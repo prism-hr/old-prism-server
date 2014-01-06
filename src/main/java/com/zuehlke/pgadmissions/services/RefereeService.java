@@ -79,12 +79,15 @@ public class RefereeService {
         refereeDAO.delete(referee);
     }
 
-    public Referee getRefereeForApplication(RegisteredUser user, ApplicationForm application) { 
-    	return refereeDAO.getRefereeByUserAndApplication(user, application);
-    }
-    
-    public Referee getRefereeByUser(RegisteredUser user) {
-    	return refereeDAO.getRefereeByUser(user);
+    public Referee getRefereeByUserAndApplication(RegisteredUser user, ApplicationForm form) {
+        Referee matchedReferee = null;
+        List<Referee> referees = user.getReferees();
+        for (Referee referee : referees) {
+            if (referee.getApplication() != null && referee.getApplication().getId().equals(form.getId())) {
+                matchedReferee = referee;
+            }
+        }
+        return matchedReferee;
     }
 
     public void declineToActAsRefereeAndSendNotification(Referee referee) {

@@ -93,18 +93,10 @@ public class RefereeDAO {
     }
 
     public Referee getRefereeByUser(RegisteredUser user) {
-        return (Referee) sessionFactory.getCurrentSession().createCriteria(Referee.class)
-        		.add(Restrictions.eq("user", user)).uniqueResult();
-    }
-    
-    public Referee getRefereeByUserAndApplication(RegisteredUser user, ApplicationForm application) {
-        return (Referee) sessionFactory.getCurrentSession().createCriteria(Referee.class)
-        		.add(Restrictions.eq("user", user))
-        		.add(Restrictions.eq("application", application)).uniqueResult();
+        return (Referee) sessionFactory.getCurrentSession().createCriteria(Referee.class).add(Restrictions.eq("user", user)).uniqueResult();
     }
 
     public void refresh(Referee referee) {
         sessionFactory.getCurrentSession().refresh(referee);
     }
-    
 }

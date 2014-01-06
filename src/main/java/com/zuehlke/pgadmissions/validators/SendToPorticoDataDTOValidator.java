@@ -51,9 +51,9 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
         	
         	ApplicationForm applicationForm = applicationFormService.getApplicationByApplicationNumber(dto.getApplicationNumber()); 
         	
-            for (int qualification : qualifications) {
-            	if (qualificationService.getQualificationById(qualification).getProofOfAward() == null) {
-            		qualifications.remove(qualification);
+            for (int i = 0; i < qualifications.size(); i++) {
+            	if (qualificationService.getQualificationById(qualifications.get(i)).getProofOfAward() == null) {
+            		qualifications.remove(i);
             	}
             }
             
@@ -82,15 +82,15 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
             
         }
 
-        if (referees != null) {    	
-            for (int referee: referees) {
-            	if (!refereeService.getRefereeById(referee).hasProvidedReference()) {
-            		referees.remove(referee);
+        if (referees != null) {
+        	
+            for (int i = 0; i < referees.size(); i++) {
+            	if (!refereeService.getRefereeById(referees.get(i)).hasProvidedReference()) {
+            		referees.remove(i);
             	}
             }
 
-            int refereesProvided = referees.size();
-            if (refereesProvided < ApplicationForm.MINIMUM_REFERENCES_FOR_EXPORT || refereesProvided > ApplicationForm.MAXIMUM_REFERENCES_FOR_EXPORT) {
+            if (referees.size() < 2) {
                 errors.rejectValue("refereesSendToPortico", "portico.submit.referees.invalid");
             }
         }

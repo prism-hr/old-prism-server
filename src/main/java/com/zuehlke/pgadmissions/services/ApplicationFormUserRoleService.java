@@ -339,10 +339,10 @@ public class ApplicationFormUserRoleService extends UserService {
 
     }
 
-    public void moveToApprovedOrRejectedOrWithdrawn(ApplicationForm application, RegisteredUser mover) {
-        applicationFormUserRoleDAO.deleteAllApplicationRoles(application); 
-        Program program = application.getProgram();
-        Project project = application.getProject();
+    public void moveToApprovedOrRejectedOrWithdrawn(ApplicationForm applicationForm) {
+        applicationFormUserRoleDAO.deleteAllApplicationRoles(applicationForm); 
+        Program program = applicationForm.getProgram();
+        Project project = applicationForm.getProject();
         
         if (!program.isEnabled() && applicationFormDAO.getActiveApplicationsByProgram(program).isEmpty()) {
         	applicationFormUserRoleDAO.deleteAllProgramRoles(program);
@@ -352,7 +352,6 @@ public class ApplicationFormUserRoleService extends UserService {
         	}
         }
         
-        registerApplicationUpdate(application, mover, ApplicationUpdateScope.ALL_USERS);
     }
 
     public void grantUserSystemRoles(RegisteredUser registeredUser, Authority... authorities) {

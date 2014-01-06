@@ -7,6 +7,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +29,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -37,25 +41,16 @@ import org.hibernate.annotations.GenerationTime;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatusType;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
-import com.zuehlke.pgadmissions.domain.enums.CommentTypeAuthority;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Entity(name = "APPLICATION_FORM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ApplicationForm implements FormSectionObject, Serializable {
+public class ApplicationForm implements Comparable<ApplicationForm>, FormSectionObject, Serializable {
 
     private static final long serialVersionUID = -7671357234815343496L;
-    
-    public static final int MINIMUM_QUALIFICATIONS_FOR_EXPORT = 1;
-    public static final int MAXIMUM_QUALIFICATIONS_FOR_EXPORT = 2;
-    
-    public static final int MINIMUM_REFERENCES_FOR_EXPORT = 2;
-    public static final int MAXIMUM_REFERENCES_FOR_EXPORT = 2;
-    
-    public static final int MINIMUM_REFEREES_FOR_SUBMISSION = 3;
-    public static final int MAXIMUM_REFEREES_FOR_SUBMISSION = 3;
 
     @Id
     @GeneratedValue
@@ -79,7 +74,11 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
     @JoinColumn(name = "application_form_id")
-    @OrderBy("date")
+    private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
+
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+    @JoinColumn(name = "application_form_id")
     private List<Event> events = new ArrayList<Event>();
 
     @Enumerated(EnumType.STRING)
@@ -87,12 +86,12 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "previous_status")
-    private ApplicationFormStatus previousStatus = null;
-    
-    @Enumerated(EnumType.STRING)
     @Column(name = "next_status")
     private ApplicationFormStatus nextStatus = null;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_when_withdrawn")
+    private ApplicationFormStatus statusWhenWithdrawn = null;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -289,20 +288,73 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     }
 
     public boolean isModifiable() {
-    	return Arrays.asList(ApplicationFormStatusType.EDITABLEBYAPPLICANT.states()).contains(status) 
-    			|| Arrays.asList(ApplicationFormStatusType.EDITABLEBYSTAFF.states()).contains(status); 
+        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN
+                || !getIsEditableByApplicant()) {
+            return false;
+        }
+        return true;
     }
 
     public boolean isSubmitted() {
         return status != ApplicationFormStatus.UNSUBMITTED;
     }
-    
+
+    public InterviewEvaluationComment getLastInterviewEvaluationComment() {
+        for (int i = applicationComments.size() - 1; i >= 0; i--) {
+            if (applicationComments.get(i) instanceof InterviewEvaluationComment) {
+                return (InterviewEvaluationComment) applicationComments.get(i);
+            }
+        }
+        return null;
+    }
+
+    public boolean hasInterviewEvaluationComment() {
+        for (Comment comment : this.getApplicationComments()) {
+            if (comment instanceof InterviewEvaluationComment) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasReviewEvaluationComment() {
+        for (Comment comment : this.getApplicationComments()) {
+            if (comment instanceof ReviewEvaluationComment) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isDecided() {
+        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isWithdrawn() {
+        return status == ApplicationFormStatus.WITHDRAWN;
+    }
+
+    public boolean isTerminated() {
+        return isDecided() || isWithdrawn();
+    }
+
     public List<Comment> getApplicationComments() {
         return applicationComments;
     }
 
     public void setApplicationComments(List<Comment> applicationComments) {
         this.applicationComments = applicationComments;
+    }
+
+    public boolean hasComments() {
+        return applicationComments != null && !applicationComments.isEmpty();
+    }
+
+    public boolean hasQualifications() {
+        return !qualifications.isEmpty();
     }
 
     public List<Funding> getFundings() {
@@ -334,6 +386,10 @@ public class ApplicationForm implements FormSectionObject, Serializable {
             return new PersonalDetails();
         }
         return personalDetails;
+    }
+
+    public boolean isPersonalDetailsNull() {
+        return personalDetails == null;
     }
 
     public void setPersonalDetails(PersonalDetails personalDetails) {
@@ -403,13 +459,58 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     }
 
     public List<Comment> getVisibleComments(RegisteredUser user) {
-    	List<Comment> returnList = new ArrayList<Comment>();
-    	for (Comment comment : applicationComments) {
-    		if (user.isInApplicationRole(this, CommentTypeAuthority.valueOf(comment.getType().toString()).authorities()) || comment.getUser().equals(user)) {
-    			returnList.add(comment);
-    		}
-    	}
-    	return returnList;
+        ArrayList<Comment> returnList = new ArrayList<Comment>();
+        if (user.isInRole(Authority.APPLICANT)) {
+            for (Comment comment : applicationComments) {
+                if (comment instanceof InterviewVoteComment && comment.getUser().getId().equals(user.getId())) {
+                    returnList.add(comment);
+                } else if (comment instanceof InterviewScheduleComment) {
+                    returnList.add(comment);
+                }
+            }
+        }
+
+        if (user.isRefereeOfApplicationForm(this) && !user.hasStaffRightsOnApplicationForm(this)) {
+            for (Comment comment : applicationComments) {
+                if (comment instanceof ReferenceComment && ((ReferenceComment) comment).getReferee().getUser().getId().equals(user.getId())) {
+                    returnList.add(comment);
+                }
+            }
+            Collections.sort(returnList);
+            return returnList;
+        }
+
+        if (user.hasStaffRightsOnApplicationForm(this) || user.isApplicationAdministrator(this) || user.isViewerOfProgramme(this, user)
+                || user.isInRole(Authority.ADMITTER)) {
+            returnList.addAll(applicationComments);
+            Collections.sort(returnList);
+            return returnList;
+        }
+
+        return returnList;
+    }
+
+    public boolean shouldOpenFirstSection() {
+        return isNull(programmeDetails, personalDetails, currentAddress, contactAddress, personalStatement, cv, additionalInformation)
+                && isEmpty(fundings, referees, employmentPositions, qualifications);
+    }
+
+    private boolean isEmpty(List<?>... objects) {
+        for (List<?> obj : objects) {
+            if (obj.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isNull(Object... objects) {
+        for (Object obj : objects) {
+            if (obj == null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Date getDueDate() {
@@ -445,10 +546,20 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     }
 
     public void setStatus(ApplicationFormStatus status) {
-    	this.previousStatus = this.status;
+    	if (status == ApplicationFormStatus.WITHDRAWN) {
+    		this.statusWhenWithdrawn = this.status;
+    	}
+    	
         this.status = status;
         this.nextStatus = null;
-        this.isEditableByApplicant = Arrays.asList(ApplicationFormStatusType.EDITABLEBYAPPLICANT.states()).contains(status);
+        
+        if (Arrays.asList(ApplicationFormStatus.UNSUBMITTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,
+        		ApplicationFormStatus.INTERVIEW).contains(status)) {
+        	this.isEditableByApplicant = true;
+        } else {
+        	this.isEditableByApplicant = false;
+        }
+        
     }
 
     public ApplicationFormStatus getNextStatus() {
@@ -457,6 +568,10 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     
     public void setNextStatus(ApplicationFormStatus nextStatus) {
         this.nextStatus = nextStatus;
+    }
+    
+    public ApplicationFormStatus getStatusWhenWithdrawn() {
+        return statusWhenWithdrawn;
     }
 
     public Date getRejectNotificationDate() {
@@ -482,7 +597,59 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     public boolean isInApprovalStage() {
         return status == ApplicationFormStatus.APPROVAL;
     }
-    
+
+    public List<NotificationRecord> getNotificationRecords() {
+        return notificationRecords;
+    }
+
+    public void setNotificationRecords(List<NotificationRecord> notificationRecords) {
+        this.notificationRecords.clear();
+        this.notificationRecords.addAll(notificationRecords);
+    }
+
+    public NotificationRecord getNotificationForType(NotificationType type) {
+        for (NotificationRecord notification : notificationRecords) {
+            if (notification.getNotificationType() == type) {
+                return notification;
+            }
+        }
+        return null;
+    }
+
+    public NotificationRecord getNotificationForType(String strType) {
+        return getNotificationForType(NotificationType.valueOf(strType));
+    }
+
+    public boolean addNotificationRecord(NotificationRecord record) {
+        for (NotificationRecord existingRecord : notificationRecords) {
+            if (existingRecord.getNotificationType() == record.getNotificationType()) {
+                existingRecord.setDate(record.getDate());
+                existingRecord.setUser(record.getUser());
+                return false;
+            }
+        }
+        return notificationRecords.add(record);
+    }
+
+    public boolean removeNotificationRecord(NotificationRecord record) {
+        return notificationRecords.remove(record);
+    }
+
+    public void removeNotificationRecord(final NotificationType... recordTypes) {
+        CollectionUtils.filter(notificationRecords, new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                NotificationRecord existingRecord = (NotificationRecord) object;
+                for (NotificationType type : recordTypes) {
+                    if (type == existingRecord.getNotificationType()) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+    }
+
     public boolean hasAcceptedTheTerms() {
         return acceptedTermsOnSubmission == CheckedStatus.YES;
     }
@@ -503,6 +670,14 @@ public class ApplicationForm implements FormSectionObject, Serializable {
         this.acceptedTermsOnSubmission = acceptedTerms;
     }
 
+    public boolean isInState(String strStatus) {
+        try {
+            return status == ApplicationFormStatus.valueOf(strStatus);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
     public boolean isInState(ApplicationFormStatus enumStatus) {
         return status == enumStatus;
     }
@@ -514,6 +689,21 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     public void setEvents(List<Event> events) {
         this.events.clear();
         this.events.addAll(events);
+    }
+
+    @Override
+    public int compareTo(ApplicationForm appForm) {
+
+        if (appForm.getSubmittedDate() != null && this.getSubmittedDate() == null) {
+            return -1;
+        }
+        if (appForm.getSubmittedDate() == null && this.getSubmittedDate() != null) {
+            return 1;
+        }
+        if (appForm.getSubmittedDate() == null && this.getSubmittedDate() == null) {
+            return this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
+        }
+        return this.submittedDate.compareTo(appForm.getSubmittedDate());
     }
 
     public List<Interview> getInterviews() {
@@ -548,13 +738,20 @@ public class ApplicationForm implements FormSectionObject, Serializable {
         this.latestReviewRound = latestReviewRound;
     }
 
-    public List<StateChangeEvent> getStateChangeEvents() {
+    public List<StateChangeEvent> getStateChangeEventsSortedByDate() {
         ArrayList<StateChangeEvent> stateChangeEvents = new ArrayList<StateChangeEvent>();
+        Comparator<StateChangeEvent> dateComparator = new Comparator<StateChangeEvent>() {
+            @Override
+            public int compare(StateChangeEvent event1, StateChangeEvent event2) {
+                return event1.getDate().compareTo(event2.getDate());
+            }
+        };
         for (Event event : events) {
             if (event instanceof StateChangeEvent) {
                 stateChangeEvents.add((StateChangeEvent) event);
             }
         }
+        Collections.sort(stateChangeEvents, dateComparator);
         return stateChangeEvents;
     }
 
@@ -663,8 +860,75 @@ public class ApplicationForm implements FormSectionObject, Serializable {
         this.isEditableByApplicant = isEditableByApplicant;
     }
 
+    public RequestRestartComment getLatestsRequestRestartComment() {
+        List<RequestRestartComment> requestRestartComments = new ArrayList<RequestRestartComment>();
+        for (Comment comment : applicationComments) {
+            if (comment instanceof RequestRestartComment) {
+                requestRestartComments.add((RequestRestartComment) comment);
+            }
+        }
+        Collections.sort(requestRestartComments);
+        if (!requestRestartComments.isEmpty()) {
+            return requestRestartComments.get(0);
+        }
+        return null;
+    }
+
+    public ApplicationFormStatus getOutcomeOfStage() {
+        if (ApplicationFormStatus.REVIEW == status) {
+            return resolveOutcomeOfStageForReviewStatus();
+        }
+        if (ApplicationFormStatus.INTERVIEW == status) {
+            return resolveOutcomeOfStageForInterviewStatus();
+        }
+        if (ApplicationFormStatus.APPROVAL == status) {
+            return resolveOutcomeOfStageForApprovalStatus();
+        }
+        if (!approvalRounds.isEmpty()) {
+            return ApplicationFormStatus.APPROVAL;
+        }
+        if (!interviews.isEmpty()) {
+            return ApplicationFormStatus.INTERVIEW;
+        }
+        if (!reviewRounds.isEmpty()) {
+            return ApplicationFormStatus.REVIEW;
+        }
+        return ApplicationFormStatus.VALIDATION;
+    }
+
+    private ApplicationFormStatus resolveOutcomeOfStageForApprovalStatus() {
+        if (approvalRounds.size() > 1) {
+            return ApplicationFormStatus.APPROVAL;
+        }
+        if (!interviews.isEmpty()) {
+            return ApplicationFormStatus.INTERVIEW;
+        }
+        if (!reviewRounds.isEmpty()) {
+            return ApplicationFormStatus.REVIEW;
+        }
+        return ApplicationFormStatus.VALIDATION;
+    }
+
+    private ApplicationFormStatus resolveOutcomeOfStageForInterviewStatus() {
+        if (interviews.size() > 1) {
+            return ApplicationFormStatus.INTERVIEW;
+        }
+        if (!reviewRounds.isEmpty()) {
+            return ApplicationFormStatus.REVIEW;
+        }
+        return ApplicationFormStatus.VALIDATION;
+    }
+
+    private ApplicationFormStatus resolveOutcomeOfStageForReviewStatus() {
+        if (reviewRounds.size() > 1) {
+            return ApplicationFormStatus.REVIEW;
+        }
+
+        return ApplicationFormStatus.VALIDATION;
+    }
+
     public List<Document> getQualificationsToSendToPortico() {
-        List<Document> result = new ArrayList<Document>();
+        List<Document> result = new ArrayList<Document>(2);
         for (Qualification qualification : getQualifications()) {
             if (BooleanUtils.isTrue(qualification.getSendToUCL())) {
                 result.add(qualification.getProofOfAward());
@@ -673,7 +937,7 @@ public class ApplicationForm implements FormSectionObject, Serializable {
         return result;
     }
 
-    public List<Integer> getQualicationIdsToSendToPortico() {
+    public List<Integer> getQualicationsToSendToPorticoIds() {
         List<Integer> qualificationIdsToSend = new ArrayList<Integer>();
         for (int i = 0; i < getQualifications().size(); i++) {
             if (getQualifications().get(i).getSendToUCL()) {
@@ -696,7 +960,7 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     }
 
     public List<ReferenceComment> getReferencesToSendToPortico() {
-        List<ReferenceComment> result = new ArrayList<ReferenceComment>();
+        List<ReferenceComment> result = new ArrayList<ReferenceComment>(2);
         for (Referee referee : getReferees()) {
             if (BooleanUtils.isTrue(referee.getSendToUCL())) {
                 result.add(referee.getReference());
@@ -706,7 +970,7 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     }
 
     public List<Referee> getRefereesToSendToPortico() {
-        List<Referee> result = new ArrayList<Referee>();
+        List<Referee> result = new ArrayList<Referee>(2);
         for (Referee referee : getReferees()) {
             if (BooleanUtils.isTrue(referee.getSendToUCL())) {
                 result.add(referee);
@@ -715,11 +979,11 @@ public class ApplicationForm implements FormSectionObject, Serializable {
         return result;
     }
 
-    public List<Integer> getRefereeIdsToSendToPortico() {
+    public List<Integer> getRefereesToSendToPorticoIds() {
         List<Integer> refereeIdsToSend = new ArrayList<Integer>();
-        for (Referee referee : getReferees()) {
-            if (referee.getSendToUCL()) {
-                refereeIdsToSend.add(referee.getId());
+        for (int i = 0; i < getReferees().size(); i++) {
+            if (getReferees().get(i).getSendToUCL()) {
+                refereeIdsToSend.add(getReferees().get(i).getId());
             }
         }
         if (refereeIdsToSend.isEmpty()) {
@@ -729,18 +993,14 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     }
 
     public boolean hasEnoughReferencesToSendToPortico() {
-    	int refereesToSend = getRefereesToSendToPortico().size();
-        if (refereesToSend >= ApplicationForm.MINIMUM_REFERENCES_FOR_EXPORT 
-        		&& refereesToSend <= ApplicationForm.MAXIMUM_REFERENCES_FOR_EXPORT) {
+        if (getReferencesToSendToPortico().size() == 2) {
             return true;
         }
         return false;
     }
 
     public boolean hasEnoughQualificationsToSendToPortico() {
-    	int qualificationsToSend = getQualificationsToSendToPortico().size();
-        if (qualificationsToSend >= ApplicationForm.MINIMUM_QUALIFICATIONS_FOR_EXPORT 
-        		&& qualificationsToSend <= ApplicationForm.MINIMUM_QUALIFICATIONS_FOR_EXPORT) {
+        if (getQualificationsToSendToPortico().size() > 0 && getQualificationsToSendToPortico().size() <= 2) {
             return true;
         }
         return false;
@@ -748,6 +1008,15 @@ public class ApplicationForm implements FormSectionObject, Serializable {
 
     public boolean isNotInState(ApplicationFormStatus status) {
         return !isInState(status);
+    }
+
+    public boolean hasConfirmElegibilityComment() {
+        for (Comment comment : applicationComments) {
+            if (comment instanceof AdmitterComment) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isDueDateExpired() {
@@ -790,26 +1059,26 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     }
 
     public ValidationComment getValidationComment() {
+        ValidationComment validationComment = null;
         for (Comment comment : getApplicationComments()) {
             if (comment instanceof ValidationComment) {
-                return (ValidationComment) comment;
+                validationComment = (ValidationComment) comment;
+                break;
             }
         }
-        return null;
+        return validationComment;
     }
 
     public StateChangeComment getLatestStateChangeComment() {
         List<Comment> commentsReversed = Lists.reverse(getApplicationComments());
+        StateChangeComment stateChangeComment = null;
         for (Comment comment : commentsReversed) {
             if (comment instanceof StateChangeComment) {
-                return (StateChangeComment) comment;
+                stateChangeComment = (StateChangeComment) comment;
+                break;
             }
         }
-        return null;
+        return stateChangeComment;
     }
     
-    public ApplicationFormStatus getPreviousStatus() {
-		return previousStatus;
-	}
-	
 }

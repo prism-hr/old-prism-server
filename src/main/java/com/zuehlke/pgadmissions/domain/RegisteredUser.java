@@ -2,8 +2,9 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -18,12 +19,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Analyze;
@@ -35,12 +38,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "REGISTERED_USER")
 @Indexed
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class RegisteredUser implements UserDetails,
+public class RegisteredUser extends AbstractAuthorisationAPI implements UserDetails,
 		Comparable<RegisteredUser>, Serializable {
 
 	private static final long serialVersionUID = 7913035836949510857L;
@@ -123,6 +127,13 @@ public class RegisteredUser implements UserDetails,
 			javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "user_id")
+	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
+
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = {
+			javax.persistence.CascadeType.PERSIST,
+			javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "user_id")
 	private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = {
@@ -146,19 +157,16 @@ public class RegisteredUser implements UserDetails,
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "PROGRAM_ADMINISTRATOR_LINK", joinColumns = { @JoinColumn(name = "administrator_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-	@OrderBy("title")
 	private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "registered_user_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-	@OrderBy("title")
 	private List<Program> programsOfWhichApprover = new ArrayList<Program>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "PROGRAM_VIEWER_LINK", joinColumns = { @JoinColumn(name = "viewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-	@OrderBy("title")
 	private List<Program> programsOfWhichViewer = new ArrayList<Program>();
 
 	@Column(name = "ucl_user_id")
@@ -194,6 +202,7 @@ public class RegisteredUser implements UserDetails,
 
 	public List<RegisteredUser> getAllLinkedAccounts() {
 		List<RegisteredUser> linkedAccountsList = new ArrayList<RegisteredUser>();
+
 		if (this.primaryAccount == null) {
 			linkedAccountsList.add(this);
 			linkedAccountsList.addAll(getLinkedAccounts());
@@ -215,70 +224,35 @@ public class RegisteredUser implements UserDetails,
 	public List<Authority> getAuthoritiesForSystem() {
 		List<Authority> foundRoles = new ArrayList<Authority>();
 		for (Authority role : AuthorityGroup.SYSTEM.authorities()) {
-			if (isInSystemRole(role)) {
+			if (isInRole(role)) {
 				foundRoles.add(role);
 			}
 		}
 		return foundRoles;
 	}
 	
-	public List<Authority> getAuthoritiesForProgram(final Program program) {
-		List<Authority> rolesFound = new ArrayList<Authority>();
-		List<Program> programsToSearch = new ArrayList<Program>();
-		for (Authority authority : AuthorityGroup.PROGRAM.authorities()) {
-			switch (authority) {
-			case ADMINISTRATOR:
-				programsToSearch = getProgramsOfWhichAdministrator();
-				break;
-			case APPROVER:
-				programsToSearch = getProgramsOfWhichApprover();
-				break;
-			case VIEWER:
-				programsToSearch = getProgramsOfWhichViewer();
-				break;
-			default: break;
-			}
-			if (programsToSearch.contains(program)) {
-				rolesFound.add(authority);
-			}
+	public List<Authority> getAuthoritiesForProgram(final Program programme) {
+		return getAuthoritiesForProgramme(programme, this);
+	}
+
+	public String getAuthoritiesForProgramAsString(final Program programme) {
+		List<Authority> authoritiesForProgram = getAuthoritiesForProgram(programme);
+		StringBuffer stringBuffer = new StringBuffer();
+		if (isInRole(Authority.SUPERADMINISTRATOR)) {
+			stringBuffer.append("Superadministrator");
 		}
-		return rolesFound;
+		for (Authority authority : authoritiesForProgram) {
+			if (stringBuffer.length() > 0) {
+				stringBuffer.append(", ");
+			}
+			stringBuffer.append(StringUtils.capitalize(authority.toString()
+					.toLowerCase()));
+		}
+		return stringBuffer.toString();
 	}
 	
 	public List<Authority> getAuthoritiesForProject(final Project project) {
-		List<Authority> rolesFound = new ArrayList<Authority>();
-		List<Authority> rolesToSearch = Arrays.asList(AuthorityGroup.PROJECT.authorities());
-		for (Authority authority : rolesToSearch) {
-			switch (authority) {
-				case PROJECTADMINISTRATOR:
-					if (this.equals(project.getAdministrator()) || this.equals(project.getPrimarySupervisor())) {
-						rolesFound.add(authority);
-					}
-					break;
-				case PROJECTAUTHOR:
-					if (this.equals(project.getAuthor())) {
-						rolesFound.add(authority);
-					}
-					break;
-				default: break;
-			}
-			if (rolesFound.containsAll(rolesToSearch)) {
-				break;
-			}
-		}
-		return rolesFound;
-	}
-	
-	public List<Authority> getAuthoritiesForApplication(final ApplicationForm application) {
-		List<Authority> rolesFound = new ArrayList<Authority>();
-		List<Authority> rolesToSearch = Arrays.asList(AuthorityGroup.APPLICATION.authorities());
-		for (ApplicationFormUserRole role : applicationFormUserRoles) {
-			Authority authority = role.getRole().getId();
-			if (rolesToSearch.contains(application)) {
-				rolesFound.add(authority);
-			}
-		}
-		return rolesFound;
+		return getAuthoritiesForProject(project, this);
 	}
 
 	public List<Comment> getComments() {
@@ -321,6 +295,18 @@ public class RegisteredUser implements UserDetails,
 		return id;
 	}
 
+	public List<Interviewer> getInterviewersForApplicationForm(final ApplicationForm form) {
+		List<Interviewer> interviewers = new ArrayList<Interviewer>();
+		List<Interviewer> formInterviewers = form.getLatestInterview()
+				.getInterviewers();
+		for (Interviewer interviewer : formInterviewers) {
+			if (this.getId().equals(interviewer.getUser().getId())) {
+				interviewers.add(interviewer);
+			}
+		}
+		return interviewers;
+	}
+
 	public String getLastName() {
 		return lastName;
 	}
@@ -331,6 +317,10 @@ public class RegisteredUser implements UserDetails,
 
 	public String getNewPassword() {
 		return newPassword;
+	}
+
+	public List<NotificationRecord> getNotificationRecords() {
+		return notificationRecords;
 	}
 
 	public String getOriginalApplicationQueryString() {
@@ -351,6 +341,13 @@ public class RegisteredUser implements UserDetails,
 	}
 
 	public List<Program> getProgramsOfWhichAdministrator() {
+		Collections.sort(programsOfWhichAdministrator,
+				new Comparator<Program>() {
+					@Override
+					public int compare(Program o1, Program o2) {
+						return o1.getTitle().compareTo(o2.getTitle());
+					}
+				});
 		return programsOfWhichAdministrator;
 	}
 
@@ -362,8 +359,37 @@ public class RegisteredUser implements UserDetails,
 		return programsOfWhichViewer;
 	}
 
+	public Referee getRefereeForApplicationForm(final ApplicationForm form) {
+		for (Referee referee : referees) {
+			if (referee.getApplication() != null
+					&& referee.getApplication().getId().equals(form.getId())
+					&& !referee.isDeclined()) {
+				return referee;
+			}
+		}
+		return null;
+	}
+
 	public List<Referee> getReferees() {
 		return referees;
+	}
+
+	public Reviewer getReviewerForCurrentUserFromLatestReviewRound(final ApplicationForm form) {
+		ReviewRound latestReviewRound = form.getLatestReviewRound();
+
+		if (latestReviewRound == null) {
+			throw new IllegalStateException(
+					String.format("latestReviewRound is null for application[applicationNumber=%s]", form.getApplicationNumber()));
+		}
+
+		List<Reviewer> formReviewers = latestReviewRound.getReviewers();
+		for (Reviewer reviewer : formReviewers) {
+			if (this.getId().equals(reviewer.getUser().getId())) {
+				return reviewer;
+			}
+		}
+		throw new IllegalStateException(String.format(
+				"Reviewer object could not be found for user [id=%d]", getId()));
 	}
 
 	public List<Role> getRoles() {
@@ -379,6 +405,70 @@ public class RegisteredUser implements UserDetails,
 		return username;
 	}
 
+	public boolean hasDeclinedToProvideReviewForApplication(final ApplicationForm form) {
+		for (Comment comment : comments) {
+			if (comment.getApplication().getId().equals(form.getId())
+					&& comment.getType().equals(CommentType.REVIEW)) {
+				ReviewComment reviewComment = (ReviewComment) comment;
+				if (reviewComment.isDecline()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean hasRefereesInApplicationForm(final ApplicationForm form) {
+		return getRefereeForApplicationForm(form) != null;
+	}
+
+	public boolean hasRespondedToProvideInterviewFeedbackForApplication(final ApplicationForm form) {
+		for (Comment comment : comments) {
+			if (comment.getApplication().getId().equals(form.getId())
+					&& comment.getType().equals(CommentType.INTERVIEW)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(final ApplicationForm form) {
+		List<Interviewer> interviewers = form.getLatestInterview()
+				.getInterviewers();
+		for (Interviewer interviewer : interviewers) {
+			if (interviewer.getInterview().getId()
+					.equals(form.getLatestInterview().getId())
+					&& this.getId().equals(interviewer.getUser().getId())
+					&& interviewer.getInterviewComment() != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasRespondedToProvideReviewForApplication(final ApplicationForm form) {
+		for (Comment comment : comments) {
+			if (comment.getApplication().getId().equals(form.getId())
+					&& comment.getType().equals(CommentType.REVIEW)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasRespondedToProvideReviewForApplicationLatestRound(final ApplicationForm form) {
+		List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
+		for (Reviewer reviewer : reviewers) {
+			if (reviewer.getReviewRound().getId()
+					.equals(form.getLatestReviewRound().getId())
+					&& this.getId().equals(reviewer.getUser().getId())
+					&& reviewer.getReview() != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return accountNonExpired;
@@ -389,6 +479,10 @@ public class RegisteredUser implements UserDetails,
 		return accountNonLocked;
 	}
 
+	public boolean isAdminInProgramme(final Program programme) {
+		return isAdminInProgramme(programme, this);
+	}
+
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return credentialsNonExpired;
@@ -397,6 +491,78 @@ public class RegisteredUser implements UserDetails,
 	@Override
 	public boolean isEnabled() {
 		return enabled;
+	}
+
+	public boolean isInRole(final Authority authority) {
+		return isInRole(this, authority);
+	}
+
+	public boolean isNotInRole(final Authority authority) {
+		return !isInRole(this, authority);
+	}
+
+	public boolean isInRoleInProgram(final Authority authority, final Program programme) {
+		return isInRoleInProgramme(programme, this, authority);
+	}
+
+	public boolean isInRoleInProgram(final String strAuthority, final Program programme) {
+		return isInRoleInProgramme(programme, this, strAuthority);
+	}
+
+	public boolean isNotInRoleInProgram(final Authority authority, Program program) {
+		return !isInRoleInProgramme(program, this, authority);
+	}
+
+	public boolean isNotInRoleInProgram(final String strAuthority, final Program programme) {
+		return !isInRoleInProgramme(programme, this, strAuthority);
+	}
+
+	public boolean isInterviewerInInterview(final Interview interview) {
+		return isInterviewerInInterview(interview, this);
+	}
+
+	public boolean isInterviewerOfApplicationForm(final ApplicationForm form) {
+		return isInterviewerOfApplication(form, this);
+	}
+
+	public boolean isApproverInProgram(final Program programme) {
+		return isApproverInProgramme(programme, this);
+	}
+
+	public boolean isViewerOfProgramme(final ApplicationForm form) {
+		return isViewerOfProgramme(form, this);
+	}
+
+	public boolean isApplicant(final ApplicationForm form) {
+		return isApplicant(form, this);
+	}
+
+	public boolean isProgrammeAdministrator(final ApplicationForm form) {
+		return isProgrammeAdministrator(form, this);
+	}
+
+	public boolean isRefereeOfApplicationForm(final ApplicationForm form) {
+		return isRefereeOfApplication(form, this);
+	}
+
+	public boolean isReviewerInLatestReviewRoundOfApplicationForm(final ApplicationForm form) {
+		return isReviewerInLatestReviewRoundOfApplication(form, this);
+	}
+
+	public boolean isReviewerInReviewRound(final ReviewRound reviewRound) {
+		return isReviewerInReviewRound(reviewRound, this);
+	}
+
+	public boolean isSupervisorInApprovalRound(final ApprovalRound approvalRound) {
+		return isSupervisorInApprovalRound(approvalRound, this);
+	}
+
+	public boolean isSupervisorIn(final List<Supervisor> supervisors) {
+		return containsSupervisor(this, supervisors);
+	}
+
+	public boolean isSupervisorOfApplicationForm(final ApplicationForm form) {
+		return isSupervisorOfApplicationForm(form, this);
 	}
 
 	public void setAccountNonExpired(final boolean accountNonExpired) {
@@ -467,6 +633,12 @@ public class RegisteredUser implements UserDetails,
 		this.newPassword = newPassword;
 	}
 
+	public void setNotificationRecords(
+			final List<NotificationRecord> notificationRecords) {
+		this.notificationRecords.clear();
+		this.notificationRecords.addAll(notificationRecords);
+	}
+
 	public void setOriginalApplicationQueryString(final String queryString) {
 		this.originalApplicationQueryString = queryString;
 	}
@@ -524,6 +696,20 @@ public class RegisteredUser implements UserDetails,
 		this.upi = upi;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("RegisteredUser [id=%s, firstName=%s, lastName=%s, email=%s, enabled=%s]", id, firstName, lastName, email, enabled);
+	}
+
+	public void removeRole(final Authority authority) {
+		CollectionUtils.filter(roles, new Predicate() {
+			@Override
+			public boolean evaluate(Object object) {
+				return ((Role) object).getId() != authority;
+			}
+		});
+	}
+
 	public List<ResearchOpportunitiesFeed> getResearchOpportunitiesFeeds() {
 		return researchOpportunitiesFeeds;
 	}
@@ -563,60 +749,5 @@ public class RegisteredUser implements UserDetails,
 	public void setApplicationFormUserRoles(List<ApplicationFormUserRole> applicationFormUserRoles) {
 		this.applicationFormUserRoles = applicationFormUserRoles;
 	}
-	
-    public boolean isInSystemRole(Authority... authorities) {
-    	return hasAuthorityInAuthorityGroup(getAuthoritiesForSystem());
-    }
-    
-    public boolean isInProgramRole(final Program program, final Authority... authorities) {
-    	if (isInSystemRole(authorities)) {
-    		return true;
-    	}
-    	return hasAuthorityInAuthorityGroup(getAuthoritiesForProgram(program), authorities);
-    }
-    
-    public boolean isInProjectRole(final Project project, final Authority... authorities) {
-    	if (isInProgramRole(project.getProgram(), authorities)) {
-    		return true;
-    	}
-    	return hasAuthorityInAuthorityGroup(getAuthoritiesForProject(project), authorities);
-    }
-    
-    public boolean isInApplicationRole(final ApplicationForm application, final Authority... authorities) {
-    	if (isInProgramRole(application.getProgram(), authorities)) {
-    		return true;
-    	}
-    	Project project = application.getProject();
-    	if (project != null) {
-    		if (isInProjectRole(project, authorities)) {
-    			return true;
-    		}
-    	}
-    	return hasAuthorityInAuthorityGroup(getAuthoritiesForApplication(application), authorities);
-    }
-    
-    public void removeRole(Authority... authorities) {
-    	List<Authority> rolesToRemove = Arrays.asList(authorities);
-    	List<Role> rolesToSearch = getRoles();
-    	for (Role role : rolesToSearch) {
-    		Authority authority = role.getId();
-    		if (rolesToRemove.contains(authority)) {
-    			rolesToRemove.remove(authority);
-    			rolesToSearch.remove(role);
-    		}
-    		if (rolesToRemove.isEmpty()) {
-    			break;
-    		}
-    	}
-    }
-    
-    private boolean hasAuthorityInAuthorityGroup (List<Authority> roles, Authority... authorities) {
-    	for (Authority authority : authorities) {
-    		if (roles.contains(authority)) {
-    			return true;
-    		}
-    	}
-    	return false;
-    }
-    
+
 }

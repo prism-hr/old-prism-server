@@ -24,13 +24,14 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -56,12 +57,11 @@ public class EmploymentController {
     private final EncryptionHelper encryptionHelper;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final DomicileService domicileService;
-    private final DomicilePropertyEditor domicilePropertyEditor;
+    private DomicilePropertyEditor domicilePropertyEditor;
     private final FullTextSearchService searchService;
-    private final ContentAccessProvider contentAccessProvider;
 
     EmploymentController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -69,8 +69,7 @@ public class EmploymentController {
                     LanguagePropertyEditor languagePropertyEditor, DatePropertyEditor datePropertyEditor,
                     ApplicationFormPropertyEditor applicationFormPropertyEditor, EmploymentPositionValidator employmentPositionValidator,
                     UserService userService, EncryptionHelper encryptionHelper, final ApplicationFormUserRoleService applicationFormUserRoleService,
-                    DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor, final FullTextSearchService searchService,
-                    ContentAccessProvider contentAccessProvider) {
+                    DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor, final FullTextSearchService searchService) {
         this.employmentPositionService = employmentPositionService;
         this.languageService = languageService;
         this.applicationService = applicationsService;
@@ -84,7 +83,6 @@ public class EmploymentController {
         this.domicileService = domicileService;
         this.domicilePropertyEditor = domicilePropertyEditor;
         this.searchService = searchService;
-        this.contentAccessProvider = contentAccessProvider;
     }
 
     @InitBinder("employmentPosition")
@@ -102,19 +100,25 @@ public class EmploymentController {
     }
 
     @RequestMapping(value = "/getEmploymentPosition", method = RequestMethod.GET)
-    public String getEmploymentView(@ModelAttribute ApplicationForm applicationForm) {
+    public String getEmploymentView() {
         return STUDENTS_EMPLOYMENT_DETAILS_VIEW;
     }
 
     @RequestMapping(value = "/editEmploymentPosition", method = RequestMethod.POST)
-    public String editEmployment(@Valid EmploymentPosition employment, BindingResult result, @ModelAttribute ApplicationForm applicationForm) {
+    public String editEmployment(@Valid EmploymentPosition employment, BindingResult result) {
+        if (employment.getApplication().isDecided()) {
+            throw new CannotUpdateApplicationException(employment.getApplication().getApplicationNumber());
+        }
+        
         if (result.hasErrors()) {
             return STUDENTS_EMPLOYMENT_DETAILS_VIEW;
         }
         
+        ApplicationForm applicationForm = employment.getApplication();
+        
         employmentPositionService.save(employment);
         applicationService.save(employment.getApplication());
-        applicationFormUserRoleService.applicationEdited(applicationForm, userService.getCurrentUser());
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         
         return "redirect:/update/getEmploymentPosition?applicationId=" + employment.getApplication().getApplicationNumber();
     }
@@ -146,12 +150,15 @@ public class EmploymentController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        contentAccessProvider.validateCanEditAsApplicant(application, userService.getCurrentUser());
+        if (application == null) {
+            throw new ResourceNotFoundException();
+        }
         return application;
     }
 
     @ModelAttribute
     public EmploymentPosition getEmploymentPosition(@RequestParam(value = "employmentId", required = false) String encryptedEmploymentId) {
+
         if (StringUtils.isBlank(encryptedEmploymentId)) {
             return new EmploymentPosition();
         }
@@ -166,5 +173,4 @@ public class EmploymentController {
     public String getMessage(@RequestParam(required = false) String message) {
         return message;
     }
-    
 }

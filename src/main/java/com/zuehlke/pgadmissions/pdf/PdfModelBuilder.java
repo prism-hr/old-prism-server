@@ -88,11 +88,15 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         this.includeAttachments = flag;
         return this;
     }
-    
-    public PdfModelBuilder includeEqualOpportunities(final boolean flag) {
-    	this.includeDisability = flag;
-    	this.includeEthnicity = flag;
-    	return this;
+
+    public PdfModelBuilder includeDisability(final boolean flag) {
+        this.includeDisability = flag;
+        return this;
+    }
+
+    public PdfModelBuilder includeEthnicity(final boolean flag) {
+        this.includeEthnicity = flag;
+        return this;
     }
 
     public PdfModelBuilder dateFormat(final SimpleDateFormat format) {

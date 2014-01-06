@@ -167,7 +167,7 @@ public class PorticoAttachmentsZipCreator {
         String serverfilename = "ApplicationForm" + referenceNumber + ".pdf";
         String applicationFilename = "ApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
-        pdfDocumentBuilder.build(new PdfModelBuilder().includeCriminialConvictions(true).includeEqualOpportunities(true).includeAttachments(false), zos, applicationForm);
+        pdfDocumentBuilder.build(new PdfModelBuilder().includeCriminialConvictions(true).includeDisability(true).includeEthnicity(true).includeAttachments(false), zos, applicationForm);
         zos.closeEntry();
         contentsProperties.put("applicationForm.1.serverFilename", serverfilename);
         contentsProperties.put("applicationForm.1.applicationFilename", applicationFilename);
@@ -186,5 +186,4 @@ public class PorticoAttachmentsZipCreator {
     protected String getRandomFilename() {
         return UUID.randomUUID() + ".pdf";
     }
-    
 }

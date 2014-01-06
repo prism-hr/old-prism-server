@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -25,16 +26,17 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.security.ActionsProvider;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -52,9 +54,9 @@ public class ReferenceController {
     private final ApplicationsService applicationsService;
     private final DocumentPropertyEditor documentPropertyEditor;
     private final FeedbackCommentValidator referenceValidator;
+    private final RefereeService refereeService;
     private final UserService userService;
     private final CommentService commentService;
-    private final RefereeService refereeService;
     private final ScoringDefinitionParser scoringDefinitionParser;
     private final ScoresPropertyEditor scoresPropertyEditor;
     private final ScoreFactory scoreFactory;
@@ -67,16 +69,16 @@ public class ReferenceController {
     }
 
     @Autowired
-    public ReferenceController(ApplicationsService applicationsService, UserService userService, DocumentPropertyEditor documentPropertyEditor, 
-    		FeedbackCommentValidator referenceValidator, CommentService commentService, RefereeService refereeService, ScoringDefinitionParser scoringDefinitionParser, 
-    		ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, final ApplicationFormUserRoleService applicationFormUserRoleService, 
-    		ActionsProvider actionsProvider, ApplicantRatingService applicantRatingService) {
+    public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
+            DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
+            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
+            final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
+        this.refereeService = refereeService;
         this.userService = userService;
         this.documentPropertyEditor = documentPropertyEditor;
         this.referenceValidator = referenceValidator;
         this.commentService = commentService;
-        this.refereeService = refereeService;
         this.scoringDefinitionParser = scoringDefinitionParser;
         this.scoresPropertyEditor = scoresPropertyEditor;
         this.scoreFactory = scoreFactory;
@@ -88,7 +90,9 @@ public class ReferenceController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.PROVIDE_REFERENCE);
+        if (applicationForm == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
         return applicationForm;
     }
 
@@ -141,16 +145,18 @@ public class ReferenceController {
     }
 
     @RequestMapping(value = "/addReferences", method = RequestMethod.GET)
-    public String getUploadReferencesPage(ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
+    public String getUploadReferencesPage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
-        applicationFormUserRoleService.applicationViewed(applicationForm, getCurrentUser());
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
         return ADD_REFERENCES_VIEW_NAME;
     }
 
     @RequestMapping(value = "/submitReference", method = RequestMethod.POST)
-    public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult, 
-    		ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) throws ScoringDefinitionParseException {
+    public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult, ModelMap modelMap)
+            throws ScoringDefinitionParseException {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
 
@@ -168,16 +174,17 @@ public class ReferenceController {
         if (bindingResult.hasErrors()) {
             return ADD_REFERENCES_VIEW_NAME;
         }
-        
-        Referee referee = comment.getReferee();
-        if (referee.getReference() == null) {
+
+        if (comment.getReferee().getReference() == null) {
             commentService.save(comment);
             applicationForm.getApplicationComments().add(comment);
             applicantRatingService.computeAverageRating(applicationForm);
-            refereeService.addReferenceEventToApplication(referee);
-            applicationsService.save(applicationForm);
+            refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
+            applicationFormUserRoleService.referencePosted(comment.getReferee());
         }
-        
+
+        applicationsService.save(applicationForm);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
     }
 

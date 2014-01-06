@@ -20,13 +20,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.FundingService;
@@ -49,17 +50,15 @@ public class FundingController {
 	private final UserService userService;
 	private final EncryptionHelper encryptionHelper;
 	private final ApplicationFormUserRoleService applicationFormUserRoleService;
-	private final ContentAccessProvider contentAccessProvider;
 
 	FundingController() {
-		this(null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public FundingController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
 			DatePropertyEditor datePropertyEditor, FundingValidator fundingValidator, FundingService fundingService,
-			DocumentPropertyEditor documentPropertyEditor, UserService userService, EncryptionHelper encryptionHelper, 
-			ApplicationFormUserRoleService applicationFormUserRoleService, ContentAccessProvider contentAccessProvider) {
+			DocumentPropertyEditor documentPropertyEditor, UserService userService, EncryptionHelper encryptionHelper, ApplicationFormUserRoleService applicationFormUserRoleService) {
 		this.applicationService = applicationsService;
 
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -70,7 +69,6 @@ public class FundingController {
 		this.userService = userService;
 		this.encryptionHelper = encryptionHelper;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.contentAccessProvider = contentAccessProvider;
 	}
 
 	@InitBinder(value="funding")
@@ -87,20 +85,26 @@ public class FundingController {
 	 }
 
 	@RequestMapping(value = "/editFunding", method = RequestMethod.POST)
-	public String editFunding(@Valid Funding funding, BindingResult result, @ModelAttribute ApplicationForm applicationForm) {
+	public String editFunding(@Valid Funding funding, BindingResult result) {
+		if(funding.getApplication().isDecided()){
+			throw new CannotUpdateApplicationException(funding.getApplication().getApplicationNumber());
+		}
+		
 		if(result.hasErrors()){
 			return STUDENT_FUNDING_DETAILS_VIEW;
 		}
+		
+        ApplicationForm applicationForm = funding.getApplication();
         
 		fundingService.save(funding);
 		applicationService.save(applicationForm);
-		applicationFormUserRoleService.applicationEdited(applicationForm, userService.getCurrentUser());
+		applicationFormUserRoleService.registerApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber();
 	}
 
 
 	@RequestMapping(value = "/getFunding", method = RequestMethod.GET)
-	public String getFundingView(@ModelAttribute ApplicationForm applicationForm) {
+	public String getFundingView() {
 		return STUDENT_FUNDING_DETAILS_VIEW;
 	}
 
@@ -124,7 +128,9 @@ public class FundingController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
 		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-		contentAccessProvider.validateCanEditAsApplicant(application, userService.getCurrentUser());
+		if(application == null){
+			throw new ResourceNotFoundException();
+		}
 		return application;
 	}
 

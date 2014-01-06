@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
@@ -154,9 +155,8 @@ public class ApprovalService {
 
         form.setStatus(ApplicationFormStatus.APPROVAL);
         resetNotificationRecords(form);
+
         applicationDAO.save(form);
-        
-        RegisteredUser mover = userService.getCurrentUser();
 
         ApprovalComment approvalComment = new ApprovalComment();
         approvalComment.setApplication(form);
@@ -170,14 +170,15 @@ public class ApprovalService {
         approvalComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
         approvalComment.setSupervisor(approvalRound.getPrimarySupervisor());
         approvalComment.setSecondarySupervisor(approvalRound.getSecondarySupervisor());
-        approvalComment.setUser(mover);
+        approvalComment.setUser(userService.getCurrentUser());
 
         if (sendReferenceRequest) {
             mailSendingService.sendReferenceRequest(form.getReferees(), form);
             applicationFormUserRoleService.validationStageCompleted(form);
         }
         commentDAO.save(approvalComment);
-        applicationFormUserRoleService.movedToApprovalStage(approvalRound, mover);
+        applicationFormUserRoleService.movedToApprovalStage(approvalRound);
+        applicationFormUserRoleService.registerApplicationUpdate(form, initiator, ApplicationUpdateScope.ALL_USERS);
     }
 
     private void copyLastNotifiedForRepeatSupervisors(ApplicationForm form, ApprovalRound approvalRound) {

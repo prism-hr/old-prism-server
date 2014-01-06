@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
-import com.zuehlke.pgadmissions.security.ActionsProvider;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
@@ -65,18 +66,22 @@ public class InterviewConfirmController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        actionsProvider.validateAction(application, getCurrentUser(), ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
         return application;
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getCurrentUser() {
+    public RegisteredUser getUser() {
         return userService.getCurrentUser();
     }
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        return actionsProvider.getApplicationDescriptorForUser(getApplicationForm(applicationId), getCurrentUser());
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getUser();
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute(value = "interviewConfirmDTO")
@@ -91,26 +96,35 @@ public class InterviewConfirmController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getInterviewConfirmPage(ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
+    public String getInterviewConfirmPage(ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
+        
         InterviewConfirmDTO interviewConfirmDTO = new InterviewConfirmDTO();
         interviewConfirmDTO.setFurtherDetails(applicationForm.getLatestInterview().getFurtherDetails());
         interviewConfirmDTO.setFurtherInterviewerDetails(applicationForm.getLatestInterview().getFurtherInterviewerDetails());
         interviewConfirmDTO.setLocationUrl(applicationForm.getLatestInterview().getLocationURL());
         modelMap.put("interviewConfirmDTO", interviewConfirmDTO);
-        applicationFormUserRoleService.applicationViewed(applicationForm, getCurrentUser());
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         return INTERVIEW_CONFIRM_PAGE;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String submitInterviewConfirmation(@ModelAttribute(value = "interviewConfirmDTO") @Valid InterviewConfirmDTO interviewConfirmDTO,
-                    BindingResult result, ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
+                    BindingResult result, ModelMap modelMap) {
+        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
+
         if (result.hasErrors()) {
             return INTERVIEW_CONFIRM_PAGE;
         }
         
         Interview interview = applicationForm.getLatestInterview();
-        interviewService.confirmInterview(getCurrentUser(), interview, interviewConfirmDTO);
+        interviewService.confirmInterview(user, interview, interviewConfirmDTO);
         applicationsService.save(applicationForm);
+        
         return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getApplicationNumber();
     }
 
@@ -118,5 +132,4 @@ public class InterviewConfirmController {
     public String restartInterviewScheduling(@ModelAttribute ApplicationForm applicationForm) {
         return "redirect:/interview/moveToInterview?applicationId=" + applicationForm.getApplicationNumber();
     }
-    
 }

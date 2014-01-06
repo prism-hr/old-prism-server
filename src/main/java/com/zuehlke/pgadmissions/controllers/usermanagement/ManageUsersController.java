@@ -28,9 +28,9 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.SuperadminUserDTOValidator;
 import com.zuehlke.pgadmissions.validators.UserDTOValidator;
 
@@ -42,7 +42,7 @@ public class ManageUsersController {
 
     private final ProgramsService programsService;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final UserService userService;
 
     private final ProgramPropertyEditor programPropertyEditor;
 
@@ -61,12 +61,11 @@ public class ManageUsersController {
     }
 
     @Autowired
-    public ManageUsersController(ProgramsService programsService, ApplicationFormUserRoleService applicationFormUserRoleService, 
-    		ProgramPropertyEditor programPropertyEditor, UserDTOValidator newUserDTOValidator, EncryptionHelper encryptionHelper, 
-    		final SuperadminUserDTOValidator userDTOValidator, final PersonPropertyEditor registryPropertyEditor, 
-    		final ConfigurationService configurationService) {
+    public ManageUsersController(ProgramsService programsService, UserService userService, ProgramPropertyEditor programPropertyEditor,
+            UserDTOValidator newUserDTOValidator, EncryptionHelper encryptionHelper, final SuperadminUserDTOValidator userDTOValidator,
+            final PersonPropertyEditor registryPropertyEditor, final ConfigurationService configurationService) {
         this.programsService = programsService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
+        this.userService = userService;
         this.programPropertyEditor = programPropertyEditor;
         this.newUserDTOValidator = newUserDTOValidator;
         this.encryptionHelper = encryptionHelper;
@@ -103,8 +102,8 @@ public class ManageUsersController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getCurrentUser() {
-        return applicationFormUserRoleService.getCurrentUser();
+    public RegisteredUser getUser() {
+        return userService.getCurrentUser();
     }
 
     @ModelAttribute("authorities")
@@ -127,7 +126,7 @@ public class ManageUsersController {
 
     @ModelAttribute("superadmins")
     public List<RegisteredUser> getSuperadmins() {
-        List<RegisteredUser> superadmins = applicationFormUserRoleService.getUsersInRole(Authority.SUPERADMINISTRATOR);
+        List<RegisteredUser> superadmins = userService.getUsersInRole(Authority.SUPERADMINISTRATOR);
 
         Collections.sort(superadmins, new Comparator<RegisteredUser>() {
 
@@ -157,17 +156,20 @@ public class ManageUsersController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/edit/saveSuperadmin")
     public String handleAddSuperadmin(@Valid @ModelAttribute("adminDTO") UserDTO userDTO, BindingResult result) {
-        if (!applicationFormUserRoleService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+        if (!userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
-        
         if (result.hasErrors()) {
             return NEW_USER_VIEW_NAME;
         }
-        
-        RegisteredUser userToAssign = applicationFormUserRoleService.createRegisteredUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-        applicationFormUserRoleService.grantUserSystemRoles(userToAssign, Authority.SUPERADMINISTRATOR);
-        
+        RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
+        if (existingUser != null) {
+            userService.updateUserWithNewRoles(existingUser, null, Authority.SUPERADMINISTRATOR);
+        } else {
+            existingUser = userService.createNewUserForProgramme(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), null,
+                    Authority.SUPERADMINISTRATOR);
+        }
+
         return "redirect:/manageUsers/edit";
 
     }
@@ -182,9 +184,13 @@ public class ManageUsersController {
             return NEW_USER_VIEW_NAME;
         }
 
-        RegisteredUser userToAssign = applicationFormUserRoleService.createRegisteredUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-        Program program = userDTO.getSelectedProgram();
-        applicationFormUserRoleService.grantUserProgramRoles(userToAssign, program, userDTO.getSelectedAuthorities());
+        RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
+        if (existingUser != null) {
+            userService.updateUserWithNewRoles(existingUser, userDTO.getSelectedProgram(), userDTO.getSelectedAuthorities());
+        } else {
+            existingUser = userService.createNewUserForProgramme(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
+                    userDTO.getSelectedProgram(), userDTO.getSelectedAuthorities());
+        }
 
         if (userDTO.getSelectedProgram() == null) {
             return "redirect:/manageUsers/edit";
@@ -195,18 +201,13 @@ public class ManageUsersController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/edit/saveRegistryUsers")
     public String handleEditRegistryUsers(@ModelAttribute RegistryUserDTO registryUserDTO) {
-    	RegisteredUser currentUser = getCurrentUser();
-    	
-        if (!currentUser.isInRole(Authority.SUPERADMINISTRATOR) && !currentUser.isInRole(Authority.ADMITTER)) {
+        if (!getUser().isInRole(Authority.SUPERADMINISTRATOR) && !getUser().isInRole(Authority.ADMITTER)) {
             throw new ResourceNotFoundException();
         }
-        
-        configurationService.saveRegistryUsers(registryUserDTO.getRegistryUsers(), currentUser);
-        
-        if (!getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR) && !currentUser.isInRole(Authority.ADMITTER)) {
+        configurationService.saveRegistryUsers(registryUserDTO.getRegistryUsers(), getUser());
+        if (!getUser().isInRole(Authority.SUPERADMINISTRATOR) && !getUser().isInRole(Authority.ADMITTER)) {
             return "redirect:/applications";
         }
-        
         return "redirect:/manageUsers/edit";
     }
 
@@ -215,18 +216,16 @@ public class ManageUsersController {
         if (!isCurrentUserAdministrator()) {
             throw new ResourceNotFoundException();
         }
-        
-        RegisteredUser userToRemove = applicationFormUserRoleService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
-        applicationFormUserRoleService.revokeUserFromProgramRoles(userToRemove, userDTO.getSelectedProgram());
-        
-        if (userToRemove == getCurrentUser() && userToRemove.getProgramsOfWhichAdministrator().isEmpty()) {
+        RegisteredUser userToRemove = userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
+        userService.deleteUserFromProgramme(userToRemove, userDTO.getSelectedProgram());
+        if (userToRemove.getId().equals(getCurrentUser().getId()) && userToRemove.getProgramsOfWhichAdministrator().isEmpty()) {
             return "redirect:/applications";
         }
         return "redirect:/manageUsers/edit?programCode=" + userDTO.getSelectedProgram().getCode();
     }
 
     private UserDTO createUserDTOFromExistingUser(final String user, final String programCode) {
-        RegisteredUser selectedUser = applicationFormUserRoleService.getUser(encryptionHelper.decryptToInteger(user));
+        RegisteredUser selectedUser = userService.getUser(encryptionHelper.decryptToInteger(user));
         UserDTO userDTO = new UserDTO();
         userDTO.setFirstName(selectedUser.getFirstName());
         userDTO.setLastName(selectedUser.getLastName());
@@ -264,5 +263,9 @@ public class ManageUsersController {
     private boolean isCurrentUserAdministrator() {
         RegisteredUser currentUser = getCurrentUser();
         return currentUser.isInRole(Authority.SUPERADMINISTRATOR) || currentUser.isInRole(Authority.ADMINISTRATOR);
+    }
+
+    private RegisteredUser getCurrentUser() {
+        return userService.getCurrentUser();
     }
 }

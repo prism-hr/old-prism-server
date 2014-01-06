@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
-import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -34,60 +33,74 @@ public class PrintController {
 
     private final Logger log = LoggerFactory.getLogger(PrintController.class);
     
-	private final ApplicationsService applicationService;
+	private final ApplicationsService applicationSevice;
 	
 	private final PdfDocumentBuilder pdfDocumentBuilder;
 	
 	private final UserService userService;
-	
-	private final ContentAccessProvider contentAccessProvider;
 
 	public PrintController() {
-		this(null, null, null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public PrintController(final ApplicationsService applicationSevice, final PdfDocumentBuilder builder, final UserService userService,
-			final ContentAccessProvider contentAccessProvider) {
-		this.applicationService = applicationSevice;
+	public PrintController(final ApplicationsService applicationSevice, final PdfDocumentBuilder builder, final UserService userService) {
+		this.applicationSevice = applicationSevice;
 		this.pdfDocumentBuilder = builder;
 		this.userService = userService;
-		this.contentAccessProvider = contentAccessProvider;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public void printPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletRequestBindingException {
 		String applicationFormNumber = ServletRequestUtils.getStringParameter(request, "applicationFormId");
-		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationFormNumber);
-		sendPDF(response, applicationFormNumber, pdfDocumentBuilder.build(buildPDFModel(application), application));
+		
+		ApplicationForm form = applicationSevice.getApplicationByApplicationNumber(applicationFormNumber);
+		
+		if (form == null) {
+		    throw new ResourceNotFoundException();
+		}
+		
+		RegisteredUser currentUser = userService.getCurrentUser();
+		
+		PdfModelBuilder pdfModelBuilder = new PdfModelBuilder();
+		if (isApplicant(currentUser, form)) {
+		    pdfModelBuilder.includeCriminialConvictions(true);
+		    pdfModelBuilder.includeDisability(true);
+		    pdfModelBuilder.includeEthnicity(true);
+		} else if (!currentUser.isRefereeOfApplicationForm(form)) {
+		    pdfModelBuilder.includeReferences(true);
+		}
+		
+		sendPDF(response, applicationFormNumber, pdfDocumentBuilder.build(pdfModelBuilder, form));
 	}
 
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	public void printAll(final HttpServletRequest request, final HttpServletResponse response) throws ServletRequestBindingException, DocumentException, IOException {
 		String appListToPrint = ServletRequestUtils.getStringParameter(request, "appList");
 		String[] applicationIds = appListToPrint.split(";");
+		RegisteredUser currentUser = userService.getCurrentUser();
 		HashMap<PdfModelBuilder, ApplicationForm> formsToPrint = new HashMap<PdfModelBuilder, ApplicationForm>();
 		
 		for (String applicationId : applicationIds) {
-			ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-			try {
-				formsToPrint.put(buildPDFModel(application), application);
-			} catch (ResourceNotFoundException e) {
-				continue;
-			}	
+			ApplicationForm form = applicationSevice.getApplicationByApplicationNumber(applicationId);
+			
+			if (form == null) {
+			    continue;
+			}
+			
+			PdfModelBuilder pdfModelBuilder = new PdfModelBuilder();
+			if (isApplicant(currentUser, form)) {
+			    pdfModelBuilder.includeCriminialConvictions(true);
+			    pdfModelBuilder.includeDisability(true);
+			    pdfModelBuilder.includeEthnicity(true);
+			} else if (!currentUser.isRefereeOfApplicationForm(form)) {
+	            pdfModelBuilder.includeReferences(true);
+	        }
+			
+			formsToPrint.put(pdfModelBuilder, form);
 		}
 		
 		sendPDF(response, getTimestamp(), pdfDocumentBuilder.build(formsToPrint));
-	}
-	
-	private PdfModelBuilder buildPDFModel(ApplicationForm application) throws ResourceNotFoundException {
-		RegisteredUser user = userService.getCurrentUser();
-		contentAccessProvider.validateCanDownloadApplication(application, user);	
-		PdfModelBuilder pdfModelBuilder = new PdfModelBuilder();	
-		pdfModelBuilder.includeEqualOpportunities(contentAccessProvider.checkCanSeeEqualOpportunitiesInformation(application, user));
-		pdfModelBuilder.includeEqualOpportunities(contentAccessProvider.checkCanSeeCriminalConvictionsInformation(application, user));
-		pdfModelBuilder.includeEqualOpportunities(contentAccessProvider.checkCanSeeReferences(application, user));
-		return pdfModelBuilder;
 	}
 
 	private void sendPDF(final HttpServletResponse response, final String pdfFileNamePostFix, final byte[] pdf) throws IOException {
@@ -122,4 +135,7 @@ public class PrintController {
 		return new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
 	}
 	
+	private boolean isApplicant(final RegisteredUser user, final ApplicationForm form) {
+	    return user.getId().equals(form.getApplicant().getId());
+	}
 }

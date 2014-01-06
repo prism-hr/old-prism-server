@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -16,15 +15,12 @@ import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
@@ -75,7 +71,6 @@ public class ApprovalService {
         supervisor.setConfirmedSupervision(confirmed);
 
         if (BooleanUtils.isTrue(confirmed)) {
-            // override secondary supervisor
             Supervisor secondarySupervisor = approvalRound.getSecondarySupervisor();
             if (!secondarySupervisor.getUser().getEmail().equals(confirmSupervisionDTO.getSecondarySupervisorEmail())) {
                 RegisteredUser user = userService.getUserByEmail(confirmSupervisionDTO.getSecondarySupervisorEmail());
@@ -138,10 +133,7 @@ public class ApprovalService {
     public void moveApplicationToApproval(ApplicationForm form, ApprovalRound approvalRound, RegisteredUser initiator) {
         checkApplicationStatus(form);
         checkSendToPorticoStatus(form, approvalRound);
-        copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
-        form.addNotificationRecord(new NotificationRecord(NotificationType.APPROVAL_REMINDER));
-
         approvalRound.setApplication(form);
         approvalRoundDAO.save(approvalRound);
 
@@ -154,51 +146,28 @@ public class ApprovalService {
         boolean sendReferenceRequest = form.getStatus() == ApplicationFormStatus.VALIDATION;
 
         form.setStatus(ApplicationFormStatus.APPROVAL);
-        resetNotificationRecords(form);
-
         applicationDAO.save(form);
+        
+        RegisteredUser mover = userService.getCurrentUser();
 
         ApprovalComment approvalComment = new ApprovalComment();
         approvalComment.setApplication(form);
         approvalComment.setComment(StringUtils.EMPTY);
         approvalComment.setType(CommentType.APPROVAL);
         approvalComment.setProjectAbstract(approvalRound.getProjectAbstract());
-        approvalComment.setProjectDescriptionAvailable(approvalRound.getProjectDescriptionAvailable());
         approvalComment.setProjectTitle(approvalRound.getProjectTitle());
         approvalComment.setRecommendedConditions(approvalRound.getRecommendedConditions());
         approvalComment.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
         approvalComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
-        approvalComment.setSupervisor(approvalRound.getPrimarySupervisor());
         approvalComment.setSecondarySupervisor(approvalRound.getSecondarySupervisor());
-        approvalComment.setUser(userService.getCurrentUser());
+        approvalComment.setUser(mover);
 
         if (sendReferenceRequest) {
             mailSendingService.sendReferenceRequest(form.getReferees(), form);
             applicationFormUserRoleService.validationStageCompleted(form);
         }
         commentDAO.save(approvalComment);
-        applicationFormUserRoleService.movedToApprovalStage(approvalRound);
-        applicationFormUserRoleService.registerApplicationUpdate(form, initiator, ApplicationUpdateScope.ALL_USERS);
-    }
-
-    private void copyLastNotifiedForRepeatSupervisors(ApplicationForm form, ApprovalRound approvalRound) {
-        ApprovalRound latestApprovalRound = form.getLatestApprovalRound();
-        if (latestApprovalRound != null) {
-            List<Supervisor> supervisors = latestApprovalRound.getSupervisors();
-            for (Supervisor supervisor : supervisors) {
-                List<Supervisor> newSupervisors = approvalRound.getSupervisors();
-                for (Supervisor newSupervisor : newSupervisors) {
-                    if (supervisor.getUser().getId().equals(newSupervisor.getUser().getId())) {
-                        newSupervisor.setLastNotified(supervisor.getLastNotified());
-                    }
-                }
-            }
-        }
-    }
-
-    private void resetNotificationRecords(ApplicationForm form) {
-        form.removeNotificationRecord(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION, NotificationType.APPROVAL_RESTART_REQUEST_REMINDER,
-                NotificationType.APPROVAL_NOTIFICATION);
+        applicationFormUserRoleService.movedToApprovalStage(approvalRound, mover);
     }
 
     private void checkApplicationStatus(ApplicationForm form) {
@@ -215,9 +184,8 @@ public class ApprovalService {
     }
 
     private void checkSendToPorticoStatus(ApplicationForm form, ApprovalRound approvalRound) {
-        if (!form.hasEnoughReferencesToSendToPortico()
-                || (!form.hasEnoughQualificationsToSendToPortico() && approvalRound.getMissingQualificationExplanation() == null)) {
-            throw new IllegalStateException("Send to portico data is not valid");
+        if (!form.hasEnoughReferencesToSendToPortico() || (!form.hasEnoughQualificationsToSendToPortico() && approvalRound.getMissingQualificationExplanation() == null)) {
+            throw new IllegalStateException("Export data is not valid");
         }
     }
 

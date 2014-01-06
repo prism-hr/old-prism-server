@@ -7,8 +7,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -29,8 +27,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -41,16 +37,27 @@ import org.hibernate.annotations.GenerationTime;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatusType;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.domain.enums.CommentTypeAuthority;
+import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Entity(name = "APPLICATION_FORM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ApplicationForm implements Comparable<ApplicationForm>, FormSectionObject, Serializable {
+public class ApplicationForm implements FormSectionObject, Serializable {
 
     private static final long serialVersionUID = -7671357234815343496L;
+    
+    public static final int MINIMUM_QUALIFICATIONS_FOR_EXPORT = 1;
+    public static final int MAXIMUM_QUALIFICATIONS_FOR_EXPORT = 2;
+    
+    public static final int MINIMUM_REFERENCES_FOR_EXPORT = 2;
+    public static final int MAXIMUM_REFERENCES_FOR_EXPORT = 2;
+    
+    public static final int MINIMUM_REFEREES_FOR_SUBMISSION = 3;
+    public static final int MAXIMUM_REFEREES_FOR_SUBMISSION = 3;
 
     @Id
     @GeneratedValue
@@ -74,11 +81,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
     @JoinColumn(name = "application_form_id")
-    private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-    @JoinColumn(name = "application_form_id")
+    @OrderBy("date")
     private List<Event> events = new ArrayList<Event>();
 
     @Enumerated(EnumType.STRING)
@@ -86,12 +89,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "next_status")
-    private ApplicationFormStatus nextStatus = null;
+    @Column(name = "previous_status")
+    private ApplicationFormStatus previousStatus = null;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_when_withdrawn")
-    private ApplicationFormStatus statusWhenWithdrawn = null;
+    @Column(name = "next_status")
+    private ApplicationFormStatus nextStatus = null;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -119,7 +122,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_statement_id")
-    private Document personalStatement = null;
+    private Document personalStatement;
 
     @Column(name = "app_date_time", insertable = false)
     @Generated(GenerationTime.INSERT)
@@ -243,8 +246,65 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @OneToMany(mappedBy = "applicationForm", fetch = FetchType.LAZY)
     private List<ApplicationFormUserRole> applicationFormUserRoles = new ArrayList<ApplicationFormUserRole>();
 
-    @Column(name = "avg_rating", precision = 3, scale = 2)
-    private BigDecimal averageRating;
+    @Column(name = "average_rating", precision = 3, scale = 2)
+    private BigDecimal averageRating = null;
+    
+    @Column(name = "total_positive_endorsements")
+    private Integer totalPositiveEndorsements = 0;
+   
+    @Column(name = "total_negative_endorsements")
+    private Integer totalNegativeEndorsements = 0;
+    
+    @Column(name = "seconds_in_validation")
+    private Integer secondsInValidation = 0;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "academically_competent")
+    private ValidationQuestionOptions academicallyCompetent = null;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "linguistically_competent")
+    private ValidationQuestionOptions linguisticallyCompetent = null;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "fee_status")
+    private HomeOrOverseas feeStatus = null;
+    
+    @Column(name = "positive_reference_endorsements")
+    private Integer positiveReferenceEndorsements = 0;
+    
+    @Column(name = "negative_reference_endorsements")
+    private Integer negativeReferenceEndorsements = 0;
+    
+    @Column(name = "average_reference_rating", precision = 3, scale = 2)
+    private BigDecimal averageReferenceRating = null;
+    
+    @Column(name = "seconds_in_review")
+    private Integer secondsInReview = 0;
+    
+    @Column(name = "positive_review_endorsements")
+    private Integer positiveReviewEndorsements = 0;
+    
+    @Column(name = "negative_review_endorsements")
+    private Integer negativeReviewEndorsements = 0;
+    
+    @Column(name = "average_review_rating", precision = 3, scale = 2)
+    private BigDecimal averageReviewRating = null;
+    
+    @Column(name = "seconds_in_interview")
+    private Integer secondsInInterview = 0;
+    
+    @Column(name = "positive_interview_endorsements")
+    private Integer positiveInterviewEndorsements = 0;
+    
+    @Column(name = "negative_interview_endorsements")
+    private Integer negativeInterviewEndorsements = 0;
+    
+    @Column(name = "average_interview_rating", precision = 3, scale = 2)
+    private BigDecimal averageInterviewRating = null;
+    
+    @Column(name = "seconds_in_approval")
+    private Integer secondsInApproval = 0;
 
     public List<Qualification> getQualifications() {
         return qualifications;
@@ -288,73 +348,20 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean isModifiable() {
-        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN
-                || !getIsEditableByApplicant()) {
-            return false;
-        }
-        return true;
+    	return Arrays.asList(ApplicationFormStatusType.EDITABLEBYAPPLICANT.states()).contains(status) 
+    			|| Arrays.asList(ApplicationFormStatusType.EDITABLEBYSTAFF.states()).contains(status); 
     }
 
     public boolean isSubmitted() {
         return status != ApplicationFormStatus.UNSUBMITTED;
     }
-
-    public InterviewEvaluationComment getLastInterviewEvaluationComment() {
-        for (int i = applicationComments.size() - 1; i >= 0; i--) {
-            if (applicationComments.get(i) instanceof InterviewEvaluationComment) {
-                return (InterviewEvaluationComment) applicationComments.get(i);
-            }
-        }
-        return null;
-    }
-
-    public boolean hasInterviewEvaluationComment() {
-        for (Comment comment : this.getApplicationComments()) {
-            if (comment instanceof InterviewEvaluationComment) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean hasReviewEvaluationComment() {
-        for (Comment comment : this.getApplicationComments()) {
-            if (comment instanceof ReviewEvaluationComment) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isDecided() {
-        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isWithdrawn() {
-        return status == ApplicationFormStatus.WITHDRAWN;
-    }
-
-    public boolean isTerminated() {
-        return isDecided() || isWithdrawn();
-    }
-
+    
     public List<Comment> getApplicationComments() {
         return applicationComments;
     }
 
     public void setApplicationComments(List<Comment> applicationComments) {
         this.applicationComments = applicationComments;
-    }
-
-    public boolean hasComments() {
-        return applicationComments != null && !applicationComments.isEmpty();
-    }
-
-    public boolean hasQualifications() {
-        return !qualifications.isEmpty();
     }
 
     public List<Funding> getFundings() {
@@ -386,10 +393,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return new PersonalDetails();
         }
         return personalDetails;
-    }
-
-    public boolean isPersonalDetailsNull() {
-        return personalDetails == null;
     }
 
     public void setPersonalDetails(PersonalDetails personalDetails) {
@@ -459,58 +462,13 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public List<Comment> getVisibleComments(RegisteredUser user) {
-        ArrayList<Comment> returnList = new ArrayList<Comment>();
-        if (user.isInRole(Authority.APPLICANT)) {
-            for (Comment comment : applicationComments) {
-                if (comment instanceof InterviewVoteComment && comment.getUser().getId().equals(user.getId())) {
-                    returnList.add(comment);
-                } else if (comment instanceof InterviewScheduleComment) {
-                    returnList.add(comment);
-                }
-            }
-        }
-
-        if (user.isRefereeOfApplicationForm(this) && !user.hasStaffRightsOnApplicationForm(this)) {
-            for (Comment comment : applicationComments) {
-                if (comment instanceof ReferenceComment && ((ReferenceComment) comment).getReferee().getUser().getId().equals(user.getId())) {
-                    returnList.add(comment);
-                }
-            }
-            Collections.sort(returnList);
-            return returnList;
-        }
-
-        if (user.hasStaffRightsOnApplicationForm(this) || user.isApplicationAdministrator(this) || user.isViewerOfProgramme(this, user)
-                || user.isInRole(Authority.ADMITTER)) {
-            returnList.addAll(applicationComments);
-            Collections.sort(returnList);
-            return returnList;
-        }
-
-        return returnList;
-    }
-
-    public boolean shouldOpenFirstSection() {
-        return isNull(programmeDetails, personalDetails, currentAddress, contactAddress, personalStatement, cv, additionalInformation)
-                && isEmpty(fundings, referees, employmentPositions, qualifications);
-    }
-
-    private boolean isEmpty(List<?>... objects) {
-        for (List<?> obj : objects) {
-            if (obj.isEmpty()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isNull(Object... objects) {
-        for (Object obj : objects) {
-            if (obj == null) {
-                return true;
-            }
-        }
-        return false;
+    	List<Comment> returnList = new ArrayList<Comment>();
+    	for (Comment comment : applicationComments) {
+    		if (user.isInApplicationRole(this, CommentTypeAuthority.valueOf(comment.getType().toString()).authorities()) || comment.getUser().equals(user)) {
+    			returnList.add(comment);
+    		}
+    	}
+    	return returnList;
     }
 
     public Date getDueDate() {
@@ -546,20 +504,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setStatus(ApplicationFormStatus status) {
-    	if (status == ApplicationFormStatus.WITHDRAWN) {
-    		this.statusWhenWithdrawn = this.status;
-    	}
-    	
+    	setPreviousStatus(this.status);
         this.status = status;
-        this.nextStatus = null;
-        
-        if (Arrays.asList(ApplicationFormStatus.UNSUBMITTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,
-        		ApplicationFormStatus.INTERVIEW).contains(status)) {
-        	this.isEditableByApplicant = true;
-        } else {
-        	this.isEditableByApplicant = false;
-        }
-        
+    	setNextStatus(null);
+    	setIsEditableByApplicant(Arrays.asList(ApplicationFormStatusType.EDITABLEBYAPPLICANT.states()).contains(status));
     }
 
     public ApplicationFormStatus getNextStatus() {
@@ -568,10 +516,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     
     public void setNextStatus(ApplicationFormStatus nextStatus) {
         this.nextStatus = nextStatus;
-    }
-    
-    public ApplicationFormStatus getStatusWhenWithdrawn() {
-        return statusWhenWithdrawn;
     }
 
     public Date getRejectNotificationDate() {
@@ -597,59 +541,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public boolean isInApprovalStage() {
         return status == ApplicationFormStatus.APPROVAL;
     }
-
-    public List<NotificationRecord> getNotificationRecords() {
-        return notificationRecords;
-    }
-
-    public void setNotificationRecords(List<NotificationRecord> notificationRecords) {
-        this.notificationRecords.clear();
-        this.notificationRecords.addAll(notificationRecords);
-    }
-
-    public NotificationRecord getNotificationForType(NotificationType type) {
-        for (NotificationRecord notification : notificationRecords) {
-            if (notification.getNotificationType() == type) {
-                return notification;
-            }
-        }
-        return null;
-    }
-
-    public NotificationRecord getNotificationForType(String strType) {
-        return getNotificationForType(NotificationType.valueOf(strType));
-    }
-
-    public boolean addNotificationRecord(NotificationRecord record) {
-        for (NotificationRecord existingRecord : notificationRecords) {
-            if (existingRecord.getNotificationType() == record.getNotificationType()) {
-                existingRecord.setDate(record.getDate());
-                existingRecord.setUser(record.getUser());
-                return false;
-            }
-        }
-        return notificationRecords.add(record);
-    }
-
-    public boolean removeNotificationRecord(NotificationRecord record) {
-        return notificationRecords.remove(record);
-    }
-
-    public void removeNotificationRecord(final NotificationType... recordTypes) {
-        CollectionUtils.filter(notificationRecords, new Predicate() {
-            @Override
-            public boolean evaluate(Object object) {
-                NotificationRecord existingRecord = (NotificationRecord) object;
-                for (NotificationType type : recordTypes) {
-                    if (type == existingRecord.getNotificationType()) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        });
-    }
-
+    
     public boolean hasAcceptedTheTerms() {
         return acceptedTermsOnSubmission == CheckedStatus.YES;
     }
@@ -670,14 +562,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.acceptedTermsOnSubmission = acceptedTerms;
     }
 
-    public boolean isInState(String strStatus) {
-        try {
-            return status == ApplicationFormStatus.valueOf(strStatus);
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
     public boolean isInState(ApplicationFormStatus enumStatus) {
         return status == enumStatus;
     }
@@ -689,21 +573,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public void setEvents(List<Event> events) {
         this.events.clear();
         this.events.addAll(events);
-    }
-
-    @Override
-    public int compareTo(ApplicationForm appForm) {
-
-        if (appForm.getSubmittedDate() != null && this.getSubmittedDate() == null) {
-            return -1;
-        }
-        if (appForm.getSubmittedDate() == null && this.getSubmittedDate() != null) {
-            return 1;
-        }
-        if (appForm.getSubmittedDate() == null && this.getSubmittedDate() == null) {
-            return this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
-        }
-        return this.submittedDate.compareTo(appForm.getSubmittedDate());
     }
 
     public List<Interview> getInterviews() {
@@ -738,20 +607,13 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.latestReviewRound = latestReviewRound;
     }
 
-    public List<StateChangeEvent> getStateChangeEventsSortedByDate() {
+    public List<StateChangeEvent> getStateChangeEvents() {
         ArrayList<StateChangeEvent> stateChangeEvents = new ArrayList<StateChangeEvent>();
-        Comparator<StateChangeEvent> dateComparator = new Comparator<StateChangeEvent>() {
-            @Override
-            public int compare(StateChangeEvent event1, StateChangeEvent event2) {
-                return event1.getDate().compareTo(event2.getDate());
-            }
-        };
         for (Event event : events) {
             if (event instanceof StateChangeEvent) {
                 stateChangeEvents.add((StateChangeEvent) event);
             }
         }
-        Collections.sort(stateChangeEvents, dateComparator);
         return stateChangeEvents;
     }
 
@@ -860,75 +722,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.isEditableByApplicant = isEditableByApplicant;
     }
 
-    public RequestRestartComment getLatestsRequestRestartComment() {
-        List<RequestRestartComment> requestRestartComments = new ArrayList<RequestRestartComment>();
-        for (Comment comment : applicationComments) {
-            if (comment instanceof RequestRestartComment) {
-                requestRestartComments.add((RequestRestartComment) comment);
-            }
-        }
-        Collections.sort(requestRestartComments);
-        if (!requestRestartComments.isEmpty()) {
-            return requestRestartComments.get(0);
-        }
-        return null;
-    }
-
-    public ApplicationFormStatus getOutcomeOfStage() {
-        if (ApplicationFormStatus.REVIEW == status) {
-            return resolveOutcomeOfStageForReviewStatus();
-        }
-        if (ApplicationFormStatus.INTERVIEW == status) {
-            return resolveOutcomeOfStageForInterviewStatus();
-        }
-        if (ApplicationFormStatus.APPROVAL == status) {
-            return resolveOutcomeOfStageForApprovalStatus();
-        }
-        if (!approvalRounds.isEmpty()) {
-            return ApplicationFormStatus.APPROVAL;
-        }
-        if (!interviews.isEmpty()) {
-            return ApplicationFormStatus.INTERVIEW;
-        }
-        if (!reviewRounds.isEmpty()) {
-            return ApplicationFormStatus.REVIEW;
-        }
-        return ApplicationFormStatus.VALIDATION;
-    }
-
-    private ApplicationFormStatus resolveOutcomeOfStageForApprovalStatus() {
-        if (approvalRounds.size() > 1) {
-            return ApplicationFormStatus.APPROVAL;
-        }
-        if (!interviews.isEmpty()) {
-            return ApplicationFormStatus.INTERVIEW;
-        }
-        if (!reviewRounds.isEmpty()) {
-            return ApplicationFormStatus.REVIEW;
-        }
-        return ApplicationFormStatus.VALIDATION;
-    }
-
-    private ApplicationFormStatus resolveOutcomeOfStageForInterviewStatus() {
-        if (interviews.size() > 1) {
-            return ApplicationFormStatus.INTERVIEW;
-        }
-        if (!reviewRounds.isEmpty()) {
-            return ApplicationFormStatus.REVIEW;
-        }
-        return ApplicationFormStatus.VALIDATION;
-    }
-
-    private ApplicationFormStatus resolveOutcomeOfStageForReviewStatus() {
-        if (reviewRounds.size() > 1) {
-            return ApplicationFormStatus.REVIEW;
-        }
-
-        return ApplicationFormStatus.VALIDATION;
-    }
-
     public List<Document> getQualificationsToSendToPortico() {
-        List<Document> result = new ArrayList<Document>(2);
+        List<Document> result = new ArrayList<Document>();
         for (Qualification qualification : getQualifications()) {
             if (BooleanUtils.isTrue(qualification.getSendToUCL())) {
                 result.add(qualification.getProofOfAward());
@@ -937,7 +732,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return result;
     }
 
-    public List<Integer> getQualicationsToSendToPorticoIds() {
+    public List<Integer> getQualicationIdsToSendToPortico() {
         List<Integer> qualificationIdsToSend = new ArrayList<Integer>();
         for (int i = 0; i < getQualifications().size(); i++) {
             if (getQualifications().get(i).getSendToUCL()) {
@@ -960,7 +755,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public List<ReferenceComment> getReferencesToSendToPortico() {
-        List<ReferenceComment> result = new ArrayList<ReferenceComment>(2);
+        List<ReferenceComment> result = new ArrayList<ReferenceComment>();
         for (Referee referee : getReferees()) {
             if (BooleanUtils.isTrue(referee.getSendToUCL())) {
                 result.add(referee.getReference());
@@ -970,7 +765,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public List<Referee> getRefereesToSendToPortico() {
-        List<Referee> result = new ArrayList<Referee>(2);
+        List<Referee> result = new ArrayList<Referee>();
         for (Referee referee : getReferees()) {
             if (BooleanUtils.isTrue(referee.getSendToUCL())) {
                 result.add(referee);
@@ -979,11 +774,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return result;
     }
 
-    public List<Integer> getRefereesToSendToPorticoIds() {
+    public List<Integer> getRefereeIdsToSendToPortico() {
         List<Integer> refereeIdsToSend = new ArrayList<Integer>();
-        for (int i = 0; i < getReferees().size(); i++) {
-            if (getReferees().get(i).getSendToUCL()) {
-                refereeIdsToSend.add(getReferees().get(i).getId());
+        for (Referee referee : getReferees()) {
+            if (referee.getSendToUCL()) {
+                refereeIdsToSend.add(referee.getId());
             }
         }
         if (refereeIdsToSend.isEmpty()) {
@@ -993,14 +788,18 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean hasEnoughReferencesToSendToPortico() {
-        if (getReferencesToSendToPortico().size() == 2) {
+    	int refereesToSend = getRefereesToSendToPortico().size();
+        if (refereesToSend >= ApplicationForm.MINIMUM_REFERENCES_FOR_EXPORT 
+        		&& refereesToSend <= ApplicationForm.MAXIMUM_REFERENCES_FOR_EXPORT) {
             return true;
         }
         return false;
     }
 
     public boolean hasEnoughQualificationsToSendToPortico() {
-        if (getQualificationsToSendToPortico().size() > 0 && getQualificationsToSendToPortico().size() <= 2) {
+    	int qualificationsToSend = getQualificationsToSendToPortico().size();
+        if (qualificationsToSend >= ApplicationForm.MINIMUM_QUALIFICATIONS_FOR_EXPORT 
+        		&& qualificationsToSend <= ApplicationForm.MINIMUM_QUALIFICATIONS_FOR_EXPORT) {
             return true;
         }
         return false;
@@ -1008,15 +807,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean isNotInState(ApplicationFormStatus status) {
         return !isInState(status);
-    }
-
-    public boolean hasConfirmElegibilityComment() {
-        for (Comment comment : applicationComments) {
-            if (comment instanceof AdmitterComment) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean isDueDateExpired() {
@@ -1058,27 +848,181 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return MathUtils.formatRating(getAverageRating());
     }
 
-    public ValidationComment getValidationComment() {
-        ValidationComment validationComment = null;
+    public Integer getTotalPositiveEndorsements() {
+		return totalPositiveEndorsements;
+	}
+
+	public void setTotalPositiveEndorsements(Integer totalPositiveEndorsements) {
+		this.totalPositiveEndorsements = totalPositiveEndorsements;
+	}
+
+	public Integer getTotalNegativeEndorsements() {
+		return totalNegativeEndorsements;
+	}
+
+	public void setTotalNegativeEndorsements(Integer totalNegativeEndorsements) {
+		this.totalNegativeEndorsements = totalNegativeEndorsements;
+	}
+
+	public Integer getSecondsInValidation() {
+		return secondsInValidation;
+	}
+
+	public void setSecondsInValidation(Integer secondsInValidation) {
+		this.secondsInValidation = secondsInValidation;
+	}
+
+	public ValidationQuestionOptions getAcademicallyCompetent() {
+		return academicallyCompetent;
+	}
+
+	public void setAcademicallyCompetent(
+			ValidationQuestionOptions academicallyCompetent) {
+		this.academicallyCompetent = academicallyCompetent;
+	}
+
+	public ValidationQuestionOptions getLinguisticallyCompetent() {
+		return linguisticallyCompetent;
+	}
+
+	public void setLinguisticallyCompetent(
+			ValidationQuestionOptions linguisticallyCompetent) {
+		this.linguisticallyCompetent = linguisticallyCompetent;
+	}
+
+	public HomeOrOverseas getFeeStatus() {
+		return feeStatus;
+	}
+
+	public void setFeeStatus(HomeOrOverseas feeStatus) {
+		this.feeStatus = feeStatus;
+	}
+	
+    public Integer getPositiveReferenceEndorsements() {
+		return positiveReferenceEndorsements;
+	}
+
+	public void setPositiveReferenceEndorsements(
+			Integer positiveReferenceEndorsements) {
+		this.positiveReferenceEndorsements = positiveReferenceEndorsements;
+	}
+
+	public Integer getNegativeReferenceEndorsements() {
+		return negativeReferenceEndorsements;
+	}
+
+	public void setNegativeReferenceEndorsements(
+			Integer negativeReferenceEndorsements) {
+		this.negativeReferenceEndorsements = negativeReferenceEndorsements;
+	}
+
+	public BigDecimal getAverageReferenceRating() {
+		return averageReferenceRating;
+	}
+
+	public void setAverageReferenceRating(BigDecimal averageReferenceRating) {
+		this.averageReferenceRating = averageReferenceRating;
+	}
+
+	public Integer getSecondsInReview() {
+		return secondsInReview;
+	}
+
+	public void setSecondsInReview(Integer secondsInReview) {
+		this.secondsInReview = secondsInReview;
+	}
+
+	public Integer getPositiveReviewEndorsements() {
+		return positiveReviewEndorsements;
+	}
+
+	public void setPositiveReviewEndorsements(Integer positiveReviewEndorsements) {
+		this.positiveReviewEndorsements = positiveReviewEndorsements;
+	}
+
+	public Integer getNegativeReviewEndorsements() {
+		return negativeReviewEndorsements;
+	}
+
+	public void setNegativeReviewEndorsements(Integer negativeReviewEndorsements) {
+		this.negativeReviewEndorsements = negativeReviewEndorsements;
+	}
+
+	public BigDecimal getAverageReviewRating() {
+		return averageReviewRating;
+	}
+
+	public void setAverageReviewRating(BigDecimal averageReviewRating) {
+		this.averageReviewRating = averageReviewRating;
+	}
+
+	public Integer getSecondsInInterview() {
+		return secondsInInterview;
+	}
+
+	public void setSecondsInInterview(Integer secondsInInterview) {
+		this.secondsInInterview = secondsInInterview;
+	}
+
+	public Integer getPositiveInterviewEndorsements() {
+		return positiveInterviewEndorsements;
+	}
+
+	public void setPositiveInterviewEndorsements(
+			Integer positiveInterviewEndorsements) {
+		this.positiveInterviewEndorsements = positiveInterviewEndorsements;
+	}
+
+	public Integer getNegativeInterviewEndorsements() {
+		return negativeInterviewEndorsements;
+	}
+
+	public void setNegativeInterviewEndorsements(
+			Integer negativeInterviewEndorsements) {
+		this.negativeInterviewEndorsements = negativeInterviewEndorsements;
+	}
+
+	public BigDecimal getAverageInterviewRating() {
+		return averageInterviewRating;
+	}
+
+	public void setAverageInterviewRating(BigDecimal averageInterviewRating) {
+		this.averageInterviewRating = averageInterviewRating;
+	}
+
+	public Integer getSecondsInApproval() {
+		return secondsInApproval;
+	}
+
+	public void setSecondsInApproval(Integer secondsInApproval) {
+		this.secondsInApproval = secondsInApproval;
+	}
+
+	public ApplicationFormStatus getPreviousStatus() {
+		return previousStatus;
+	}
+	
+	public void setPreviousStatus(ApplicationFormStatus previousStatus) {
+		this.previousStatus = previousStatus;
+	}
+
+	public ValidationComment getValidationComment() {
         for (Comment comment : getApplicationComments()) {
             if (comment instanceof ValidationComment) {
-                validationComment = (ValidationComment) comment;
-                break;
+                return (ValidationComment) comment;
             }
         }
-        return validationComment;
+        return null;
     }
 
     public StateChangeComment getLatestStateChangeComment() {
         List<Comment> commentsReversed = Lists.reverse(getApplicationComments());
-        StateChangeComment stateChangeComment = null;
         for (Comment comment : commentsReversed) {
             if (comment instanceof StateChangeComment) {
-                stateChangeComment = (StateChangeComment) comment;
-                break;
+                return (StateChangeComment) comment;
             }
         }
-        return stateChangeComment;
+        return null;
     }
-    
+	
 }

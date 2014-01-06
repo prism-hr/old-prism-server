@@ -6,15 +6,12 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.validators.ATASConstraint;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -50,10 +47,6 @@ public class OfferRecommendedComment extends Comment {
     @ManyToOne
     @JoinColumn(name = "secondary_supervisor_id")
     private Supervisor secondarySupervisor;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "comment_type")
-    private CommentType type;
 
     @Transient
     private List<Supervisor> supervisors = new ArrayList<Supervisor>();
@@ -113,15 +106,7 @@ public class OfferRecommendedComment extends Comment {
     public void setSecondarySupervisor(Supervisor secondarySupervisor) {
         this.secondarySupervisor = secondarySupervisor;
     }
-
-    public CommentType getType() {
-        return type;
-    }
-
-    public void setType(CommentType type) {
-        this.type = type;
-    }
-
+    
     public List<Supervisor> getSupervisors() {
         return supervisors;
     }

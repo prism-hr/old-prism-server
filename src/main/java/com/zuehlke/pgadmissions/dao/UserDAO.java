@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +15,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
@@ -24,6 +28,7 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.io.CharStreams;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -31,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
@@ -242,5 +248,45 @@ public class UserDAO {
     /* package */void setGetUsersDueToUpdateNotificationSql(String getUsersDueToUpdateNotificationSql) {
         this.getUsersDueToUpdateNotificationSql = getUsersDueToUpdateNotificationSql;
     }
+    
+	public List<RegisteredUser> findUsersInterestedInApplication(ApplicationForm applicationForm) {
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+				.setProjection(Projections.projectionList()
+					.add(Projections.groupProperty("user"), "user"))
+				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+				.add(Restrictions.eq("applicationForm", applicationForm))
+				.add(Restrictions.eq("interestedInApplicant", true))
+				.add(Restrictions.disjunction()
+						.add(Restrictions.eq("registeredUser.enabled", true))
+						.add(Restrictions.conjunction()
+							.add(Restrictions.eq("registeredUser.enabled", false))
+							.add(Restrictions.in("role.id", Arrays.asList(Authority.SUGGESTEDSUPERVISOR)))))
+				.addOrder(Order.asc("registeredUser.lastName"))
+				.addOrder(Order.asc("registeredUser.firstName"))
+				.addOrder(Order.asc("registeredUser.id")).list();
+	}
+
+	public List<RegisteredUser> findUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
+		DetachedCriteria usersInterestedInApplicant = DetachedCriteria.forClass(ApplicationFormUserRole.class)
+				.setProjection(Projections.projectionList()
+					.add(Projections.groupProperty("user")))
+				.add(Restrictions.eq("applicationForm", applicationForm))
+				.add(Restrictions.eq("interestedInApplicant", true));
+		
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+				.setProjection(Projections.projectionList()
+					.add(Projections.groupProperty("user"), "user"))
+				.createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+				.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+				.add(Restrictions.eq("program.id", applicationForm.getProgram().getId()))
+				.add(Restrictions.in("role.id", AuthorityGroup.POTENTIALSUPERVISOR.authorities()))
+				.add(Restrictions.isNull("registeredUser.primaryAccount"))
+				.add(Restrictions.eq("registeredUser.enabled", true))
+				.add(Property.forName("user").notIn(usersInterestedInApplicant))
+				.addOrder(Order.asc("registeredUser.lastName"))
+				.addOrder(Order.asc("registeredUser.firstName"))
+				.addOrder(Order.asc("registeredUser.id")).list();
+	}
 
 }

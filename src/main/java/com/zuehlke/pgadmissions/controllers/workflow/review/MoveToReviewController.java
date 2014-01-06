@@ -16,19 +16,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
+import com.zuehlke.pgadmissions.security.ActionsProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 
 @Controller
@@ -38,24 +36,21 @@ public class MoveToReviewController {
     public static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
     public static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
     protected final ApplicationsService applicationsService;
-    protected final UserService userService;
     protected final ReviewService reviewService;
     protected final ActionsProvider actionsProvider;
-
     private final ReviewRoundValidator reviewRoundValidator;
     private final MoveToReviewReviewerPropertyEditor reviewerPropertyEditor;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     MoveToReviewController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
-    public MoveToReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService,
+    public MoveToReviewController(ApplicationsService applicationsService, ReviewService reviewService,
             ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor,
             final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
-        this.userService = userService;
         this.reviewService = reviewService;
         this.actionsProvider = actionsProvider;
         this.reviewRoundValidator = reviewRoundValidator;
@@ -64,10 +59,8 @@ public class MoveToReviewController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToReview")
-    public String getReviewRoundDetailsPage(ModelMap modelMap) {
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-        actionsProvider.validateAction(application, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
-        applicationFormUserRoleService.deregisterApplicationUpdate(application, getUser());
+    public String getReviewRoundDetailsPage(ModelMap modelMap, @ModelAttribute ApplicationForm application) {
+        applicationFormUserRoleService.applicationViewed(application, getCurrentUser());
         return REVIEW_DETAILS_VIEW_NAME;
     }
 
@@ -77,15 +70,11 @@ public class MoveToReviewController {
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToReview(@RequestParam String applicationId, 
-    		@Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, 
-    		BindingResult bindingResult) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+    public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, 
+    		BindingResult bindingResult, @ModelAttribute ApplicationForm applicationForm) {
+    	RegisteredUser initiator = getCurrentUser();
         
-        RegisteredUser initiator = getUser();
-        
-        actionsProvider.validateAction(applicationForm, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
-        if (bindingResult.hasErrors()) {
+    	if (bindingResult.hasErrors()) {
             return REVIEWERS_SECTION_NAME;
         }
 
@@ -129,24 +118,20 @@ public class MoveToReviewController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
-        return userService.getCurrentUser();
+    public RegisteredUser getCurrentUser() {
+        return applicationFormUserRoleService.getCurrentUser();
     }
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
+        actionsProvider.validateAction(application, getCurrentUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
         return application;
     }
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(getApplicationForm(applicationId), getCurrentUser());
     }
 
 }

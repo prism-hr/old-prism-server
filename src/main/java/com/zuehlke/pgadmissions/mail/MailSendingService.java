@@ -62,9 +62,6 @@ public class MailSendingService extends AbstractMailSendingService {
     }
 
     private void sendReferenceRequest(Referee referee, ApplicationForm applicationForm) {
-
-        processRefereeAndGetAsUser(referee);
-
         PrismEmailMessage message = null;
         try {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
@@ -80,36 +77,6 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users that they are required to provide references.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Referees
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Referees are notified to provide references, when:
-     * <ol>
-     * <li>Administrators move applications from the validation state into a state, that:
-     * <ol>
-     * <li>Is not the rejected or approved state</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
     public void sendReferenceRequest(List<Referee> referees, ApplicationForm applicationForm) {
         for (Referee referee : referees) {
             referee.setLastNotified(new Date());
@@ -117,32 +84,6 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users that they have submitted applications.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Applicant
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * APPLICATION_SUBMIT_CONFIRMATION
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Applicants are notified, when:
-     * <ol>
-     * <li>They submit applications.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
     public void sendSubmissionConfirmationToApplicant(ApplicationForm form) {
         PrismEmailMessage message = null;
         try {
@@ -151,7 +92,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
-                            admissionsOfferServiceLevel, form.getOutcomeOfStage() });
+                            admissionsOfferServiceLevel, form.getPreviousStatus() });
 
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -172,43 +113,6 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when applications have been rejected.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Applicant
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Administrators can reject applications, when:
-     * <ol>
-     * <li>They are not in the rejected, approved or withdrawn states.</li>
-     * </ol>
-     * </li>
-     * <li>Approvers can reject applications, when:
-     * <ol>
-     * <li>They are in the approval state.</li>
-     * </ol>
-     * </li>
-     * <li>Applicants are notified of rejections, when:
-     * <ol>
-     * <li>Applications are rejected by Administrators or Approvers.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    // TODO: Current business logic is incorrect. Administrator cannot reject application when it is in approval state.
     public void sendRejectionConfirmationToApplicant(ApplicationForm form) {
         PrismEmailMessage message = null;
         try {
@@ -217,7 +121,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
-                            admissionsOfferServiceLevel, form.getOutcomeOfStage() });
+                            admissionsOfferServiceLevel, form.getPreviousStatus() });
 
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -228,7 +132,7 @@ public class MailSendingService extends AbstractMailSendingService {
             }
 
             Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
-                    form.getOutcomeOfStage().displayValue() };
+                    form.getPreviousStatus().displayValue() };
             String subject = resolveMessage(REJECTED_NOTIFICATION, args);
 
             message = buildMessage(applicant, subject, model, REJECTED_NOTIFICATION);
@@ -237,43 +141,7 @@ public class MailSendingService extends AbstractMailSendingService {
             log.error("Error while sending rejection confirmation to applicant: {}", e);
         }
     }
-
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when applications have been approved.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Applicant
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Administrators can approve applications, while:
-     * <ol>
-     * <li>They are not in the rejected, approved or withdrawn states.</li>
-     * </ol>
-     * </li>
-     * <li>Approvers can approve applications, while:
-     * <ol>
-     * <li>They are in the approval state.</li>
-     * </ol>
-     * </li>
-     * <li>Applicants are notified, when:
-     * <ol>
-     * <li>Applications are approved.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
+    
     public void sendApprovedNotification(ApplicationForm form) {
         PrismEmailMessage message = null;
         try {
@@ -282,7 +150,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
-                            admissionsOfferServiceLevel, form.getOutcomeOfStage() });
+                            admissionsOfferServiceLevel, form.getPreviousStatus() });
 
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -292,7 +160,7 @@ public class MailSendingService extends AbstractMailSendingService {
                 }
             }
 
-            String subject = resolveMessage(MOVED_TO_APPROVED_NOTIFICATION, form, form.getOutcomeOfStage());
+            String subject = resolveMessage(MOVED_TO_APPROVED_NOTIFICATION, form, form.getPreviousStatus());
 
             message = buildMessage(applicant, subject, model, MOVED_TO_APPROVED_NOTIFICATION);
             sendEmail(message);
@@ -301,38 +169,6 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when interviews have been scheduled.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Interviewer
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Administrators and Delegate Interview Administrators can schedule interviews, while:
-     * <ol>
-     * <li>Applications are in the current interview state, and;</li>
-     * <li>Interviews have not been scheduled.</li>
-     * </ol>
-     * </li>
-     * <li>Interviewers are notified, when:
-     * <ol>
-     * <li>Interviews have been scheduled.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
     public void sendInterviewConfirmationToInterviewers(List<Interviewer> interviewers) {
         PrismEmailMessage message = null;
         for (Interviewer interviewer : interviewers) {
@@ -351,49 +187,15 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when interviews have been scheduled.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Applicant
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <li>Administrators and Delegate Interview Administrators can schedule interviews, while:
-     * <ol>
-     * <li>Applications are in the current interview state, and;</li>
-     * <li>Interviews have not been scheduled.</li>
-     * </ol>
-     * </li>
-     * <ol>
-     * <li>Applicants are notified, when:
-     * <ol>
-     * <li>Interviews have been scheduled.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     * 
-     * @param applicationForm
-     */
     public void sendInterviewConfirmationToApplicant(ApplicationForm applicationForm) {
         PrismEmailMessage message = null;
         try {
-            String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, applicationForm, applicationForm.getOutcomeOfStage());
+            String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, applicationForm, applicationForm.getPreviousStatus());
             List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), applicationForm, applicationForm.getApplicant(),
-                            configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, applicationForm.getOutcomeOfStage() });
+                            configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, applicationForm.getPreviousStatus() });
 
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(applicationForm.getStatus())) {
@@ -431,10 +233,6 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * @param participant
-     *            interview participant who has posted a vote.
-     */
     public void sendInterviewVoteConfirmationToAdministrators(InterviewParticipant participant) {
         Interview interview = participant.getInterview();
         ApplicationForm application = interview.getApplication();
@@ -444,7 +242,7 @@ public class MailSendingService extends AbstractMailSendingService {
         String subject = resolveMessage(INTERVIEW_VOTE_CONFIRMATION, application);
         for (RegisteredUser administrator : administrators) {
             if (administrator.getId() == participant.getUser().getId()) {
-                continue; // administrator has voted himself, no need to notify him
+                continue; 
             }
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "administrator", "application", "participant", "host" }, new Object[] {
@@ -457,32 +255,6 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when a data export has failed.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Super Administrator
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Super Administrators are notified, when:
-     * <ol>
-     * <li>A data export has failed.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
     public void sendExportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
         if (messageCode == null) {
@@ -502,32 +274,6 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when a data import has failed.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Super Administrator
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Super Administrators are notified, when:
-     * <ol>
-     * <li>A data import has failed.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
     public void sendImportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
         if (messageCode == null) {
@@ -547,47 +293,10 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users that they are required to confirm registrations.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Users
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Users can register, when they are:
-     * <ol>
-     * <li>Invited to do so by Administrators, or;</li>
-     * <li>In the process of initiating applications;</li>
-     * </ol>
-     * </li>
-     * <li>They are notified to confirm registrations, when:
-     * <ol>
-     * <li>Submitted registrations.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    public void sendRegistrationConfirmation(RegisteredUser user, String action) {
+    public void sendRegistrationConfirmation(RegisteredUser user) {
         PrismEmailMessage message = null;
-        if (action == null) {
-            log.error("Error while sending confirmation email to registering user: action is null");
-            return;
-        }
-
         try {
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "action", "host" }, new Object[] { user, action, getHostName() });
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "host" }, new Object[] { user, getHostName() });
             String subject = resolveMessage(REGISTRATION_CONFIRMATION, (Object[]) null);
             message = buildMessage(user, subject, modelBuilder.build(), REGISTRATION_CONFIRMATION);
             sendEmail(message);
@@ -596,37 +305,6 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when temporary passwords have been set for their account.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Any User Role
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Users can request a temporary password, at:
-     * <ol>
-     * <li>Any time.</li>
-     * </ol>
-     * </li>
-     * <li>Users are notified, when:
-     * <ol>
-     * <li>Their temporary password has been created.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
     public void sendResetPasswordMessage(final RegisteredUser user, final String newPassword) throws PrismMailMessageException {
         PrismEmailMessage message = null;
         try {

@@ -47,9 +47,19 @@ public class ReviewRound implements Serializable {
     @Generated(GenerationTime.INSERT)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
+    
+    @Column(name = "completed_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date completedDate;
 
-    @Column(name = "avg_rating", precision = 3, scale = 2)
+    @Column(name = "average_rating", precision = 3, scale = 2)
     private BigDecimal averageRating;
+    
+    @Column(name = "total_negative_endorsements")
+    private Integer totalPositiveEndorsements = 0;
+    
+    @Column(name = "total_negative_endorsements")
+    private Integer totalNegativeEndorsements = 0;
 
     public void setId(Integer id) {
         this.id = id;
@@ -88,7 +98,15 @@ public class ReviewRound implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public BigDecimal getAverageRating() {
+    public Date getCompletedDate() {
+		return completedDate;
+	}
+
+	public void setCompletedDate(Date completedDate) {
+		this.completedDate = completedDate;
+	}
+
+	public BigDecimal getAverageRating() {
         return averageRating;
     }
 
@@ -96,7 +114,23 @@ public class ReviewRound implements Serializable {
         this.averageRating = averageRating;
     }
 
-    public boolean hasAllReviewersResponded() {
+    public Integer getTotalPositiveEndorsements() {
+		return totalPositiveEndorsements;
+	}
+
+	public void setTotalPositiveEndorsements(Integer totalPositiveEndorsements) {
+		this.totalPositiveEndorsements = totalPositiveEndorsements;
+	}
+
+	public Integer getTotalNegativeEndorsements() {
+		return totalNegativeEndorsements;
+	}
+
+	public void setTotalNegativeEndorsements(Integer totalNegativeEndorsements) {
+		this.totalNegativeEndorsements = totalNegativeEndorsements;
+	}
+
+	public boolean hasAllReviewersResponded() {
         for (Reviewer reviewer : getReviewers()) {
             if (reviewer.getReview() == null) {
                 return false;
@@ -112,6 +146,5 @@ public class ReviewRound implements Serializable {
     public String getAverageRatingFormatted(){
         return MathUtils.formatRating(getAverageRating());
     }
-
 
 }

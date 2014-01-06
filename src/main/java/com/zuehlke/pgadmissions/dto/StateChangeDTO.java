@@ -6,7 +6,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -82,10 +82,7 @@ public class StateChangeDTO {
 	}
 	
 	public Boolean hasGlobalAdministrationRights() {
-		return registeredUser.isInRole(Authority.SUPERADMINISTRATOR) ||
-				registeredUser.isAdminInProgramme(applicationForm.getProgram()) ||
-				registeredUser.isProjectAdministrator(applicationForm, registeredUser) ||
-				registeredUser.isApproverInProgram(applicationForm.getProgram());
+		return registeredUser.isInProgramRole(applicationForm.getProgram(), AuthorityGroup.TRANSITIONCOMMITTER.authorities());
 	}
 	
 	public Boolean hasFastTrackOption() {
@@ -96,7 +93,7 @@ public class StateChangeDTO {
 	}
 	
 	public Boolean isInState(String applicationFormStatus) {
-		return applicationForm.isInState(applicationFormStatus);
+		return applicationForm.getStatus().equals(ApplicationFormStatus.valueOf(applicationFormStatus));
 	}
 
 	public String getComment() {

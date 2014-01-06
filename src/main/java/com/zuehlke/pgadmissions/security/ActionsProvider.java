@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.components;
+package com.zuehlke.pgadmissions.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,13 +9,14 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 
 @Component
 public class ActionsProvider {
 
     @Autowired
-    private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+    protected ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 
     @Transactional
     public ApplicationDescriptor getApplicationDescriptorForUser(final ApplicationForm application, final RegisteredUser user) {
@@ -27,7 +28,9 @@ public class ActionsProvider {
     }
     
     public void validateAction(final ApplicationForm applicationForm, final RegisteredUser user, final ApplicationFormAction action) {
-        if (!checkActionAvailable(applicationForm, user, action)) {
+    	if (applicationForm == null) {
+    		throw new ResourceNotFoundException();
+    	} else if (!checkActionAvailable(applicationForm, user, action)) {
             throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
     }

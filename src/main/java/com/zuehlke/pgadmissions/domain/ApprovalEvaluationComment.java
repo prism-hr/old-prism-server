@@ -22,5 +22,4 @@ public class ApprovalEvaluationComment extends StateChangeComment {
 		this.approvalRound = approvalRound;
 	}
 
-	
 }

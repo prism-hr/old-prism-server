@@ -132,7 +132,6 @@ public class EmailTemplateService {
         return true;
     }
 
-    //Not used now, may be in the future
 	@Deprecated
 	public String processTemplateContent(String templateContent) {
 		Pattern pattern = Pattern.compile("\\$\\{(.*?)\\}");  
@@ -142,12 +141,8 @@ public class EmailTemplateService {
 	    	String ftlVariable = matcher.group(1);
 	    	String keyWord = ftlVariable.replace("?", "\\?");
 	    	int indexOfQuestionMark = ftlVariable.indexOf("?");
-	    	String newString = indexOfQuestionMark != -1 
-	    			?
-	    				ftlVariable.substring(0, indexOfQuestionMark)
-	    			:
-	    				ftlVariable;
-	    				result = result.replaceAll("\\$\\{"+keyWord+"\\}", newString);
+	    	String newString = indexOfQuestionMark != -1 ?ftlVariable.substring(0, indexOfQuestionMark) : ftlVariable;
+	    	result = result.replaceAll("\\$\\{"+keyWord+"\\}", newString);
 	    }
 	    return result;
 	}
@@ -159,4 +154,5 @@ public class EmailTemplateService {
         }
         throw new RuntimeException("No email template found: " + templateName);
     }
+    
 }

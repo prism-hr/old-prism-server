@@ -18,7 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
-import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.security.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -168,12 +168,12 @@ public class ApplicationSummaryService {
 
 	private void addReferences(ApplicationForm form, Map<String, String> result) {
 		Integer numberOfResponsed = CollectionUtils.countMatches(
-				form.getReferees(), new Predicate() {
-					@Override
-					public boolean evaluate(Object object) {
-						return ((Referee) object).hasResponded();
-					}
-				});
+			form.getReferees(), new Predicate() {
+				@Override
+				public boolean evaluate(Object object) {
+					return ((Referee) object).getReference() != null;
+				}
+			});
 		result.put("numberOfReferences", numberOfResponsed.toString());
 	}
 

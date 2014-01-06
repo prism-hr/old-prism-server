@@ -71,7 +71,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     public void sendDigestsToUsers() {
         ScheduledMailSendingService thisProxy = applicationContext.getBean(this.getClass());
-        thisProxy.updateApplicationsThatRaisesUrgentFlag();
         
         log.trace("Sending task reminder to users");
         List<Integer> users = thisProxy.getPotentialUsersForTaskReminder();
@@ -95,15 +94,21 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         log.trace("Finished sending update notification to users");
     }
 
+    @Transactional
     public List<Integer> getPotentialUsersForTaskNotification() {
+        updateApplicationFormActionUrgentFlag();
         return userDAO.getPotentialUsersForTaskNotification();
     }
 
+    @Transactional
     public List<Integer> getPotentialUsersForTaskReminder() {
+        updateApplicationFormActionUrgentFlag();
         return userDAO.getPotentialUsersForTaskReminder();
     }
 
+    @Transactional
     public List<Integer> getUsersForUpdateNotification() {
+        updateApplicationFormActionUrgentFlag();
         return userDAO.getUsersForUpdateNotification();
     }
 
@@ -165,14 +170,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public void sendReferenceReminder() {
-        log.trace("Sending reference reminders to users");
+        log.trace("Running sendReferenceReminder Task");
         List<Integer> refereesDueAReminder = refereeDAO.getRefereesIdsDueAReminder();
-        
         for (Integer referee : refereesDueAReminder) {
             applicationContext.getBean(this.getClass()).sendReferenceReminder(referee);
         }
-        
-        log.trace("Finished sending reference reminders to users");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -200,14 +202,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public void sendInterviewParticipantVoteReminder() {
-        log.trace("Sending interview scheduling reminders to users");
+        log.trace("Running interviewParticipantVoteReminder Task");
         List<Integer> participantsDueAReminder = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
-        
         for (Integer participantId : participantsDueAReminder) {
             applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participantId);
         }
-        
-        log.trace("Finished sending interview scheduling reminders to users");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -234,14 +233,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public void sendNewUserInvitation() {
-        log.trace("Sending new user invitations");
+        log.trace("Running sendNewUserInvitation Task");
         List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
-        
         for (Integer user : users) {
             applicationContext.getBean(this.getClass()).sendNewUserInvitation(user);
         }
-        
-        log.trace("Finished sending new user invitations");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -268,8 +264,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         return true;
     }
     
-    private void updateApplicationsThatRaisesUrgentFlag() {
-    	applicationFormUserRoleDAO.updateRaisesUrgentFlag();
+    private void updateApplicationFormActionUrgentFlag() {
+        applicationFormUserRoleDAO.updateRaisesUrgentFlag();
     }
     
 }

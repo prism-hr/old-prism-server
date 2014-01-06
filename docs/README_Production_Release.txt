@@ -11,9 +11,7 @@
                           Release Procedure
 ========================================================================
 
-	0) Run mvn release:prepare locally to get the version number
-
-    1) SSH in to prism@prism.ucl.ac.uk (ssh prism@prism.ucl.ac.uk)    
+	1) SSH in to prism@prism.ucl.ac.uk (ssh prism@prism.ucl.ac.uk)    
 
     2) Become the root user and enter the password
         # sudo -s

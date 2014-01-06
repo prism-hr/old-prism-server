@@ -36,6 +36,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.zuehlke.pgadmissions.converters.ProjectConverter;
+import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -46,8 +47,10 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
 import com.zuehlke.pgadmissions.validators.ProjectDTOValidator;
 
@@ -57,7 +60,9 @@ import freemarker.template.TemplateException;
 @RequestMapping("/prospectus/projects")
 public class ProjectConfigurationController {
 
-    private final UserService userService;
+	private final ApplicationsService applicationsService;
+	
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     private final ProgramsService programsService;
 
@@ -66,24 +71,34 @@ public class ProjectConfigurationController {
     private final ProjectDTOValidator projectDTOValidator;
 
     private final DatePropertyEditor datePropertyEditor;
+    
     private final ProgramPropertyEditor programPropertyEditor;
+    
     private final PersonPropertyEditor personPropertyEditor;
+    
     private final ProjectConverter projectConverter;
+    
     private final ApplyTemplateRenderer templateRenderer;
+    
     private final String host;
+    
+    private final ProjectDAO projectDAO;
 
     private Gson gson;
 
+	private ContentAccessProvider contentAccessProvider;
     
     public ProjectConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public ProjectConfigurationController(UserService userService, ProgramsService programsService, ApplicationContext applicationContext,
-            ProjectDTOValidator projectDTOValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
-            PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer, @Value("${application.host}") final String host) {
-        this.userService = userService;
+    public ProjectConfigurationController(ApplicationsService applicationsService, ApplicationFormUserRoleService applicationFormUserRoleService, ProgramsService programsService, 
+    		ApplicationContext applicationContext, ProjectDTOValidator projectDTOValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
+            PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer, @Value("${application.host}") final String host,
+            ProjectDAO projectDAO, ContentAccessProvider contentAccessProvider) {
+    	this.applicationsService = applicationsService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.programsService = programsService;
         this.applicationContext = applicationContext;
         this.projectDTOValidator = projectDTOValidator;
@@ -93,6 +108,8 @@ public class ProjectConfigurationController {
         this.projectConverter = projectConverter;
 		this.templateRenderer = templateRenderer;
 		this.host = host;
+		this.projectDAO = projectDAO;
+		this.contentAccessProvider = contentAccessProvider;
     }
 
     @PostConstruct
@@ -131,39 +148,39 @@ public class ProjectConfigurationController {
         if (programCode == null) {
             return null;
         }
-        return programsService.getProgramByCode(programCode);
+        Program program = programsService.getProgramByCode(programCode);
+        contentAccessProvider.validateCanManageProgramProjectAdverts(program, getCurrentUser());
+        return program;
     }
 	
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
-        return userService.getCurrentUser();
+    public RegisteredUser getCurrentUser() {
+        return applicationFormUserRoleService.getCurrentUser();
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public String addProject(@ModelAttribute("projectDTO") @Valid ProjectDTO projectDTO, BindingResult result, HttpServletRequest request) {
-        Map<String, Object> map = getErrorValues(result, request);
-
+    public String addProject(@ModelAttribute("projectDTO") @Valid ProjectDTO projectDTO, BindingResult result, 
+    		HttpServletRequest request, @ModelAttribute Program program) {
+    	Map<String, Object> map = getErrorValues(result, request);
         if (map.isEmpty()) {
-            RegisteredUser currentUser = getUser();
+            RegisteredUser currentUser = getCurrentUser();
             Project project = projectConverter.toDomainObject(projectDTO);
             project.setAuthor(currentUser);
-            addSupervisorsRoles(project);
+            applicationFormUserRoleService.grantUserProjectRoles(null, currentUser, project, Authority.PROJECTADMINISTRATOR);
             programsService.saveProject(project);
             map.put("success", "true");
-        }
-
+        } 
         return gson.toJson(map);
     }
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public Map<String, Object> listProjects(@RequestParam String programCode) {
+    public Map<String, Object> listProjects(@ModelAttribute Program program) {
         Map<String, Object> json = new HashMap<String, Object>();
-        Program program = programsService.getProgramByCode(programCode);
         List<Project> projects = Collections.emptyList();
         if (program != null) {
-            projects = programsService.listProjects(getUser(), program);
+            projects = projectDAO.getProgramProjectsOfWhichProjectEditor(program, getCurrentUser());
         }
         json.put("projects", gson.toJson(projects));
         json.put("closingDate", programsService.getDefaultClosingDate(program));
@@ -173,7 +190,7 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/defaultPrimarySupervisor", method = RequestMethod.GET)
     @ResponseBody
     public String defaultSupervisor() {
-        RegisteredUser user = getUser();
+        RegisteredUser user = getCurrentUser();
         Person person = new Person();
         person.setFirstname(user.getFirstName());
         person.setLastname(user.getLastName());
@@ -185,10 +202,11 @@ public class ProjectConfigurationController {
     @ResponseBody
     public String getProject(@PathVariable("projectId") int projectId) throws TemplateException, IOException {
     	Map<String, Object> map = Maps.newHashMap();
-        Project project = programsService.getProject(projectId);
-        if(project==null || project.isDisabled()){
+        Project project = programsService.getProject(projectId);  
+        if(project == null) {
         	throw new ResourceNotFoundException();
         }
+        contentAccessProvider.validateCanManageProjectAdvert(project, getCurrentUser());
         map.put("project", project);
         map.putAll(createApplyTemplates(project));
         return gson.toJson(map);
@@ -211,23 +229,27 @@ public class ProjectConfigurationController {
     public String saveProject(@Valid ProjectDTO projectDTO, BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = getErrorValues(result, request);
         if (!result.hasErrors()) {
+        	Project toBeUpdated = projectDAO.getProjectById(projectDTO.getId());
+        	contentAccessProvider.validateCanManageProjectAdvert(toBeUpdated, getCurrentUser());
+        	RegisteredUser oldAdministrator = toBeUpdated.getAdministrator();
+        	RegisteredUser oldPrimarySupervisor = toBeUpdated.getPrimarySupervisor();
+        	RegisteredUser oldSecondarySupervisor = toBeUpdated.getSecondarySupervisor();
             Project project = projectConverter.toDomainObject(projectDTO);
-            if(project==null){
-            	throw new ResourceNotFoundException();
-            }
-            addSupervisorsRoles(project);
-            programsService.saveProject(project);
+        	RegisteredUser newAdministrator = project.getAdministrator();
+        	RegisteredUser newPrimarySupervisor = project.getPrimarySupervisor();
+        	RegisteredUser newSecondarySupervisor = project.getSecondarySupervisor();
+        	if (!applicationsService.getApplicationsForProject(project).isEmpty()) {
+	        	applicationFormUserRoleService.grantUserProjectRoles(oldAdministrator, newAdministrator, project, Authority.PROJECTADMINISTRATOR);
+	        	applicationFormUserRoleService.grantUserProjectRoles(oldPrimarySupervisor, newPrimarySupervisor, project, Authority.PROJECTADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR);
+	        	applicationFormUserRoleService.grantUserProjectRoles(oldSecondarySupervisor, newSecondarySupervisor, project, Authority.SUGGESTEDSUPERVISOR);
+        	}
+        	programsService.saveProject(project);
             map.put("success", "true");
         }
         return gson.toJson(map);
     }
+    
 
-    private void addSupervisorsRoles(Project project) {
-    	userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
-    	if(project.getSecondarySupervisor()!=null){
-    		userService.updateUserWithNewRoles(project.getSecondarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
-    	}
-	}
 
 	private Map<String, Object> getErrorValues(BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(result.getErrorCount());
@@ -242,6 +264,7 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
     @ResponseBody
     public String removeProject(@PathVariable("projectId") int projectId) {
+    	contentAccessProvider.validateCanManageProjectAdvert(programsService.getProject(projectId), getCurrentUser());
         programsService.removeProject(projectId);
         return "ok";
     }

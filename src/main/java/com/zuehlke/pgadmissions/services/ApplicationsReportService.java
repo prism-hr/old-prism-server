@@ -29,7 +29,6 @@ import com.google.visualization.datasource.datatable.value.NumberValue;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
-
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -53,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Service("applicationsReportService")
@@ -66,15 +66,19 @@ public class ApplicationsReportService {
     private final ApplicationsService applicationsService;
     
     private final ApplicantRatingService applicantRatingService;
+    
+    private final ContentAccessProvider contentAccessProvider;
 
     public ApplicationsReportService() {
-        this(null, null);
+        this(null, null, null);
     }
 
     @Autowired
-    public ApplicationsReportService(ApplicationsService applicationsService, ApplicantRatingService applicantRatingService) {
+    public ApplicationsReportService(ApplicationsService applicationsService, ApplicantRatingService applicantRatingService,
+    		ContentAccessProvider contentAccessProvider) {
         this.applicationsService = applicationsService;
         this.applicantRatingService = applicantRatingService;
+        this.contentAccessProvider = contentAccessProvider;
     }
 
     public DataTable getApplicationsReport(RegisteredUser user, ApplicationsFiltering filtering) {
@@ -167,7 +171,7 @@ public class ApplicationsReportService {
                 int overallPositiveEndorsements = referenceEndorsements[0] + reviewEndorsements[0] + interviewEndorsements[0];
 
                 Date approveDate = getApproveDate(app);
-                boolean canSeeRating = user.getId() != applicant.getId();
+                boolean canSeeRating = contentAccessProvider.checkCanSeeExtendedReport(app, user);
 
                 TableRow row = new TableRow();
 
@@ -197,9 +201,9 @@ public class ApplicationsReportService {
 
                 row.addCell(app.getStatus().displayValue());
                 row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
-                row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
-                row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
-                row.addCell(validationComment != null ? validationComment.getEnglishCompentencyOk().getDisplayValue() : StringUtils.EMPTY);
+                row.addCell(validationComment != null && canSeeRating ? validationComment.getHomeOrOverseas().getDisplayValue() : N_R);
+                row.addCell(validationComment != null && canSeeRating ? validationComment.getQualifiedForPhd().getDisplayValue() : N_R);
+                row.addCell(validationComment != null && canSeeRating ? validationComment.getEnglishCompentencyOk().getDisplayValue() : N_R);
 
                 // reference report
                 row.addCell(receivedAndDeclinedReferences[0]);
@@ -519,4 +523,5 @@ public class ApplicationsReportService {
     private String printRating(String rating) {
         return rating == null ? N_R : rating;
     }
+    
 }

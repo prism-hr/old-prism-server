@@ -33,10 +33,10 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -52,32 +52,28 @@ import freemarker.template.TemplateException;
 public class ProgramConfigurationController {
 
     private final UserService userService;
-
     private final ProgramsService programsService;
     private final String host;
-
     private final ApplicationContext applicationContext;
-
     private final DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
-
     private final ProgramAdvertValidator programAdvertValidator;
-
     private final ProgramClosingDateValidator closingDateValidator;
     private final DatePropertyEditor datePropertyEditor;
     private final ProgramPropertyEditor programPropertyEditor;
-
     private final ApplyTemplateRenderer templateRenderer;
 	private Gson gson;
 	private final AdvertService advertsService;
+	private final ContentAccessProvider contentAccessProvider;
 
     public ProgramConfigurationController() {
-        this(null,null, null, null, null, null, null, null, null, null, null);
+        this(null,null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ProgramConfigurationController(UserService userService, ProgramsService programsService, AdvertService advertsService, @Value("${application.host}") final String host,
             ApplicationContext applicationContext, ProgramAdvertValidator programAdvertValidator, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor,
-            ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor, ApplyTemplateRenderer templateRenderer) {
+            ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor, ApplyTemplateRenderer templateRenderer,
+            ContentAccessProvider contentAccessProvider) {
         this.userService = userService;
         this.programsService = programsService;
 		this.advertsService = advertsService;
@@ -89,6 +85,7 @@ public class ProgramConfigurationController {
         this.datePropertyEditor = datePropertyEditor;
         this.programPropertyEditor = programPropertyEditor;
 		this.templateRenderer = templateRenderer;
+		this.contentAccessProvider = contentAccessProvider;
     }
 
     @PostConstruct
@@ -124,6 +121,7 @@ public class ProgramConfigurationController {
         if (programCode == null) {
             return null;
         }
+    	contentAccessProvider.validateCanManageProgramAdvert(programsService.getProgramByCode(programCode), getCurrentUser());
         return programsService.getProgramByCode(programCode);
     }
 
@@ -136,23 +134,19 @@ public class ProgramConfigurationController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
     }
 
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
-        if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-            return programsService.getAllPrograms();
-        }
-        return userService.getCurrentUser().getProgramsOfWhichAdministrator();
+    	return programsService.getProgramsOfWhichAuthor(getCurrentUser());
     }
 
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
-    public String getAdvertData(@RequestParam String programCode) throws TemplateException, IOException {
+    public String getAdvertData(@RequestParam String programCode, @ModelAttribute Program program) throws TemplateException, IOException {
         Advert advert = HibernateUtils.unproxy(getProgrameAdvert(programCode));
-
         Map<String, Object> result = Maps.newHashMap();
         result.put("advert", advert);
 
@@ -171,10 +165,8 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
     @ResponseBody
-    public String saveProgramAdvert(@RequestParam String programCode, @Valid Advert advert, BindingResult result, HttpServletRequest request) {
+    public String saveProgramAdvert(@RequestParam String programCode, @ModelAttribute Program program, @Valid Advert advert, BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMap();
-
-        Program program = programsService.getProgramByCode(programCode);
         if (program == null) {
             map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, null, request.getLocale()));
         }
@@ -194,7 +186,7 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/editProgramAdvert", method = RequestMethod.POST)
     @ResponseBody
-    public String editProgramAdvert(@RequestParam String programCode, @Valid Advert advert, BindingResult result, HttpServletRequest request) {
+    public String editProgramAdvert(@RequestParam String programCode, @ModelAttribute Program program, @Valid Advert advert, BindingResult result, HttpServletRequest request) {
     	Map<String, Object> map = Maps.newHashMap();
 		if (result.hasErrors()) {
 		    for (FieldError error : result.getFieldErrors()) {
@@ -210,7 +202,7 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String addClosingDate(@Valid ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
+    public String addClosingDate(@ModelAttribute Program program, @Valid ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMap();
 
         for (FieldError error : result.getFieldErrors()) {
@@ -218,7 +210,6 @@ public class ProgramConfigurationController {
         }
 
         if (!result.hasErrors()) {
-            Program program = programClosingDate.getProgram();
             program.addClosingDate(programClosingDate);
             programsService.save(program);
             map.put("programClosingDate", programClosingDate);
@@ -229,7 +220,7 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/updateClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String updateClosingDate(@Valid ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
+    public String updateClosingDate(@ModelAttribute Program program, @Valid ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMap();
 
         for (FieldError error : result.getFieldErrors()) {
@@ -237,7 +228,6 @@ public class ProgramConfigurationController {
         }
 
         if (!result.hasErrors()) {
-            Program program = programClosingDate.getProgram();
             program.updateClosingDate(programClosingDate);
             programsService.save(program);
             map.put("programClosingDate", programClosingDate);
@@ -248,9 +238,8 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/getClosingDates", method = RequestMethod.GET)
     @ResponseBody
-    public String getClosingDates(@RequestParam String programCode, HttpServletRequest request) throws TemplateException, IOException {
+    public String getClosingDates(@RequestParam String programCode, @ModelAttribute Program program, HttpServletRequest request) throws TemplateException, IOException {
         Map<String, Object> map = Maps.newHashMap();
-        Program program = programsService.getProgramByCode(programCode);
 
         if (program == null) {
             map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, null, request.getLocale()));
@@ -266,10 +255,9 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/removeClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String removeClosingDate(@RequestParam String programCode, @RequestParam Integer closingDateId, HttpServletRequest request)
+    public String removeClosingDate(@RequestParam String programCode, @ModelAttribute Program program, @RequestParam Integer closingDateId, HttpServletRequest request)
             throws TemplateException, IOException {
         Map<String, Object> map = Maps.newHashMap();
-        Program program = programsService.getProgramByCode(programCode);
 
         if (program == null) {
             map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, null, request.getLocale()));
@@ -282,4 +270,5 @@ public class ProgramConfigurationController {
         }
         return gson.toJson(map);
     }
+    
 }

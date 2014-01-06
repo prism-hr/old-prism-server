@@ -1,19 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
@@ -22,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 @Service
@@ -60,27 +55,6 @@ public class ProgramsService {
         return programDAO.getProgramByCode(code);
     }
 
-    public List<Program> getProgramsForWhichCanManageProjects(RegisteredUser user) {
-        if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-            return programDAO.getAllPrograms();
-        }
-        
-        Set<Program> programs = new TreeSet<Program>(new Comparator<Program>() {
-            @Override
-            public int compare(Program p1, Program p2) {
-                return p1.getTitle().compareTo(p2.getTitle());
-            }
-        });
-        
-        programs.addAll(user.getProgramsOfWhichAdministrator());
-        programs.addAll(user.getProgramsOfWhichApprover());
-        programs.addAll(programDAO.getProgramsOfWhichPreviousReviewer(user));
-        programs.addAll(programDAO.getProgramsOfWhichPreviousInterviewer(user));
-        programs.addAll(programDAO.getProgramsOfWhichPreviousSupervisor(user));
-
-        return Lists.newArrayList(programs);
-    }
-
     public void applyScoringDefinition(String programCode, ScoringStage scoringStage, String scoringContent) {
         Program program = programDAO.getProgramByCode(programCode);
         ScoringDefinition scoringDefinition = new ScoringDefinition();
@@ -116,14 +90,6 @@ public class ProgramsService {
         projectDAO.save(project);
     }
 
-    public List<Project> listProjects(RegisteredUser user, Program program) {
-        if (user.isInRole(user, Authority.SUPERADMINISTRATOR) || user.isAdminInProgramme(program)) {
-            return projectDAO.getProjectsForProgram(program);
-        } else {
-            return projectDAO.getProjectsForProgramOfWhichAuthor(program, user);
-        }
-    }
-
     public void addProgramAdvert(String programCode, Advert advert) {
         Program program = getProgramByCode(programCode);
         advertDAO.delete(program.getAdvert());
@@ -148,5 +114,21 @@ public class ProgramsService {
         }
         return formattedDate;
     }
+    
+	public List<Program> getProgramsOfWhichAdministrator(RegisteredUser user) {
+		return programDAO.getProgramsOfWhichAdministrator(user);
+	}
+    
+	public List<Program> getProgramsOfWhichAuthor(RegisteredUser user) {
+		return programDAO.getProgramsOfWhichAuthor(user);
+	}
+	
+	public List<Program> getProgramsOfWhichProjectAuthor(RegisteredUser user) {
+		return programDAO.getProgramsOfWhichProjectAuthor(user);
+	}
+	
+	public List<Program> getProgramsOfWhichProjectEditor(RegisteredUser user) {
+		return programDAO.getProgramsOfWhichProjectEditor(user);
+	}
 
 }

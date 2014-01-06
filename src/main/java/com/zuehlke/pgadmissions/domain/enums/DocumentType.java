@@ -19,4 +19,5 @@ public enum DocumentType {
 	private DocumentType(String displayValue) {
 		this.displayValue = displayValue;
 	}
+	
 }

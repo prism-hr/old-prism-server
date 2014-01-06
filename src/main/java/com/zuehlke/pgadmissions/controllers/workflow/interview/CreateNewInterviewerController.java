@@ -16,11 +16,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 @Controller
@@ -29,7 +27,7 @@ public class CreateNewInterviewerController {
 
     private static final String CREATE_INTERVIEWER_SECTION = "/private/staff/interviewers/create_interviewer_section";
     private static final String JSON_VIEW = "/private/staff/reviewer/reviewer_json";
-    private final UserService userService;
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final ApplicationsService applicationsService;
     private final NewUserByAdminValidator interviewerValidator;
 
@@ -38,9 +36,9 @@ public class CreateNewInterviewerController {
     }
 
     @Autowired
-    public CreateNewInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator interviewerValidator) {
+    public CreateNewInterviewerController(ApplicationsService applicationsService, ApplicationFormUserRoleService applicationFormUserRoleService, NewUserByAdminValidator interviewerValidator) {
         this.applicationsService = applicationsService;
-        this.userService = userService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.interviewerValidator = interviewerValidator;
     }
 
@@ -50,19 +48,12 @@ public class CreateNewInterviewerController {
         if (bindingResult.hasErrors()) {
             return new ModelAndView(CREATE_INTERVIEWER_SECTION);
         }
-        ModelAndView modelAndView = new ModelAndView(JSON_VIEW);
-        RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(suggestedNewInterviewerUser.getEmail());
-        if (existingUser != null) {
-            modelAndView.getModel().put("isNew", false);
-            modelAndView.getModel().put("user", existingUser);
-            return modelAndView;
-        }
-
-        modelAndView.getModel().put("isNew", true);
-        RegisteredUser newUser = userService.createNewUserInRole(suggestedNewInterviewerUser.getFirstName(), suggestedNewInterviewerUser.getLastName(),
-                suggestedNewInterviewerUser.getEmail(), DirectURLsEnum.VIEW_APPLIATION_PRIOR_TO_INTERVIEW, applicationForm, Authority.INTERVIEWER);
-        modelAndView.getModel().put("user", newUser);
-        return modelAndView;
+        
+		ModelAndView modelAndView = new ModelAndView(JSON_VIEW);
+		RegisteredUser userToAssign = applicationFormUserRoleService.createRegisteredUser(suggestedNewInterviewerUser.getFirstName(), suggestedNewInterviewerUser.getLastName(), suggestedNewInterviewerUser.getEmail());
+		modelAndView.getModel().put("isNew", applicationFormUserRoleService.isNewlyCreatedUser(userToAssign));		
+		modelAndView.getModel().put("user", userToAssign);
+		return modelAndView;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "create_interviewer_section")

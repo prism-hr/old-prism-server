@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.ResearchOpportunitiesFeedService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -37,26 +38,30 @@ public class ResearchOpportunitiesFeedController {
     
     private final MessageSource messageSource;
     
+    private final ContentAccessProvider contentAccessProvider;
+    
     private static final String SUCCESS = "success";
     
     public ResearchOpportunitiesFeedController() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
     
     @Autowired
     public ResearchOpportunitiesFeedController(final UserService userService, final ProgramsService programsService,
-            final ResearchOpportunitiesFeedService feedService, final MessageSource messageSource) {
+            final ResearchOpportunitiesFeedService feedService, final MessageSource messageSource,
+            final ContentAccessProvider contentAccessProvider) {
         this.userService = userService;
         this.programsService = programsService;
         this.feedService = feedService;
         this.messageSource = messageSource;
+        this.contentAccessProvider = contentAccessProvider;
     }
     
     @RequestMapping(value = "programmes", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<Map<String, Object>> getProgrammes() {
         ArrayList<Map<String, Object>> response = new ArrayList<Map<String, Object>>();
-        for (Program p : programsService.getProgramsForWhichCanManageProjects(getCurrentUser())) {
+        for (Program p : programsService.getProgramsOfWhichAuthor(getCurrentUser())) {
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("id", p.getId());
             map.put("title", p.getTitle());
@@ -68,6 +73,7 @@ public class ResearchOpportunitiesFeedController {
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<Map<String, Object>> getAllResearchOpportunitiesFeedForCurrentUser() {
+    	contentAccessProvider.validateCanManageAdvertFeeds(getCurrentUser());
         ArrayList<Map<String, Object>> response = new ArrayList<Map<String, Object>>();
         List<ResearchOpportunitiesFeed> feeds = feedService.getAllFeedsForUser(getCurrentUser());
         for (ResearchOpportunitiesFeed feed : feeds) {
@@ -79,6 +85,7 @@ public class ResearchOpportunitiesFeedController {
     @RequestMapping(value = "{feedId}", method = RequestMethod.DELETE, produces = "application/json")
     @ResponseBody
     public Map<String, Object> deleteFeedById(@PathVariable final Integer feedId) {
+    	contentAccessProvider.validateCanManageAdvertFeed(feedService.getById(feedId), getCurrentUser());
         feedService.deleteById(feedId);
         return Collections.<String, Object>singletonMap(SUCCESS, true);
     }
@@ -87,14 +94,15 @@ public class ResearchOpportunitiesFeedController {
     @ResponseBody
     @SuppressWarnings("unchecked")
     public Map<String, Object> updateFeedById(@PathVariable final Integer feedId, @RequestBody final HashMap<String, Object> json) {
-        RegisteredUser currentUser = getCurrentUser();
+        RegisteredUser user = getCurrentUser();
+    	contentAccessProvider.validateCanManageAdvertFeed(feedService.getById(feedId), user);
         List<Integer> selectedProgramIds = (List<Integer>) json.get("selectedPrograms");
         String feedFormat = (String) json.get("feedSize");
         String title = (String) json.get("feedTitle");
         
-        Map<String, Object> responseMap = validate(selectedProgramIds, feedFormat, title, currentUser, true);
+        Map<String, Object> responseMap = validate(selectedProgramIds, feedFormat, title, user, true);
         if ((Boolean) responseMap.get(SUCCESS)) {
-            ResearchOpportunitiesFeed feed = feedService.updateFeed(feedId, selectedProgramIds, currentUser, FeedFormat.valueOf(feedFormat), title);
+            ResearchOpportunitiesFeed feed = feedService.updateFeed(feedId, selectedProgramIds, user, FeedFormat.valueOf(feedFormat), title);
             responseMap.put("iframeCode", feedService.getIframeHtmlCode(feed));
         }
         return responseMap;
@@ -113,6 +121,7 @@ public class ResearchOpportunitiesFeedController {
     @ResponseBody
     @SuppressWarnings("unchecked")
     public Map<String, Object> saveFeed(@RequestBody final HashMap<String, Object> json) {
+    	contentAccessProvider.validateCanManageAdvertFeeds(getCurrentUser());
         Map<String, Object> responseMap = new HashMap<String, Object>();
         RegisteredUser currentUser = getCurrentUser();
         List<Integer> selectedProgramIds = (List<Integer>) json.get("selectedPrograms");
@@ -154,7 +163,6 @@ public class ResearchOpportunitiesFeedController {
             final String title, final RegisteredUser currentUser, boolean ignoreUniqueTitleContraint) {
         HashMap<String, Object> responseMap = new HashMap<String, Object>();
         responseMap.put(SUCCESS, true);
-        
         if (selectedProgramIds == null || selectedProgramIds.isEmpty()) {
             responseMap.put(SUCCESS, false);
             responseMap.put("selectedPrograms", FieldErrorUtils.resolveMessage("dropdown.radio.select.none", messageSource));
@@ -177,4 +185,5 @@ public class ResearchOpportunitiesFeedController {
         
         return responseMap;
     }
+    
 }

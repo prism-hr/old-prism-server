@@ -14,16 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.security.ActionsProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -70,30 +68,25 @@ public class GenericCommentController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (applicationForm == null) {
-            throw new ResourceNotFoundException();
-        }
+        actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.COMMENT);
         return applicationForm;
     }
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(getApplicationForm(applicationId), getCurrentUser());
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
     }
 
     @ModelAttribute("comment")
     public Comment getComment(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
         Comment comment = new Comment();
-        comment.setApplication(applicationForm);
-        comment.setUser(userService.getCurrentUser());
+        comment.setApplication(getApplicationForm(applicationId));
+        comment.setUser(getCurrentUser());
         return comment;
     }
 
@@ -106,26 +99,20 @@ public class GenericCommentController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getGenericCommentPage(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+    public String getGenericCommentPage(ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
+        applicationFormUserRoleService.applicationViewed(applicationForm, getCurrentUser());
         return GENERIC_COMMENT_PAGE;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String addComment(@Valid @ModelAttribute("comment") Comment comment, BindingResult result, ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
+    public String addComment(@Valid @ModelAttribute("comment") Comment comment, BindingResult result, ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
         if (result.hasErrors()) {
             return GENERIC_COMMENT_PAGE;
         }
         
         commentService.save(comment);
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getUser(), ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.commentPosted(applicationForm, getCurrentUser());
         return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
     }
 

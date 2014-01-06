@@ -51,7 +51,6 @@ public class RegisterFormValidator extends AbstractValidator {
 	        }
 	    }
 
-		// checking for length of password field
 		if(StringUtils.isBlank(user.getPassword())){
 		    errors.rejectValue("password", EMPTY_FIELD_ERROR_MESSAGE);
 		} else if(user.getPassword().length() < MINIMUM_PASSWORD_CHARACTERS){
@@ -60,7 +59,6 @@ public class RegisterFormValidator extends AbstractValidator {
             errors.rejectValue("password", "user.password.large");
         }
 		
-		// check if confirm password is not empty and if matches the password
         if (StringUtils.isBlank(user.getConfirmPassword())) {
             errors.rejectValue("confirmPassword", EMPTY_FIELD_ERROR_MESSAGE);
         } else if (!Objects.equal(user.getConfirmPassword(), user.getPassword())) {

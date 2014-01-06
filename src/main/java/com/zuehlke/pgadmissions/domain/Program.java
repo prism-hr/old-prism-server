@@ -23,6 +23,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Sort;
@@ -35,7 +36,7 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Entity(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Program extends Authorisable implements Serializable {
+public class Program extends AbstractAuthorisationAPI implements Serializable {
 
     private static final long serialVersionUID = -9073611033741317582L;
 
@@ -72,9 +73,13 @@ public class Program extends Authorisable implements Serializable {
     private SortedSet<ProgramClosingDate> closingDates = new TreeSet<ProgramClosingDate>();
 
     @MapKey(name = "stage")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id")
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "program", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_id")
+    private List<Project> projects = new ArrayList<Project>();
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id")
@@ -147,6 +152,12 @@ public class Program extends Authorisable implements Serializable {
 
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
+        if (BooleanUtils.isFalse(enabled)) {
+	        for (Project project : this.projects) {
+	        	project.setDisabled(true);
+	        	project.getAdvert().setActive(false);
+	        }
+        }
     }
 
     public Boolean getAtasRequired() {
@@ -239,5 +250,13 @@ public class Program extends Authorisable implements Serializable {
         };
         return Iterables.find(getClosingDates(), findById, null);
     }
+
+	public List<Project> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<Project> projects) {
+		this.projects = projects;
+	}
 
 }

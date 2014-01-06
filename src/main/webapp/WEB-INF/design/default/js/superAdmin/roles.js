@@ -65,30 +65,23 @@ $(document).ready(function()
 		var errors = false;
 		$('#addRemoveRegistryUsers div.alert-error').remove();
 		
-		// no duplicate users.
-		if ($('#registryUsers:contains('+$('#reg-email').val()+')').length > 0) {
-			$('#reg-email').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> This user already exists.</div>');
-			errors = true;
-		}
 		// Validation on any entered details.
-		if (!validateEmail($('#reg-email').val()))
-		{
+		if (!validateEmail($('#reg-email').val())) {
 			$('#reg-email').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must enter a valid email address.</div>');
 			errors = true;
 		}
-		if ($('#reg-firstname').val() == "")
-		{
+		
+		if ($('#reg-firstname').val() == "") {
 			$('#reg-firstname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must make an entry.</div>');
 			errors = true;
 		}
-		if ( $('#reg-lastname').val() == "")
-		{
+		
+		if ( $('#reg-lastname').val() == "") {
 			$('#reg-lastname').after('<div class="alert alert-error"><i class="icon-warning-sign"></i> You must make an entry.</div>');
 			errors = true;
 		}
 
-		if (!errors)
-		{
+		if (!errors) {
 			$('#registryUsers tbody').append('<tr>'
 				+ '	<td> <span class="arrow"></span> </td>'
 				+ '<td>'

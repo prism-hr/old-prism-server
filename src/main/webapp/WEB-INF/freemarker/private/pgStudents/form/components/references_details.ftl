@@ -18,7 +18,7 @@
       <tr>
          <td colspan="3" class="scrollparent">
     	   <div class="scroll">
-            <table class="table-striped table-hover">
+            <table id='existing-referee-container' class="table-striped table-hover">
                 <colgroup>
                 <col />
                 <col style="width: 30px" />

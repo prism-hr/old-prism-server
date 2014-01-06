@@ -44,22 +44,25 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 
 public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
     private static final String NOT_REQUIRED = "Not Required";
 
     private final Logger log = LoggerFactory.getLogger(PdfModelBuilder.class);
+    
+    private ApplicationForm application = null;
+    
+    private RegisteredUser user = null;
 
-    private boolean includeCriminialConvictions = false;
-
-    private boolean includeAttachments = true;
-
-    private boolean includeDisability = false;
-
-    private boolean includeEthnicity = false;
+    private boolean includeEqualOpportunities = false;
 
     private boolean includeReferences = false;
+    
+    private boolean includeCriminalConvictions = false;
+    
+    private boolean includeAttachments = true;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
 
@@ -70,18 +73,42 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
     private Map<Integer, Object> bookmarkMap = new HashMap<Integer, Object>();
 
     private HeaderEvent headerEvent;
-
+    
+    private ContentAccessProvider contentAccessProvider;
+    
     public PdfModelBuilder() {
     }
 
+    public PdfModelBuilder(ApplicationForm application, RegisteredUser user) {
+    	this.application = application;
+    	this.user = user;
+    }
+ 
+    public PdfModelBuilder includeEqualOpportunities(final boolean flag) {
+    	this.includeEqualOpportunities = flag;
+    	return this;
+    }
+    
+    private boolean includeEqualOpportunities() {
+    	return contentAccessProvider.checkCanSeeEqualOpportunitiesInformation(application, user);
+    }
+    
     public PdfModelBuilder includeReferences(final boolean flag) {
         this.includeReferences = flag;
         return this;
     }
+    
+    private boolean includeReference(ReferenceComment comment) {
+        return contentAccessProvider.checkCanSeeComment(comment, user);
+    }
 
-    public PdfModelBuilder includeCriminialConvictions(final boolean flag) {
-        this.includeCriminialConvictions = flag;
+    public PdfModelBuilder includeCriminalConvictions(final boolean flag) {
+        this.includeCriminalConvictions = flag;
         return this;
+    }
+    
+    private boolean includeCriminalConvictions() {
+    	return contentAccessProvider.checkCanSeeCriminalConvictionsInformation(application, user);
     }
 
     public PdfModelBuilder includeAttachments(final boolean flag) {
@@ -89,41 +116,11 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         return this;
     }
 
-    public PdfModelBuilder includeDisability(final boolean flag) {
-        this.includeDisability = flag;
-        return this;
-    }
-
-    public PdfModelBuilder includeEthnicity(final boolean flag) {
-        this.includeEthnicity = flag;
-        return this;
-    }
-
     public PdfModelBuilder dateFormat(final SimpleDateFormat format) {
         this.dateFormat = format;
         return this;
     }
-
-    public boolean isIncludeCriminialConvictions() {
-        return includeCriminialConvictions;
-    }
-
-    public boolean isIncludeAttachments() {
-        return includeAttachments;
-    }
-
-    public boolean isIncludeDisability() {
-        return includeDisability;
-    }
-
-    public boolean isIncludeEthnicity() {
-        return includeEthnicity;
-    }
-
-    public boolean isIncludeReferences() {
-        return includeReferences;
-    }
-
+    
     public Map<Integer, Object> getBookmarkMap() {
         return bookmarkMap;
     }
@@ -486,16 +483,14 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newTableCell("Skype", SMALL_BOLD_FONT));
         table.addCell(newTableCell(form.getPersonalDetails().getMessenger(), SMALL_FONT));
 
-        if (includeEthnicity) {
+        if (includeEqualOpportunities || includeEqualOpportunities()) {
             table.addCell(newTableCell("Ethnicity", SMALL_BOLD_FONT));
             if (form.getPersonalDetails().getEthnicity() == null) {
                 table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
             } else {
                 table.addCell(newTableCell(form.getPersonalDetails().getEthnicity().getName(), SMALL_FONT));
             }
-        }
-
-        if (includeDisability) {
+            
             table.addCell(newTableCell("Disability", SMALL_BOLD_FONT));
             if (form.getPersonalDetails().getDisability() == null) {
                 table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
@@ -886,11 +881,13 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(newTableCell("Skype", SMALL_BOLD_FONT));
                 table.addCell(newTableCell(referee.getMessenger(), SMALL_FONT));
 
-                if (includeReferences) {
+                ReferenceComment reference = referee.getReference();
+                
+                if (includeReferences || includeReference(reference)) {
                     table.addCell(newTableCell("Reference", SMALL_BOLD_FONT));
-                    if (referee.getReference() != null) {
+                    if (reference != null) {
                         table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                        bookmarkMap.put(appendixCounter++, referee.getReference());
+                        bookmarkMap.put(appendixCounter++, reference);
                     } else {
                         table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
                     }
@@ -947,32 +944,30 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
     }
 
     protected void addAdditionalInformationSection(final ApplicationForm form, Document pdfDocument) throws DocumentException {
-        if (!includeCriminialConvictions) {
-            return;
+        if (includeCriminalConvictions || includeCriminalConvictions()) {
+        	PdfPTable table = new PdfPTable(1);
+            table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
+            table.addCell(newGrayTableCell("ADDITIONAL INFORMATION", BOLD_FONT));
+
+            pdfDocument.add(table);
+            pdfDocument.add(addSectionSeparators());
+
+            table = new PdfPTable(2);
+            table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
+            table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", SMALL_BOLD_FONT));
+            if (form.getAdditionalInformation().getConvictions() == null) {
+                table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+            } else if (BooleanUtils.isTrue(form.getAdditionalInformation().getConvictions())) {
+                table.addCell(newTableCell("Yes", SMALL_FONT));
+            } else {
+                table.addCell(newTableCell("No", SMALL_FONT));
+            }
+
+            table.addCell(newTableCell("Description", SMALL_BOLD_FONT));
+            table.addCell(newTableCell(form.getAdditionalInformation().getConvictionsText(), SMALL_FONT));
+
+            pdfDocument.add(table);
         }
-
-        PdfPTable table = new PdfPTable(1);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newGrayTableCell("ADDITIONAL INFORMATION", BOLD_FONT));
-
-        pdfDocument.add(table);
-        pdfDocument.add(addSectionSeparators());
-
-        table = new PdfPTable(2);
-        table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-        table.addCell(newTableCell("Do you have any unspent Criminial Convictions?", SMALL_BOLD_FONT));
-        if (form.getAdditionalInformation().getConvictions() == null) {
-            table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
-        } else if (BooleanUtils.isTrue(form.getAdditionalInformation().getConvictions())) {
-            table.addCell(newTableCell("Yes", SMALL_FONT));
-        } else {
-            table.addCell(newTableCell("No", SMALL_FONT));
-        }
-
-        table.addCell(newTableCell("Description", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getAdditionalInformation().getConvictionsText(), SMALL_FONT));
-
-        pdfDocument.add(table);
     }
 
     protected void addSupportingDocuments(final ApplicationForm form, final Document pdfDocument, final PdfWriter pdfWriter) throws DocumentException {

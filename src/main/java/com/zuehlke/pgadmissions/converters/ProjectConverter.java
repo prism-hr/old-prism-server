@@ -55,10 +55,11 @@ public class ProjectConverter {
     }
 
     private RegisteredUser loadPerson(Person person) {
-        if (person == null || StringUtils.isBlank(person.getEmail())) {
+    	String personEmail = person.getEmail();
+        if (person == null || StringUtils.isBlank(personEmail)) {
             return null;
         }
-        return userService.getUserByEmailIncludingDisabledAccounts(person.getEmail());
+        return userService.createRegisteredUser(person.getFirstname(), person.getLastname(), personEmail);
     }
 
     private void updateProjectAdvert(Advert advert, ProjectDTO projectAdvertDTO) {

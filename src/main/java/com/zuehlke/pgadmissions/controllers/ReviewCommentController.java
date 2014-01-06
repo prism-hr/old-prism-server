@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -24,21 +23,21 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
+import com.zuehlke.pgadmissions.security.ActionsProvider;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
@@ -59,16 +58,17 @@ public class ReviewCommentController {
     private final ApplicationFormUserRoleService ApplicationFormUserRoleService;
     private final ActionsProvider actionsProvider;
     private final ApplicantRatingService applicantRatingService;
+    private final ReviewService reviewService;
 
     ReviewCommentController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
             FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
             ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormUserRoleService ApplicationFormUserRoleService, ActionsProvider actionsProvider,
-            ApplicantRatingService applicantRatingService) {
+            ApplicantRatingService applicantRatingService, ReviewService reviewService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -80,41 +80,38 @@ public class ReviewCommentController {
         this.ApplicationFormUserRoleService = ApplicationFormUserRoleService;
         this.actionsProvider = actionsProvider;
         this.applicantRatingService = applicantRatingService;
+        this.reviewService = reviewService;
     }
-
+    
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (applicationForm == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
+        actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.PROVIDE_REVIEW);
         return applicationForm;
     }
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(getApplicationForm(applicationId), getCurrentUser());
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
     }
 
     @ModelAttribute("comment")
-    public ReviewComment getComment(@RequestParam String applicationId) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
+    public ReviewComment getComment(@RequestParam String applicationId, @ModelAttribute ApplicationForm application) 
+    		throws ScoringDefinitionParseException {
+        RegisteredUser user = getCurrentUser();
         ReviewComment reviewComment = new ReviewComment();
-        reviewComment.setApplication(applicationForm);
+        reviewComment.setApplication(application);
         reviewComment.setUser(user);
         reviewComment.setComment("");
         reviewComment.setType(CommentType.REVIEW);
-        reviewComment.setReviewer(user.getReviewerForCurrentUserFromLatestReviewRound(applicationForm));
+        reviewComment.setReviewer(reviewService.getReviewerForReviewRound(user, application.getLatestReviewRound()));
 
-        ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
+        ScoringDefinition scoringDefinition = application.getProgram().getScoringDefinitions().get(ScoringStage.REVIEW);
         if (scoringDefinition != null) {
             try {
                 CustomQuestions customQuestion = scoringDefinitionParser.parseScoringDefinition(scoringDefinition.getContent());
@@ -122,7 +119,7 @@ public class ReviewCommentController {
                 reviewComment.getScores().addAll(scores);
                 reviewComment.setAlert(customQuestion.getAlert());
             } catch (ScoringDefinitionParseException e) {
-                log.error("Incorrect scoring XML configuration for review stage in program: " + applicationForm.getProgram().getTitle());
+                log.error("Incorrect scoring XML configuration for review stage in program: " + application.getProgram().getTitle());
             }
         }
 
@@ -137,17 +134,16 @@ public class ReviewCommentController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getReviewFeedbackPage(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+    public String getReviewFeedbackPage(ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
-        ApplicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        ApplicationFormUserRoleService.applicationViewed(applicationForm, user);
         return REVIEW_FEEDBACK_PAGE;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result, ModelMap modelMap) throws ScoringDefinitionParseException {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+    public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result, 
+    		@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) throws ScoringDefinitionParseException {
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
 
@@ -173,7 +169,6 @@ public class ReviewCommentController {
         applicantRatingService.computeAverageRating(comment.getReviewer().getReviewRound());
         applicantRatingService.computeAverageRating(applicationForm);
         ApplicationFormUserRoleService.reviewPosted(comment.getReviewer());
-        ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
 
         return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
     }

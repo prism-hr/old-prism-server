@@ -14,9 +14,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 @Entity(name = "PROGRAM_INSTANCE")
 public class ProgramInstance implements ProgramInstanceInterface, ImportedObject, Serializable {
 

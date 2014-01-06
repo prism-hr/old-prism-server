@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICATION_MOVED_TO_APPROVED_NOTIFICATION;
-
 import java.util.Date;
 import java.util.List;
 
@@ -15,12 +13,10 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
@@ -73,7 +69,6 @@ public class OfferRecommendationService {
         form.setStatus(ApplicationFormStatus.APPROVED);
         form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
         sendNotificationToApplicant(form);
-        form.removeNotificationRecord(NotificationType.APPROVAL_REMINDER);
 
         List<Supervisor> supervisors = form.getLatestApprovalRound().getSupervisors();
         supervisors.clear();
@@ -93,19 +88,13 @@ public class OfferRecommendationService {
             }
         }
         commentDAO.save(offerRecommendedComment);
-        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(form);
+        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(form, offerRecommendedComment.getUser());
         return true;
     }
 
     private void sendNotificationToApplicant(ApplicationForm form) {
         try {
             mailSendingService.sendApprovedNotification(form);
-            NotificationRecord notificationRecord = form.getNotificationForType(APPLICATION_MOVED_TO_APPROVED_NOTIFICATION);
-            if (notificationRecord == null) {
-                notificationRecord = new NotificationRecord(APPLICATION_MOVED_TO_APPROVED_NOTIFICATION);
-                form.addNotificationRecord(notificationRecord);
-            }
-            notificationRecord.setDate(new Date());
         } catch (Exception e) {
             log.warn("{}", e);
         }

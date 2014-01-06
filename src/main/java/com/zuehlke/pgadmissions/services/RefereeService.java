@@ -11,46 +11,35 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional
 public class RefereeService {
 
     private final RefereeDAO refereeDAO;
-    private final UserService userService;
-    private final RoleDAO roleDAO;
     private final CommentService commentService;
     private final EventFactory eventFactory;
     private final ApplicationFormDAO applicationFormDAO;
-    private final EncryptionUtils encryptionUtils;
     private final EncryptionHelper encryptionHelper;
     private final ApplicantRatingService applicantRatingService;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public RefereeService() {
-        this(null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils, UserService userService, RoleDAO roleDAO, CommentService commentService,
-            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper, ApplicantRatingService applicantRatingService, ApplicationFormUserRoleService applicationFormUserRoleService) {
+    public RefereeService(RefereeDAO refereeDAO, CommentService commentService, EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, 
+    		EncryptionHelper encryptionHelper, ApplicantRatingService applicantRatingService, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.refereeDAO = refereeDAO;
-        this.encryptionUtils = encryptionUtils;
-        this.userService = userService;
-        this.roleDAO = roleDAO;
         this.commentService = commentService;
         this.eventFactory = eventFactory;
         this.applicationFormDAO = applicationFormDAO;
@@ -71,53 +60,12 @@ public class RefereeService {
         refereeDAO.refresh(referee);
     }
 
-    public void saveReferenceAndSendMailNotifications(Referee referee) {
-        addReferenceEventToApplication(referee);
-    }
-
     public void processRefereesRoles(List<Referee> referees) {
         for (Referee referee : referees) {
-            processRefereeAndGetAsUser(referee);
+            RegisteredUser user = applicationFormUserRoleService.createRegisteredUser(referee.getFirstname(), referee.getLastname(), referee.getEmail());
+            referee.setUser(user);
+            save(referee);
         }
-    }
-
-    public RegisteredUser processRefereeAndGetAsUser(Referee referee) {
-        RegisteredUser user = userService.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
-        Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
-        if (userExists(user) && !isUserReferee(user)) {
-            user.getRoles().add(refereeRole);
-        }
-        if (!userExists(user)) {
-            user = createAndSaveNewUserWithRefereeRole(referee, refereeRole);
-        }
-        referee.setUser(user);
-        save(referee);
-        return user;
-    }
-
-    private boolean userExists(RegisteredUser user) {
-        return user != null;
-    }
-
-    private boolean isUserReferee(RegisteredUser user) {
-        return user.isInRole(Authority.REFEREE);
-    }
-
-    private RegisteredUser createAndSaveNewUserWithRefereeRole(Referee referee, Role refereeRole) {
-        RegisteredUser user = newRegisteredUser();
-        user.setEmail(referee.getEmail());
-        user.setFirstName(referee.getFirstname());
-        user.setLastName(referee.getLastname());
-        user.setUsername(referee.getEmail());
-        user.getRoles().add(refereeRole);
-        user.setActivationCode(encryptionUtils.generateUUID());
-        user.setEnabled(false);
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
-        user.setDirectToUrl(DirectURLsEnum.ADD_REFERENCE.displayValue() + referee.getApplication().getApplicationNumber());
-        userService.save(user);
-        return user;
     }
 
     RegisteredUser newRegisteredUser() {
@@ -131,20 +79,21 @@ public class RefereeService {
         refereeDAO.delete(referee);
     }
 
-    public Referee getRefereeByUserAndApplication(RegisteredUser user, ApplicationForm form) {
-        Referee matchedReferee = null;
-        List<Referee> referees = user.getReferees();
-        for (Referee referee : referees) {
-            if (referee.getApplication() != null && referee.getApplication().getId().equals(form.getId())) {
-                matchedReferee = referee;
-            }
-        }
-        return matchedReferee;
+    public Referee getRefereeForApplication(RegisteredUser user, ApplicationForm application) { 
+    	return refereeDAO.getRefereeByUserAndApplication(user, application);
+    }
+    
+    public Referee getRefereeByUser(RegisteredUser user) {
+    	return refereeDAO.getRefereeByUser(user);
     }
 
     public void declineToActAsRefereeAndSendNotification(Referee referee) {
-        referee.setDeclined(true);
-        refereeDAO.save(referee);
+    	ReferenceComment reference = new ReferenceComment();
+    	reference.setApplication(referee.getApplication());
+    	reference.setDeclined(true);
+    	reference.setType(CommentType.REFERENCE);
+    	reference.setUser(referee.getUser());
+    	commentService.save(reference);
         addReferenceEventToApplication(referee);
     }
 
@@ -178,7 +127,6 @@ public class RefereeService {
         }
         
         applicantRatingService.computeAverageRating(applicationForm);
-
         return reference;
     }
 
@@ -205,9 +153,7 @@ public class RefereeService {
             referee.setSendToUCL(true);
         }
         
-        applicationFormUserRoleService.referencePosted(referee);
-
-        saveReferenceAndSendMailNotifications(referee);
+        this.addReferenceEventToApplication(referee);
         return referenceComment;
     }
 
@@ -231,7 +177,7 @@ public class RefereeService {
         referenceComment.setReferee(referee);
         referenceComment.setType(CommentType.REFERENCE);
         referenceComment.setUser(referee.getUser());
-        referenceComment.setProvidedBy(userService.getCurrentUser());
+        referenceComment.setProvidedBy(applicationFormUserRoleService.getCurrentUser());
         referenceComment.setComment(refereesAdminEditDTO.getComment());
         referenceComment.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
         referenceComment.setSuitableForUCL(refereesAdminEditDTO.getSuitableForUCL());
@@ -245,10 +191,11 @@ public class RefereeService {
         return referenceComment;
     }
 
-    private void addReferenceEventToApplication(Referee referee) {
+    public void addReferenceEventToApplication(Referee referee) {
         ApplicationForm application = referee.getApplication();
         application.getEvents().add(eventFactory.createEvent(referee));
         applicationFormDAO.save(application);
+        applicationFormUserRoleService.referencePosted(referee);
     }
 
 }

@@ -57,25 +57,28 @@ public class ApplicationFormValidator extends AbstractValidator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress", "user.addresses.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddress", "user.addresses.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalStatement", "documents.section.invalid");
-		if (applicationForm.getReferees().size() < 3) {
+		
+		int refereesProvided = applicationForm.getReferees().size();
+		if (refereesProvided < ApplicationForm.MINIMUM_REFEREES_FOR_SUBMISSION || refereesProvided > ApplicationForm.MAXIMUM_REFEREES_FOR_SUBMISSION) {
 			errors.rejectValue("referees", "user.referees.notvalid");
 		}
+		
 		if (applicationForm.getAcceptedTermsOnSubmission() == CheckedStatus.NO) {
 			errors.rejectValue("acceptedTermsOnSubmission", EMPTY_FIELD_ERROR_MESSAGE);
 		}
+
 		if (programmeDetails != null && programmeDetails.getStudyOption() != null) {
 			List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(applicationForm.getProgram(), programmeDetails.getStudyOption());
 			if (programInstances == null || programInstances.isEmpty()) {
 				List<ProgramInstance> allActiveProgramInstances = programInstanceDAO.getActiveProgramInstances(applicationForm.getProgram());
 				if (allActiveProgramInstances == null || allActiveProgramInstances.isEmpty()) {
-					//program is  no longer active
 					errors.rejectValue("program", "application.program.invalid");
 				} else {
-					//program is active, but not with selected study option
 					errors.rejectValue("programmeDetails.studyOption", "programmeDetails.studyOption.invalid");
 				}
 
 			}
 		}
 	}
+	
 }

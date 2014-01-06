@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -29,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
@@ -40,13 +38,13 @@ import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredExc
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.security.ActionsProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.StateTransitionService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 
@@ -57,8 +55,6 @@ public class StateTransitionController {
     protected static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
 
     protected final ApplicationsService applicationsService;
-
-    protected final UserService userService;
 
     protected final CommentService commentService;
 
@@ -81,16 +77,15 @@ public class StateTransitionController {
     protected final ActionsProvider actionsProvider;
 
     public StateTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public StateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
-            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
+    public StateTransitionController(ApplicationsService applicationsService, CommentService commentService, CommentFactory commentFactory, 
+    		EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService, 
+    		StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService, 
+    		ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
-        this.userService = userService;
         this.commentService = commentService;
         this.commentFactory = commentFactory;
         this.encryptionHelper = encryptionHelper;
@@ -180,7 +175,7 @@ public class StateTransitionController {
         	stateChangeDTO.setDelegate(false);
         }
         
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, registeredUser);
+        applicationFormUserRoleService.applicationViewed(applicationForm, registeredUser);
         return stateTransitionService.resolveView(applicationForm, action);
     }
     
@@ -234,7 +229,7 @@ public class StateTransitionController {
     }
     
     public RegisteredUser getCurrentUser() {
-        return userService.getCurrentUser();
+        return applicationFormUserRoleService.getCurrentUser();
     }
 
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -308,14 +303,7 @@ public class StateTransitionController {
     	
     	if (BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights())) {
 	    	if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
-		    	String delegateAdministratorEmail = stateChangeDTO.getDelegateEmail();
-		    	RegisteredUser userToSaveAsDelegate = userService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);
-		    	
-		    	if (userToSaveAsDelegate == null) {
-		    		userToSaveAsDelegate = userService.createNewUserInRole(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), 
-		    				delegateAdministratorEmail, Authority.STATEADMINISTRATOR);
-		    	}
-		    	
+		    	RegisteredUser userToSaveAsDelegate = applicationFormUserRoleService.createRegisteredUser(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), stateChangeDTO.getDelegateEmail());
 		    	stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
 	    	}
     	} else {
@@ -328,7 +316,7 @@ public class StateTransitionController {
     	commentService.save(stateChangeComment);
         applicationsService.save(applicationForm);
         applicationsService.refresh(applicationForm);
-        applicationFormUserRoleService.stateChanged(stateChangeComment);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);	
+        applicationFormUserRoleService.stateChanged(stateChangeComment);	
     }
+    
 }

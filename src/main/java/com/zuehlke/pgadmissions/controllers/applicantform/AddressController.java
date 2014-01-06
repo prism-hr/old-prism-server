@@ -19,11 +19,9 @@ import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -42,30 +40,27 @@ public class AddressController {
     private final UserService userService;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final DomicilePropertyEditor domicilePropertyEditor;
+    private final ContentAccessProvider contentAccessProvider;
 
     public AddressController() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public AddressController(ApplicationsService applicationService, UserService userService, DomicileService domicileService,
             DomicilePropertyEditor domicilePropertyEditor, AddressSectionDTOValidator addressSectionDTOValidator,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            ApplicationFormUserRoleService applicationFormUserRoleService, ContentAccessProvider contentAccessProvider) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.domicileService = domicileService;
         this.domicilePropertyEditor = domicilePropertyEditor;
         this.addressSectionDTOValidator = addressSectionDTOValidator;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
+        this.contentAccessProvider = contentAccessProvider;
     }
 
     @RequestMapping(value = "/editAddress", method = RequestMethod.POST)
     public String editAddresses(@Valid AddressSectionDTO addressSectionDTO, BindingResult result, @ModelAttribute ApplicationForm applicationForm) {
- 
-        if (applicationForm.isDecided()) {
-            throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
-        }
-        
         if (result.hasErrors()) {
             return APPLICATION_ADDRESS_VIEW;
         }
@@ -99,13 +94,13 @@ public class AddressController {
         currentAddress.setAddress5(addressSectionDTO.getCurrentAddress5());
 
         applicationService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationEdited(applicationForm, getCurrentUser());
 
         return "redirect:/update/getAddress?applicationId=" + applicationForm.getApplicationNumber();
     }
 
     @RequestMapping(value = "/getAddress", method = RequestMethod.GET)
-    public String getAddressView() {
+    public String getAddressView(@ModelAttribute ApplicationForm applicationForm) {
         return APPLICATION_ADDRESS_VIEW;
     }
 
@@ -123,9 +118,7 @@ public class AddressController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new ResourceNotFoundException();
-        }
+        contentAccessProvider.validateCanEditAsApplicant(application, getCurrentUser());
         return application;
     }
 

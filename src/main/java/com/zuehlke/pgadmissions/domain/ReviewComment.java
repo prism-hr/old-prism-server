@@ -1,15 +1,13 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Entity(name = "REVIEW_COMMENT")
 public class ReviewComment extends Comment {
@@ -39,23 +37,8 @@ public class ReviewComment extends Comment {
     @Column(name = "decline")
     private boolean decline;
 
-    @Column(name = "admins_notified")
-    private boolean adminsNotified;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "comment_type")
-    private CommentType type;
-
     @Transient
     private String alert;
-
-    public CommentType getType() {
-        return type;
-    }
-
-    public void setType(CommentType type) {
-        this.type = type;
-    }
 
     public Reviewer getReviewer() {
         return reviewer;
@@ -109,14 +92,6 @@ public class ReviewComment extends Comment {
         this.decline = decline;
     }
 
-    public boolean isAdminsNotified() {
-        return adminsNotified;
-    }
-
-    public void setAdminsNotified(boolean adminsNotified) {
-        this.adminsNotified = adminsNotified;
-    }
-
     public Boolean getSuitableCandidateForProgramme() {
         return suitableCandidateForProgramme;
     }
@@ -140,4 +115,13 @@ public class ReviewComment extends Comment {
     public void setAlert(String alert) {
         this.alert = alert;
     }
+    
+    private void recomputeReviewRoundRating(BigDecimal rating) {
+    	BigDecimal currentRating = this.getReviewer().getReviewRound().getAverageRating();
+    }
+    
+    private void recomputeReviewRoundEndorsementTotals(Boolean endorsement) {
+    	
+    }
+    
 }

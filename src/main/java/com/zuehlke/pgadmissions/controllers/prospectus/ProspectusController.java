@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -40,21 +39,18 @@ public class ProspectusController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
     }
 
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
-        if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-            return programsService.getAllPrograms();
-        }
-        return userService.getCurrentUser().getProgramsOfWhichAdministrator();
+       return programsService.getProgramsOfWhichAuthor(getCurrentUser());
     }
     
     @ModelAttribute("projectProgrammes")
     public List<Program> getProjectProgrammes() {
-        return programsService.getProgramsForWhichCanManageProjects(getUser());
+        return programsService.getProgramsOfWhichProjectAuthor(getCurrentUser());
     }
 
 }

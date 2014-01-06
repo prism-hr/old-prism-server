@@ -115,4 +115,5 @@ public class ApplicantRatingService {
         avgDecimal.setScale(2, RoundingMode.HALF_UP);
         return avgDecimal;
     }
+    
 }

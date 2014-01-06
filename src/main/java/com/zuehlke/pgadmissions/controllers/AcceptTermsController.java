@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -20,15 +19,17 @@ public class AcceptTermsController {
 	private final ApplicationsService applicationsService;
 	private static final String TERMS_AND_CONDITIONS_VIEW_NAME = "/private/pgStudents/form/components/terms_and_conditions";
 	private final UserService userService;
+	private final ContentAccessProvider contentAccessProvider;
 
 	public AcceptTermsController() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public AcceptTermsController(ApplicationsService applicationsService, UserService userService) {
+	public AcceptTermsController(ApplicationsService applicationsService, UserService userService, ContentAccessProvider contentAccessProvider) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
+		this.contentAccessProvider = contentAccessProvider;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -39,20 +40,14 @@ public class AcceptTermsController {
 
 	@ModelAttribute
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null || !userService.getCurrentUser().canSee(applicationForm)) {
-			throw new ResourceNotFoundException();
-		}
-		return applicationForm;
+		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+		contentAccessProvider.validateCanEditAsApplicant(application, userService.getCurrentUser());
+		return application;
 
 	}
 
 	@RequestMapping(value = "/getTermsAndConditions", method = RequestMethod.GET)
-	public String getAcceptedTermsView() {
-
-		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
-			throw new ResourceNotFoundException();
-		}
+	public String getAcceptedTermsView(@ModelAttribute ApplicationForm applicationForm) {
 		return TERMS_AND_CONDITIONS_VIEW_NAME;
 	}
 

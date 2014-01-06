@@ -229,7 +229,7 @@ public class ApplicationFormUserRoleService {
 
     public void admitterCommentPosted(AdmitterComment comment) {
         ApplicationForm application = comment.getApplication();
-        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.ADMITTER);
+        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.ADMITTER, Authority.SUPERADMINISTRATOR);
         for (ApplicationFormUserRole role : roles) {
             applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
         }

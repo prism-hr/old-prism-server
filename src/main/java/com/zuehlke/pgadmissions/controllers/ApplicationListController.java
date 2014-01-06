@@ -93,6 +93,9 @@ public class ApplicationListController {
         }
 
         ApplicationsFiltering filtering = (ApplicationsFiltering) model.get("filtering");
+        if (filtering == null) {
+        	filtering = new ApplicationsFiltering();
+        }
 
         if (applyFilters != null) {
             if ("urgent".equals(applyFilters)) {

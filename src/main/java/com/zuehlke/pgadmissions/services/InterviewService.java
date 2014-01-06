@@ -26,7 +26,9 @@ import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
@@ -94,6 +96,9 @@ public class InterviewService {
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
         applicationForm.getEvents().add(eventFactory.createEvent(interview));
 
+        removeApplicationAdministratorReminders(interview);
+        applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_FEEDBACK_REMINDER);
+
         applicationFormDAO.save(applicationForm);
 
         if (!interview.getTakenPlace()) {
@@ -115,7 +120,8 @@ public class InterviewService {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
             applicationFormUserRoleService.validationStageCompleted(applicationForm);
         }
-        applicationFormUserRoleService.movedToInterviewStage(interview, user);
+        applicationFormUserRoleService.movedToInterviewStage(interview);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
     }
 
     private void assignInterviewDueDate(final Interview interview, ApplicationForm applicationForm) {
@@ -130,6 +136,7 @@ public class InterviewService {
         interviewParticipantDAO.save(interviewParticipant);
         interviewVoteCommentDAO.save(interviewVoteComment);
         applicationFormUserRoleService.interviewParticipantResponded(interviewParticipant);
+        applicationFormUserRoleService.registerApplicationUpdate(interviewVoteComment.getApplication(), interviewParticipant.getUser(), ApplicationUpdateScope.INTERNAL);
         mailService.sendInterviewVoteConfirmationToAdministrators(interviewParticipant);
     }
 
@@ -159,8 +166,10 @@ public class InterviewService {
         
         ApplicationForm application = interview.getApplication(); 
         assignInterviewDueDate(interview, application);
+        removeApplicationAdministratorReminders(interview);
         sendConfirmationEmails(interview);    
-        applicationFormUserRoleService.interviewConfirmed(interview, user);
+        applicationFormUserRoleService.interviewConfirmed(interview);
+        applicationFormUserRoleService.registerApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
     }
 
     private void createParticipants(final Interview interview) {
@@ -184,6 +193,33 @@ public class InterviewService {
             mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
         } catch (Exception e) {
             log.warn("{}", e);
+        }
+    }
+
+    private void removeApplicationAdministratorReminders(final Interview interview) {
+        ApplicationForm application = interview.getApplication();
+        // Check if the interview administration was delegated
+        if (application.getApplicationAdministrator() != null && interview.isScheduled()) {
+            // We remove the notification record so that the delegate does not receive reminders any longer
+            application.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST, NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
+            application.setSuppressStateChangeNotifications(false);
+        }
+    }
+
+    public void addInterviewerInPreviousInterview(ApplicationForm applicationForm, RegisteredUser newUser) {
+        Interviewer inter = newInterviewer();
+        inter.setUser(newUser);
+        interviewerDAO.save(inter);
+        Interview latestInterview = applicationForm.getLatestInterview();
+        if (latestInterview == null) {
+            Interview interview = newInterview();
+            interview.getInterviewers().add(inter);
+            interview.setApplication(applicationForm);
+            save(interview);
+            applicationForm.setLatestInterview(interview);
+        } else {
+            latestInterview.getInterviewers().add(inter);
+            save(latestInterview);
         }
     }
 

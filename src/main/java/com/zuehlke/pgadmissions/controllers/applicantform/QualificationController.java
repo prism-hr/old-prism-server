@@ -32,7 +32,9 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -40,7 +42,6 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
-import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
@@ -70,10 +71,9 @@ public class QualificationController {
     private final QualificationInstitutionDAO qualificationInstitutionDAO;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final FullTextSearchService searchService;
-    private final ContentAccessProvider contentAccessProvider;
     
 	public QualificationController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
     @Autowired
@@ -85,9 +85,8 @@ public class QualificationController {
             UserService userService, EncryptionHelper encryptionHelper, QualificationTypeDAO qualificationTypeDAO,
             QualificationTypePropertyEditor qualificationTypePropertyEditor, 
             QualificationInstitutionDAO qualificationInstitutionDAO,
-            ApplicationFormUserRoleService applicationFormUserRoleService,
-            FullTextSearchService searchService,
-            ContentAccessProvider contentAccessProvider) {
+            final ApplicationFormUserRoleService applicationFormUserRoleService,
+            final FullTextSearchService searchService) {
 		this.applicationService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
@@ -105,7 +104,6 @@ public class QualificationController {
         this.qualificationInstitutionDAO = qualificationInstitutionDAO;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.searchService = searchService;
-        this.contentAccessProvider = contentAccessProvider;
 	}
 	
 	@InitBinder(value="qualification")
@@ -125,22 +123,29 @@ public class QualificationController {
     }
 	
 	@RequestMapping(value = "/getQualification", method = RequestMethod.GET)
-	public String getQualificationView(@ModelAttribute ApplicationForm applicationForm) {
+	public String getQualificationView() {
 		return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
 	}
 	
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-	public String editQualification(@Valid Qualification qualification, BindingResult result, Model model, @ModelAttribute ApplicationForm applicationForm) {
+	public String editQualification(@Valid Qualification qualification, BindingResult result, Model model) {
+        if (qualification.getApplication().isDecided()) {
+            throw new CannotUpdateApplicationException(qualification.getApplication().getApplicationNumber());
+        }
+        
         if (result.hasErrors()) {
             if (qualification.getInstitutionCountry() != null) {
-                model.addAttribute("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(qualification.getInstitutionCountry().getCode()));
+                model.addAttribute("institutions", qualificationInstitutionDAO
+                        .getEnabledInstitutionsByCountryCode(qualification.getInstitutionCountry().getCode()));
             }
             return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
         }
+
+        ApplicationForm applicationForm = qualification.getApplication();
         
         qualificationService.save(qualification);
         applicationService.save(applicationForm);
-        applicationFormUserRoleService.applicationEdited(applicationForm, userService.getCurrentUser());
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
 	}
 	
@@ -165,15 +170,17 @@ public class QualificationController {
     	return gson.toJson(searchService.getMatchingQualificationsWithGradesLike(searchTerm));
     }
 
-	@ModelAttribute("qualification")
+	@ModelAttribute
 	public Qualification getQualification(@RequestParam(value="qualificationId", required=false) String encryptedQualificationId, Model model) {
 		if (StringUtils.isBlank(encryptedQualificationId)) {
 			return new Qualification();
 		}
+		
 		Qualification qualification = qualificationService.getQualificationById(encryptionHelper.decryptToInteger(encryptedQualificationId));
 		if (qualification == null) {
 			throw new ResourceNotFoundException();
 		}
+		
 		model.addAttribute("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(qualification.getInstitutionCountry().getCode()));
 		return qualification;
 	}
@@ -201,7 +208,9 @@ public class QualificationController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
 		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-		contentAccessProvider.validateCanEditAsApplicant(application, userService.getCurrentUser());
+		if(application == null) {
+			throw new ResourceNotFoundException();
+		}
 		return application;
 	}
 

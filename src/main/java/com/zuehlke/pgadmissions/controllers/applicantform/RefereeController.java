@@ -24,11 +24,13 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.security.ContentAccessProvider;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -52,17 +54,16 @@ public class RefereeController {
     private final UserService userService;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final FullTextSearchService searchService;
-    private final ContentAccessProvider contentAccessProvider;
 
     public RefereeController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public RefereeController(RefereeService refereeService, UserService userService, ApplicationsService applicationsService,
             DomicilePropertyEditor domicilePropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator,
             EncryptionHelper encryptionHelper, final ApplicationFormUserRoleService applicationFormUserRoleService, DomicileService domicileService, 
-            final FullTextSearchService searchService, ContentAccessProvider contentAccessProvider) {
+            final FullTextSearchService searchService) {
         this.refereeService = refereeService;
         this.userService = userService;
         this.applicationsService = applicationsService;
@@ -73,11 +74,16 @@ public class RefereeController {
         this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.domicileService = domicileService;
         this.searchService = searchService;
-        this.contentAccessProvider = contentAccessProvider;
     }
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
-    public String editReferee(String refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
+    public String editReferee(String refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap) {
+        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+
+        if (application.isDecided()) {
+            throw new CannotUpdateApplicationException(application.getApplicationNumber());
+        }
+
         Referee referee = null;
         if (StringUtils.isNotBlank(refereeId)) {
             referee = getReferee(refereeId);
@@ -104,16 +110,16 @@ public class RefereeController {
             referee.setMessenger(newReferee.getMessenger());
         }
 
-        if (!applicationForm.isSubmitted()) {
+        if (!application.isSubmitted()) {
             refereeService.save(referee);
-        } else if (applicationForm.isModifiable()) {
+        } else if (application.isModifiable()) {
             refereeService.processRefereesRoles(Arrays.asList(referee));
 
         }
 
-        applicationsService.save(applicationForm);
-        applicationFormUserRoleService.applicationEdited(applicationForm, userService.getCurrentUser());
-        return "redirect:/update/getReferee?applicationId=" + applicationForm.getApplicationNumber();
+        applicationsService.save(application);
+        applicationFormUserRoleService.registerApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber();
     }
     
     @RequestMapping(value="/referee/employer/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
@@ -138,7 +144,9 @@ public class RefereeController {
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        contentAccessProvider.validateCanEditAsApplicant(application, userService.getCurrentUser());
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
         return application;
     }
 
@@ -172,7 +180,7 @@ public class RefereeController {
     }
 
     @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
-    public String getRefereeView(@RequestParam(required = false) String refereeId, ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
+    public String getRefereeView(@RequestParam(required = false) String refereeId, ModelMap modelMap) {
         
         Referee referee = getReferee(refereeId);
         if (referee == null) {

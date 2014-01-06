@@ -30,14 +30,12 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
-import com.zuehlke.pgadmissions.security.ActionsProvider;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
@@ -63,24 +61,21 @@ public class ApplicationListController {
     private final ApplicationSummaryService applicationSummaryService;
 
     private final ApplicationsFilteringService filteringService;
-    
-    private final ActionsProvider actionsProvider;
 
     public ApplicationListController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
-            ApplicationsFiltersPropertyEditor filtersPropertyEditor, ApplicationSummaryService applicationSummaryService,
-            ApplicationsFilteringService filteringService, ActionsProvider actionsProvider) {
+            ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService,
+            ApplicationsFilteringService filteringService) {
         this.applicationsService = applicationsService;
         this.applicationsReportService = applicationsReportService;
         this.userService = userService;
         this.filtersPropertyEditor = filtersPropertyEditor;
         this.applicationSummaryService = applicationSummaryService;
         this.filteringService = filteringService;
-        this.actionsProvider = actionsProvider;
     }
 
     @InitBinder(value = "filtering")
@@ -98,9 +93,6 @@ public class ApplicationListController {
         }
 
         ApplicationsFiltering filtering = (ApplicationsFiltering) model.get("filtering");
-        if (filtering == null) {
-        	filtering = new ApplicationsFiltering();
-        }
 
         if (applyFilters != null) {
             if ("urgent".equals(applyFilters)) {
@@ -156,7 +148,6 @@ public class ApplicationListController {
     @RequestMapping(value = "/getApplicationDetails", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, String> getApplicationDetails(@RequestParam String applicationId) {
-    	actionsProvider.validateAction(applicationsService.getApplicationByApplicationNumber(applicationId), getUser(), ApplicationFormAction.VIEW);
         return applicationSummaryService.getSummary(applicationId);
     }
 

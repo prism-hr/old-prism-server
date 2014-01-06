@@ -109,7 +109,7 @@ public class ResearchOpportunitiesFeedService {
     }
 
     private ResearchOpportunitiesFeed getDefaultOpportunitiesFeed(final RegisteredUser user, FeedFormat format) {
-        List<Program> defaultPrograms = programService.getProgramsOfWhichProjectAuthor(user);
+        List<Program> defaultPrograms = programService.getProgramsForWhichCanManageProjects(user);
 
         ResearchOpportunitiesFeed defaultFeedSmall = new ResearchOpportunitiesFeed();
         defaultFeedSmall.setId(format == FeedFormat.SMALL ? DEFAULT_SMALL_FEED_ID : DEFAULT_LARGE_FEED_ID);

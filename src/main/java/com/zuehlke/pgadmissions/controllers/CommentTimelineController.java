@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.TimelineObject;
-import com.zuehlke.pgadmissions.security.ContentAccessProvider;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.TimelineService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -28,31 +28,31 @@ public class CommentTimelineController {
 	private final UserService userService;
 	private final ApplicationsService applicationService;
 	private final TimelineService timelineService;
-	private final ContentAccessProvider contentAccessProvider;
 
 	CommentTimelineController() {
-		this(null, null, null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public CommentTimelineController(ApplicationsService applicationsService, UserService userService, 
-			TimelineService timelineService, ContentAccessProvider contentAccessProvider) {
+	public CommentTimelineController(ApplicationsService applicationsService, UserService userService, TimelineService timelineService) {
 		this.applicationService = applicationsService;
 		this.userService = userService;
 		this.timelineService = timelineService;
-		this.contentAccessProvider = contentAccessProvider;
+
 	}
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String id) {
 		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
-		contentAccessProvider.validateCanViewApplication(applicationForm, getUser());
+		if (applicationForm == null) {
+			throw new ResourceNotFoundException();
+		}
 		return applicationForm;
 	}
 
 
 	@RequestMapping(value = { "/view" }, method = RequestMethod.GET)
-	public String getCommentsView(@ModelAttribute ApplicationForm applicationForm) {
+	public String getCommentsView() {
 		return COMMENTS_VIEW;
 	}
 	

@@ -37,14 +37,13 @@ import org.hibernate.search.annotations.Store;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "REGISTERED_USER")
 @Indexed
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class RegisteredUser extends AbstractAuthorisationAPI implements UserDetails,
+public class RegisteredUser extends Authorisable implements UserDetails,
 		Comparable<RegisteredUser>, Serializable {
 
 	private static final long serialVersionUID = 7913035836949510857L;
@@ -184,8 +183,31 @@ public class RegisteredUser extends AbstractAuthorisationAPI implements UserDeta
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date applicationListLastAccessTimestamp;
 
+	@Transient
+	private boolean canManageProjects;
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
 	private List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds = new ArrayList<ResearchOpportunitiesFeed>();
+
+	public boolean canSee(ApplicationForm applicationForm) {
+		return canSeeApplication(applicationForm, this);
+	}
+
+	public boolean canEditAsApplicant(ApplicationForm applicationForm) {
+		return canEditApplicationAsApplicant(applicationForm, this);
+	}
+
+	public boolean canEditAsAdministrator(ApplicationForm applicationForm) {
+		return canEditApplicationAsAdministrator(applicationForm, this);
+	}
+
+	public boolean canSeeReference(final ReferenceComment reference) {
+		return canSeeReference(reference, this);
+	}
+
+	public boolean canSeeRestrictedInformation(final ApplicationForm form) {
+		return canSeeRestrictedInformation(form, this);
+	}
 
 	@Override
 	public int compareTo(final RegisteredUser other) {
@@ -220,17 +242,7 @@ public class RegisteredUser extends AbstractAuthorisationAPI implements UserDeta
 	public Collection<Role> getAuthorities() {
 		return getRoles();
 	}
-	
-	public List<Authority> getAuthoritiesForSystem() {
-		List<Authority> foundRoles = new ArrayList<Authority>();
-		for (Authority role : AuthorityGroup.SYSTEM.authorities()) {
-			if (isInRole(role)) {
-				foundRoles.add(role);
-			}
-		}
-		return foundRoles;
-	}
-	
+
 	public List<Authority> getAuthoritiesForProgram(final Program programme) {
 		return getAuthoritiesForProgramme(programme, this);
 	}
@@ -249,10 +261,6 @@ public class RegisteredUser extends AbstractAuthorisationAPI implements UserDeta
 					.toLowerCase()));
 		}
 		return stringBuffer.toString();
-	}
-	
-	public List<Authority> getAuthoritiesForProject(final Project project) {
-		return getAuthoritiesForProject(project, this);
 	}
 
 	public List<Comment> getComments() {
@@ -405,6 +413,10 @@ public class RegisteredUser extends AbstractAuthorisationAPI implements UserDeta
 		return username;
 	}
 
+	public boolean hasAdminRightsOnApplication(final ApplicationForm form) {
+		return hasAdminRightsOnApplication(form, this);
+	}
+
 	public boolean hasDeclinedToProvideReviewForApplication(final ApplicationForm form) {
 		for (Comment comment : comments) {
 			if (comment.getApplication().getId().equals(form.getId())
@@ -469,6 +481,10 @@ public class RegisteredUser extends AbstractAuthorisationAPI implements UserDeta
 		return false;
 	}
 
+	public boolean hasStaffRightsOnApplicationForm(final ApplicationForm form) {
+		return hasStaffRightsOnApplication(form, this);
+	}
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return accountNonExpired;
@@ -497,8 +513,16 @@ public class RegisteredUser extends AbstractAuthorisationAPI implements UserDeta
 		return isInRole(this, authority);
 	}
 
+	public boolean isInRole(final String strAuthority) {
+		return isInRole(this, strAuthority);
+	}
+
 	public boolean isNotInRole(final Authority authority) {
 		return !isInRole(this, authority);
+	}
+
+	public boolean isNotInRole(final String strAuthority) {
+		return !isInRole(this, strAuthority);
 	}
 
 	public boolean isInRoleInProgram(final Authority authority, final Program programme) {
@@ -533,12 +557,28 @@ public class RegisteredUser extends AbstractAuthorisationAPI implements UserDeta
 		return isViewerOfProgramme(form, this);
 	}
 
+	public boolean isApplicationAdministrator(final ApplicationForm form) {
+		return isApplicationAdministrator(form, this);
+	}
+
 	public boolean isApplicant(final ApplicationForm form) {
 		return isApplicant(form, this);
 	}
 
 	public boolean isProgrammeAdministrator(final ApplicationForm form) {
 		return isProgrammeAdministrator(form, this);
+	}
+
+	public boolean isPastOrPresentInterviewerOfApplicationForm(final ApplicationForm form) {
+		return isPastOrPresentInterviewerOfApplication(form, this);
+	}
+
+	public boolean isPastOrPresentReviewerOfApplicationForm(final ApplicationForm form) {
+		return isPastOrPresentReviewerOfApplication(form, this);
+	}
+
+	public boolean isPastOrPresentSupervisorOfApplicationForm(final ApplicationForm form) {
+		return isPastOrPresentSupervisorOfApplication(form, this);
 	}
 
 	public boolean isRefereeOfApplicationForm(final ApplicationForm form) {
@@ -694,6 +734,14 @@ public class RegisteredUser extends AbstractAuthorisationAPI implements UserDeta
 
 	public void setUpi(final String upi) {
 		this.upi = upi;
+	}
+
+	public boolean isCanManageProjects() {
+		return canManageProjects;
+	}
+
+	public void setCanManageProjects(boolean canManageProjects) {
+		this.canManageProjects = canManageProjects;
 	}
 
 	@Override

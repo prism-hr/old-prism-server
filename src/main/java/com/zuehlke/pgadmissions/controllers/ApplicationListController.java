@@ -102,14 +102,10 @@ public class ApplicationListController {
             	filtering.setSortCategory(SortCategory.URGENT);
             } else if ("update".equals(applyFilters)) {
             	filtering.setSortCategory(SortCategory.UPDATE);
-            } else if ("reload".equals(applyFilters)) {
-            	filtering = filteringService.getStoredOrDefaultFiltering(getUser());               
             }
         }
 
-        if (filtering == null) {
-            filtering = filteringService.getStoredOrDefaultFiltering(getUser());
-        }
+       filtering = filteringService.getStoredOrDefaultFiltering(getUser());
 
         model.addAttribute("filtering", filtering);
         return APPLICATION_LIST_PAGE_VIEW_NAME;

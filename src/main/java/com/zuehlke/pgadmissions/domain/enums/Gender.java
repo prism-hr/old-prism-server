@@ -15,5 +15,4 @@ public enum Gender {
 	private Gender(String displayValue) {
 		this.displayValue = displayValue;
 	}
-	
 }

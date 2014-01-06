@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -15,6 +17,8 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.springframework.util.StringUtils;
+
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Entity(name = "REFERENCE_COMMENT")
 public class ReferenceComment extends Comment {
@@ -40,12 +44,24 @@ public class ReferenceComment extends Comment {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdated;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "comment_type")
+    private CommentType type;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provided_by")
     private RegisteredUser providedBy;
 
     @Transient
     private String alert;
+
+    public CommentType getType() {
+        return type;
+    }
+
+    public void setType(CommentType type) {
+        this.type = type;
+    }
 
     public boolean isSuitableForUCLSet() {
         return suitableForUCL != null;
@@ -116,5 +132,4 @@ public class ReferenceComment extends Comment {
             return super.getTooltipMessage(role);
         }
     }
-    
 }

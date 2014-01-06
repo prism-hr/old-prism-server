@@ -2,11 +2,13 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 import org.apache.commons.lang.StringUtils;
 
+/*
+ * Please use Boolean or boolean instead of this :)
+ */
 @Deprecated
 public enum CheckedStatus {
 
-	YES, 
-	NO;
+	YES, NO;
 
 	public String displayValue() {
 		return StringUtils.capitalize(this.toString().toLowerCase());

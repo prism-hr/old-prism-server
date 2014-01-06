@@ -88,12 +88,8 @@ public class RefereeService {
     }
 
     public void declineToActAsRefereeAndSendNotification(Referee referee) {
-    	ReferenceComment reference = new ReferenceComment();
-    	reference.setApplication(referee.getApplication());
-    	reference.setDeclined(true);
-    	reference.setType(CommentType.REFERENCE);
-    	reference.setUser(referee.getUser());
-    	commentService.save(reference);
+        referee.setDeclined(true);
+        refereeDAO.save(referee);
         addReferenceEventToApplication(referee);
     }
 

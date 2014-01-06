@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -11,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "SUPERVISION_CONFIRMATION_COMMENT")
@@ -45,6 +48,18 @@ public class SupervisionConfirmationComment extends Comment {
     @ManyToOne
     @JoinColumn(name = "secondary_supervisor_id")
     private Supervisor secondarySupervisor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "comment_type")
+    private CommentType type;
+
+    public CommentType getType() {
+        return type;
+    }
+
+    public void setType(CommentType type) {
+        this.type = type;
+    }
 
     public Supervisor getSupervisor() {
         return supervisor;

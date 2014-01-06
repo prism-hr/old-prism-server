@@ -21,5 +21,6 @@ public class InterviewEvaluationComment extends StateChangeComment {
 	public void setInterview(Interview interview) {
 		this.interview = interview;
 	}
+
 	
 }

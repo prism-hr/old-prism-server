@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -25,24 +26,30 @@ public class Score implements Serializable {
     @GeneratedValue
     private Integer id;
 
+    @Basic
     @Column(name = "question_type")
     @Enumerated(EnumType.STRING)
     private QuestionType questionType;
 
+    @Basic
     @Column(name = "question")
     private String question;
 
+    @Basic
     @Column(name = "text_response")
     private String textResponse;
 
+    @Basic
     @Temporal(value = TemporalType.DATE)
     @Column(name = "date_response")
     private Date dateResponse;
 
+    @Basic
     @Temporal(value = TemporalType.DATE)
     @Column(name = "second_date_response")
     private Date secondDateResponse;
 
+    @Basic
     @Column(name = "rating_response")
     private Integer ratingResponse;
 
@@ -112,5 +119,6 @@ public class Score implements Serializable {
     public void setOriginalQuestion(Question originalQuestion) {
         this.originalQuestion = originalQuestion;
     }
+
 
 }

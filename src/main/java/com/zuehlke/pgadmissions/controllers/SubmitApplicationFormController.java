@@ -19,14 +19,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
-import com.zuehlke.pgadmissions.security.ContentAccessProvider;
+import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EventFactory;
@@ -56,10 +59,10 @@ public class SubmitApplicationFormController {
     private final EventFactory eventFactory;
 
     private final UserService userService;
+
+    private final ActionsProvider actionsProvider;
     
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
-    
-    private final ContentAccessProvider contentAccessProvider;
 
     public SubmitApplicationFormController() {
         this(null, null, null, null, null, null, null);
@@ -67,19 +70,23 @@ public class SubmitApplicationFormController {
 
     @Autowired
     public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
-            StageDurationService stageDurationService, EventFactory eventFactory, ApplicationFormUserRoleService applicationFormUserRoleService, 
-            ContentAccessProvider contentAccessProvider) {
+            StageDurationService stageDurationService, EventFactory eventFactory, 
+            ActionsProvider actionsProvider, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
         this.stageDurationService = stageDurationService;
         this.eventFactory = eventFactory;
+        this.actionsProvider = actionsProvider;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.contentAccessProvider = contentAccessProvider;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String submitApplication(@Valid @ModelAttribute ApplicationForm applicationForm, BindingResult result, HttpServletRequest request) {
+    public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result, HttpServletRequest request) {
+        if (!getCurrentUser().getId().equals(applicationForm.getApplicant().getId())) {
+            throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
+        }
+
         if (result.hasErrors()) {
             if (result.getFieldError("program") != null) {
                 throw new CannotApplyToProgramException(applicationForm.getProgram());
@@ -100,6 +107,7 @@ public class SubmitApplicationFormController {
         assignBatchDeadline(applicationForm);
         applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
         applicationFormUserRoleService.applicationSubmitted(applicationForm);
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
     }
 
@@ -124,10 +132,11 @@ public class SubmitApplicationFormController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
-        RegisteredUser user = getCurrentUser();    
-        applicationFormUserRoleService.applicationViewed(applicationForm, user);
+        RegisteredUser user = getCurrentUser();
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.VIEW);      
+        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         
-        if (contentAccessProvider.checkCanEditAsApplicant(applicationForm, user)) {
+        if (user.canEditAsApplicant(applicationForm)) {
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }
 
@@ -135,7 +144,7 @@ public class SubmitApplicationFormController {
             return VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME;
         }
 
-        if (BooleanUtils.isTrue(contentAccessProvider.checkActionAvailable(applicationForm, user, ApplicationFormAction.VIEW_EDIT))) {
+        if (BooleanUtils.isTrue(actionsProvider.checkActionAvailable(applicationForm, user, ApplicationFormAction.VIEW_EDIT))) {
             return "redirect:/editApplicationFormAsProgrammeAdmin?applicationId=" + applicationForm.getApplicationNumber();
         }
 
@@ -149,13 +158,21 @@ public class SubmitApplicationFormController {
     @ModelAttribute
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
-        contentAccessProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.VIEW);  
+        if (applicationForm == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
         return applicationForm;
     }
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        return contentAccessProvider.getApplicationDescriptorForUser(getApplicationForm(applicationId), getCurrentUser());
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        RegisteredUser user = getUser();
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
-    
+
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return getCurrentUser();
+    }
 }

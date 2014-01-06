@@ -168,12 +168,12 @@ public class ApplicationSummaryService {
 
 	private void addReferences(ApplicationForm form, Map<String, String> result) {
 		Integer numberOfResponsed = CollectionUtils.countMatches(
-			form.getReferees(), new Predicate() {
-				@Override
-				public boolean evaluate(Object object) {
-					return ((Referee) object).getReference() != null;
-				}
-			});
+				form.getReferees(), new Predicate() {
+					@Override
+					public boolean evaluate(Object object) {
+						return ((Referee) object).hasResponded();
+					}
+				});
 		result.put("numberOfReferences", numberOfResponsed.toString());
 	}
 

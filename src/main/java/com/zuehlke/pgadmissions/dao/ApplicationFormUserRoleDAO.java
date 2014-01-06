@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -9,8 +10,10 @@ import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.enums.ActionScope;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -110,6 +112,37 @@ public class ApplicationFormUserRoleDAO {
     public List<ActionDefinition> findActionsByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
     	return findActionsByUserIdAndApplicationIdAndApplicationFormStatus(user.getId(), applicationForm.getId(), applicationForm.getStatus());
     }
+    
+    public List<ActionDefinition> findActionsByUserIdAndApplicationIdAndApplicationFormStatus(Integer registeredUserId, Integer applicationFormId, ApplicationFormStatus status) {
+    	Query query = sessionFactory.getCurrentSession()
+    		.createSQLQuery("CALL SELECT_APPLICATION_FORM_ACTION(?, ?, ?);")
+	    		.setInteger(0, registeredUserId)
+	    		.setInteger(1, applicationFormId)
+	    		.setString(2, status.toString());
+    	
+    	List<Object[]> rows = (List<Object[]>) query.list();
+    	List<ActionDefinition> actionDefinitions = new ArrayList<ActionDefinition>();
+    	
+    	Boolean hasViewAction = false;
+    	
+    	for (Object[] row : rows) {
+    		ApplicationFormAction action = ApplicationFormAction.valueOf((String)row[0]);
+    		Boolean raisesUrgentFlag = BooleanUtils.toBooleanObject((Integer) row[1]);
+			
+			if (action == ApplicationFormAction.VIEW) {
+				hasViewAction = true;
+			}
+    		
+    		if (action == ApplicationFormAction.VIEW_EDIT &&
+    			BooleanUtils.isTrue(hasViewAction)) {
+    			actionDefinitions.remove(actionDefinitions.size() - 1);
+    		}
+    		
+			actionDefinitions.add(new ActionDefinition(action, raisesUrgentFlag));
+    	}
+    	
+    	return actionDefinitions;
+    }
 
     public Boolean findRaisesUpdateFlagByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
         Boolean raisesUpdateFlag = (Boolean) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
@@ -143,62 +176,80 @@ public class ApplicationFormUserRoleDAO {
         return false;
     }
     
-    public List<ActionDefinition> findActionsByUserIdAndApplicationIdAndApplicationFormStatus(Integer registeredUserId, Integer applicationFormId, ApplicationFormStatus status) {
+    public void insertUserinRole(RegisteredUser registeredUser, Authority authority) {
     	Query query = sessionFactory.getCurrentSession()
-    		.createSQLQuery("CALL SELECT_APPLICATION_FORM_ACTIONS(?, ?, ?);")
-	    		.setInteger(0, registeredUserId)
-	    		.setInteger(1, applicationFormId)
-	    		.setString(2, status.toString());
+    		.createSQLQuery("CALL INSERT_USER_IN_SYSTEM_ROLE(?, ?);")
+	    		.setInteger(0, registeredUser.getId())
+	    		.setString(1, authority.toString());
+    		query.executeUpdate();
+    }
     	
-    	List<Object[]> rows = (List<Object[]>) query.list();
-    	List<ActionDefinition> actionDefinitions = new ArrayList<ActionDefinition>();
-    	
-    	Boolean hasViewAction = false;
-    	
-    	for (Object[] row : rows) {
-    		ApplicationFormAction action = ApplicationFormAction.valueOf((String)row[0]);
-    		Boolean raisesUrgentFlag = BooleanUtils.toBooleanObject((Integer) row[1]);
-			
-			if (action == ApplicationFormAction.VIEW) {
-				hasViewAction = true;
-			}
-    		
-    		if (action == ApplicationFormAction.VIEW_EDIT &&
-    			BooleanUtils.isTrue(hasViewAction)) {
-    			actionDefinitions.remove(actionDefinitions.size() - 1);
-    		}
-    		
-			actionDefinitions.add(new ActionDefinition(action, raisesUrgentFlag));
-    	}
-    	
-    	return actionDefinitions;
+    public void insertUserInProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {
+    	Query query = sessionFactory.getCurrentSession()
+    		.createSQLQuery("CALL INSERT_USER_IN_PROGRAM_ROLE(?, ?, ?);")
+	    		.setInteger(0, registeredUser.getId())
+	    		.setInteger(1, program.getId())
+	    		.setString(2, authority.toString());
+    	query.executeUpdate();
+    }
+    
+    public void insertUserInProjectRole(RegisteredUser registeredUser, Project project, Authority authority) {
+    	Query query = sessionFactory.getCurrentSession()
+    		.createSQLQuery("CALL INSERT_USER_IN_PROJECT_ROLE(?, ?, ?);")
+	    		.setInteger(0, registeredUser.getId())
+	    		.setInteger(1, project.getId())
+	    		.setString(2, authority.toString());
+    	query.executeUpdate();
+    }
+    
+    public void deleteUserFromRole (RegisteredUser registeredUser, Authority authority) {
+    	Query query = sessionFactory.getCurrentSession()
+    		.createSQLQuery("CALL DELETE_USER_FROM_SYSTEM_ROLE(?, ?);")
+	    		.setInteger(0, registeredUser.getId())
+	    		.setString(1, authority.toString());
+    	query.executeUpdate();
+    }
+    
+    public void deleteUserFromProgramRole (RegisteredUser registeredUser, Program program, Authority authority) {
+		Query query = sessionFactory.getCurrentSession()
+			.createSQLQuery("CALL DELETE_USER_FROM_PROGRAM_ROLE(?, ?, ?);")
+				.setInteger(0, registeredUser.getId())
+				.setInteger(1, program.getId())
+				.setString(2, authority.toString());
+		query.executeUpdate();
+	}
+    
+    public void deleteUserFromProjectRole (RegisteredUser registeredUser, Project project, Authority authority) {
+		Query query = sessionFactory.getCurrentSession()
+				.createSQLQuery("CALL DELETE_USER_FROM_PROJECT_ROLE(?, ?, ?);")
+					.setInteger(0, registeredUser.getId())
+					.setInteger(1, project.getId())
+					.setString(2, authority.toString());
+			query.executeUpdate();
     }
 
 	public void updateRaisesUrgentFlag() {
-		Session session = sessionFactory.getCurrentSession();
-		
-		Query query = session.createSQLQuery("CALL UPDATE_RAISES_URGENT_FLAG();");
+		Query query = sessionFactory.getCurrentSession().
+			createSQLQuery("CALL UPDATE_RAISES_URGENT_FLAG();");
 		query.executeUpdate();
-		
-		session.flush();
 	}
 	
 	public void updateApplicationFormActionRequiredDeadline(ApplicationForm applicationForm, Date deadlineTimestamp) {
 		applicationForm.setDueDate(deadlineTimestamp);
 		Session session = sessionFactory.getCurrentSession();
+		session.flush();
 		
-		Query query = session.createSQLQuery("CALL UPDATE_ACTION_REQUIRED_DEADLINE(?, ?);")
+		Query query = session.createSQLQuery("CALL UPDATE_APPLICATION_FORM_DUE_DATE(?, ?);")
 			.setInteger(0, applicationForm.getId())
 			.setDate(1, deadlineTimestamp);
 		query.executeUpdate();
-		
-		session.flush();
 	}
 	
 	public void updateApplicationFormUpdateTimestamp(ApplicationForm applicationForm, RegisteredUser registeredUser, 
 			Date updateTimestamp, ApplicationUpdateScope updateVisibility) {
         applicationForm.setLastUpdated(updateTimestamp);
 		Session session = sessionFactory.getCurrentSession();
+		session.flush();
 		
 		Query query = sessionFactory.getCurrentSession()
 			.createSQLQuery("CALL INSERT_APPLICATION_FORM_UPDATE(?, ?, ?, ?);")
@@ -207,49 +258,76 @@ public class ApplicationFormUserRoleDAO {
 				.setString(2, javaDateToMySQLDateString(updateTimestamp))
 				.setInteger(3, ApplicationUpdateScope.valueOf(updateVisibility.toString()).ordinal());
 		query.executeUpdate();
-		
-		session.flush();
 	}
 	
-    public void insertUserinRole(RegisteredUser user, Authority authority) {
-    	insertRoles(null, null, user, authority);
-    }
-    	
-    public void insertUserInProgramRole(RegisteredUser user, Program program, Authority authority) {
-    	insertRoles(program, null, user, authority);
-    }
-    
-    public void insertUserInProjectRole(RegisteredUser user, Project project, Authority authority) {
-    	insertRoles(project.getProgram(), project, user, authority);
-    }
-	
 	public void deleteAllProgramRoles (Program program) {
-		deleteRoles(program, null, null, null, null, ActionScope.APPLICATION);
+		Query query = sessionFactory.getCurrentSession()
+				.createSQLQuery("CALL DELETE_PROGRAM_ROLES(?);")
+					.setInteger(0, program.getId());
+			query.executeUpdate();
 	}
 	
 	public void deleteAllProjectRoles (Project project) {
-		deleteRoles(project.getProgram(), project, null, null, null, ActionScope.APPLICATION);
+		Query query = sessionFactory.getCurrentSession()
+				.createSQLQuery("CALL DELETE_PROJECT_ROLES(?);")
+					.setInteger(0, project.getId());
+			query.executeUpdate();
 	}
 	
-	public void deleteAllApplicationRoles (ApplicationForm application) {
-		deleteRoles(application.getProgram(), application.getProject(), application, null, null, ActionScope.APPLICATION);
+	public void deleteAllApplicationRoles (ApplicationForm applicationForm) {
+		Query query = sessionFactory.getCurrentSession()
+			.createSQLQuery("CALL DELETE_APPLICATION_ROLES(?);")
+				.setInteger(0, applicationForm.getId());
+		query.executeUpdate();
 	}
 	
-	public void deleteAllStateRoles(ApplicationForm application) {
-		deleteRoles(application.getProgram(), application.getProject(), application, null, null, ActionScope.STATE);
+	public void deleteAllStateRoles(ApplicationForm applicationForm) {
+		Query query = sessionFactory.getCurrentSession()
+			.createSQLQuery("CALL DELETE_STATE_ROLES(?);")
+				.setInteger(0, applicationForm.getId());
+		query.executeUpdate();
 	}
-	
-    public void deleteUserFromSystemRole (RegisteredUser user, Authority authority) {
-		deleteRoles(null, null, null, user, authority, ActionScope.APPLICATION);
-    }
-    
-    public void deleteUserFromProgramRole (RegisteredUser user, Program program, Authority authority) {
-		deleteRoles(program, null, null, user, authority, ActionScope.APPLICATION);
+
+	public List<RegisteredUser> findUsersInterestedInApplication(ApplicationForm applicationForm) {
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+				.setProjection(Projections.projectionList()
+					.add(Projections.groupProperty("user"), "user"))
+				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+				.add(Restrictions.eq("applicationForm", applicationForm))
+				.add(Restrictions.eq("interestedInApplicant", true))
+				.add(Restrictions.disjunction()
+						.add(Restrictions.eq("registeredUser.enabled", true))
+						.add(Restrictions.conjunction()
+							.add(Restrictions.eq("registeredUser.enabled", false))
+							.add(Restrictions.in("role.id", Arrays.asList(Authority.SUGGESTEDSUPERVISOR)))))
+				.addOrder(Order.asc("registeredUser.lastName"))
+				.addOrder(Order.asc("registeredUser.firstName"))
+				.addOrder(Order.asc("registeredUser.id")).list();
 	}
-    
-    public void deleteUserFromProjectRole (RegisteredUser user, Project project, Authority authority) {
-		deleteRoles(project.getProgram(), project, null, user, authority, ActionScope.APPLICATION);
-    }
+
+	public List<RegisteredUser> findUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
+		DetachedCriteria usersInterestedInApplicant = DetachedCriteria.forClass(ApplicationFormUserRole.class)
+				.setProjection(Projections.projectionList()
+					.add(Projections.groupProperty("user")))
+				.add(Restrictions.eq("applicationForm", applicationForm))
+				.add(Restrictions.eq("interestedInApplicant", true));
+		
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+				.setProjection(Projections.projectionList()
+					.add(Projections.groupProperty("user"), "user"))
+				.createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+				.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+				.add(Restrictions.eq("program.id", applicationForm.getProgram().getId()))
+				.add(Restrictions.in("role.id", Arrays.asList(Authority.REVIEWER, Authority.INTERVIEWER, Authority.SUPERVISOR, 
+						Authority.SUGGESTEDSUPERVISOR, Authority.APPROVER, Authority.STATEADMINISTRATOR, Authority.PROJECTADMINISTRATOR)))
+				.add(Restrictions.isNull("registeredUser.primaryAccount"))
+				.add(Restrictions.eq("registeredUser.enabled", true))
+				.add(Property.forName("user").notIn(usersInterestedInApplicant))
+				.addOrder(Order.asc("registeredUser.lastName"))
+				.addOrder(Order.asc("registeredUser.firstName"))
+				.addOrder(Order.asc("registeredUser.id")).list();
+	}
 	
 	public void deleteActionsAndFlushToDB(ApplicationFormUserRole applicationFormUserRole) {
 		applicationFormUserRole.getActions().clear();
@@ -262,32 +340,6 @@ public class ApplicationFormUserRoleDAO {
 		return outputDateFormat.format(date);
 	}
 	
-	private void insertRoles(Program program, Project project, RegisteredUser user, Authority authority) {
-		Session session = sessionFactory.getCurrentSession();
-		
-		Query query = session.createSQLQuery("CALL INSERT_ROLES(?, ?, ?, ?);")
-					.setInteger(0, program.getId())
-					.setInteger(1, project.getId())
-					.setInteger(2, user.getId())
-					.setText(3, authority.toString());
-		query.executeUpdate();
-			
-		session.flush();
-	}
-
-	private void deleteRoles(Program program, Project project, ApplicationForm application, RegisteredUser user, Authority authority, ActionScope scope) {
-		Session session = sessionFactory.getCurrentSession();
-		
-		Query query = session.createSQLQuery("CALL DELETE_ROLES(?, ?, ?, ?, ?, ?);")
-					.setInteger(0, program.getId())
-					.setInteger(1, project.getId())
-					.setInteger(2, application.getId())
-					.setInteger(3, user.getId())
-					.setText(4, authority.toString())
-					.setText(5, scope.toString());
-		query.executeUpdate();
-			
-		session.flush();
-	}
+	
 	
 }

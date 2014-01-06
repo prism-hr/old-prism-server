@@ -1,18 +1,17 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum FundingType {
+public enum HomeOrOverseas {
 
-	SCHOLARSHIP("Scholarship/Grant"), EMPLOYER("Employer"), SPONSOR("Industrial sponsor");
+	HOME("Home/EU"), OVERSEAS("Overseas"), UNSURE("Unsure");
 
 	private final String displayValue;
 
-	private FundingType(String displayValue) {
+	private HomeOrOverseas(String displayValue){	
 		this.displayValue = displayValue;
 	}
 
 	public String getDisplayValue() {
 		return displayValue;
 	}
-
 	
 }

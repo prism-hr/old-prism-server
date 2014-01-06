@@ -1,18 +1,15 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum FundingType {
-
-	SCHOLARSHIP("Scholarship/Grant"), EMPLOYER("Employer"), SPONSOR("Industrial sponsor");
-
+public enum ValidationQuestionOptions {
+	YES("Yes"), NO("No"), UNSURE("Unsure");
+	
 	private final String displayValue;
 
-	private FundingType(String displayValue) {
+	private ValidationQuestionOptions(String displayValue){	
 		this.displayValue = displayValue;
 	}
 
 	public String getDisplayValue() {
 		return displayValue;
 	}
-
-	
 }

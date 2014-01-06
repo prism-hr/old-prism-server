@@ -21,5 +21,4 @@ public class ReviewEvaluationComment extends StateChangeComment {
 	public void setReviewRound(ReviewRound reviewRound) {
 		this.reviewRound = reviewRound;
 	}
-	
 }

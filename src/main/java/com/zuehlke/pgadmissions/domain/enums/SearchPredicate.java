@@ -2,10 +2,13 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 public enum SearchPredicate {
 
-    CONTAINING("containing"),
+    // text predicates
+    CONTAINING("containing"), //
     NOT_CONTAINING("not containing"),
-    FROM_DATE("from"),
-    ON_DATE("on"),
+
+    // date predicates
+    FROM_DATE("from"), //
+    ON_DATE("on"), //
     TO_DATE("to");
 
     private final String displayValue;

@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -101,6 +102,7 @@ public class RegisterController {
 
 		RegisteredUser existingDisabledUser = userService.getUserByEmailDisabledAccountsOnly(pendingUser.getEmail());
 		if (existingDisabledUser != null && StringUtils.isBlank(pendingUser.getActivationCode())) {
+			// Kevin: This means a user tries to register without using the link provided in the registration email.
 			registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(existingDisabledUser);
 			return REGISTER_NOT_COMPLETE_VIEW_NAME;
 		}
@@ -164,8 +166,8 @@ public class RegisterController {
 		String projectId = params.get("project");
 		if (!StringUtils.isBlank(projectId) && StringUtils.isNumeric(projectId)) {
 			project = programService.getProject(Integer.valueOf(projectId));
-			if (!project.isAcceptingApplications()) {
-				project = null;
+			if (project == null || !project.isAcceptingApplications()) {
+				throw new CannotApplyToProjectException(project);
 			}
 		}
 		String applyingAdvertId = params.get("advert");

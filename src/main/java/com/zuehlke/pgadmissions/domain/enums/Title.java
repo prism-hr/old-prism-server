@@ -33,5 +33,4 @@ public enum Title {
     public String getDisplayValue() {
         return title;
     }
-    
 }

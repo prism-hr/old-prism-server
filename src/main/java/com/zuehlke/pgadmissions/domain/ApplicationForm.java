@@ -40,8 +40,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatusType;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentTypeAuthority;
-import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
-import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Entity(name = "APPLICATION_FORM")
@@ -246,65 +244,8 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     @OneToMany(mappedBy = "applicationForm", fetch = FetchType.LAZY)
     private List<ApplicationFormUserRole> applicationFormUserRoles = new ArrayList<ApplicationFormUserRole>();
 
-    @Column(name = "average_rating", precision = 3, scale = 2)
-    private BigDecimal averageRating = null;
-    
-    @Column(name = "total_positive_endorsements")
-    private Integer totalPositiveEndorsements = 0;
-   
-    @Column(name = "total_negative_endorsements")
-    private Integer totalNegativeEndorsements = 0;
-    
-    @Column(name = "seconds_in_validation")
-    private Integer secondsInValidation = 0;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "academically_competent")
-    private ValidationQuestionOptions academicallyCompetent = null;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "linguistically_competent")
-    private ValidationQuestionOptions linguisticallyCompetent = null;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "fee_status")
-    private HomeOrOverseas feeStatus = null;
-    
-    @Column(name = "positive_reference_endorsements")
-    private Integer positiveReferenceEndorsements = 0;
-    
-    @Column(name = "negative_reference_endorsements")
-    private Integer negativeReferenceEndorsements = 0;
-    
-    @Column(name = "average_reference_rating", precision = 3, scale = 2)
-    private BigDecimal averageReferenceRating = null;
-    
-    @Column(name = "seconds_in_review")
-    private Integer secondsInReview = 0;
-    
-    @Column(name = "positive_review_endorsements")
-    private Integer positiveReviewEndorsements = 0;
-    
-    @Column(name = "negative_review_endorsements")
-    private Integer negativeReviewEndorsements = 0;
-    
-    @Column(name = "average_review_rating", precision = 3, scale = 2)
-    private BigDecimal averageReviewRating = null;
-    
-    @Column(name = "seconds_in_interview")
-    private Integer secondsInInterview = 0;
-    
-    @Column(name = "positive_interview_endorsements")
-    private Integer positiveInterviewEndorsements = 0;
-    
-    @Column(name = "negative_interview_endorsements")
-    private Integer negativeInterviewEndorsements = 0;
-    
-    @Column(name = "average_interview_rating", precision = 3, scale = 2)
-    private BigDecimal averageInterviewRating = null;
-    
-    @Column(name = "seconds_in_approval")
-    private Integer secondsInApproval = 0;
+    @Column(name = "avg_rating", precision = 3, scale = 2)
+    private BigDecimal averageRating;
 
     public List<Qualification> getQualifications() {
         return qualifications;
@@ -504,10 +445,10 @@ public class ApplicationForm implements FormSectionObject, Serializable {
     }
 
     public void setStatus(ApplicationFormStatus status) {
-    	setPreviousStatus(this.status);
+    	this.previousStatus = this.status;
         this.status = status;
-    	setNextStatus(null);
-    	setIsEditableByApplicant(Arrays.asList(ApplicationFormStatusType.EDITABLEBYAPPLICANT.states()).contains(status));
+        this.nextStatus = null;
+        this.isEditableByApplicant = Arrays.asList(ApplicationFormStatusType.EDITABLEBYAPPLICANT.states()).contains(status);
     }
 
     public ApplicationFormStatus getNextStatus() {
@@ -848,165 +789,7 @@ public class ApplicationForm implements FormSectionObject, Serializable {
         return MathUtils.formatRating(getAverageRating());
     }
 
-    public Integer getTotalPositiveEndorsements() {
-		return totalPositiveEndorsements;
-	}
-
-	public void setTotalPositiveEndorsements(Integer totalPositiveEndorsements) {
-		this.totalPositiveEndorsements = totalPositiveEndorsements;
-	}
-
-	public Integer getTotalNegativeEndorsements() {
-		return totalNegativeEndorsements;
-	}
-
-	public void setTotalNegativeEndorsements(Integer totalNegativeEndorsements) {
-		this.totalNegativeEndorsements = totalNegativeEndorsements;
-	}
-
-	public Integer getSecondsInValidation() {
-		return secondsInValidation;
-	}
-
-	public void setSecondsInValidation(Integer secondsInValidation) {
-		this.secondsInValidation = secondsInValidation;
-	}
-
-	public ValidationQuestionOptions getAcademicallyCompetent() {
-		return academicallyCompetent;
-	}
-
-	public void setAcademicallyCompetent(
-			ValidationQuestionOptions academicallyCompetent) {
-		this.academicallyCompetent = academicallyCompetent;
-	}
-
-	public ValidationQuestionOptions getLinguisticallyCompetent() {
-		return linguisticallyCompetent;
-	}
-
-	public void setLinguisticallyCompetent(
-			ValidationQuestionOptions linguisticallyCompetent) {
-		this.linguisticallyCompetent = linguisticallyCompetent;
-	}
-
-	public HomeOrOverseas getFeeStatus() {
-		return feeStatus;
-	}
-
-	public void setFeeStatus(HomeOrOverseas feeStatus) {
-		this.feeStatus = feeStatus;
-	}
-	
-    public Integer getPositiveReferenceEndorsements() {
-		return positiveReferenceEndorsements;
-	}
-
-	public void setPositiveReferenceEndorsements(
-			Integer positiveReferenceEndorsements) {
-		this.positiveReferenceEndorsements = positiveReferenceEndorsements;
-	}
-
-	public Integer getNegativeReferenceEndorsements() {
-		return negativeReferenceEndorsements;
-	}
-
-	public void setNegativeReferenceEndorsements(
-			Integer negativeReferenceEndorsements) {
-		this.negativeReferenceEndorsements = negativeReferenceEndorsements;
-	}
-
-	public BigDecimal getAverageReferenceRating() {
-		return averageReferenceRating;
-	}
-
-	public void setAverageReferenceRating(BigDecimal averageReferenceRating) {
-		this.averageReferenceRating = averageReferenceRating;
-	}
-
-	public Integer getSecondsInReview() {
-		return secondsInReview;
-	}
-
-	public void setSecondsInReview(Integer secondsInReview) {
-		this.secondsInReview = secondsInReview;
-	}
-
-	public Integer getPositiveReviewEndorsements() {
-		return positiveReviewEndorsements;
-	}
-
-	public void setPositiveReviewEndorsements(Integer positiveReviewEndorsements) {
-		this.positiveReviewEndorsements = positiveReviewEndorsements;
-	}
-
-	public Integer getNegativeReviewEndorsements() {
-		return negativeReviewEndorsements;
-	}
-
-	public void setNegativeReviewEndorsements(Integer negativeReviewEndorsements) {
-		this.negativeReviewEndorsements = negativeReviewEndorsements;
-	}
-
-	public BigDecimal getAverageReviewRating() {
-		return averageReviewRating;
-	}
-
-	public void setAverageReviewRating(BigDecimal averageReviewRating) {
-		this.averageReviewRating = averageReviewRating;
-	}
-
-	public Integer getSecondsInInterview() {
-		return secondsInInterview;
-	}
-
-	public void setSecondsInInterview(Integer secondsInInterview) {
-		this.secondsInInterview = secondsInInterview;
-	}
-
-	public Integer getPositiveInterviewEndorsements() {
-		return positiveInterviewEndorsements;
-	}
-
-	public void setPositiveInterviewEndorsements(
-			Integer positiveInterviewEndorsements) {
-		this.positiveInterviewEndorsements = positiveInterviewEndorsements;
-	}
-
-	public Integer getNegativeInterviewEndorsements() {
-		return negativeInterviewEndorsements;
-	}
-
-	public void setNegativeInterviewEndorsements(
-			Integer negativeInterviewEndorsements) {
-		this.negativeInterviewEndorsements = negativeInterviewEndorsements;
-	}
-
-	public BigDecimal getAverageInterviewRating() {
-		return averageInterviewRating;
-	}
-
-	public void setAverageInterviewRating(BigDecimal averageInterviewRating) {
-		this.averageInterviewRating = averageInterviewRating;
-	}
-
-	public Integer getSecondsInApproval() {
-		return secondsInApproval;
-	}
-
-	public void setSecondsInApproval(Integer secondsInApproval) {
-		this.secondsInApproval = secondsInApproval;
-	}
-
-	public ApplicationFormStatus getPreviousStatus() {
-		return previousStatus;
-	}
-	
-	public void setPreviousStatus(ApplicationFormStatus previousStatus) {
-		this.previousStatus = previousStatus;
-	}
-
-	public ValidationComment getValidationComment() {
+    public ValidationComment getValidationComment() {
         for (Comment comment : getApplicationComments()) {
             if (comment instanceof ValidationComment) {
                 return (ValidationComment) comment;
@@ -1024,5 +807,9 @@ public class ApplicationForm implements FormSectionObject, Serializable {
         }
         return null;
     }
+    
+    public ApplicationFormStatus getPreviousStatus() {
+		return previousStatus;
+	}
 	
 }

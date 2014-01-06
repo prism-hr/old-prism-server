@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
+
 public enum ApplicationFormAction {
 
     COMMENT, 
@@ -24,6 +25,6 @@ public enum ApplicationFormAction {
     CONFIRM_PRIMARY_SUPERVISION, 
     CONFIRM_REJECTION, 
     PROVIDE_INTERVIEW_FEEDBACK, 
-    PROVIDE_REVIEW;
+    PROVIDE_REVIEW
 
 }

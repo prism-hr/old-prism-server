@@ -31,6 +31,8 @@
         # mvn dbdeploy:update (runs the database change scripts)
 		# cd ../current
 		# bin/jboss-cli.sh --connect --controller=localhost:9999 --command=:shutdown
+		# check that there are no running jboss processes ps aux | grep jboss
+		# kill any stray processes that need to be killed, e.g. kill -9
 	    # cp ../pgadmissions/target/pgadmissions.war standalone/deployments/
 		# bin/standalone.sh -b 0.0.0.0 -Djboss.server.base.dir=standalone >/dev/null 2>/dev/null &
 

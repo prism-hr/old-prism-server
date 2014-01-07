@@ -116,35 +116,6 @@ public class ApplicationListControllerTest {
     }
 
     @Test
-    public void shouldReturnViewForApplicationListPageWithDefaultFiltersWhenFilterReloadRequested() {
-
-        // GIVEN
-        ModelMap model = new ExtendedModelMap();
-
-        model.addAttribute("filtering", new ApplicationsFiltering());
-        HttpSession httpSession = new MockHttpSession();
-        AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
-        httpSession.setAttribute("alertDefinition", alert);
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
-        user.setFiltering(filtering);
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-        EasyMock.expect(filteringServiceMock.getStoredOrDefaultFiltering(user)).andReturn(filtering);
-
-        // WHEN
-        EasyMock.replay(userServiceMock, filteringServiceMock);
-        assertEquals("private/my_applications_page", controller.getApplicationListPage("reload", model, httpSession));
-        EasyMock.verify(userServiceMock, filteringServiceMock);
-
-        // THEN
-        Object actualFiltering = model.get("filtering");
-        assertSame(filtering, actualFiltering);
-        assertSame(alert, model.get("alertDefinition"));
-    }
-
-
-
-    @Test
     public void shouldReturnViewForApplicationListPageWhenSessionFiltersInitialized() {
 
         // GIVEN

@@ -94,7 +94,7 @@ public class ApplicationListController {
 
         ApplicationsFiltering filtering = (ApplicationsFiltering) model.get("filtering");
         if (filtering == null) {
-        	filtering = new ApplicationsFiltering();
+            filtering = filteringService.getStoredOrDefaultFiltering(getUser());
         }
 
         if (applyFilters != null) {
@@ -102,10 +102,8 @@ public class ApplicationListController {
             	filtering.setSortCategory(SortCategory.URGENT);
             } else if ("update".equals(applyFilters)) {
             	filtering.setSortCategory(SortCategory.UPDATE);
-            }
+            } 
         }
-
-       filtering = filteringService.getStoredOrDefaultFiltering(getUser());
 
         model.addAttribute("filtering", filtering);
         return APPLICATION_LIST_PAGE_VIEW_NAME;

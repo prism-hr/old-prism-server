@@ -20,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -28,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -43,35 +47,26 @@ import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 public class SubmitApplicationFormController {
 
     private final Logger log = LoggerFactory.getLogger(SubmitApplicationFormController.class);
-
     private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "/private/pgStudents/form/main_application_page";
-
     private static final String VIEW_APPLICATION_STAFF_VIEW_NAME = "/private/staff/application/main_application_page";
-
     private static final String VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME = "/private/staff/application/main_application_page_without_headers";
-
     private final ApplicationFormValidator applicationFormValidator;
-
     private final StageDurationService stageDurationService;
-
     private final ApplicationsService applicationService;
-
     private final EventFactory eventFactory;
-
     private final UserService userService;
-
-    private final ActionsProvider actionsProvider;
-    
+    private final ActionsProvider actionsProvider; 
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final ProgramInstanceDAO programInstanceDAO;
 
     public SubmitApplicationFormController() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
-            StageDurationService stageDurationService, EventFactory eventFactory, 
-            ActionsProvider actionsProvider, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            StageDurationService stageDurationService, EventFactory eventFactory, ActionsProvider actionsProvider, 
+            ApplicationFormUserRoleService applicationFormUserRoleService, ProgramInstanceDAO programInstanceDAO) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
@@ -79,6 +74,7 @@ public class SubmitApplicationFormController {
         this.eventFactory = eventFactory;
         this.actionsProvider = actionsProvider;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
+        this.programInstanceDAO = programInstanceDAO;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -137,6 +133,15 @@ public class SubmitApplicationFormController {
         applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
         
         if (user.canEditAsApplicant(applicationForm)) {
+            Program program = applicationForm.getProgram();
+            Project project = applicationForm.getProject();
+        	if (programInstanceDAO.getActiveProgramInstances(program).isEmpty()) {
+            	throw new CannotApplyToProgramException(program);
+            } else if (project != null) {
+            	if (!project.isAcceptingApplications()) {
+            		throw new CannotApplyToProjectException(project);
+            	}
+            }
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }
 

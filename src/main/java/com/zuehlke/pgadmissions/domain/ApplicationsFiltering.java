@@ -29,7 +29,7 @@ public class ApplicationsFiltering implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "filtering_id")
     @IndexColumn(name = "filter_position")
     private List<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();

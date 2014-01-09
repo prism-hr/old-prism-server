@@ -7,5 +7,6 @@ INNER JOIN ACTION
 	ON APPLICATION_FORM_ACTION_REQUIRED.action_id = ACTION.id
 WHERE ACTION.notification = "SYNDICATED"
 	AND APPLICATION_FORM_USER_ROLE.raises_urgent_flag = 1
-	AND DATE(REGISTERED_USER.latest_task_notification_date) < CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT}
+	AND (REGISTERED_USER.latest_task_notification_date IS NULL
+		OR DATE(REGISTERED_USER.latest_task_notification_date) < CURRENT_DATE() - INTERVAL :interval ${TIME_UNIT})
 GROUP BY APPLICATION_FORM_USER_ROLE.registered_user_id;

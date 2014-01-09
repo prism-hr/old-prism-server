@@ -180,7 +180,7 @@
                 <input type="hidden" id="<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>_lastname" name="sLN" value="${(supervisor.lastname?html)!}"/>
                 <input type="hidden" id="<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>_email" name="sEM"  value="${(supervisor.email?html)!}"/>
                 <input type="hidden" id="<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>_aware" name="sAS" value="<#if supervisor.aware>YES<#else>NO</#if>"/>                    
-                <input type="hidden" name="suggestedSupervisors" id="<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>_supervisors" value='{"firstname" :"${(supervisor.firstname?html?replace("'", "\\u0027"))!}","lastname" :"${(supervisor.lastname?html?replace("'", "\\u0027"))!}","email" :"${supervisor.email?html?replace("'", "\\u0027")}", "awareSupervisor":"<#if supervisor.aware>YES<#else>NO</#if>"}' />                             
+                <input type="hidden" class="suggestedSupervisors" name="suggestedSupervisors" id="<#if supervisor.id?? >${encrypter.encrypt(supervisor.id)!}</#if>_supervisors" value='{"firstname" :"${(supervisor.firstname?html?replace("'", "\\u0027"))!}","lastname" :"${(supervisor.lastname?html?replace("'", "\\u0027"))!}","email" :"${supervisor.email?html?replace("'", "\\u0027")}", "awareSupervisor":"<#if supervisor.aware>YES<#else>NO</#if>"}' />                             
              
             </tr>
             </#list>

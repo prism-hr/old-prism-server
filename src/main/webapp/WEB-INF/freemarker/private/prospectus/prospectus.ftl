@@ -18,6 +18,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/prospectus.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/tinymce/tinymce.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/underscore-min.js' />"></script>
@@ -47,7 +48,7 @@
                     <div class="content-box-inner">
                       <div id="configBox" class="tabbox">
                         <ul class="tabs">
-                          <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
+                          <#if user.isInRole('SUPERADMINISTRATOR') || user.programsOfWhichAdministrator?has_content>
                             <li><a href="#programmeConfiguration">Manage Programmes</a></li>
                           </#if>
                           
@@ -65,7 +66,7 @@
                           
                         </ul>
                     
-                        <#if user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR')>
+                        <#if user.isInRole('SUPERADMINISTRATOR') || user.programsOfWhichAdministrator?has_content>
                           <div id="programmeConfiguration" class="tab-page">
                             <#include "/private/prospectus/program_configuration.ftl"/>
                           </div>

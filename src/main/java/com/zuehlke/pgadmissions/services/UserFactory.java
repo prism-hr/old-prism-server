@@ -51,4 +51,5 @@ public class UserFactory {
         user.setActivationCode(encryptionUtils.generateUUID());
         return user;
     }
+    
 }

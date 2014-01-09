@@ -49,6 +49,7 @@ public class CommentFactory {
     public InterviewScheduleComment createInterviewScheduleComment(RegisteredUser user, ApplicationForm application, String furtherDetails,
             String furtherInterviewerDetails, String locationUrl) {
         InterviewScheduleComment scheduleComment = new InterviewScheduleComment();
+        scheduleComment.setComment("");
         scheduleComment.setFurtherDetails(furtherDetails);
         scheduleComment.setFurtherInterviewerDetails(furtherInterviewerDetails);
         scheduleComment.setLocationUrl(locationUrl);

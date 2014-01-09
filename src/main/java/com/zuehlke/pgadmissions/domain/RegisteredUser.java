@@ -175,6 +175,10 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date latestTaskNotificationDate;
 	
+	@Column(name = "latest_update_notification_date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date latestUpdateNotificationDate;
+
 	@Column(name = "application_list_last_access_timestamp")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date applicationListLastAccessTimestamp;
@@ -521,23 +525,19 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return !isInRole(this, strAuthority);
 	}
 
-	public boolean isInRoleInProgram(final Authority authority,
-			final Program programme) {
+	public boolean isInRoleInProgram(final Authority authority, final Program programme) {
 		return isInRoleInProgramme(programme, this, authority);
 	}
 
-	public boolean isInRoleInProgram(final String strAuthority,
-			final Program programme) {
+	public boolean isInRoleInProgram(final String strAuthority, final Program programme) {
 		return isInRoleInProgramme(programme, this, strAuthority);
 	}
 
-	public boolean isNotInRoleInProgram(final Authority authority,
-			Program program) {
+	public boolean isNotInRoleInProgram(final Authority authority, Program program) {
 		return !isInRoleInProgramme(program, this, authority);
 	}
 
-	public boolean isNotInRoleInProgram(final String strAuthority,
-			final Program programme) {
+	public boolean isNotInRoleInProgram(final String strAuthority, final Program programme) {
 		return !isInRoleInProgramme(programme, this, strAuthority);
 	}
 
@@ -569,18 +569,15 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return isProgrammeAdministrator(form, this);
 	}
 
-	public boolean isPastOrPresentInterviewerOfApplicationForm(
-			final ApplicationForm form) {
+	public boolean isPastOrPresentInterviewerOfApplicationForm(final ApplicationForm form) {
 		return isPastOrPresentInterviewerOfApplication(form, this);
 	}
 
-	public boolean isPastOrPresentReviewerOfApplicationForm(
-			final ApplicationForm form) {
+	public boolean isPastOrPresentReviewerOfApplicationForm(final ApplicationForm form) {
 		return isPastOrPresentReviewerOfApplication(form, this);
 	}
 
-	public boolean isPastOrPresentSupervisorOfApplicationForm(
-			final ApplicationForm form) {
+	public boolean isPastOrPresentSupervisorOfApplicationForm(final ApplicationForm form) {
 		return isPastOrPresentSupervisorOfApplication(form, this);
 	}
 
@@ -690,8 +687,7 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		this.password = password;
 	}
 
-	public void setPendingRoleNotifications(
-			final List<PendingRoleNotification> pendingRoleNotifications) {
+	public void setPendingRoleNotifications(final List<PendingRoleNotification> pendingRoleNotifications) {
 		this.pendingRoleNotifications.clear();
 		this.pendingRoleNotifications.addAll(pendingRoleNotifications);
 	}
@@ -700,18 +696,15 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		this.primaryAccount = primary;
 	}
 
-	public void setProgramsOfWhichAdministrator(
-			final List<Program> programsOfWhichAdministrator) {
+	public void setProgramsOfWhichAdministrator(final List<Program> programsOfWhichAdministrator) {
 		this.programsOfWhichAdministrator = programsOfWhichAdministrator;
 	}
 
-	public void setProgramsOfWhichApprover(
-			final List<Program> programsOfWhichApprover) {
+	public void setProgramsOfWhichApprover(final List<Program> programsOfWhichApprover) {
 		this.programsOfWhichApprover = programsOfWhichApprover;
 	}
 
-	public void setProgramsOfWhichViewer(
-			final List<Program> programsOfWhichViewer) {
+	public void setProgramsOfWhichViewer(final List<Program> programsOfWhichViewer) {
 		this.programsOfWhichViewer = programsOfWhichViewer;
 	}
 
@@ -753,9 +746,7 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 
 	@Override
 	public String toString() {
-		return String
-				.format("RegisteredUser [id=%s, firstName=%s, lastName=%s, email=%s, enabled=%s]",
-						id, firstName, lastName, email, enabled);
+		return String.format("RegisteredUser [id=%s, firstName=%s, lastName=%s, email=%s, enabled=%s]", id, firstName, lastName, email, enabled);
 	}
 
 	public void removeRole(final Authority authority) {
@@ -771,8 +762,7 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 		return researchOpportunitiesFeeds;
 	}
 
-	public void setResearchOpportunitiesFeeds(
-			List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds) {
+	public void setResearchOpportunitiesFeeds(List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds) {
 		this.researchOpportunitiesFeeds = researchOpportunitiesFeeds;
 	}
 
@@ -782,7 +772,15 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 
 	public void setLatestTaskNotificationDate(Date latestTaskNotificationDate) {
 		this.latestTaskNotificationDate = latestTaskNotificationDate;
+	}	
+	
+	public Date getLatestUpdateNotificationDate() {
+		return latestUpdateNotificationDate;
 	}
+
+	public void setLatestUpdateNotificationDate(Date latestUpdateNotificationDate) {
+		this.latestUpdateNotificationDate = latestUpdateNotificationDate;
+	}	
 
 	public Date getApplicationListLastAccessTimestamp() {
 		return applicationListLastAccessTimestamp;

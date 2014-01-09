@@ -227,6 +227,7 @@ public class AdvertsController {
                     projectDto.setStudyDuration(program.getAdvert().getStudyDuration());
                 }
                 projectDto.setTitle(input.getTitle());
+                projectDto.setClosingDate(getFirstClosingDate(program));
                 RegisteredUser supervisor = project.getPrimarySupervisor();
                 projectDto.setPrimarySupervisor(toPerson(supervisor));
                 projectDto.setSupervisorEmail(supervisor.getEmail());
@@ -277,4 +278,5 @@ public class AdvertsController {
             return admin != null && admin.isAccountNonExpired() && admin.isAccountNonLocked() && admin.isCredentialsNonExpired() && admin.isEnabled();
         }
     }
+    
 }

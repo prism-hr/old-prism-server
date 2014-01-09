@@ -284,10 +284,11 @@ function addCounter() {
 			$(this).data("maxlength", 2000);
 		}
         textAreaBolean = $(this).is("textarea");
+        var counter = 0;
         if (textAreaBolean) { 
-            var counter = $(this).data("maxlength") - $(this).val().length;
+            counter = $(this).data("maxlength") - $(this).val().length;
         } else {
-            var counter = $(this).data("maxlength") - $(this).text().length;
+            counter = $(this).data("maxlength") - $(this).text().length;
         }
 
         // Create the span with all the content and characters left
@@ -461,7 +462,6 @@ function deleteUploadedFile($hidden_field) {
             data : {
                 documentId : $hidden_field.val()
             }
-
         });
     }
 }
@@ -473,7 +473,7 @@ function doUpload($upload_field) {
     var $container = $upload_field.closest('div.field');
 	var $uploadedDocuments = $container.find('ul.uploaded-files');
 	
-    var $hidden = $container.find('span input');
+    // var $hidden = $container.find('span input');
     // var $hfParent = $hidden.parent();
     // var $progress = $container.find('span.progress');
 
@@ -1130,7 +1130,7 @@ function exStatus() {
 				} else {
 					$(this).removeClass('icon-minus-sign').addClass('icon-plus-sign');
 				}
-			})
+			});
 		}
 	});
 }

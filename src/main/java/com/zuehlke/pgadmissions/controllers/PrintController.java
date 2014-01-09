@@ -62,10 +62,6 @@ public class PrintController {
 		
 		RegisteredUser currentUser = userService.getCurrentUser();
 		
-		if (!currentUser.canSee(form)) {
-		    throw new ResourceNotFoundException();
-		}
-		
 		PdfModelBuilder pdfModelBuilder = new PdfModelBuilder();
 		if (isApplicant(currentUser, form)) {
 		    pdfModelBuilder.includeCriminialConvictions(true);
@@ -91,10 +87,6 @@ public class PrintController {
 			if (form == null) {
 			    continue;
 			}
-			
-			if (!currentUser.canSee(form)) {
-			    continue;
-	        }
 			
 			PdfModelBuilder pdfModelBuilder = new PdfModelBuilder();
 			if (isApplicant(currentUser, form)) {

@@ -11,7 +11,7 @@
                           Release Procedure
 ========================================================================
 
-    1) SSH in to prism@prism.ucl.ac.uk (ssh prism@prism.ucl.ac.uk)    
+	1) SSH in to prism@prism.ucl.ac.uk (ssh prism@prism.ucl.ac.uk)    
 
     2) Become the root user and enter the password
         # sudo -s
@@ -19,18 +19,22 @@
     3) Make a backup of the existing database
         # cd /root/pgadmissions-backup
         # mkdir 2013-mm-dd (enter the current date)
-        # mysqldump -u pgadmissions -ppgadmissions pgadmissions > out.sql
+        # mysqldump -u pgadmissions -ppgadmissions pgadmissions --routines > out.sql
     
     4) Become the jboss user and update the current sources, build the WAR file 
         and run the database change scripts if necessary
         # su -l jboss
         # cd pgadmissions
         # hg pull
-        # hg update
-        (and then hg update --clean --rev <BRANCH_NAME> if you want to switch to a specific branch)
+        # hg update -r <REVISION_NAME>
         # mvn clean package -DskipTests -Pucl-prod
         # mvn dbdeploy:update (runs the database change scripts)
-        # cp target/pgadmissions.war /usr/local/jboss/current/standalone/deployments
+		# cd ../current
+		# bin/jboss-cli.sh --connect --controller=localhost:9999 --command=:shutdown
+		# check that there are no running jboss processes ps aux | grep jboss
+		# kill any stray processes that need to be killed, e.g. kill -9
+	    # cp ../pgadmissions/target/pgadmissions.war standalone/deployments/
+		# bin/standalone.sh -b 0.0.0.0 -Djboss.server.base.dir=standalone >/dev/null 2>/dev/null &
 
     5) Check the log files if everything works like expected
         # tail -f /usr/local/jboss/current/standalone/log/server.log

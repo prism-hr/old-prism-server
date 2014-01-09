@@ -107,13 +107,8 @@
 <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
 
 <!-- Scripts -->
-<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.1.10.2.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-<script type="text/javascript">
-jQuery.noConflict(true);
-</script>
 
-<script type="text/javascript" src="<@spring.url '/design/default/js/jquery-ui-1.8.23.custom.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>    
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script> 

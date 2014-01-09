@@ -21,7 +21,7 @@ public class ApplicationsFilteringBuilder {
 
     private Integer blockCount;
 
-    private Boolean useDisjunction;
+    private Boolean useDisjunction = false;
 
     public ApplicationsFilteringBuilder id(Integer id) {
         this.id = id;

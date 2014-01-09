@@ -75,48 +75,26 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	// Save button.
 	// -------------------------------------------------------------------------------
-	$('#refereeSaveAndCloseButton').click(function()
-	{
-		if ($("#acceptTermsRDValue").val() =='NO')
-	/*	if ($("#acceptTermsRDValue").val() =='NO')
-		{ 
-			// Highlight the information bar and terms box.
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			
-			var $infobar = $('#ref-info-bar-div.section-info-bar');
-			$infobar.switchClass("section-info-bar", "section-error-bar", 1);
-			if ($infobar)
-			{
-				$("#ref-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please complete all of the mandatory fields in this section.\"></span>');
-				refImgCount = refImgCount + 1;
-			}
-			addToolTips();
-			
+	$('#refereeSaveAndCloseButton').click(function() {
+		$("span[name='nonAcceptedRD']").html('');
+		if ($('#existing-referee-container tr').length == 3)
+		{
+			$('#refereeForm').each (function(){
+			  this.reset();
+			});
+			$('#refereeCloseButton').trigger('click');
 		}
 		else
-		{*/
-			$("span[name='nonAcceptedRD']").html('');
-			// Check for 3 references provided.
-			if ($('#referencesSection table.existing tbody tr').length == 3)
+		{
+			if ($('#existing-referee-container tr').length < 3 || !isFormEmpty('#referencesSection form'))
 			{
-				$('#refereeForm').each (function(){
-				  this.reset();
-				});
-				$('#refereeCloseButton').trigger('click');
+				postRefereeData('close');
 			}
 			else
 			{
-				// Check for a "dirty" referee form. If there is data try to submit it.
-				if ($('#referencesSection table.existing tbody tr').length < 3 || !isFormEmpty('#referencesSection form'))
-				{
-					postRefereeData('close');
-				}
-				else
-				{
-					$('#refereeCloseButton').trigger('click');
-				}
+				$('#refereeCloseButton').trigger('click');
 			}
-		//}
+		}
 	});
 	
 

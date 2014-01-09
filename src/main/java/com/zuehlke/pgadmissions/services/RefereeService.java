@@ -86,6 +86,9 @@ public class RefereeService {
         Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
         if (userExists(user) && !isUserReferee(user)) {
             user.getRoles().add(refereeRole);
+            if (user.getActivationCode() == null) {
+            	user.setActivationCode(encryptionUtils.generateUUID());
+            }
         }
         if (!userExists(user)) {
             user = createAndSaveNewUserWithRefereeRole(referee, refereeRole);

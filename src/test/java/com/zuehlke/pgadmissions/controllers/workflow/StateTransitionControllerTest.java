@@ -129,12 +129,14 @@ public class StateTransitionControllerTest {
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
-        assertSame(currentUser, controller.getUser());
+        assertSame(currentUser, controller.getCurrentUser());
     }
 
     @Test
     public void shouldReturnAvaialableNextStatuses() {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).build();
+        final RegisteredUser registeredUser = new RegisteredUserBuilder().id(5).build();
+        userServiceMock.addRoleToUser(registeredUser, Authority.SUPERADMINISTRATOR);
         controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,
                 documentServiceMock, approvalServiceMock, stateChangeValidatorMock, documentPropertyEditorMock, new StateTransitionService(),
                 applicationFormUserRoleServiceMock, actionsProviderMock) {
@@ -144,8 +146,8 @@ public class StateTransitionControllerTest {
                 return applicationForm;
             }
         };
-        assertArrayEquals(new StateTransitionService().getAvailableNextStati(ApplicationFormStatus.VALIDATION).toArray(), controller.getAvailableNextStati("5")
-                .toArray());
+        assertArrayEquals(new StateTransitionService().getAvailableNextStati(ApplicationFormStatus.VALIDATION).toArray(), 
+        		controller.getAvailableNextStati(applicationForm, registeredUser).toArray());
     }
 
     @Before

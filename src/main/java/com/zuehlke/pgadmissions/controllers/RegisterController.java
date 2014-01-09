@@ -237,7 +237,7 @@ public class RegisterController {
 			Advert advertById = advertService.getAdvertById(advertId);
 			Program program = advertService.getProgram(advertById);
 			modelMap.addAttribute("title", program.getTitle());
-			modelMap.addAttribute("description", advertById.getDescription());
+			modelMap.addAttribute("description", advertById.getDescriptionForFacebook());
 			modelMap.addAttribute("advertId", advert);
 		}
 		return REGISTER_USERS_VIEW_NAME;
@@ -284,4 +284,5 @@ public class RegisterController {
 		}
 	return false;
 	}
+	
 }

@@ -47,8 +47,8 @@ public class AdditionalInformationController {
     @Autowired
     public AdditionalInformationController(ApplicationsService applicationService,
             UserService userService,
-            ApplicationFormPropertyEditor applicationFormPropertyEditor,//
-            BooleanPropertyEditor booleanEditor,//
+            ApplicationFormPropertyEditor applicationFormPropertyEditor,
+            BooleanPropertyEditor booleanEditor,
             AdditionalInfoService addInfoServiceMock, AdditionalInformationValidator infoValidator,
             ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationService = applicationService;
@@ -87,7 +87,7 @@ public class AdditionalInformationController {
     @ModelAttribute("additionalInformation")
     public AdditionalInformation getAdditionalInformation(@RequestParam String applicationId) {
         ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (application == null || !getCurrentUser().canSee(application)) {
+        if (application == null) {
             throw new ResourceNotFoundException();
         }
         return application.getAdditionalInformation();

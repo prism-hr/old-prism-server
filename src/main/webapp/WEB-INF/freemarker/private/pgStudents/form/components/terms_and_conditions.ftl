@@ -10,7 +10,7 @@
 					Failure to provide true and correct information may result in a subsequent offer of study being withdrawn.				
 				</label>
 				<div class="terms-field" >
-					<input type="checkbox" name="acceptTermsCB" id="acceptTermsCB"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if> />
+					<input type="checkbox" name="acceptTermsCB" id="acceptTermsCB"/>
 				</div>
 				<input type="hidden" name="acceptTermsValue" id="acceptTermsValue"/>
 			</div>

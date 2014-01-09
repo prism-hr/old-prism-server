@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -70,7 +71,6 @@ public class ApplicationFormUserRoleService {
         initiateStageMap.put(ApplicationFormStatus.INTERVIEW, ApplicationFormAction.ASSIGN_INTERVIEWERS);
         initiateStageMap.put(ApplicationFormStatus.APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
         initiateStageMap.put(ApplicationFormStatus.REJECTED, ApplicationFormAction.CONFIRM_REJECTION);
-
     }
     
     public void applicationCreated(ApplicationForm applicationForm) {
@@ -99,6 +99,7 @@ public class ApplicationFormUserRoleService {
                 userToSaveAsSuggestedSupervisor.setEnabled(false);
                 userToSaveAsSuggestedSupervisor.setCredentialsNonExpired(true);
                 userToSaveAsSuggestedSupervisor.setActivationCode(encryptionUtils.generateUUID());
+                userToSaveAsSuggestedSupervisor.getRoles().add(roleDAO.getRoleByAuthority(Authority.SUGGESTEDSUPERVISOR));
                 userDAO.save(userToSaveAsSuggestedSupervisor);
             }
             
@@ -115,15 +116,24 @@ public class ApplicationFormUserRoleService {
         }
 
         Boolean anyUnsure = application.getValidationComment().isAtLeastOneAnswerUnsure();
-
-        for (RegisteredUser admitter : userDAO.getAdmitters()) {
-            if (BooleanUtils.isTrue(anyUnsure)) {
+        List<RegisteredUser> admitters = userDAO.getAdmitters();
+        List<ApplicationFormUserRole> superadministratorRoles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.SUPERADMINISTRATOR);
+        
+        if (BooleanUtils.isTrue(anyUnsure)) {
+        	for (RegisteredUser admitter : admitters) {
                 createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false, 
-                		new ApplicationFormActionRequired(ApplicationFormAction.CONFIRM_ELIGIBILITY, new Date(), false, true));
-            } else {
-                createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false);
-            }
+                		new ApplicationFormActionRequired(ApplicationFormAction.CONFIRM_ELIGIBILITY, new Date(), false, true));        		
+        	}
+        	for (ApplicationFormUserRole superadministratorRole : superadministratorRoles) {
+        		superadministratorRole.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.CONFIRM_ELIGIBILITY, new Date(), false, true));
+        		superadministratorRole.setRaisesUrgentFlag(true);
+        	}
+        } else {
+        	for (RegisteredUser admitter : admitters) {
+                createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false);        		
+        	}
         }
+        
     }
 
     public void stateChanged(StateChangeComment stateChangeComment) {
@@ -219,7 +229,7 @@ public class ApplicationFormUserRoleService {
 
     public void admitterCommentPosted(AdmitterComment comment) {
         ApplicationForm application = comment.getApplication();
-        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.ADMITTER);
+        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.ADMITTER, Authority.SUPERADMINISTRATOR);
         for (ApplicationFormUserRole role : roles) {
             applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
         }
@@ -383,6 +393,8 @@ public class ApplicationFormUserRoleService {
                 applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
                 applicationFormUserRole.setRaisesUpdateFlag(true);
             }
+            
+            
         }
 
         applicationFormUserRole.setInterestedInApplicant(interestedInApplicant);
@@ -410,9 +422,12 @@ public class ApplicationFormUserRoleService {
         for (RegisteredUser administrator : applicationForm.getProgram().getAdministrators()) {
             administrators.put(administrator, Authority.ADMINISTRATOR);
         }
-
-        if (applicationForm.getProject() != null) {
-            RegisteredUser projectAdministrator = applicationForm.getProject().getAdministrator();
+        
+        Project project = applicationForm.getProject();
+        if (project != null) {
+        	administrators.put(project.getPrimarySupervisor(), Authority.PROJECTADMINISTRATOR);
+        	
+        	RegisteredUser projectAdministrator = project.getAdministrator();
             if (projectAdministrator != null) {
                 administrators.put(projectAdministrator, Authority.PROJECTADMINISTRATOR);
             }

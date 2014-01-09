@@ -8,8 +8,8 @@
 		
 		<meta property="og:type" content="website">
         <meta property="og:site_name" content="UCL Postgraduate Admissions">
-        <meta property="og:title" content="<#if title??>${title}</#if>">
-        <meta property="og:description" content="<#if description??>${description}</#if>">
+        <meta property="og:title" content="<#if title?has_content>${title}</#if>">
+        <meta property="og:description" content="<#if description?has_content>${description}</#if>">
         <meta property="og:url" content="http://www.prism.ucl.ac.uk/pgadmissions/register<#if advertId??>?advert=${advertId}</#if>">
         <meta property="og:image" content="http://www.prism.ucl.ac.uk/pgadmissions/design/default/images/fbimg.jpg">
         <meta property="fb:app_id" content="172294119620634">
@@ -44,7 +44,6 @@
 	<!--<![endif]-->
 		<!-- Scripts -->
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery-ui-1.8.23.custom.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/register_applicant.js'/>"></script>

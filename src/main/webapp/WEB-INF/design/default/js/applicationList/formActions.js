@@ -17,11 +17,10 @@ $(document).ready(function() {
         
 		$(element).find('.application-details:odd').addClass('odd').addClass('loading');
 		
-        $(element).find('.applicationRow').not('.applicationRow.binded').bind('click',function(event) {
+        $(element).find('.applicationRow').not('.applicationRow.binded').bind('click', function(event) {
             
             var applicationDetails = $(this).next();
 			
-            // alert ($(event.target).attr('class'));
 			if (applicationDetails.attr('data-application-status') == 'UNSUBMITTED' 
 				|| applicationDetails.attr('data-application-status') == 'WITHDRAWN') {
 				return;
@@ -54,8 +53,8 @@ $(document).ready(function() {
 						} 
 						
 						applicationDetails.find('[data-field=applicant-name]').text(applicant.name);
-						applicationDetails.find('[data-field=submitted-date]').text(data.applicationUpdateDate);
-						applicationDetails.find('[data-field=last-edited-date]').text(data.applicationSubmissionDate);
+						applicationDetails.find('[data-field=submitted-date]').text(data.applicationSubmissionDate);
+						applicationDetails.find('[data-field=last-edited-date]').text(data.applicationUpdateDate);
 						
 						applicationDetails.find('[data-field=most-recent-qualification]').text(applicant.mostRecentQualification);
 						
@@ -86,7 +85,7 @@ $(document).ready(function() {
 					}
 				});
 			}
-			if ($(event.target).attr('class') == 'btn dropdown-toggle btn-default'
+			if ($(event.target).attr('class') == 'btn dropdown-toggle selectpicker btn-default'
 				|| $(event.target).attr('class') == 'filter-option pull-left'
 				|| $(event.target).attr('class') == 'text'
 				|| $(event.target).attr('class') == 'caret'
@@ -504,6 +503,9 @@ function getFilters() {
 		var search_category = $(this).find('.selectCategory').val();
 		var search_predicate = $(this).find('.selectPredicate').val();
 		var search_term = $(this).find('.filterInput').val();
+		if (search_term == "undefined") {
+			search_term = "";
+		}
 		
 		if (search_category && search_term.length > 0) {
 			filters.push({

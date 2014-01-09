@@ -78,7 +78,7 @@ $(document).ready(function()
 	/*
 	 * Keep the view state of the form open or close depending on the user role.
 	 */
-	$(window).load(function(){
+	$(window).on( "load", function(){
 		
 		
 		// To make uncompleted functionalities disable.

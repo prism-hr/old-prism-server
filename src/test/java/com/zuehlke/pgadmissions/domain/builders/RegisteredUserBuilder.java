@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +32,7 @@ public class RegisteredUserBuilder {
     private boolean credentialsNonExpired = true;
     private String activationCode;
     private String upi;
+    private Date applicationListLastAccessTimestamp;
 
     private List<Referee> referees = new ArrayList<Referee>();
     private List<Comment> comments = new ArrayList<Comment>();
@@ -52,6 +54,11 @@ public class RegisteredUserBuilder {
     public RegisteredUserBuilder linkedAccounts(final RegisteredUser... user) {
         linkedAccounts.addAll(Arrays.asList(user));
         return this;
+    }
+    
+    public RegisteredUserBuilder applicationListLastAccessTimestamp(Date applicationListLastAccessTimestamp) {
+    	this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
+    	return this;
     }
     
     public RegisteredUserBuilder upi(final String upi) {
@@ -232,6 +239,7 @@ public class RegisteredUserBuilder {
         user.setFiltering(filtering);
         
         user.setUpi(upi);
+        user.setApplicationListLastAccessTimestamp(applicationListLastAccessTimestamp);
         user.setLinkedAccounts(linkedAccounts);
         user.setPrimaryAccount(primaryAccount);
         

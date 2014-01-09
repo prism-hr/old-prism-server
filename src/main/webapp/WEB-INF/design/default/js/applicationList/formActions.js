@@ -503,7 +503,7 @@ function getFilters() {
 		var search_category = $(this).find('.selectCategory').val();
 		var search_predicate = $(this).find('.selectPredicate').val();
 		var search_term = $(this).find('.filterInput').val();
-		if (search_term == "undefined") {
+		if (search_term == undefined) {
 			search_term = "";
 		}
 		

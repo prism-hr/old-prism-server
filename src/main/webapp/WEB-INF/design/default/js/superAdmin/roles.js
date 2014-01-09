@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-	
+
 	autosuggest($("#editUser #firstName"), $("#editUser #lastName"), $("#editUser #email"));
 	autosuggest($("#editSuperadmins #firstName"), $("#editSuperadmins #lastName"), $("#editSuperadmins #email"));
 	autosuggest($("#reg-firstname"), $("#reg-lastname"), $("#reg-email"));
@@ -9,7 +9,7 @@ $(document).ready(function()
 	// Load a list of assigned users for a specific programme.
 	// ------------------------------------------------------------------------------
 
-	if ($('#programs').val()!="" && $('#userIsAdmin').val()=="true") {
+	if ($('#programs').val()!="") {
 		loadUsersForProgram();
 	}
 
@@ -99,7 +99,7 @@ $(document).ready(function()
 			submitRegistryUsers();
 		}
 	});
-	
+	$('.selectpicker').selectpicker();
 	generalTabing();
 });
 

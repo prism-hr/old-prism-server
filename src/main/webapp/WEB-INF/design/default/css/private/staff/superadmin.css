@@ -4,7 +4,6 @@ h1 { font-size: 14pt; margin-bottom: 1em; }
 div.row { margin-bottom: 10px; overflow: hidden; }
 
 form label { display: block; margin-bottom: 0.5em; }
-form input[type=text], form select, form textarea { width: 300px; }
 form select[multiple] { padding: 3px; width: 100% }
 
 div.programme label { float: left; width: 150px; }

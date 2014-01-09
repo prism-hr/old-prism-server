@@ -18,6 +18,7 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/superadmin.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/bootstrap-select.min.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
 <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
 <!--[if lt IE 9]>
@@ -39,7 +40,6 @@
 			<div class="content-box">
 				<div class="content-box-inner">
 					<input type="hidden" id="currentUserEmail" value="${user.email}">
-                    <input type="hidden" id="userIsAdmin" value=<#if user.isInRole('ADMINISTRATOR')>"true"<#else>"false"</#if>>
 					<div id="configManageUsersBox" class="tabbox">
 						
 				        <ul class="tabs">
@@ -70,17 +70,13 @@
 											<div class="tableContainer existingUsers"></div>
 				
 											<div class="row-group">
-											
-												<div class="row">
 													<label for="programs" class="plain-label">Programme<em>*</em></label>
 													<span class="hint" data-desc="<@spring.message 'manageUsers.programme'/>"></span>
 													<div class="field">
 														<select class="max selectpicker" data-live-search="true" data-size="6" name="selectedProgram" id="programs">
 															<option value="">Please select a program</option>
-															<#list programs as program>"
-															<option value='${program.code}' 
-															<#if userDTO.selectedProgram?? && userDTO.selectedProgram.id == program.id >selected="selected"</#if>
-															>${program.title?html}</option>               
+															<#list programs as program>
+															<option value='${program.code}' <#if userDTO.selectedProgram?? && userDTO.selectedProgram.id == program.id >selected="selected"</#if>>${program.title?html}</option>               
 															</#list>
 														</select>
 					
@@ -88,9 +84,7 @@
 														<#list spring.status.errorMessages as error>
 														 <div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
 														</#list>
-													</div>
-												</div>
-												
+													</div>								
 											</div>
 						
 											<div class="row-group" id="editUser">

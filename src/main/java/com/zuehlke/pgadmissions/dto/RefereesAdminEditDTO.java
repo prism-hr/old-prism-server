@@ -16,7 +16,6 @@ public class RefereesAdminEditDTO {
 
     // reference data
     
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
     private String comment;
 
     private Document referenceDocument;

@@ -22,6 +22,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -65,6 +66,7 @@ public class Program extends Authorisable implements Serializable {
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
+    @OrderBy("")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "program")

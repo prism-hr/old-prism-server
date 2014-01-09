@@ -26,7 +26,7 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
         try {
             Document document = new Document(PageSize.A4, 50, 50, 100, 50);
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-            writer.setCloseStream(false); // otherwise we're loosing our ZipOutputstream for calling zos.closeEntry();
+            writer.setCloseStream(false);
             document.open();
 
             PdfPTable table = new PdfPTable(1);
@@ -43,11 +43,16 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
 
             PdfContentByte cb = writer.getDirectContent();
             for (com.zuehlke.pgadmissions.domain.Document in : referenceComment.getDocuments()) {
-                PdfReader reader = new PdfReader(in.getContent());
-                for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+                try {
+                	PdfReader reader = new PdfReader(in.getContent());
+                    for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+                        document.newPage();
+                        PdfImportedPage page = writer.getImportedPage(reader, i);
+                        cb.addTemplate(page, 0, 0);
+                    }
+                } catch (IllegalArgumentException e) {
                     document.newPage();
-                    PdfImportedPage page = writer.getImportedPage(reader, i);
-                    cb.addTemplate(page, 0, 0);
+                    document.add(new Paragraph("The reference document provided was corrupted."));    
                 }
             }
             document.newPage();
@@ -56,4 +61,5 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
             throw new PdfDocumentBuilderException(e);
         }
     }
+    
 }

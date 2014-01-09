@@ -11,8 +11,10 @@ import static org.junit.Assert.assertEquals;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,13 +31,16 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
@@ -58,23 +63,15 @@ import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 public class SubmitApplicationFormControllerTest {
 
     private SubmitApplicationFormController applicationController;
-
     private ApplicationsService applicationsServiceMock;
-
     private ApplicationFormValidator applicationFormValidatorMock;
-
     private StageDurationService stageDurationServiceMock;
-
     private EventFactory eventFactoryMock;
-
     private UserService userServiceMock;
-
     private MockHttpServletRequest httpServletRequestMock;
-
     private ActionsProvider actionsProviderMock;
-
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
-
+    private ProgramInstanceDAO programInstanceDAOMock;
     private RegisteredUser student;
     private RegisteredUser admin;
 
@@ -85,8 +82,18 @@ public class SubmitApplicationFormControllerTest {
 
     @Test
     public void shouldReturnStudenApplicationViewOnGetForApplicantOfApplciation() {
-        String view = applicationController.getApplicationView(null,
-                new ApplicationFormBuilder().applicant(student).id(1).program(new ProgramBuilder().id(1).build()).build());
+    	Program program = new ProgramBuilder().id(1).build();
+    	ProgramInstance instance = new ProgramInstanceBuilder().program(program).applicationDeadline(DateUtils.addMonths(new Date(), 1)).enabled(true).build();
+    	program.getInstances().add(instance);
+    	List<ProgramInstance> referenceInstanceList = new ArrayList<ProgramInstance>();
+    	referenceInstanceList.add(instance);
+    	
+    	expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(referenceInstanceList);
+    	replay(programInstanceDAOMock);
+    	
+    	String view = applicationController.getApplicationView(null,
+                new ApplicationFormBuilder().applicant(student).id(1).program(program).build());
+      
         assertEquals("/private/pgStudents/form/main_application_page", view);
     }
 
@@ -388,9 +395,10 @@ public class SubmitApplicationFormControllerTest {
         eventFactoryMock = createMock(EventFactory.class);
         actionsProviderMock = createMock(ActionsProvider.class);
         applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+        programInstanceDAOMock = createMock(ProgramInstanceDAO.class);
 
         applicationController = new SubmitApplicationFormController(applicationsServiceMock, userServiceMock, applicationFormValidatorMock,
-                stageDurationServiceMock, eventFactoryMock, actionsProviderMock, applicationFormUserRoleServiceMock);
+                stageDurationServiceMock, eventFactoryMock, actionsProviderMock, applicationFormUserRoleServiceMock, programInstanceDAOMock);
         httpServletRequestMock = new MockHttpServletRequest();
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

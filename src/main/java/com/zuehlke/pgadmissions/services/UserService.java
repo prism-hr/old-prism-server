@@ -387,6 +387,8 @@ public class UserService {
     }
 
     public void setFiltering(final RegisteredUser user, final ApplicationsFiltering filtering) {
+    	
+    	
         ApplicationsFiltering mergedFilter = filteringDAO.merge(filtering);
         user.setFiltering(mergedFilter);
         userDAO.save(user);

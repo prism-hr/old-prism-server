@@ -178,4 +178,5 @@ public class ProgrammeDetailsController {
     private RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
     }
+    
 }

@@ -473,6 +473,7 @@ $(document).ready(function()
 	
 	bindDatePicker('#startDate');
 	addToolTips();
+	$('#programmeDetailsSection .selectpicker').selectpicker();
 });
 
 
@@ -530,7 +531,7 @@ function postProgrammeData(message)
 			  }
 		  },
 		url:"/pgadmissions/update/editProgrammeDetails",
-		data:$.param(postData) + "&" + $('[input[name="suggestedSupervisors"]').serialize(),
+		data:$.param(postData) + "&" + $('input[name="suggestedSupervisors"]').serialize(),
 		success: function(data)
 			{
 				$('#programmeDetailsSection').html(data);

@@ -1,6 +1,7 @@
 $(document)
 		.ready(
 				function() {
+					$('.selectpicker').selectpicker();
 					if ($("input[name='passportAvailable']:checked").val() == "true") {
 						enablePassportInformation();
 					} else {
@@ -219,7 +220,7 @@ $(document)
 					// Language Qualification Type Change
 					// -------------------------------------------------------------------------------
 					$('#qualificationType')
-							.live(
+							.on(
 									'change',
 									function() {
 										var selectedType = $(

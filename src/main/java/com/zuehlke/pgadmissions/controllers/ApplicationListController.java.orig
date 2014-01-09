@@ -94,7 +94,7 @@ public class ApplicationListController {
 
         ApplicationsFiltering filtering = (ApplicationsFiltering) model.get("filtering");
         if (filtering == null) {
-        	filtering = new ApplicationsFiltering();
+            filtering = filteringService.getStoredOrDefaultFiltering(getUser());
         }
 
         if (applyFilters != null) {
@@ -102,13 +102,7 @@ public class ApplicationListController {
             	filtering.setSortCategory(SortCategory.URGENT);
             } else if ("update".equals(applyFilters)) {
             	filtering.setSortCategory(SortCategory.UPDATE);
-            } else if ("reload".equals(applyFilters)) {
-            	filtering = filteringService.getStoredOrDefaultFiltering(getUser());               
-            }
-        }
-
-        if (filtering == null) {
-            filtering = filteringService.getStoredOrDefaultFiltering(getUser());
+            } 
         }
 
         model.addAttribute("filtering", filtering);

@@ -200,7 +200,9 @@ select[multiple] { vertical-align: top; }
 
 iframe { border: 2px inset #999; font-family: Arial, Helvetica, sans-serif; }
 
-	
+.visover {
+	overflow: visible !important;
+}
 /* Validation errors. */
 span.invalid {
 	/* background: url(../../images/button_exclaim.png) no-repeat 0 .1em; */ 
@@ -728,52 +730,8 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 
 */
 
-/* qTip2 - Pretty powerful tooltips
-*  http://craigsworks.com/projects/qtip2/ */
-
-/* Core qTip styles */
-.ui-tooltip, .qtip { position: absolute; left: -28000px; top: -28000px; display: none; max-width: 280px; min-width: 50px; font-size: 10.5px; line-height: 12px; }
-
-/* Fluid class for determining actual width in IE */
-.ui-tooltip-fluid { display: block; visibility: hidden; position: static !important; float: left !important; }
-.ui-tooltip-content { position: relative; padding: 5px 9px; overflow: hidden; border: 1px solid #000001; text-align: left; word-wrap: break-word; overflow: hidden; }
-.ui-tooltip-titlebar { position: relative; min-height: 14px; padding: 5px 35px 5px 10px; overflow: hidden; border: 1px solid #000001; border-width: 1px 1px 0; font-weight: bold; }
-.ui-tooltip-titlebar + .ui-tooltip-content{ border-top-width: 0px !important; }
-
-/*! Default close button class */
-.ui-tooltip-titlebar .ui-state-default{ position: absolute; right: 4px; top: 50%; margin-top: -9px; cursor: pointer; outline: medium none; border-width: 1px; border-style: solid; }  
-* html .ui-tooltip-titlebar .ui-state-default{ top: 16px; } /* IE fix */
-.ui-tooltip-titlebar .ui-icon, .ui-tooltip-icon .ui-icon{ display: block; text-indent: -1000em; }
-.ui-tooltip-icon, .ui-tooltip-icon .ui-icon{ -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; }
-.ui-tooltip-icon .ui-icon{ width: 18px; height: 14px; text-align: center; text-indent: 0; font: normal bold 10px/13px Tahoma,sans-serif; color: inherit; background: transparent none no-repeat -100em -100em; }
-
-/*! Default tooltip style */
-.ui-tooltip-default .ui-tooltip-titlebar, .ui-tooltip-default .ui-tooltip-content { border-color: #F1D031; background-color: #FFFFA3; color: #555; }
-.ui-tooltip-default .ui-tooltip-titlebar { background-color: #FFEF93; }
-.ui-tooltip-default .ui-tooltip-icon { border-color: #CCC; background: #F1F1F1; color: #777; }
-.ui-tooltip-default .ui-tooltip-titlebar .ui-state-hover{ border-color: #AAA; color: #111; }
-
-/* Tips plugin */
-.ui-tooltip .ui-tooltip-tip { margin: 0 auto; overflow: hidden; z-index: 10; }
-.ui-tooltip .ui-tooltip-tip,
-.ui-tooltip .ui-tooltip-tip * { position: absolute; line-height: 0.1px !important; font-size: 0.1px !important; color: #123456; background: transparent; border: 0px dashed transparent; }
-.ui-tooltip .ui-tooltip-tip canvas{ display: none; }
-
-/*! Add shadows to your tooltips in: FF3+, Chrome 2+, Opera 10.6+, IE6+, Safari 2+ */
-.ui-tooltip-shadow {
-  -webkit-box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.5);
-  box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.5);
-}
-.ui-tooltip-shadow .ui-tooltip-titlebar,
-.ui-tooltip-shadow .ui-tooltip-content {
-  filter: progid:DXImageTransform.Microsoft.Shadow(Color='gray', Direction=135, Strength=3);
-  -ms-filter:"progid:DXImageTransform.Microsoft.Shadow(Color='gray', Direction=135, Strength=3)";
-  _margin-bottom: -3px; /* IE6 */
-  .margin-bottom: -3px; /* IE7 */
-}
-
-
+/* qTip2 v2.2.0 None | qtip2.com | Licensed MIT, GPL | Sun Dec 15 2013 14:11:09 */
+.qtip{position:absolute;left:-28000px;top:-28000px;display:none;max-width:280px;min-width:50px;font-size:10.5px;line-height:12px;direction:ltr;box-shadow:none;padding:0}.qtip-content{position:relative;padding:5px 9px;overflow:hidden;text-align:left;word-wrap:break-word}.qtip-titlebar{position:relative;padding:5px 35px 5px 10px;overflow:hidden;border-width:0 0 1px;font-weight:700}.qtip-titlebar+.qtip-content{border-top-width:0!important}.qtip-close{position:absolute;right:-9px;top:-9px;cursor:pointer;outline:medium none;border-width:1px;border-style:solid;border-color:transparent}.qtip-titlebar .qtip-close{right:4px;top:50%;margin-top:-9px}* html .qtip-titlebar .qtip-close{top:16px}.qtip-titlebar .ui-icon,.qtip-icon .ui-icon{display:block;text-indent:-1000em;direction:ltr}.qtip-icon,.qtip-icon .ui-icon{-moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;text-decoration:none}.qtip-icon .ui-icon{width:18px;height:14px;line-height:14px;text-align:center;text-indent:0;font:400 bold 10px/13px Tahoma,sans-serif;color:inherit;background:transparent none no-repeat -100em -100em}.qtip-focus{}.qtip-hover{}.qtip-default{border-width:1px;border-style:solid;border-color:#F1D031;background-color:#FFFFA3;color:#555}.qtip-default .qtip-titlebar{background-color:#FFEF93}.qtip-default .qtip-icon{border-color:#CCC;background:#F1F1F1;color:#777}.qtip-default .qtip-titlebar .qtip-close{border-color:#AAA;color:#111}
 
 /*
  * jQuery UI Autocomplete 1.8.18
@@ -1401,12 +1359,6 @@ span.icon-status.not-submitted:before {
 .tooltip-pgr .ui-tooltip-shadow {
   background: black !important;
 }
-.ui-tooltip-shadow {
-  box-shadow: 0 0 3px 1px #888888 !important;
-  -webkit-border-radius: 4px 4px 0px 4px;
-  -moz-border-radius: 4px 4px 0px 4px;
-  border-radius: 4px 4px 0px 4px;
-}
 .tooltip-pgr .ui-tooltip-titlebar,
 .tooltip-pgr .ui-tooltip-content {
   border: none;
@@ -1414,9 +1366,19 @@ span.icon-status.not-submitted:before {
   -moz-border-radius: 4px 4px 0px 4px;
   border-radius: 4px 4px 0px 4px;
 }
-.ui-tooltip,
-.qtip {
-  line-height: 14px;
+.qtip-default {
+    background-color: #007BC4 !important;
+    border: 2px solid #FFFFFF !important;
+    color: #FFFFFF !important;
+    font-size: 9pt !important;
+    padding: 3px !important;  
+}
+.ui-tooltip, .qtip {
+    line-height: 14px !important;
+}
+.ui-tooltip-shadow {
+    border-radius: 4px 4px 0;
+    box-shadow: 0 0 3px 1px #BBBBBB !important;
 }
 #previewModal {
   width: 650px !important;
@@ -1983,12 +1945,12 @@ background: #909194;
 }
 .bootstrap-select.actionType {
     margin-bottom: 0;
-    width: 113px;
+    width: 113px !important;
 }
 #programme-details .bootstrap-select.actionType {
     margin-bottom: 10px;
     margin-top: 6px;
-    width: 198px;
+    width: 198px !important;
 }
 #programme-details .bootstrap-select.actionType i.icon-bell-alt{
  color: #F83929;
@@ -1999,6 +1961,7 @@ background: #909194;
 .bootstrap-select.btn-group .dropdown-menu li > a.title {  
     height: 0;
     overflow: hidden;
+    display:none;
 }
 .bootstrap-select.btn-group .dropdown-menu li > a.title:hover {
   background: none;
@@ -2019,7 +1982,9 @@ background: #909194;
 	position: relative !important;
 }
 /* Responsive queries*/
-
+.row-group {
+	overflow: visible !important;
+}
 @media (min-width:768px) and (max-width:979px) {
 
 }
@@ -2048,7 +2013,7 @@ background: #909194;
 	section.form-rows .field .full {
 	    width: 356px !important;
 	}
-	section.form-rows .field select.full {
+	section.form-rows .field .bootstrap-select.full, section.form-rows .field select.full {
 	    width: 366px !important;
 	}
 	section.form-rows .field .full.date, section.form-rows .field input.hasDatepicker {

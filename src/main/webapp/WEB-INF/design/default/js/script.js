@@ -839,7 +839,7 @@ function guid() {
          s4() + '-' + s4() + s4() + s4();
 }
 	
-$('button.btn.btn-primary').live('click', function() {
+$('button.btn.btn-primary').on('click', function() {
 	var section;
 	
 	if ($(this).hasClass('btn-large')) {

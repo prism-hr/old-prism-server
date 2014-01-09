@@ -55,11 +55,6 @@ public class ApplicationFormListDAO {
     
     @SuppressWarnings("unchecked")
     public List<ApplicationDescriptor> getVisibleApplicationsForList(final RegisteredUser registeredUser, final ApplicationsFiltering filtering, final int itemsPerPage) {
-        if (filtering.getBlockCount() == 1) {
-        	registeredUser.setApplicationListLastAccessTimestamp(new Date());
-        	sessionFactory.getCurrentSession().flush();
-        }
-        
     	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
     		.setReadOnly(true)
     		.setProjection(Projections.projectionList()
@@ -160,11 +155,11 @@ public class ApplicationFormListDAO {
                         case SUPERVISOR:
                             criteria.createAlias("applicationForm.programmeDetails", "programmeDetails", JoinType.LEFT_OUTER_JOIN)
                             		.createAlias("applicationForm.approvalRounds", "approvalRounds", JoinType.LEFT_OUTER_JOIN)
-                            		.createAlias("programmeDetails.suggestedSupervisors", "suggestedSupervisor", JoinType.LEFT_OUTER_JOIN)
+                            		.createAlias("programmeDetails.suggestedSupervisor", "suggestedSupervisor", JoinType.LEFT_OUTER_JOIN)
                             		.createAlias("approvalRounds.supervisors", "supervisors", JoinType.LEFT_OUTER_JOIN)
                             		.createAlias("supervisors.user", "supervisorUser", JoinType.LEFT_OUTER_JOIN)
-                            		.createAlias("project.primarySupervisor", "advertPrimarySupervisorUser", JoinType.LEFT_OUTER_JOIN)
-                            		.createAlias("project.secondarySupervisor", "advertSecondarySupervisorUser", JoinType.LEFT_OUTER_JOIN);
+                            		.createAlias("advert.primarySupervisor", "advertPrimarySupervisorUser", JoinType.LEFT_OUTER_JOIN)
+                            		.createAlias("advert.secondarySupervisor", "advertSecondarySupervisorUser", JoinType.LEFT_OUTER_JOIN);
 
                             criterion = Restrictions.disjunction()
                                     .add(ConcatenableIlikeCriterion.ilike(searchTerm, MatchMode.ANYWHERE, "supervisorUser.firstName", "supervisorUser.lastName"))
@@ -189,7 +184,6 @@ public class ApplicationFormListDAO {
                         } else if (searchCategory == SearchCategory.CLOSING_DATE) {
                             criterion = getCriteriaForDate(searchPredicate, searchTerm, "applicationForm.batchDeadline");
                         }
-                        criterions.add(criterion);
                         
                     }
                 }

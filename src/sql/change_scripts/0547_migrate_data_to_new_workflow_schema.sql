@@ -1,7 +1,3 @@
-INSERT IGNORE INTO APPLICATION_ROLE (id, update_visibility)
-	SELECT "STATEADMINISTRATOR", 1
-;
-
 INSERT IGNORE INTO APPLICATION_FORM_USER_ROLE (application_form_id, registered_user_id, application_role_id,
 	is_interested_in_applicant, next_required_action_id, next_required_action_deadline, bind_deadline_to_due_date)
 	SELECT APPLICATION_FORM.id, APPLICATION_FORM.applicant_id, "APPLICANT", NULL,
@@ -874,7 +870,7 @@ LEFT JOIN (
 		APPLICATION_FORM_UPDATE.update_visibility AS update_visibility
 	FROM APPLICATION_FORM_UPDATE
 	GROUP BY APPLICATION_FORM_UPDATE.application_form_id,
-		APPLICATION_FORM_UPDATE.update_visibility) AS LATEST_UPDATE
+		APPlICATION_FORM_UPDATE.update_visibility) AS LATEST_UPDATE
 	ON APPLICATION_FORM_USER_ROLE.application_form_id = LATEST_UPDATE.application_form_id
 	AND APPLICATION_ROLE.update_visibility >= LATEST_UPDATE.update_visibility
 LEFT JOIN APPLICATION_FORM_LAST_ACCESS

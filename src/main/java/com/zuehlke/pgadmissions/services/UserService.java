@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -205,14 +206,14 @@ public class UserService {
         }
         
         newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authorities);
-        userDAO.save(newUser);
         
         for (Authority authority : authorities) {
-            if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
+            if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER, Authority.STATEADMINISTRATOR).contains(authority)) {
             	applicationFormUserRoleService.createUserInRole(newUser, authority);
             }
         }
         
+        userDAO.save(newUser);
         return newUser;
     }
 
@@ -397,6 +398,12 @@ public class UserService {
 
     public List<RegisteredUser> getUsersWithUpi(final String upi) {
         return userDAO.getUsersWithUpi(upi);
+    }
+    
+    public void setApplicationFormListLastAccessTimestamp(RegisteredUser registeredUser) {
+    	registeredUser.setApplicationListLastAccessTimestamp(new Date());
+    	userDAO.save(registeredUser);
+    	
     }
     
 }

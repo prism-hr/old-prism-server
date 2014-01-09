@@ -85,7 +85,7 @@ $(document).ready(function() {
 					}
 				});
 			}
-			if ($(event.target).attr('class') == 'btn btn-default dropdown-toggle'
+			if ($(event.target).attr('class') == 'btn dropdown-toggle selectpicker btn-default'
 				|| $(event.target).attr('class') == 'filter-option pull-left'
 				|| $(event.target).attr('class') == 'text'
 				|| $(event.target).attr('class') == 'caret'
@@ -148,7 +148,7 @@ $(document).ready(function() {
 	// ------------------------------------------------------------------------------
 	// SELECTION CHANGED FOR SELECT CATEGORY
 	// ------------------------------------------------------------------------------
-	$('.selectCategory').live("change",	function() {
+	$('.selectCategory').on("change",	function() {
 		var selected = $(this).val();
 		var predicateSelect = $(this).parent().find('.selectPredicate');
 		predicateSelect.empty();
@@ -189,7 +189,7 @@ $(document).ready(function() {
 	// ------------------------------------------------------------------------------
 	// CLEAR ALL FILTERS
 	// ------------------------------------------------------------------------------
-	$("#search-reset").live('click', function() {
+	$("#search-reset").on('click', function() {
 		clearCurrentFilters(true);
 		checkSwitch();
 	});
@@ -232,7 +232,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$("#loadMoreApplications").live('click', function() {
+	$("#loadMoreApplications").on('click', function() {
 		if (loading) {
 			return;
 		}
@@ -241,7 +241,7 @@ $(document).ready(function() {
 	});
 
 	// Load active applications
-	$("#loadActiveApplication").live('click', function() {
+	$("#loadActiveApplication").on('click', function() {
 		clearCurrentFilters(false);
 		$('#sort-column').val('APPLICATION_DATE');
 		$('#sort-order').val('DESCENDING');
@@ -274,7 +274,7 @@ $(document).ready(function() {
 	});
 
 	// Duplicate filters buttons
-	$(".add").live('click', function() {
+	$(".add").on('click', function() {
 		var existingFilter=$(this).parent();
 		var newFilter=$(existingFilter).clone(true);
 		newFilter.insertAfter($(this).parent());
@@ -288,7 +288,7 @@ $(document).ready(function() {
 	});
 	
 	// Remove current filter
-	$(".remove").live('click', function() {
+	$(".remove").on('click', function() {
 		var existingFilter= $(this).parent();
 		if ($("#search-box").find("div.filter").length > 1) {
 			var filterValue = existingFilter.find(".filterInput").val(); 
@@ -503,6 +503,9 @@ function getFilters() {
 		var search_category = $(this).find('.selectCategory').val();
 		var search_predicate = $(this).find('.selectPredicate').val();
 		var search_term = $(this).find('.filterInput').val();
+		if (search_term == "undefined") {
+			search_term = "";
+		}
 		
 		if (search_category && search_term.length > 0) {
 			filters.push({

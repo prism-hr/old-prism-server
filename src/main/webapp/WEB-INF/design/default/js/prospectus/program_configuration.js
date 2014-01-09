@@ -7,6 +7,7 @@ $(document).ready(function(){
 		getProgramData();
 		checkDates();
 		initEditors();
+		$('.selectpicker').selectpicker();
 });
 function initEditors() {
 	tinymce.init({

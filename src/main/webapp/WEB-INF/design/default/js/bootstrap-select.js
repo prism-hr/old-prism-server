@@ -1,5 +1,5 @@
 /*!
- * bootstrap-select v1.2.0
+ * bootstrap-select v1.4.2
  * http://silviomoreto.github.io/bootstrap-select/
  *
  * Copyright 2013 bootstrap-select
@@ -8,7 +8,11 @@
 
 !function($) {
 
-    "use strict";
+    'use strict';
+
+    $.expr[':'].icontains = function(obj, index, meta) {
+        return $(obj).text().toUpperCase().indexOf(meta[3].toUpperCase()) >= 0;
+    };
 
     var Selectpicker = function(element, options, e) {
         if (e) {
@@ -24,7 +28,7 @@
         this.options = $.extend({}, $.fn.selectpicker.defaults, this.$element.data(), typeof options == 'object' && options);
 
         //If we have no title yet, check the attribute 'title' (this is missed by jq as its not a data-attribute
-        if (this.options.title == null) {
+        if (this.options.title === null) {
             this.options.title = this.$element.attr('title');
         }
 
@@ -42,7 +46,7 @@
 
         constructor: Selectpicker,
 
-        init: function(e) {
+        init: function() {
             this.$element.hide();
             this.multiple = this.$element.prop('multiple');
             var id = this.$element.attr('id');
@@ -50,18 +54,22 @@
             this.$element.after(this.$newElement);
             this.$menu = this.$newElement.find('> .dropdown-menu');
             this.$button = this.$newElement.find('> button');
+            this.$searchbox = this.$newElement.find('input');
 
             if (id !== undefined) {
-                var _this = this;
+                var that = this;
                 this.$button.attr('data-id', id);
-                $('label[for="' + id + '"]').click(function() {
-                    _this.$button.focus();
+                $('label[for="' + id + '"]').click(function(e) {
+                    e.preventDefault();
+                    that.$button.focus();
                 });
             }
 
             this.checkDisabled();
-            this.checkTabIndex();
             this.clickListener();
+            if (this.options.liveSearch) {
+                this.liveSearchListener();
+            }
             this.render();
             this.liHeight();
             this.setStyle();
@@ -74,21 +82,23 @@
         },
 
         createDropdown: function() {
-            //If we are multiple, then add the show-tick class by default            
+            //If we are multiple, then add the show-tick class by default
             var multiple = this.multiple ? ' show-tick' : '';
-            var header = this.options.header ? '<h3 class="popover-title">' + this.options.header + '<button type="button" class="close" aria-hidden="true">&times;</button></h3>' : '';
+            var header = this.options.header ? '<div class="popover-title"><button type="button" class="close" aria-hidden="true">&times;</button>' + this.options.header + '</div>' : '';
+            var searchbox = this.options.liveSearch ? '<div class="bootstrap-select-searchbox"><input type="text" class="input-block-level form-control" /></div>' : '';
             var drop =
-                "<div class='btn-group bootstrap-select" + multiple + "'>" +
-                    "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown'>" +
-                        "<div class='filter-option pull-left'></div>&nbsp;" +
-                        "<div class='caret'></div>" +
-                    "</button>" +
-                    "<div class='dropdown-menu open'>" +
+                '<div class="btn-group bootstrap-select' + multiple + '">' +
+                    '<button type="button" class="btn dropdown-toggle selectpicker" data-toggle="dropdown">' +
+                        '<span class="filter-option pull-left"></span>&nbsp;' +
+                        '<span class="caret"></span>' +
+                    '</button>' +
+                    '<div class="dropdown-menu open">' +
                         header +
-                        "<ul class='dropdown-menu inner' role='menu'>" +
-                        "</ul>" +
-                    "</div>" +
-                "</div>";
+                        searchbox +
+                        '<ul class="dropdown-menu inner selectpicker" role="menu">' +
+                        '</ul>' +
+                    '</div>' +
+                '</div>';
 
             return $(drop);
         },
@@ -113,19 +123,19 @@
         },
 
         createLi: function() {
-            var _this = this,
+            var that = this,
                 _liA = [],
                 _liHtml = '';
 
-            this.$element.find('option').each(function(index) {
+            this.$element.find('option').each(function() {
                 var $this = $(this);
 
                 //Get the class and text for the option
-                var optionClass = $this.attr("class") || '';
-                var inline = $this.attr("style") || '';
+                var optionClass = $this.attr('class') || '';
+                var inline = $this.attr('style') || '';
                 var text =  $this.data('content') ? $this.data('content') : $this.html();
-                var subtext = $this.data('subtext') !== undefined ? '<small class="muted">' + $this.data('subtext') + '</small>' : '';
-                var icon = $this.data('icon') !== undefined ? '<i class="glyphicon '+$this.data('icon')+'"></i> ' : '';
+                var subtext = $this.data('subtext') !== undefined ? '<small class="muted text-muted">' + $this.data('subtext') + '</small>' : '';
+                var icon = $this.data('icon') !== undefined ? '<i class="' + that.options.iconBase + ' ' + $this.data('icon') + '"></i> ' : '';
                 if (icon !== '' && ($this.is(':disabled') || $this.parent().is(':disabled'))) {
                     icon = '<span>'+icon+'</span>';
                 }
@@ -135,45 +145,45 @@
                     text = icon + '<span class="text">' + text + subtext + '</span>';
                 }
 
-                if (_this.options.hideDisabled && ($this.is(':disabled') || $this.parent().is(':disabled'))) {
+                if (that.options.hideDisabled && ($this.is(':disabled') || $this.parent().is(':disabled'))) {
                     _liA.push('<a style="min-height: 0; padding: 0"></a>');
-                } else if ($this.parent().is('optgroup') && $this.data('divider') != true) {
-                    if ($this.index() == 0) {
+                } else if ($this.parent().is('optgroup') && $this.data('divider') !== true) {
+                    if ($this.index() === 0) {
                         //Get the opt group label
                         var label = $this.parent().attr('label');
-                        var labelSubtext = $this.parent().data('subtext') !== undefined ? '<small class="muted">'+$this.parent().data('subtext')+'</small>' : '';
+                        var labelSubtext = $this.parent().data('subtext') !== undefined ? '<small class="muted text-muted">'+$this.parent().data('subtext')+'</small>' : '';
                         var labelIcon = $this.parent().data('icon') ? '<i class="'+$this.parent().data('icon')+'"></i> ' : '';
                         label = labelIcon + '<span class="text">' + label + labelSubtext + '</span>';
 
-                        if ($this[0].index != 0) {
+                        if ($this[0].index !== 0) {
                             _liA.push(
                                 '<div class="div-contain"><div class="divider"></div></div>'+
                                 '<dt>'+label+'</dt>'+
-                                _this.createA(text, "opt " + optionClass, inline )
+                                that.createA(text, 'opt ' + optionClass, inline )
                                 );
                         } else {
                             _liA.push(
                                 '<dt>'+label+'</dt>'+
-                                _this.createA(text, "opt " + optionClass, inline ));
+                                that.createA(text, 'opt ' + optionClass, inline ));
                         }
                     } else {
-                         _liA.push( _this.createA(text, "opt " + optionClass, inline ) );
+                         _liA.push(that.createA(text, 'opt ' + optionClass, inline ));
                     }
-                } else if ($this.data('divider') == true) {
+                } else if ($this.data('divider') === true) {
                     _liA.push('<div class="div-contain"><div class="divider"></div></div>');
-                } else if ($(this).data('hidden') == true) {
+                } else if ($(this).data('hidden') === true) {
                     _liA.push('');
                 } else {
-                    _liA.push( _this.createA(text, optionClass, inline ) );
+                    _liA.push(that.createA(text, optionClass, inline ));
                 }
             });
 
             $.each(_liA, function(i, item) {
-                _liHtml += "<li rel=" + i + ">" + item + "</li>";
+                _liHtml += '<li rel=' + i + '>' + item + '</li>';
             });
 
             //If we are not multiple, and we dont have a selected item, and we dont have a title, select the first element so something is set in the button
-            if (!this.multiple && this.$element.find('option:selected').length==0 && !_this.options.title) {
+            if (!this.multiple && this.$element.find('option:selected').length===0 && !this.options.title) {
                 this.$element.find('option').eq(0).prop('selected', true).attr('selected', 'selected');
             }
 
@@ -183,31 +193,33 @@
         createA: function(text, classes, inline) {
             return '<a tabindex="0" class="'+classes+'" style="'+inline+'">' +
                  text +
-                 '<i class="glyphicon glyphicon-ok icon-ok check-mark"></i>' +
+                 '<i class="' + this.options.iconBase + ' ' + this.options.tickIcon + ' icon-ok check-mark"></i>' +
                  '</a>';
         },
 
         render: function() {
-            var _this = this;
+            var that = this;
 
             //Update the LI to match the SELECT
             this.$element.find('option').each(function(index) {
-               _this.setDisabled(index, $(this).is(':disabled') || $(this).parent().is(':disabled') );
-               _this.setSelected(index, $(this).is(':selected') );
+               that.setDisabled(index, $(this).is(':disabled') || $(this).parent().is(':disabled') );
+               that.setSelected(index, $(this).is(':selected') );
             });
 
-            var selectedItems = this.$element.find('option:selected').map(function(index,value) {
+            this.tabIndex();
+
+            var selectedItems = this.$element.find('option:selected').map(function() {
                 var $this = $(this);
-                var icon = $this.data('icon') && _this.options.showIcon ? '<i class="glyphicon ' + $this.data('icon') + '"></i> ' : '';
+                var icon = $this.data('icon') && that.options.showIcon ? '<i class="' + that.options.iconBase + ' ' + $this.data('icon') + '"></i> ' : '';
                 var subtext;
-                if (_this.options.showSubtext && $this.attr('data-subtext') && !_this.multiple) {
-                    subtext = ' <small class="muted">'+$this.data('subtext') +'</small>';
+                if (that.options.showSubtext && $this.attr('data-subtext') && !that.multiple) {
+                    subtext = ' <small class="muted text-muted">'+$this.data('subtext') +'</small>';
                 } else {
                     subtext = '';
                 }
-                if ($this.data('content') && _this.options.showContent) {
+                if ($this.data('content') && that.options.showContent) {
                     return $this.data('content');
-                } else if ($this.attr('title') != undefined) {
+                } else if ($this.attr('title') !== undefined) {
                     return $this.attr('title');
                 } else {
                     return icon + $this.html() + subtext;
@@ -216,23 +228,24 @@
 
             //Fixes issue in IE10 occurring when no default option is selected and at least one option is disabled
             //Convert all the values into a comma delimited string
-            var title = !this.multiple ? selectedItems[0] : selectedItems.join(", ");
+            var title = !this.multiple ? selectedItems[0] : selectedItems.join(this.options.multipleSeparator);
 
             //If this is multi select, and the selectText type is count, the show 1 of 2 selected etc..
-            if (_this.multiple && _this.options.selectedTextFormat.indexOf('count') > -1) {
-                var max = _this.options.selectedTextFormat.split(">");
+            if (this.multiple && this.options.selectedTextFormat.indexOf('count') > -1) {
+                var max = this.options.selectedTextFormat.split('>');
                 var notDisabled = this.options.hideDisabled ? ':not([disabled])' : '';
                 if ( (max.length>1 && selectedItems.length > max[1]) || (max.length==1 && selectedItems.length>=2)) {
-                    title = _this.options.countSelectedText.replace('{0}', selectedItems.length).replace('{1}', this.$element.find('option:not([data-divider="true"]):not([data-hidden="true"])'+notDisabled).length);
+                    title = this.options.countSelectedText.replace('{0}', selectedItems.length).replace('{1}', this.$element.find('option:not([data-divider="true"]):not([data-hidden="true"])'+notDisabled).length);
                 }
              }
 
             //If we dont have a title, then use the default, or if nothing is set at all, use the not selected text
             if (!title) {
-                title = _this.options.title != undefined ? _this.options.title : _this.options.noneSelectedText;
+                title = this.options.title !== undefined ? this.options.title : this.options.noneSelectedText;
             }
 
-            _this.$newElement.find('.filter-option').html(title);
+            this.$button.attr('title', $.trim(title));
+            this.$newElement.find('.filter-option').html(title);
         },
 
         setStyle: function(style, status) {
@@ -253,23 +266,28 @@
         },
 
         liHeight: function() {
-            var selectClone = this.$newElement.clone();
-            selectClone.appendTo('body');
-            var $menuClone = selectClone.addClass('open').find('> .dropdown-menu');
-            var liHeight = $menuClone.find('li > a').outerHeight();
-            var headerHeight = this.options.header ? $menuClone.find('.popover-title').outerHeight() : 0;
-            selectClone.remove();
-            this.$newElement.data('liHeight', liHeight).data('headerHeight', headerHeight);
+            var $selectClone = this.$menu.parent().clone().appendTo('body'),
+                $menuClone = $selectClone.addClass('open').find('> .dropdown-menu'),
+                liHeight = $menuClone.find('li > a').outerHeight(),
+                headerHeight = this.options.header ? $menuClone.find('.popover-title').outerHeight() : 0,
+                searchHeight = this.options.liveSearch ? $menuClone.find('.bootstrap-select-searchbox').outerHeight() : 0;
+            
+            $selectClone.remove();
+            
+            this.$newElement
+                .data('liHeight', liHeight)
+                .data('headerHeight', headerHeight)
+                .data('searchHeight', searchHeight);
         },
 
         setSize: function() {
-            var _this = this,
+            var that = this,
                 menu = this.$menu,
                 menuInner = menu.find('.inner'),
-                menuA = menuInner.find('li > a'),
                 selectHeight = this.$newElement.outerHeight(),
                 liHeight = this.$newElement.data('liHeight'),
                 headerHeight = this.$newElement.data('headerHeight'),
+                searchHeight = this.$newElement.data('searchHeight'),
                 divHeight = menu.find('li .divider').outerHeight(true),
                 menuPadding = parseInt(menu.css('padding-top')) +
                               parseInt(menu.css('padding-bottom')) +
@@ -282,19 +300,21 @@
                 selectOffsetTop,
                 selectOffsetBot,
                 posVert = function() {
-                    selectOffsetTop = _this.$newElement.offset().top - $window.scrollTop();
+                    selectOffsetTop = that.$newElement.offset().top - $window.scrollTop();
                     selectOffsetBot = $window.height() - selectOffsetTop - selectHeight;
                 };
                 posVert();
                 if (this.options.header) menu.css('padding-top', 0);
-                
+
             if (this.options.size == 'auto') {
                 var getSize = function() {
                     var minHeight;
                     posVert();
                     menuHeight = selectOffsetBot - menuExtras;
-                    _this.$newElement.toggleClass('dropup', (selectOffsetTop > selectOffsetBot) && (menuHeight - menuExtras) < menu.height() && _this.options.dropupAuto);
-                    if (_this.$newElement.hasClass('dropup')) {
+                    if (that.options.dropupAuto) {
+                        that.$newElement.toggleClass('dropup', (selectOffsetTop > selectOffsetBot) && ((menuHeight - menuExtras) < menu.height()));
+                    }
+                    if (that.$newElement.hasClass('dropup')) {
                         menuHeight = selectOffsetTop - menuExtras;
                     }
                     if ((menu.find('li').length + menu.find('dt').length) > 3) {
@@ -303,17 +323,19 @@
                         minHeight = 0;
                     }
                     menu.css({'max-height' : menuHeight + 'px', 'overflow' : 'hidden', 'min-height' : minHeight + 'px'});
-                    menuInner.css({'max-height' : menuHeight - headerHeight- menuPadding + 'px', 'overflow-y' : 'auto', 'min-height' : minHeight - menuPadding + 'px'});
-                }
+                    menuInner.css({'max-height' : menuHeight - headerHeight - searchHeight- menuPadding + 'px', 'overflow-y' : 'auto', 'min-height' : minHeight - menuPadding + 'px'});
+                };
                 getSize();
                 $(window).resize(getSize);
                 $(window).scroll(getSize);
             } else if (this.options.size && this.options.size != 'auto' && menu.find('li'+notDisabled).length > this.options.size) {
-                var optIndex = menu.find("li"+notDisabled+" > *").filter(':not(.div-contain)').slice(0,this.options.size).last().parent().index();
-                var divLength = menu.find("li").slice(0,optIndex + 1).find('.div-contain').length;
+                var optIndex = menu.find('li'+notDisabled+' > *').filter(':not(.div-contain)').slice(0,this.options.size).last().parent().index();
+                var divLength = menu.find('li').slice(0,optIndex + 1).find('.div-contain').length;
                 menuHeight = liHeight*this.options.size + divLength*divHeight + menuPadding;
-                this.$newElement.toggleClass('dropup', (selectOffsetTop > selectOffsetBot) && menuHeight < menu.height() && this.options.dropupAuto);
-                menu.css({'max-height' : menuHeight + headerHeight + 'px', 'overflow' : 'hidden'});
+                if (that.options.dropupAuto) {
+                    this.$newElement.toggleClass('dropup', (selectOffsetTop > selectOffsetBot) && (menuHeight < menu.height()));
+                }
+                menu.css({'max-height' : menuHeight + headerHeight + searchHeight + 'px', 'overflow' : 'hidden'});
                 menuInner.css({'max-height' : menuHeight - menuPadding + 'px', 'overflow-y' : 'auto'});
             }
         },
@@ -348,8 +370,8 @@
         },
 
         selectPosition: function() {
-            var _this = this,
-                drop = "<div />",
+            var that = this,
+                drop = '<div />',
                 $drop = $(drop),
                 pos,
                 actualHeight,
@@ -359,20 +381,20 @@
                     actualHeight = $element.hasClass('dropup') ? 0 : $element[0].offsetHeight;
                     $drop.css({'top' : pos.top + actualHeight, 'left' : pos.left, 'width' : $element[0].offsetWidth, 'position' : 'absolute'});
                 };
-            this.$newElement.on('click', function(e) {
+            this.$newElement.on('click', function() {
                 getPlacement($(this));
-                $drop.appendTo(_this.options.container);
+                $drop.appendTo(that.options.container);
                 $drop.toggleClass('open', !$(this).hasClass('open'));
-                $drop.append(_this.$menu);
+                $drop.append(that.$menu);
             });
             $(window).resize(function() {
-                getPlacement(_this.$newElement);
+                getPlacement(that.$newElement);
             });
-            $(window).on('scroll', function(e) {
-                getPlacement(_this.$newElement);
+            $(window).on('scroll', function() {
+                getPlacement(that.$newElement);
             });
             $('html').on('click', function(e) {
-                if ($(e.target).closest(_this.$newElement).length < 1) {
+                if ($(e.target).closest(that.$newElement).length < 1) {
                     $drop.removeClass('open');
                 }
             });
@@ -389,6 +411,15 @@
             this.setWidth();
             this.setStyle();
             this.checkDisabled();
+            this.liHeight();
+        },
+        
+        update: function() {
+            this.reloadLi();
+            this.setWidth();
+            this.setStyle();
+            this.checkDisabled();
+            this.liHeight();
         },
 
         setSelected: function(index, selected) {
@@ -397,9 +428,9 @@
 
         setDisabled: function(index, disabled) {
             if (disabled) {
-                this.$menu.find('li').eq(index).addClass('disabled').find('a').attr('href','#').attr('tabindex',-1);
+                this.$menu.find('li').eq(index).addClass('disabled').find('a').attr('href', '#').attr('tabindex', -1);
             } else {
-                this.$menu.find('li').eq(index).removeClass('disabled').find('a').removeAttr('href').attr('tabindex',0);
+                this.$menu.find('li').eq(index).removeClass('disabled').find('a').removeAttr('href').attr('tabindex', 0);
             }
         },
 
@@ -408,56 +439,67 @@
         },
 
         checkDisabled: function() {
-            var _this = this;
+            var that = this;
+
             if (this.isDisabled()) {
-                this.$button.addClass('disabled');
-                this.$button.attr('tabindex','-1');
-            } else if (this.$button.hasClass('disabled')) {
-                this.$button.removeClass('disabled');
-                this.$button.removeAttr('tabindex');
+                this.$button.addClass('disabled').attr('tabindex', -1);
+            } else {
+                if (this.$button.hasClass('disabled')) {
+                    this.$button.removeClass('disabled');
+                }
+
+                if (this.$button.attr('tabindex') == -1) {
+                    if (!this.$element.data('tabindex')) this.$button.removeAttr('tabindex');
+                }
             }
+
             this.$button.click(function() {
-                return !_this.isDisabled();
+                return !that.isDisabled();
             });
         },
 
-        checkTabIndex: function() {
+        tabIndex: function() {
             if (this.$element.is('[tabindex]')) {
-                var tabindex = this.$element.attr("tabindex");
-                this.$button.attr('tabindex', tabindex);
+                this.$element.data('tabindex', this.$element.attr('tabindex'));
+                this.$button.attr('tabindex', this.$element.data('tabindex'));
             }
         },
 
         clickListener: function() {
-            var _this = this;
+            var that = this;
 
             $('body').on('touchstart.dropdown', '.dropdown-menu', function(e) {
                 e.stopPropagation();
             });
 
             this.$newElement.on('click', function() {
-                _this.setSize();
+                that.setSize();
+                if (!that.options.liveSearch && !that.multiple) {
+                    setTimeout(function() {
+                        that.$menu.find('.selected a').focus();
+                    }, 10);
+                }
             });
 
             this.$menu.on('click', 'li a', function(e) {
                 var clickedIndex = $(this).parent().index(),
-                    $this = $(this).parent(),
-                    prevValue = _this.$element.val();
+                    prevValue = that.$element.val(),
+                    prevIndex = that.$element.prop('selectedIndex');
 
                 //Dont close on multi choice menu
-                if (_this.multiple) {
+                if (that.multiple) {
                     e.stopPropagation();
                 }
 
                 e.preventDefault();
 
                 //Dont run if we have been disabled
-                if (!_this.isDisabled() && !$(this).parent().hasClass('disabled')) {
-                    var $options = _this.$element.find('option');
+                if (!that.isDisabled() && !$(this).parent().hasClass('disabled')) {
+                    var $options = that.$element.find('option');
                     var $option = $options.eq(clickedIndex);
 
                     //Deselect all others if not multi select box
-                    if (!_this.multiple) {
+                    if (!that.multiple) {
                         $options.prop('selected', false);
                         $option.prop('selected', true);
                     }
@@ -468,31 +510,96 @@
                         $option.prop('selected', !state);
                     }
 
-                    _this.$button.focus();
+                    if (!that.multiple) {
+                        that.$button.focus();
+                    } else if (that.options.liveSearch) {
+                        that.$searchbox.focus();
+                    }
 
                     // Trigger select 'change'
-                    if (prevValue != _this.$element.val()) {
-                        _this.$element.change();
+                    if ((prevValue != that.$element.val() && that.multiple) || (prevIndex != that.$element.prop('selectedIndex') && !that.multiple)) {
+                        that.$element.change();
                     }
                 }
             });
 
-            this.$menu.on('click', 'li.disabled a, li dt, li .div-contain, h3.popover-title', function(e) {
+            this.$menu.on('click', 'li.disabled a, li dt, li .div-contain, .popover-title, .popover-title :not(.close)', function(e) {
                 if (e.target == this) {
                     e.preventDefault();
                     e.stopPropagation();
-                    _this.$button.focus();
+                    if (!that.options.liveSearch) {
+                        that.$button.focus();
+                    } else {
+                        that.$searchbox.focus();
+                    }
                 }
+            });
+            
+            this.$menu.on('click', '.popover-title .close', function() {
+                that.$button.focus();
+            });
+
+            this.$searchbox.on('click', function(e) {
+                e.stopPropagation();
             });
 
             this.$element.change(function() {
-                _this.render()
+                that.render();
+            });
+        },
+
+        liveSearchListener: function() {
+            var that = this,
+                no_results = $('<li class="no-results"></li>');
+
+            this.$newElement.on('click.dropdown.data-api', function() {
+                that.$menu.find('.active').removeClass('active');
+                if (!!that.$searchbox.val()) {
+                    that.$searchbox.val('');
+                    that.$menu.find('li').show();
+                    if (!!no_results.parent().length) no_results.remove();
+                }
+                if (!that.multiple) that.$menu.find('.selected').addClass('active');
+                setTimeout(function() {
+                    that.$searchbox.focus();
+                }, 10);
+            });
+
+            this.$searchbox.on('input propertychange', function() {
+                if (that.$searchbox.val()) {
+                    that.$menu.find('li').show().not(':icontains(' + that.$searchbox.val() + ')').hide();
+                    
+                    if (!that.$menu.find('li').filter(':visible:not(.no-results)').length) {
+                        if (!!no_results.parent().length) no_results.remove();
+                        no_results.html('No results match "'+ that.$searchbox.val() + '"').show();
+                        that.$menu.find('li').last().after(no_results);
+                    } else if (!!no_results.parent().length) {
+                        no_results.remove();
+                    }
+                    
+                } else {
+                    that.$menu.find('li').show();
+                    if (!!no_results.parent().length) no_results.remove();
+                }
+
+                that.$menu.find('li.active').removeClass('active');
+                that.$menu.find('li').filter(':visible:not(.divider)').eq(0).addClass('active').find('a').focus();
+                $(this).focus();
+            });
+            
+            this.$menu.on('mouseenter', 'a', function(e) {
+              that.$menu.find('.active').removeClass('active');
+              $(e.currentTarget).parent().not('.disabled').addClass('active');
+            });
+            
+            this.$menu.on('mouseleave', 'a', function() {
+              that.$menu.find('.active').removeClass('active');
             });
         },
 
         val: function(value) {
 
-            if (value != undefined) {
+            if (value !== undefined) {
                 this.$element.val( value );
 
                 this.$element.change();
@@ -522,50 +629,110 @@
                 last,
                 prev,
                 nextPrev,
-                that;
+                that,
+                prevIndex,
+                isActive,
+                keyCodeMap = {
+                    32:' ', 48:'0', 49:'1', 50:'2', 51:'3', 52:'4', 53:'5', 54:'6', 55:'7', 56:'8', 57:'9', 59:';',
+                    65:'a', 66:'b', 67:'c', 68:'d', 69:'e', 70:'f', 71:'g', 72:'h', 73:'i', 74:'j', 75:'k', 76:'l',
+                    77:'m', 78:'n', 79:'o', 80:'p', 81:'q', 82:'r', 83:'s', 84:'t', 85:'u', 86:'v', 87:'w', 88:'x',
+                    89:'y', 90:'z', 96:'0', 97:'1', 98:'2', 99:'3', 100:'4', 101:'5', 102:'6', 103:'7', 104:'8', 105:'9'
+                };
 
             $this = $(this);
 
             $parent = $this.parent();
+            
+            if ($this.is('input')) $parent = $this.parent().parent();
 
             that = $parent.data('this');
+            
+            if (that.options.liveSearch) $parent = $this.parent().parent();
 
             if (that.options.container) $parent = that.$menu;
 
-            $items = $('[role=menu] li:not(.divider):visible a', $parent);
+            $items = $('[role=menu] li:not(.divider) a', $parent);
+            
+            isActive = that.$menu.parent().hasClass('open');
+            
+            if (that.options.liveSearch) {
+                if (/(^9$|27)/.test(e.keyCode) && isActive && that.$menu.find('.active').length === 0) {
+                    e.preventDefault();
+                    that.$menu.parent().removeClass('open');
+                    that.$button.focus();
+                }
+                $items = $('[role=menu] li:not(.divider):visible', $parent);
+                if (!$this.val() && !/(38|40)/.test(e.keyCode)) {
+                    if ($items.filter('.active').length === 0) {
+                        $items = that.$newElement.find('li').filter(':icontains(' + keyCodeMap[e.keyCode] + ')');
+                    }
+                }
+            }
 
             if (!$items.length) return;
 
             if (/(38|40)/.test(e.keyCode)) {
-
+                
+                if (!isActive) {
+                    that.$menu.parent().addClass('open');
+                }
+                
                 index = $items.index($items.filter(':focus'));
-                first = $items.parent(':not(.disabled)').first().index();
-                last = $items.parent(':not(.disabled)').last().index();
-                next = $items.eq(index).parent().nextAll(':not(.disabled)').eq(0).index();
-                prev = $items.eq(index).parent().prevAll(':not(.disabled)').eq(0).index();
-                nextPrev = $items.eq(next).parent().prevAll(':not(.disabled)').eq(0).index();
-
+                first = $items.parent(':not(.disabled):visible').first().index();
+                last = $items.parent(':not(.disabled):visible').last().index();
+                next = $items.eq(index).parent().nextAll(':not(.disabled):visible').eq(0).index();
+                prev = $items.eq(index).parent().prevAll(':not(.disabled):visible').eq(0).index();
+                nextPrev = $items.eq(next).parent().prevAll(':not(.disabled):visible').eq(0).index();
+                
+                if (that.options.liveSearch) {
+                    $items.each(function(i) {
+                        if ($(this).is(':not(.disabled)')) {
+                            $(this).data('index', i);
+                        }
+                    });
+                    index = $items.index($items.filter('.active'));
+                    first = $items.filter(':not(.disabled):visible').first().data('index');
+                    last = $items.filter(':not(.disabled):visible').last().data('index');
+                    next = $items.eq(index).nextAll(':not(.disabled):visible').eq(0).data('index');
+                    prev = $items.eq(index).prevAll(':not(.disabled):visible').eq(0).data('index');
+                    nextPrev = $items.eq(next).prevAll(':not(.disabled):visible').eq(0).data('index');
+                }
+                
+                prevIndex = $this.data('prevIndex');
+                
                 if (e.keyCode == 38) {
+                    if (that.options.liveSearch) index -= 1;
                     if (index != nextPrev && index > prev) index = prev;
                     if (index < first) index = first;
+                    if (index == prevIndex) index = last;
                 }
 
                 if (e.keyCode == 40) {
+                    if (that.options.liveSearch) index += 1;
+                    if (index == -1) index = 0;
                     if (index != nextPrev && index < next) index = next;
                     if (index > last) index = last;
-                    if (index == -1) index = 0;
+                    if (index == prevIndex) index = first;
                 }
 
-                $items.eq(index).focus();
-            } else {
-                var keyCodeMap = {
-                    48:"0", 49:"1", 50:"2", 51:"3", 52:"4", 53:"5", 54:"6", 55:"7", 56:"8", 57:"9", 59:";",
-                    65:"a", 66:"b", 67:"c", 68:"d", 69:"e", 70:"f", 71:"g", 72:"h", 73:"i", 74:"j", 75:"k", 76:"l",
-                    77:"m", 78:"n", 79:"o", 80:"p", 81:"q", 82:"r", 83:"s", 84:"t", 85:"u", 86:"v", 87:"w", 88:"x", 89:"y", 90:"z",
-                    96:"0", 97:"1", 98:"2", 99:"3", 100:"4", 101:"5", 102:"6", 103:"7", 104:"8", 105:"9"
+                $this.data('prevIndex', index);
+                
+                if (!that.options.liveSearch) {
+                    $items.eq(index).focus();
+                } else {
+                    e.preventDefault();
+                    if (!$this.is('.dropdown-toggle')) {
+                        $items.removeClass('active');
+                        $items.eq(index).addClass('active').find('a').focus();
+                        $this.focus();
+                    }
                 }
+                
+            } else if (!$this.is('input')) {
 
-                var keyIndex = [];
+                var keyIndex = [],
+                    count,
+                    prevKey;
 
                 $items.each(function() {
                     if ($(this).parent().is(':not(.disabled)')) {
@@ -575,28 +742,40 @@
                     }
                 });
 
-                var count = $(document).data('keycount');
+                count = $(document).data('keycount');
                 count++;
                 $(document).data('keycount',count);
 
-                var prevKey = $.trim($(':focus').text().toLowerCase()).substring(0,1);
+                prevKey = $.trim($(':focus').text().toLowerCase()).substring(0,1);
 
                 if (prevKey != keyCodeMap[e.keyCode]) {
                     count = 1;
-                    $(document).data('keycount',count);
+                    $(document).data('keycount', count);
                 } else if (count >= keyIndex.length) {
-                    $(document).data('keycount',0);
+                    $(document).data('keycount', 0);
+                    if (count > keyIndex.length) count = 1;
                 }
 
                 $items.eq(keyIndex[count - 1]).focus();
             }
 
-            // select focused option if "Enter" or "Spacebar" are pressed
-            if (/(13|32)/.test(e.keyCode)) {
-                e.preventDefault();
-                $(':focus').click();
+            // Select focused option if "Enter", "Spacebar", "Tab" are pressed inside the menu.
+            if (/(13|32|^9$)/.test(e.keyCode) && isActive) {
+                if (!/(32)/.test(e.keyCode)) e.preventDefault();
+                if (!that.options.liveSearch) {
+                    $(':focus').click();
+                } else if (!/(32)/.test(e.keyCode)) {
+                    that.$menu.find('.active a').click();
+                    $this.focus();
+                }
                 $(document).data('keycount',0);
             }
+            
+            if ((/(^9$|27)/.test(e.keyCode) && isActive && (that.multiple || that.options.liveSearch)) || (/(27)/.test(e.keyCode) && !isActive)) {
+                that.$menu.parent().removeClass('open');
+                that.$button.focus();
+            }
+
         },
 
         hide: function() {
@@ -645,7 +824,7 @@
             }
         });
 
-        if (value != undefined) {
+        if (value !== undefined) {
             return value;
         } else {
             return chain;
@@ -653,7 +832,7 @@
     };
 
     $.fn.selectpicker.defaults = {
-        style: null,
+        style: 'btn-default',
         size: 'auto',
         title: null,
         selectedTextFormat : 'values',
@@ -666,11 +845,16 @@
         showIcon: true,
         showContent: true,
         dropupAuto: true,
-        header: false
-    }
+        header: false,
+        liveSearch: false,
+        multipleSeparator: ', ',
+        iconBase: 'glyphicon',
+        tickIcon: 'glyphicon-ok'
+    };
 
     $(document)
         .data('keycount', 0)
-        .on('keydown', '[data-toggle=dropdown], [role=menu]' , Selectpicker.prototype.keydown)
+        .on('keydown', '.bootstrap-select [data-toggle=dropdown], .bootstrap-select [role=menu], .bootstrap-select-searchbox input', Selectpicker.prototype.keydown)
+        .on('focusin.modal', '.bootstrap-select [data-toggle=dropdown], .bootstrap-select [role=menu], .bootstrap-select-searchbox input', function (e) { e.stopPropagation(); });
 
 }(window.jQuery);

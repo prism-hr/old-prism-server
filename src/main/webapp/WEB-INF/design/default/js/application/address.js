@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	
+	$('.selectpicker').selectpicker();
 	$("#acceptTermsADValue").val("NO");
 	//limitTextArea();
 
@@ -200,6 +200,7 @@ function disableContactAddress() {
 	$("#contactAddress4").attr('disabled','disabled');
 	$("#contactAddress5").attr('disabled','disabled');
 	$("#contactAddressDomicile").attr('disabled','disabled');
+	$("#contactAddressDomicile").selectpicker('refresh');
 	
 	$("#add-two-lb-1").addClass("grey-label").parent().find('.hint').addClass("grey");
 	$("#add-two-lb-2").addClass("grey-label").parent().find('.hint').addClass("grey");
@@ -240,4 +241,5 @@ function enableContactAddress(clear) {
 	$("#contactAddress4").removeAttr('disabled','disabled');
 	$("#contactAddress5").removeAttr('disabled','disabled');
 	$("#contactAddressDomicile").removeAttr('disabled','disabled');
+	$("#contactAddressDomicile").selectpicker('refresh');
 }

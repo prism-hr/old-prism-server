@@ -17,7 +17,7 @@ $(document).ready(function(){
 	/*
 	 * Keep the view state of the form open or close depending on the user role.
 	 */
-	$(window).load(function(){
+	$(window).on( "load", function(){
 		if($("input#form-display-state").val() == "close"){
 			// close everything
 			$('section.folding:not(.error) > div').removeClass("open").hide();

@@ -9,7 +9,7 @@
               	<div class="row" id="programAdvertProgramDiv">
                   <label for="programAdvertProgramSelect" class="plain-label">Select Programme<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
                   <div class="field forLabel">
-                      <select id="programAdvertProgramSelect" class="max">
+                      <select id="programAdvertProgramSelect" class="max selectpicker" data-live-search="true" data-size="6" >
                           <option value="">Select...</option> <#list programmes as programme>
                           <option value="${programme.code}"<#if program?? && programme.code == program.code>selected</#if> > ${programme.title?html}</option> </#list>
                       </select>

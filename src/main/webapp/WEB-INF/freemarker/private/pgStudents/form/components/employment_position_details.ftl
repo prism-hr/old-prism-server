@@ -136,7 +136,7 @@
       <div class="row">
         <label class="plain-label" for="position_country">Country<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerCountry'/>"></span>
-        <div class="field"> <select class="full" id="position_country" name="position_country"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
+        <div class="field"> <select class="full selectpicker" data-live-search="true" data-size="6" id="position_country" name="position_country"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
           <option value="">Select...</option>
           <#list domiciles as domicile> <option value="${encrypter.encrypt(domicile.id)}"<#if employmentPosition.employerAddress.domicile?? && employmentPosition.employerAddress.domicile.id == domicile.id> selected="selected"</#if>>
           ${domicile.name?html}

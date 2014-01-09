@@ -16,7 +16,7 @@
 $(document).ready(function(){
 	
 	var numberOfSavedPositions = 0;
-	
+	$('#position_country').selectpicker();
 	$("#acceptTermsEPValue").val("NO");
 	//limitTextArea();
 	showOrHideAdPosisionButtonOnly();

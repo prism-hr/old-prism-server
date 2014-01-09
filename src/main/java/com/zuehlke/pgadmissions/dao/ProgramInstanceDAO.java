@@ -74,9 +74,12 @@ public class ProgramInstanceDAO {
     public ProgramInstance getCurrentProgramInstanceForStudyOption(Program program, String studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
         List<ProgramInstance> futureInstances = sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-                .add(Restrictions.eq("program", program)).add(Restrictions.eq("enabled", true)).add(Restrictions.eq("studyOption", studyOption))
-                .add(Restrictions.ge("applicationDeadline", today)).addOrder(Order.asc("applicationDeadline"))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true))
+                .add(Restrictions.eq("studyOption", studyOption))
+                .add(Restrictions.ge("applicationDeadline", today))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+        		.addOrder(Order.asc("applicationDeadline")).list();
         return futureInstances.get(0);
     }
 

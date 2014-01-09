@@ -98,8 +98,7 @@ $(document).ready(function()
 			$('#reg-firstname, #reg-lastname, #reg-email').val('');
 			submitRegistryUsers();
 		}
-	});
-	
+	});	
 	generalTabing();
 });
 

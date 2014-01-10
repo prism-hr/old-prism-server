@@ -7,90 +7,90 @@ $(document).ready(function() {
 	if($('#editedRefereeId').val() == "") {
 		$('#editedRefereeId').val("newReferee");
 	}
-    
-    // --------------------------------------------------------------------------------
-    // New reference button.
-    // --------------------------------------------------------------------------------
-    $('#newReferenceButton').on("click", function () {
-		$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
-		$('#referee_newReferee').show();
-		$('#editedRefereeId').val('newReferee');
-		clearRefereeFormErrors();
-		clearRefereeForm($("#referee_newReferee"));
-		$('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
-	});
-    
-    // --------------------------------------------------------------------------------
-    // Close button.
-    // --------------------------------------------------------------------------------
-	$('#refereeCloseButton').on("click", function() {
-		$('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
-		$('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
-	});
-	
-    // -------------------------------------------------------------------------------
-    // Clear button.
-    // -------------------------------------------------------------------------------
-    $('#refereeClearButton').on("click", function() {
-        clearRefereeFormErrors();
-        
-        var refereeBeingEdited = getRefereeBeingEdited();
-        
-        if (refereeBeingEdited == null) {
-        	$('input[name="refereeSendToUcl"]').each(function() {
-        		$(this).removeAttr("checked");
-            });
-        }
-        else {
-        	clearRefereeFormErrors();
-        	clearRefereeForm($("#" + refereeBeingEdited));
-        }
-        
-		$('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
-    });    
-    
-    // --------------------------------------------------------------------------------
-    // SHOW SELECTED REFEREE
-    // --------------------------------------------------------------------------------
-    $('a[name="showRefereeLink"]').on("click", function() {
-        $('a[name="showRefereeLink"]').each(function() {
-            $("#" + $(this).attr("toggles")).hide();
-        });
-        $("#referee_newReferee").hide();
-        $("#" + $(this).attr("toggles")).show();
-        $('#editedRefereeId').val($(this).attr("toggles").replace("referee_", "")); // set the id of the referee we are looking at
-        clearRefereeFormErrors();        
-    });
-    
-    // --------------------------------------------------------------------------------
-    // ONLY ALLOW A MAXIMUM OF 2 REFEREES TO BE SELECTED AT THE SAME TIME
-    // --------------------------------------------------------------------------------
-    $('input[name="refereeSendToUcl"]:checkbox').on("change", function() {
-        var maxAllowed = 2;
-        var checked = $('input[name="refereeSendToUcl"]:checked').size();
-        if (checked > maxAllowed) {
-            $(this).attr("checked", false);
-        }
-    });
-    
-    // --------------------------------------------------------------------------------
-    // POST SEND TO PORTICO REFEREE DATA
-    // --------------------------------------------------------------------------------
-    $('#refereeSaveButton').on("click", function(event) {
-        postRefereesData(true, false, event);
-    });
 
-    // --------------------------------------------------------------------------------
-    // POST ADD REFERENCE DATA
-    // --------------------------------------------------------------------------------
-	$(".addReferenceButton").on("click", function(event) {
-		postRefereesData(false, true, event);
-    });
-    
     // --------------------------------------------------------------------------------
     // EDIT REFERENCE DATA
     // --------------------------------------------------------------------------------
 	attachReferenceEditListeners();
+});
+
+// --------------------------------------------------------------------------------
+// New reference button.
+// --------------------------------------------------------------------------------
+$(document).on('click', '#newReferenceButton', function () {
+    $('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
+    $('#referee_newReferee').show();
+    $('#editedRefereeId').val('newReferee');
+    clearRefereeFormErrors();
+    clearRefereeForm($("#referee_newReferee"));
+    $('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
+});
+
+// --------------------------------------------------------------------------------
+// Close button.
+// --------------------------------------------------------------------------------
+$(document).on('click', '#refereeCloseButton', function() {
+    $('#referee_newReferee').parent().find('*[id*=referee_]:visible').hide();
+    $('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
+});
+
+// -------------------------------------------------------------------------------
+// Clear button.
+// -------------------------------------------------------------------------------
+$(document).on('click', '#refereeClearButton', function() {
+    clearRefereeFormErrors();
+    
+    var refereeBeingEdited = getRefereeBeingEdited();
+    
+    if (refereeBeingEdited == null) {
+        $('input[name="refereeSendToUcl"]').each(function() {
+            $(this).removeAttr("checked");
+        });
+    }
+    else {
+        clearRefereeFormErrors();
+        clearRefereeForm($("#" + refereeBeingEdited));
+    }
+    
+    $('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
+});    
+
+// --------------------------------------------------------------------------------
+// SHOW SELECTED REFEREE
+// --------------------------------------------------------------------------------
+$(document).on('click', 'a[name="showRefereeLink"]', function() {
+    $('a[name="showRefereeLink"]').each(function() {
+        $("#" + $(this).attr("toggles")).hide();
+    });
+    $("#referee_newReferee").hide();
+    $("#" + $(this).attr("toggles")).show();
+    $('#editedRefereeId').val($(this).attr("toggles").replace("referee_", "")); // set the id of the referee we are looking at
+    clearRefereeFormErrors();        
+});
+
+// --------------------------------------------------------------------------------
+// ONLY ALLOW A MAXIMUM OF 2 REFEREES TO BE SELECTED AT THE SAME TIME
+// --------------------------------------------------------------------------------
+$(document).on('change', 'input[name="refereeSendToUcl"]:checkbox', function() {
+    var maxAllowed = 2;
+    var checked = $('input[name="refereeSendToUcl"]:checked').size();
+    if (checked > maxAllowed) {
+        $(this).attr("checked", false);
+    }
+});
+
+// --------------------------------------------------------------------------------
+// POST SEND TO PORTICO REFEREE DATA
+// --------------------------------------------------------------------------------
+$(document).on('click', '#refereeSaveButton', function(event) {
+    postRefereesData(true, false, event);
+});
+
+// --------------------------------------------------------------------------------
+// POST ADD REFERENCE DATA
+// --------------------------------------------------------------------------------
+$(document).on('click', '.addReferenceButton', function(event) {
+    postRefereesData(false, true, event);
 });
 
 function clearRefereeFormErrors() {
@@ -385,11 +385,8 @@ function editReferenceData(event) {
 
 function collectRefereesSendToPortico(){
     var referees = new Array();
-    $('input[name="refereeSendToUcl"]:checkbox').each(function() {
-        var checked = $(this).prop('checked');
-        if (checked) {
-        	referees.push($(this).val());
-        }
+    $('input[name="refereeSendToUcl"]:checked').each(function() {
+        referees.push($(this).val());
     });
     return referees;
 }

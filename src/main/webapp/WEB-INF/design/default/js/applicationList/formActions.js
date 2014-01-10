@@ -118,7 +118,7 @@ $(document).ready(function() {
 		populateApplicationList();
 	});
 
-	$('#storeFiltersBtn').click(function() {
+	$(document).on('click', '#storeFiltersBtn', function() {
 		filters = getFilters();
 
 		data = {
@@ -148,7 +148,7 @@ $(document).ready(function() {
 	// ------------------------------------------------------------------------------
 	// SELECTION CHANGED FOR SELECT CATEGORY
 	// ------------------------------------------------------------------------------
-	$('.selectCategory').on("change",	function() {
+	$(document).on('change', '.selectCategory', function() {
 		var selected = $(this).val();
 		var predicateSelect = $(this).parent().find('.selectPredicate');
 		predicateSelect.empty();
@@ -170,7 +170,7 @@ $(document).ready(function() {
 	// ------------------------------------------------------------------------------
 	// SELECT ALL/NO APPLICATIONS
 	// ------------------------------------------------------------------------------
-	$('#select-all').click(function(event) {
+	$(document).on('click', '#select-all', function(event) {
 		var selectAllValue = this.checked;
 		var $appList = $('#appList');
 		var list = '';
@@ -189,7 +189,7 @@ $(document).ready(function() {
 	// ------------------------------------------------------------------------------
 	// CLEAR ALL FILTERS
 	// ------------------------------------------------------------------------------
-	$("#search-reset").on('click', function() {
+	$(document).on('click', '#search-reset', function() {
 		clearCurrentFilters(true);
 		checkSwitch();
 	});
@@ -219,7 +219,7 @@ $(document).ready(function() {
 	// --------------------------------------------------------------------------------
 	// DOWNLOAD SELECTED APPLICATIONS
 	// --------------------------------------------------------------------------------
-	$('#downloadAll').click(function() {
+	$(document).on('click', '#downloadAll', function() {
 		var appListValue = '';
 		$('input[name=appDownload]').each(function () {
 			if (this.checked) {
@@ -232,7 +232,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$("#loadMoreApplications").on('click', function() {
+	$(document).on('click', '#loadMoreApplications', function() {
 		if (loading) {
 			return;
 		}
@@ -241,7 +241,7 @@ $(document).ready(function() {
 	});
 
 	// Load active applications
-	$("#loadActiveApplication").on('click', function() {
+	$(document).on('click', '#loadActiveApplication' function() {
 		clearCurrentFilters(false);
 		$('#sort-column').val('APPLICATION_DATE');
 		$('#sort-order').val('DESCENDING');
@@ -274,7 +274,7 @@ $(document).ready(function() {
 	});
 
 	// Duplicate filters buttons
-	$(".add").on('click', function() {
+	$(document).on('click', '.add', function() {
 		var existingFilter=$(this).parent();
 		var newFilter=$(existingFilter).clone(true);
 		newFilter.insertAfter($(this).parent());
@@ -288,7 +288,7 @@ $(document).ready(function() {
 	});
 	
 	// Remove current filter
-	$(".remove").on('click', function() {
+	$(document).on('click', '.remove', function() {
 		var existingFilter= $(this).parent();
 		if ($("#search-box").find("div.filter").length > 1) {
 			var filterValue = existingFilter.find(".filterInput").val(); 

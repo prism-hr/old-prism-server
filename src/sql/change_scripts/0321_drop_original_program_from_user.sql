@@ -1,0 +1,1 @@
+ALTER TABLE REGISTERED_USER DROP FOREIGN KEY program_user_fk, DROP COLUMN originally_program_id;

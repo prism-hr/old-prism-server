@@ -1,0 +1,1 @@
+UPDATE APPLICATION_FORM set latest_review_round_id = (select REVIEW_ROUND.id from REVIEW_ROUND where REVIEW_ROUND.application_form_id = APPLICATION_FORM.id);

@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('.selectpicker').selectpicker();
+    $('#programme-details .selectpicker').selectpicker();
     $(document).on('change', 'select.actionType', function() {
     	
         var name = this.name;

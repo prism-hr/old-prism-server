@@ -1,276 +1,256 @@
-$(document)
-		.ready(
-				function() {
-					$('.selectpicker').selectpicker();
-					if ($("input[name='passportAvailable']:checked").val() == "true") {
-						enablePassportInformation();
-					} else {
-						disablePassportInformation();
-					}
+$(document).ready(function() {
+	$('#personalDetailsSection .selectpicker').selectpicker();
+	if ($("input[name='passportAvailable']:checked").val() == "true") {
+		enablePassportInformation();
+	} else {
+		disablePassportInformation();
+	}
 
-					isRequireVisa();
+	isRequireVisa();
 
-					if ($(
-							"input[name='languageQualificationAvailable']:checked")
-							.val() == "true") {
-						enableLanguageQualifications();
-					} else {
-						disableLanguageQualifications();
-					}
+	if ($(
+			"input[name='languageQualificationAvailable']:checked")
+			.val() == "true") {
+		enableLanguageQualifications();
+	} else {
+		disableLanguageQualifications();
+	}
 
-					var selectedType = $('#qualificationType').val();
-					if (selectedType === "IELTS_ACADEMIC") {
-						$(
-								'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
-								.show();
-						$(
-								'#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree')
-								.hide();
-						$('#overallScoreSelect').val(
-								$("#overallScoreFree").val());
-						$('#readingScoreSelect').val(
-								$("#readingScoreFree").val());
-						$('#writingScoreSelect').val(
-								$("#writingScoreFree").val());
-						$('#speakingScoreSelect').val(
-								$("#speakingScoreFree").val());
-						$('#listeningScoreSelect').val(
-								$("#listeningScoreFree").val());
-						$(
-								'#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree')
-								.val("");
-					}
+	var selectedType = $('#qualificationType').val();
+	if (selectedType === "IELTS_ACADEMIC") {
+		$(
+				'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
+				.show();
+		$(
+				'#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree')
+				.hide();
+		$('#overallScoreSelect').val(
+				$("#overallScoreFree").val());
+		$('#readingScoreSelect').val(
+				$("#readingScoreFree").val());
+		$('#writingScoreSelect').val(
+				$("#writingScoreFree").val());
+		$('#speakingScoreSelect').val(
+				$("#speakingScoreFree").val());
+		$('#listeningScoreSelect').val(
+				$("#listeningScoreFree").val());
+		$(
+				'#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree')
+				.val("");
+	}
 
-					if (selectedType === "OTHER") {
-						enableOtherLanguageQualification();
-					} else {
-						disableOtherLanguageQualification();
-					}
+	if (selectedType === "OTHER") {
+		enableOtherLanguageQualification();
+	} else {
+		disableOtherLanguageQualification();
+	}
 
-					if ($('#languageQualificationsTable tr').length > 0) {
-						disableLanguageQualifications();
-					}
+	if ($('#languageQualificationsTable tr').length > 0) {
+		disableLanguageQualifications();
+	}
 
-					isEnglishFirstLanguage();
+	isEnglishFirstLanguage();
 
-					$("#acceptTermsPEDValue").val("NO");
+	$("#acceptTermsPEDValue").val("NO");
 
-					// -------------------------------------------------------------------------------
-					// Close button.
-					// -------------------------------------------------------------------------------
-					$('#personalDetailsCloseButton').click(function() {
-						$('#personalDetails-H2').trigger('click');
-						return false;
-					});
+	// -------------------------------------------------------------------------------
+	// Close button.
+	// -------------------------------------------------------------------------------
+	$('#personalDetailsCloseButton').click(function() {
+		$('#personalDetails-H2').trigger('click');
+		return false;
+	});
 
-					// -------------------------------------------------------------------------------
-					// Clear button.
-					// -------------------------------------------------------------------------------
-					$('#personalDetailsClearButton').click(
-							function() {
-								$('#ajaxloader').show();
-								loadPersonalDetails(true);
-								
-							});
+	// -------------------------------------------------------------------------------
+	// Clear button.
+	// -------------------------------------------------------------------------------
+	$('#personalDetailsClearButton').click(
+			function() {
+				$('#ajaxloader').show();
+				loadPersonalDetails(true);
+				
+			});
 
-					// -------------------------------------------------------------------------------
-					// "Accept terms" checkbox.
-					// -------------------------------------------------------------------------------
-					$("input[name*='acceptTermsPEDCB']").click(function() {
-						if ($("#acceptTermsPEDValue").val() == 'YES') {
-							$("#acceptTermsPEDValue").val("NO");
-						} else {
-							$("#acceptTermsPEDValue").val("YES");
-						}
-					});
+	// -------------------------------------------------------------------------------
+	// "Accept terms" checkbox.
+	// -------------------------------------------------------------------------------
+	$("input[name*='acceptTermsPEDCB']").click(function() {
+		if ($("#acceptTermsPEDValue").val() == 'YES') {
+			$("#acceptTermsPEDValue").val("NO");
+		} else {
+			$("#acceptTermsPEDValue").val("YES");
+		}
+	});
 
-					// -------------------------------------------------------------------------------
-					// Require visa
-					// -------------------------------------------------------------------------------
-					$("input[name='requiresVisa']").bind('change', function() {
-						isRequireVisa();
-					});
+	// -------------------------------------------------------------------------------
+	// Require visa
+	// -------------------------------------------------------------------------------
+	$("input[name='requiresVisa']").bind('change', function() {
+		isRequireVisa();
+	});
 
-					// -------------------------------------------------------------------------------
-					// Passport Available
-					// -------------------------------------------------------------------------------
-					$("input[name='passportAvailable']")
-							.bind(
-									'change',
-									function() {
-										var selected_radio = $(
-												"input[name='passportAvailable']:checked")
-												.val();
-										if (selected_radio == 'true') {
-											enablePassportInformation();
-										} else {
-											disablePassportInformation();
-										}
-									});
+	// -------------------------------------------------------------------------------
+	// Passport Available
+	// -------------------------------------------------------------------------------
+	$("input[name='passportAvailable']").bind('change',	function() {
+		var selected_radio = $(
+				"input[name='passportAvailable']:checked")
+				.val();
+		if (selected_radio == 'true') {
+			enablePassportInformation();
+		} else {
+			disablePassportInformation();
+		}
+	});
 
-					// -------------------------------------------------------------------------------
-					// Is English your first language?*
-					// -------------------------------------------------------------------------------
-					$("input[name='englishFirstLanguage']").bind('change',
-							function() {
-								var returnVal = isEnglishFirstLanguage();
-								if (returnVal) {
-									ajaxDeleteAllLanguageQualifications();
-								}
-							});
+	// -------------------------------------------------------------------------------
+	// Is English your first language?*
+	// -------------------------------------------------------------------------------
+	$("input[name='englishFirstLanguage']").bind('change',
+			function() {
+				var returnVal = isEnglishFirstLanguage();
+				if (returnVal) {
+					ajaxDeleteAllLanguageQualifications();
+				}
+			});
 
-					// -------------------------------------------------------------------------------
-					// Language Qualification available
-					// -------------------------------------------------------------------------------
-					$("input[name='languageQualificationAvailable']")
-							.bind(
-									'change',
-									function() {
-										$(
-												'#languageQualification_div div.alert')
-												.remove();
-										var selected_radio = $(
-												"input[name='languageQualificationAvailable']:checked")
-												.val();
-										if (selected_radio == 'true') {
-											enableLanguageQualifications();
-										} else {
-											disableLanguageQualifications();
-											ajaxDeleteAllLanguageQualifications();
-										}
-									});
+	// -------------------------------------------------------------------------------
+	// Language Qualification available
+	// -------------------------------------------------------------------------------
+	$("input[name='languageQualificationAvailable']").bind('change',function() {
+		$(
+				'#languageQualification_div div.alert')
+				.remove();
+		var selected_radio = $(
+				"input[name='languageQualificationAvailable']:checked")
+				.val();
+		if (selected_radio == 'true') {
+			enableLanguageQualifications();
+		} else {
+			disableLanguageQualifications();
+			ajaxDeleteAllLanguageQualifications();
+		}
+	});
 
-					// -------------------------------------------------------------------------------
-					// Save button.
-					// -------------------------------------------------------------------------------
-					$('#personalDetailsSaveButton').on("click", function() {
-						$("span[name='nonAcceptedPED']").html('');
+	// -------------------------------------------------------------------------------
+	// Save button.
+	// -------------------------------------------------------------------------------
+	$('#personalDetailsSaveButton').on("click", function() {
+		$("span[name='nonAcceptedPED']").html('');
 
-						// Attempt saving of "dirty" nationalities.
-						$('#addCandidateNationalityButton').trigger('click');
-						$('#addMaternalNationalityButton').trigger('click');
-						$('#addPaternalNationalityButton').trigger('click');
+		// Attempt saving of "dirty" nationalities.
+		$('#addCandidateNationalityButton').trigger('click');
+		$('#addMaternalNationalityButton').trigger('click');
+		$('#addPaternalNationalityButton').trigger('click');
 
-						postPersonalDetailsData('close');
-					});
+		postPersonalDetailsData('close');
+	});
 
-					// To make uncompleted functionalities disabled
-					$(".disabledEle").attr("disabled", "disabled");
+	// To make uncompleted functionalities disabled
+	$(".disabledEle").attr("disabled", "disabled");
 
-					// / delete collection items
-					$("#existingCandidateNationalities").on(
-							"click",
-							"a",
-							function() {
-								$(this).parent("div").remove();
+	// / delete collection items
+	$("#existingCandidateNationalities").on("click","a",function() {
+		$(this).parent("div").remove();
 
-								if ($('#existingCandidateNationalities')
-										.children().length <= 1) {
-									$('#candidateNationalitiesLabel').remove();
-									$('#my-nationality-lb').html(
-											"My Nationality");
-								}
+		if ($('#existingCandidateNationalities')
+				.children().length <= 1) {
+			$('#candidateNationalitiesLabel').remove();
+			$('#my-nationality-lb').html(
+					"My Nationality");
+		}
 
-								if ($('#existingCandidateNationalities')
-										.children().length == 1) {
+		if ($('#existingCandidateNationalities')
+				.children().length == 1) {
 
-									$('#my-hint').remove();
-									$('#my-nationality-hint').show();
-								}
+			$('#my-hint').remove();
+			$('#my-nationality-hint').show();
+		}
 
-							});
+	});
 
-					$("#existingMaternalNationalities").on(
-							"click",
-							"a",
-							function() {
-								$(this).parent("div").remove();
+	$("#existingMaternalNationalities").on("click","a",function() {
+		$(this).parent("div").remove();
 
-								if ($('#existingMaternalNationalities')
-										.children().length <= 1) {
-									$('#maternalNationalitiesLabel').remove();
-									$('#maternal-nationality-lb').html(
-											"Mother's Nationality");
-								}
-							});
+		if ($('#existingMaternalNationalities')
+				.children().length <= 1) {
+			$('#maternalNationalitiesLabel').remove();
+			$('#maternal-nationality-lb').html(
+					"Mother's Nationality");
+		}
+	});
 
-					$("#existingPaternalNationalities").on(
-							"click",
-							"a",
-							function() {
-								$(this).parent("div").remove();
+	$("#existingPaternalNationalities").on("click", "a", function() {
+		$(this).parent("div").remove();
 
-								if ($('#existingPaternalNationalities')
-										.children().length <= 1) {
-									$('#paternalNationalitiesLabel').remove();
-									$('#paternal-nationality-lb').html(
-											"Father's Nationality");
-								}
-							});
+		if ($('#existingPaternalNationalities')
+				.children().length <= 1) {
+			$('#paternalNationalitiesLabel').remove();
+			$('#paternal-nationality-lb').html(
+					"Father's Nationality");
+		}
+	});
 
-					bindDatePicker('#dateOfBirth');
-					bindDatePicker('#passportExpiryDate');
-					bindDatePicker('#passportIssueDate');
-					bindDatePicker('#dateOfExamination');
-					addToolTips();
-					watchUpload($('#languageQualificationDocument'),
-							ajaxLanguageQualificationDocumentDelete);
+	bindDatePicker('#dateOfBirth');
+	bindDatePicker('#passportExpiryDate');
+	bindDatePicker('#passportIssueDate');
+	bindDatePicker('#dateOfExamination');
+	addToolTips();
+	watchUpload($('#languageQualificationDocument'),
+			ajaxLanguageQualificationDocumentDelete);
 
-					// -------------------------------------------------------------------------------
-					// Language Qualification Type Change
-					// -------------------------------------------------------------------------------
-					$('#qualificationType')
-							.on(
-									'change',
-									function() {
-										var selectedType = $(
-												'#qualificationType').val();
-										if (selectedType === "IELTS_ACADEMIC") {
-											$(
-													'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
-													.show();
-											$(
-													'#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree')
-													.hide();
-										} else {
-											$(
-													'#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree')
-													.show();
-											$(
-													'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
-													.hide();
-										}
+	// -------------------------------------------------------------------------------
+	// Language Qualification Type Change
+	// -------------------------------------------------------------------------------
+	$('#qualificationType').on('change',function() {
+		var selectedType = $(
+				'#qualificationType').val();
+		if (selectedType === "IELTS_ACADEMIC") {
+			$(
+					'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
+					.show();
+			$(
+					'#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree')
+					.hide();
+		} else {
+			$(
+					'#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree')
+					.show();
+			$(
+					'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
+					.hide();
+		}
 
-										if (selectedType === "OTHER") {
-											enableOtherLanguageQualification();
-										} else {
-											disableOtherLanguageQualification();
-										}
+		if (selectedType === "OTHER") {
+			enableOtherLanguageQualification();
+		} else {
+			disableOtherLanguageQualification();
+		}
 
-										$(
-												'#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree')
-												.val("");
-										$(
-												'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
-												.val("");
-										$("#examTakenOnlineNo").removeAttr(
-												"checked");
-										$("#examTakenOnlineYes").removeAttr(
-												"checked");
+		$(
+				'#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree')
+				.val("");
+		$(
+				'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
+				.val("");
+		$("#examTakenOnlineNo").removeAttr(
+				"checked");
+		$("#examTakenOnlineYes").removeAttr(
+				"checked");
 
-										$(
-												'#languageQualification_div div.alert')
-												.remove();
+		$(
+				'#languageQualification_div div.alert')
+				.remove();
 
-										$(
-												"#otherQualificationTypeName, #dateOfExamination")
-												.val("");
+		$(
+				"#otherQualificationTypeName, #dateOfExamination")
+				.val("");
 
-										ajaxLanguageQualificationDocumentDelete();
-										deleteQualificationDocumentFile();
-									});
+		ajaxLanguageQualificationDocumentDelete();
+		deleteQualificationDocumentFile();
+	});
 
-				});
+});
 
 function ajaxLanguageQualificationDocumentDelete() {
 	if ($('#document_LANGUAGE_QUALIFICATION')

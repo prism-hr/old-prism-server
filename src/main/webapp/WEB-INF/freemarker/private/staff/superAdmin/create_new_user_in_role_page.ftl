@@ -18,7 +18,6 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/superadmin.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
-<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/bootstrap-select.min.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
 <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>
 <!--[if lt IE 9]>
@@ -358,7 +357,6 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap-select.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js'/>"></script>
 
 </body>

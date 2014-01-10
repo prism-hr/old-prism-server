@@ -473,7 +473,6 @@ $(document).ready(function()
 	
 	bindDatePicker('#startDate');
 	addToolTips();
-	$('#programmeDetailsSection .selectpicker').selectpicker();
 });
 
 

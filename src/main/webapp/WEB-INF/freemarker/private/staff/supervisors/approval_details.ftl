@@ -79,6 +79,7 @@
                             <#else>
                                 <#include "/private/staff/supervisors/portico_validation_section.ftl"/>
                             </#if>
+                            <script type="text/javascript" src="<@spring.url '/design/default/js/supervisor/qualifications_portico_validation.js' />"></script>
                         </div>
 					</div>
 				</div>

@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('.selectpicker').selectpicker();
+    $('#qualificationsSection .selectpicker').selectpicker();
     $("#acceptTermsQDValue").val("NO");
     showOrHideAddQualificationButtonOnly();
     showOrHideQualificationInstitution();

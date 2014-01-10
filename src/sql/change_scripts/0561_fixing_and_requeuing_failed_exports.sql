@@ -96,3 +96,22 @@ SET transfer_begin_timeppoint = NOW(),
 	status = "QUEUED_FOR_WEBSERVICE_CALL"
 WHERE application_id = 3224
 ;
+
+CREATE TABLE SUBSTITUTE_COUNTRY (
+	prism_id	INT(10) UNSIGNED NOT NULL,
+	portico_id VARCHAR(10),
+	substitute_prism_id INT(10) UNSIGNED,
+	UNIQUE INDEX (prism_id),
+	UNIQUE INDEX (portico_id),
+	INDEX (substitute_prism_id),
+	FOREIGN KEY (prism_id) REFERENCES COUNTRIES (id),
+	FOREIGN KEY (substitute_prism_id) REFERENCES COUNTRIES (id)
+) ENGINE = INNODB
+;
+
+INSERT INTO SUBSTITUTE_COUNTRY (prism_id, portico_id)
+	SELECT id, code
+	FROM countries 
+	WHERE enabled = 0
+;
+

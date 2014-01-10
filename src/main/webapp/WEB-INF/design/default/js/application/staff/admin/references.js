@@ -386,7 +386,7 @@ function editReferenceData(event) {
 function collectRefereesSendToPortico(){
     var referees = new Array();
     $('input[name="refereeSendToUcl"]:checkbox').each(function() {
-        var checked = $(this).attr("checked");
+        var checked = $(this).prop('checked');
         if (checked) {
         	referees.push($(this).val());
         }

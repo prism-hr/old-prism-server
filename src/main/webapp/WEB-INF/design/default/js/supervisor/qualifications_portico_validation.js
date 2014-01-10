@@ -104,7 +104,7 @@ function postQualificationsData() {
 function collectQualificationsSendToPortico(){
     qualifications = new Array();
     $('input[name="qualificationSendToUcl"]:checkbox').each(function() {
-        var checked = $(this).attr("checked");
+        var checked = $(this).prop('checked');
         if (checked) {
         	qualifications.push($(this).val());
         }

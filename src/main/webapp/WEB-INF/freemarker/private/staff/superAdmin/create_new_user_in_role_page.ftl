@@ -358,7 +358,6 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap-select.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/autosuggest.js'/>"></script>
 
 </body>

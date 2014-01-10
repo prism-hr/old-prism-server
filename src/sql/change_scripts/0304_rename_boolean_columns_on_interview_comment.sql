@@ -1,0 +1,1 @@
+ALTER TABLE INTERVIEW_COMMENT CHANGE COLUMN willing_to_supervise old_willing_to_supervise VARCHAR(30), CHANGE COLUMN suitable_candidate old_suitable_candidate VARCHAR(30),  CHANGE COLUMN decline old_decline VARCHAR(30),   CHANGE COLUMN admins_notified old_admins_notified varchar(30);

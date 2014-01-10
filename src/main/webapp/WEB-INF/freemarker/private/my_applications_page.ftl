@@ -10,7 +10,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1" />
 
 <!-- Styles for Application List Page -->
-<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/bootstrap-select.min.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />" />
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application_list.css' />" />
 <link rel="shortcut icon" type="text/css" href="<@spring.url '/design/default/images/favicon.ico' />"/>

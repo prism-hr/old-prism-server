@@ -1,4 +1,3 @@
-<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/bootstrap-select.min.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application_list.css' />" />
 
 <div id="programme-details">

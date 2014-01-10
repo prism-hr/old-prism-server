@@ -42,7 +42,7 @@
               <div class="row" id="projectAdvertProgramDiv">
                 <label for="projectAdvertProgramSelect" class="plain-label">Programme<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
                 <div class="field">
-                  <select id="projectAdvertProgramSelect" class="max">
+                  <select id="projectAdvertProgramSelect" class="max selectpicker" data-size="6" data-live-search="true">
                     <option value="">Select...</option>
                       <#list projectProgrammes as programme>
                         <option value="${programme.code}"

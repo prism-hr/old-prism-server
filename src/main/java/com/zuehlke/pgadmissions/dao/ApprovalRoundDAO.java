@@ -25,8 +25,7 @@ public class ApprovalRoundDAO {
 	}
 
 	public void save(ApprovalRound approvalRound) {
-		sessionFactory.getCurrentSession().saveOrUpdate(approvalRound);
-		
+		sessionFactory.getCurrentSession().saveOrUpdate(approvalRound);	
 	}
 
 }

@@ -141,8 +141,6 @@ public class ApprovalService {
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
         form.addNotificationRecord(new NotificationRecord(NotificationType.APPROVAL_REMINDER));
-
-        approvalRound.setApplication(form);
         approvalRoundDAO.save(approvalRound);
 
         StageDuration approveStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.APPROVAL);
@@ -219,6 +217,10 @@ public class ApprovalService {
                 || (!form.hasEnoughQualificationsToSendToPortico() && approvalRound.getMissingQualificationExplanation() == null)) {
             throw new IllegalStateException("Send to portico data is not valid");
         }
+    }
+    
+    public void save(ApprovalRound approvalRound) {
+    	approvalRoundDAO.save(approvalRound);
     }
 
 }

@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.dto.NewApprovalStageInstanceDTO;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -59,12 +60,12 @@ import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
+import com.zuehlke.pgadmissions.validators.ApprovalRoundDTOValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
 
-@SessionAttributes("approvalRound")
+@SessionAttributes("approvalRoundDTO")
 @Controller
 @RequestMapping("/approval")
 public class ApprovalController extends EditApplicationFormAsProgrammeAdminController {
@@ -75,7 +76,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     private static final String QUALIFICATION_SECTION = "/private/staff/supervisors/components/qualification_portico_validation";
     private static final String REFERENCE_SECTION = "/private/staff/supervisors/components/reference_portico_validation";
 
-    private final ApprovalRoundValidator approvalRoundValidator;
+    private final ApprovalRoundDTOValidator approvalRoundDTOValidator;
 
     private final SupervisorPropertyEditor supervisorPropertyEditor;
 
@@ -103,7 +104,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
     @Autowired
     public ApprovalController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
-            ApprovalRoundValidator approvalRoundValidator, SupervisorPropertyEditor supervisorPropertyEditor, DocumentPropertyEditor documentPropertyEditor,
+            ApprovalRoundDTOValidator approvalRoundDTOValidator, SupervisorPropertyEditor supervisorPropertyEditor, DocumentPropertyEditor documentPropertyEditor,
             GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService,
             RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
             SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, DomicileService domicileService,
@@ -114,7 +115,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
                 encryptionHelper, messageSource, scoringDefinitionParser, scoresPropertyEditor, scoreFactory, domicileService, domicilePropertyEditor,
                 applicationFormUserRoleService, actionsProvider);
         this.approvalService = approvalService;
-        this.approvalRoundValidator = approvalRoundValidator;
+        this.approvalRoundDTOValidator = approvalRoundDTOValidator;
         this.supervisorPropertyEditor = supervisorPropertyEditor;
         this.commentValidator = commentValidator;
         this.qualificationService = qualificationService;
@@ -130,7 +131,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         
         actionsProvider.validateAction(applicationForm, registeredUser, ApplicationFormAction.ASSIGN_SUPERVISORS);
         
-        modelMap.put("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
+        modelMap.put("approvalRound", getApprovalRoundDTO(applicationForm.getApplicationNumber()));
 
         if (applicationForm.getLatestApprovalRound() != null) {
             SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();
@@ -145,11 +146,6 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         return APPROVAL_PAGE;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "supervisors_section")
-    public String getSupervisorSection() {
-        return PROPOSE_OFFER_RECOMMENDATION_SECTION;
-    }
-
     @ModelAttribute
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
@@ -159,48 +155,47 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         return applicationForm;
     }  
 
-    @ModelAttribute("approvalRound")
-    public ApprovalRound getApprovalRound(String applicationId) {
-        ApprovalRound approvalRound = new ApprovalRound();
+    @ModelAttribute("approvalRoundDTO")
+    public NewApprovalStageInstanceDTO getApprovalRoundDTO(String applicationId) {
+    	NewApprovalStageInstanceDTO approvalRoundDTO = new NewApprovalStageInstanceDTO();
         ApplicationForm applicationForm = getApplicationForm((String) applicationId);
+        approvalRoundDTO.setApplicationForm(applicationForm);
+        
         ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
-
         Project project = applicationForm.getProject();
-        boolean applicationHasProject = project != null;
-
         Date startDate = applicationForm.getProgrammeDetails().getStartDate();
 
         if (latestApprovalRound != null) {
 
             for (Supervisor supervisor : latestApprovalRound.getSupervisors()) {
                 if (!supervisor.hasDeclinedSupervision()) {
-                    approvalRound.getSupervisors().add(supervisor);
+                    approvalRoundDTO.addSupervisor(supervisor);
                 }
             }
 
             if (latestApprovalRound.getProjectDescriptionAvailable() != null) {
-                approvalRound.setProjectDescriptionAvailable(latestApprovalRound.getProjectDescriptionAvailable());
-                approvalRound.setProjectTitle(latestApprovalRound.getProjectTitle());
-                approvalRound.setProjectAbstract(latestApprovalRound.getProjectAbstract());
+                approvalRoundDTO.setProjectDescriptionAvailable(latestApprovalRound.getProjectDescriptionAvailable());
+                approvalRoundDTO.setProjectTitle(latestApprovalRound.getProjectTitle());
+                approvalRoundDTO.setProjectAbstract(latestApprovalRound.getProjectAbstract());
             }
 
             startDate = latestApprovalRound.getRecommendedStartDate();
 
             if (latestApprovalRound.getRecommendedConditionsAvailable() != null) {
-                approvalRound.setRecommendedConditionsAvailable(latestApprovalRound.getRecommendedConditionsAvailable());
-                approvalRound.setRecommendedConditions(latestApprovalRound.getRecommendedConditions());
+                approvalRoundDTO.setRecommendedConditionsAvailable(latestApprovalRound.getRecommendedConditionsAvailable());
+                approvalRoundDTO.setRecommendedConditions(latestApprovalRound.getRecommendedConditions());
             }
 
         }
 
-        else if (applicationHasProject) {
+        else if (!(project == null)) {
 
-            addUserAsSupervisorInApprovalRound(project.getPrimarySupervisor(), approvalRound, true);
-            addUserAsSupervisorInApprovalRound(project.getSecondarySupervisor(), approvalRound, false);
+            addUserAsSupervisorInApprovalRound(project.getPrimarySupervisor(), approvalRoundDTO, true);
+            addUserAsSupervisorInApprovalRound(project.getSecondarySupervisor(), approvalRoundDTO, false);
 
-            approvalRound.setProjectDescriptionAvailable(true);
-            approvalRound.setProjectTitle(project.getAdvert().getTitle());
-            approvalRound.setProjectAcceptingApplications(project.getAdvert().getActive());
+            approvalRoundDTO.setProjectDescriptionAvailable(true);
+            approvalRoundDTO.setProjectTitle(project.getAdvert().getTitle());
+            approvalRoundDTO.setProjectAcceptingApplications(project.getAdvert().getActive());
 
         }
 
@@ -208,25 +203,18 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             startDate = programInstanceService.getEarliestPossibleStartDate(applicationForm);
         }
 
-        approvalRound.setRecommendedStartDate(startDate);
-        return approvalRound;
+        approvalRoundDTO.setRecommendedStartDate(startDate);
+        approvalRoundDTO.setUsersInterestedInApplication(applicationFormUserRoleService.getUsersInterestedInApplication(applicationForm));
+        approvalRoundDTO.setUsersPotentiallyInterestedInApplication(applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(applicationForm));
+        
+        return approvalRoundDTO;
     }
 
-    private void addUserAsSupervisorInApprovalRound(RegisteredUser user, ApprovalRound approvalRound, boolean isPrimary) {
+    private void addUserAsSupervisorInApprovalRound(RegisteredUser user, NewApprovalStageInstanceDTO approvalRoundDTO, boolean isPrimary) {
         Supervisor supervisor = new Supervisor();
         supervisor.setIsPrimary(isPrimary);
         supervisor.setUser(user);
-        approvalRound.getSupervisors().add(supervisor);
-    }
-    
-    @ModelAttribute("usersInterestedInApplication") 
-    public List<RegisteredUser> getUsersInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
-    }
-    
-    @ModelAttribute("usersPotentiallyInterestedInApplication") 
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
+        approvalRoundDTO.addSupervisor(supervisor);
     }
 
     @ModelAttribute("explanation")
@@ -234,9 +222,9 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         return "";
     }
 
-    @InitBinder("approvalRound")
-    public void registerValidatorAndPropertyEditorForApprovalRound(WebDataBinder binder) {
-        binder.setValidator(approvalRoundValidator);
+    @InitBinder("approvalRoundDTO")
+    public void registerValidatorAndPropertyEditorForApprovalRoundDTO(WebDataBinder binder) {
+        binder.setValidator(approvalRoundDTOValidator);
         binder.registerCustomEditor(Supervisor.class, supervisorPropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
@@ -255,8 +243,8 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
-    public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound, BindingResult bindingResult,
-            SessionStatus sessionStatus) {
+    public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalRoundDTO") NewApprovalStageInstanceDTO approvalRoundDTO, 
+    		BindingResult bindingResult, SessionStatus sessionStatus) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser initiator = getCurrentUser();
         actionsProvider.validateAction(applicationForm, initiator, ApplicationFormAction.ASSIGN_SUPERVISORS);
@@ -264,9 +252,21 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         if (bindingResult.hasErrors()) {
             return PROPOSE_OFFER_RECOMMENDATION_SECTION;
         }
-
+        
+        ApprovalRound approvalRound = new ApprovalRound();
+        approvalRound.setApplication(approvalRoundDTO.getApplicationForm());
+        approvalRound.setMissingQualificationExplanation(approvalRoundDTO.getMissingQualificationExplanation());
+        approvalRound.setProjectDescriptionAvailable(approvalRoundDTO.getProjectDescriptionAvailable());
+        approvalRound.setProjectTitle(approvalRoundDTO.getProjectTitle());
+        approvalRound.setProjectAbstract(approvalRoundDTO.getProjectAbstract());
+        approvalRound.setRecommendedStartDate(approvalRoundDTO.getRecommendedStartDate());
+        approvalRound.setRecommendedConditionsAvailable(approvalRoundDTO.getRecommendedConditionsAvailable());
+        approvalRound.setRecommendedConditions(approvalRoundDTO.getRecommendedConditions());
+        approvalRound.setProjectAcceptingApplications(approvalRoundDTO.getProjectAcceptingApplications());
+        approvalRound.setSupervisors(approvalRoundDTO.getSupervisors());
         approvalService.moveApplicationToApproval(applicationForm, approvalRound, initiator);
         sessionStatus.setComplete();
+        
         return "/private/common/ajax_OK";
     }
 
@@ -286,6 +286,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
         approvalRound.setMissingQualificationExplanation(sendToPorticoData.getEmptyQualificationsExplanation());
         applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        
         return PROPOSE_OFFER_RECOMMENDATION_SECTION;
     }
 

@@ -48,7 +48,7 @@
                 <label class="plain-label" for="title">Title<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.title'/>"></span>
                 <div class="field">
-                    <select class="full" name="title" id="title" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
+                    <select class="full selectpicker" data-live-search="true" data-size="6" name="title" id="title" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
                         <option value="">Select...</option>
                             <#list titles as title>
                                 <option value="${title}" <#if personalDetails.title?? &&  personalDetails.title == title >selected="selected"</#if>>${title.displayValue?html}</option>               
@@ -503,7 +503,7 @@
                 <label class="plain-label" for="ethnicity">Ethnicity<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.ethnicity'/>"></span>
                 <div class="field">
-                    <select class="full" name="ethnicity" id="ethnicity" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
+                    <select class="full selectpicker" data-live-search="true" data-size="6" name="ethnicity" id="ethnicity" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <#list ethnicities as ethnicity>
                         <option value="${encrypter.encrypt(ethnicity.id)!}"
@@ -523,7 +523,7 @@
                 <label class="plain-label" for="disability">Disability<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'personalDetails.disability'/>"></span>
                 <div class="field">
-                    <select class="full" name="disability" id="disability" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
+                    <select class="full selectpicker" data-live-search="true" data-size="6" name="disability" id="disability" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <#list disabilities as disability>
                         <option value="${encrypter.encrypt(disability.id)!}"

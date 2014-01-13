@@ -23,9 +23,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
-import com.zuehlke.pgadmissions.validators.ATASConstraint;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
-
 @Entity(name = "APPROVAL_ROUND")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ApprovalRound implements Serializable {
@@ -40,19 +37,15 @@ public class ApprovalRound implements Serializable {
     @JoinColumn(name = "approval_round_id")
     private List<Supervisor> supervisors = new ArrayList<Supervisor>();
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500)
     @Column(name = "missing_qualification_explanation")
     private String missingQualificationExplanation;
 
     @Column(name = "project_description_available")
     private Boolean projectDescriptionAvailable;
-
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
+    
     @Column(name = "project_title")
     private String projectTitle;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
-    @ATASConstraint
     @Column(name = "project_abstract")
     private String projectAbstract;
 
@@ -63,7 +56,6 @@ public class ApprovalRound implements Serializable {
     @Column(name = "recommended_conditions_available")
     private Boolean recommendedConditionsAvailable;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 1000)
     @Column(name = "recommended_conditions")
     private String recommendedConditions;
 
@@ -112,7 +104,7 @@ public class ApprovalRound implements Serializable {
     }
 
     public List<Supervisor> getSupervisors() {
-        return supervisors;
+    	return supervisors;
     }
 
     public void setSupervisors(List<Supervisor> supervisors) {

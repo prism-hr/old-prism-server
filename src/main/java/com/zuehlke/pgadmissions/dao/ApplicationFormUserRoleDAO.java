@@ -50,24 +50,30 @@ public class ApplicationFormUserRoleDAO {
     }
 
     public List<ApplicationFormUserRole> findByApplicationFormAndUser(ApplicationForm applicationForm, RegisteredUser user) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("user", user)).list();
     }
 
     public Date findUpdateTimestampByApplicationFormAndAuthorityUpdateVisility(ApplicationForm applicationForm, ApplicationUpdateScope updateVisibility) {
         return (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).createAlias("role", "role")
-                .add(Restrictions.eq("applicationForm", applicationForm)).add(Restrictions.ge("role.updateVisibility", updateVisibility))
-                .setProjection(Projections.projectionList().add(Projections.max("updateTimestamp"))).uniqueResult();
+                .add(Restrictions.eq("applicationForm", applicationForm))
+                .add(Restrictions.ge("role.updateVisibility", updateVisibility))
+                .setProjection(Projections.projectionList()
+                		.add(Projections.max("updateTimestamp"))).uniqueResult();
     }
 
     public ApplicationFormUserRole findByApplicationFormAndUserAndAuthority(ApplicationForm applicationForm, RegisteredUser user, Authority authority) {
         return (ApplicationFormUserRole) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .add(Restrictions.eq("applicationForm", applicationForm)).add(Restrictions.eq("user", user)).add(Restrictions.eq("role.id", authority))
+                .add(Restrictions.eq("applicationForm", applicationForm))
+                .add(Restrictions.eq("user", user))
+                .add(Restrictions.eq("role.id", authority))
                 .uniqueResult();
     }
 
     public List<ApplicationFormUserRole> findByApplicationFormAndAuthorities(ApplicationForm applicationForm, Authority... authorities) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).add(Restrictions.eq("applicationForm", applicationForm))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        		.add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.in("role.id", authorities)).list();
     }
 
@@ -240,7 +246,10 @@ public class ApplicationFormUserRoleDAO {
 	public List<RegisteredUser> findUsersInterestedInApplication(ApplicationForm applicationForm) {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
 				.setProjection(Projections.projectionList()
-					.add(Projections.groupProperty("user"), "user"))
+						.add(Projections.groupProperty("user.id"), "id")
+						.add(Projections.property("user.firstName"), "firstName")
+						.add(Projections.property("user.lastName"), "lastName")
+						.add(Projections.property("user.email"), "email"))
 				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
 				.add(Restrictions.eq("applicationForm", applicationForm))
 				.add(Restrictions.eq("interestedInApplicant", true))
@@ -263,7 +272,10 @@ public class ApplicationFormUserRoleDAO {
 		
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
 				.setProjection(Projections.projectionList()
-					.add(Projections.groupProperty("user"), "user"))
+						.add(Projections.groupProperty("user.id"), "id")
+						.add(Projections.property("user.firstName"), "firstName")
+						.add(Projections.property("user.lastName"), "lastName")
+						.add(Projections.property("user.email"), "email"))
 				.createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
 				.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
 				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)

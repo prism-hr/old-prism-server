@@ -351,13 +351,18 @@ function toggleScores() {
 		$(this).show();
 	});
 	
-	$('.more-scores').toggle(function () {
-		$(this).closest('.score-results').find('.hide-score-group').slideDown();
-		$(this).text('Show less').addClass('collapsed').removeClass('expand');
-	}, function () {
-		$(this).closest('.score-results').find('.hide-score-group').slideUp();
-		$(this).text('Show more').addClass('expand').removeClass('collapsed');
-	});
+    function expand() {
+        $(this).closest('.score-results').find('.hide-score-group').slideDown();
+        $(this).text('Show less').addClass('collapsed').removeClass('expand');
+        $(this).one("click", collapsed);
+    }
+    function collapsed() {
+        $(this).closest('.score-results').find('.hide-score-group').slideUp();
+        $(this).text('Show more').addClass('expand').removeClass('collapsed');
+        $(this).one("click", expand);
+    }
+    $('.more-scores').one("click", expand);
+
 }
 
 // ------------------------------------------------------------------------------
@@ -1123,7 +1128,7 @@ function exStatus() {
 				$(this).hide();
 				$(this).parent().find('>.box i').removeClass('icon-minus-sign').addClass('icon-plus-sign');
 			}
-			$(this).parent().find('>.box i').click(function() {
+			$(this).parent().find('>.box i').on('click', function() {
 				$(this).parent().parent().find(".excontainer").slideToggle(300);
 				if ($(this).attr('class') == 'icon-plus-sign') {
 					$(this).removeClass('icon-plus-sign').addClass('icon-minus-sign');
@@ -1134,3 +1139,42 @@ function exStatus() {
 		}
 	});
 }
+
+function timelineTextExpander() {
+
+    var $expander = $(".textContainer");
+    var expandheight = 54;
+
+    $.each($expander, function() {
+        if ($(this).height() > expandheight) {
+            var maxHeight = $(this).height();
+
+            function expand() {
+               $(this).animate({
+                    height : maxHeight
+                }, 200);
+                $(this).find('.expander').removeClass('expand').addClass('collapsed').text('Show less').animate (
+                    {
+                        
+                        top: maxHeight + 39
+                    }, 200);
+                 $(this).one("click", collapsed);
+            }
+            function collapsed() {
+                $(this).animate({
+                    height : expandheight
+                }, 200);
+                $(this).find('.expander').removeClass('collapsed').addClass('expand').text('Show more').animate (
+                    {
+                        top: 90
+                    }, 200);
+                $(this).one("click", expand);
+            }
+
+            $(this).append('<a class="expander expand">Show more</a>').one("click", expand);
+
+            $(this).addClass('expandable').height(expandheight);
+        }
+    });
+
+};

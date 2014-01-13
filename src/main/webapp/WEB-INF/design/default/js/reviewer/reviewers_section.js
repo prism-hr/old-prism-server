@@ -13,7 +13,7 @@ $(document).ready(function() {
                 $("#programReviewers option[value='" + id + "']").addClass('selected').removeAttr('selected').attr('disabled', 'disabled');
                 $("#applicationReviewers").append('<option value="' + id + '" category="' + category + '">' + selText + '</option>');
             }
-            $('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
+            $('#applicationReviewers').attr("size", $('#applicationReviewers option').length + 1);
             resetReviewersErrors();
         }
     });
@@ -29,7 +29,7 @@ $(document).ready(function() {
                 $("#applicationReviewers option[value='" + id + "']").remove();
                 $("#programReviewers option[value='" + id + "']").removeClass('selected').removeAttr('disabled');
             }
-            $('#applicationReviewers').attr("size", $('#applicationReviewers option').size() + 1);
+            $('#applicationReviewers').attr("size", $('#applicationReviewers option').length + 1);
         }
         resetReviewersErrors();
     });

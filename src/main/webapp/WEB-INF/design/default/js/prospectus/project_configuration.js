@@ -1,5 +1,6 @@
 $(document).ready(function() {
 	bindDatePicker($("#projectAdvertClosingDateInput"));
+	
 	registerProgramSelect();
 	registerDefaultClosingDateSelector();
 	registerAddProjectAdvertButton();
@@ -14,34 +15,17 @@ $(document).ready(function() {
 	clearAll();
 	loadProjects();
 	$('#projectsClear').hide();
-	initEditorsProjects();
 });
 function initEditorsProjects() {
-	tinymce.init({
-				selector : "#projectAdvertDescriptionText",
-				plugins : [ "link wordcount" ],
-				width : 480,
-				menubar : false,
-				content : "",
-				toolbar : "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
-			/*
-			 * setup : function(ed) { ed.on('keyup', function(e) {
-			 * $('textArea#programAdvertDescriptionText').val(tinymce.get('programAdvertDescriptionText').getContent())}); }
-			 */
-			});
-	tinymce.init({
-				selector : "#projectAdvertFundingText",
-				plugins : [ "link wordcount" ],
-				width : 480,
-				menubar : false,
-				content : "",
-				toolbar : "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
-			});
+	tinyMCE.get('projectAdvertDescriptionText').setContent('');
+	tinyMCE.get('projectAdvertFundingText').setContent('');
+	tinyMCE.execCommand("mceRepaint");
 }
 
 function registerDefaultClosingDateSelector() {
 	$("#projectAdvertProgramSelect").change(function() {
 		selectDefaultClosingDate();
+		initEditorsProjects();
 	});
 }
 
@@ -145,6 +129,8 @@ function addOrEditProjectAdvert() {
 				},
 				complete : function() {
 					hideLoader();
+					// Display modal
+					$('#resourcesModal').modal('show');
 				}
 			});
 }
@@ -242,7 +228,6 @@ function clearAll() {
 	$('html, body').animate({
 		scrollTop : $('body').offset().top
 	}, 300);
-	initEditorsProjects();
 	addCounter();
 }
 
@@ -456,8 +441,20 @@ function fillProjectAdvertForm(data) {
 	displaySecondarySupervisor(project.secondarySupervisor);
 	$('#projectId').val(projectId);
 	$('#addProjectAdvert').text("Edit Project");
-	$('#projectAdvertLinkToApply').val(data['linkToApply']);
+
+
+	var linkToApply = data['linkToApply'];
+	var titleSeleted = $("#projectAdvertTitleInput").val();
+	var sharethisvar = 'http://api.addthis.com/oexchange/0.8/offer?url='+linkToApply+'&title='+titleSeleted;
+
+	$('#projectAdvertLinkToApply').val(linkToApply);
 	$('#projectAdvertButtonToApply').val(data['buttonToApply']);
+
+	$("#modalButtonToApply").val(data['buttonToApply']);
+	$("#modalLinkToApply").val(linkToApply);
+
+	$('#sharethis').prop("href", sharethisvar);
+	
 }
 
 function checktoDisableProjet() {

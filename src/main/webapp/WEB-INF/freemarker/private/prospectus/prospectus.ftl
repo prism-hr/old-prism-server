@@ -17,9 +17,10 @@
 <!-- Styles for Application List Page -->
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/prospectus.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/tinymce/tinymce.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/tinymce/jquery.tinymce.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/prospectus.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/underscore-min.js' />"></script>
 <!--[if lt IE 9]>
@@ -35,7 +36,28 @@
 <!--[if (gte IE 9)|!(IE)]><!-->
 <body>
     <!--<![endif]-->
+     <!-- Modal Start-->
+  <div id="resourcesModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <h3 id="myModalLabel">Share your advert</h3>
+    </div>
+    <div class="modal-body">
+      <p><strong>The link to apply.</strong> Use this in emails and on websites.</p>
+      <input type="text" readonly="" aria-haspopup="true" role="textbox" class="input-xxlarge" id="modalLinkToApply">
+      <p><strong>The button to apply.</strong> Use this in on websites.</p>
+      <textarea readonly="" cols="150" rows="6" class="input-xxlarge" id="modalButtonToApply"></textarea>
+      <p><strong>Or share this in social networks</strong> 
+       <a href="#" target="_blank" id="sharethis" title="View more services" style="margin-left: 6px;"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>
+      </p>
+      
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+  </div>
+  <!-- Modal End-->
     <!-- Wrapper Starts -->
+
     <div id="wrapper">
         <#include "/private/common/global_header.ftl"/>
         <!-- Middle Starts -->

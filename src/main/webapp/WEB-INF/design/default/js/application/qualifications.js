@@ -107,7 +107,7 @@ $(document).ready(function() {
     // Show or hide the AddPositionButton.
     // -------------------------------------------------------------------------------
     function showOrHideAddQualificationButton() {
-        numberOfSavedPositions = $("#qualificationsSection .existing .button-edit").size();
+        numberOfSavedPositions = $("#qualificationsSection .existing .button-edit").length;
         if (numberOfSavedPositions >= 6) {
             $("#qualificationsSaveButton").addClass("clear");
             $('#qualifications-H2').trigger('click');
@@ -119,7 +119,7 @@ $(document).ready(function() {
     }
 
     function showOrHideAddQualificationButtonOnly() {
-        numberOfSavedPositions = $("#qualificationsSection .existing .button-edit").size();
+        numberOfSavedPositions = $("#qualificationsSection .existing .button-edit").length;
         if (numberOfSavedPositions >= 6 && $("#qualificationSubject").val() == "") {
             $("#qualificationsSaveButton").addClass("clear");
             $("#addQualificationButton").attr('disabled', 'true');

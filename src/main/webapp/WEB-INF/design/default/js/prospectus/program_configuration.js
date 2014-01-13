@@ -14,6 +14,7 @@ function initEditors() {
 	    selector: "#programAdvertDescriptionText",
 	    plugins: ["link wordcount"],
 	    width: 480,
+	    height : 180,
 	    menubar: false,
 	    content: "",
 	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
@@ -25,6 +26,25 @@ function initEditors() {
 	    selector: "#programAdvertFundingText",
 	    plugins: ["link wordcount"],
 	    width: 480,
+	    height : 180,
+	    menubar: false,
+	    content: "",
+	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+	});
+	tinymce.init({
+		selector : "#projectAdvertDescriptionText",
+	    plugins: ["link wordcount"],
+	    width: 480,
+	    height : 180,
+	    menubar: false,
+	    content: "",
+	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+	});
+	tinymce.init({
+		selector : "#projectAdvertFundingText",
+	    plugins: ["link wordcount"],
+	    width: 480,
+	    height : 180,
 	    menubar: false,
 	    content: "",
 	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
@@ -325,8 +345,18 @@ function getAdvertData(programme_code){
     });
 }
 function updateAdvertSection(map){
+	var linkToApply = map['linkToApply'];
+	var titleSeleted = $("#programAdvertProgramSelect option:selected").text();
+	var sharethisvar = 'http://api.addthis.com/oexchange/0.8/offer?url='+linkToApply+'&title='+titleSeleted;
+
 	$("#programAdvertButtonToApply").val(map['buttonToApply']);
-	$("#programAdvertLinkToApply").val(map['linkToApply']);
+	$("#modalButtonToApply").val(map['buttonToApply']);
+	
+	$("#programAdvertLinkToApply").val(linkToApply);
+	$("#modalLinkToApply").val(linkToApply);
+	
+	$('#sharethis').prop("href", sharethisvar);
+
 }
 
 function updateProgramSection(advert){
@@ -422,6 +452,8 @@ function saveAdvert(){
 		},
 		complete: function() {
 			$('#ajaxloader').fadeOut('fast');
+			// Display modal
+			$('#resourcesModal').modal('show');
 		}
 	});
 }
@@ -439,7 +471,7 @@ function clearAdvert(){
 	$("#programAdvertStudyDurationUnitSelect").val("");
 	$("#programAdvertIsActiveRadioYes").prop("checked", false);
 	$("#programAdvertIsActiveRadioNo").prop("checked", false);
-	initEditors();
+	tinyMCE.execCommand("mceRepaint");
 }
 
 function setTextAreaValue(textArea, value){

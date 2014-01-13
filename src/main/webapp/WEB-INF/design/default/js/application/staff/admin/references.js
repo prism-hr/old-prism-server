@@ -73,7 +73,7 @@ $(document).on('click', 'a[name="showRefereeLink"]', function() {
 // --------------------------------------------------------------------------------
 $(document).on('change', 'input[name="refereeSendToUcl"]:checkbox', function() {
     var maxAllowed = 2;
-    var checked = $('input[name="refereeSendToUcl"]:checked').size();
+    var checked = $('input[name="refereeSendToUcl"]:checked').length;
     if (checked > maxAllowed) {
         $(this).attr("checked", false);
     }

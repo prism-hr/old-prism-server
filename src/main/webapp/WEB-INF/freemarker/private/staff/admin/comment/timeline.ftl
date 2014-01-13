@@ -268,4 +268,8 @@
     </div>           
   </div>
 </section>
-<script type="text/javascript" src="<@spring.url '/design/default/js/expand.js' />"></script>
+<script>
+$(document).ready(function() {
+  timelineTextExpander();
+});
+</script>

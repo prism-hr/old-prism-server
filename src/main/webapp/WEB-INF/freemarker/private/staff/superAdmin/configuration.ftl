@@ -201,7 +201,7 @@
                   <label class="plain-label" for="program">Programme<em>*</em></label>
                   <span data-desc="Select a programme." class="hint"></span>
                   <div class="field">
-                    <select name="programSelect" id="programSelect">
+                    <select name="programSelect" id="programSelect" class="max selectpicker" data-size="6" data-live-search="true">
                       <option value="">Please select a programme</option>
                       <#list programs as program>
                       <option value="${program.code}">

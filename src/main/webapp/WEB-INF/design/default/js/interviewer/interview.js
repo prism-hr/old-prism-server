@@ -18,7 +18,7 @@ $(document).ready(function() {
                 $("#programInterviewers option[value='" + id + "']").addClass('selected').removeAttr('selected').attr('disabled', 'disabled');
                 $("#applicationInterviewers").append('<option value="' + id + '" category="' + category + '">' + selText + '</option>');
             }
-            $('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+            $('#applicationInterviewers').attr("size", $('#applicationInterviewers option').length + 1);
             resetInterviwersErrors();
         }
     });
@@ -69,7 +69,7 @@ $(document).ready(function() {
                 if (newInterviewer.isNew) {
                     $('#previous').append('<option value="' + newInterviewer.id + '" category="previous" disabled="disabled">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + ' (' + newInterviewer.email + ' )</option>');
                     $('#applicationInterviewers').append('<option value="' + newInterviewer.id + '">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + ' (' + newInterviewer.email + ' )</option>');
-                    $('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+                    $('#applicationInterviewers').attr("size", $('#applicationInterviewers option').length + 1);
 
                 } else {
                     addExistingUserToInterviewersLists(newInterviewer);
@@ -97,7 +97,7 @@ $(document).ready(function() {
                 $("#applicationInterviewers option[value='" + id + "']").remove();
                 $("#programInterviewers option[value='" + id + "']").removeClass('selected').removeAttr('disabled');
             }
-            $('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+            $('#applicationInterviewers').attr("size", $('#applicationInterviewers option').length + 1);
             resetInterviwersErrors();
         }
     });
@@ -579,12 +579,12 @@ function addExistingUserToInterviewersLists(newInterviewer) {
 
     $('#previous').append('<option value="' + newInterviewer.id + '" category="previous" disabled="disabled">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + ' (' + newInterviewer.email + ' )</option>');
     $('#applicationInterviewers').append('<option value="' + newInterviewer.id + '">' + newInterviewer.firstname + ' ' + newInterviewer.lastname + ' (' + newInterviewer.email + ' )</option>');
-    $('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+    $('#applicationInterviewers').attr("size", $('#applicationInterviewers option').length + 1);
 
 }
 
 function resetInterviwersErrors() {
-    if ($('#applicationInterviewers option').size() > 0) {
+    if ($('#applicationInterviewers option').length > 0) {
         $('#interviewersErrorSpan').remove();
     }
 }

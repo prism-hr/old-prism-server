@@ -210,7 +210,7 @@ function enableAddingSupervisorsToList() {
 }
 
 function resetSupervisorsErrors() {
-    if ($('#applicationSupervisors option').size() > 0) {
+    if ($('#applicationSupervisors option').length > 0) {
         $('#supervisorsErrorSpan').remove();
     }
 }

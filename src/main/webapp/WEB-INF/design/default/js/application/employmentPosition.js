@@ -2,7 +2,7 @@
 	// Show or hide the AdPosisionButton
 	// -------------------------------------------------------------------------------
 	function showOrHideAdPosisionButton() {
-		numberOfSavedPositions = $("#positionSection .existing .button-edit").size();
+		numberOfSavedPositions = $("#positionSection .existing .button-edit").length;
 		if (numberOfSavedPositions >= 5) {
 			//$("#addPosisionButton").removeClass("blue");
             //$("#positionSaveAndCloseButton").addClass("clear");
@@ -27,7 +27,7 @@ $(document).ready(function(){
 	// Show or hide the AdPosisionButton Without minimizing 
 	// -------------------------------------------------------------------------------
 	function showOrHideAdPosisionButtonOnly() {
-		numberOfSavedPositions = $("#positionSection .existing .button-edit").size();
+		numberOfSavedPositions = $("#positionSection .existing .button-edit").length;
 		if (numberOfSavedPositions >= 5 && $("#position_title").val() == "") {
 			$("#addPosisionButton").removeClass("blue");
 			$("#addPosisionButton").attr('disabled','true');

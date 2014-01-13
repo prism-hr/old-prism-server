@@ -273,7 +273,7 @@ function addCounter() {
 			$(this).data("maxlength", 250);
 		} else if  ($(this).attr('id') == 'explanationText'||$(this).attr('id') == 'programmeFundingInformation') {
 		    $(this).data("maxlength", 500);
-		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'feedCode' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'programAdvertButtonToApply' || $(this).attr('id') == 'projectAdvertButtonToApply' || $(this).attr('id') == 'projectAdvertDescriptionText' || $(this).attr('id') == 'programAdvertDescriptionText' || $(this).attr('id') == 'programAdvertFundingText' || $(this).attr('id') == 'projectAdvertFundingText') {
+		} else if ($(this).attr('id') == 'templateContentId' || $(this).attr('id') == 'feedCode' || $(this).attr('id') == 'scoringConfigurationContent' || $(this).attr('id') == 'programAdvertButtonToApply' || $(this).attr('id') == 'modalButtonToApply' || $(this).attr('id') == 'projectAdvertButtonToApply' || $(this).attr('id') == 'projectAdvertDescriptionText' || $(this).attr('id') == 'programAdvertDescriptionText' || $(this).attr('id') == 'programAdvertFundingText' || $(this).attr('id') == 'projectAdvertFundingText') {
 			display = false;
 		} else if ($(this).attr('id')=="referenceComment"||$(this).attr('id').indexOf('refereeComment')==0||$(this).attr('id')=='review-comment'||$(this).attr('id')=='interview-comment'||$(this).attr('id')=='genericComment'||$(this).attr('id')=='state_change_comment'){
 			$(this).data("maxlength", 50000);

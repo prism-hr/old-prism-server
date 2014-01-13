@@ -16,8 +16,8 @@ $(document).ready(function() {
 			$("#assignedReviewers option[value='" + id + "']").remove();
 			$("#reviewers").append('<option value="'+ id +'">'+ selText +'</option>');
 		});
-		$('#programInterviewers').attr("size", $('#programInterviewers option').size() + 1);
-		$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').size() + 1);
+		$('#programInterviewers').attr("size", $('#programInterviewers option').length + 1);
+		$('#applicationInterviewers').attr("size", $('#applicationInterviewers option').length + 1);
 		return false;
 	});
 

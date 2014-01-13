@@ -1,6 +1,6 @@
 $(document).ready(function() {
    
-    var checked = $('input[name="qualificationSendToUcl"]:checked').size();
+    var checked = $('input[name="qualificationSendToUcl"]:checked').length;
     if (checked > 0) {
     	disableExplanation();
     }
@@ -40,7 +40,7 @@ $(document).on('click', 'a[name="showQualificationLink"]', function() {
 // --------------------------------------------------------------------------------
 $(document).on('change', 'input[name="qualificationSendToUcl"]:checkbox', function() {
     var maxAllowed = 2;
-    var checked = $('input[name="qualificationSendToUcl"]:checked').size();
+    var checked = $('input[name="qualificationSendToUcl"]:checked').length;
     addCounter();       
     if (checked == 0) {
         $('#explanationTextLabel').removeClass("grey-label").parent().find('.hint').removeClass("grey");

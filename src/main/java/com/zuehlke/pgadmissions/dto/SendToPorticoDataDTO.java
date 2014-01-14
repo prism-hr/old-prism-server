@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.List;
 
+import javax.persistence.Lob;
 import javax.validation.constraints.Size;
 
 public class SendToPorticoDataDTO {
@@ -12,7 +13,8 @@ public class SendToPorticoDataDTO {
     
     private List<Integer> qualificationsSendToPortico;
 
-    @Size(max = 500, message = "A maximum of 500 characters are allowed.")
+    @Size(max = 50000, message = "A maximum of 50000 characters are allowed.")
+    @Lob
     private String emptyQualificationsExplanation;
     
     public String getApplicationNumber() {

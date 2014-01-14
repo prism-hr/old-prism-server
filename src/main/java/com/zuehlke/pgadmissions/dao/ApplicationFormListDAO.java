@@ -169,14 +169,7 @@ public class ApplicationFormListDAO {
                         default:
                         }
                         
-                        if (searchPredicate == SearchPredicate.NOT_CONTAINING) {
-                            criterions.add(Restrictions.not(criterion));
-                        } else {
-                        	criterions.add(criterion);
-                        }
-                        
                     } else if (searchCategory.getType() == CategoryType.DATE) {
-                    	
                         if (searchCategory == SearchCategory.SUBMISSION_DATE) {
                             criterion = getCriteriaForDate(searchPredicate, searchTerm, "applicationForm.submittedDate");
                         } else if (searchCategory == SearchCategory.LAST_EDITED_DATE) {
@@ -185,6 +178,12 @@ public class ApplicationFormListDAO {
                             criterion = getCriteriaForDate(searchPredicate, searchTerm, "applicationForm.batchDeadline");
                         }
                         
+                    }
+                    
+                    if (searchPredicate == SearchPredicate.NOT_CONTAINING) {
+                        criterions.add(Restrictions.not(criterion));
+                    } else {
+                        criterions.add(criterion);
                     }
                 }
             }
@@ -217,20 +216,20 @@ public class ApplicationFormListDAO {
             return null;
         }
         switch (searchPredicate) {
-        case FROM_DATE:
-            criterion = Restrictions.ge(field, submissionDate);
-            break;
-        case ON_DATE:
-            Conjunction conjunction = Restrictions.conjunction();
-            conjunction.add(Restrictions.ge(field, submissionDate));
-            conjunction.add(Restrictions.lt(field, new DateTime(submissionDate).plusDays(1).toDate()));
-            criterion = conjunction;
-            break;
-        case TO_DATE:
-            criterion = Restrictions.lt(field, new DateTime(submissionDate).plusDays(1).toDate());
-            break;
-        default:
-            return null;
+            case FROM_DATE:
+                criterion = Restrictions.ge(field, submissionDate);
+                break;
+            case ON_DATE:
+                Conjunction conjunction = Restrictions.conjunction();
+                conjunction.add(Restrictions.ge(field, submissionDate));
+                conjunction.add(Restrictions.lt(field, new DateTime(submissionDate).plusDays(1).toDate()));
+                criterion = conjunction;
+                break;
+            case TO_DATE:
+                criterion = Restrictions.lt(field, new DateTime(submissionDate).plusDays(1).toDate());
+                break;
+            default:
+                return null;
         }
         return criterion;
     }

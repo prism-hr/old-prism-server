@@ -33,15 +33,12 @@ import org.springframework.web.bind.support.SimpleSessionStatus;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -49,13 +46,10 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.Supervisor;
-import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -157,69 +151,13 @@ public class ApprovalControllerTest {
     }
     
     @Test
-    public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfAny() {
-        Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
-        Supervisor suprvisorTwo = new SupervisorBuilder().id(2).build();
-
-        Date nowDate = new Date();
-        Date testDate = DateUtils.addMonths(nowDate, 1);
-        Date deadlineDate = DateUtils.addMonths(nowDate, 2);
-
-        final Program program = new Program();
-        program.setId(100000);
-
-        final ProgramInstance programInstance = new ProgramInstance();
-        programInstance.setId(1);
-        programInstance.setProgram(program);
-        programInstance.setApplicationStartDate(nowDate);
-        programInstance.setApplicationDeadline(deadlineDate);
-
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(testDate).studyOption("1", "full").build();
-
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicationNumber("abc").programmeDetails(programmeDetails)
-                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, suprvisorTwo).build()).build();
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();;
-
-        ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
-
-        assertNull(returnedApprovalRound.getId());
-        assertEquals(2, returnedApprovalRound.getSupervisors().size());
-        assertTrue(returnedApprovalRound.getSupervisors().containsAll(Arrays.asList(supervisorOne, suprvisorTwo)));
-        assertEquals(testDate, returnedApprovalRound.getRecommendedStartDate());
-    }
-
-    @Test
-    public void shouldReturnNewApprovalRoundWithEmtpySupervisorsIfNoLatestApprovalRound() {
-
-        Date startDate = new Date();
-
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
-
-        Date nowDate = new Date();
-        Date testDate = DateUtils.addMonths(nowDate, 1);
-        Date deadlineDate = DateUtils.addMonths(nowDate, 3);
-
-        final Program program = new Program();
-        program.setId(100000);
-
-        final ProgramInstance programInstance = new ProgramInstance();
-        programInstance.setId(1);
-        programInstance.setProgram(program);
-        programInstance.setApplicationStartDate(nowDate);
-        programInstance.setApplicationDeadline(deadlineDate);
-
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails)
-                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors().build()).build();
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
-
-        ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
-
-        assertNull(returnedApprovalRound.getId());
-        assertTrue(returnedApprovalRound.getSupervisors().isEmpty());
-        assertEquals(testDate, returnedApprovalRound.getRecommendedStartDate());
-
+    public void shouldReturnApprovalRound() {
+        ApprovalRound round = new ApprovalRound();
+        EasyMock.expect(approvalServiceMock.initiateApprovalRound("test")).andReturn(round);
+        EasyMock.replay(approvalServiceMock);
+        ApprovalRound testedRound = controller.getApprovalRound("test");
+        EasyMock.verify(approvalServiceMock);
+        assertSame(round, testedRound);
     }
 
     @Test
@@ -569,49 +507,6 @@ public class ApprovalControllerTest {
         controller.registerPropertyEditors(binderMock);
 
         EasyMock.verify(binderMock);
-    }
-
-    @Test
-    public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfApplicationHasProject() {
-        Program program = new ProgramBuilder().id(1).enabled(true).build();
-        RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).email("primary.supervisor@email.test").build();
-        RegisteredUser secondarySupervisor = new RegisteredUserBuilder().id(2).email("secondary.supervisor@email.test").build();
-        Advert advert = new AdvertBuilder().description("desc").funding("fund").studyDuration(1).title("title").build();
-        Project project = new ProjectBuilder().program(program).advert(advert).primarySupervisor(primarySupervisor).secondarySupervisor(secondarySupervisor)
-                .build();
-
-        Date nowDate = new Date();
-        Date testDate = DateUtils.addMonths(nowDate, 1);
-        Date deadlineDate = DateUtils.addMonths(nowDate, 2);
-
-        Supervisor primary = new Supervisor();
-        primary.setUser(primarySupervisor);
-        primary.setIsPrimary(true);
-        Supervisor secondary = new Supervisor();
-        secondary.setUser(secondarySupervisor);
-
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).project(project)
-                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build()).build();
-
-        final ProgramInstance programInstance = new ProgramInstance();
-        programInstance.setId(1);
-        programInstance.setProgram(program);
-        programInstance.setApplicationStartDate(nowDate);
-        programInstance.setApplicationDeadline(deadlineDate);
-
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application);
-
-        ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
-
-        assertNull(returnedApprovalRound.getId());
-        List<Supervisor> supervisors = returnedApprovalRound.getSupervisors();
-        assertEquals(2, supervisors.size());
-        Supervisor supervisorOne = supervisors.get(0);
-        assertEquals(supervisorOne.getUser(), primarySupervisor);
-        assertTrue(supervisorOne.getIsPrimary());
-        Supervisor supervisorTwo = supervisors.get(1);
-        assertEquals(supervisorTwo.getUser(), secondarySupervisor);
-        assertFalse(supervisorTwo.getIsPrimary());
     }
 
     @Before

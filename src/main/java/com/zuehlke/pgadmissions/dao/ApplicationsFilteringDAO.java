@@ -21,8 +21,8 @@ public class ApplicationsFilteringDAO {
     }
 
     public ApplicationsFiltering merge(ApplicationsFiltering filtering) {
-    	
-        return (ApplicationsFiltering) sessionFactory.getCurrentSession().merge(filtering);
+        sessionFactory.getCurrentSession().saveOrUpdate(filtering);
+        return filtering;
     }
     
 }

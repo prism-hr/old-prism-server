@@ -8,7 +8,9 @@ import java.util.Map;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -28,6 +30,8 @@ public class ProgramBuilder {
     private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
     private Advert advert;
+    private QualificationInstitution institution;
+    private ProgramFeed programFeed;
 
     public ProgramBuilder atasRequired(boolean flag) {
         atasRequired = flag;
@@ -98,6 +102,16 @@ public class ProgramBuilder {
         this.advert = advert;
         return this;
     }
+    
+    public ProgramBuilder institution(QualificationInstitution institution) {
+        this.institution = institution;
+        return this;
+    }
+
+    public ProgramBuilder programFeed(ProgramFeed programFeed) {
+        this.programFeed = programFeed;
+        return this;
+    }
 
     public Program build() {
         Program program = new Program();
@@ -113,6 +127,8 @@ public class ProgramBuilder {
         program.setAtasRequired(atasRequired);
         program.getClosingDates().addAll(programClosingDates);
         program.setAdvert(advert);
+        program.setInstitution(institution);
+        program.setProgramFeed(programFeed);
         return program;
     }
 }

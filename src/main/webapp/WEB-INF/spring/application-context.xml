@@ -48,7 +48,7 @@
             </props>
         </property>
     </bean>
-
+    
     <bean id="encryptionHelper" class="com.zuehlke.pgadmissions.interceptors.EncryptionHelper" />
 
     <import resource="mvc-context.xml" />

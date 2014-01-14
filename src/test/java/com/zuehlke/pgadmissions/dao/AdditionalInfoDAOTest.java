@@ -9,10 +9,12 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
@@ -21,8 +23,9 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 
 	@Before
 	public void prepare() {
-        Program program = new ProgramBuilder().code("newproject").title("another title").build();
-        save(program);
+	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        Program program = new ProgramBuilder().code("newproject").title("another title").institution(institution).build();
+        save(institution, program);
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
                 .email("email@test.com").username("username").password("password").accountNonExpired(false)
                 .accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();

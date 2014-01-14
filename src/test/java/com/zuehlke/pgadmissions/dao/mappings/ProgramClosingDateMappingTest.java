@@ -16,7 +16,9 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 
 public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
 
@@ -144,8 +146,9 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
 	}
 
 	private Program storeAndLoadProgram(String code, String title) {
-		Program program = new ProgramBuilder().code(code).title(title).build();
-        save(program);
+	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+		Program program = new ProgramBuilder().code(code).title(title).institution(institution).build();
+        save(institution, program);
         flushAndClearSession();
 		return program;
 	}

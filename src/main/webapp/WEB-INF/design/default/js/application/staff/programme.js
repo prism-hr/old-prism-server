@@ -71,35 +71,38 @@ $(document).ready(function(){
 			}
 		});
 	});
-
-  	bindDatePickers();
-
-	//open/close
-	var $header  =$('#programme-H2');
-	var $content = $header.next('div');
-	$header.bind('click', function()
-	{
-	  $content.toggle();
-	  $(this).toggleClass('open', $content.is(':visible'));
-	  return false;
-	});	
-});
-$(document).on('click', '#addSupervisorButton', function(){
-	if( $('#supervisorEmail').val() && $('#supervisorEmail').val() !="Email address" ){
+	
+	$('#addSupervisorButton').on('click', function(){
+		if( $('#supervisorEmail').val() && $('#supervisorEmail').val() !="Email address" ){
+			
 		
+			$('#supervisor_div').append('<span name="supervisor_span">'+ 
+					"Name: " + $('#supervisorFirstname').val()+" "+ $('#supervisorLastname').val()+", Email: "+
+					$('#supervisorEmail').val()+ ", Primary:" + $('#primarySupervisor').val() +", Is supervisor aware of your application:" + $('#awareSupervisor').val() +'<a class="button-delete">delete</a>'+
+					'<input type="hidden" name="supervisors" value=' +"'" + '{"firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val()+ '", "primarySupervisor":"' + $('#primarySupervisor').val() + '", "awareSupervisor":"' + $('#awareSupervisor').val()+ '"} ' + "'" + "/>"									
+					+'<br/></span>');
+			$('#supervisorFirstname').val('');
+			$('#supervisorLastname').val('');
+			$('#supervisorEmail').val('');
+		}
+	});
 	
-		$('#supervisor_div').append('<span name="supervisor_span">'+ 
-				"Name: " + $('#supervisorFirstname').val()+" "+ $('#supervisorLastname').val()+", Email: "+
-				$('#supervisorEmail').val()+ ", Primary:" + $('#primarySupervisor').val() +", Is supervisor aware of your application:" + $('#awareSupervisor').val() +'<a class="button-delete">delete</a>'+
-				'<input type="hidden" name="supervisors" value=' +"'" + '{"firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val()+ '", "primarySupervisor":"' + $('#primarySupervisor').val() + '", "awareSupervisor":"' + $('#awareSupervisor').val()+ '"} ' + "'" + "/>"									
-				+'<br/></span>');
-		$('#supervisorFirstname').val('');
-		$('#supervisorLastname').val('');
-		$('#supervisorEmail').val('');
-	}
-});
+	$('#programmeCloseButton').click(function(){
+		$('#programme-H2').trigger('click');
+		return false;
+	});
 	
-$(document).on('click', '#programmeCloseButton', function(){
-	$('#programme-H2').trigger('click');
-	return false;
+	
+	  bindDatePickers();
+
+		//open/close
+		var $header  =$('#programme-H2');
+		var $content = $header.next('div');
+		$header.bind('click', function()
+		{
+		  $content.toggle();
+		  $(this).toggleClass('open', $content.is(':visible'));
+		  return false;
+		});
+		
 });

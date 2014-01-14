@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
@@ -49,14 +50,16 @@ public class ApprovalService {
 
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
+    private final ProgramInstanceService programInstanceService;
+
     public ApprovalService() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO,
             StageDurationService stageDurationService, EventFactory eventFactory, CommentDAO commentDAO, MailSendingService mailSendingService,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            ApplicationFormUserRoleService applicationFormUserRoleService, ProgramInstanceService programInstanceService) {
         this.userService = userService;
         this.applicationDAO = applicationDAO;
         this.approvalRoundDAO = approvalRoundDAO;
@@ -65,6 +68,7 @@ public class ApprovalService {
         this.commentDAO = commentDAO;
         this.mailSendingService = mailSendingService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
+        this.programInstanceService = programInstanceService;
     }
 
     public void confirmOrDeclineSupervision(ApplicationForm form, ConfirmSupervisionDTO confirmSupervisionDTO) {
@@ -133,6 +137,48 @@ public class ApprovalService {
         }
 
         return supervisionConfirmationComment;
+    }
+
+    public ApprovalRound initiateApprovalRound(String applicationId) {
+        ApplicationForm application = applicationDAO.getApplicationByApplicationNumber(applicationId);
+        ApprovalRound approvalRound = new ApprovalRound();
+        ApprovalRound latestApprovalRound = application.getLatestApprovalRound();
+        Project project = application.getProject();
+        Date startDate = application.getProgrammeDetails().getStartDate();
+        if (latestApprovalRound != null) {
+            for (Supervisor supervisor : latestApprovalRound.getSupervisors()) {
+                if (!supervisor.hasDeclinedSupervision()) {
+                    approvalRound.getSupervisors().add(supervisor);
+                }
+            }
+            if (latestApprovalRound.getProjectDescriptionAvailable() != null) {
+                approvalRound.setProjectDescriptionAvailable(latestApprovalRound.getProjectDescriptionAvailable());
+                approvalRound.setProjectTitle(latestApprovalRound.getProjectTitle());
+                approvalRound.setProjectAbstract(latestApprovalRound.getProjectAbstract());
+            }
+            startDate = latestApprovalRound.getRecommendedStartDate();
+            if (latestApprovalRound.getRecommendedConditionsAvailable() != null) {
+                approvalRound.setRecommendedConditionsAvailable(latestApprovalRound.getRecommendedConditionsAvailable());
+                approvalRound.setRecommendedConditions(latestApprovalRound.getRecommendedConditions());
+            }
+        } else if (project != null) {
+            addUserAsSupervisorInApprovalRound(project.getPrimarySupervisor(), approvalRound, true);
+            RegisteredUser secondarySupervisor = project.getSecondarySupervisor();
+            if (secondarySupervisor != null) {
+                addUserAsSupervisorInApprovalRound(project.getSecondarySupervisor(), approvalRound, false);
+            }
+            approvalRound.setProjectDescriptionAvailable(true);
+            approvalRound.setProjectTitle(project.getAdvert().getTitle());
+            approvalRound.setProjectAcceptingApplications(project.getAdvert().getActive());
+        }
+
+        if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {
+            startDate = programInstanceService.getEarliestPossibleStartDate(application);
+        }
+
+        approvalRound.setRecommendedStartDate(startDate);
+        approvalRoundDAO.saveAndInitialise(approvalRound);
+        return approvalRound;
     }
 
     public void moveApplicationToApproval(ApplicationForm form, ApprovalRound approvalRound, RegisteredUser initiator) {
@@ -219,6 +265,14 @@ public class ApprovalService {
                 || (!form.hasEnoughQualificationsToSendToPortico() && approvalRound.getMissingQualificationExplanation() == null)) {
             throw new IllegalStateException("Send to portico data is not valid");
         }
+    }
+
+    private void addUserAsSupervisorInApprovalRound(RegisteredUser user, ApprovalRound approvalRound, boolean isPrimary) {
+        Supervisor supervisor = new Supervisor();
+        supervisor.setIsPrimary(isPrimary);
+        supervisor.setUser(user);
+        supervisor.setApprovalRound(approvalRound);
+        approvalRound.getSupervisors().add(supervisor);
     }
 
 }

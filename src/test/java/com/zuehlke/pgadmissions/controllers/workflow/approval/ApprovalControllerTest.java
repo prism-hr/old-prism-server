@@ -84,7 +84,6 @@ import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.DomicileService;
-import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -120,7 +119,6 @@ public class ApprovalControllerTest {
     private ScoreFactory scoreFactoryMock;
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
-    private ProgramInstanceService programInstanceServiceMock;
 
     @Test
     public void shouldGetApprovalPage() {
@@ -149,23 +147,15 @@ public class ApprovalControllerTest {
         modelMap.put("user", currentUserMock);
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
-        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
         ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");
 
-        EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         Assert.assertEquals("/private/staff/supervisors/approval_details", controller.getMoveToApprovalPage(modelMap, null));
-        EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
 
         assertNull(approvalRound.getId());
         assertEquals(2, approvalRound.getSupervisors().size());
         assertTrue(approvalRound.getSupervisors().containsAll(Arrays.asList(supervisorOne, suprvisorTwo)));
     }
-
-    @Test
-    public void shouldGetSupervisorsSection() {
-        Assert.assertEquals("/private/staff/supervisors/propose_offer_recommendation", controller.getSupervisorSection());
-    }
-
+    
     @Test
     public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfAny() {
         Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
@@ -189,12 +179,9 @@ public class ApprovalControllerTest {
         final ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicationNumber("abc").programmeDetails(programmeDetails)
                 .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, suprvisorTwo).build()).build();
 
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
-        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();;
 
-        EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
-        EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
 
         assertNull(returnedApprovalRound.getId());
         assertEquals(2, returnedApprovalRound.getSupervisors().size());
@@ -226,11 +213,8 @@ public class ApprovalControllerTest {
                 .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors().build()).build();
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
-        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
-        EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
-        EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
 
         assertNull(returnedApprovalRound.getId());
         assertTrue(returnedApprovalRound.getSupervisors().isEmpty());
@@ -616,11 +600,8 @@ public class ApprovalControllerTest {
         programInstance.setApplicationDeadline(deadlineDate);
 
         EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("bob")).andReturn(application);
-        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 
-        EasyMock.replay(applicationServiceMock, programInstanceServiceMock);
         ApprovalRound returnedApprovalRound = controller.getApprovalRound("bob");
-        EasyMock.verify(applicationServiceMock, programInstanceServiceMock);
 
         assertNull(returnedApprovalRound.getId());
         List<Supervisor> supervisors = returnedApprovalRound.getSupervisors();
@@ -657,7 +638,6 @@ public class ApprovalControllerTest {
         scoreFactoryMock = EasyMock.createMock(ScoreFactory.class);
         applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(EasyMock.anyObject(ApplicationForm.class))).andReturn(true);
@@ -671,6 +651,6 @@ public class ApprovalControllerTest {
                 supervisorPropertyEditorMock, documentPropertyEditorMock, commentValidatorMock, refereesAdminEditDTOValidatorMock, qualificationServiceMock,
                 refereeServiceMock, encryptionHelperMock, sendToPorticoDataDTOEditorMock, sendToPorticoDataDTOValidatorMock, datePropertyEditorMock,
                 domicileServiceMock, domicilePropertyEditorMock, messageSourceMock, scoringDefinitionParserMock, scoresPropertyEditorMock, scoreFactoryMock,
-                applicationFormUserRoleServiceMock, actionsProviderMock, programInstanceServiceMock);
+                applicationFormUserRoleServiceMock, actionsProviderMock);
     }
 }

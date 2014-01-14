@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.Capture;
@@ -32,11 +33,16 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -44,11 +50,15 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
@@ -444,7 +454,125 @@ public class ApprovalServiceTest {
 
         assertFalse(approvalRound.getProjectDescriptionAvailable());
     }
+    
+    @Test
+    public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfApplicationHasProject() {
+        Program program = new ProgramBuilder().id(1).enabled(true).build();
+        RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).email("primary.supervisor@email.test").build();
+        RegisteredUser secondarySupervisor = new RegisteredUserBuilder().id(2).email("secondary.supervisor@email.test").build();
+        Advert advert = new AdvertBuilder().description("desc").funding("fund").studyDuration(1).title("title").build();
+        Project project = new ProjectBuilder().program(program).advert(advert).primarySupervisor(primarySupervisor).secondarySupervisor(secondarySupervisor)
+                .build();
 
+        Date nowDate = new Date();
+        Date testDate = DateUtils.addMonths(nowDate, 1);
+        Date deadlineDate = DateUtils.addMonths(nowDate, 2);
+
+        Supervisor primary = new Supervisor();
+        primary.setUser(primarySupervisor);
+        primary.setIsPrimary(true);
+        Supervisor secondary = new Supervisor();
+        secondary.setUser(secondarySupervisor);
+
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).project(project)
+                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build()).build();
+
+        final ProgramInstance programInstance = new ProgramInstance();
+        programInstance.setId(1);
+        programInstance.setProgram(program);
+        programInstance.setApplicationStartDate(nowDate);
+        programInstance.setApplicationDeadline(deadlineDate);
+
+        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("bob")).andReturn(application);
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
+
+        EasyMock.replay(applicationFormDAOMock, programInstanceServiceMock);
+        ApprovalRound returnedApprovalRound = approvalService.initiateApprovalRound("bob");
+        EasyMock.verify(applicationFormDAOMock, programInstanceServiceMock);
+
+        assertNull(returnedApprovalRound.getId());
+        List<Supervisor> supervisors = returnedApprovalRound.getSupervisors();
+        assertEquals(2, supervisors.size());
+        Supervisor supervisorOne = supervisors.get(0);
+        assertEquals(supervisorOne.getUser(), primarySupervisor);
+        assertTrue(supervisorOne.getIsPrimary());
+        Supervisor supervisorTwo = supervisors.get(1);
+        assertEquals(supervisorTwo.getUser(), secondarySupervisor);
+        assertFalse(supervisorTwo.getIsPrimary());
+    }
+    
+    @Test
+    public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfAny() {
+        Supervisor supervisorOne = new SupervisorBuilder().id(1).build();
+        Supervisor suprvisorTwo = new SupervisorBuilder().id(2).build();
+
+        Date nowDate = new Date();
+        Date testDate = DateUtils.addMonths(nowDate, 1);
+        Date deadlineDate = DateUtils.addMonths(nowDate, 2);
+
+        final Program program = new Program();
+        program.setId(100000);
+
+        final ProgramInstance programInstance = new ProgramInstance();
+        programInstance.setId(1);
+        programInstance.setProgram(program);
+        programInstance.setApplicationStartDate(nowDate);
+        programInstance.setApplicationDeadline(deadlineDate);
+
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(testDate).studyOption("1", "full").build();
+
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicationNumber("abc").programmeDetails(programmeDetails)
+                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, suprvisorTwo).build()).build();
+
+        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
+
+        EasyMock.replay(applicationFormDAOMock, programInstanceServiceMock);
+        ApprovalRound returnedApprovalRound = approvalService.initiateApprovalRound("bob");
+        EasyMock.verify(applicationFormDAOMock, programInstanceServiceMock);
+
+        assertNull(returnedApprovalRound.getId());
+        assertEquals(2, returnedApprovalRound.getSupervisors().size());
+        assertTrue(returnedApprovalRound.getSupervisors().containsAll(Arrays.asList(supervisorOne, suprvisorTwo)));
+        assertEquals(testDate, returnedApprovalRound.getRecommendedStartDate());
+    }
+
+    @Test
+    public void shouldReturnNewApprovalRoundWithEmtpySupervisorsIfNoLatestApprovalRound() {
+
+        Date startDate = new Date();
+
+        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+
+        Date nowDate = new Date();
+        Date testDate = DateUtils.addMonths(nowDate, 1);
+        Date deadlineDate = DateUtils.addMonths(nowDate, 3);
+
+        final Program program = new Program();
+        program.setId(100000);
+
+        final ProgramInstance programInstance = new ProgramInstance();
+        programInstance.setId(1);
+        programInstance.setProgram(program);
+        programInstance.setApplicationStartDate(nowDate);
+        programInstance.setApplicationDeadline(deadlineDate);
+
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").programmeDetails(programmeDetails)
+                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors().build()).build();
+
+        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
+        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
+
+        EasyMock.replay(applicationFormDAOMock, programInstanceServiceMock);
+        ApprovalRound returnedApprovalRound = approvalService.initiateApprovalRound("bob");
+        EasyMock.verify(applicationFormDAOMock, programInstanceServiceMock);
+
+        assertNull(returnedApprovalRound.getId());
+        assertTrue(returnedApprovalRound.getSupervisors().isEmpty());
+        assertEquals(testDate, returnedApprovalRound.getRecommendedStartDate());
+
+    }
+    
     private void applyValidSendToPorticoData(ApplicationForm applicationForm) {
         RegisteredUser user1 = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();
         RegisteredUser user2 = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().id(Authority.REFEREE).build()).build();

@@ -111,12 +111,12 @@ public class SendToPorticoDataDTOValidatorTest {
     @Test
     public void shouldRejectIfExplanationIsKLongerThan500Characters() {
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 11, 12 }));
-        sendToPorticoDataDTO.setEmptyQualificationsExplanation(RandomStringUtils.randomAscii(501));
+        sendToPorticoDataDTO.setEmptyQualificationsExplanation(RandomStringUtils.randomAscii(50001));
         
         EasyMock.replay(qualificationServiceMock, refereeServiceMock);
         sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
         assertEquals(2, mappingResult.getErrorCount());
-        assertEquals("A maximum of 500 characters are allowed.", mappingResult.getFieldError("emptyQualificationsExplanation").getDefaultMessage());
+        assertEquals("A maximum of 50000 characters are allowed.", mappingResult.getFieldError("emptyQualificationsExplanation").getDefaultMessage());
         assertEquals("portico.submit.no.qualification.or.explanation", mappingResult.getFieldError("qualificationsSendToPortico").getCode());
     }
 

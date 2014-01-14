@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -78,22 +77,25 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     private RoleDAO roleDAO;
 
-	private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
-	
-	private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    private QualificationInstitution institution;
 
     @Before
     public void prepare() {
-    	
+
         applicationFormListDAO = new ApplicationFormListDAO(sessionFactory);
 
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);
-        
+
         applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
-        
+
         applicationFormUserRoleService = new ApplicationFormUserRoleService();
 
-        applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null, null, applicationFormUserRoleDAO, applicationFormUserRoleService);
+        applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null, null, applicationFormUserRoleDAO,
+                applicationFormUserRoleService);
 
         roleDAO = new RoleDAO(sessionFactory);
 
@@ -104,10 +106,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         superUser = new RegisteredUserBuilder().firstName("John").lastName("Doe").email("email@test.com").username("superUserUsername").password("password")
                 .role(roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR)).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
                 .enabled(true).applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
-       
+
         sessionFactory.getCurrentSession().flush();
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
         program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 
         save(applicant, superUser, institution, program);
@@ -121,12 +123,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
         applicationDescriptor.setApplicationFormId(form.getId());
         applicationDescriptor.setApplicationFormStatus(ApplicationFormStatus.REVIEW);
-        
+
         ApplicationFormListDAO applicationFormDAOMock = EasyMock.createMock(ApplicationFormListDAO.class);
-        ApplicationsService applicationsService = new ApplicationsService(null, applicationFormDAOMock, null, null, null, applicationFormUserRoleDAO, applicationFormUserRoleService);
+        ApplicationsService applicationsService = new ApplicationsService(null, applicationFormDAOMock, null, null, null, applicationFormUserRoleDAO,
+                applicationFormUserRoleService);
         RegisteredUser user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         ApplicationsFiltering filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
-        EasyMock.expect(applicationFormDAOMock.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE)).andReturn(Arrays.asList(applicationDescriptor));
+        EasyMock.expect(applicationFormDAOMock.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE)).andReturn(
+                Arrays.asList(applicationDescriptor));
         EasyMock.replay(applicationFormDAOMock);
         List<ApplicationDescriptor> visibleApplications = applicationsService.getAllVisibleAndMatchedApplicationsForList(user, filtering);
         EasyMock.verify(applicationFormDAOMock);
@@ -208,13 +212,13 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationDescriptor applicationDescriptorThree = new ApplicationDescriptor();
         applicationDescriptorThree.setApplicationFormId(applicationFormThree.getId());
         applicationDescriptorThree.setApplicationFormStatus(ApplicationFormStatus.APPROVAL);
-        
+
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).status(ApplicationFormStatus.APPROVAL).build();
         ApplicationDescriptor applicationDescriptorFour = new ApplicationDescriptor();
         applicationDescriptorFour.setApplicationFormId(applicationFormFour.getId());
         applicationDescriptorFour.setApplicationFormStatus(ApplicationFormStatus.APPROVAL);
-        
+
         Role role = roleDAO.getRoleByAuthority(Authority.APPLICANT);
         ApplicationFormUserRole applicationFormUserRole1 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormOne).role(role).user(applicant)
                 .build();
@@ -234,16 +238,15 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
-        
         assertEquals(2, applications.size());
-        
+
         assertTrue(listContainsId(applicationFormFour, applications));
         assertTrue(listContainsId(applicationFormTwo, applications));
     }
 
     @Test
     public void shouldGetApplicationBelongingToProgramWithCodeScienceAndOtherTitle() throws ParseException {
-        Program programOne = new ProgramBuilder().code("Program_ZZZZZ_1").title("empty").build();
+        Program programOne = new ProgramBuilder().code("Program_ZZZZZ_1").title("empty").institution(institution).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC1").program(programOne).applicant(applicant)
                 .status(ApplicationFormStatus.APPROVAL).build();
@@ -269,7 +272,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetApplicationBelongingToProgramWithTitleScienceAndOtherCode() throws ParseException {
-        Program programOne = new ProgramBuilder().code("empty").title("Program_ZZZZZ_1").build();
+        Program programOne = new ProgramBuilder().code("empty").title("Program_ZZZZZ_1").institution(institution).build();
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant)
                 .status(ApplicationFormStatus.APPROVAL).build();
 
@@ -294,16 +297,15 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldNotReturnAppIfTermNotInProgrameCodeOrTitle() {
-        Program programOne = new ProgramBuilder().code("empty").title("empty").build();
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant)
-                .status(ApplicationFormStatus.APPROVAL).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").applicant(applicant).status(ApplicationFormStatus.APPROVAL)
+                .build();
 
         Role role = roleDAO.getRoleByAuthority(Authority.APPLICANT);
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormOne).role(role).user(applicant)
                 .build();
 
-        save(programOne, applicationFormOne, applicationFormUserRole);
+        save(applicationFormOne, applicationFormUserRole);
         flushAndClearSession();
 
         ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
@@ -315,19 +317,17 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingFirstNameFred() {
-        Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").build();
-
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("FredzzZZZZZerick").lastName("Doe").email("email@test.com").username("freddy")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant)
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
                 .status(ApplicationFormStatus.APPROVAL).build();
 
         Role role = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormOne).role(role).user(superUser)
                 .build();
 
-        save(programOne, applicant, applicationFormOne, applicationFormUserRole);
+        save(applicant, applicationFormOne, applicationFormUserRole);
 
         flushAndClearSession();
 
@@ -341,19 +341,18 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingLastName() {
-        Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").build();
 
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com").username("freddy")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant)
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
                 .status(ApplicationFormStatus.APPROVAL).build();
 
         Role role = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormOne).role(role).user(superUser)
                 .build();
 
-        save(programOne, applicant, applicationFormOne, applicationFormUserRole);
+        save(applicant, applicationFormOne, applicationFormUserRole);
 
         flushAndClearSession();
 
@@ -367,19 +366,18 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldNotReturnAppIfTermNotInApplicantNameFirstOrLastName() {
-        Program programOne = new ProgramBuilder().code("empty").title("empty").build();
 
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").username("freddy")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant)
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
                 .status(ApplicationFormStatus.APPROVAL).build();
 
         Role role = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormOne).role(role).user(superUser)
                 .build();
 
-        save(programOne, applicant, applicationFormOne, applicationFormUserRole);
+        save(applicant, applicationFormOne, applicationFormUserRole);
 
         flushAndClearSession();
 
@@ -392,7 +390,6 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetAllApplicationsInValidationStage() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicationNumber("ABC").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
@@ -420,7 +417,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationFormUserRole applicationFormUserRole4 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormFour).role(role).user(applicant)
                 .build();
 
-        save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
+        save(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
                 applicationFormUserRole3, applicationFormUserRole4);
 
         flushAndClearSession();
@@ -436,13 +433,12 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetAllApplicationsInApprovalStage() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).applicationNumber("ABC").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
         ApplicationDescriptor applicationDescriptorOne = new ApplicationDescriptor();
         applicationDescriptorOne.setApplicationFormId(applicationFormOne.getId());
-        
+
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
@@ -462,7 +458,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationFormUserRole applicationFormUserRole4 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormFour).role(role).user(applicant)
                 .build();
 
-        save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
+        save(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
                 applicationFormUserRole3, applicationFormUserRole4);
 
         flushAndClearSession();
@@ -477,7 +473,6 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetAllApplicationsInApprovedStage() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
@@ -503,7 +498,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationFormUserRole applicationFormUserRole4 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormFour).role(role).user(applicant)
                 .build();
 
-        save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
+        save(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
                 applicationFormUserRole3, applicationFormUserRole4);
 
         flushAndClearSession();
@@ -518,7 +513,6 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldNotReturnAppIfNoStatusMatching() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program)
                 .appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
@@ -542,7 +536,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationFormUserRole applicationFormUserRole4 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormFour).role(role).user(applicant)
                 .build();
 
-        save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
+        save(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
                 applicationFormUserRole3, applicationFormUserRole4);
 
         flushAndClearSession();
@@ -556,8 +550,6 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldSearchAndSort() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").build();
-
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).applicationNumber("zzzFooBarzzz")
                 .program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
@@ -580,7 +572,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationFormUserRole applicationFormUserRole4 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormFour).role(applicantRole)
                 .user(applicant).build();
 
-        save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
+        save(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
                 applicationFormUserRole3, applicationFormUserRole4);
 
         flushAndClearSession();
@@ -596,7 +588,6 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldSortApplicationInNaturalSortOrder() throws ParseException {
-        Program program = new ProgramBuilder().code("empty").title("empty").build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program)
                 .applicant(applicant).build();
@@ -620,7 +611,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationFormUserRole applicationFormUserRole4 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormFour).role(applicantRole)
                 .user(applicant).build();
 
-        save(program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
+        save(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour, applicationFormUserRole1, applicationFormUserRole2,
                 applicationFormUserRole3, applicationFormUserRole4);
 
         flushAndClearSession();
@@ -644,7 +635,6 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
         RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4")
                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
-        Program program = new ProgramBuilder().code("empty").title("empty").build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1).status(ApplicationFormStatus.APPROVED)
                 .applicationNumber("ABCDE1").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).build();
@@ -668,7 +658,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationFormUserRole applicationFormUserRole4 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormFour).role(role).user(superUser)
                 .build();
 
-        save(applicant1, applicant2, applicant3, applicant4, program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour,
+        save(applicant1, applicant2, applicant3, applicant4, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour,
                 applicationFormUserRole1, applicationFormUserRole2, applicationFormUserRole3, applicationFormUserRole4);
 
         flushAndClearSession();
@@ -694,7 +684,6 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
         RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4")
                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
-        Program program = new ProgramBuilder().code("empty").title("empty").build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1).status(ApplicationFormStatus.APPROVED)
                 .applicationNumber("ABCDE1").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).build();
@@ -718,7 +707,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationFormUserRole applicationFormUserRole4 = new ApplicationFormUserRoleBuilder().applicationForm(applicationFormFour)
                 .role(superadministratorRole).user(superUser).build();
 
-        save(applicant1, applicant2, applicant3, applicant4, program, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour,
+        save(applicant1, applicant2, applicant3, applicant4, applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour,
                 applicationFormUserRole1, applicationFormUserRole2, applicationFormUserRole3, applicationFormUserRole4);
 
         flushAndClearSession();
@@ -745,10 +734,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4")
                 .role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
 
-        Program program1 = new ProgramBuilder().code("empty1").title("AAA").build();
-        Program program2 = new ProgramBuilder().code("empty2").title("CCC").build();
-        Program program3 = new ProgramBuilder().code("empty3").title("BBB").build();
-        Program program4 = new ProgramBuilder().code("empty4").title("DDD").build();
+        Program program1 = new ProgramBuilder().code("empty1").title("AAA").institution(institution).build();
+        Program program2 = new ProgramBuilder().code("empty2").title("CCC").institution(institution).build();
+        Program program3 = new ProgramBuilder().code("empty3").title("BBB").institution(institution).build();
+        Program program4 = new ProgramBuilder().code("empty4").title("DDD").institution(institution).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1).status(ApplicationFormStatus.APPROVED)
                 .applicationNumber("ABCDE1").program(program1).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).build();
@@ -785,7 +774,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         Assert.assertEquals(applicationFormTwo.getId(), applications.get(1).getApplicationFormId());
         Assert.assertEquals(applicationFormThree.getId(), applications.get(2).getApplicationFormId());
         Assert.assertEquals(applicationFormOne.getId(), applications.get(3).getApplicationFormId());
-        
+
     }
 
     @Test
@@ -839,7 +828,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
         assertEquals(1, applications.size());
-        assertEquals(supervisor.getLastname(), applicationFormDAO.get(applications.get(0).getApplicationFormId()).getProgrammeDetails().getSuggestedSupervisors().get(0).getLastname());
+        assertEquals(supervisor.getLastname(), applicationFormDAO.get(applications.get(0).getApplicationFormId()).getProgrammeDetails()
+                .getSuggestedSupervisors().get(0).getLastname());
     }
 
     @Test
@@ -869,7 +859,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
         assertEquals(1, applications.size());
-        assertEquals(supervisor1.getUser().getLastName(), applicationFormDAO.get(applications.get(0).getApplicationFormId()).getApprovalRounds().get(0).getSupervisors().get(0).getUser().getLastName());
+        assertEquals(supervisor1.getUser().getLastName(), applicationFormDAO.get(applications.get(0).getApplicationFormId()).getApprovalRounds().get(0)
+                .getSupervisors().get(0).getUser().getLastName());
     }
 
     @Test

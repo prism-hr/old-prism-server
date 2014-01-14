@@ -117,8 +117,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         String thisYear = new SimpleDateFormat("yyyy").format(new Date());
         String lastYear = new Integer(Integer.parseInt(thisYear) - 1).toString();
         String nextYear = new Integer(Integer.parseInt(thisYear) + 1).toString();
-        Program program = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
-        save(program);
         flushAndClearSession();
 
         long number = applicationDAO.getApplicationsInProgramThisYear(program, thisYear);
@@ -151,9 +149,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetApplicationByApplicationNumber() {
-        Program program = new ProgramBuilder().code("ZZZZZZZ").title("another title").build();
-        save(program);
-
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(user)
                 .status(ApplicationFormStatus.APPROVAL).build();
 
@@ -203,13 +198,10 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldGetTwoApplicationsByApplicantAndProgram() {
-
-        Program program = new ProgramBuilder().title("program").code("KLOP").build();
-
         ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
         ApplicationForm applicationForm2 = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).build();
 
-        save(program, applicationForm, applicationForm2);
+        save(applicationForm, applicationForm2);
         flushAndClearSession();
 
         List<ApplicationForm> applications = applicationDAO.getApplicationsByApplicantAndProgram(user, program);
@@ -223,12 +215,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetNoApplicationsByApplicantAndProgram() {
-
-        Program program = new ProgramBuilder().title("program").code("KLOP").build();
-
-        save(program);
-        flushAndClearSession();
-
         List<ApplicationForm> applications = applicationDAO.getApplicationsByApplicantAndProgram(user, program);
         assertThat(applications, is(empty()));
     }

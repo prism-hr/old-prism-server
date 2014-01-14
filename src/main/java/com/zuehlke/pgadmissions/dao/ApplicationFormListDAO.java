@@ -155,17 +155,17 @@ public class ApplicationFormListDAO {
                         case SUPERVISOR:
                             criteria.createAlias("applicationForm.programmeDetails", "programmeDetails", JoinType.LEFT_OUTER_JOIN)
                             		.createAlias("applicationForm.approvalRounds", "approvalRounds", JoinType.LEFT_OUTER_JOIN)
-                            		.createAlias("programmeDetails.suggestedSupervisor", "suggestedSupervisor", JoinType.LEFT_OUTER_JOIN)
+                            		.createAlias("programmeDetails.suggestedSupervisors", "suggestedSupervisors", JoinType.LEFT_OUTER_JOIN)
                             		.createAlias("approvalRounds.supervisors", "supervisors", JoinType.LEFT_OUTER_JOIN)
                             		.createAlias("supervisors.user", "supervisorUser", JoinType.LEFT_OUTER_JOIN)
-                            		.createAlias("advert.primarySupervisor", "advertPrimarySupervisorUser", JoinType.LEFT_OUTER_JOIN)
-                            		.createAlias("advert.secondarySupervisor", "advertSecondarySupervisorUser", JoinType.LEFT_OUTER_JOIN);
+                            		.createAlias("project.primarySupervisor", "projectPrimarySupervisorUser", JoinType.LEFT_OUTER_JOIN)
+                            		.createAlias("project.secondarySupervisor", "projectSecondarySupervisorUser", JoinType.LEFT_OUTER_JOIN);
 
                             criterion = Restrictions.disjunction()
                                     .add(ConcatenableIlikeCriterion.ilike(searchTerm, MatchMode.ANYWHERE, "supervisorUser.firstName", "supervisorUser.lastName"))
-                                    .add(ConcatenableIlikeCriterion.ilike(searchTerm, MatchMode.ANYWHERE, "suggestedSupervisor.firstname", "suggestedSupervisor.lastname"))
-                                    .add(ConcatenableIlikeCriterion.ilike(searchTerm, MatchMode.ANYWHERE, "advertPrimarySupervisorUser.firstName", "advertPrimarySupervisorUser.lastName"))
-                                    .add(ConcatenableIlikeCriterion.ilike(searchTerm, MatchMode.ANYWHERE, "advertSecondarySupervisorUser.firstName", "advertSecondarySupervisorUser.lastName"));
+                                    .add(ConcatenableIlikeCriterion.ilike(searchTerm, MatchMode.ANYWHERE, "suggestedSupervisors.firstname", "suggestedSupervisors.lastname"))
+                                    .add(ConcatenableIlikeCriterion.ilike(searchTerm, MatchMode.ANYWHERE, "projectPrimarySupervisorUser.firstName", "projectPrimarySupervisorUser.lastName"))
+                                    .add(ConcatenableIlikeCriterion.ilike(searchTerm, MatchMode.ANYWHERE, "projectSecondarySupervisorUser.firstName", "projectSecondarySupervisorUser.lastName"));
                         default:
                         }
                         

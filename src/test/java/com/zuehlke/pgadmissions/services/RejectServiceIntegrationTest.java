@@ -16,14 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
@@ -35,82 +39,85 @@ import com.zuehlke.pgadmissions.mail.MailSendingService;
 @ContextConfiguration("/testIntegrationContext.xml")
 public class RejectServiceIntegrationTest {
 
-	@Autowired
-	private RejectService rejectsService;
+    @Autowired
+    private RejectService rejectsService;
 
-	@Autowired
-	private ApplicationFormDAO applicationDAO;
+    @Autowired
+    private ApplicationFormDAO applicationDAO;
 
-	@Autowired
-	private UserDAO userDAO;
+    @Autowired
+    private UserDAO userDAO;
 
-	@Autowired
-	private RoleDAO roleDAO;
-	
-	@Autowired
-	private ProgramDAO programDao;
-	
-	@Autowired
-	private MailSendingService mailSendingService;
+    @Autowired
+    private RoleDAO roleDAO;
 
-	@Autowired
-	private SessionFactory sessionFactory;
+    @Autowired
+    private ProgramDAO programDao;
+    
+    @Autowired
+    private QualificationInstitutionDAO qualificationInstitutionDAO;
 
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testMoveApplicationToReject() {
-		RejectReason reason1 = createReason("r1");
+    @Autowired
+    private MailSendingService mailSendingService;
 
-		sessionFactory.getCurrentSession().saveOrUpdate(reason1);
-		
+    @Autowired
+    private SessionFactory sessionFactory;
 
-		Role approverRole = roleDAO.getRoleByAuthority(Authority.APPROVER);
-		RegisteredUser approver = new RegisteredUserBuilder().firstName("Some").lastName("Aprove").email("sdfajklsdf@test.com").username("sdfakd")//
-				.role(approverRole)//
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-		userDAO.save(approver);
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testMoveApplicationToReject() {
+        RejectReason reason1 = createReason("r1");
 
-		
-		Program program = new Program();
-		program.setTitle("alelele");
-		program.setCode("blabjk");
-		program.getApprovers().add(approver);
-		programDao.save(program);
-		
-		ApplicationForm application = new ApplicationForm();
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-		userDAO.save(user);
-		application.setApplicant(user);
+        sessionFactory.getCurrentSession().saveOrUpdate(reason1);
 
-		application.setProgram(program);
-		applicationDAO.save(application);
+        Role approverRole = roleDAO.getRoleByAuthority(Authority.APPROVER);
+        RegisteredUser approver = new RegisteredUserBuilder().firstName("Some").lastName("Aprove").email("sdfajklsdf@test.com").username("sdfakd")//
+                .role(approverRole)//
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        userDAO.save(approver);
 
-		flushNClear();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        qualificationInstitutionDAO.save(institution);
+        
+        Program program = new ProgramBuilder().title("alelele").code("blabjk").institution(institution).build();
+        program.getApprovers().add(approver);
+        programDao.save(program);
 
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		
-		authenticationToken.setDetails(user);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-		
-		Rejection rejection = new RejectionBuilder().rejectionReason(reason1).build();
-		rejectsService.moveApplicationToReject(application, rejection);
-		flushNClear();
+        ApplicationForm application = new ApplicationForm();
+        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+        userDAO.save(user);
+        application.setApplicant(user);
 
-		ApplicationForm storedAppl = applicationDAO.get(application.getId());
+        application.setProgram(program);
+        applicationDAO.save(application);
 
-		Assert.assertEquals(ApplicationFormStatus.REJECTED, storedAppl.getStatus());
-		Assert.assertEquals(reason1.getId(), storedAppl.getRejection().getRejectionReason().getId());
-	}
+        flushNClear();
 
-	private void flushNClear() {
-		sessionFactory.getCurrentSession().flush();
-		sessionFactory.getCurrentSession().clear();
-	}
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 
-	private RejectReason createReason(String text) {
-		return new RejectReasonBuilder().text(text).build();
-	}
+        authenticationToken.setDetails(user);
+        SecurityContextImpl secContext = new SecurityContextImpl();
+        secContext.setAuthentication(authenticationToken);
+        SecurityContextHolder.setContext(secContext);
+
+        Rejection rejection = new RejectionBuilder().rejectionReason(reason1).build();
+        rejectsService.moveApplicationToReject(application, rejection);
+        flushNClear();
+
+        ApplicationForm storedAppl = applicationDAO.get(application.getId());
+
+        Assert.assertEquals(ApplicationFormStatus.REJECTED, storedAppl.getStatus());
+        Assert.assertEquals(reason1.getId(), storedAppl.getRejection().getRejectionReason().getId());
+    }
+
+    private void flushNClear() {
+        sessionFactory.getCurrentSession().flush();
+        sessionFactory.getCurrentSession().clear();
+    }
+
+    private RejectReason createReason(String text) {
+        return new RejectReasonBuilder().text(text).build();
+    }
 }

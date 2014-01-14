@@ -17,11 +17,13 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class InterviewMappingTest extends AutomaticRollbackTestCase{
@@ -60,9 +62,10 @@ public class InterviewMappingTest extends AutomaticRollbackTestCase{
         interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com")
                 .username("brady").password("password").accountNonExpired(false).accountNonLocked(false)
                 .credentialsNonExpired(false).enabled(false).build();
-        program = new ProgramBuilder().code("doesntexist").title("another title").build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
         application = new ApplicationFormBuilder().program(program).applicant(user).build();
-        save(user, program, interviewerUser, application);
+        save(user, institution, program, interviewerUser, application);
         flushAndClearSession();
 	}
 }

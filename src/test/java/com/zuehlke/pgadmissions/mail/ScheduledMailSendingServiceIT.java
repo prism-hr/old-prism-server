@@ -22,12 +22,14 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -83,7 +85,8 @@ public class ScheduledMailSendingServiceIT {
 
                 lastNotified = new DateTime(2013, 5, 7, 0, 0);
 
-                Program program = new ProgramBuilder().administrators(programAdmin).title("ProgramTitle").build();
+                QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+                Program program = new ProgramBuilder().administrators(programAdmin).title("ProgramTitle").institution(institution).build();
 
                 ApplicationForm application1 = new ApplicationFormBuilder().applicant(applicant).program(program).applicationNumber("sampelNumber")
                         .status(ApplicationFormStatus.INTERVIEW).build();
@@ -98,7 +101,7 @@ public class ScheduledMailSendingServiceIT {
                 referee3 = new RefereeBuilder().declined(false).application(application1).reference(new ReferenceCommentBuilder().build())
                         .lastNotified(lastNotified.toDate()).user(refereeUser3).build();
 
-                saveObjects(interval, mailTemplate, refereeUser1, refereeUser2, refereeUser3, programAdmin, applicant, program, application1, application2,
+                saveObjects(interval, mailTemplate, refereeUser1, refereeUser2, refereeUser3, programAdmin, applicant, institution, program, application1, application2,
                         referee1, referee2, referee3);
                 referee1Id = referee1.getId();
                 referee2Id = referee2.getId();

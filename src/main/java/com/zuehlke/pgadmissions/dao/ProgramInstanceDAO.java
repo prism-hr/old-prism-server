@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 
 @Repository
@@ -87,8 +88,11 @@ public class ProgramInstanceDAO {
         return (ProgramInstance) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).add(Restrictions.eq("id", id)).uniqueResult();
     }
 
-    public List<ProgramInstance> getAllProgramInstances() {
-        return sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    public List<ProgramInstance> getAllProgramInstances(ProgramFeed programFeed) {
+        return sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
+                .createAlias("program", "p")
+                .add(Restrictions.eq("p.programFeed", programFeed))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     public void save(ProgramInstance programInstance) {

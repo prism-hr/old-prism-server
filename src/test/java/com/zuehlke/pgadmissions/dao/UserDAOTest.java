@@ -26,11 +26,13 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -161,11 +163,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetUsersByProgramme() {
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        Program programOne = new ProgramBuilder().code("111111").title("hello").institution(institution).build();
+        Program programTwo = new ProgramBuilder().code("222222").title("hello").institution(institution).build();
 
-        Program programOne = new ProgramBuilder().code("111111").title("hello").build();
-        Program programTwo = new ProgramBuilder().code("222222").title("hello").build();
-
-        save(programOne, programTwo);
+        save(institution, programOne, programTwo);
 
         flushAndClearSession();
 
@@ -335,8 +337,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
-        save(program);
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
+        save(institution, program);
 
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
@@ -359,8 +362,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
-        save(program);
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
+        save(institution, program);
 
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
@@ -382,8 +386,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
-        save(program);
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
+        save(institution, program);
 
         Date now = new Date();
 
@@ -406,8 +411,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
-        save(program);
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
+        save(institution, program);
 
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();

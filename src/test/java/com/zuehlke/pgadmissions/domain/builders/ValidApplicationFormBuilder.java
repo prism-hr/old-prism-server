@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -62,6 +63,7 @@ public class ValidApplicationFormBuilder {
     protected PersonalDetails personalDetails;
     protected AdditionalInformation additionalInformation;
     protected ProgramInstance instance;
+    protected QualificationInstitution institution;
     protected Program program;
     protected SourcesOfInterest interest;
     protected ProgrammeDetails programDetails;
@@ -90,7 +92,7 @@ public class ValidApplicationFormBuilder {
     public ApplicationForm build(SessionFactory sessionFactory) {
         ApplicationForm applicationForm = build();
         save(sessionFactory, user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser,
-                language, country, domicile, address, program, employmentPosition, applicationForm);
+                language, country, domicile, address, institution, program, employmentPosition, applicationForm);
         program.setCode("TMRMBISING001");
         return applicationForm;
     }
@@ -165,8 +167,9 @@ public class ValidApplicationFormBuilder {
                 .applicationDeadline(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 1))
                 .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 5)).enabled(true).studyOption("F+++++", "Full-time")
                 .identifier("0009").build();
+        institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
         program = new ProgramBuilder().id(Integer.MAX_VALUE).administrators(user).approver(user).code("TMRMBISING99").enabled(true).instances(instance)
-                .title("MRes Medical and Biomedical Imaging").build();
+                .title("MRes Medical and Biomedical Imaging").institution(institution).build();
         interest = new SourcesOfInterestBuilder().id(Integer.MAX_VALUE).code("BRIT_COUN").name("British Council").build();
         programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging").projectName("Project Title")
                 .sourcesOfInterest(interest).startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")

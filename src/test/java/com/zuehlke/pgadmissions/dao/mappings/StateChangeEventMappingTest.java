@@ -14,10 +14,12 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -53,10 +55,10 @@ public class StateChangeEventMappingTest extends AutomaticRollbackTestCase {
 	public void shouldLoadApplicationFormForStateChangeEvent() throws ParseException {
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+		QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").build();
-
-		save(applicant, program);
+		save(applicant, institution, program);
 		ApplicationFormStatus newStatus = ApplicationFormStatus.APPROVAL;
 		Date eventDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 12 2011 14:09:26");
 		StateChangeEvent event = new StateChangeEventBuilder().newStatus(newStatus).date(eventDate).build();

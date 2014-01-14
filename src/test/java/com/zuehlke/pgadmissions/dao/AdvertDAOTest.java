@@ -13,8 +13,10 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 
 public class AdvertDAOTest extends AutomaticRollbackTestCase {
 
@@ -27,13 +29,14 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetActiveAdverts() {
-        Program programWithInactiveProgramAdvert = new ProgramBuilder().code("inactive").title("another title").build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        Program programWithInactiveProgramAdvert = new ProgramBuilder().code("inactive").title("another title").institution(institution).build();
         Advert inactiveProgramAdvert = new AdvertBuilder().description("inactive program").studyDuration(9).active(false).build();
 
-        Program programWithActiveProgramAdvert = new ProgramBuilder().code("program").title("another title").build();
+        Program programWithActiveProgramAdvert = new ProgramBuilder().code("program").title("another title").institution(institution).build();
         Advert programAdvert = new AdvertBuilder().description("program").studyDuration(66).build();
 
-        save(programWithInactiveProgramAdvert, programWithActiveProgramAdvert);
+        save(institution, programWithInactiveProgramAdvert, programWithActiveProgramAdvert);
         save(inactiveProgramAdvert, programAdvert);
         flushAndClearSession();
 

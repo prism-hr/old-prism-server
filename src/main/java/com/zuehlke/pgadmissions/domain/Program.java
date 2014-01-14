@@ -19,6 +19,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -55,6 +56,14 @@ public class Program extends Authorisable implements Serializable {
 
     @Column(name = "atas_required")
     private Boolean atasRequired;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "institution_id", nullable = false)
+    private QualificationInstitution institution;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "feed_id")
+    private ProgramFeed programFeed;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichApprover")
     private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
@@ -186,6 +195,22 @@ public class Program extends Authorisable implements Serializable {
 
     public void setClosingDates(SortedSet<ProgramClosingDate> closingDates) {
         this.closingDates = closingDates;
+    }
+
+    public QualificationInstitution getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(QualificationInstitution institution) {
+        this.institution = institution;
+    }
+
+    public ProgramFeed getProgramFeed() {
+        return programFeed;
+    }
+
+    public void setProgramFeed(ProgramFeed programFeed) {
+        this.programFeed = programFeed;
     }
 
     public boolean addClosingDate(ProgramClosingDate closingDate) {

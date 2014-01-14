@@ -14,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationInstitutionReference;
 
@@ -112,4 +113,9 @@ public class QualificationInstitutionDAO {
             .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
             .list();
     }
+    
+    public void save(QualificationInstitution institution) {
+        sessionFactory.getCurrentSession().saveOrUpdate(institution);
+    }
+    
 }

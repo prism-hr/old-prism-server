@@ -84,6 +84,8 @@ public class ApprovalServiceTest {
     private MailSendingService mailSendingServiceMock;
 
     private ApplicationFormUserRoleService applicationFormUserRoleService;
+    
+    private ProgramInstanceService programInstanceServiceMock;
 
     @Before
     public void setUp() {
@@ -95,9 +97,10 @@ public class ApprovalServiceTest {
         userServiceMock = createMock(UserService.class);
         mailSendingServiceMock = createMock(MailSendingService.class);
         applicationFormUserRoleService = createMock(ApplicationFormUserRoleService.class);
+        programInstanceServiceMock = createMock(ProgramInstanceService.class);
 
         approvalService = new ApprovalService(userServiceMock, applicationFormDAOMock, approvalRoundDAOMock, stageDurationDAOMock, eventFactoryMock,
-                commentDAOMock, mailSendingServiceMock, applicationFormUserRoleService);
+                commentDAOMock, mailSendingServiceMock, applicationFormUserRoleService, programInstanceServiceMock);
     }
 
     @Test

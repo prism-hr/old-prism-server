@@ -242,6 +242,8 @@ public class UserService {
         List<Authority> authList = new ArrayList<Authority>(Arrays.asList(authorities));
 
         newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authList);
+        userDAO.save(newUser);
+        
         if (authList.contains(Authority.SUPERADMINISTRATOR)) {
             addPendingRoleNotificationToUser(newUser, Authority.SUPERADMINISTRATOR, null);
             applicationFormUserRoleService.createUserInRole(newUser, Authority.SUPERADMINISTRATOR);
@@ -264,8 +266,6 @@ public class UserService {
             addPendingRoleNotificationToUser(newUser, Authority.VIEWER, program);
             applicationFormUserRoleService.createUserInProgramRole(newUser, program, Authority.VIEWER);
         }
-
-        userDAO.save(newUser);
         
         return newUser;
     }

@@ -86,7 +86,7 @@ public class ApplicationListController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getApplicationListPage(@RequestParam(required = false) String applyFilters, 
-    	ModelMap model, HttpSession session) {
+        ModelMap model, HttpSession session) {
         Object alertDefinition = session.getAttribute("alertDefinition");
         if (alertDefinition != null) {
             model.addAttribute("alertDefinition", alertDefinition);
@@ -94,20 +94,19 @@ public class ApplicationListController {
         }
 
         ApplicationsFiltering filtering = (ApplicationsFiltering) model.get("filtering");
+        if (filtering == null) {
+            filtering = new ApplicationsFiltering();
+        }
 
         if (applyFilters != null) {
             if ("urgent".equals(applyFilters)) {
-            	filtering.setSortCategory(SortCategory.URGENT);
+                filtering.setSortCategory(SortCategory.URGENT);
             } else if ("update".equals(applyFilters)) {
-            	filtering.setSortCategory(SortCategory.UPDATE);
-            } else if ("reload".equals(applyFilters)) {
-            	filtering = filteringService.getStoredOrDefaultFiltering(getUser());               
+                filtering.setSortCategory(SortCategory.UPDATE);
             }
         }
 
-        if (filtering == null) {
-            filtering = filteringService.getStoredOrDefaultFiltering(getUser());
-        }
+        filtering = filteringService.getStoredOrDefaultFiltering(getUser());
 
         model.addAttribute("filtering", filtering);
         return APPLICATION_LIST_PAGE_VIEW_NAME;

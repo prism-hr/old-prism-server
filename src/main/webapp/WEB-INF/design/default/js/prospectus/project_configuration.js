@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	bindDatePicker($("#projectAdvertClosingDateInput"));
-	
+
 	registerProgramSelect();
 	registerDefaultClosingDateSelector();
 	registerAddProjectAdvertButton();
@@ -30,12 +30,9 @@ function registerDefaultClosingDateSelector() {
 }
 
 function registerAutosuggest() {
-	autosuggest($("#primarySupervisorFirstName"),
-			$("#primarySupervisorLastName"), $("#primarySupervisorEmail"));
-	autosuggest($("#secondarySupervisorFirstName"),
-			$("#secondarySupervisorLastName"), $("#secondarySupervisorEmail"));
-	autosuggest($("#projectAdministratorFirstName"),
-			$("#projectAdministratorLastName"), $("#projectAdministratorEmail"));
+	autosuggest($("#primarySupervisorFirstName"), $("#primarySupervisorLastName"), $("#primarySupervisorEmail"));
+	autosuggest($("#secondarySupervisorFirstName"), $("#secondarySupervisorLastName"), $("#secondarySupervisorEmail"));
+	autosuggest($("#projectAdministratorFirstName"), $("#projectAdministratorLastName"), $("#projectAdministratorEmail"));
 }
 
 function registerProgramSelect() {
@@ -77,102 +74,79 @@ function addOrEditProjectAdvert() {
 		labeltext = 'updated';
 	}
 	showLoader();
-	$
-			.ajax({
-				type : method,
-				statusCode : {
-					401 : function() {
-						window.location.reload();
-					},
-					500 : function() {
-						window.location.href = "/pgadmissions/error";
-					},
-					404 : function() {
-						window.location.href = "/pgadmissions/404";
-					},
-					400 : function() {
-						window.location.href = "/pgadmissions/400";
-					},
-					403 : function() {
-						window.location.href = "/pgadmissions/404";
-					}
-				},
-				url : url,
-				data : {
-					id : projectId,
-					program : $("#projectAdvertProgramSelect").val(),
-					administratorSpecified : projectAdvertHasAdministrator(),
-					administrator : JSON.stringify(projectAdministrator),
-					title : $("#projectAdvertTitleInput").val(),
-					description : addBlankLinks(tinymce.get(
-							'projectAdvertDescriptionText').getContent()),
-					funding : addBlankLinks(tinymce.get(
-							'projectAdvertFundingText').getContent()),
-					closingDateSpecified : projectAdvertHasClosingDate(),
-					closingDate : $('#projectAdvertClosingDateInput').val(),
-					active : $(
-							"input:radio[name=projectAdvertIsActiveRadio]:checked")
-							.val(),
-					primarySupervisor : JSON.stringify(primarySupervisor),
-					secondarySupervisorSpecified : projectAdvertHasSecondarySupervisor(),
-					secondarySupervisor : JSON.stringify(secondarySupervisor)
-				},
-				success : function(data) {
-					var map = JSON.parse(data);
-					if (!map['success']) {
-						displayErrors(map);
-					} else {
-						loadProjects();
-						clearAll();
-					}
-					changeInfoBarNameProject(labeltext, true);
-				},
-				complete : function() {
-					hideLoader();
-					// Display modal
-					$('#resourcesModal').modal('show');
-				}
-			});
+	$.ajax({
+		type : method,
+		statusCode : {
+			401 : function() {
+				window.location.reload();
+			},
+			500 : function() {
+				window.location.href = "/pgadmissions/error";
+			},
+			404 : function() {
+				window.location.href = "/pgadmissions/404";
+			},
+			400 : function() {
+				window.location.href = "/pgadmissions/400";
+			},
+			403 : function() {
+				window.location.href = "/pgadmissions/404";
+			}
+		},
+		url : url,
+		data : {
+			id : projectId,
+			program : $("#projectAdvertProgramSelect").val(),
+			administratorSpecified : projectAdvertHasAdministrator(),
+			administrator : JSON.stringify(projectAdministrator),
+			title : $("#projectAdvertTitleInput").val(),
+			description : addBlankLinks(tinymce.get('projectAdvertDescriptionText').getContent()),
+			funding : addBlankLinks(tinymce.get('projectAdvertFundingText').getContent()),
+			closingDateSpecified : projectAdvertHasClosingDate(),
+			closingDate : $('#projectAdvertClosingDateInput').val(),
+			active : $("input:radio[name=projectAdvertIsActiveRadio]:checked").val(),
+			primarySupervisor : JSON.stringify(primarySupervisor),
+			secondarySupervisorSpecified : projectAdvertHasSecondarySupervisor(),
+			secondarySupervisor : JSON.stringify(secondarySupervisor)
+		},
+		success : function(data) {
+			var map = JSON.parse(data);
+			if (!map['success']) {
+				displayErrors(map);
+			} else {
+				loadProjects();
+				clearAll();
+				$('#resourcesModal').modal('show');
+			}
+			changeInfoBarNameProject(labeltext, true);
+		},
+		complete : function() {
+			hideLoader();
+		}
+	});
 }
 
 function displayErrors(map) {
 	appendErrorToElementIfPresent(map['program'], $("#projectAdvertProgramDiv"));
-	appendErrorToElementIfPresent(map['administrator.firstname'],
-			$("#projectAdministratorFirstNameDiv"));
-	appendErrorToElementIfPresent(map['administrator.lastname'],
-			$("#projectAdministratorLastNameDiv"));
-	appendErrorToElementIfPresent(map['administrator.email'],
-			$("#projectAdministratorEmailDiv"));
-	appendErrorToElementIfPresent(map['administrator'],
-			$("#projectAdministratorEmailDiv"));
+	appendErrorToElementIfPresent(map['administrator.firstname'], $("#projectAdministratorFirstNameDiv"));
+	appendErrorToElementIfPresent(map['administrator.lastname'], $("#projectAdministratorLastNameDiv"));
+	appendErrorToElementIfPresent(map['administrator.email'], $("#projectAdministratorEmailDiv"));
+	appendErrorToElementIfPresent(map['administrator'], $("#projectAdministratorEmailDiv"));
 	appendErrorToElementIfPresent(map['title'], $("#projectAdvertTitleDiv"));
-	appendErrorToElementIfPresent(map['description'],
-			$("#projectAdvertDescriptionDiv"));
-	appendErrorToElementIfPresent(map['funding'],
-			$("#projectAdvertFundingDiv"));
+	appendErrorToElementIfPresent(map['description'], $("#projectAdvertDescriptionDiv"));
+	appendErrorToElementIfPresent(map['funding'], $("#projectAdvertFundingDiv"));
 	appendErrorToElementIfPresent(map['active'], $("#projectAdvertIsActiveDiv"));
-	appendErrorToElementIfPresent(map['closingDateSpecified'],
-			$("#projectAdvertHasClosingDateDiv"));
-	appendErrorToElementIfPresent(map['closingDate'],
-			$("#projectAdvertClosingDateDiv"));
-	appendErrorToElementIfPresent(map['studyPlaces'],
-			$("#projectAdvertStudyPlacesDiv"));
-	appendErrorToElementIfPresent(map['primarySupervisor.firstname'],
-			$("#primarySupervisorFirstNameDiv"));
-	appendErrorToElementIfPresent(map['primarySupervisor.lastname'],
-			$("#primarySupervisorLastNameDiv"));
-	appendErrorToElementIfPresent(map['primarySupervisor.email'],
-			$("#primarySupervisorEmailDiv"));
-	appendErrorToElementIfPresent(map['primarySupervisor'],
-			$("#primarySupervisorEmailDiv"));
-	appendErrorToElementIfPresent(map['secondarySupervisor.firstname'],
-			$("#secondarySupervisorFirstNameDiv"));
-	appendErrorToElementIfPresent(map['secondarySupervisor.lastname'],
-			$("#secondarySupervisorLastNameDiv"));
-	appendErrorToElementIfPresent(map['secondarySupervisor.email'],
-			$("#secondarySupervisorEmailDiv"));
-	appendErrorToElementIfPresent(map['secondarySupervisor'],
-			$("#secondarySupervisorEmailDiv"));
+	appendErrorToElementIfPresent(map['closingDateSpecified'], $("#projectAdvertHasClosingDateDiv"));
+	appendErrorToElementIfPresent(map['closingDate'], $("#projectAdvertClosingDateDiv"));
+	appendErrorToElementIfPresent(map['studyPlaces'], $("#projectAdvertStudyPlacesDiv"));
+	appendErrorToElementIfPresent(map['primarySupervisor.firstname'], $("#primarySupervisorFirstNameDiv"));
+	appendErrorToElementIfPresent(map['primarySupervisor.lastname'], $("#primarySupervisorLastNameDiv"));
+	appendErrorToElementIfPresent(map['primarySupervisor.email'], $("#primarySupervisorEmailDiv"));
+	appendErrorToElementIfPresent(map['primarySupervisor'], $("#primarySupervisorEmailDiv"));
+	appendErrorToElementIfPresent(map['secondarySupervisor.firstname'], $("#secondarySupervisorFirstNameDiv"));
+	appendErrorToElementIfPresent(map['secondarySupervisor.lastname'], $("#secondarySupervisorLastNameDiv"));
+	appendErrorToElementIfPresent(map['secondarySupervisor.email'], $("#secondarySupervisorEmailDiv"));
+	appendErrorToElementIfPresent(map['secondarySupervisor'], $("#secondarySupervisorEmailDiv"));
 }
 
 function registerEditProjectAdvertButton() {
@@ -228,27 +202,23 @@ function clearAll() {
 	$('html, body').animate({
 		scrollTop : $('body').offset().top
 	}, 300);
+	initEditors();
 	addCounter();
 }
 
 function registerHasClosingDateProjectAdvertRadio() {
-	$(
-			"#projectAdvertHasClosingDateDiv [name='projectAdvertHasClosingDateRadio']")
-			.each(function() {
-				$(this).bind('change', function() {
-					checkProjectClosingDate();
-				});
-			});
-	$(
-			"#projectAdvertHasClosingDateDiv [name='projectAdvertHasClosingDateRadio']")
-			.change(function() {
-				selectDefaultClosingDate();
-			});
+	$("#projectAdvertHasClosingDateDiv [name='projectAdvertHasClosingDateRadio']").each(function() {
+		$(this).bind('change', function() {
+			checkProjectClosingDate();
+		});
+	});
+	$("#projectAdvertHasClosingDateDiv [name='projectAdvertHasClosingDateRadio']").change(function() {
+		selectDefaultClosingDate();
+	});
 }
 
 function selectDefaultClosingDate() {
-	if ($('#projectAdvertProgramSelect :selected').text() != 'Select...'
-			&& $("#projectAdvertHasClosingDateDiv [name='projectAdvertHasClosingDateRadio']")[0].checked) {
+	if ($('#projectAdvertProgramSelect :selected').text() != 'Select...' && $("#projectAdvertHasClosingDateDiv [name='projectAdvertHasClosingDateRadio']")[0].checked) {
 		var closingDate = $('#closingDate').val();
 		if (closingDate != 'null') {
 			$('#projectAdvertClosingDateInput').val(closingDate);
@@ -261,36 +231,29 @@ function selectDefaultClosingDate() {
 }
 
 function registerHasProjectAdministratorRadio() {
-	$(
-			"#projectAdvertHasAdministratorDiv [name='projectAdvertHasAdministratorRadio']")
-			.each(function() {
-				$(this).bind('change', function() {
-					checkProjectAdministrator();
-				});
-			});
+	$("#projectAdvertHasAdministratorDiv [name='projectAdvertHasAdministratorRadio']").each(function() {
+		$(this).bind('change', function() {
+			checkProjectAdministrator();
+		});
+	});
 }
 
 function registerHasSecondarySupervisorRadio() {
-	$(
-			"#projectAdvertHasSecondarySupervisorDiv [name='projectAdvertHasSecondarySupervisorRadio']")
-			.each(function() {
-				$(this).bind('change', function() {
-					checkSecondarySupervisor();
-				});
-			});
+	$("#projectAdvertHasSecondarySupervisorDiv [name='projectAdvertHasSecondarySupervisorRadio']").each(function() {
+		$(this).bind('change', function() {
+			checkSecondarySupervisor();
+		});
+	});
 }
 
 function checkProjectClosingDate() {
 	if (projectAdvertHasClosingDate()) {
 		$('#projectAdvertClosingDateInput').removeAttr('disabled');
-		$('#projectAdvertClosingDateInput').parent().parent().find('label')
-				.removeClass("grey-label").parent().find('.hint').removeClass(
-						"grey");
+		$('#projectAdvertClosingDateInput').parent().parent().find('label').removeClass("grey-label").parent().find('.hint').removeClass("grey");
 	} else {
 		$('#projectAdvertClosingDateInput').val("");
 		$('#projectAdvertClosingDateInput').attr('disabled', 'disabled');
-		$('#projectAdvertClosingDateInput').parent().parent().find('label')
-				.addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#projectAdvertClosingDateInput').parent().parent().find('label').addClass("grey-label").parent().find('.hint').addClass("grey");
 	}
 }
 
@@ -322,14 +285,12 @@ function checkSecondarySupervisor() {
 
 function enableField(input) {
 	input.removeAttr('disabled').removeAttr('readonly');
-	$(input).parent().parent().find('label').removeClass("grey-label").parent()
-			.find('.hint').removeClass("grey");
+	$(input).parent().parent().find('label').removeClass("grey-label").parent().find('.hint').removeClass("grey");
 }
 function clearAndDisable(input) {
 	input.val("");
 	input.attr('disabled', 'disabled');
-	$(input).parent().parent().find('label').addClass("grey-label").parent()
-			.find('.hint').addClass("grey");
+	$(input).parent().parent().find('label').addClass("grey-label").parent().find('.hint').addClass("grey");
 }
 
 function removeProject(projectRow) {
@@ -424,8 +385,7 @@ function fillProjectAdvertForm(data) {
 
 	if (project.closingDate) {
 		$("#projectAdvertHasClosingDateRadioYes").prop("checked", true);
-		$("#projectAdvertClosingDateInput").val(
-				formatProjectClosingDate(new Date(project.closingDate)));
+		$("#projectAdvertClosingDateInput").val(formatProjectClosingDate(new Date(project.closingDate)));
 	} else {
 		$("#projectAdvertHasClosingDateRadioNo").prop("checked", true);
 		$("#projectAdvertClosingDateInput").val("");
@@ -442,10 +402,9 @@ function fillProjectAdvertForm(data) {
 	$('#projectId').val(projectId);
 	$('#addProjectAdvert').text("Edit Project");
 
-
 	var linkToApply = data['linkToApply'];
 	var titleSeleted = $("#projectAdvertTitleInput").val();
-	var sharethisvar = 'http://api.addthis.com/oexchange/0.8/offer?url='+linkToApply+'&title='+titleSeleted;
+	var sharethisvar = 'http://api.addthis.com/oexchange/0.8/offer?url=' + linkToApply + '&title=' + titleSeleted;
 
 	$('#projectAdvertLinkToApply').val(linkToApply);
 	$('#projectAdvertButtonToApply').val(data['buttonToApply']);
@@ -454,60 +413,36 @@ function fillProjectAdvertForm(data) {
 	$("#modalLinkToApply").val(linkToApply);
 
 	$('#sharethis').prop("href", sharethisvar);
-	
+
 }
 
 function checktoDisableProjet() {
 	if ($("#projectAdvertProgramSelect").val() != "") {
-		$(".projectGroup label").removeClass("grey-label").parent().find(
-				'.hint').removeClass("grey");
-		$(".projectGroup input, .projectGroup textarea, .projectGroup select")
-				.removeAttr("readonly", "readonly");
-		$(
-				".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button")
-				.removeAttr("disabled", "disabled");
+		$(".projectGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+		$(".projectGroup input, .projectGroup textarea, .projectGroup select").removeAttr("readonly", "readonly");
+		$(".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button").removeAttr("disabled", "disabled");
 		$("#addProjectAdvert").removeClass("disabled");
-		$(
-				"#projectAdvertClosingDateInput, #secondarySupervisorFirstName, #secondarySupervisorLastName, #secondarySupervisorEmail, #projectAdministratorFirstName, #projectAdministratorLastName, #projectAdministratorEmail")
-				.attr("disabled", "disabled").attr("readonly", "readonly");
+		$("#projectAdvertClosingDateInput, #secondarySupervisorFirstName, #secondarySupervisorLastName, #secondarySupervisorEmail, #projectAdministratorFirstName, #projectAdministratorLastName, #projectAdministratorEmail").attr("disabled", "disabled").attr("readonly", "readonly");
 		if ($("#primarySupervisorDiv").hasClass('isAdmin')) {
-			$(
-					"#primarySupervisorFirstName, #primarySupervisorLastName, #primarySupervisorEmail")
-					.removeAttr("disabled").removeAttr("readonly");
-			$("#primarySupervisorDiv label").removeClass("grey-label").parent()
-					.find('.hint').removeClass("grey");
+			$("#primarySupervisorFirstName, #primarySupervisorLastName, #primarySupervisorEmail").removeAttr("disabled").removeAttr("readonly");
+			$("#primarySupervisorDiv label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 		} else {
-			$(
-					"#primarySupervisorFirstName, #primarySupervisorLastName, #primarySupervisorEmail")
-					.attr("disabled", "disabled").attr("readonly", "readonly");
-			$("#primarySupervisorDiv label").addClass("grey-label").parent()
-					.find('.hint').addClass("grey");
+			$("#primarySupervisorFirstName, #primarySupervisorLastName, #primarySupervisorEmail").attr("disabled", "disabled").attr("readonly", "readonly");
+			$("#primarySupervisorDiv label").addClass("grey-label").parent().find('.hint').addClass("grey");
 		}
 		/* Exceptions */
 
-		$("#projectAdvertClosingDateDiv label").addClass("grey-label").parent()
-				.find('.hint').addClass("grey");
-		$('#secondarySupervisorFirstNameLabel').addClass("grey-label").parent()
-				.find('.hint').addClass("grey");
-		$('#secondarySupervisorLastNameLabel').addClass("grey-label").parent()
-				.find('.hint').addClass("grey");
-		$('#secondarySupervisorEmailLabel').addClass("grey-label").parent()
-				.find('.hint').addClass("grey");
-		$('#projectAdministratorFirstNameLabel').addClass("grey-label")
-				.parent().find('.hint').addClass("grey");
-		$('#projectAdministratorLastNameLabel').addClass("grey-label").parent()
-				.find('.hint').addClass("grey");
-		$('#projectAdministratorEmailLabel').addClass("grey-label").parent()
-				.find('.hint').addClass("grey");
+		$("#projectAdvertClosingDateDiv label").addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#secondarySupervisorFirstNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#secondarySupervisorLastNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#secondarySupervisorEmailLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#projectAdministratorFirstNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#projectAdministratorLastNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
+		$('#projectAdministratorEmailLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
 	} else {
-		$(".projectGroup label").addClass("grey-label").parent().find('.hint')
-				.addClass("grey");
-		$(
-				".projectGroup input, .projectGroup textarea, .projectGroup select, #projectAdvertHasSecondarySupervisorRadioYes, #projectAdvertHasSecondarySupervisorRadioNo")
-				.attr("readonly", "readonly");
-		$(
-				".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button, #projectAdvertHasSecondarySupervisorRadioYes, #projectAdvertHasSecondarySupervisorRadioNo")
-				.attr("disabled", "disabled");
+		$(".projectGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
+		$(".projectGroup input, .projectGroup textarea, .projectGroup select, #projectAdvertHasSecondarySupervisorRadioYes, #projectAdvertHasSecondarySupervisorRadioNo").attr("readonly", "readonly");
+		$(".projectGroup input, .projectGroup textarea, .projectGroup select, .projectGroup button, #projectAdvertHasSecondarySupervisorRadioYes, #projectAdvertHasSecondarySupervisorRadioNo").attr("disabled", "disabled");
 		$("#addProjectAdvert").addClass("disabled");
 		clearAll();
 	}
@@ -515,24 +450,18 @@ function checktoDisableProjet() {
 function changeInfoBarNameProject(text, advertUpdated) {
 	errors = $('.alert-error:visible').length;
 	if (errors > 0) {
-		$('.infoBar').removeClass('alert-info').addClass('alert-error').find(
-				'i').removeClass('icon-info-sign')
-				.addClass('icon-warning-sign');
+		$('.infoBar').removeClass('alert-info').addClass('alert-error').find('i').removeClass('icon-info-sign').addClass('icon-warning-sign');
 		$('html, body').animate({
 			scrollTop : $("#projectConfiguration").offset().top
 		}, 300);
 	} else {
-		$('.infoBar').removeClass('alert-error').addClass('alert-info').find(
-				'i').removeClass('icon-warning-sign')
-				.addClass('icon-info-sign');
+		$('.infoBar').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
 		if (advertUpdated) {
-			infohtml = "<i class='icon-ok-sign'></i> Your advert for your project has been "
-					+ text + ".";
-			if ($('#infoBarproject').hasClass('alert-info')) {
-				$('#infoBarproject').addClass('alert-success').removeClass(
-						'alert-info').html(infohtml);
+			infohtml = "<i class='icon-ok-sign'></i> Your advert for your project has been " + text + ".";
+			if ($('#infoBarProject').hasClass('alert-info')) {
+				$('#infoBarProject').addClass('alert-success').removeClass('alert-info').html(infohtml);
 			} else {
-				$('#infoBarproject').html(infohtml);
+				$('#infoBarProject').html(infohtml);
 			}
 		} else {
 			if (text != "Select...") {
@@ -540,11 +469,10 @@ function changeInfoBarNameProject(text, advertUpdated) {
 			} else {
 				infohtml = "<i class='icon-info-sign'></i> Manage the adverts and closing dates for your project here.";
 			}
-			if ($('#infoBarproject').hasClass('alert-success')) {
-				$('#infoBarproject').addClass('alert-info').removeClass(
-						'alert-success').html(infohtml);
+			if ($('#infoBarProject').hasClass('alert-success')) {
+				$('#infoBarProject').addClass('alert-info').removeClass('alert-success').html(infohtml);
 			} else {
-				$('#infoBarproject').html(infohtml);
+				$('#infoBarProject').html(infohtml);
 			}
 		}
 	}
@@ -578,8 +506,7 @@ function loadProjects() {
 		success : function(data) {
 			var projects = JSON.parse(data['projects']);
 			$('#closingDate').val(data['closingDate']);
-			var programme_name = $(
-					"#projectAdvertProgramSelect option:selected").text();
+			var programme_name = $("#projectAdvertProgramSelect option:selected").text();
 			displayProjectList(projects);
 			checktoDisableProjet();
 			clearProjectAdvertErrors();
@@ -595,9 +522,7 @@ function loadProjects() {
 
 function clearProjectAdvertErrors() {
 	$("#projectAdvertDiv .error").remove();
-	$('#infoBarproject').removeClass('alert-error').addClass('alert-info')
-			.find('i').removeClass('icon-warning-sign').addClass(
-					'icon-info-sign');
+	$('#infoBarProject').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
 }
 
 function clearSecondarySupervisor() {
@@ -687,23 +612,7 @@ function setValue(element, value) {
 	element.val(value);
 }
 function appendProjectRow(project) {
-	$('#projectAdvertsTable tbody tbody')
-			.append(
-					'<tr project-id="'
-							+ project.id
-							+ '">'
-							+ '<td>'
-							+ project.advert.title
-							+ '</td>'
-							+ '<td>'
-							+ '<button class="button-show button-hint" type="button" data-desc="Get Advertising Resources">Show</button>'
-							+ '</td>'
-							+ '<td>'
-							+ '<button class="button-edit button-hint" type="button" data-desc="Edit Advert">Edit</button>'
-							+ '</td>'
-							+ '<td>'
-							+ '<button class="button-delete button-hint" type="button" data-desc="Delete Advert">Remove</button>'
-							+ '</td>' + '</tr>');
+	$('#projectAdvertsTable tbody tbody').append('<tr project-id="' + project.id + '">' + '<td>' + project.advert.title + '</td>' + '<td>' + '<button class="button-show button-hint" type="button" data-desc="Get Advertising Resources">Show</button>' + '</td>' + '<td>' + '<button class="button-edit button-hint" type="button" data-desc="Edit Advert">Edit</button>' + '</td>' + '<td>' + '<button class="button-delete button-hint" type="button" data-desc="Delete Advert">Remove</button>' + '</td>' + '</tr>');
 }
 function projectAdvertHasClosingDate() {
 	return projectAdvertRadioHasValue('projectAdvertHasClosingDateRadio');

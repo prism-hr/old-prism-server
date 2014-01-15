@@ -66,10 +66,15 @@ public class ProjectConfigurationController {
     private final ProjectDTOValidator projectDTOValidator;
 
     private final DatePropertyEditor datePropertyEditor;
+    
     private final ProgramPropertyEditor programPropertyEditor;
+    
     private final PersonPropertyEditor personPropertyEditor;
+    
     private final ProjectConverter projectConverter;
+    
     private final ApplyTemplateRenderer templateRenderer;
+    
     private final String host;
 
     private Gson gson;

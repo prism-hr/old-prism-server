@@ -91,10 +91,10 @@ function changeInfoBarName(text,advertUpdated) {
 	if (advertUpdated) {
 		var programme_name = $("#programAdvertProgramSelect option:selected").text();
 		infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>"+programme_name+"</b> has been "+text+".";
-		if ($('.infoBar').hasClass('alert-info')) {
-			$('.infoBar').addClass('alert-success').removeClass('alert-info').html(infohtml);
+		if ($('#infoBarProgram').hasClass('alert-info')) {
+			$('#infoBarProgram').addClass('alert-success').removeClass('alert-info').html(infohtml);
 		} else {
-			$('.infoBar').html(infohtml);
+			$('#infoBarProgram').html(infohtml);
 		}
 	} else {
 		if (text != "Select...") {
@@ -108,10 +108,10 @@ function changeInfoBarName(text,advertUpdated) {
 		}
 		$('#infodates').html(infodate);
 		$('#infoResources').html(inforesource);
-		if ($('.infoBar').hasClass('alert-success')) {
-			$('.infoBar').addClass('alert-info').removeClass('alert-success').html(infohtml);
+		if ($('#infoBarProgram').hasClass('alert-success')) {
+			$('#infoBarProgram').addClass('alert-info').removeClass('alert-success').html(infohtml);
 		} else {
-			$('.infoBar').html(infohtml);
+			$('#infoBarProgram').html(infohtml);
 		}
 	}
 	
@@ -447,13 +447,12 @@ function saveAdvert(){
 				$('#programAdvertId').val(map['advertId']);
 				advertUpdated = true;
 				changeInfoBarName(labeltext,true);
+				$('#resourcesModal').modal('show');
 			}
 			
 		},
 		complete: function() {
 			$('#ajaxloader').fadeOut('fast');
-			// Display modal
-			$('#resourcesModal').modal('show');
 		}
 	});
 }
@@ -517,6 +516,6 @@ function clearProgramAdvertErrors(){
 }
 
 function clearInfoBarWarning(){
-	$('.infoBar').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
+	$('#infoBarProgram').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
 	checkIfErrors();
 }

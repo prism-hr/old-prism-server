@@ -126,7 +126,11 @@ public class ApplicationListControllerTest {
         HttpSession httpSession = new MockHttpSession();
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
-
+        
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+        EasyMock.expect(filteringServiceMock.getStoredOrDefaultFiltering(user)).andReturn(filtering);
+        
+        EasyMock.replay(filteringServiceMock, userServiceMock);
         // WHEN
         assertEquals("private/my_applications_page", controller.getApplicationListPage(null, model, httpSession));
 

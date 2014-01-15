@@ -18,7 +18,7 @@
               </div>  
               <div class="row-group" id="advertGroup">
                   <h3>Advert</h3>
-                    <div class="infoBar alert alert-info">
+                    <div class="infoBar alert alert-info" id="infoBarProgram">
                       <i class="icon-info-sign"></i> Manage the advert for your programme here.
                   </div>
                     <div class="row" id="programAdvertDescriptionDiv">

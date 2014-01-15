@@ -298,4 +298,5 @@ public class ApplicationListControllerTest {
         Assert.assertTrue(controller.getApplicationDetails("appID").isEmpty());
         EasyMock.verify(applicationSummaryServiceMock);
     }
+    
 }

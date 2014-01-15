@@ -365,7 +365,6 @@ public class UserServiceTest {
                         Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER, Authority.VIEWER))).andReturn(newUser);
 
         userDAOMock.save(newUser);
-        EasyMock.expectLastCall().andDelegateTo(new CheckProgrammeAndSimulateSaveDAO(program));
 
         Role role_1 = new RoleBuilder().build();
         Role role_2 = new RoleBuilder().build();
@@ -652,18 +651,5 @@ public class UserServiceTest {
     public void tearDown() {
         SecurityContextHolder.clearContext();
     }
-
-    class CheckProgrammeAndSimulateSaveDAO extends UserDAO {
-        private final Program expectedProgramme;
-
-        public CheckProgrammeAndSimulateSaveDAO(Program programme) {
-            super(null, null, null, null);
-            this.expectedProgramme = programme;
-        }
-
-        @Override
-        public void save(RegisteredUser user) {
-            Assert.assertTrue(user.getProgramsOfWhichApprover().contains(expectedProgramme));
-        }
-    }
+    
 }

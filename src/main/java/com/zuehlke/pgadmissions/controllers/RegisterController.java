@@ -98,17 +98,6 @@ public class RegisterController {
 			return REGISTER_USERS_VIEW_NAME;
 		}
 
-		RegisteredUser existingDisabledUser = userService
-				.getUserByEmailDisabledAccountsOnly(pendingUser.getEmail());
-		if (existingDisabledUser != null
-				&& StringUtils.isBlank(pendingUser.getActivationCode())) {
-			// Kevin: This means a user tries to register without using the link
-			// provided in the registration email.
-			registrationService
-					.sendInstructionsToRegisterIfActivationCodeIsMissing(existingDisabledUser);
-			return REGISTER_NOT_COMPLETE_VIEW_NAME;
-		}
-
 		String queryString = (String) request.getSession().getAttribute(
 				"applyRequest");
 		RegisteredUser registeredUser = registrationService.updateOrSaveUser(

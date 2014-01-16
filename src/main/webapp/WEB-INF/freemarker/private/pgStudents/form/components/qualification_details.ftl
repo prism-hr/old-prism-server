@@ -90,63 +90,73 @@
           <div class="alert alert-error"> <i class="icon-warning-sign"></i>
             ${error}
           </div>
-          </#list> </div>
+          </#list>
+        </div>
       </div>
       
       <!-- Provider -->
       <div class="row">
         <label id="lbl-providerName" class="plain-label grey-label" for="qualificationInstitution">Institution / Provider Name<em>*</em></label>
         <span class="hint grey" data-desc="<@spring.message 'education.qualifications.institutionName'/>"></span>
-        <div class="field"> <select class="full selectpicker" data-live-search="true" data-size="6"  id="qualificationInstitution" name="qualificationInstitution"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
-          <option value="">Select...</option>
-          <#list institutions as inst> <option value="${inst.code}" <#if qualification.qualificationInstitutionCode?? && qualification.qualificationInstitutionCode == inst.code> selected="selected"</#if>>
-          ${inst.name?html}
-          </option>
-          </#list> <option value="OTHER" <#if qualification.qualificationInstitutionCode?? && qualification.qualificationInstitutionCode == "OTHER">selected="selected"</#if>>Other
-          </option>
+        <div class="field">
+          <select class="full selectpicker" data-live-search="true" data-size="6"  id="qualificationInstitution" name="qualificationInstitution"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
+            <option value="">Select...</option>
+            <#list institutions as inst>
+              <option value="${inst.code}" <#if qualification.qualificationInstitutionCode?? && qualification.qualificationInstitutionCode == inst.code> selected="selected"</#if>>
+                ${inst.name?html}
+              </option>
+            </#list>
+            <option value="OTHER" <#if qualification.qualificationInstitutionCode?? && qualification.qualificationInstitutionCode == "OTHER">selected="selected"</#if>>Other
+            </option>
           </select>
           <@spring.bind "qualification.qualificationInstitutionCode" />
           <#list spring.status.errorMessages as error>
-          <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-            ${error}
-          </div>
-          </#list> </div>
+            <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+              ${error}
+            </div>
+          </#list>
+        </div>
       </div>
       
       <!-- Other name-->
       <div class="row">
         <label id="lbl-otherInstitutionProviderName" class="plain-label grey-label" for="otherInstitutionProviderName">Please Specify<em>*</em></label>
         <span class="hint grey" data-desc="<@spring.message 'education.qualifications.subject'/>"></span>
-        <div class="field"> <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-          <input readonly disabled="disabled" id="otherInstitutionProviderName" class="full" type="text" value="${(qualification.otherQualificationInstitution?html)!}" />
+        <div class="field">
+          <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+            <input readonly disabled="disabled" id="otherInstitutionProviderName" class="full" type="text" value="${(qualification.otherQualificationInstitution?html)!}" />
           <#else>
-          <input readonly id="otherInstitutionProviderName" class="full" type="text" value="${(qualification.otherQualificationInstitution?html)!}" />
+            <input readonly id="otherInstitutionProviderName" class="full" type="text" value="${(qualification.otherQualificationInstitution?html)!}" />
           </#if>
           <@spring.bind "qualification.otherQualificationInstitution" />
           <#list spring.status.errorMessages as error>
-          <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-            ${error}
-          </div>
-          </#list> </div>
+            <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+              ${error}
+            </div>
+          </#list>
+        </div>
       </div>
       
       <!-- Qualification type -->
       <div class="row">
         <label class="plain-label" for="qqualificationType">Qualification Type<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'education.qualifications.qualificationType'/>"></span>
-        <div class="field"> <select class="full selectpicker" data-live-search="true" data-size="6" id="qqualificationType" name="qqualificationType"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
-          <option value="">Select...</option>
-          <#list types as type> <option value="${encrypter.encrypt(type.id)}"<#if qualification.qualificationType?? && qualification.qualificationType.id == type.id> selected="selected"</#if>>
-          ${type.name?html}
-          </option>
-          </#list>
+        <div class="field">
+          <select class="full selectpicker" data-live-search="true" data-size="6" id="qqualificationType" name="qqualificationType"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
+            <option value="">Select...</option>
+            <#list types as type>
+              <option value="${encrypter.encrypt(type.id)}"<#if qualification.qualificationType?? && qualification.qualificationType.id == type.id> selected="selected"</#if>>
+                ${type.name?html}
+              </option>
+            </#list>
           </select>
           <@spring.bind "qualification.qualificationType" />
           <#list spring.status.errorMessages as error>
           <div class="alert alert-error"> <i class="icon-warning-sign"></i>
             ${error}
           </div>
-          </#list> </div>
+          </#list>
+        </div>
       </div>
       
       <!-- Title -->
@@ -163,7 +173,8 @@
           <div class="alert alert-error"> <i class="icon-warning-sign"></i>
             ${error}
           </div>
-          </#list> </div>
+          </#list>
+        </div>
       </div>
       
       <!-- Subject -->
@@ -180,7 +191,8 @@
           <div class="alert alert-error"> <i class="icon-warning-sign"></i>
             ${error}
           </div>
-          </#list> </div>
+          </#list>
+        </div>
       </div>
       
       <!-- Language (in which programme was undertaken) -->
@@ -197,7 +209,8 @@
           <div class="alert alert-error"> <i class="icon-warning-sign"></i>
             ${error}
           </div>
-          </#list> </div>
+          </#list>
+        </div>
       </div>
       
       <!-- Start date -->
@@ -210,7 +223,8 @@
           <div class="alert alert-error"> <i class="icon-warning-sign"></i>
             ${error}
           </div>
-          </#list> </div>
+          </#list>
+        </div>
       </div>
     </div>
     

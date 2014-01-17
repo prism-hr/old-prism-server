@@ -29,6 +29,11 @@ public class DomicileService {
     }
 
     @Transactional
+    public List<Domicile> getAllEnabledDomicilesExceptAlternateValues() {
+    	return domicileDAO.getAllEnabledDomicilesExceptAlternateValues();
+    }
+
+    @Transactional
     public Domicile getDomicileById(Integer id) {
         return domicileDAO.getDomicileById(id);
     }

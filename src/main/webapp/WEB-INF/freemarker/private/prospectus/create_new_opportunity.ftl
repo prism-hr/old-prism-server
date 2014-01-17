@@ -84,10 +84,10 @@
           </div>
           
           <div class="control-group">
-            <label id="programTitleLabel" class="control-label" for="programTitle">Please Specify<em>*</em></label>
+            <label id="programTitleLabel" class="control-label" for="programTitle">Program Title<em>*</em></label>
             <span class="hint grey" data-desc="<@spring.message 'opportunityRequest.programTitle'/>"></span>
             <div class="controls">
-              <input readonly disabled="disabled" id="projectTitle" name="projectTitle" class="full" type="text" value="${(opportunityRequest.projectTitle?html)!}" />
+              <input id="programTitle" name="programTitle" class="full" type="text" value="${(opportunityRequest.programTitle?html)!}" />
               <@spring.bind "opportunityRequest.programTitle" />
               <#list spring.status.errorMessages as error>
                 <div class="alert alert-error"> <i class="icon-warning-sign"></i>
@@ -98,7 +98,7 @@
           </div>
           
           <div class="control-group">
-            <label id="programDescriptionLabel" class="control-label" for="programDescription">Please Specify<em>*</em></label>
+            <label id="programDescriptionLabel" class="control-label" for="programDescription">Program Description<em>*</em></label>
             <span class="hint grey" data-desc="<@spring.message 'opportunityRequest.programDescription'/>"></span>
             <div class="controls">
               <textarea id="programDescription" name="programDescription" class="max" cols="70" rows="6">${(opportunityRequest.programDescription?html)!}</textarea>

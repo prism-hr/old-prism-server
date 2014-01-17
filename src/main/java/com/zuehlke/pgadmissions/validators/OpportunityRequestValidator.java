@@ -23,6 +23,8 @@ public class OpportunityRequestValidator extends AbstractValidator {
     public void addExtraValidation(Object target, Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCountry", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCode", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programTitle", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programDescription", EMPTY_FIELD_ERROR_MESSAGE);
 
         OpportunityRequest opportunityRequest = (OpportunityRequest) target;
 
@@ -37,4 +39,8 @@ public class OpportunityRequestValidator extends AbstractValidator {
         ValidationUtils.invokeValidator(registerFormValidator, opportunityRequest.getAuthor(), errors);
         errors.popNestedPath();
     }
+    
+    void setRegisterFormValidator(RegisterFormValidator registerFormValidator) {
+		this.registerFormValidator = registerFormValidator;
+	}
 }

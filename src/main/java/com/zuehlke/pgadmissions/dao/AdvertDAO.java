@@ -31,12 +31,14 @@ public class AdvertDAO {
     }
 
     public Program getProgram(Advert advert) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("advert", advert));
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .add(Restrictions.eq("advert", advert));
         return (Program) criteria.uniqueResult();
     }
     
     public Project getProject(Advert advert) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("advert", advert));
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Project.class)
+                .add(Restrictions.eq("advert", advert));
         return (Project) criteria.uniqueResult();
     }
 
@@ -46,7 +48,8 @@ public class AdvertDAO {
 
     @SuppressWarnings("unchecked")
     public List<Advert> getActiveProgramAdverts() {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("active", true));
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class)
+                .add(Restrictions.eq("active", true));
         return criteria.list();
     }
 
@@ -54,7 +57,7 @@ public class AdvertDAO {
 		if(advert == null || advert.getId() == null){
 			return;
 		}
-		 sessionFactory.getCurrentSession().delete(advert);
+		sessionFactory.getCurrentSession().delete(advert);
 	}
 
 }

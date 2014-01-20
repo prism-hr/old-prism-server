@@ -28,12 +28,15 @@ public class CountriesDAO {
 
 	public List<Country> getAllCountries() {
 	    return sessionFactory.getCurrentSession().createCriteria(Country.class)
-                .addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+                .addOrder(Order.asc("name"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 	}
 	
     public List<Country> getAllEnabledCountries() {
-        return sessionFactory.getCurrentSession().createCriteria(Country.class).add(Restrictions.eq("enabled", true))
-                .addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return sessionFactory.getCurrentSession().createCriteria(Country.class)
+                .add(Restrictions.eq("enabled", true))
+                .addOrder(Order.asc("name"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 	
 	public Country getCountryById(Integer id) {
@@ -45,6 +48,9 @@ public class CountriesDAO {
 	}
 	
 	public Country getEnabledCountryByCode(String code) {
-        return (Country) sessionFactory.getCurrentSession().createCriteria(Country.class).add(Restrictions.eq("code", code)).add(Restrictions.eq("enabled", true)).uniqueResult();
+        return (Country) sessionFactory.getCurrentSession().createCriteria(Country.class)
+                .add(Restrictions.eq("code", code))
+                .add(Restrictions.eq("enabled", true)).uniqueResult();
     }
+	
 }

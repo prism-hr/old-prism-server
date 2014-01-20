@@ -75,6 +75,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Before
     public void prepare() {
+        userDAO = new UserDAO(sessionFactory, null, null, null);
         applicationDAO = new ApplicationFormListDAO(sessionFactory, userDAO);
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         role = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);

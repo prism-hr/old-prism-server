@@ -43,7 +43,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.AdvertPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
@@ -79,22 +78,19 @@ public class ProjectConfigurationController {
     
     private final String host;
     
-    private final AdvertPropertyEditor advertPropertyEditor;
-    
     private final DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
 
     private Gson gson;
     
     public ProjectConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ProjectConfigurationController(UserService userService, ProgramsService programsService, ApplicationContext applicationContext,
             ProjectDTOValidator projectDTOValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
             PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer, 
-            @Value("${application.host}") final String host, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor,
-            AdvertPropertyEditor advertPropertyEditor) {
+            @Value("${application.host}") final String host, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor) {
         this.userService = userService;
         this.programsService = programsService;
         this.applicationContext = applicationContext;
@@ -104,7 +100,6 @@ public class ProjectConfigurationController {
         this.personPropertyEditor = personPropertyEditor;
         this.projectConverter = projectConverter;
 		this.templateRenderer = templateRenderer;
-		this.advertPropertyEditor = advertPropertyEditor;
 		this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
 		this.host = host;
     }
@@ -138,8 +133,6 @@ public class ProjectConfigurationController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.registerCustomEditor(Person.class, "primarySupervisor", personPropertyEditor);
         binder.registerCustomEditor(Person.class, "secondarySupervisor", personPropertyEditor);
-        binder.registerCustomEditor(String.class, "description", advertPropertyEditor);
-        binder.registerCustomEditor(String.class, "funding", advertPropertyEditor);
         binder.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
     }
 

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICANT_SUBMISSION_NOTIFICATION;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -21,13 +22,20 @@ import com.google.common.collect.Ordering;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -55,15 +63,20 @@ public class ApplicationsService {
 	private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 	
 	private ApplicationFormUserRoleService applicationFormUserRoleService;
+	
+    private final CountriesDAO countriesDAO;
+    
+    private final DomicileDAO domicileDAO;
 
     public ApplicationsService() {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ApplicationsService(final ApplicationFormDAO applicationFormDAO, final ApplicationFormListDAO applicationFormListDAO,
             final MailSendingService mailService, final ProgrammeDetailsService programmeDetailsService, final ProgramDAO programDAO,
-            final ApplicationFormUserRoleDAO applicationFormUserRoleDAO, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            final ApplicationFormUserRoleDAO applicationFormUserRoleDAO, ApplicationFormUserRoleService applicationFormUserRoleService,
+            CountriesDAO countriesDAO, DomicileDAO domicileDAO) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormListDAO = applicationFormListDAO;
         this.mailService = mailService;
@@ -71,6 +84,8 @@ public class ApplicationsService {
         this.programDAO = programDAO;
         this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
+        this.countriesDAO = countriesDAO;
+        this.domicileDAO = domicileDAO;
     }
 
     public Date getBatchDeadlineForApplication(ApplicationForm form) {
@@ -215,4 +230,56 @@ public class ApplicationsService {
     	return applicationFormDAO.getApplicationsByProject(project);
     }
 
+    /**
+     * Temporary bodge to help applications with countries or domiciles 
+     * that are UK municipalities to pass the web service validation.
+     * @author Alastair Knowles
+     * @param form
+     */
+    public void transformUKCountriesAndDomiciles(final ApplicationForm form) {
+        String ukCode = "XK";
+        Country ukCountry = countriesDAO.getEnabledCountryByCode(ukCode);
+        Domicile ukDomicile = domicileDAO.getEnabledDomicileByCode(ukCode);
+        List<String> ukTransforms = Arrays.asList("XF", "XI", "XH", "8826");
+        Country countryOfBirth = form.getPersonalDetails().getCountry();
+        if (ukCountry != null) {
+            if (ukTransforms.contains(countryOfBirth.getCode())) {
+                form.getPersonalDetails().setCountry(ukCountry);
+            }
+        }
+        if (ukDomicile != null) {
+            Domicile countryOfResidence = form.getPersonalDetails().getResidenceCountry();
+            if (ukTransforms.contains(countryOfResidence.getCode())) {
+                form.getPersonalDetails().setResidenceCountry(ukDomicile);
+            }
+            Domicile countryOfCurrentAddress = form.getCurrentAddress().getDomicile();
+            if (ukTransforms.contains(countryOfCurrentAddress.getCode())) {
+                form.getCurrentAddress().setDomicile(ukDomicile);
+            }
+            Domicile countryOfContactAddress = form.getContactAddress().getDomicile();
+            if (ukTransforms.contains(countryOfContactAddress.getCode())) {
+                form.getContactAddress().setDomicile(ukDomicile);
+            }
+            for (Qualification qualification : form.getQualifications()) {
+                Domicile countryOfInstitution = qualification.getInstitutionCountry();
+                if (ukTransforms.contains(countryOfInstitution.getCode())) {
+                    qualification.setInstitutionCountry(ukDomicile);
+                }
+            }
+            for (EmploymentPosition position : form.getEmploymentPositions()) {
+                Domicile countryOfEmployer = position.getEmployerAddress().getDomicile();
+                if (ukTransforms.contains(countryOfEmployer.getCode())) {
+                    position.getEmployerAddress().setDomicile(ukDomicile);
+                }
+            }
+            for (Referee referee : form.getReferees()) {
+                Domicile countryOfReferee = referee.getAddressLocation().getDomicile();
+                if (ukTransforms.contains(countryOfReferee.getCode())) {
+                    referee.getAddressLocation().setDomicile(ukDomicile);
+                }
+            }
+        }
+        applicationFormDAO.save(form);
+    }
+    
 }

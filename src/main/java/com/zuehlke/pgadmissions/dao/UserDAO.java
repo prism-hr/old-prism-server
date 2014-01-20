@@ -246,7 +246,7 @@ public class UserDAO {
     
     public void setApplicationFormListLastAccessTimestamp(RegisteredUser user) {
         user.setApplicationListLastAccessTimestamp(new Date());
-        sessionFactory.getCurrentSession().flush();
+        save(user);
     }
 
 }

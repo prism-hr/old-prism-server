@@ -32,18 +32,34 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -73,6 +89,14 @@ public class ApplicationsServiceTest {
     @Mock
     @InjectIntoByType
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    
+    @Mock
+    @InjectIntoByType
+    private CountriesDAO countriesDAOMock;
+    
+    @Mock
+    @InjectIntoByType
+    private DomicileDAO domicileDAOMock;
 
     @Test
     public void shouldSendSubmissionsConfirmationToApplicant() {
@@ -299,6 +323,56 @@ public class ApplicationsServiceTest {
         verify();
 
         assertSame(deadline, returnedDeadline);
+    }
+    
+    @Test
+    public void shouldTransFormUKCountriesAndDomiciles() {
+        Country validCountry = new CountryBuilder().code("XK").enabled(true).build();
+        Domicile validDomicile = new DomicileBuilder().code("XK").enabled(true).build();
+        
+        Country invalidCountry = new CountryBuilder().code("XF").enabled(true).build();
+        Domicile invalidDomicile1 = new DomicileBuilder().code("XF").enabled(true).build();
+        Domicile invalidDomicile2 = new DomicileBuilder().code("XI").enabled(true).build();
+        Domicile invalidDomicile3 = new DomicileBuilder().code("XH").enabled(true).build();
+        Domicile invalidDomicile4 = new DomicileBuilder().code("8826").enabled(true).build();
+        PersonalDetails personalDetails = new PersonalDetailsBuilder().country(invalidCountry).residenceDomicile(invalidDomicile1).build();
+        Address address = new AddressBuilder().domicile(invalidDomicile2).build();
+        Qualification qualification1 = new QualificationBuilder().institutionCountry(invalidDomicile3).build();
+        Qualification qualification2 = new QualificationBuilder().institutionCountry(invalidDomicile4).build();
+        EmploymentPosition position1 = new EmploymentPositionBuilder().domicile(invalidDomicile1).toEmploymentPosition();
+        EmploymentPosition position2 = new EmploymentPositionBuilder().domicile(invalidDomicile2).toEmploymentPosition();
+        Referee referee1 = new RefereeBuilder().addressDomicile(invalidDomicile3).build();
+        Referee referee2 = new RefereeBuilder().addressDomicile(invalidDomicile4).build();
+        
+        ApplicationForm application = new ApplicationFormBuilder().personalDetails(personalDetails).contactAddress(address)
+                .currentAddress(address).qualifications(qualification1, qualification2).employmentPositions(position1, position2)
+                .referees(referee1, referee2).build();
+        
+        EasyMock.expect(countriesDAOMock.getEnabledCountryByCode("XK")).andReturn(validCountry);
+        EasyMock.expect(domicileDAOMock.getEnabledDomicileByCode("XK")).andReturn(validDomicile);
+        applicationFormDAOMock.save(application);
+        
+        replay();
+        applicationsService.transformUKCountriesAndDomiciles(application);
+        verify();
+        
+        assertEquals(application.getPersonalDetails().getCountry().getCode(), validCountry.getCode());
+        assertEquals(application.getPersonalDetails().getResidenceCountry().getCode(), validDomicile.getCode());
+        assertEquals(application.getCurrentAddress().getDomicile().getCode(), validDomicile.getCode());
+        assertEquals(application.getContactAddress().getDomicile().getCode(), validDomicile.getCode());
+        
+        for (Qualification qualification : application.getQualifications()) {
+            assertEquals(qualification.getInstitutionCountry().getCode(), validDomicile.getCode());
+        }
+        
+        for (EmploymentPosition position : application.getEmploymentPositions()) {
+            assertEquals(position.getEmployerAddress().getDomicile().getCode(), validDomicile.getCode());
+        }
+        
+        for (Referee referee : application.getReferees()) {
+            assertEquals(referee.getAddressLocation().getDomicile().getCode(), validDomicile.getCode());
+        }
+
     }
 
 }

@@ -54,6 +54,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong;
@@ -92,6 +93,8 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
     private SftpAttachmentsSendingService attachmentsSendingService;
 
     private PorticoAttachmentsZipCreator attachmentsZipCreatorMock;
+    
+    private ApplicationsService applicationsServiceMock;
 
     private ApplicationFormTransferService applicationFormTransferService;
 
@@ -1080,8 +1083,10 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         webServiceTemplateMock = EasyMock.createMock(WebServiceTemplate.class);
 
         attachmentsZipCreatorMock = EasyMock.createMock(PorticoAttachmentsZipCreator.class);
+        
+        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 
-        applicationFormTransferService = new ApplicationFormTransferService(applicationFormTransferErrorDAO, applicationFormTransferDAO);
+        applicationFormTransferService = new ApplicationFormTransferService(applicationsServiceMock, applicationFormTransferErrorDAO, applicationFormTransferDAO);
 
         applicationFormTransferServiceMock = EasyMock.createMock(ApplicationFormTransferService.class);
 

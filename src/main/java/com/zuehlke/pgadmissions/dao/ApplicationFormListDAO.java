@@ -41,21 +41,27 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 public class ApplicationFormListDAO {
 	
 	private final SessionFactory sessionFactory;
+	
+	private final UserDAO userDAO;
 
     public static final DateTimeFormatter USER_DATE_FORMAT = DateTimeFormat.forPattern("dd MMM yyyy");
     
     public ApplicationFormListDAO() {
-        this(null);
+        this(null, null);
     }
 
     @Autowired
-    public ApplicationFormListDAO(SessionFactory sessionFactory) {
+    public ApplicationFormListDAO(SessionFactory sessionFactory, UserDAO userDAO) {
         this.sessionFactory = sessionFactory;
+        this.userDAO = userDAO;
     }
     
     @SuppressWarnings("unchecked")
     public List<ApplicationDescriptor> getVisibleApplicationsForList(final RegisteredUser registeredUser, final ApplicationsFiltering filtering, final int itemsPerPage) {
-    	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        Integer blockCount = filtering.getBlockCount();
+        updateLastAccessTimestamp(registeredUser, blockCount); 
+        
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
     		.setReadOnly(true)
     		.setProjection(Projections.projectionList()
     			.add(Projections.groupProperty("applicationForm.id"), "applicationFormId")
@@ -86,7 +92,7 @@ public class ApplicationFormListDAO {
     	criteria.add(Restrictions.leProperty("assignedTimestamp", "registeredUser.applicationListLastAccessTimestamp"));
     	
     	appendOrderStatement(criteria, filtering);
-    	appendLimitStatement(criteria, (filtering.getBlockCount() - 1) * itemsPerPage, itemsPerPage);
+    	appendLimitStatement(criteria, (blockCount - 1) * itemsPerPage, itemsPerPage);
     	
     	return criteria.setResultTransformer(Transformers.aliasToBean(ApplicationDescriptor.class)).list();
     }
@@ -303,6 +309,12 @@ public class ApplicationFormListDAO {
     private void appendLimitStatement(Criteria criteria, int recordStart, int recordCount) {
     	criteria.setFirstResult(recordStart);
     	criteria.setMaxResults(recordCount);
+    }
+    
+    private void updateLastAccessTimestamp(RegisteredUser user, Integer blockCount) {
+        if (blockCount == 1) {
+            userDAO.setApplicationFormListLastAccessTimestamp(user);
+        }
     }
     
 }

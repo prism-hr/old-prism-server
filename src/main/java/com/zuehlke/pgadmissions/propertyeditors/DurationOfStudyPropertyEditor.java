@@ -35,6 +35,11 @@ public class DurationOfStudyPropertyEditor extends PropertyEditorSupport {
 
         setValue(result);
     }
+    
+    public Integer getAsInteger(String jsonString) {
+        setAsText(jsonString);
+        return (Integer) getValue();
+    }
 
 	private Integer getDurationOfStudyInMonthsOrError(Integer duration, String durationOfStudyUnitAsString) {
 		if( StringUtils.isNotBlank(durationOfStudyUnitAsString))

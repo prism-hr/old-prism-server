@@ -129,3 +129,41 @@ function addBlankLinks(text) {
 	  var editdescription = removePreviousBlank.replace(new RegExp("<a href=","g"),"<a target=\"_blank\" href=");
     return editdescription; 
 }
+
+function initEditors() {
+	tinymce.init({
+	    selector: "#programAdvertDescriptionText",
+	    width: 480,
+	    height : 180,
+	    menubar: false,
+	    content: "",
+	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+	  /*setup : function(ed) {
+	    	ed.on('keyup', function(e) { $('textArea#programAdvertDescriptionText').val(tinymce.get('programAdvertDescriptionText').getContent())});
+	    }*/
+	});
+	tinymce.init({
+	    selector: "#programAdvertFundingText",
+	    width: 480,
+	    height : 180,
+	    menubar: false,
+	    content: "",
+	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+	});
+	tinymce.init({
+		selector : "#projectAdvertDescriptionText",
+	    width: 480,
+	    height : 180,
+	    menubar: false,
+	    content: "",
+	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+	});
+	tinymce.init({
+		selector : "#projectAdvertFundingText",
+	    width: 480,
+	    height : 180,
+	    menubar: false,
+	    content: "",
+	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+	});
+}

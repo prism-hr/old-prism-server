@@ -21,6 +21,7 @@ $(document).on('click', '#qualificationCloseButton', function(){
 $(document).on('click', '#qualificationClearButton', function() {
     $('input[name="qualificationSendToUcl"]').each(function() {
         $(this).attr("checked", false);
+        $('html,body').animate({ scrollTop: $('#qualifications-H2').offset().top }, 'fast');
     });
     $("#explanationText").val("");
 });
@@ -58,6 +59,7 @@ $(document).on('change', 'input[name="qualificationSendToUcl"]:checkbox', functi
 // --------------------------------------------------------------------------------
 $(document).on("click","#qualificationSaveButton", function () {
     postQualificationsData();
+    $('html,body').animate({ scrollTop: $('#qualifications-H2').offset().top }, 'fast');
 });
 
 

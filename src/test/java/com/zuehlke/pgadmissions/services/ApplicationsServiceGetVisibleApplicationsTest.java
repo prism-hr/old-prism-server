@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
@@ -76,6 +77,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     private ApplicationsService applicationsService;
 
     private RoleDAO roleDAO;
+    
+    private UserDAO userDAO;
 
     private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 
@@ -86,7 +89,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Before
     public void prepare() {
 
-        applicationFormListDAO = new ApplicationFormListDAO(sessionFactory);
+        applicationFormListDAO = new ApplicationFormListDAO(sessionFactory, userDAO);
 
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);
 

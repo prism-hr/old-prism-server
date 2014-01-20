@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectDTOBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
-import com.zuehlke.pgadmissions.propertyeditors.AdvertPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
@@ -47,7 +46,6 @@ public class ProjectConverterTest {
 	private Program program;
 	private Project project;
 	private ProjectDTO projectDTO;
-	private AdvertPropertyEditor advertPropertyEditor;
 	
 	@Before
 	public void setup(){
@@ -58,8 +56,7 @@ public class ProjectConverterTest {
 		setupFullProjectDTO(administratorPerson, primarySupervisorPerson, secondarySupervisorPerson, program);
 		setupUserService();
 		setupProgramService();
-		setupAdvertPropertyEditor();
-		converter = new ProjectConverter(userService, programService, advertPropertyEditor);
+		converter = new ProjectConverter(userService, programService);
 	}
 	
 	@After
@@ -160,13 +157,6 @@ public class ProjectConverterTest {
 		programService = EasyMock.createMock(ProgramsService.class);
 		expect(programService.getProject(PROJECT_ID)).andReturn(project);
 		EasyMock.replay(programService);
-	}
-	
-	private void setupAdvertPropertyEditor() {
-	    advertPropertyEditor = EasyMock.createMock(AdvertPropertyEditor.class);
-	    advertPropertyEditor.setAsText(projectDTO.getDescription());
-	    advertPropertyEditor.setAsText(projectDTO.getFunding());    
-	    EasyMock.replay(advertPropertyEditor);
 	}
 
 	private void setupUserService() {

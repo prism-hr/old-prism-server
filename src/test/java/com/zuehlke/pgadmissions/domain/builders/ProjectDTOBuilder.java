@@ -12,6 +12,7 @@ public class ProjectDTOBuilder {
     private Program program;
     private String title;
     private String description;
+    private Integer studyDuration;
     private String funding;
     private Boolean closingDateSpecified;
     private Date closingDate;
@@ -28,6 +29,7 @@ public class ProjectDTOBuilder {
         projectDTO.setProgram(program);
         projectDTO.setTitle(title);
         projectDTO.setDescription(description);
+        projectDTO.setStudyDuration(studyDuration);
         projectDTO.setFunding(funding);
         projectDTO.setClosingDateSpecified(closingDateSpecified);
         projectDTO.setClosingDate(closingDate);
@@ -57,6 +59,11 @@ public class ProjectDTOBuilder {
 
     public ProjectDTOBuilder description(String description) {
         this.description = description;
+        return this;
+    }
+    
+    public ProjectDTOBuilder studyDuration(Integer studyDuration) {
+        this.studyDuration = studyDuration;
         return this;
     }
 

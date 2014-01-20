@@ -51,7 +51,7 @@ public class AdvertDAO {
     }
 
 	public void delete(Advert advert) {
-		if(advert==null||advert.getId()==null){
+		if(advert == null || advert.getId() == null){
 			return;
 		}
 		 sessionFactory.getCurrentSession().delete(advert);

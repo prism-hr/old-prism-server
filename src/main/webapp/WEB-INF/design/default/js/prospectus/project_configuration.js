@@ -1,6 +1,5 @@
 $(document).ready(function() {
 	bindDatePicker($("#projectAdvertClosingDateInput"));
-
 	registerProgramSelect();
 	registerDefaultClosingDateSelector();
 	registerAddProjectAdvertButton();
@@ -16,6 +15,7 @@ $(document).ready(function() {
 	loadProjects();
 	$('#projectsClear').hide();
 });
+
 function initEditorsProjects() {
 	tinyMCE.get('projectAdvertDescriptionText').setContent('');
 	tinyMCE.get('projectAdvertFundingText').setContent('');
@@ -50,6 +50,10 @@ function registerAddProjectAdvertButton() {
 
 function addOrEditProjectAdvert() {
 	clearProjectAdvertErrors();
+	var duration = {
+		value : $("#projectAdvertStudyDurationInput").val(),
+		unit : $("#projectAdvertStudyDurationUnitSelect").val()
+	};
 	var projectAdministrator = {
 		firstname : $("#projectAdministratorFirstName").val(),
 		lastname : $("#projectAdministratorLastName").val(),
@@ -101,6 +105,7 @@ function addOrEditProjectAdvert() {
 			administrator : JSON.stringify(projectAdministrator),
 			title : $("#projectAdvertTitleInput").val(),
 			description : addBlankLinks(tinymce.get('projectAdvertDescriptionText').getContent()),
+			studyDuration : JSON.stringify(duration),
 			funding : addBlankLinks(tinymce.get('projectAdvertFundingText').getContent()),
 			closingDateSpecified : projectAdvertHasClosingDate(),
 			closingDate : $('#projectAdvertClosingDateInput').val(),
@@ -134,6 +139,7 @@ function displayErrors(map) {
 	appendErrorToElementIfPresent(map['administrator'], $("#projectAdministratorEmailDiv"));
 	appendErrorToElementIfPresent(map['title'], $("#projectAdvertTitleDiv"));
 	appendErrorToElementIfPresent(map['description'], $("#projectAdvertDescriptionDiv"));
+	appendErrorToElementIfPresent(map['studyDuration'], $("#projectAdvertStudyDurationDiv"));
 	appendErrorToElementIfPresent(map['funding'], $("#projectAdvertFundingDiv"));
 	appendErrorToElementIfPresent(map['active'], $("#projectAdvertIsActiveDiv"));
 	appendErrorToElementIfPresent(map['closingDateSpecified'], $("#projectAdvertHasClosingDateDiv"));
@@ -378,6 +384,8 @@ function fillProjectAdvertForm(data) {
 	$("#projectAdvertDescriptionText").val(advert.description);
 
 	tinymce.get('projectAdvertDescriptionText').setContent(advert.description);
+	
+	setStudyDuration(advert);
 
 	$("#projectAdvertFundingText").val(advert.funding);
 
@@ -416,7 +424,7 @@ function fillProjectAdvertForm(data) {
 
 }
 
-function checktoDisableProjet() {
+function checkToDisableProject() {
 	if ($("#projectAdvertProgramSelect").val() != "") {
 		$(".projectGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
 		$(".projectGroup input, .projectGroup textarea, .projectGroup select").removeAttr("readonly", "readonly");
@@ -430,8 +438,6 @@ function checktoDisableProjet() {
 			$("#primarySupervisorFirstName, #primarySupervisorLastName, #primarySupervisorEmail").attr("disabled", "disabled").attr("readonly", "readonly");
 			$("#primarySupervisorDiv label").addClass("grey-label").parent().find('.hint').addClass("grey");
 		}
-		/* Exceptions */
-
 		$("#projectAdvertClosingDateDiv label").addClass("grey-label").parent().find('.hint').addClass("grey");
 		$('#secondarySupervisorFirstNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
 		$('#secondarySupervisorLastNameLabel').addClass("grey-label").parent().find('.hint').addClass("grey");
@@ -447,6 +453,7 @@ function checktoDisableProjet() {
 		clearAll();
 	}
 }
+
 function changeInfoBarNameProject(text, advertUpdated) {
 	errors = $('.alert-error:visible').length;
 	if (errors > 0) {
@@ -464,11 +471,7 @@ function changeInfoBarNameProject(text, advertUpdated) {
 				$('#infoBarProject').html(infohtml);
 			}
 		} else {
-			if (text != "Select...") {
-				infohtml = "<i class='icon-info-sign'></i> Manage the adverts and closing dates for your project here.";
-			} else {
-				infohtml = "<i class='icon-info-sign'></i> Manage the adverts and closing dates for your project here.";
-			}
+			infohtml = "<i class='icon-info-sign'></i> Manage the advert and closing dates for your project here.";
 			if ($('#infoBarProject').hasClass('alert-success')) {
 				$('#infoBarProject').addClass('alert-info').removeClass('alert-success').html(infohtml);
 			} else {
@@ -504,13 +507,18 @@ function loadProjects() {
 			programCode : $("#projectAdvertProgramSelect").val()
 		},
 		success : function(data) {
-			var projects = JSON.parse(data['projects']);
-			$('#closingDate').val(data['closingDate']);
-			var programme_name = $("#projectAdvertProgramSelect option:selected").text();
+			var projects = null;
+			if (data['projects'] != undefined) {
+				projects = JSON.parse(data['projects']);
+			}
 			displayProjectList(projects);
-			checktoDisableProjet();
-			clearProjectAdvertErrors();
+			$('#closingDate').val(data['closingDate']);
+			$('#studyDuration').val(data['studyDuration']);
+			var programme_name = $("#projectAdvertProgramSelect option:selected").text();
 			changeInfoBarNameProject(programme_name, false);
+			setStudyDuration(null);
+			checkToDisableProject();
+			clearProjectAdvertErrors();
 			$('#projectsClear').hide();
 		},
 		complete : function() {
@@ -533,7 +541,7 @@ function clearSecondarySupervisor() {
 
 function displayProjectList(projects) {
 	$('#projectAdvertsTable tbody tbody').empty();
-	if (projects.length == 0) {
+	if (projects == null || projects.length == 0) {
 		$("#projectAdvertsDiv").hide();
 	} else {
 		$("#projectAdvertsDiv").show();
@@ -640,4 +648,21 @@ function showLoader() {
 
 function hideLoader() {
 	$('#ajaxloader').fadeOut('fast');
+}
+
+function setStudyDuration(advert) {
+	var studyDuration = $('#studyDuration').val();
+	if (advert != null && advert.studyDuration != undefined) {
+		studyDuration = advert.studyDuration;
+	}
+	if (studyDuration == 0) {
+		$("#projectAdvertStudyDurationInput").val('');
+		$("#projectAdvertStudyDurationUnitSelect").val('');
+	} else if (studyDuration%12==0){
+		$("#projectAdvertStudyDurationInput").val((studyDuration/12).toString());
+		$("#projectAdvertStudyDurationUnitSelect").val('Years');
+	} else {
+		$("#projectAdvertStudyDurationInput").val(studyDuration.toString());
+		$("#projectAdvertStudyDurationUnitSelect").val('Months');
+	}
 }

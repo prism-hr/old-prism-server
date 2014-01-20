@@ -11,7 +11,9 @@ public class AdvertPropertyEditor extends PropertyEditorSupport {
     
     @Override
     public void setAsText(String untrimmedHTML) {
-        setValue(CharMatcher.BREAKING_WHITESPACE.removeFrom(untrimmedHTML));
+        if (untrimmedHTML != null) {
+            setValue(CharMatcher.BREAKING_WHITESPACE.removeFrom(untrimmedHTML));
+        }
     }
     
 }

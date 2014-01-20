@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+
+import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 
 public abstract class AbstractValidator implements org.springframework.validation.Validator, ApplicationContextAware, ConstraintValidatorFactory {
 
@@ -36,6 +39,8 @@ public abstract class AbstractValidator implements org.springframework.validatio
     protected static final String INVALID_TIME = "time.field.invalid";
 
     protected static final Pattern TIME_PATTERN = Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]");
+    
+    protected static final String PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER = "prospectus.durationOfStudy.emptyOrNotInteger";
 
     @Autowired
     private Validator validator;
@@ -94,5 +99,15 @@ public abstract class AbstractValidator implements org.springframework.validatio
 
     public void setValidator(Validator validator) {
         this.validator = validator;
+    }
+    
+    protected void validateStudyDuration(Errors errors, Integer studyDuration) {
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyDuration", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
+        if (studyDuration != null && studyDuration.equals(DurationOfStudyPropertyEditor.ERROR_VALUE_FOR_DURATION_OF_STUDY)) {
+            errors.rejectValue("studyDuration", PROSPECTUS_DURATION_OF_STUDY_EMPTY_OR_NOT_INTEGER);
+        }
+        if (studyDuration != null && studyDuration.equals(DurationOfStudyPropertyEditor.ERROR_UNIT_FOR_DURATION_OF_STUDY)) {
+            errors.rejectValue("studyDuration", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        }
     }
 }

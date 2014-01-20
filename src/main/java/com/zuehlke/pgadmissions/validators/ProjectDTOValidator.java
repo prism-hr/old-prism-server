@@ -44,8 +44,8 @@ public class ProjectDTOValidator extends AbstractValidator {
     @Override
     public void addExtraValidation(Object target, Errors errors) {
         ProjectDTO dto = (ProjectDTO) target;
-
-        validateRequiredFields(errors);
+        validateSimpleFields(errors);
+        validateStudyDuration(errors, dto.getStudyDuration());
         validateAdministrator(errors, dto.getAdministratorSpecified(), dto.getAdministrator());
         validateClosingDate(errors, dto.getClosingDateSpecified(), dto.getClosingDate());
         validatePrimarySupervisor(errors, dto.getPrimarySupervisor());
@@ -53,7 +53,7 @@ public class ProjectDTOValidator extends AbstractValidator {
         validateDifferentSupervisors(errors, dto.getPrimarySupervisor(), dto.getSecondarySupervisor());
     }
 
-    private void validateRequiredFields(Errors errors) {
+    private void validateSimpleFields(Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "program", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "administratorSpecified", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", EMPTY_FIELD_ERROR_MESSAGE);

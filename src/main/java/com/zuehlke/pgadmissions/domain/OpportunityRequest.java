@@ -60,6 +60,16 @@ public class OpportunityRequest {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
+	@Column(name = "atas_required")
+	private Boolean atasRequired;
+
+	@Column(name = "start_date")
+	@Temporal(value = TemporalType.DATE)
+	private Date applicationStartDate;
+
+	@Column(name = "advertisingDuration")
+	private Integer advertisingDuration;
+
 	@Transient
 	private Integer studyDurationNumber;
 
@@ -144,6 +154,30 @@ public class OpportunityRequest {
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	public Boolean getAtasRequired() {
+		return atasRequired;
+	}
+
+	public void setAtasRequired(Boolean atasRequired) {
+		this.atasRequired = atasRequired;
+	}
+
+	public Date getApplicationStartDate() {
+		return applicationStartDate;
+	}
+
+	public void setApplicationStartDate(Date applicationStartDate) {
+		this.applicationStartDate = applicationStartDate;
+	}
+
+	public Integer getAdvertisingDuration() {
+		return advertisingDuration;
+	}
+
+	public void setAdvertisingDuration(Integer advertisingDuration) {
+		this.advertisingDuration = advertisingDuration;
 	}
 
 	public Integer getStudyDurationNumber() {

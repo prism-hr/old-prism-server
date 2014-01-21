@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping("/requests")
 public class RequestsController {
 
-	private static final String REQUESTS_PAGE_VIEW_NAME = "/private/staff/superAdmin/requests";
+	protected static final String REQUESTS_PAGE_VIEW_NAME = "/private/staff/superAdmin/requests";
 	
 	@Autowired
 	private OpportunitiesService opportunitiesService;

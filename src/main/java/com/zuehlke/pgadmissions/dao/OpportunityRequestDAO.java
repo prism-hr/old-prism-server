@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -22,6 +24,15 @@ public class OpportunityRequestDAO {
 
 	public void save(OpportunityRequest opportunityRequest) {
 		sessionFactory.getCurrentSession().saveOrUpdate(opportunityRequest);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<OpportunityRequest> getOpportunityRequests() {
+		return sessionFactory.getCurrentSession().createCriteria(OpportunityRequest.class).list();
+	}
+
+	public OpportunityRequest findById(Integer requestId) {
+		return (OpportunityRequest) sessionFactory.getCurrentSession().get(OpportunityRequest.class, requestId);
 	}
 
 }

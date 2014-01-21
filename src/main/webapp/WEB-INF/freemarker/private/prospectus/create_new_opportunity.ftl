@@ -24,7 +24,7 @@
         
           <div class="control-group">
             <label class="control-label" for="institutionCountry">Institution Country<em>*</em></label>
-            <span class="hint" data-desc="<@spring.message 'education.qualifications.institutionCountry'/>"></span>
+            <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionCountry'/>"></span>
             <div class="controls">
               <select class="full selectpicker" data-live-search="true" data-size="6" id="institutionCountry" name="institutionCountry">
                 <option value="">Select...</option>
@@ -46,7 +46,7 @@
           
           <div class="control-group">
             <label id="lbl-providerName" class="control-label" for="institution">Institution Name<em>*</em></label>
-            <span class="hint grey" data-desc="<@spring.message 'education.qualifications.institutionName'/>"></span>
+            <span class="hint grey" data-desc="<@spring.message 'opportunityRequest.institutionName'/>"></span>
             <div class="controls">
               <select class="full selectpicker" disabled="disabled" data-live-search="true" data-size="6"  id="institution" name="institutionCode">
                 <option value="">Select...</option>
@@ -71,7 +71,7 @@
           
           <div class="control-group">
             <label id="lbl-otherInstitutionProviderName" class="control-label" for="otherInstitutionProviderName">Please Specify<em>*</em></label>
-            <span class="hint grey" data-desc="<@spring.message 'education.qualifications.subject'/>"></span>
+            <span class="hint grey" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
             <div class="controls">
               <input readonly disabled="disabled" id="otherInstitution" name="otherInstitution" class="full" type="text" value="${(opportunityRequest.otherInstitution?html)!}" />
               <@spring.bind "opportunityRequest.otherInstitution" />
@@ -111,11 +111,37 @@
             </div>
           </div>
           
+          <div class="control-group">
+            <label for="studyDurationNumber" class="plain-label">Duration of Study<em>*</em></label>
+            <span class="hint" data-desc="<@spring.message 'prospectus.durationOfStudy'/>"></span>
+            <div class="field">
+                <input class="numeric input-small" type="text" size="4" id="studyDurationNumber" name="studyDurationNumber" value="${(opportunityRequest.studyDurationNumber?string)!}" />
+                <select id="studyDurationUnit" name="studyDurationUnit" class="input-small">
+                    <#assign unit = opportunityRequest.studyDurationUnit!>
+                    <option value="">Select...</option>
+                    <option value="MONTHS" <#if unit?? && unit == "MONTHS">selected="selected"</#if>>Months</option>
+                    <option value="YEARS" <#if unit?? && unit == "YEARS">selected="selected"</#if>>Years</option>
+                </select>
+                <@spring.bind "opportunityRequest.studyDurationNumber" />
+                <#list spring.status.errorMessages as error>
+                  <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                    ${error}
+                  </div>
+                </#list>
+                <@spring.bind "opportunityRequest.studyDurationUnit" />
+                <#list spring.status.errorMessages as error>
+                  <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                    ${error}
+                  </div>
+                </#list>
+            </div>
+          </div>
+          
           <#assign pendingUser = opportunityRequest.author>
           
           <div class="control-group">
             <label class="control-label" for="firstName">First Name <em>*</em></label>
-            <span class="hint" data-desc="Please enter your first name."></span>
+            <span class="hint" data-desc="<@spring.message 'opportunityRequest.author.firstName'/>"></span>
             <div class="controls">
               <input id="firstName" type="text" name="author.firstName" value='${(opportunityRequest.author.firstName?html)!""}' />
               <@spring.bind "opportunityRequest.author.firstName" />
@@ -128,7 +154,7 @@
           </div>
           <div class="control-group">
             <label class="control-label" for="lastName">Last Name <em>*</em></label>
-            <span class="hint" data-desc="Please enter your last name."></span>
+            <span class="hint" data-desc="<@spring.message 'opportunityRequest.author.lastName'/>"></span>
             <div class="controls">
               <input id="lastName" type="text" name="author.lastName" value='${(opportunityRequest.author.lastName?html)!""}' />
               <@spring.bind "opportunityRequest.author.lastName" />
@@ -139,7 +165,7 @@
           </div>
           <div class="control-group">
             <label class="control-label" for="email">Email <em>*</em></label>
-            <span class="hint" data-desc="Please enter your email address."></span>
+            <span class="hint" data-desc="<@spring.message 'opportunityRequest.author.email'/>"></span>
             <div class="controls">
               <input id="email" type="email" placeholder="Email Address" name="author.email" value='${(opportunityRequest.author.email?html)!""}' />
               <@spring.bind "opportunityRequest.author.email" />

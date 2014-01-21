@@ -1,22 +1,22 @@
 
 /* Application list ---------------------------------------------------------------------------------- */
 
-table#appliList thead th {
+table.appliList thead th {
 	background: rgb(188,188,188);
 	cursor: pointer; 
 	padding:12px 2px;
 }
-table#appliList thead th:nth-child(5) {
+table.appliList thead th:nth-child(5) {
 	/*cursor: auto;*/
 }
 
 /* Sorting functionality. */
-table#appliList th.sorting {
+table.appliList th.sorting {
 	background: #59DAFF; /* Old browsers */ 
 }
-table#appliList th.sortable span { float: right; width: 10px; height: 16px; background:  url(../../images/icon_arrow_sort.png) no-repeat center; margin: 0px 2px 0 3px; }
-table#appliList th.sortable.asc span { background-image: url(../../images/icon_arrow_up.png); }
-table#appliList th.sortable.desc span { background-image: url(../../images/icon_arrow_down.png); }
+table.appliList th.sortable span { float: right; width: 10px; height: 16px; background:  url(../../images/icon_arrow_sort.png) no-repeat center; margin: 0px 2px 0 3px; }
+table.appliList th.sortable.asc span { background-image: url(../../images/icon_arrow_up.png); }
+table.appliList th.sortable.desc span { background-image: url(../../images/icon_arrow_down.png); }
 
 /* Form fields inside the table. */
 td.applicant-name { white-space: nowrap; } /* name on one line. */
@@ -94,9 +94,9 @@ div.fetching { text-align: center; font-weight: bold; padding: 5px; }
 
 /* With bootstrap*/
 
-table#appliList th, table#appliList td { padding: 8px 3px; vertical-align: middle; line-height: 15px; }
-table#appliList select {width: 113px; margin-bottom: 0;}
-table#appliList input[type="checkbox"] { margin-top: 0px;}
+table.appliList th, table.appliList td { padding: 8px 3px; vertical-align: middle; line-height: 15px; }
+table.appliList select {width: 113px; margin-bottom: 0;}
+table.appliList input[type="checkbox"] { margin-top: 0px;}
 
 /* new actions line/*/
 .actions {
@@ -151,7 +151,7 @@ table#appliList input[type="checkbox"] { margin-top: 0px;}
 #applicationListSection .application-details, #applicationListSection .placeholder {
 	display:none;
 }
-#appliList td.rating {
+.appliList td.rating {
     text-align:center;
 }
 .application-lhs.loading {

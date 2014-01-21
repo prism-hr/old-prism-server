@@ -15,23 +15,20 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Service
 public class ApplicationFormTransferService {
     
-    private final ApplicationsService applicationsService;
     private final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO;
     private final ApplicationFormTransferDAO applicationFormTransferDAO;
     
     public ApplicationFormTransferService() {
-        this(null, null, null);
+        this(null, null);
     }
     
     @Autowired
-    public ApplicationFormTransferService(final ApplicationsService applicationsService, final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO,
+    public ApplicationFormTransferService(final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO,
             final ApplicationFormTransferDAO applicationFormTransferDAO) {
-        this.applicationsService = applicationsService;
         this.applicationFormTransferErrorDAO = applicationFormTransferErrorDAO;
         this.applicationFormTransferDAO = applicationFormTransferDAO;
     }
@@ -63,7 +60,6 @@ public class ApplicationFormTransferService {
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ApplicationFormTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
-        applicationsService.transformUKCountriesAndDomiciles(form);
         ApplicationFormTransfer transfer = applicationFormTransferDAO.getByApplicationForm(form);
         if (transfer == null) {
             ApplicationFormTransfer result = new ApplicationFormTransfer();

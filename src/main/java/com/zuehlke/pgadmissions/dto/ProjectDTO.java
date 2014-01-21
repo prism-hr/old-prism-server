@@ -26,6 +26,8 @@ public class ProjectDTO {
     @Size(max = 3000, message = "A maximum of 2000 characters are allowed.")
     @ATASConstraint
     private String description;
+    
+    private Integer studyDuration;
 
     @Size(max = 2000, message = "A maximum of 1000 characters are allowed.")
     private String funding;
@@ -144,6 +146,14 @@ public class ProjectDTO {
 
     public void setSecondarySupervisor(Person secondarySupervisor) {
         this.secondarySupervisor = secondarySupervisor;
+    }
+
+    public Integer getStudyDuration() {
+        return studyDuration;
+    }
+
+    public void setStudyDuration(Integer studyDuration) {
+        this.studyDuration = studyDuration;
     }
 
 }

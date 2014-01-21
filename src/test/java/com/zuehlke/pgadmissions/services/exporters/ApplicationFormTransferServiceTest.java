@@ -22,9 +22,12 @@ import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 public class ApplicationFormTransferServiceTest {
+    
+    private ApplicationsService applicationsServiceMock;
 
     private ApplicationFormTransferErrorDAO applicationFormTransferErrorDAOMock;
     
@@ -34,9 +37,10 @@ public class ApplicationFormTransferServiceTest {
     
     @Before
     public void prepare() {
+        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         applicationFormTransferDAOMock = EasyMock.createMock(ApplicationFormTransferDAO.class);
         applicationFormTransferErrorDAOMock = EasyMock.createMock(ApplicationFormTransferErrorDAO.class);
-        service = new ApplicationFormTransferService(applicationFormTransferErrorDAOMock, applicationFormTransferDAOMock);
+        service = new ApplicationFormTransferService(applicationsServiceMock, applicationFormTransferErrorDAOMock, applicationFormTransferDAOMock);
     }
 
     @Test
@@ -131,4 +135,5 @@ public class ApplicationFormTransferServiceTest {
         
         EasyMock.verify(applicationFormTransferDAOMock);
     }
+    
 }

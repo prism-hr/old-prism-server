@@ -1,60 +1,20 @@
 $(document).ready(function(){
-		bindDatePicker($("#programAdvertClosingDateInput"));
-		bindAddClosingDateButtonAction();
-		bindSaveButtonAction();
-		bindProgramSelectChangeAction();
-		bindClosingDatesActions();
-		getProgramData();
-		checkDates();
-		initEditors();
-		$('.selectpicker').selectpicker();
+	bindDatePicker($("#programAdvertClosingDateInput"));
+	bindAddClosingDateButtonAction();
+	bindSaveButtonAction();
+	bindProgramSelectChangeAction();
+	bindClosingDatesActions();
+	initEditors();
+	checkDates();
+	$('.selectpicker').selectpicker();
 });
-function initEditors() {
-	tinymce.init({
-	    selector: "#programAdvertDescriptionText",
-	    plugins: ["link wordcount"],
-	    width: 480,
-	    height : 180,
-	    menubar: false,
-	    content: "",
-	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
-	  /*setup : function(ed) {
-	    	ed.on('keyup', function(e) { $('textArea#programAdvertDescriptionText').val(tinymce.get('programAdvertDescriptionText').getContent())});
-	    }*/
-	});
-	tinymce.init({
-	    selector: "#programAdvertFundingText",
-	    plugins: ["link wordcount"],
-	    width: 480,
-	    height : 180,
-	    menubar: false,
-	    content: "",
-	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
-	});
-	tinymce.init({
-		selector : "#projectAdvertDescriptionText",
-	    plugins: ["link wordcount"],
-	    width: 480,
-	    height : 180,
-	    menubar: false,
-	    content: "",
-	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
-	});
-	tinymce.init({
-		selector : "#projectAdvertFundingText",
-	    plugins: ["link wordcount"],
-	    width: 480,
-	    height : 180,
-	    menubar: false,
-	    content: "",
-	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
-	});
-}
+
 function bindProgramSelectChangeAction(){
 	$("#programAdvertProgramSelect").bind('change', function() {
 		getProgramData();
 	});
 }
+
 function checktoDisable() {
 	if ($("#programAdvertProgramSelect").val() != "") {
 		$("#advertGroup label, #programAdvertClosingDateGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
@@ -72,6 +32,7 @@ function checktoDisable() {
 		$("#programAdvertDescriptionText").text('1000 Characters left');
 	}
 }
+
 function getProgramData(){
 	clearProgramAdvertErrors();
 	var programme_code= $("#programAdvertProgramSelect").val();
@@ -87,6 +48,7 @@ function getProgramData(){
 	}
 	
 }
+
 function changeInfoBarName(text,advertUpdated) {
 	if (advertUpdated) {
 		var programme_name = $("#programAdvertProgramSelect option:selected").text();
@@ -116,6 +78,7 @@ function changeInfoBarName(text,advertUpdated) {
 	}
 	
 }
+
 function getClosingDatesData(program_code){
 	clearClosingDate();
 	$.ajax({
@@ -163,6 +126,7 @@ function bindAddClosingDateButtonAction(){
 		saveClosingDate();
 	});
 }
+
 function saveClosingDate(){
 	clearProgramAdvertClosingDateErrors();
 	$('#ajaxloader').show();
@@ -344,6 +308,7 @@ function getAdvertData(programme_code){
         }
     });
 }
+
 function updateAdvertSection(map){
 	var linkToApply = map['linkToApply'];
 	var titleSeleted = $("#programAdvertProgramSelect option:selected").text();
@@ -372,9 +337,11 @@ function updateProgramSection(advert){
 			$("#programAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
 			$("#programAdvertStudyDurationUnitSelect").val('Months');
 		}
-		
-		if(advert['active']){$("#programAdvertIsActiveRadioYes").prop("checked", true);}
-		else{$("#programAdvertIsActiveRadioNo").prop("checked", true);}
+		if(advert['active']){
+			$("#programAdvertIsActiveRadioYes").prop("checked", true);
+		}else{
+			$("#programAdvertIsActiveRadioNo").prop("checked", true);
+		}
 	}else{
 		clearAdvert();
 	}

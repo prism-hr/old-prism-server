@@ -9,7 +9,6 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
-import com.zuehlke.pgadmissions.propertyeditors.AdvertPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -18,13 +17,11 @@ public class ProjectConverter {
     
     private final UserService userService;
     private ProgramsService programService;
-    private AdvertPropertyEditor advertPropertyEditor;
 
     @Autowired
-    public ProjectConverter(UserService userService, ProgramsService programService, AdvertPropertyEditor advertPropertyEditor) {
+    public ProjectConverter(UserService userService, ProgramsService programService) {
         this.userService = userService;
         this.programService = programService;
-        this.advertPropertyEditor = advertPropertyEditor;
     }
 
     public Project toDomainObject(ProjectDTO projectAdvertDTO) {
@@ -67,15 +64,11 @@ public class ProjectConverter {
 
     private void updateProjectAdvert(Advert advert, ProjectDTO projectAdvertDTO) {
         advert.setTitle(projectAdvertDTO.getTitle());
-        
         String description = projectAdvertDTO.getDescription();
-        advertPropertyEditor.setAsText(description);
         advert.setDescription(description);
-        
+        advert.setStudyDuration(projectAdvertDTO.getStudyDuration());
         String funding = projectAdvertDTO.getFunding();       
-        advertPropertyEditor.setAsText(funding);
         advert.setFunding(funding);
-        
         advert.setActive(projectAdvertDTO.getActive());
     }
 

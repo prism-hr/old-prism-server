@@ -34,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.propertyeditors.AdvertPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
@@ -74,18 +73,15 @@ public class ProgramConfigurationController {
 	private Gson gson;
 	
 	private final AdvertService advertsService;
-	
-	private final AdvertPropertyEditor advertPropertyEditor;
 
     public ProgramConfigurationController() {
-        this(null,null, null, null, null, null, null, null, null, null, null, null);
+        this(null,null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ProgramConfigurationController(UserService userService, ProgramsService programsService, AdvertService advertsService, @Value("${application.host}") final String host,
             ApplicationContext applicationContext, ProgramAdvertValidator programAdvertValidator, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor,
-            ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor, ApplyTemplateRenderer templateRenderer,
-            AdvertPropertyEditor advertPropertyEditor) {
+            ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor, ApplyTemplateRenderer templateRenderer) {
         this.userService = userService;
         this.programsService = programsService;
 		this.advertsService = advertsService;
@@ -97,7 +93,6 @@ public class ProgramConfigurationController {
         this.datePropertyEditor = datePropertyEditor;
         this.programPropertyEditor = programPropertyEditor;
 		this.templateRenderer = templateRenderer;
-		this.advertPropertyEditor = advertPropertyEditor;
     }
 
     @PostConstruct
@@ -119,8 +114,6 @@ public class ProgramConfigurationController {
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(programAdvertValidator);
         binder.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
-        binder.registerCustomEditor(String.class, "description", advertPropertyEditor);
-        binder.registerCustomEditor(String.class, "funding", advertPropertyEditor);
     }
 
     @InitBinder("programClosingDate")
@@ -169,7 +162,7 @@ public class ProgramConfigurationController {
 
         HashMap<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("programCode", programCode);
-        if(advert!=null){
+        if(advert != null){
         	dataMap.put("advertId", advert.getId());
         }
         dataMap.put("host", host);

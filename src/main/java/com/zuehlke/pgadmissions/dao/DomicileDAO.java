@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Domicile;
 
 @Repository
@@ -67,4 +68,11 @@ public class DomicileDAO {
 	public void save(Domicile domicile) {
 		sessionFactory.getCurrentSession().saveOrUpdate(domicile);
 	}
+	
+   public Domicile getEnabledDomicileByCode(String code) {
+        return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class)
+                .add(Restrictions.eq("code", code))
+                .add(Restrictions.eq("enabled", true)).uniqueResult();
+    }
+   
 }

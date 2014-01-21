@@ -38,11 +38,12 @@ $(document).ready(function()
 			},
 			success: function(data)
 			{
-				if(data == "OK"){					
+				if (data == "OK"){					
 					window.location.href = '/pgadmissions/applications?messageCode=move.approval&application=' + $('#applicationId').val();
 				
-				}else{
+				} else {
 					$('#approve-content').html(data);
+				    $('html,body').animate({ scrollTop: $('#approvalsection').offset().top }, 'fast');
 				}
 	            addCounter();
 				addToolTips();

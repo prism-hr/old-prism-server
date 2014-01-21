@@ -96,7 +96,7 @@
           <div class="row-group projectGroup">
                 <h3>Advert</h3>
                  <div class="infoBar alert alert-info" id="infoBarProject">
-                	<i class="icon-info-sign"></i> Manage the adverts and closing dates for your project here.
+                	<i class="icon-info-sign"></i> Manage the advert and closing dates for your project here.
            		 </div>
                 <div class="row" id="projectAdvertTitleDiv">
                     <label for="projectAdvertTitleInput" class="plain-label">Title<em>*</em></label>
@@ -110,6 +110,19 @@
                     <div class="field">
                         <textarea id="projectAdvertDescriptionText" class="max" rows="6" cols="150"></textarea>
                     </div>
+                </div>
+                <div class="row" id="projectAdvertStudyDurationDiv">
+                  <label for="projectAdvertStudyDurationInput" class="plain-label">Duration of Study<em>*</em>
+                  </label> <span class="hint" data-desc="<@spring.message 'prospectus.durationOfStudy'/>"></span>
+                  <div class="field">
+                      <input class="numeric input-small" type="text" size="4" id="projectAdvertStudyDurationInput" />
+                      <select id="projectAdvertStudyDurationUnitSelect" class="input-small">
+                          <option value="">Select...</option>
+                          <option value="Months">Months</option>
+                          <option value="Years">Years</option>
+                      </select>
+                      <input type="hidden" id="studyDuration" />
+                  </div>
                 </div>
                 <div class="row" id="projectAdvertFundingDiv">
                   <label for="projectAdvertFundingText" class="plain-label">Funding Information</label> <span class="hint" data-desc="<@spring.message 'prospectus.fundingInformation'/>"></span>
@@ -244,5 +257,3 @@
         </form>
     </div>
 </section>
-
-    

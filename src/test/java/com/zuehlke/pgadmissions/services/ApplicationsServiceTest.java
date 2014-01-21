@@ -350,7 +350,6 @@ public class ApplicationsServiceTest {
         
         EasyMock.expect(countriesDAOMock.getEnabledCountryByCode("XK")).andReturn(validCountry);
         EasyMock.expect(domicileDAOMock.getEnabledDomicileByCode("XK")).andReturn(validDomicile);
-        applicationFormDAOMock.save(application);
         
         replay();
         applicationsService.transformUKCountriesAndDomiciles(application);

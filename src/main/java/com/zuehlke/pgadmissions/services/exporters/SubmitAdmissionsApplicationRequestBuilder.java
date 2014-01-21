@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -216,6 +217,7 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         nameTp.setForename1(applicant.getFirstName());
         nameTp.setForename2(applicant.getFirstName2());
         nameTp.setForename3(applicant.getFirstName3());
+        
         // Workaround until a new web service has been released by UCL.
         switch (personalDetails.getGender()) {
         case FEMALE:
@@ -331,14 +333,10 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setPostCode(currentAddress.getAddress5());
         addressTp.setCountry(currentAddress.getDomicile().getCode());
 
-        // postCode is mandatory but but PRISM did not collect addresses
-        // in this format before.
         if (StringUtils.isBlank(addressTp.getPostCode())) {
             addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
         }
 
-        // addressLine3 is mandatory but PRISM did not collect addresses
-        // in this format before.
         if (StringUtils.isBlank(addressTp.getAddressLine3())) {
             addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
         }
@@ -360,14 +358,10 @@ public class SubmitAdmissionsApplicationRequestBuilder {
         addressTp.setPostCode(contactAddress.getAddress5());
         addressTp.setCountry(contactAddress.getDomicile().getCode());
 
-        // postCode is mandatory but but PRISM did not collect addresses
-        // in this format before.
         if (StringUtils.isBlank(addressTp.getPostCode())) {
             addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
         }
 
-        // addressLine3 is mandatory but PRISM did not collect addresses
-        // in this format before.
         if (StringUtils.isBlank(addressTp.getAddressLine3())) {
             addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
         }
@@ -385,8 +379,6 @@ public class SubmitAdmissionsApplicationRequestBuilder {
 
         NameTp supervisorName = buildAgreedSupervisorName();
         if (supervisorName == null && !programmeDetails.getSuggestedSupervisors().isEmpty()) {
-            // Which supervisor to pick if there are multiple
-            // Just send the first one. Confirmed by Alastair Knowles
             supervisorName = buildSuggestedSupervisorName(0);
         }
         applicationTp.setSupervisorName(supervisorName);
@@ -438,13 +430,16 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             if (isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getAtasRequired())) {
                 applicationTp.setAtasStatement(latestApprovalRound.getProjectAbstract());
             }
-
             if (applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
+                String departmentalOfferConditions = "Recommended Offer Type: ";       
                 if (BooleanUtils.isTrue(latestApprovalRound.getRecommendedConditionsAvailable())) {
-                    applicationTp.setDepartmentalOfferConditions("Conditional Offer: " + latestApprovalRound.getRecommendedConditions());
+                    departmentalOfferConditions += "Conditional\n\n";
+                    departmentalOfferConditions += latestApprovalRound.getRecommendedConditions() + "\n\n";
                 } else {
-                    applicationTp.setDepartmentalOfferConditions("Unconditional Offer");
-                }
+                    departmentalOfferConditions += "Unconditional\n\n";
+                }   
+                departmentalOfferConditions += "Provisional Start Date: " + new SimpleDateFormat("dd-mm-yyyy").format(latestApprovalRound.getRecommendedStartDate());
+                applicationTp.setDepartmentalOfferConditions(departmentalOfferConditions);
             }
         }
 
@@ -535,10 +530,6 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                 QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
 
                 qualificationsTp.setStartDate(buildXmlDate(qualification.getQualificationStartDate()));
-
-                // TODO: This might be null because we've changed this to a mandatory field in mid flight.
-                // Talk to Alastair about this when we go live!
-                // Sending a null value will be rejected by the web service.
                 qualificationsTp.setEndDate(buildXmlDate(qualification.getQualificationAwardDate()));
 
                 qualificationsTp.setGrade(qualification.getQualificationGrade());
@@ -643,14 +634,10 @@ public class SubmitAdmissionsApplicationRequestBuilder {
             addressTp.setPostCode(referee.getAddressLocation().getAddress5());
             addressTp.setCountry(referee.getAddressLocation().getDomicile().getCode());
 
-            // postCode is mandatory but but PRISM did not collect addresses
-            // in this format before.
             if (StringUtils.isBlank(addressTp.getPostCode())) {
                 addressTp.setPostCode(ADDRESS_LINE_EMPTY_VALUE);
             }
 
-            // addressLine3 is mandatory but PRISM did not collect addresses
-            // in this format before.
             if (StringUtils.isBlank(addressTp.getAddressLine3())) {
                 addressTp.setAddressLine3(ADDRESS_LINE_EMPTY_VALUE);
             }
@@ -689,7 +676,6 @@ public class SubmitAdmissionsApplicationRequestBuilder {
                         languageQualifications.getQualificationType()));
             }
 
-            // The web service does not allow scores in the format "6.0" it only accepts "6" and the like.
             EnglishLanguageScoreTp overallScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             overallScoreTp.setName(LanguageBandScoreTp.OVERALL);
             overallScoreTp.setScore(languageQualifications.getOverallScore().replace(".0", ""));

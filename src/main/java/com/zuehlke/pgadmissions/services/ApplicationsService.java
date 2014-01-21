@@ -279,7 +279,6 @@ public class ApplicationsService {
                 }
             }
         }
-        applicationFormDAO.save(form);
     }
     
 }

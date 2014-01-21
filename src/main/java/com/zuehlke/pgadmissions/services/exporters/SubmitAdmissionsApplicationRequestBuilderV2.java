@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -429,11 +431,17 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         }
 
         if (latestApprovalRound != null && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
+            String departmentalOfferConditions = "Recommended Offer Type: ";       
             if (BooleanUtils.isTrue(latestApprovalRound.getRecommendedConditionsAvailable())) {
-                applicationTp.setDepartmentalOfferConditions("Conditional Offer: " + latestApprovalRound.getRecommendedConditions());
+                departmentalOfferConditions += "Conditional\n\nRecommended Conditions: ";
+                departmentalOfferConditions += latestApprovalRound.getRecommendedConditions() + "\n\n";
             } else {
-                applicationTp.setDepartmentalOfferConditions("Unconditional Offer");
+                departmentalOfferConditions += "Unconditional\n\n";
             }
+            SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+            String provisionalStartDateString = outputDateFormat.format(latestApprovalRound.getRecommendedStartDate());
+            departmentalOfferConditions += "Recommended Start Date: " + provisionalStartDateString;
+            applicationTp.setDepartmentalOfferConditions(departmentalOfferConditions);
         }
 
         return applicationTp;

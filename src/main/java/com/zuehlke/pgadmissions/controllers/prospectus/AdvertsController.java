@@ -90,7 +90,10 @@ public class AdvertsController {
                 if (programCode != null) {
                     Program program = programsService.getProgramByCode(programCode);
                     if (program != null) {
-                        advertId = program.getAdvert().getId();
+                        Advert advert = program.getAdvert();
+                        if (advert != null) {
+                            advertId = program.getAdvert().getId();
+                        }
                     }
                 }
             }
@@ -138,15 +141,8 @@ public class AdvertsController {
         Collections.shuffle(activeAdverts, new Random(System.currentTimeMillis()));
         AdvertDTO selectedAdvert = getSelectedAdvert(advert, activeAdverts);
         setSelectedAndBringToFront(selectedAdvert, activeAdverts);
-        for (AdvertDTO advertDTO : activeAdverts) {
-            advertDTO.setDescription(replaceLineChangeWithHTMLLineChange(advertDTO.getDescription()));
-        }
         map.put("adverts", activeAdverts);
         return new Gson().toJson(map);
-    }
-
-    private String replaceLineChangeWithHTMLLineChange(String originalDescription) {
-        return originalDescription.replaceAll("\n", "<br>");
     }
 
     @SuppressWarnings("rawtypes")
@@ -223,9 +219,7 @@ public class AdvertsController {
                 projectDto.setProjectId(project.getId());
                 program = project.getProgram();
                 projectDto.setProgramCode(program.getCode());
-                if (program.getAdvert() != null) {
-                    projectDto.setStudyDuration(program.getAdvert().getStudyDuration());
-                }
+                projectDto.setStudyDuration(project.getAdvert().getStudyDuration());
                 projectDto.setTitle(input.getTitle());
                 projectDto.setClosingDate(getFirstClosingDate(program));
                 RegisteredUser supervisor = project.getPrimarySupervisor();

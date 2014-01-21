@@ -84,6 +84,7 @@ $(document).on('change', 'input[name="refereeSendToUcl"]:checkbox', function() {
 // --------------------------------------------------------------------------------
 $(document).on('click', '#refereeSaveButton', function(event) {
     postRefereesData(true, false, event);
+    $('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
 });
 
 // --------------------------------------------------------------------------------

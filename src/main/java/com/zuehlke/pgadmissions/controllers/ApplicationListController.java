@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -116,11 +115,6 @@ public class ApplicationListController {
     public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering,
     		@RequestParam Integer blockCount, @RequestParam(required = false) Boolean useDisjunction, final ModelMap model) {
         RegisteredUser user = getUser();
-        
-        if (blockCount == 1) {
-            user.setApplicationListLastAccessTimestamp(new Date());
-        }
-        
         filtering.setBlockCount(blockCount);
         filtering.setUseDisjunction(useDisjunction);
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(user, filtering);

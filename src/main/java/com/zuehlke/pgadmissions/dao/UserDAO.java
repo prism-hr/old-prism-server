@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -241,6 +242,11 @@ public class UserDAO {
 
     /* package */void setGetUsersDueToUpdateNotificationSql(String getUsersDueToUpdateNotificationSql) {
         this.getUsersDueToUpdateNotificationSql = getUsersDueToUpdateNotificationSql;
+    }
+    
+    public void setApplicationFormListLastAccessTimestamp(RegisteredUser user) {
+        user.setApplicationListLastAccessTimestamp(new Date());
+        save(user);
     }
 
 }

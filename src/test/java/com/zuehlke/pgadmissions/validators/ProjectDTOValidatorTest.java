@@ -12,11 +12,14 @@ import static com.zuehlke.pgadmissions.validators.ProjectDTOValidator.PROSPECTUS
 
 import java.util.Date;
 
+import junit.framework.Assert;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.Test;
+import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Errors;
 
 import com.zuehlke.pgadmissions.domain.Person;
@@ -27,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectDTOBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
+import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
@@ -82,6 +86,24 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
     public void shouldRejectIf_Description_IsMissing() {
         projectDTO.setDescription(null);
         assertThatObjectFieldHasErrorCode(projectDTO, "description", EMPTY_FIELD_ERROR_MESSAGE);
+    }
+    
+    @Test
+    public void shouldRejectIfDurationOfStudyHasErrorValue() {
+        projectDTO.setStudyDuration(DurationOfStudyPropertyEditor.ERROR_VALUE_FOR_DURATION_OF_STUDY);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(projectDTO, "advert");
+        validator.validate(projectDTO, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("prospectus.durationOfStudy.emptyOrNotInteger", mappingResult.getFieldError("studyDuration").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfDurationOfStudyIsNull() {
+        projectDTO.setStudyDuration(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(projectDTO, "advert");
+        validator.validate(projectDTO, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("prospectus.durationOfStudy.emptyOrNotInteger", mappingResult.getFieldError("studyDuration").getCode());
     }
 
     @Test
@@ -236,7 +258,7 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
         ProjectDTOBuilder builder = new ProjectDTOBuilder();
         Program program = createValidProgram();
         Date futureClosingDate = DateUtils.addMonths(new Date(), 1);
-        builder.id(1).title("title").description("description").funding("funding").closingDateSpecified(true).closingDate(futureClosingDate)
+        builder.id(1).title("title").description("description").studyDuration(12).funding("funding").closingDateSpecified(true).closingDate(futureClosingDate)
                 .primarySupervisor(primarySupervisor).program(program).secondarySupervisorSpecified(false).active(true).administratorSpecified(false);
         return builder.build();
     }

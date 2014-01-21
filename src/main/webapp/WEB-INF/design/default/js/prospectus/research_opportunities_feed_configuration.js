@@ -78,7 +78,7 @@ function loadExistingFeeds() {
 				var editable = item.id >= 0;
 				var viewButton;
 				var deleteButton;
-				if(editable){
+				if (editable) {
 					viewButton = '<button class="button-edit" type="button" data-desc="Edit">Edit</button>'; 
 					deleteButton = '<button class="button-delete" type="button" data-desc="Remove">Remove</button>';
 				} else {
@@ -92,7 +92,7 @@ function loadExistingFeeds() {
 					+ '<td>' + deleteButton + '</td>'
 					+ '</tr>');
 			});
-			shortTable()
+			shortTable();
 		}
 	});
 }

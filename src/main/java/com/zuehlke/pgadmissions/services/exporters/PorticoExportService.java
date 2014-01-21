@@ -22,7 +22,6 @@ import org.springframework.ws.soap.client.SoapFaultClientException;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
@@ -35,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 /**
  * This is UCL data export service. Used for situations where we push data to UCL system (PORTICO).
@@ -50,7 +50,7 @@ public class PorticoExportService {
 
     private SftpAttachmentsSendingService sftpAttachmentsSendingService;
 
-    private final ApplicationFormDAO applicationFormDAO;
+    private final ApplicationsService applicationsService;
     
     private final ApplicationFormTransferService applicationFormTransferService;
     
@@ -77,7 +77,7 @@ public class PorticoExportService {
     @Autowired
     public PorticoExportService(
             WebServiceTemplate webServiceTemplate,
-            ApplicationFormDAO applicationFormDAO,
+            ApplicationsService applicationsService,
             CommentDAO commentDAO,
             SftpAttachmentsSendingService sftpAttachmentsSendingService,
             ApplicationFormTransferService applicationFormTransferService,
@@ -86,7 +86,7 @@ public class PorticoExportService {
         this.commentDAO = commentDAO;
         this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
         this.applicationFormTransferService = applicationFormTransferService;
-        this.applicationFormDAO = applicationFormDAO;
+        this.applicationsService = applicationsService;
         this.context = context;
     }
 
@@ -128,7 +128,7 @@ public class PorticoExportService {
     
     @Transactional
     public void sendWebServiceRequest(final ApplicationForm formObj, final ApplicationFormTransfer transferObj, final TransferListener listener) throws PorticoExportServiceException {
-        ApplicationForm form = applicationFormDAO.get(formObj.getId());
+        ApplicationForm form = applicationsService.getApplicationById(formObj.getId());
         ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         ValidationComment validationComment = commentDAO.getValidationCommentForApplication(form);
         Boolean isOverseasStudent = validationComment == null ? true : validationComment.getHomeOrOverseas().equals(HomeOrOverseas.OVERSEAS);
@@ -283,13 +283,14 @@ public class PorticoExportService {
                         refereesToSend.put(referee.getId(), referee);
                     }
                 }
-                
-                applicationFormDAO.save(form);
             }
         }
+        applicationsService.transformUKCountriesAndDomiciles(form);
+        applicationsService.save(form);
     }
 
     public ApplicationFormTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
         return applicationFormTransferService.createOrReturnExistingApplicationFormTransfer(form);
     }
+    
 }

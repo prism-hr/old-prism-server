@@ -103,9 +103,9 @@ public class ApplicationListController {
             } else if ("update".equals(applyFilters)) {
                 filtering.setSortCategory(SortCategory.UPDATE);
             }
+        } else {
+            filtering = filteringService.getStoredOrDefaultFiltering(getUser());
         }
-
-        filtering = filteringService.getStoredOrDefaultFiltering(getUser());
 
         model.addAttribute("filtering", filtering);
         return APPLICATION_LIST_PAGE_VIEW_NAME;

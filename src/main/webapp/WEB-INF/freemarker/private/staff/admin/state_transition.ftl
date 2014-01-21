@@ -210,7 +210,7 @@
 														<div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
 													</#list>
 												</div>
-												<div id="customQuestionSection">
+												<div id="customQuestionSection" style="display:none">
 													<label id="useCustomQuestionsLabel" class="plain-label normal">Do you wish to use custom questions?<em>*</em></label> 
 												    <span class="hint" data-desc="<@spring.message 'validateApp.useCustomQuestions'/>"> </span>
 												    <div id="useCustomQuestionsDiv" class="field">

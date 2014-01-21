@@ -312,10 +312,8 @@ public class MailSendingServiceTest {
     @Test
     public void sendConfirmationEmailToRegisteringUserShouldSuccessfullySendMessage() throws Exception {
         RegisteredUser user = new RegisteredUserBuilder().id(1).build();
-        String action = "action";
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("user", user);
-        model.put("action", action);
         model.put("host", HOST);
 
         Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
@@ -324,7 +322,7 @@ public class MailSendingServiceTest {
         expect(mockMailSender.resolveSubject(REGISTRATION_CONFIRMATION, (Object[]) null)).andReturn("Your Registration for UCL Prism");
 
         replay(mockMailSender);
-        service.sendRegistrationConfirmation(user, action);
+        service.sendRegistrationConfirmation(user);
         verify(mockMailSender);
 
         PrismEmailMessage message = messageCaptor.getValue();

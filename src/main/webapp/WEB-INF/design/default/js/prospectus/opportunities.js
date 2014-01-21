@@ -1,7 +1,6 @@
 var buttonText;
 
 $(document).ready(function(){
-	hideAdverts();
 	getAdverts();
 	setClass();
 	$(window).bind('resize', function() { 
@@ -31,13 +30,6 @@ function setClass() {
 		buttonText = 'Apply Now';
 	}
 	setHsize();
-}
-function hideAdverts(){
-	$('#pHolder').hide();
-}
-
-function showAdverts(){
-	$('#pHolder').show();	
 }
 
 function getAdverts(){

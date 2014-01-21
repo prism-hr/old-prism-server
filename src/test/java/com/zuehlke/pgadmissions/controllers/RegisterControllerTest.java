@@ -221,37 +221,6 @@ public class RegisterControllerTest {
 	}
 
 	@Test
-	public void shouldShowRegistrationNotCompleteViewIfUserRegistersWithoutRegistrationCode() {
-		RegisteredUser pendingUser = new RegisteredUserBuilder().email(
-				"test@test.com").build();
-		RegisteredUser databaseUser = new RegisteredUserBuilder()
-				.id(4)
-				.email("test@test.com")
-				.enabled(false)
-				.activationCode("abc")
-				.pendingRoleNotifications(
-						new PendingRoleNotificationBuilder().id(1)
-								.notificationDate(new Date()).build(),
-						new PendingRoleNotificationBuilder().id(2)
-								.notificationDate(new Date()).build()).build();
-		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-		EasyMock.expect(
-				userServiceMock.getUserByEmailDisabledAccountsOnly(pendingUser
-						.getEmail())).andReturn(databaseUser);
-		registrationServiceMock
-				.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
-		EasyMock.replay(errorsMock, userServiceMock, registrationServiceMock);
-
-		String modelAndView = registerController.submitRegistration(
-				pendingUser, errorsMock, new ExtendedModelMap(),
-				new MockHttpServletRequest());
-		assertEquals("public/register/registration_not_complete", modelAndView);
-
-		EasyMock.verify(registrationServiceMock);
-	}
-
-	@Test
 	public void shouldCreateAndSaveNewUserIfNoErrors() {
 		RegisteredUser pendingUser = new RegisteredUserBuilder().id(1).build();
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);

@@ -1431,7 +1431,7 @@ i {
 .table {
   margin-bottom: 10px !important;
 }
-#appliList.table-bordered th, #appliList.table-bordered td { border-color: #B5B1B3 !important; border-left-color: #B5B1B3 !important; border-top-color: #B5B1B3 !important;}
+.appliList.table-bordered th, .appliList.table-bordered td { border-color: #B5B1B3 !important; border-left-color: #B5B1B3 !important; border-top-color: #B5B1B3 !important;}
 #createinterviewersection, #supervisor_div .row-group, #editUser, #editSuperadmins .row-group, #addRemoveRegistryUsers .row-group, #createreviewersection, #createsupervisorsection, #section-registryusers, .aSDisplay, #interviewDelegation {
 	overflow: visible !important;
 }

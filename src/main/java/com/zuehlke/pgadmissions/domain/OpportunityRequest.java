@@ -1,13 +1,21 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "OPPORTUNITY_REQUEST")
@@ -37,9 +45,26 @@ public class OpportunityRequest {
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 3000)
 	private String programDescription;
 
+	@Column(name = "study_duration")
+	private Integer studyDuration;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "author_id")
 	private RegisteredUser author;
+
+	@Column(name = "status")
+	@Enumerated(EnumType.STRING)
+	private OpportunityRequestStatus status = OpportunityRequestStatus.NEW;
+
+	@Column(name = "created_date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
+
+	@Transient
+	private Integer studyDurationNumber;
+
+	@Transient
+	private String studyDurationUnit;
 
 	public Integer getId() {
 		return id;
@@ -89,12 +114,72 @@ public class OpportunityRequest {
 		this.programDescription = programDescription;
 	}
 
+	public Integer getStudyDuration() {
+		return studyDuration;
+	}
+
+	public void setStudyDuration(Integer studyDuration) {
+		this.studyDuration = studyDuration;
+	}
+
 	public RegisteredUser getAuthor() {
 		return author;
 	}
 
 	public void setAuthor(RegisteredUser author) {
 		this.author = author;
+	}
+
+	public OpportunityRequestStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(OpportunityRequestStatus status) {
+		this.status = status;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public Integer getStudyDurationNumber() {
+		return studyDurationNumber;
+	}
+
+	public void setStudyDurationNumber(Integer studyDurationNumber) {
+		this.studyDurationNumber = studyDurationNumber;
+	}
+
+	public String getStudyDurationUnit() {
+		return studyDurationUnit;
+	}
+
+	public void setStudyDurationUnit(String studyDurationUnit) {
+		this.studyDurationUnit = studyDurationUnit;
+	}
+
+	public void computeStudyDuration() {
+		int studyDuration = getStudyDurationNumber();
+		String studyDurationUnit = getStudyDurationUnit();
+		if ("YEARS".equals(studyDurationUnit)) {
+			studyDuration = studyDuration * 12;
+		}
+		this.studyDuration = studyDuration;
+	}
+
+	public void computeStudyDurationNumberAndUnit() {
+		Integer duration = getStudyDuration();
+		if (duration % 12 == 0) {
+			setStudyDurationNumber(duration / 12);
+			setStudyDurationUnit("YEARS");
+		} else {
+			setStudyDurationNumber(duration);
+			setStudyDurationUnit("MONTHS");
+		}
 	}
 
 }

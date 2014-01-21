@@ -78,6 +78,7 @@ public class CreateNewOpportunityController {
 			return LOGIN_PAGE;
 		}
 
+		opportunityRequest.computeStudyDuration();
 		opportunitiesService.createOpportunityRequestAndAuthor(opportunityRequest);
 
 		model.addAttribute("pendingUser", opportunityRequest.getAuthor());

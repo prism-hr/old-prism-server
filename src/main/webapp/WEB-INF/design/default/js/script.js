@@ -269,6 +269,8 @@ function addCounter() {
 		/*} else if  ($(this).attr('id') == 'projectAbstract'|| $(this).attr('id') == 'projectAdvertDescriptionText'|| $(this).attr('id') == 'programAdvertDescriptionText') {*/
         } else if  ($(this).attr('id') == 'projectAbstract' ) {
 			$(this).data("maxlength", 1000);
+        } else if  ($(this).attr('id') == 'programDescription' ) {
+            $(this).data("maxlength", 3000);
 		} else if  ($(this).attr('id') == 'position_remit') {
 			$(this).data("maxlength", 250);
 		} else if  ($(this).attr('id') == 'explanationText'||$(this).attr('id') == 'programmeFundingInformation') {

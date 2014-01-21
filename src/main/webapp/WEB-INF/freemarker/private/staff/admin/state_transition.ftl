@@ -171,6 +171,24 @@
 													</div>
 												</div>
 											</div>
+											<div class="row-group">
+												<div class="row" id="useCustomReferenceQuestions">
+												    <label id="useCustomReferenceQuestionsLabel" class="plain-label normal">Do you wish to use custom reference questions?<em>*</em></label> 
+												    <span class="hint" data-desc="<@spring.message 'validateApp.useCustomReferenceQuestions'/>"> </span>
+												    <div class="field">
+												        <input id="useCustomReferenceQuestions" type="radio" name="useCustomReferenceQuestions" value="false" <#if stateChangeDTO.useCustomReferenceQuestions?? && !stateChangeDTO.useCustomReferenceQuestions> checked="checked"</#if>/>
+												            No
+												        <input id="useCustomReferenceQuestions" type="radio" name="useCustomReferenceQuestions" value="true" <#if stateChangeDTO.useCustomReferenceQuestions?? && stateChangeDTO.useCustomReferenceQuestions> checked="checked"</#if>/>
+												            Yes
+													    <@spring.bind "stateChangeDTO.useCustomReferenceQuestions" /> 
+														<#list spring.status.errorMessages as error>  
+															<div class="alert alert-error"> <i class="icon-warning-sign"></i>
+												            	${error}
+												          	</div>
+												        </#list>
+												    </div>
+												</div>
+											</div>
 										</#if>
 										<div class="row-group">
 											<div class="row">
@@ -191,6 +209,22 @@
 													<#list spring.status.errorMessages as error>  
 														<div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
 													</#list>
+												</div>
+												<div id="customQuestionSection">
+													<label id="useCustomQuestionsLabel" class="plain-label normal">Do you wish to use custom questions?<em>*</em></label> 
+												    <span class="hint" data-desc="<@spring.message 'validateApp.useCustomQuestions'/>"> </span>
+												    <div id="useCustomQuestionsDiv" class="field">
+												        <input id="useCustomQuestions" type="radio" name="useCustomQuestions" value="false" <#if stateChangeDTO.useCustomQuestions?? && !stateChangeDTO.useCustomQuestions> checked="checked"</#if>/>
+												            No
+												        <input id="useCustomQuestions" type="radio" name="useCustomQuestions" value="true" <#if stateChangeDTO.useCustomQuestions?? && stateChangeDTO.useCustomQuestions> checked="checked"</#if>/>
+												            Yes
+													    <@spring.bind "stateChangeDTO.useCustomQuestions" /> 
+														<#list spring.status.errorMessages as error>  
+															<div class="alert alert-error"> <i class="icon-warning-sign"></i>
+												            	${error}
+												          	</div>
+												        </#list>
+												    </div>
 												</div>
 												<div id="fastTrackApplicationSection"
 													<#if !stateChangeDTO.hasGlobalAdministrationRights() ||

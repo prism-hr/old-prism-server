@@ -50,6 +50,9 @@ public class ReviewRound implements Serializable {
 
     @Column(name = "avg_rating", precision = 3, scale = 2)
     private BigDecimal averageRating;
+    
+    @Column(name = "use_custom_questions")
+    private Boolean useCustomQuestions = null;
 
     public void setId(Integer id) {
         this.id = id;
@@ -113,5 +116,12 @@ public class ReviewRound implements Serializable {
         return MathUtils.formatRating(getAverageRating());
     }
 
+    public Boolean getUseCustomQuestions() {
+        return useCustomQuestions;
+    }
+
+    public void setUseCustomQuestions(Boolean useCustomQuestions) {
+        this.useCustomQuestions = useCustomQuestions;
+    }
 
 }

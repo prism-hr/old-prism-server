@@ -245,6 +245,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Column(name = "avg_rating", precision = 3, scale = 2)
     private BigDecimal averageRating;
+    
+    @Column(name = "use_custom_reference_questions")
+    private Boolean useCustomReferenceQuestions = null;
 
     public List<Qualification> getQualifications() {
         return qualifications;
@@ -1079,6 +1082,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             }
         }
         return stateChangeComment;
+    }
+
+    public Boolean getUseCustomReferenceQuestions() {
+        return useCustomReferenceQuestions;
+    }
+
+    public void setUseCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
+        this.useCustomReferenceQuestions = useCustomReferenceQuestions;
     }
     
 }

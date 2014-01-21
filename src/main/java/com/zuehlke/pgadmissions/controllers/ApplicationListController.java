@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
-import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
@@ -93,18 +92,13 @@ public class ApplicationListController {
         }
 
         ApplicationsFiltering filtering = (ApplicationsFiltering) model.get("filtering");
-        if (filtering == null) {
-            filtering = new ApplicationsFiltering();
-        }
-
-        if (applyFilters != null) {
-            if ("urgent".equals(applyFilters)) {
-                filtering.setSortCategory(SortCategory.URGENT);
-            } else if ("update".equals(applyFilters)) {
-                filtering.setSortCategory(SortCategory.UPDATE);
-            }
-        } else {
-            filtering = filteringService.getStoredOrDefaultFiltering(getUser());
+        
+        if (("urgent").equals(applyFilters)) {
+            filtering = filteringService.getUrgentApplicationFiltering();
+        } else if (("active").equals(applyFilters)) {
+            filtering = filteringService.getActiveApplicationFiltering();
+        } else if (("default").equals(applyFilters) || filtering == null) {
+            filtering = filteringService.getDefaultApplicationFiltering(getUser());
         }
 
         model.addAttribute("filtering", filtering);

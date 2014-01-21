@@ -112,6 +112,9 @@ public class OpportunityRequestBuilder {
 		request.setStatus(status);
 		request.setCreatedDate(createdDate);
 		request.setStudyDuration(studyDuration);
+		request.setAtasRequired(atasRequired);
+		request.setApplicationStartDate(applicationStartDate);
+		request.setAdvertisingDuration(advertisingDuration);
 		request.setStudyDurationNumber(studyDurationNumber);
 		request.setStudyDurationUnit(studyDurationUnit);
 		return request;

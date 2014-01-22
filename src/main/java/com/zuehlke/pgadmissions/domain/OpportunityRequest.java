@@ -21,199 +21,210 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Entity(name = "OPPORTUNITY_REQUEST")
 public class OpportunityRequest {
 
-	@Id
-	@GeneratedValue
-	private Integer id;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "institution_domicile_id")
-	private Domicile institutionCountry;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "institution_domicile_id")
+    private Domicile institutionCountry;
 
-	@Column(name = "institution_code")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 10)
-	private String institutionCode;
+    @Column(name = "institution_code")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 10)
+    private String institutionCode;
 
-	@Column(name = "other_institution_name")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
-	private String otherInstitution;
+    @Column(name = "other_institution_name")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
+    private String otherInstitution;
 
-	@Column(name = "title")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
-	private String programTitle;
+    @Column(name = "title")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
+    private String programTitle;
 
-	@Column(name = "description")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 3000)
-	private String programDescription;
+    @Column(name = "description")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 3000)
+    private String programDescription;
 
-	@Column(name = "study_duration")
-	private Integer studyDuration;
+    @Column(name = "study_duration")
+    private Integer studyDuration;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "author_id")
-	private RegisteredUser author;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private RegisteredUser author;
 
-	@Column(name = "status")
-	@Enumerated(EnumType.STRING)
-	private OpportunityRequestStatus status = OpportunityRequestStatus.NEW;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private OpportunityRequestStatus status = OpportunityRequestStatus.NEW;
 
-	@Column(name = "created_date")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+    @Column(name = "created_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdDate;
 
-	@Column(name = "atas_required")
-	private Boolean atasRequired;
+    @Column(name = "atas_required")
+    private Boolean atasRequired;
 
-	@Column(name = "application_start_date")
-	@Temporal(value = TemporalType.DATE)
-	private Date applicationStartDate;
+    @Column(name = "study_options")
+    private String studyOptions;
 
-	@Column(name = "advertising_duration")
-	private Integer advertisingDuration;
+    @Column(name = "application_start_date")
+    @Temporal(value = TemporalType.DATE)
+    private Date applicationStartDate;
 
-	@Transient
-	private Integer studyDurationNumber;
+    @Column(name = "advertising_duration")
+    private Integer advertisingDuration;
 
-	@Transient
-	private String studyDurationUnit;
+    @Transient
+    private Integer studyDurationNumber;
 
-	public Integer getId() {
-		return id;
-	}
+    @Transient
+    private String studyDurationUnit;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public Domicile getInstitutionCountry() {
-		return institutionCountry;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setInstitutionCountry(Domicile institutionCountry) {
-		this.institutionCountry = institutionCountry;
-	}
+    public Domicile getInstitutionCountry() {
+        return institutionCountry;
+    }
 
-	public String getInstitutionCode() {
-		return institutionCode;
-	}
+    public void setInstitutionCountry(Domicile institutionCountry) {
+        this.institutionCountry = institutionCountry;
+    }
 
-	public void setInstitutionCode(String institutionCode) {
-		this.institutionCode = institutionCode;
-	}
+    public String getInstitutionCode() {
+        return institutionCode;
+    }
 
-	public String getOtherInstitution() {
-		return otherInstitution;
-	}
+    public void setInstitutionCode(String institutionCode) {
+        this.institutionCode = institutionCode;
+    }
 
-	public void setOtherInstitution(String otherInstitution) {
-		this.otherInstitution = otherInstitution;
-	}
+    public String getOtherInstitution() {
+        return otherInstitution;
+    }
 
-	public String getProgramTitle() {
-		return programTitle;
-	}
+    public void setOtherInstitution(String otherInstitution) {
+        this.otherInstitution = otherInstitution;
+    }
 
-	public void setProgramTitle(String programTitle) {
-		this.programTitle = programTitle;
-	}
+    public String getProgramTitle() {
+        return programTitle;
+    }
 
-	public String getProgramDescription() {
-		return programDescription;
-	}
+    public void setProgramTitle(String programTitle) {
+        this.programTitle = programTitle;
+    }
 
-	public void setProgramDescription(String programDescription) {
-		this.programDescription = programDescription;
-	}
+    public String getProgramDescription() {
+        return programDescription;
+    }
 
-	public Integer getStudyDuration() {
-		return studyDuration;
-	}
+    public void setProgramDescription(String programDescription) {
+        this.programDescription = programDescription;
+    }
 
-	public void setStudyDuration(Integer studyDuration) {
-		this.studyDuration = studyDuration;
-	}
+    public Integer getStudyDuration() {
+        return studyDuration;
+    }
 
-	public RegisteredUser getAuthor() {
-		return author;
-	}
+    public void setStudyDuration(Integer studyDuration) {
+        this.studyDuration = studyDuration;
+    }
 
-	public void setAuthor(RegisteredUser author) {
-		this.author = author;
-	}
+    public RegisteredUser getAuthor() {
+        return author;
+    }
 
-	public OpportunityRequestStatus getStatus() {
-		return status;
-	}
+    public void setAuthor(RegisteredUser author) {
+        this.author = author;
+    }
 
-	public void setStatus(OpportunityRequestStatus status) {
-		this.status = status;
-	}
+    public OpportunityRequestStatus getStatus() {
+        return status;
+    }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    public void setStatus(OpportunityRequestStatus status) {
+        this.status = status;
+    }
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-	public Boolean getAtasRequired() {
-		return atasRequired;
-	}
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	public void setAtasRequired(Boolean atasRequired) {
-		this.atasRequired = atasRequired;
-	}
+    public Boolean getAtasRequired() {
+        return atasRequired;
+    }
 
-	public Date getApplicationStartDate() {
-		return applicationStartDate;
-	}
+    public void setAtasRequired(Boolean atasRequired) {
+        this.atasRequired = atasRequired;
+    }
 
-	public void setApplicationStartDate(Date applicationStartDate) {
-		this.applicationStartDate = applicationStartDate;
-	}
+    public String getStudyOptions() {
+        return studyOptions;
+    }
 
-	public Integer getAdvertisingDuration() {
-		return advertisingDuration;
-	}
+    public void setStudyOptions(String studyOptions) {
+        this.studyOptions = studyOptions;
+    }
 
-	public void setAdvertisingDuration(Integer advertisingDuration) {
-		this.advertisingDuration = advertisingDuration;
-	}
+    public Date getApplicationStartDate() {
+        return applicationStartDate;
+    }
 
-	public Integer getStudyDurationNumber() {
-		return studyDurationNumber;
-	}
+    public void setApplicationStartDate(Date applicationStartDate) {
+        this.applicationStartDate = applicationStartDate;
+    }
 
-	public void setStudyDurationNumber(Integer studyDurationNumber) {
-		this.studyDurationNumber = studyDurationNumber;
-	}
+    public Integer getAdvertisingDuration() {
+        return advertisingDuration;
+    }
 
-	public String getStudyDurationUnit() {
-		return studyDurationUnit;
-	}
+    public void setAdvertisingDuration(Integer advertisingDuration) {
+        this.advertisingDuration = advertisingDuration;
+    }
 
-	public void setStudyDurationUnit(String studyDurationUnit) {
-		this.studyDurationUnit = studyDurationUnit;
-	}
+    public Integer getStudyDurationNumber() {
+        return studyDurationNumber;
+    }
 
-	public void computeStudyDuration() {
-		int studyDuration = getStudyDurationNumber();
-		String studyDurationUnit = getStudyDurationUnit();
-		if ("YEARS".equals(studyDurationUnit)) {
-			studyDuration = studyDuration * 12;
-		}
-		this.studyDuration = studyDuration;
-	}
+    public void setStudyDurationNumber(Integer studyDurationNumber) {
+        this.studyDurationNumber = studyDurationNumber;
+    }
 
-	public void computeStudyDurationNumberAndUnit() {
-		Integer duration = getStudyDuration();
-		if (duration % 12 == 0) {
-			setStudyDurationNumber(duration / 12);
-			setStudyDurationUnit("YEARS");
-		} else {
-			setStudyDurationNumber(duration);
-			setStudyDurationUnit("MONTHS");
-		}
-	}
+    public String getStudyDurationUnit() {
+        return studyDurationUnit;
+    }
+
+    public void setStudyDurationUnit(String studyDurationUnit) {
+        this.studyDurationUnit = studyDurationUnit;
+    }
+
+    public void computeStudyDuration() {
+        int studyDuration = getStudyDurationNumber();
+        String studyDurationUnit = getStudyDurationUnit();
+        if ("YEARS".equals(studyDurationUnit)) {
+            studyDuration = studyDuration * 12;
+        }
+        this.studyDuration = studyDuration;
+    }
+
+    public void computeStudyDurationNumberAndUnit() {
+        Integer duration = getStudyDuration();
+        if (duration % 12 == 0) {
+            setStudyDurationNumber(duration / 12);
+            setStudyDurationUnit("YEARS");
+        } else {
+            setStudyDurationNumber(duration);
+            setStudyDurationUnit("MONTHS");
+        }
+    }
 
 }

@@ -51,19 +51,23 @@ public class OpportunitiesService {
 
     public void approveOpportunityRequest(Integer requestId, OpportunityRequest newOpportunityRequest) {
         OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
-        opportunityRequest.setStatus(OpportunityRequestStatus.APPROVED);
 
+        opportunityRequest.setStatus(OpportunityRequestStatus.APPROVED);
         opportunityRequest.setInstitutionCountry(newOpportunityRequest.getInstitutionCountry());
         opportunityRequest.setInstitutionCode(newOpportunityRequest.getInstitutionCode());
         opportunityRequest.setOtherInstitution(newOpportunityRequest.getOtherInstitution());
         opportunityRequest.setProgramTitle(newOpportunityRequest.getProgramTitle());
         opportunityRequest.setProgramDescription(newOpportunityRequest.getProgramDescription());
+        opportunityRequest.setStudyDuration(newOpportunityRequest.getStudyDuration());
+        opportunityRequest.setAtasRequired(newOpportunityRequest.getAtasRequired());
+        opportunityRequest.setApplicationStartDate(newOpportunityRequest.getApplicationStartDate());
+        opportunityRequest.setAdvertisingDuration(newOpportunityRequest.getAdvertisingDuration());
+        opportunityRequest.setStudyOptions(newOpportunityRequest.getStudyOptions());
 
         Program program = programsService.createNewCustomProgram(opportunityRequest);
 
         List<ProgramInstance> programInstances = programInstanceService.createNewCustomProgramInstances(opportunityRequest, program);
         program.getInstances().addAll(programInstances);
-
     }
 
     public void rejectOpportunityRequest(Integer requestId) {

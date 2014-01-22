@@ -34,12 +34,15 @@ import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
 
@@ -74,11 +77,15 @@ public class CreateNewOpportunityControllerTest {
 	@InjectIntoByType
 	private DatePropertyEditor datePropertyEditor;
 
+	@Mock
+	@InjectIntoByType
+	private ProgramInstanceService programInstanceService;
+
 	@TestedObject
 	private CreateNewOpportunityController controller = new CreateNewOpportunityController();
 
 	@Test
-	public void shouldReturnAllEnabledCountries() {
+	public void shouldReturnAllEnabledDomiciles() {
 		List<Domicile> domicileList = Lists.newArrayList();
 		EasyMock.expect(domicileService.getAllEnabledDomicilesExceptAlternateValues()).andReturn(domicileList);
 
@@ -87,6 +94,18 @@ public class CreateNewOpportunityControllerTest {
 		verify();
 
 		assertSame(domicileList, returnedList);
+	}
+	
+	@Test
+	public void shouldGetDistinctStudyOptions() {
+	    List<StudyOption> studyOptions = Lists.newArrayList();
+	    EasyMock.expect(programInstanceService.getDistinctStudyOptions()).andReturn(studyOptions);
+	    
+	    replay();
+	    List<StudyOption> returnedList = controller.getDistinctStudyOptions();
+	    verify();
+	    
+	    assertSame(studyOptions, returnedList);
 	}
 
 	@Test
@@ -124,7 +143,8 @@ public class CreateNewOpportunityControllerTest {
 
 	@Test
 	public void shouldPostOpportunityRequest() {
-		OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDurationNumber(2).studyDurationUnit("YEARS").build();
+	    RegisteredUser author = new RegisteredUser();
+		OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDurationNumber(2).studyDurationUnit("YEARS").author(author).build();
 		BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 		Model model = new ExtendedModelMap();
 		HttpServletRequest request = new MockHttpServletRequest();
@@ -136,6 +156,8 @@ public class CreateNewOpportunityControllerTest {
 		verify();
 
 		assertEquals(CreateNewOpportunityController.REGISTER_COMPLETE_VIEW_NAME, result);
+		assertEquals(24, opportunityRequest.getStudyDuration().intValue());
+		assertSame(author, model.asMap().get("pendingUser"));
 	}
 
 	@Test

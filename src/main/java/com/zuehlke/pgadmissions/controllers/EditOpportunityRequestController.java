@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -20,9 +21,12 @@ import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
 
@@ -30,84 +34,89 @@ import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
 @RequestMapping("/requests/edit")
 public class EditOpportunityRequestController {
 
-	private static final String EDIT_REQUEST_PAGE_VIEW_NAME = "/private/staff/superAdmin/edit_opportunity_request";
+    protected static final String EDIT_REQUEST_PAGE_VIEW_NAME = "/private/staff/superAdmin/edit_opportunity_request";
 
-	@Autowired
-	private OpportunitiesService opportunitiesService;
+    @Autowired
+    private OpportunitiesService opportunitiesService;
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@Autowired
-	private DomicileService domicileService;
+    @Autowired
+    private DomicileService domicileService;
 
-	@Autowired
-	private QualificationInstitutionDAO qualificationInstitutionDAO;
+    @Autowired
+    private QualificationInstitutionDAO qualificationInstitutionDAO;
 
-	@Autowired
-	private DomicilePropertyEditor domicilePropertyEditor;
+    @Autowired
+    private DomicilePropertyEditor domicilePropertyEditor;
 
-	@Autowired
-	private OpportunityRequestValidator opportunityRequestValidator;
+    @Autowired
+    private OpportunityRequestValidator opportunityRequestValidator;
 
-	@RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
-	public String getEditOpportunityRequestPage(@PathVariable("requestId") Integer requestId, ModelMap modelMap) {
-		OpportunityRequest opportunityRequest = opportunitiesService.getOpportunityRequest(requestId);
-		opportunityRequest.computeStudyDurationNumberAndUnit();
-		
-		modelMap.addAttribute("opportunityRequest", opportunityRequest);
-		
-		if (opportunityRequest.getInstitutionCountry() != null) {
-			modelMap.addAttribute("institutions",
-					qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(opportunityRequest.getInstitutionCountry().getCode()));
-		}
+    @Autowired
+    private ProgramInstanceService programInstanceService;
 
-		return EDIT_REQUEST_PAGE_VIEW_NAME;
-	}
+    @Autowired
+    private DatePropertyEditor datePropertyEditor;
 
-	
+    @RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
+    public String getEditOpportunityRequestPage(@PathVariable("requestId") Integer requestId, ModelMap modelMap) {
+        OpportunityRequest opportunityRequest = opportunitiesService.getOpportunityRequest(requestId);
+        opportunityRequest.computeStudyDurationNumberAndUnit();
 
-	@RequestMapping(value = "/{requestId}", method = RequestMethod.POST)
-	public String approveOrRejectOpportunityRequest(@PathVariable("requestId") Integer requestId, @Valid OpportunityRequest opportunityRequest, BindingResult bindingResult,
-			@RequestParam String editAction, ModelMap modelMap) {
-		if("approve".equals(editAction)){
-			if(bindingResult.hasErrors()){
-				modelMap.addAttribute("opportunityRequest", opportunityRequest);
+        modelMap.addAttribute("opportunityRequest", opportunityRequest);
 
-				if (opportunityRequest.getInstitutionCountry() != null) {
-					modelMap.addAttribute("institutions",
-							qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(opportunityRequest.getInstitutionCountry().getCode()));
-				}
-				
-				return EDIT_REQUEST_PAGE_VIEW_NAME;
-			}
-			opportunityRequest.computeStudyDuration();
-			opportunitiesService.approveOpportunityRequest(requestId, opportunityRequest);
-		} else if("reject".equals(editAction)) {
-			opportunitiesService.rejectOpportunityRequest(requestId);
-		}
-		return "redirect:/requests";
-	}
-	
-	@InitBinder(value = "opportunityRequest")
-	public void registerPropertyEditors(WebDataBinder binder) {
-		binder.setValidator(opportunityRequestValidator);
-		binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
-	}
-	
-	@ModelAttribute("opportunityRequests")
-	public List<OpportunityRequest> getOpportunityRequests() {
-		return opportunitiesService.getOpportunityRequests();
-	}
+        if (opportunityRequest.getInstitutionCountry() != null) {
+            modelMap.addAttribute("institutions",
+                    qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(opportunityRequest.getInstitutionCountry().getCode()));
+        }
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return userService.getCurrentUser();
-	}
+        return EDIT_REQUEST_PAGE_VIEW_NAME;
+    }
 
-	@ModelAttribute("countries")
-	public List<Domicile> getAllEnabledDomiciles() {
-		return domicileService.getAllEnabledDomicilesExceptAlternateValues();
-	}
+    @RequestMapping(value = "/{requestId}", method = RequestMethod.POST)
+    public String approveOrRejectOpportunityRequest(@PathVariable("requestId") Integer requestId, @Valid OpportunityRequest opportunityRequest,
+            BindingResult bindingResult, @RequestParam String editAction, ModelMap modelMap) {
+        if ("approve".equals(editAction)) {
+            if (bindingResult.hasErrors()) {
+                modelMap.addAttribute("opportunityRequest", opportunityRequest);
+
+                if (opportunityRequest.getInstitutionCountry() != null) {
+                    modelMap.addAttribute("institutions",
+                            qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(opportunityRequest.getInstitutionCountry().getCode()));
+                }
+
+                return EDIT_REQUEST_PAGE_VIEW_NAME;
+            }
+            opportunityRequest.computeStudyDuration();
+            opportunitiesService.approveOpportunityRequest(requestId, opportunityRequest);
+        } else if ("reject".equals(editAction)) {
+            opportunitiesService.rejectOpportunityRequest(requestId);
+        }
+        return "redirect:/requests";
+    }
+
+    @InitBinder(value = "opportunityRequest")
+    public void registerPropertyEditors(WebDataBinder binder) {
+        binder.setValidator(opportunityRequestValidator);
+        binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
+        binder.registerCustomEditor(Date.class, datePropertyEditor);
+    }
+
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return userService.getCurrentUser();
+    }
+
+    @ModelAttribute("countries")
+    public List<Domicile> getAllEnabledDomiciles() {
+        return domicileService.getAllEnabledDomicilesExceptAlternateValues();
+    }
+
+    @ModelAttribute("studyOptions")
+    public List<StudyOption> getDistinctStudyOptions() {
+        return programInstanceService.getDistinctStudyOptions();
+    }
 
 }

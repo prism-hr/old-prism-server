@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,9 @@ public class ProgramInstanceService {
 
     @Autowired
     private ProgramInstanceDAO programInstanceDAO;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public boolean isProgrammeStillAvailable(ApplicationForm applicationForm) {
         Date maxProgrammeEndDate = null;
@@ -119,12 +124,13 @@ public class ProgramInstanceService {
         return false;
     }
 
+    @Transactional
     public List<StudyOption> getDistinctStudyOptions() {
-        List<String[]> options = programInstanceDAO.getDistinctStudyOptions();
+        List<Object[]> options = programInstanceDAO.getDistinctStudyOptions();
         List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(options.size());
 
-        for (String[] option : options) {
-            StudyOption studyOption = new StudyOption(option[0], option[1]);
+        for (Object[] option : options) {
+            StudyOption studyOption = new StudyOption(option[0].toString(), option[1].toString());
             studyOptions.add(studyOption);
         }
         return studyOptions;
@@ -132,60 +138,80 @@ public class ProgramInstanceService {
 
     @Transactional
     public List<ProgramInstance> createNewCustomProgramInstances(OpportunityRequest opportunityRequest, Program program) {
+        ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
         List<ProgramInstance> instances = Lists.newArrayListWithCapacity(opportunityRequest.getAdvertisingDuration() + 1);
 
-        DateTime startDate = getCustomProgramInstanceStartDate(new DateTime(opportunityRequest.getApplicationStartDate()));
+        List<StudyOption> studyOptions = thisBean.getStudyOptions(opportunityRequest);
+        int startYear = thisBean.getCustomProgramInstanceStartYear(new DateTime(opportunityRequest.getApplicationStartDate()), new DateTime());
 
-        for (int i = 0; i <= opportunityRequest.getAdvertisingDuration(); i++) {
-            DateTime deadline = findLastSeptemberMonday(startDate.getYear() + 1);
+        for (int i = 0; i <= opportunityRequest.getAdvertisingDuration(); i++, startYear++) {
+            DateTime startDate = thisBean.findPenultimateSeptemberMonday(startYear);
+            DateTime deadline = thisBean.findPenultimateSeptemberMonday(startYear + 1);
 
-            ProgramInstance programInstance = new ProgramInstance();
-            programInstance.setApplicationStartDate(startDate.toDate());
-            programInstance.setAcademicYear(Integer.toString(startDate.getYear()));
-            programInstance.setApplicationDeadline(deadline.toDate());
-            programInstance.setDisabledDate(deadline.minusMonths(1).toDate());
-            programInstance.setEnabled(true);
-            programInstance.setIdentifier("CUSTOM");
-            programInstance.setProgram(program);
-            programInstance.setStudyOption("Full-time");
-            programInstance.setStudyOptionCode("F+++++");
+            for (StudyOption studyOption : studyOptions) {
+                ProgramInstance programInstance = new ProgramInstance();
+                programInstance.setApplicationStartDate(startDate.toDate());
+                programInstance.setAcademicYear(Integer.toString(startYear));
+                programInstance.setApplicationDeadline(deadline.toDate());
+                programInstance.setDisabledDate(deadline.minusMonths(1).toDate());
+                programInstance.setEnabled(true);
+                programInstance.setIdentifier("CUSTOM");
+                programInstance.setProgram(program);
+                programInstance.setStudyOption(studyOption.getName());
+                programInstance.setStudyOptionCode(studyOption.getId());
 
-            programInstanceDAO.save(programInstance);
+                programInstanceDAO.save(programInstance);
 
-            instances.add(programInstance);
+                instances.add(programInstance);
+            }
         }
         return instances;
     }
 
-    private DateTime getCustomProgramInstanceStartDate(DateTime intendedStartDate) {
-        DateTime startDate = new DateTime();
+    protected int getCustomProgramInstanceStartYear(DateTime intendedStartDate, DateTime now) {
+        DateTime startDate = now;
 
         if (intendedStartDate.isAfter(startDate)) {
             startDate = intendedStartDate;
         }
 
-        return getLastProgramInstanceStartDate(startDate);
+        return getFirstProgramInstanceStartYear(startDate);
     }
 
-    private DateTime getLastProgramInstanceStartDate(DateTime startDate) {
-        int yearNow = startDate.getYear();
-        DateTime actualStartDate = findLastSeptemberMonday(yearNow);
+    private int getFirstProgramInstanceStartYear(DateTime startDate) {
+        int year = startDate.getYear();
+        DateTime actualStartDate = findPenultimateSeptemberMonday(year);
 
         if (actualStartDate.isAfter(startDate)) {
-            actualStartDate = findLastSeptemberMonday(yearNow - 1);
+            year--;
         }
 
-        return actualStartDate;
+        return year;
     }
 
-    private DateTime findLastSeptemberMonday(int year) {
-        DateTime lastSeptemberMonday = new DateTime(year, 9, 30, 0, 0);
+    protected DateTime findPenultimateSeptemberMonday(int year) {
+        DateTime penultimateSeptemberMonday = new DateTime(year, 9, 30, 0, 0);
+        penultimateSeptemberMonday = penultimateSeptemberMonday.minusWeeks(1);
 
-        while (lastSeptemberMonday.getDayOfWeek() != 1) {
-            lastSeptemberMonday.minusDays(1);
+        while (penultimateSeptemberMonday.getDayOfWeek() != 1) {
+            penultimateSeptemberMonday = penultimateSeptemberMonday.minusDays(1);
         }
 
-        return lastSeptemberMonday;
+        return penultimateSeptemberMonday;
     }
 
+    protected List<StudyOption> getStudyOptions(OpportunityRequest opportunityRequest) {
+        ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
+        List<StudyOption> distinctStudyOptions = thisBean.getDistinctStudyOptions();
+        List<String> options = Arrays.asList(opportunityRequest.getStudyOptions().split(","));
+
+        List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(options.size());
+        for (StudyOption o : distinctStudyOptions) {
+            if (options.contains(o.getId())) {
+                studyOptions.add(o);
+            }
+        }
+        return studyOptions;
+    }
+    
 }

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static junit.framework.Assert.assertSame;
+import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
@@ -23,6 +24,7 @@ import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContext;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.EasyMockUnitils;
 import org.unitils.easymock.annotation.Mock;
@@ -32,13 +34,18 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
+import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
+import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
@@ -56,6 +63,14 @@ public class ProgramsServiceTest {
     @Mock
     @InjectIntoByType
     private ProjectDAO projectDAOMock;
+
+    @Mock
+    @InjectIntoByType
+    private QualificationInstitutionService qualificationInstitutionService;
+
+    @Mock
+    @InjectIntoByType
+    private ApplicationContext applicationContext;
 
     @TestedObject
     private ProgramsService programsService;
@@ -251,6 +266,64 @@ public class ProgramsServiceTest {
         verify();
 
         assertSame(allProjects, loadedProjects);
+    }
+
+    @Test
+    public void shouldCreateNewCustomProgram() {
+        ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
+
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, null).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().build();
+
+        expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
+        expect(qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest)).andReturn(institution);
+        Capture<Program> programCapture = new Capture<Program>();
+        programDAOMock.save(capture(programCapture));
+        expect(thisBean.generateNextProgramCode(institution)).andReturn("AAA_00000");
+
+        replay();
+        Program program = programsService.createNewCustomProgram(opportunityRequest);
+        verify();
+
+        Advert advert = program.getAdvert();
+
+        assertTrue(advert.getActive());
+        assertEquals(opportunityRequest.getProgramDescription(), advert.getDescription());
+        assertEquals(opportunityRequest.getStudyDuration(), advert.getStudyDuration());
+
+        assertSame(programCapture.getValue(), program);
+        assertSame(advert, program.getAdvert());
+        assertEquals(opportunityRequest.getAtasRequired(), program.getAtasRequired());
+        assertSame(institution, program.getInstitution());
+        assertEquals(opportunityRequest.getProgramTitle(), program.getTitle());
+        assertEquals("AAA_00000", program.getCode());
+    }
+
+    @Test
+    public void shouldGenerateNextProgramCode() {
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("AAA").build();
+        Program lastCustomProgram = new ProgramBuilder().code("AAA_00018").build();
+
+        expect(programDAOMock.getLastCustomProgram(institution)).andReturn(lastCustomProgram);
+
+        replay();
+        String nextCode = programsService.generateNextProgramCode(institution);
+        verify();
+
+        assertEquals("AAA_00019", nextCode);
+    }
+
+    @Test
+    public void shouldInitialProgramCode() {
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("AAA").build();
+
+        expect(programDAOMock.getLastCustomProgram(institution)).andReturn(null);
+
+        replay();
+        String nextCode = programsService.generateNextProgramCode(institution);
+        verify();
+
+        assertEquals("AAA_00000", nextCode);
     }
 
 }

@@ -1,8 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
@@ -15,7 +19,9 @@ import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.ApplicationContext;
 import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.EasyMockUnitils;
 import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
@@ -23,11 +29,13 @@ import org.unitils.inject.annotation.TestedObject;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
@@ -45,6 +53,10 @@ public class ProgramInstanceServiceTest {
     @Mock
     @InjectIntoByType
     private ThrottleService throttleService;
+
+    @Mock
+    @InjectIntoByType
+    private ApplicationContext applicationContext;
 
     @Test
     public void shouldReturnFalseForIsProgrammeStillAvailableIfLargestEndDateIsBeforeToday() {
@@ -213,7 +225,7 @@ public class ProgramInstanceServiceTest {
 
     @Test
     public void shouldGetDistinctStudyOptions() {
-        List<String[]> options = Lists.newArrayList(new String[] { "code1", "option1" }, new String[] { "code2", "option2" });
+        List<Object[]> options = Lists.newArrayList(new Object[] { "code1", "option1" }, new Object[] { "code2", "option2" });
 
         expect(programInstanceDAO.getDistinctStudyOptions()).andReturn(options);
 
@@ -222,7 +234,96 @@ public class ProgramInstanceServiceTest {
         verify();
 
         assertThat(studyOptions, containsInAnyOrder(new StudyOption("code1", "option1"), new StudyOption("code2", "option2")));
+    }
 
+    @Test
+    public void shouldCreateNewCustomProgramInstances() {
+        ProgramInstanceService thisBean = EasyMockUnitils.createMock(ProgramInstanceService.class);
+        Date applicationStartDate = new DateTime(2014, 3, 14, 0, 0).toDate();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().applicationStartDate(applicationStartDate).advertisingDuration(2).build();
+        Program program = new Program();
+        DateTime monday2013 = new DateTime(2013, 9, 23, 0, 0);
+        DateTime monday2014 = new DateTime(2014, 9, 22, 0, 0);
+        DateTime monday2015 = new DateTime(2015, 9, 21, 0, 0);
+        DateTime monday2016 = new DateTime(2016, 9, 19, 0, 0);
+        StudyOption fullTimeOption = new StudyOption("F", "Full-time");
+        StudyOption partTimeOption = new StudyOption("P", "Part-time");
+
+        expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
+        expect(thisBean.getStudyOptions(opportunityRequest))
+                .andReturn(Lists.newArrayList(fullTimeOption, partTimeOption));
+        expect(thisBean.getCustomProgramInstanceStartYear(isA(DateTime.class), isA(DateTime.class))).andReturn(2013);
+        expect(thisBean.findPenultimateSeptemberMonday(2013)).andReturn(monday2013);
+        expect(thisBean.findPenultimateSeptemberMonday(2014)).andReturn(monday2014).times(2);
+        expect(thisBean.findPenultimateSeptemberMonday(2015)).andReturn(monday2015).times(2);
+        expect(thisBean.findPenultimateSeptemberMonday(2016)).andReturn(monday2016);
+        programInstanceDAO.save(isA(ProgramInstance.class));
+        expectLastCall().times(6);
+
+        replay();
+        List<ProgramInstance> instances = service.createNewCustomProgramInstances(opportunityRequest, program);
+        verify();
+
+        assertProgramInstance(instances.get(0), program, opportunityRequest, monday2013, monday2014, fullTimeOption);
+        assertProgramInstance(instances.get(1), program, opportunityRequest, monday2013, monday2014, partTimeOption);
+        assertProgramInstance(instances.get(2), program, opportunityRequest, monday2014, monday2015, fullTimeOption);
+        assertProgramInstance(instances.get(3), program, opportunityRequest, monday2014, monday2015, partTimeOption);
+        assertProgramInstance(instances.get(4), program, opportunityRequest, monday2015, monday2016, fullTimeOption);
+        assertProgramInstance(instances.get(5), program, opportunityRequest, monday2015, monday2016, partTimeOption);
+    }
+    
+    @Test
+    public void shouldGetCustomProgramInstanceStartYearWhenBeforeSeptemberMonday(){
+        DateTime intendedStartDate = new DateTime(2014, 1, 22, 0, 0);
+        DateTime now = new DateTime(2013, 1, 22, 0, 0);
+        int startYear = service.getCustomProgramInstanceStartYear(intendedStartDate, now);
+        assertEquals(2013, startYear);
+    }
+
+    @Test
+    public void shouldGetCustomProgramInstanceStartYearWhenAfterSeptemberMonday(){
+        DateTime intendedStartDate = new DateTime(2014, 1, 22, 0, 0);
+        DateTime now = new DateTime(2014, 9, 22, 0, 0);
+        int startYear = service.getCustomProgramInstanceStartYear(intendedStartDate, now);
+        assertEquals(2014, startYear);
+    }
+    
+    @Test
+    public void shouldFindPenultimateSeptemberMonday(){
+        assertEquals(new DateTime(2013, 9, 23, 0, 0), service.findPenultimateSeptemberMonday(2013));
+        assertEquals(new DateTime(2014, 9, 22, 0, 0), service.findPenultimateSeptemberMonday(2014));
+        assertEquals(new DateTime(2015, 9, 21, 0, 0), service.findPenultimateSeptemberMonday(2015));
+    }
+    
+    @Test
+    public void shouldGetStudyOptions(){
+        ProgramInstanceService thisBean = EasyMockUnitils.createMock(ProgramInstanceService.class);
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyOptions("P+++,F+++").build();
+        
+        expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
+        StudyOption partOption = new StudyOption("P+++",  "Part-time");
+        StudyOption fullOption = new StudyOption("F+++",  "Fart-time");
+        StudyOption modularOption = new StudyOption("B+++",  "Modular");
+        expect(thisBean.getDistinctStudyOptions()).andReturn(Lists.newArrayList(partOption, fullOption, modularOption));
+        
+        replay();
+        List<StudyOption> studyOptions = service.getStudyOptions(opportunityRequest );
+        verify();
+        
+        assertThat(studyOptions, containsInAnyOrder(partOption, fullOption));
+    }
+    
+    private void assertProgramInstance(ProgramInstance programInstance, Program program, OpportunityRequest opportunityRequest, DateTime startDate,
+            DateTime deadline, StudyOption studyOption) {
+        assertEquals(startDate.toDate(), programInstance.getApplicationStartDate());
+        assertEquals(Integer.toString(startDate.getYear()), programInstance.getAcademic_year());
+        assertEquals(deadline.toDate(), programInstance.getApplicationDeadline());
+        assertEquals(deadline.minusMonths(1).toDate(), programInstance.getDisabledDate());
+        assertTrue(programInstance.getEnabled());
+        assertEquals("CUSTOM", programInstance.getIdentifier());
+        assertSame(program, programInstance.getProgram());
+        assertEquals(studyOption.getName(), programInstance.getStudyOption());
+        assertEquals(studyOption.getId(), programInstance.getStudyOptionCode());
     }
 
 }

@@ -78,7 +78,7 @@ public class ProgramInstanceDAO {
                 .add(Restrictions.eq("p.programFeed", programFeed)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<String[]> getDistinctStudyOptions() {
+    public List<Object[]> getDistinctStudyOptions() {
         return sessionFactory
                 .getCurrentSession()
                 .createCriteria(ProgramInstance.class)

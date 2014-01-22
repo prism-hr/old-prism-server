@@ -243,5 +243,22 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         Assert.assertNull(result);
 
     }
+    
+    @Test
+    public void shouldGetLastCustomProgram() {
+        Program program1 = ProgramBuilder.aProgram(institution).code(institution.getCode() + "_00006").build();
+        Program program2 = ProgramBuilder.aProgram(institution).code(institution.getCode() + "_00008").build();
+        Program program3 = ProgramBuilder.aProgram(institution).code(institution.getCode() + "_00007").build();
+
+        save(program1, program2, program3);
+
+        flushAndClearSession();
+
+        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+
+        Program returned = programDAO.getLastCustomProgram(institution);
+
+        assertEquals(program2.getCode(), returned.getCode());
+    }
 
 }

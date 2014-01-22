@@ -92,6 +92,7 @@ $(document).on('click', '#refereeSaveButton', function(event) {
 // --------------------------------------------------------------------------------
 $(document).on('click', '.addReferenceButton', function(event) {
     postRefereesData(false, true, event);
+    $('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
 });
 
 function clearRefereeFormErrors() {

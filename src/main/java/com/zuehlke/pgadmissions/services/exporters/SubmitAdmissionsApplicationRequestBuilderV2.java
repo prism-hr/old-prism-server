@@ -56,6 +56,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.PassportInformation;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -423,23 +424,23 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
         }
 
-        ApprovalRound latestApprovalRound = applicationForm.getLatestApprovalRound();
-        if (latestApprovalRound != null) {
+        OfferRecommendedComment offerRecommendedComment = applicationForm.getOfferRecommendedComment();
+        if (offerRecommendedComment != null) {
             if (isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getAtasRequired())) {
-                applicationTp.setAtasStatement(latestApprovalRound.getProjectAbstract());
+                applicationTp.setAtasStatement(offerRecommendedComment.getProjectAbstract());
             }
         }
 
-        if (latestApprovalRound != null && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
+        if (offerRecommendedComment != null && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
             String departmentalOfferConditions = "Recommended Offer Type: ";       
-            if (BooleanUtils.isTrue(latestApprovalRound.getRecommendedConditionsAvailable())) {
+            if (BooleanUtils.isTrue(offerRecommendedComment.getRecommendedConditionsAvailable())) {
                 departmentalOfferConditions += "Conditional\n\nRecommended Conditions: ";
-                departmentalOfferConditions += latestApprovalRound.getRecommendedConditions() + "\n\n";
+                departmentalOfferConditions += offerRecommendedComment.getRecommendedConditions() + "\n\n";
             } else {
                 departmentalOfferConditions += "Unconditional\n\n";
             }
             SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-            String provisionalStartDateString = outputDateFormat.format(latestApprovalRound.getRecommendedStartDate());
+            String provisionalStartDateString = outputDateFormat.format(offerRecommendedComment.getRecommendedStartDate());
             departmentalOfferConditions += "Recommended Start Date: " + provisionalStartDateString;
             applicationTp.setDepartmentalOfferConditions(departmentalOfferConditions);
         }

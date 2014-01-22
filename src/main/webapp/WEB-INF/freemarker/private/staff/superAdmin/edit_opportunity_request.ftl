@@ -54,7 +54,7 @@
       <div id="middle">
       
         <#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
-        <@header/>
+        <@header activeTab="requests"/>
             <!-- Main content area. -->
             <article id="content" role="main">        
               

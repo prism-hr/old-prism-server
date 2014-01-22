@@ -80,6 +80,8 @@ public class EditOpportunityRequestController {
             BindingResult bindingResult, @RequestParam String editAction, ModelMap modelMap) {
         if ("approve".equals(editAction)) {
             if (bindingResult.hasErrors()) {
+                RegisteredUser author = opportunitiesService.getOpportunityRequest(requestId).getAuthor();
+                opportunityRequest.setAuthor(author);
                 modelMap.addAttribute("opportunityRequest", opportunityRequest);
 
                 if (opportunityRequest.getInstitutionCountry() != null) {

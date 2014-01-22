@@ -11,12 +11,13 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
+import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 
 @Service
 @Transactional
 public class ApplicationsFilteringService {
 
-    public ApplicationsFiltering getStoredOrDefaultFiltering(RegisteredUser user) {
+    public ApplicationsFiltering getDefaultApplicationFiltering(RegisteredUser user) {
         ApplicationsFiltering filtering;
         if (user.getFiltering() != null) {
             filtering = user.getFiltering();
@@ -26,12 +27,18 @@ public class ApplicationsFilteringService {
         return filtering;
     }
 
-    private ApplicationsFiltering getActiveApplicationFiltering() {
+    public ApplicationsFiltering getActiveApplicationFiltering() {
         ApplicationsFiltering filtering = new ApplicationsFiltering();
         List<ApplicationsFilter> filters = filtering.getFilters();
         filters.add(getFilterForNonStatus(ApplicationFormStatus.APPROVED));
         filters.add(getFilterForNonStatus(ApplicationFormStatus.REJECTED));
         filters.add(getFilterForNonStatus(ApplicationFormStatus.WITHDRAWN));
+        return filtering;
+    }
+    
+    public ApplicationsFiltering getUrgentApplicationFiltering() {
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        filtering.setSortCategory(SortCategory.URGENT);
         return filtering;
     }
 

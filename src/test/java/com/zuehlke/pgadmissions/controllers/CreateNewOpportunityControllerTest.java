@@ -9,6 +9,7 @@ import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
+import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
@@ -68,6 +70,10 @@ public class CreateNewOpportunityControllerTest {
 	@InjectIntoByType
 	private OpportunitiesService opportunitiesService;
 
+	@Mock
+	@InjectIntoByType
+	private DatePropertyEditor datePropertyEditor;
+
 	@TestedObject
 	private CreateNewOpportunityController controller = new CreateNewOpportunityController();
 
@@ -100,6 +106,7 @@ public class CreateNewOpportunityControllerTest {
 		WebDataBinder dataBinder = EasyMockUnitils.createMock(WebDataBinder.class);
 		dataBinder.setValidator(opportunityRequestValidator);
 		dataBinder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
+		dataBinder.registerCustomEditor(Date.class, datePropertyEditor);
 
 		replay();
 		controller.registerPropertyEditors(dataBinder);
@@ -117,7 +124,7 @@ public class CreateNewOpportunityControllerTest {
 
 	@Test
 	public void shouldPostOpportunityRequest() {
-		OpportunityRequest opportunityRequest = new OpportunityRequest();
+		OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDurationNumber(2).studyDurationUnit("YEARS").build();
 		BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 		Model model = new ExtendedModelMap();
 		HttpServletRequest request = new MockHttpServletRequest();

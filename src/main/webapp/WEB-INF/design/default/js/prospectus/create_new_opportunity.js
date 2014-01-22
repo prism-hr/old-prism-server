@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    bindDatePicker($("#applicationStartDate"));
+    
 	$('#plist').height(500);
 	refreshControls();
 

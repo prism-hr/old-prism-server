@@ -30,112 +30,196 @@ import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 @ContextConfiguration("/testValidatorContext.xml")
 public class OpportunityRequestValidatorTest {
 
-	@Autowired
-	private Validator validator;
+    @Autowired
+    private Validator validator;
 
-	private RegisterFormValidator registerFormValidatorMock;
+    private RegisterFormValidator registerFormValidatorMock;
 
-	private OpportunityRequestValidator opportunityRequestValidator;
+    private OpportunityRequestValidator opportunityRequestValidator;
 
-	private OpportunityRequest opportunityRequest;
+    private OpportunityRequest opportunityRequest;
 
-	private RegisteredUser author;
+    private RegisteredUser author;
 
-	@Before
-	public void setUp() {
-		Domicile institutionCountry = new DomicileBuilder().code("PL").build();
-		author = new RegisteredUser();
-		opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).institutionCode("AGH").programTitle("Title").programDescription("Desc").author(author).build();
+    @Before
+    public void setUp() {
+        Domicile institutionCountry = new DomicileBuilder().code("PL").build();
+        author = new RegisteredUser();
+        opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(author, institutionCountry).build();
 
-		registerFormValidatorMock = EasyMock.createMock(RegisterFormValidator.class);
+        registerFormValidatorMock = EasyMock.createMock(RegisterFormValidator.class);
 
-		opportunityRequestValidator = new OpportunityRequestValidator();
-		opportunityRequestValidator.setValidator(validator);
-		opportunityRequestValidator.setRegisterFormValidator(registerFormValidatorMock);
-	}
+        opportunityRequestValidator = new OpportunityRequestValidator();
+        opportunityRequestValidator.setValidator(validator);
+        opportunityRequestValidator.setRegisterFormValidator(registerFormValidatorMock);
+    }
 
-	@Test
-	public void shouldSupportProgramAdvertClass() {
-		assertTrue(opportunityRequestValidator.supports(OpportunityRequest.class));
-	}
+    @Test
+    public void shouldSupportProgramAdvertClass() {
+        assertTrue(opportunityRequestValidator.supports(OpportunityRequest.class));
+    }
 
-	@Test
-	public void shouldRejectIfInstitutionCountryIsNull() {
-		opportunityRequest.setInstitutionCountry(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+    @Test
+    public void shouldRejectIfInstitutionCountryIsNull() {
+        opportunityRequest.setInstitutionCountry(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 
-		configureAndReplayRegisterFormValidator(mappingResult);
-		opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
 
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals(EMPTY_DROPDOWN_ERROR_MESSAGE, mappingResult.getFieldError("institutionCountry").getCode());
-	}
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(EMPTY_DROPDOWN_ERROR_MESSAGE, mappingResult.getFieldError("institutionCountry").getCode());
+    }
 
-	@Test
-	public void shouldRejectIfInstitutionCodeIsNull() {
-		opportunityRequest.setInstitutionCode(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+    @Test
+    public void shouldRejectIfInstitutionCodeIsNull() {
+        opportunityRequest.setInstitutionCode(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 
-		configureAndReplayRegisterFormValidator(mappingResult);
-		opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
 
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("institutionCode").getCode());
-	}
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("institutionCode").getCode());
+    }
 
-	@Test
-	public void shouldRejectIfProgramTitleIsNull() {
-		opportunityRequest.setProgramTitle(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+    @Test
+    public void shouldRejectIfProgramTitleIsNull() {
+        opportunityRequest.setProgramTitle(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 
-		configureAndReplayRegisterFormValidator(mappingResult);
-		opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
 
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("programTitle").getCode());
-	}
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("programTitle").getCode());
+    }
 
-	@Test
-	public void shouldRejectIfOtherInstitutionIsNullWhenOtherInstitutionChosen() {
-		opportunityRequest.setInstitutionCode("OTHER");
-		opportunityRequest.setOtherInstitution(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+    @Test
+    public void shouldRejectIfProgramDescriptionIsNull() {
+        opportunityRequest.setProgramDescription(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 
-		configureAndReplayRegisterFormValidator(mappingResult);
-		opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
 
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("otherInstitution").getCode());
-	}
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("programDescription").getCode());
+    }
 
-	@Test
-	public void shouldRejectIfProgramDescriptionIsNull() {
-		opportunityRequest.setProgramDescription(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+    @Test
+    public void shouldRejectIfAtasRequiredIsEmpty() {
+        opportunityRequest.setAtasRequired(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 
-		configureAndReplayRegisterFormValidator(mappingResult);
-		opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
 
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("programDescription").getCode());
-	}
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, mappingResult.getFieldError("atasRequired").getCode());
+    }
 
-	@Test
-	public void shouldFindNoErrorsAndInvokeRegisterFormValidator() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+    @Test
+    public void shouldRejectIfApplicationStartDateIsEmpty() {
+        opportunityRequest.setApplicationStartDate(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 
-		configureAndReplayRegisterFormValidator(mappingResult);
-		opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
 
-		verify(registerFormValidatorMock);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-	}
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("applicationStartDate").getCode());
+    }
 
-	private void configureAndReplayRegisterFormValidator(Errors errors) {
-		expect(registerFormValidatorMock.supports(RegisteredUser.class)).andReturn(true);
-		registerFormValidatorMock.validate(author, errors);
+    @Test
+    public void shouldRejectIfOtherInstitutionIsNullWhenOtherInstitutionChosen() {
+        opportunityRequest.setInstitutionCode("OTHER");
+        opportunityRequest.setOtherInstitution(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 
-		replay(registerFormValidatorMock);
-	}
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("otherInstitution").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfStudyDurationNumberIsEmpty() {
+        opportunityRequest.setStudyDurationNumber(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("studyDurationNumber").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfStudyDurationNumberIsLessThan1() {
+        opportunityRequest.setStudyDurationNumber(0);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("Min", mappingResult.getFieldError("studyDurationNumber").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfStudyDurationUnitIsEmpty() {
+        opportunityRequest.setStudyDurationUnit(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, mappingResult.getFieldError("studyDurationUnit").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfAdvertisingDurationIsEmpty() {
+        opportunityRequest.setAdvertisingDuration(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("advertisingDuration").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfAdvertisingDurationIsLessThan1() {
+        opportunityRequest.setAdvertisingDuration(0);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("Min", mappingResult.getFieldError("advertisingDuration").getCode());
+    }
+
+    @Test
+    public void shouldFindNoErrorsAndInvokeRegisterFormValidator() {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+
+        verify(registerFormValidatorMock);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+    }
+
+    private void configureAndReplayRegisterFormValidator(Errors errors) {
+        expect(registerFormValidatorMock.supports(RegisteredUser.class)).andReturn(true);
+        registerFormValidatorMock.validate(author, errors);
+
+        replay(registerFormValidatorMock);
+    }
 
 }

@@ -63,11 +63,11 @@ public class OpportunityRequest {
 	@Column(name = "atas_required")
 	private Boolean atasRequired;
 
-	@Column(name = "start_date")
+	@Column(name = "application_start_date")
 	@Temporal(value = TemporalType.DATE)
 	private Date applicationStartDate;
 
-	@Column(name = "advertisingDuration")
+	@Column(name = "advertising_duration")
 	private Integer advertisingDuration;
 
 	@Transient

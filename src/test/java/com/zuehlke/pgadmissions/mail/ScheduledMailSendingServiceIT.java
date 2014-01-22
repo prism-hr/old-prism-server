@@ -47,7 +47,7 @@ public class ScheduledMailSendingServiceIT {
     private ScheduledMailSendingService service;
 
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
     @Autowired
     private PlatformTransactionManager transactionManager;

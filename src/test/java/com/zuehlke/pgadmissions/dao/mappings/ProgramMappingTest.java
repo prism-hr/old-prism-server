@@ -51,9 +51,9 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
         Program program = new ProgramBuilder().code("abcD").title("Program's title").institution(institution).build();
 
         save(institution, program);
-        ProgramInstance instanceOne = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption("1", "Full-time").program(program)
+        ProgramInstance instanceOne = new ProgramInstanceBuilder().applicationDeadline(new Date()).studyOption("1", "Full-time").program(program)
                 .applicationStartDate(new Date()).academicYear("2013").enabled(true).build();
-        ProgramInstance instanceTwo = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption("1", "Full-time").program(program)
+        ProgramInstance instanceTwo = new ProgramInstanceBuilder().applicationDeadline(new Date()).studyOption("1", "Full-time").program(program)
                 .applicationStartDate(new Date()).academicYear("2013").enabled(true).build();
         save(instanceOne, instanceTwo);
         flushAndClearSession();
@@ -71,7 +71,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
     public void shouldLoadProgramsWithApprovers() {
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("abcD").title("Program's title").institution(institution).build();
-        
+
         save(institution, program);
 
         RegisteredUser approverOne = new RegisteredUserBuilder().programsOfWhichApprover(program).firstName("Jane").lastName("Doe").email("email@test.com")
@@ -96,7 +96,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
     public void shouldLoadProgramsWithAdministrators() {
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("abcD").title("Program's title").institution(institution).build();
-        
+
         save(institution, program);
 
         RegisteredUser adminOne = new RegisteredUserBuilder().programsOfWhichAdministrator(program).firstName("Jane").lastName("Doe").email("email@test.com")

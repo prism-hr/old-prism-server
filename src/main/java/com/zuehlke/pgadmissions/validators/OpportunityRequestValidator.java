@@ -28,6 +28,7 @@ public class OpportunityRequestValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programDescription", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "atasRequired", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicationStartDate", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOptions", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
         OpportunityRequest opportunityRequest = (OpportunityRequest) target;
 
@@ -52,9 +53,11 @@ public class OpportunityRequestValidator extends AbstractValidator {
 
         // validate advertising duration
         if (opportunityRequest.getAdvertisingDuration() == null) {
-            errors.rejectValue("advertisingDuration", EMPTY_FIELD_ERROR_MESSAGE);
+            errors.rejectValue("advertisingDuration", EMPTY_DROPDOWN_ERROR_MESSAGE);
         } else if (opportunityRequest.getAdvertisingDuration() < 1) {
             errors.rejectValue("advertisingDuration", "Min", new Object[] { null, "0" }, null);
+        } else if (opportunityRequest.getAdvertisingDuration() > 5) {
+            errors.rejectValue("advertisingDuration", "Max", new Object[] { null, "6" }, null);
         }
 
         // validate an author

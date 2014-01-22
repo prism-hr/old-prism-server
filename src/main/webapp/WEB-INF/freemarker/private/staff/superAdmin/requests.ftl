@@ -104,7 +104,9 @@
                   <td class="centre">
                     <select class="opportunityRequestActionType selectpicker" data-request-id="${opportunityRequest.id?string}">
                       <option class="title">Actions</option>
-                      <option value="approve">Approve</option>
+                      <#if opportunityRequest.status == "NEW">
+                        <option value="approve">Approve</option>
+                      </#if>
                     </select>
                   </td>
                    

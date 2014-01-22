@@ -130,6 +130,18 @@ public class OpportunityRequestValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("applicationStartDate").getCode());
     }
+    
+    @Test
+    public void shouldRejectIfStudyOptionsAreEmpty() {
+        opportunityRequest.setStudyOptions(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+        
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+        
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, mappingResult.getFieldError("studyOptions").getCode());
+    }
 
     @Test
     public void shouldRejectIfOtherInstitutionIsNullWhenOtherInstitutionChosen() {
@@ -189,7 +201,7 @@ public class OpportunityRequestValidatorTest {
         opportunityRequestValidator.validate(opportunityRequest, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("advertisingDuration").getCode());
+        Assert.assertEquals(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, mappingResult.getFieldError("advertisingDuration").getCode());
     }
 
     @Test
@@ -202,6 +214,18 @@ public class OpportunityRequestValidatorTest {
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("Min", mappingResult.getFieldError("advertisingDuration").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfAdvertisingDurationIsLessThan5() {
+        opportunityRequest.setAdvertisingDuration(6);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+        
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+        
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("Max", mappingResult.getFieldError("advertisingDuration").getCode());
     }
 
     @Test

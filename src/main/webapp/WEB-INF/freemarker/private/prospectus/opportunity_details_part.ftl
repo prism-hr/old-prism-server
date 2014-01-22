@@ -173,7 +173,16 @@
   <label class="plain-label" for="advertisingDuration">Advertising Duration (in years)<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.advertisingDuration'/>"></span>
   <div class="field">
-    <input id="advertisingDuration" name="advertisingDuration" class="numeric full" type="text" value="${(opportunityRequest.advertisingDuration?html)!}" />
+    <select class="full selectpicker" data-live-search="true" data-size="6" id="advertisingDuration" name="advertisingDuration">
+      <option value="">Select...</option>
+      <#list [1, 2, 3, 4, 5] as duration>
+        <option value="${duration?html}"
+          <#if opportunityRequest.advertisingDuration?? && opportunityRequest.advertisingDuration == duration> selected="selected"</#if>
+          >${duration?html}
+        </option>
+      </#list>
+    </select>
+ 
     <@spring.bind "opportunityRequest.advertisingDuration" />
     <#list spring.status.errorMessages as error>
       <div class="alert alert-error"> <i class="icon-warning-sign"></i>

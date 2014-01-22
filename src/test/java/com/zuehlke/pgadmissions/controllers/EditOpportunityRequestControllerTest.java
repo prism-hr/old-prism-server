@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
@@ -116,12 +117,14 @@ public class EditOpportunityRequestControllerTest {
     public void shouldNotApproveOpportunityRequestWhenBindingErrors() {
         Domicile institutionCountry = new DomicileBuilder().code("PL").build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).build();
+        RegisteredUser author = new RegisteredUser();
         ModelMap modelMap = new ModelMap();
         BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
         bindingResult.reject("error");
         List<QualificationInstitution> institutions = Lists.newArrayList();
 
         expect(qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode("PL")).andReturn(institutions);
+        expect(opportunitiesService.getOpportunityRequest(8)).andReturn(new OpportunityRequestBuilder().author(author).build());
 
         replay();
         String result = controller.approveOrRejectOpportunityRequest(8, opportunityRequest, bindingResult, "approve", modelMap);
@@ -130,6 +133,7 @@ public class EditOpportunityRequestControllerTest {
         assertSame(opportunityRequest, modelMap.get("opportunityRequest"));
         assertSame(institutions, modelMap.get("institutions"));
         assertEquals(EditOpportunityRequestController.EDIT_REQUEST_PAGE_VIEW_NAME, result);
+        assertSame(author, opportunityRequest.getAuthor());
     }
 
     @Test

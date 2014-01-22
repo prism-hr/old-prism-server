@@ -1,38 +1,33 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
-import com.google.common.io.CharStreams;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.NotificationsDuration;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
 @Repository
@@ -45,36 +40,15 @@ public class UserDAO {
 
     private final NotificationsDurationDAO notificationsDurationDAO;
 
-    private final ApplicationContext applicationContext;
-
-    private String getPotentialUsersDueToTaskReminderSql;
-
-    private String getPotentialUsersDueToTaskNotificationSql;
-
-    private String getUsersDueToUpdateNotificationSql;
-
     public UserDAO() {
-        this(null, null, null, null);
+        this(null, null, null);
     }
 
     @Autowired
-    public UserDAO(SessionFactory sessionFactory, ReminderIntervalDAO reminderIntervalDAO, NotificationsDurationDAO notificationsDurationDAO,
-            ApplicationContext applicationContext) {
+    public UserDAO(SessionFactory sessionFactory, ReminderIntervalDAO reminderIntervalDAO, NotificationsDurationDAO notificationsDurationDAO) {
         this.sessionFactory = sessionFactory;
         this.reminderIntervalDAO = reminderIntervalDAO;
         this.notificationsDurationDAO = notificationsDurationDAO;
-        this.applicationContext = applicationContext;
-    }
-
-    @PostConstruct
-    public void setup() throws IOException {
-        InputStreamReader reader = new InputStreamReader(applicationContext.getResource("classpath:sql/get_potential_users_due_to_task_reminder.sql")
-                .getInputStream());
-        getPotentialUsersDueToTaskReminderSql = CharStreams.toString(reader);
-        reader = new InputStreamReader(applicationContext.getResource("classpath:sql/get_potential_users_due_to_task_notification.sql").getInputStream());
-        getPotentialUsersDueToTaskNotificationSql = CharStreams.toString(reader);
-        reader = new InputStreamReader(applicationContext.getResource("classpath:sql/get_users_due_to_update_notification.sql").getInputStream());
-        getUsersDueToUpdateNotificationSql = CharStreams.toString(reader);
     }
 
     public void save(RegisteredUser user) {
@@ -199,29 +173,6 @@ public class UserDAO {
                 .add(Restrictions.isNull("pendingRoleNotification.notificationDate")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<Integer> getPotentialUsersForTaskNotification() {
-        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK);
-        int interval = reminderInterval.getDuration();
-        DurationUnitEnum unit = reminderInterval.getUnit();
-        String sqlQuery = StringUtils.replace(getPotentialUsersDueToTaskNotificationSql, "${TIME_UNIT}", unit.sqlValue());
-        return sessionFactory.getCurrentSession().createSQLQuery(sqlQuery).setParameter("interval", interval).list();
-    }
-
-    public List<Integer> getPotentialUsersForTaskReminder() {
-        ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK);
-        NotificationsDuration notificationsDurationObj = notificationsDurationDAO.getNotificationsDuration();
-        int notificationsDuration = notificationsDurationObj.getDurationInDays();
-        int interval = reminderInterval.getDuration();
-        DurationUnitEnum unit = reminderInterval.getUnit();
-        String sqlQuery = StringUtils.replace(getPotentialUsersDueToTaskReminderSql, "${TIME_UNIT}", unit.sqlValue());
-        return sessionFactory.getCurrentSession().createSQLQuery(sqlQuery).setParameter("interval", interval)
-                .setParameter("notificationsDuration", notificationsDuration).list();
-    }
-
-    public List<Integer> getUsersForUpdateNotification() {
-        return sessionFactory.getCurrentSession().createSQLQuery(getUsersDueToUpdateNotificationSql).list();
-    }
-
     public List<RegisteredUser> getSuperadministrators() {
         return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createAlias("roles", "role")
                 .add(Restrictions.eq("role.id", Authority.SUPERADMINISTRATOR)).list();
@@ -231,22 +182,84 @@ public class UserDAO {
         return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createAlias("roles", "role")
                 .add(Restrictions.eq("role.id", Authority.ADMITTER)).list();
     }
-
-    /* package */void setGetPotentialUsersDueToTaskReminderSql(String getPotentialUsersDueToTaskReminderSql) {
-        this.getPotentialUsersDueToTaskReminderSql = getPotentialUsersDueToTaskReminderSql;
-    }
-
-    /* package */void setGetPotentialUsersDueToTaskNotificationSql(String getPotentialUsersDueToTaskNotificationSql) {
-        this.getPotentialUsersDueToTaskNotificationSql = getPotentialUsersDueToTaskNotificationSql;
-    }
-
-    /* package */void setGetUsersDueToUpdateNotificationSql(String getUsersDueToUpdateNotificationSql) {
-        this.getUsersDueToUpdateNotificationSql = getUsersDueToUpdateNotificationSql;
-    }
     
     public void setApplicationFormListLastAccessTimestamp(RegisteredUser user) {
         user.setApplicationListLastAccessTimestamp(new Date());
         save(user);
+    }
+    
+    public List<RegisteredUser> getUsersDueTaskReminder() {
+        Date baseline = new Date();
+        Date reminderBaseline = getReminderBaseline(baseline);
+        Date expiryBaseline = getExpiryBaseline(baseline);
+        
+        HashSet<RegisteredUser> deduplicatedUsers = new HashSet<RegisteredUser>();
+        
+        List<RegisteredUser> applicationUsers = (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("user"))
+                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+                .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
+                .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("action.notification", NotificationMethod.SYNDICATED))
+                .add(Restrictions.eq("raisesUrgentFlag", true))
+                .add(Restrictions.eq("user.latestTaskNotificationDate", reminderBaseline))
+                .add(Restrictions.gt("applicationFormActionRequired.deadlineTimestamp", expiryBaseline)).list();
+        
+        deduplicatedUsers.addAll(applicationUsers);
+        return new ArrayList<RegisteredUser>(deduplicatedUsers);
+    }
+    
+    public List<RegisteredUser> getUsersDueTaskNotification() {
+        Date baseline = new Date();
+        Date reminderBaseline = getReminderBaseline(baseline);
+        Date expiryBaseline = getExpiryBaseline(baseline);
+        
+        HashSet<RegisteredUser> deduplicatedUsers = new HashSet<RegisteredUser>();
+        
+        List<RegisteredUser> applicationUsers = (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("user"))
+                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+                .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
+                .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("action.notification", NotificationMethod.SYNDICATED))
+                .add(Restrictions.eq("raisesUrgentFlag", true))
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.eq("user.latestTaskNotificationDate", null))
+                        .add(Restrictions.lt("user.latestTaskNotificationDate", reminderBaseline)))
+                .add(Restrictions.gt("applicationFormActionRequired.deadlineTimestamp", expiryBaseline)).list();
+        
+        deduplicatedUsers.addAll(applicationUsers);
+        return new ArrayList<RegisteredUser>(deduplicatedUsers);
+    }
+    
+    public List<RegisteredUser> getUsersDueUpdateNotification() {
+        Date baseline = new Date();
+        
+        HashSet<RegisteredUser> deduplicatedUsers = new HashSet<RegisteredUser>();
+        
+        List<RegisteredUser> applicationUsers = (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("user"))
+                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+                .createAlias("role", "role", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("role.doSendUpdateNotification", true))
+                .add(Restrictions.eq("raisesUpdateFlag", true))
+                .add(Restrictions.eq("updateTimestamp", baseline))
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.eq("user.latestUpdateNotificationDate", null))
+                        .add(Restrictions.lt("user.latestUpdateNotificationDate", baseline))).list();
+        
+        deduplicatedUsers.addAll(applicationUsers);
+        return new ArrayList<RegisteredUser>(deduplicatedUsers);
+    }
+    
+    private Date getReminderBaseline(Date baseline) {
+        int reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK).getDurationInDays();
+        return DateUtils.addDays((Date) baseline.clone(), -reminderInterval);
+    }
+    
+    private Date getExpiryBaseline(Date baseline) {
+        int expiryInterval = notificationsDurationDAO.getNotificationsDuration().getDurationInDays();
+        return DateUtils.addDays((Date) baseline.clone(), -expiryInterval);
     }
 
 }

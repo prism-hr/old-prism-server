@@ -43,14 +43,16 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
+import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.OfferRecommendedCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -384,10 +386,12 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSuccessfullyCallWebServiceWithOverseasStudent() throws PorticoExportServiceException {
+        OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm)
+                .comment("").commentType(CommentType.OFFER_RECOMMENDED_COMMENT).projectAbstract("abstract")
+                .recommendedConditionsAvailable(false).recommendedStartDate(new Date()).build();
+        applicationForm.getApplicationComments().add(offerComment);
+        applicationForm.getProgram().setAtasRequired(true); 
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
-        applicationFormTransfer.getApplicationForm().setLatestApprovalRound(new ApprovalRoundBuilder().id(4).projectAbstract("abstract")
-                .recommendedConditionsAvailable(false).recommendedConditions("conditions").recommendedStartDate(new Date()).build());
-        applicationFormTransfer.getApplicationForm().getProgram().setAtasRequired(true);
         TransferListener listener = new TransferListener() {
             
             @Override

@@ -73,48 +73,44 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         ScheduledMailSendingService thisProxy = applicationContext.getBean(this.getClass());
         
         log.trace("Sending task reminder to users");
-        List<Integer> users = thisProxy.getPotentialUsersForTaskReminder();
-        for (Integer userId : users) {
-            thisProxy.sendDigestEmail(userId, DigestNotificationType.TASK_REMINDER);
+        for (RegisteredUser user : thisProxy.getUsersForTaskReminder()) {
+            thisProxy.sendDigestEmail(user, DigestNotificationType.TASK_REMINDER);
         }
         log.trace("Finished sending task reminder to users");
 
         log.trace("Sending task notification to users");
-        users = thisProxy.getPotentialUsersForTaskNotification();
-        for (Integer userId : users) {
-            thisProxy.sendDigestEmail(userId, DigestNotificationType.TASK_NOTIFICATION);
+        for (RegisteredUser user : thisProxy.getUsersForTaskNotification()) {
+            thisProxy.sendDigestEmail(user, DigestNotificationType.TASK_NOTIFICATION);
         }
         log.trace("Finished sending task notification to users");
 
         log.trace("Sending update notification to users");
-        users = thisProxy.getUsersForUpdateNotification();
-        for (Integer userId : users) {
-            thisProxy.sendDigestEmail(userId, DigestNotificationType.UPDATE_NOTIFICATION);
+        for (RegisteredUser user : thisProxy.getUsersForUpdateNotification()) {
+            thisProxy.sendDigestEmail(user, DigestNotificationType.UPDATE_NOTIFICATION);
         }
         log.trace("Finished sending update notification to users");
     }
 
     @Transactional
-    public List<Integer> getPotentialUsersForTaskNotification() {
+    public List<RegisteredUser> getUsersForTaskNotification() {
         updateApplicationFormActionUrgentFlag();
-        return userDAO.getPotentialUsersForTaskNotification();
+        return userDAO.getUsersDueTaskNotification();
     }
 
     @Transactional
-    public List<Integer> getPotentialUsersForTaskReminder() {
+    public List<RegisteredUser> getUsersForTaskReminder() {
         updateApplicationFormActionUrgentFlag();
-        return userDAO.getPotentialUsersForTaskReminder();
+        return userDAO.getUsersDueTaskReminder();
     }
 
     @Transactional
-    public List<Integer> getUsersForUpdateNotification() {
+    public List<RegisteredUser> getUsersForUpdateNotification() {
         updateApplicationFormActionUrgentFlag();
-        return userDAO.getUsersForUpdateNotification();
+        return userDAO.getUsersDueUpdateNotification();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendDigestEmail(final Integer userId, DigestNotificationType digestNotificationType) {
-        final RegisteredUser user = userDAO.get(userId);
+    public boolean sendDigestEmail(RegisteredUser user, DigestNotificationType digestNotificationType) {
         return sendDigest(user, digestNotificationType);
     }
     

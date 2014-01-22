@@ -272,7 +272,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetDistinctsStudyOptions() {
         ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
-        List<String[]> studyOptions = dao.getDistinctStudyOptions();
+        List<Object[]> studyOptions = dao.getDistinctStudyOptions();
         assertTrue(studyOptions.size() > 0);
     }
 

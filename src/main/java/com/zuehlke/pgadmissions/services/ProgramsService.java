@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +43,9 @@ public class ProgramsService {
 
     @Autowired
     private QualificationInstitutionService qualificationInstitutionService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public List<Program> getAllPrograms() {
         return programDAO.getAllPrograms();
@@ -149,33 +153,37 @@ public class ProgramsService {
     }
 
     public Program createNewCustomProgram(OpportunityRequest opportunityRequest) {
-        Program program = new Program();
-
+        ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
+        
         Advert advert = new Advert();
         advert.setActive(true);
         advert.setDescription(opportunityRequest.getProgramDescription());
         advert.setStudyDuration(opportunityRequest.getStudyDuration());
 
+        QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest);
+
+        Program program = new Program();
         program.setAdvert(advert);
-
-        if ("OTHER".equals(opportunityRequest.getInstitutionCode())) {
-            QualificationInstitution institution = new QualificationInstitution();
-            institution.setDomicileCode(opportunityRequest.getInstitutionCountry().getCode());
-            institution.setEnabled(true);
-            institution.setName(opportunityRequest.getOtherInstitution());
-            qualificationInstitutionService.createNewCustomInstitution(institution);
-
-            program.setInstitution(institution);
-        } else {
-            QualificationInstitution institution = qualificationInstitutionService.getInstitutionByCode(opportunityRequest.getInstitutionCode());
-            program.setInstitution(institution);
-        }
-
+        program.setInstitution(institution);
         program.setEnabled(true);
         program.setTitle(opportunityRequest.getProgramTitle());
         program.setAtasRequired(opportunityRequest.getAtasRequired());
+        program.setCode(thisBean.generateNextProgramCode(institution));
+        
         programDAO.save(program);
         return program;
+    }
+
+    protected String generateNextProgramCode(QualificationInstitution institution) {
+        Program lastCustomProgram = programDAO.getLastCustomProgram(institution);
+        Integer codeNumber;
+        if (lastCustomProgram != null) {
+            codeNumber = Integer.valueOf(lastCustomProgram.getCode().split("_")[1]);
+            codeNumber++;
+        } else {
+            codeNumber = 0;
+        }
+        return String.format("%s_%05d", institution.getCode(), codeNumber);
     }
 
 }

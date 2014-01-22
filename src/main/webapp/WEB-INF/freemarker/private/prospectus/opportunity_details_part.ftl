@@ -88,6 +88,29 @@
 </div>
 
 <div class="row">
+  <label class="control-label" for="studyOption">Study Options<em>*</em></label>
+  <span class="hint" data-desc="<@spring.message 'opportunityRequest.studyOptions'/>"></span>
+  <div class="field">
+    <select multiple class="full selectpicker" data-live-search="true" data-size="6" id="studyOptions" name="studyOptions">
+      <#assign selectedOptionsString = opportunityRequest.studyOptions!"">    
+      <#assign selectedOptions = selectedOptionsString?split(",")>
+      <#list studyOptions as studyOption>
+        <option value="${studyOption.id}"
+          <#if selectedOptions?seq_contains(studyOption.id)> selected="selected"</#if>
+          >${studyOption.name?html}
+        </option>
+      </#list>
+    </select>
+    <@spring.bind "opportunityRequest.studyOptions" />
+    <#list spring.status.errorMessages as error>
+      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+        ${error}
+      </div>
+    </#list>
+  </div>
+</div>
+
+<div class="row">
   <label for="studyDurationNumber" class="plain-label">Duration of Study<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'prospectus.durationOfStudy'/>"></span>
   <div class="field">

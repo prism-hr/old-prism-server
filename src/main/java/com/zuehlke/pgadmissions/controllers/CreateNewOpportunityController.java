@@ -22,10 +22,12 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
 
@@ -59,6 +61,9 @@ public class CreateNewOpportunityController {
 
     @Autowired
     private DatePropertyEditor datePropertyEditor;
+
+    @Autowired
+    private ProgramInstanceService programInstanceService;
 
     @InitBinder(value = "opportunityRequest")
     public void registerPropertyEditors(WebDataBinder binder) {
@@ -107,6 +112,11 @@ public class CreateNewOpportunityController {
     @ModelAttribute("institutions")
     public List<QualificationInstitution> getEmptyQualificationInstitution() {
         return Collections.emptyList();
+    }
+
+    @ModelAttribute("studyOptions")
+    public List<StudyOption> getDistinctStudyOptions() {
+        return programInstanceService.getDistinctStudyOptions();
     }
 
 }

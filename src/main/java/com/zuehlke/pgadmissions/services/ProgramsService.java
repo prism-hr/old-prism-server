@@ -18,8 +18,10 @@ import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -29,20 +31,17 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 @Transactional
 public class ProgramsService {
 
-    private final ProgramDAO programDAO;
-    private final AdvertDAO advertDAO;
-    private final ProjectDAO projectDAO;
-
-    ProgramsService() {
-        this(null, null, null);
-    }
+    @Autowired
+    private ProgramDAO programDAO;
 
     @Autowired
-    public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO) {
-        this.programDAO = programDAO;
-        this.advertDAO = advertDAO;
-        this.projectDAO = projectDAO;
-    }
+    private AdvertDAO advertDAO;
+
+    @Autowired
+    private ProjectDAO projectDAO;
+
+    @Autowired
+    private QualificationInstitutionService qualificationInstitutionService;
 
     public List<Program> getAllPrograms() {
         return programDAO.getAllPrograms();
@@ -64,14 +63,14 @@ public class ProgramsService {
         if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
             return programDAO.getAllPrograms();
         }
-        
+
         Set<Program> programs = new TreeSet<Program>(new Comparator<Program>() {
             @Override
             public int compare(Program p1, Program p2) {
                 return p1.getTitle().compareTo(p2.getTitle());
             }
         });
-        
+
         programs.addAll(user.getProgramsOfWhichAdministrator());
         programs.addAll(user.getProgramsOfWhichApprover());
         programs.addAll(programDAO.getProgramsOfWhichPreviousReviewer(user));
@@ -105,11 +104,11 @@ public class ProgramsService {
     public void saveProject(Project project) {
         projectDAO.save(project);
     }
-    
+
     public void removeProject(int projectId) {
         Project project = getProject(projectId);
-        if(project==null){
-        	return;
+        if (project == null) {
+            return;
         }
         project.setDisabled(true);
         project.getAdvert().setActive(false);
@@ -147,6 +146,36 @@ public class ProgramsService {
             formattedDate = new SimpleDateFormat("dd MMM yyyy").format(closingDate);
         }
         return formattedDate;
+    }
+
+    public Program createNewCustomProgram(OpportunityRequest opportunityRequest) {
+        Program program = new Program();
+
+        Advert advert = new Advert();
+        advert.setActive(true);
+        advert.setDescription(opportunityRequest.getProgramDescription());
+        advert.setStudyDuration(opportunityRequest.getStudyDuration());
+
+        program.setAdvert(advert);
+
+        if ("OTHER".equals(opportunityRequest.getInstitutionCode())) {
+            QualificationInstitution institution = new QualificationInstitution();
+            institution.setDomicileCode(opportunityRequest.getInstitutionCountry().getCode());
+            institution.setEnabled(true);
+            institution.setName(opportunityRequest.getOtherInstitution());
+            qualificationInstitutionService.createNewCustomInstitution(institution);
+
+            program.setInstitution(institution);
+        } else {
+            QualificationInstitution institution = qualificationInstitutionService.getInstitutionByCode(opportunityRequest.getInstitutionCode());
+            program.setInstitution(institution);
+        }
+
+        program.setEnabled(true);
+        program.setTitle(opportunityRequest.getProgramTitle());
+        program.setAtasRequired(opportunityRequest.getAtasRequired());
+        programDAO.save(program);
+        return program;
     }
 
 }

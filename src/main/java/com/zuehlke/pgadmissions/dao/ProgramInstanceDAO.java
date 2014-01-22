@@ -8,6 +8,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -33,54 +34,38 @@ public class ProgramInstanceDAO {
 
     public List<ProgramInstance> getActiveProgramInstances(Program program) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
-        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-        		.add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("enabled", true))
-                .add(Restrictions.ge("applicationDeadline", today))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true)).add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .list();
     }
 
     public List<ProgramInstance> getActiveProgramInstancesOrderedByApplicationStartDate(Program program, String studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
-        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-        		.add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("enabled", true))
-                .add(Restrictions.eq("studyOption", studyOption))
-                .add(Restrictions.ge("applicationDeadline", today))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .addOrder(Order.asc("applicationStartDate")).list();
+        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true)).add(Restrictions.eq("studyOption", studyOption)).add(Restrictions.ge("applicationDeadline", today))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).addOrder(Order.asc("applicationStartDate")).list();
     }
 
     public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPast(Program program, String studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
-        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-        		.add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("enabled", true))
-                .add(Restrictions.eq("studyOption", studyOption))
-                .add(Restrictions.ge("applicationDeadline", today))
+        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true)).add(Restrictions.eq("studyOption", studyOption)).add(Restrictions.ge("applicationDeadline", today))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(Program program, String studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
-        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-        		.add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("enabled", true))
-                .add(Restrictions.eq("studyOption", studyOption))
-                .add(Restrictions.ge("applicationDeadline", today))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .addOrder(Order.asc("applicationDeadline")).list();
+        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true)).add(Restrictions.eq("studyOption", studyOption)).add(Restrictions.ge("applicationDeadline", today))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).addOrder(Order.asc("applicationDeadline")).list();
     }
 
     public ProgramInstance getCurrentProgramInstanceForStudyOption(Program program, String studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
         List<ProgramInstance> futureInstances = sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("enabled", true))
-                .add(Restrictions.eq("studyOption", studyOption))
-                .add(Restrictions.ge("applicationDeadline", today))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-        		.addOrder(Order.asc("applicationDeadline")).list();
+                .add(Restrictions.eq("program", program)).add(Restrictions.eq("enabled", true)).add(Restrictions.eq("studyOption", studyOption))
+                .add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .addOrder(Order.asc("applicationDeadline")).list();
         return futureInstances.get(0);
     }
 
@@ -89,10 +74,17 @@ public class ProgramInstanceDAO {
     }
 
     public List<ProgramInstance> getAllProgramInstances(ProgramFeed programFeed) {
-        return sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-                .createAlias("program", "p")
-                .add(Restrictions.eq("p.programFeed", programFeed))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).createAlias("program", "p")
+                .add(Restrictions.eq("p.programFeed", programFeed)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
+
+    public List<String[]> getDistinctStudyOptions() {
+        return sessionFactory
+                .getCurrentSession()
+                .createCriteria(ProgramInstance.class)
+                .setProjection(
+                        Projections.distinct(Projections.projectionList().add(Projections.property("studyOptionCode")).add(Projections.property("studyOption"))))
+                .list();
     }
 
     public void save(ProgramInstance programInstance) {

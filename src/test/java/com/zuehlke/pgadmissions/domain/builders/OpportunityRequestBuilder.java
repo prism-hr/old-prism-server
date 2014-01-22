@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -119,4 +121,14 @@ public class OpportunityRequestBuilder {
 		request.setStudyDurationUnit(studyDurationUnit);
 		return request;
 	}
+
+	public static OpportunityRequestBuilder aOpportunityRequest(RegisteredUser author, Domicile institutionCountry) {
+		Date yesterday= new DateTime().minusDays(1).toDate();
+		Date inAWeek= new DateTime().plusWeeks(1).toDate();
+		
+		
+		return new OpportunityRequestBuilder().author(author).createdDate(yesterday).institutionCode("AGH").institutionCountry(institutionCountry)
+				.programDescription("This is really amazing Opportunity!").programTitle("Amazing Opportunity").advertisingDuration(2).applicationStartDate(inAWeek).atasRequired(true).studyDuration(24).studyDurationNumber(2).studyDurationUnit("YEARS");
+	}
+
 }

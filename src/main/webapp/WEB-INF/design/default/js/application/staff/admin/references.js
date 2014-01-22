@@ -172,6 +172,7 @@ function attachReferenceEditListeners () {
     $('.editReferenceButton').each(function() {
     	$(this).on("click", function(event) {
     		editReferenceData(event);
+    	    $('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
         });
     });
 }

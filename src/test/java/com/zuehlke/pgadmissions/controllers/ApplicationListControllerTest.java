@@ -78,7 +78,7 @@ public class ApplicationListControllerTest {
         user.setFiltering(filtering);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-        EasyMock.expect(filteringServiceMock.getStoredOrDefaultFiltering(user)).andReturn(filtering);
+        EasyMock.expect(filteringServiceMock.getDefaultApplicationFiltering(user)).andReturn(filtering);
 
         // WHEN
         EasyMock.replay(userServiceMock, filteringServiceMock);
@@ -102,7 +102,7 @@ public class ApplicationListControllerTest {
         ApplicationsFiltering filtering = new ApplicationsFiltering();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-        EasyMock.expect(filteringServiceMock.getStoredOrDefaultFiltering(user)).andReturn(filtering);
+        EasyMock.expect(filteringServiceMock.getDefaultApplicationFiltering(user)).andReturn(filtering);
 
         // WHEN
         EasyMock.replay(userServiceMock, filteringServiceMock);
@@ -128,7 +128,7 @@ public class ApplicationListControllerTest {
         httpSession.setAttribute("alertDefinition", alert);
         
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-        EasyMock.expect(filteringServiceMock.getStoredOrDefaultFiltering(user)).andReturn(filtering);
+        EasyMock.expect(filteringServiceMock.getDefaultApplicationFiltering(user)).andReturn(filtering);
         
         EasyMock.replay(filteringServiceMock, userServiceMock);
         // WHEN

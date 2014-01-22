@@ -174,13 +174,13 @@
               
                   <div class="btn-actions">
                       <div class="btn-group">
-                        <button class="btn btn-success" id="search-go">Apply</button>
+                        <button class="btn btn-success" id="search-go">Filter</button>
                         <button class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="#" id="storeFiltersBtn">Save as Default Filter</a></li>
-                            <li><a href="<@spring.url '/applications?applyFilters=reload'/>">Load Default Filter</a></li>
-                            <li><a href="#" id="loadActiveApplication">Display Active Applications</a></li>
-              
+                            <li><a href="<@spring.url '/applications?applyFilters=default'/>">Load Default Filter</a></li>
+                           	<li><a href="<@spring.url '/applications?applyFilters=urgent'/>">Display Urgent Applications</a></li>
+                           	<li><a href="<@spring.url '/applications?applyFilters=active'/>">Display Active Applications</a></li>
                         </ul>
                       </div>
                      <button class="btn btn-info" type="button" id="search-reset">Clear</button>

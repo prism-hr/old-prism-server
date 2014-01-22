@@ -437,21 +437,25 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetUsersForUpdateNotification() throws IOException {
         userDAO.getUsersDueUpdateNotification();
     }
-
+    
     @Test
-    public void shouldGetPotentialUsersDueToTaskNotificationSql() throws IOException {
+    public void shouldGetPotentialUsersDueToTaskNotification() throws IOException {
         ReminderInterval reminderInterval = new ReminderInterval();
         reminderInterval.setDuration(8);
         reminderInterval.setUnit(DurationUnitEnum.DAYS);
-        EasyMock.expect(reminderIntervalDAOMock.getReminderInterval(ReminderType.TASK)).andReturn(reminderInterval);
+        NotificationsDuration notificationsDuration = new NotificationsDuration();
+        notificationsDuration.setDuration(16);
+        notificationsDuration.setUnit(DurationUnitEnum.DAYS);
+        expect(reminderIntervalDAOMock.getReminderInterval(ReminderType.TASK)).andReturn(reminderInterval);
+        expect(notificationsDurationDAOMock.getNotificationsDuration()).andReturn(notificationsDuration);
 
-        EasyMock.replay(reminderIntervalDAOMock);
+        EasyMock.replay(reminderIntervalDAOMock, notificationsDurationDAOMock);
         userDAO.getUsersDueTaskNotification();
-        EasyMock.verify(reminderIntervalDAOMock);
+        EasyMock.verify(reminderIntervalDAOMock, notificationsDurationDAOMock);
     }
 
     @Test
-    public void shouldGetPotentialUsersDueToTaskReminderSql() throws IOException {
+    public void shouldGetPotentialUsersDueToTaskReminder() throws IOException {
         ReminderInterval reminderInterval = new ReminderInterval();
         reminderInterval.setDuration(8);
         reminderInterval.setUnit(DurationUnitEnum.DAYS);

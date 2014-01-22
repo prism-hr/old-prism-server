@@ -123,7 +123,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     public void shouldSendUpdateEmail() {
         RegisteredUser user = new RegisteredUserBuilder().id(8).username("bebok").build();
 
-        expect(userDAOMock.get(8)).andReturn(user);
         expect(mockMailSender.resolveSubject(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION, (Object) null)).andReturn("Ahoj!");
 
         Capture<PrismEmailMessage> messageCapture = new Capture<PrismEmailMessage>();

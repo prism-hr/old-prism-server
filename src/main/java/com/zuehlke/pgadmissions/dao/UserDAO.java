@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -193,20 +192,15 @@ public class UserDAO {
         Date reminderBaseline = getReminderBaseline(baseline);
         Date expiryBaseline = getExpiryBaseline(baseline);
         
-        HashSet<RegisteredUser> deduplicatedUsers = new HashSet<RegisteredUser>();
-        
-        List<RegisteredUser> applicationUsers = (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .setProjection(Projections.groupProperty("user"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("action.notification", NotificationMethod.SYNDICATED))
                 .add(Restrictions.eq("raisesUrgentFlag", true))
-                .add(Restrictions.eq("user.latestTaskNotificationDate", reminderBaseline))
+                .add(Restrictions.eq("registeredUser.latestTaskNotificationDate", reminderBaseline))
                 .add(Restrictions.gt("applicationFormActionRequired.deadlineTimestamp", expiryBaseline)).list();
-        
-        deduplicatedUsers.addAll(applicationUsers);
-        return new ArrayList<RegisteredUser>(deduplicatedUsers);
     }
     
     public List<RegisteredUser> getUsersDueTaskNotification() {
@@ -214,9 +208,7 @@ public class UserDAO {
         Date reminderBaseline = getReminderBaseline(baseline);
         Date expiryBaseline = getExpiryBaseline(baseline);
         
-        HashSet<RegisteredUser> deduplicatedUsers = new HashSet<RegisteredUser>();
-        
-        List<RegisteredUser> applicationUsers = (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .setProjection(Projections.groupProperty("user"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
@@ -224,20 +216,15 @@ public class UserDAO {
                 .add(Restrictions.eq("action.notification", NotificationMethod.SYNDICATED))
                 .add(Restrictions.eq("raisesUrgentFlag", true))
                 .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("user.latestTaskNotificationDate", null))
-                        .add(Restrictions.lt("user.latestTaskNotificationDate", reminderBaseline)))
+                        .add(Restrictions.eq("registeredUser.latestTaskNotificationDate", null))
+                        .add(Restrictions.lt("registeredUser.latestTaskNotificationDate", reminderBaseline)))
                 .add(Restrictions.gt("applicationFormActionRequired.deadlineTimestamp", expiryBaseline)).list();
-        
-        deduplicatedUsers.addAll(applicationUsers);
-        return new ArrayList<RegisteredUser>(deduplicatedUsers);
     }
     
     public List<RegisteredUser> getUsersDueUpdateNotification() {
         Date baseline = new Date();
         
-        HashSet<RegisteredUser> deduplicatedUsers = new HashSet<RegisteredUser>();
-        
-        List<RegisteredUser> applicationUsers = (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .setProjection(Projections.groupProperty("user"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("role", "role", JoinType.INNER_JOIN)
@@ -245,11 +232,8 @@ public class UserDAO {
                 .add(Restrictions.eq("raisesUpdateFlag", true))
                 .add(Restrictions.eq("updateTimestamp", baseline))
                 .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("user.latestUpdateNotificationDate", null))
-                        .add(Restrictions.lt("user.latestUpdateNotificationDate", baseline))).list();
-        
-        deduplicatedUsers.addAll(applicationUsers);
-        return new ArrayList<RegisteredUser>(deduplicatedUsers);
+                        .add(Restrictions.eq("registeredUser.latestUpdateNotificationDate", null))
+                        .add(Restrictions.lt("registeredUser.latestUpdateNotificationDate", baseline))).list();
     }
     
     private Date getReminderBaseline(Date baseline) {

@@ -1083,6 +1083,17 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return stateChangeComment;
     }
+    
+    public OfferRecommendedComment getOfferRecommendedComment() {
+        List<Comment> commentsReversed = Lists.reverse(getApplicationComments());
+        OfferRecommendedComment offerRecommendedComment = null;
+        for (Comment comment : commentsReversed) {
+            if (comment instanceof OfferRecommendedComment) {
+                offerRecommendedComment = (OfferRecommendedComment) comment;
+            }
+        }
+        return offerRecommendedComment;
+    }
 
     public Boolean getUseCustomReferenceQuestions() {
         return useCustomReferenceQuestions;

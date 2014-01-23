@@ -21,6 +21,12 @@ public class RoleDAO {
 	public RoleDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
+	
+	public void save(final Role role) {
+	    if (getRoleByAuthority(role.getId()) == null) {
+	        sessionFactory.getCurrentSession().save(role);
+	    }
+	}
 
 	public Role getRoleByAuthority(final Authority authority) {
 		return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("id", authority)).uniqueResult();

@@ -71,42 +71,43 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     public void sendDigestsToUsers() {
         ScheduledMailSendingService thisProxy = applicationContext.getBean(this.getClass());
+        Date baselineDate = new Date();
         
         log.trace("Sending task reminder to users");
-        for (RegisteredUser user : thisProxy.getUsersForTaskReminder()) {
+        for (RegisteredUser user : thisProxy.getUsersForTaskReminder(baselineDate)) {
             thisProxy.sendDigestEmail(user, DigestNotificationType.TASK_REMINDER);
         }
         log.trace("Finished sending task reminder to users");
 
         log.trace("Sending task notification to users");
-        for (RegisteredUser user : thisProxy.getUsersForTaskNotification()) {
+        for (RegisteredUser user : thisProxy.getUsersForTaskNotification(baselineDate)) {
             thisProxy.sendDigestEmail(user, DigestNotificationType.TASK_NOTIFICATION);
         }
         log.trace("Finished sending task notification to users");
 
         log.trace("Sending update notification to users");
-        for (RegisteredUser user : thisProxy.getUsersForUpdateNotification()) {
+        for (RegisteredUser user : thisProxy.getUsersForUpdateNotification(baselineDate)) {
             thisProxy.sendDigestEmail(user, DigestNotificationType.UPDATE_NOTIFICATION);
         }
         log.trace("Finished sending update notification to users");
     }
 
     @Transactional
-    public List<RegisteredUser> getUsersForTaskNotification() {
+    public List<RegisteredUser> getUsersForTaskNotification(Date baselineDate) {
         updateApplicationFormActionUrgentFlag();
-        return userDAO.getUsersDueTaskNotification();
+        return userDAO.getUsersDueTaskNotification(baselineDate);
     }
 
     @Transactional
-    public List<RegisteredUser> getUsersForTaskReminder() {
+    public List<RegisteredUser> getUsersForTaskReminder(Date baselineDate) {
         updateApplicationFormActionUrgentFlag();
-        return userDAO.getUsersDueTaskReminder();
+        return userDAO.getUsersDueTaskReminder(baselineDate);
     }
 
     @Transactional
-    public List<RegisteredUser> getUsersForUpdateNotification() {
+    public List<RegisteredUser> getUsersForUpdateNotification(Date baselineDate) {
         updateApplicationFormActionUrgentFlag();
-        return userDAO.getUsersDueUpdateNotification();
+        return userDAO.getUsersDueUpdateNotification(baselineDate);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

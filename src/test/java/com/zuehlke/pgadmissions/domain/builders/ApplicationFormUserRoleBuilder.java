@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -25,6 +26,10 @@ public class ApplicationFormUserRoleBuilder {
     private Role role;
     
     private Boolean raisesUpdateFlag = false;
+    
+    private Boolean raisesUrgentFlag = false;
+    
+    private Date updateTimestamp;
 
     public ApplicationFormUserRoleBuilder id(Integer id) {
         this.id = id;
@@ -38,6 +43,11 @@ public class ApplicationFormUserRoleBuilder {
 
     public ApplicationFormUserRoleBuilder actions(ApplicationFormActionRequired... actions) {
         this.actions.addAll(Arrays.asList(actions));
+        return this;
+    }
+    
+    public ApplicationFormUserRoleBuilder actions(List<ApplicationFormActionRequired> actions) {
+        this.actions.addAll(actions);
         return this;
     }
 
@@ -61,6 +71,16 @@ public class ApplicationFormUserRoleBuilder {
         return this;
     }
     
+    public ApplicationFormUserRoleBuilder raisesUrgentFlag(Boolean raisesUrgentFlag) {
+        this.raisesUrgentFlag = raisesUrgentFlag;
+        return this;
+    }
+    
+    public ApplicationFormUserRoleBuilder updateTimestamp(Date updateTimestamp) {
+        this.updateTimestamp = updateTimestamp;
+        return this;
+    }
+    
     public ApplicationFormUserRole build() {
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRole();
         applicationFormUserRole.setId(id);
@@ -70,6 +90,8 @@ public class ApplicationFormUserRoleBuilder {
         applicationFormUserRole.setUser(user);
         applicationFormUserRole.setRole(role);
         applicationFormUserRole.setRaisesUpdateFlag(raisesUpdateFlag);
+        applicationFormUserRole.setRaisesUrgentFlag(raisesUrgentFlag);
+        applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
         return applicationFormUserRole;
     }
 

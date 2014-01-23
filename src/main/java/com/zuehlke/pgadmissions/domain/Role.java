@@ -49,20 +49,20 @@ public class Role implements GrantedAuthority, Serializable {
         return id.toString();
     }
     
-    public Boolean getDoSendUpdateNotification() {
-        return doSendUpdateNotification;
-    }
-
-    public void setDoSendUpdateNotification(Boolean doSendUpdateNotification) {
-        this.doSendUpdateNotification = doSendUpdateNotification;
-    }
-    
     public ApplicationUpdateScope getUpdateVisibility() {
         return updateVisibility;
     }
 
     public void setUpdateVisibility(ApplicationUpdateScope updateVisibility) {
         this.updateVisibility = updateVisibility;
+    }
+    
+    public Boolean getDoSendUpdateNotification() {
+        return doSendUpdateNotification;
+    }
+
+    public void setDoSendUpdateNotification(Boolean doSendUpdateNotification) {
+        this.doSendUpdateNotification = doSendUpdateNotification;
     }
 
     @Override

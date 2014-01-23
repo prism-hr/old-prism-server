@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ApplicationFormCreationService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
@@ -48,7 +49,7 @@ public class RegisterController {
 
 	private final RegistrationService registrationService;
 
-	private final ApplicationsService applicationsService;
+	private final ApplicationFormCreationService applicationFormCreationService;
 
 	private final ProgramsService programService;
 
@@ -61,11 +62,11 @@ public class RegisterController {
 	}
 
 	@Autowired
-	public RegisterController(RegisterFormValidator validator, UserService userService, RegistrationService registrationService, ApplicationsService applicationsService, ProgramsService programService, ApplicationQueryStringParser applicationQueryStringParser, EncryptionHelper encryptionHelper, AdvertService advertService) {
+	public RegisterController(RegisterFormValidator validator, UserService userService, RegistrationService registrationService, ApplicationFormCreationService applicationFormCreationService, ProgramsService programService, ApplicationQueryStringParser applicationQueryStringParser, EncryptionHelper encryptionHelper, AdvertService advertService) {
 		this.registerFormValidator = validator;
 		this.userService = userService;
 		this.registrationService = registrationService;
-		this.applicationsService = applicationsService;
+		this.applicationFormCreationService = applicationFormCreationService;
 		this.programService = programService;
 		this.applicationQueryStringParser = applicationQueryStringParser;
 		this.advertService = advertService;
@@ -152,7 +153,7 @@ public class RegisterController {
 		}
 		String applyingAdvertId = params.get("advert");
 		String applyingAdvert = !StringUtils.isBlank(applyingAdvertId) ? "&advert=" + applyingAdvertId : "";
-		ApplicationForm newApplicationForm = applicationsService.createOrGetUnsubmittedApplicationForm(user, program, project);
+		ApplicationForm newApplicationForm = applicationFormCreationService.createOrGetUnsubmittedApplicationForm(user, program, project);
 		return redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber() + applyingAdvert;
 	}
 

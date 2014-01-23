@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormCreationService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -39,7 +39,7 @@ public class ApplicationFormControllerTest {
     private ProgramDAO programDAOMock;
     private ApplicationFormController applicationController;
     private ApplicationForm applicationForm;
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormCreationService applicationFormCreationServiceMock;
     private RegisteredUser student;
     private ProgramInstanceDAO programInstanceDAOMock;
     private UserService userServiceMock;
@@ -53,12 +53,12 @@ public class ApplicationFormControllerTest {
         program.setInstances(Arrays.asList(programInstance));
 
         EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
-        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null)).andReturn(applicationForm);
+        EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null)).andReturn(applicationForm);
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 
-        EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
+        EasyMock.replay(programDAOMock, applicationFormCreationServiceMock, programInstanceDAOMock);
         applicationController.createNewApplicationForm("ABC", null);
-        EasyMock.verify(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
+        EasyMock.verify(programDAOMock, applicationFormCreationServiceMock, programInstanceDAOMock);
     }
 
     @Test
@@ -74,13 +74,13 @@ public class ApplicationFormControllerTest {
 
         EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
         EasyMock.expect(programsServiceMock.getProject(projectId)).andReturn(project);
-        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
+        EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 
-        EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock, programsServiceMock);
+        EasyMock.replay(programDAOMock, applicationFormCreationServiceMock, programInstanceDAOMock, programsServiceMock);
 
         applicationController.createNewApplicationForm("ABC", projectId);
-        EasyMock.verify(applicationsServiceMock);
+        EasyMock.verify(applicationFormCreationServiceMock);
 
     }
 
@@ -92,9 +92,9 @@ public class ApplicationFormControllerTest {
         program.setInstances(Arrays.asList(programInstance));
 
         EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
-        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null)).andReturn(applicationForm);
+        EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(student, program, null)).andReturn(applicationForm);
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
-        EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
+        EasyMock.replay(programDAOMock, applicationFormCreationServiceMock, programInstanceDAOMock);
 
         ModelAndView modelAndView = applicationController.createNewApplicationForm("ABC", null);
         assertEquals(applicationForm.getApplicationNumber(), modelAndView.getModel().get("applicationId"));
@@ -148,10 +148,10 @@ public class ApplicationFormControllerTest {
 
         EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
         EasyMock.expect(programsServiceMock.getProject(projectId)).andReturn(project);
-        EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
+        EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 
-        EasyMock.replay(programDAOMock, programsServiceMock, applicationsServiceMock, programInstanceDAOMock);
+        EasyMock.replay(programDAOMock, programsServiceMock, applicationFormCreationServiceMock, programInstanceDAOMock);
         applicationController.createNewApplicationForm("ABC", projectId);
     }
 
@@ -168,10 +168,10 @@ public class ApplicationFormControllerTest {
     	
     	EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
     	EasyMock.expect(programsServiceMock.getProject(projectId)).andReturn(project);
-    	EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
+    	EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
     	EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
     	
-    	EasyMock.replay(programDAOMock, programsServiceMock, applicationsServiceMock, programInstanceDAOMock);
+    	EasyMock.replay(programDAOMock, programsServiceMock, applicationFormCreationServiceMock, programInstanceDAOMock);
     	applicationController.createNewApplicationForm("ABC", projectId);
     }
 
@@ -188,10 +188,10 @@ public class ApplicationFormControllerTest {
     	
     	EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
     	EasyMock.expect(programsServiceMock.getProject(projectId)).andReturn(null);
-    	EasyMock.expect(applicationsServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
+    	EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(student, program, project)).andReturn(applicationForm);
     	EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
     	
-    	EasyMock.replay(programDAOMock, programsServiceMock, applicationsServiceMock, programInstanceDAOMock);
+    	EasyMock.replay(programDAOMock, programsServiceMock, applicationFormCreationServiceMock, programInstanceDAOMock);
     	applicationController.createNewApplicationForm("ABC", projectId);
     }
 
@@ -200,12 +200,12 @@ public class ApplicationFormControllerTest {
         applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("ABC").build();
 
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationFormCreationServiceMock = EasyMock.createMock(ApplicationFormCreationService.class);
         programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         programsServiceMock = EasyMock.createMock(ProgramsService.class);
 
-        applicationController = new ApplicationFormController(programDAOMock, applicationsServiceMock, programInstanceDAOMock, userServiceMock,
+        applicationController = new ApplicationFormController(programDAOMock, applicationFormCreationServiceMock, programInstanceDAOMock, userServiceMock,
                 programsServiceMock);
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

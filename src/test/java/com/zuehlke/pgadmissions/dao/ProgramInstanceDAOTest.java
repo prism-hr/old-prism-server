@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.dao;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -13,6 +15,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hamcrest.Matchers;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -32,7 +36,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
     @Override
     public void setup() {
         super.setup();
-        institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
         save(institution);
     }
 
@@ -244,8 +248,6 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldFindAllProgramInstancesForProgramFeed() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
-
         ProgramFeed programFeed1 = new ProgramFeedBuilder().feedUrl("url").institution(institution).build();
         ProgramFeed programFeed2 = new ProgramFeedBuilder().feedUrl("url2").institution(institution).build();
 
@@ -260,7 +262,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         ProgramInstance programInstance3 = new ProgramInstanceBuilder().identifier("i3").program(program3).academicYear("1985")
                 .applicationStartDate(new Date()).applicationDeadline(new Date()).enabled(true).build();
 
-        save(institution, programFeed1, programFeed2, program1, program2, program3, programInstance1, programInstance2, programInstance3);
+        save(programFeed1, programFeed2, program1, program2, program3, programInstance1, programInstance2, programInstance3);
         flushAndClearSession();
 
         ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
@@ -274,6 +276,36 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
         List<Object[]> studyOptions = dao.getDistinctStudyOptions();
         assertTrue(studyOptions.size() > 0);
+    }
+
+    @Test
+    public void shouldGetLapsedInstances() {
+        Program program = ProgramBuilder.aProgram(institution).build();
+        DateTime today = new DateTime().withTimeAtStartOfDay();
+        DateTime yesterday = today.minusDays(1);
+        DateTime tomorrow = today.plusDays(1);
+
+        ProgramInstance instance1 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(true).disabledDate(yesterday.toDate())
+                .build();
+        ProgramInstance instance2 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(true).disabledDate(today.toDate()).build();
+        ProgramInstance instance3 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(true).disabledDate(tomorrow.toDate())
+                .build();
+        ProgramInstance instance4 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(false).disabledDate(yesterday.toDate())
+                .build();
+        ProgramInstance instance5 = ProgramInstanceBuilder.aProgramInstance(program).identifier("000").enabled(true).disabledDate(yesterday.toDate())
+                .build();
+
+        save(program, instance1, instance2, instance3, instance4, instance5);
+        flushAndClearSession();
+
+        ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
+        List<ProgramInstance> lapsedInstances = dao.getLapsedInstances();
+
+        assertThat(lapsedInstances, hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance1.getId()))));
+        assertThat(lapsedInstances, not(hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance2.getId())))));
+        assertThat(lapsedInstances, not(hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance3.getId())))));
+        assertThat(lapsedInstances, not(hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance4.getId())))));
+        assertThat(lapsedInstances, not(hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance5.getId())))));
     }
 
     private boolean listContainsId(ProgramInstance instance, List<ProgramInstance> instances) {

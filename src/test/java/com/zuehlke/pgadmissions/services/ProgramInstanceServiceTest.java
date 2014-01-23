@@ -313,6 +313,20 @@ public class ProgramInstanceServiceTest {
         assertThat(studyOptions, containsInAnyOrder(partOption, fullOption));
     }
     
+    @Test
+    public void souldDisableLapsedInstances(){
+        ProgramInstance instance1 = new ProgramInstanceBuilder().enabled(true).build();
+        ProgramInstance instance2 = new ProgramInstanceBuilder().enabled(true).build();
+        expect(programInstanceDAO.getLapsedInstances()).andReturn(Lists.newArrayList(instance1, instance2));
+        
+        replay();
+        service.disableLapsedInstances();
+        verify();
+        
+        assertFalse(instance1.getEnabled());
+        assertFalse(instance2.getEnabled());
+    }
+    
     private void assertProgramInstance(ProgramInstance programInstance, Program program, OpportunityRequest opportunityRequest, DateTime startDate,
             DateTime deadline, StudyOption studyOption) {
         assertEquals(startDate.toDate(), programInstance.getApplicationStartDate());

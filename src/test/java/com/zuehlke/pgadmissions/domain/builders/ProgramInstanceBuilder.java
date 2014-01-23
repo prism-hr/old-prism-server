@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 
@@ -87,7 +89,12 @@ public class ProgramInstanceBuilder {
         programInstance.setEnabled(enabled);
         programInstance.setDisabledDate(disabledDate);
         return programInstance;
+    }
 
+    public static ProgramInstanceBuilder aProgramInstance(Program program) {
+        return new ProgramInstanceBuilder().identifier("instance").program(program).academicYear("1985")
+                .applicationStartDate(new DateTime(2014, 2, 13, 0, 0).toDate()).applicationDeadline(new DateTime(2015, 2, 13, 0, 0).toDate()).enabled(true)
+                .disabledDate(new DateTime(2015, 1, 13, 0, 0).toDate()).studyOption("F+++++", "Full-time");
     }
 
 }

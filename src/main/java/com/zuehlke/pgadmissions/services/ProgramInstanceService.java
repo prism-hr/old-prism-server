@@ -213,5 +213,13 @@ public class ProgramInstanceService {
         }
         return studyOptions;
     }
-    
+
+    @Transactional
+    public void disableLapsedInstances() {
+        List<ProgramInstance> lapsedInstances = programInstanceDAO.getLapsedInstances();
+        for (ProgramInstance lapsedInstance : lapsedInstances) {
+            lapsedInstance.setEnabled(false);
+        }
+    }
+
 }

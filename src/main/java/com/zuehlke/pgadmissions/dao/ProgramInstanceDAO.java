@@ -10,6 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -89,6 +90,12 @@ public class ProgramInstanceDAO {
 
     public void save(ProgramInstance programInstance) {
         sessionFactory.getCurrentSession().saveOrUpdate(programInstance);
+    }
+
+    public List<ProgramInstance> getLapsedInstances() {
+        Date today = new DateTime().withTimeAtStartOfDay().toDate();
+        return sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).add(Restrictions.lt("disabledDate", today))
+                .add(Restrictions.eq("enabled", true)).add(Restrictions.eq("identifier", "CUSTOM")).list();
     }
 
 }

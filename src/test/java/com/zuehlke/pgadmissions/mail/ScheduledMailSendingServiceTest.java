@@ -16,11 +16,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.easymock.Capture;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -101,9 +103,12 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
        
         ScheduledMailSendingService thisServiceMock = createMock(ScheduledMailSendingService.class);
 
-        expect(thisServiceMock.getUsersForTaskReminder()).andReturn(potentialUsersForTaskReminder);
-        expect(thisServiceMock.getUsersForTaskNotification()).andReturn(potentialUsersForTaskNotification);
-        expect(thisServiceMock.getUsersForUpdateNotification()).andReturn(usersForUpdateNotification);
+        DateTime baselineDateTime = new DateTime(new Date());
+        DateTime cleanBaselineDateTime = new DateTime(baselineDateTime.getYear(), baselineDateTime.getMonthOfYear(), baselineDateTime.getDayOfMonth(), 0, 0, 0);
+        Date cleanBaselineDate = cleanBaselineDateTime.toDate();
+        expect(thisServiceMock.getUsersForTaskReminder(cleanBaselineDate)).andReturn(potentialUsersForTaskReminder);
+        expect(thisServiceMock.getUsersForTaskNotification(cleanBaselineDate)).andReturn(potentialUsersForTaskNotification);
+        expect(thisServiceMock.getUsersForUpdateNotification(cleanBaselineDate)).andReturn(usersForUpdateNotification);
 
         expect(applicationContextMock.getBean(ScheduledMailSendingService.class)).andReturn(thisServiceMock);
 

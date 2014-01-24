@@ -168,6 +168,7 @@ public class LanguageQualification implements Serializable {
     }
 
     public void setLanguageQualificationDocument(Document languageQualificationDocument) {
+        languageQualificationDocument.setIsReferenced(true);
         this.languageQualificationDocument = languageQualificationDocument;
     }
     

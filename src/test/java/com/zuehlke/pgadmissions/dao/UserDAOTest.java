@@ -15,11 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.easymock.EasyMock;
-import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
@@ -42,6 +40,8 @@ import com.zuehlke.pgadmissions.domain.helpers.NotificationListTestScenario;
 import com.zuehlke.pgadmissions.domain.helpers.RegisteredUserTestHarness;
 
 public class UserDAOTest extends AutomaticRollbackTestCase {
+    
+    private static final int NOTIFICATION_TEST_ITERATIONS = 10;
 
     private static final int NOTIFICATION_REMINDER_INTERVAL = 8;
 
@@ -540,28 +540,35 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         List<RegisteredUser> usersDueUpdateNotification = userDAO.getUsersDueUpdateNotification(notificationBaselineDate);
 
         EasyMock.verify(reminderIntervalDAOMock, notificationsDurationDAOMock);
+        
+        int actualTaskReminderCount = 0;
+        int actualTaskNotificationCount = 0;
+        int actualUpdateNotificationCount = 0;
 
         for (RegisteredUser user : usersDueTaskReminder) {
-            if (testInstances.containsKey(user)) {
-                assertEquals(testInstances.get(user).getNotificationListTestScenario(), NotificationListTestScenario.TASKREMINDERSUCCESS);
+            if (testInstances.containsKey(user)) {         
+                assertEquals(NotificationListTestScenario.TASKREMINDERSUCCESS, testInstances.get(user).getNotificationListTestScenario());
+                actualTaskReminderCount++;
             }
         }
 
         for (RegisteredUser user : usersDueTaskNotification) {
             if (testInstances.containsKey(user)) {
-                assertEquals(testInstances.get(user).getNotificationListTestScenario(), NotificationListTestScenario.TASKNOTIFICATIONSUCCESS);
+                assertEquals(NotificationListTestScenario.TASKNOTIFICATIONSUCCESS, testInstances.get(user).getNotificationListTestScenario());
+                actualTaskNotificationCount++;
             }
         }
 
         for (RegisteredUser user : usersDueUpdateNotification) {
             if (testInstances.containsKey(user)) {
-                assertEquals(testInstances.get(user).getNotificationListTestScenario(), NotificationListTestScenario.UPDATENOTIFICATIONSUCCESS);
+                assertEquals(NotificationListTestScenario.UPDATENOTIFICATIONSUCCESS, testInstances.get(user).getNotificationListTestScenario());
+                actualUpdateNotificationCount++;
             }
         }
-
-        assertEquals(usersDueTaskReminder.size(), userNotificationListBuilder.getTaskReminderSuccessCount());
-        assertEquals(usersDueTaskNotification.size(), userNotificationListBuilder.getTaskNotificationSuccessCount());
-        assertEquals(usersDueUpdateNotification.size(), userNotificationListBuilder.getUpdateNotificationSuccessCount());
+        
+        assertEquals(userNotificationListBuilder.getTaskReminderSuccessCount() / NOTIFICATION_TEST_ITERATIONS, actualTaskReminderCount);
+        assertEquals(userNotificationListBuilder.getTaskNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS, actualTaskNotificationCount);
+        assertEquals(userNotificationListBuilder.getUpdateNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS, actualUpdateNotificationCount);
     }
 
     @Before
@@ -575,11 +582,10 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
 
         DateTime baseline = new DateTime(new Date());
-        DateTime cleanBaseline = new DateTime(baseline.getYear(), baseline.getMonthOfYear(), baseline.getDayOfYear(), 0, 0, 0);
+        DateTime cleanBaseline = new DateTime(baseline.getYear(), baseline.getMonthOfYear(), baseline.getDayOfMonth(), 0, 0, 0);
         notificationBaselineDate = cleanBaseline.toDate();
 
-        userNotificationListBuilder = new UserNotificationListBuilder(notificationBaselineDate, NOTIFICATION_REMINDER_INTERVAL, NOTIFICATION_EXPIRY_INTERVAL,
-                userDAO, applicationFormDAO, roleDAO, actionDAO, applicationFormUserRoleDAO);
+        userNotificationListBuilder = new UserNotificationListBuilder(sessionFactory, notificationBaselineDate, NOTIFICATION_TEST_ITERATIONS, NOTIFICATION_REMINDER_INTERVAL, NOTIFICATION_EXPIRY_INTERVAL);
     }
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {

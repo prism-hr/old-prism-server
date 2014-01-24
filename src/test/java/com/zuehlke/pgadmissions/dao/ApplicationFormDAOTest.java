@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hamcrest.Matcher;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -217,6 +218,27 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetNoApplicationsByApplicantAndProgram() {
         List<ApplicationForm> applications = applicationDAO.getApplicationsByApplicantAndProgram(user, program);
         assertThat(applications, is(empty()));
+    }
+
+    @Test
+    public void shouldGetPreviousApplicationForApplicant() {
+        DateTime initialDate = new DateTime(2014, 5, 13, 15, 56);
+
+        RegisteredUser otherApplicant = new RegisteredUserBuilder().firstName("Other").lastName("Applicant").email("other@applicant.com").username("other")
+                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+
+        ApplicationForm applicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).toDate()).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        ApplicationForm applicationForm2 = new ApplicationFormBuilder().submittedDate(initialDate.toDate()).program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationForm3 = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(1).toDate()).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).build();
+        ApplicationForm recentApplicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).plusMinutes(2).toDate()).program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).build();
+
+        ApplicationForm otherApplication = new ApplicationFormBuilder().submittedDate(initialDate.plusWeeks(1).toDate()).program(program).applicant(otherApplicant).status(ApplicationFormStatus.REVIEW).build();
+
+        save(otherApplicant, applicationForm, applicationForm2, applicationForm3, recentApplicationForm, otherApplication);
+        
+        ApplicationForm returned = applicationDAO.getPreviousApplicationForApplicant(recentApplicationForm);
+        
+        assertEquals(applicationForm.getId(), returned.getId());
     }
 
 }

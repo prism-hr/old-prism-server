@@ -8,7 +8,9 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 public class ApplicationFormDAO {
 
     private final SessionFactory sessionFactory;
-    
+
     private List<ApplicationFormStatus> activeStates = Lists.newArrayList();
 
     public ApplicationFormDAO() {
@@ -56,14 +58,12 @@ public class ApplicationFormDAO {
     }
 
     public List<ApplicationForm> getAllApplications() {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-        		.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 
     }
 
     public List<Qualification> getQualificationsByApplication(ApplicationForm application) {
-        return sessionFactory.getCurrentSession().createCriteria(Qualification.class)
-        		.add(Restrictions.eq("application", application))
+        return sessionFactory.getCurrentSession().createCriteria(Qualification.class).add(Restrictions.eq("application", application))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
@@ -78,10 +78,8 @@ public class ApplicationFormDAO {
 
         Date endYear = DateUtils.addYears(startYear, 1);
 
-        return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-        		.setProjection(Projections.rowCount())
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.between("applicationTimestamp", startYear, endYear)).uniqueResult();
+        return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).setProjection(Projections.rowCount())
+                .add(Restrictions.eq("program", program)).add(Restrictions.between("applicationTimestamp", startYear, endYear)).uniqueResult();
     }
 
     public ApplicationForm getApplicationByApplicationNumber(String applicationNumber) {
@@ -96,49 +94,52 @@ public class ApplicationFormDAO {
     }
 
     public List<ApplicationForm> getApplicationsByApplicantAndProgram(RegisteredUser applicant, Program program) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-        		.add(Restrictions.eq("applicant", applicant))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicant", applicant))
                 .add(Restrictions.eq("program", program)).list();
     }
 
     public List<ApplicationForm> getApplicationsByApplicantAndProgramAndProject(RegisteredUser applicant, Program program, Project project) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-        		.add(Restrictions.eq("applicant", applicant))
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("project", project)).list();
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicant", applicant))
+                .add(Restrictions.eq("program", program)).add(Restrictions.eq("project", project)).list();
     }
-    
+
     public List<ApplicationForm> getApplicationsByProject(Project project) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .add(Restrictions.eq("project", project)).list();
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("project", project)).list();
     }
-    
+
     public List<ApplicationForm> getActiveApplicationsByProgram(Program program) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .add(Restrictions.eq("program", program))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("program", program))
                 .add(Restrictions.in("state", activeStates)).list();
     }
-    
+
     public List<ApplicationForm> getActiveApplicationsByProject(Project project) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .add(Restrictions.eq("project", project))
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("project", project))
                 .add(Restrictions.in("state", activeStates)).list();
     }
-    
+
     public ApplicationForm getApplicationByDocument(Document document) {
-        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-        		.createAlias("personalDetails", "personalDetails")
-        		.createAlias("personalDetails.languageQualifications", "languageQualification")
-        		.createAlias("qualifications", "qualification")
-        		.createAlias("fundings", "funding")
-        		.createAlias("applicationComments", "comment")
-        		.add(Restrictions.disjunction()
-        				.add(Restrictions.eq("languageQualication.languageQualificationDocument", document))
-        				.add(Restrictions.eq("qualification.proofOfAward", document))
-        				.add(Restrictions.eq("funding.document", document))
-        				.add(Restrictions.eq("comment.documents", document))
-        				.add(Restrictions.eq("personalStatement", document))
-        				.add(Restrictions.eq("cv", document))).uniqueResult();
+        return (ApplicationForm) sessionFactory
+                .getCurrentSession()
+                .createCriteria(ApplicationForm.class)
+                .createAlias("personalDetails", "personalDetails")
+                .createAlias("personalDetails.languageQualifications", "languageQualification")
+                .createAlias("qualifications", "qualification")
+                .createAlias("fundings", "funding")
+                .createAlias("applicationComments", "comment")
+                .add(Restrictions.disjunction().add(Restrictions.eq("languageQualication.languageQualificationDocument", document))
+                        .add(Restrictions.eq("qualification.proofOfAward", document)).add(Restrictions.eq("funding.document", document))
+                        .add(Restrictions.eq("comment.documents", document)).add(Restrictions.eq("personalStatement", document))
+                        .add(Restrictions.eq("cv", document))).uniqueResult();
     }
-    
+
+    public ApplicationForm getPreviousApplicationForApplicant(ApplicationForm applicationForm) {
+        DetachedCriteria previousAppCriteria = DetachedCriteria.forClass(ApplicationForm.class) //
+                .setProjection(Projections.max("applicationTimestamp")) //
+                .add(Restrictions.eq("applicant", applicationForm.getApplicant())) //
+                .add(Restrictions.ne("id", applicationForm.getId()));
+
+        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .add(Property.forName("applicationTimestamp").eq(previousAppCriteria)).uniqueResult();
+    }
+
 }

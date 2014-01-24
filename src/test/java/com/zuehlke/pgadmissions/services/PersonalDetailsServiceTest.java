@@ -1,12 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.ArrayList;
-
 import org.easymock.EasyMock;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 
@@ -37,9 +34,6 @@ public class PersonalDetailsServiceTest {
         personalDetailsMock.setPassportAvailable(false);
         personalDetailDAOMock.save(personalDetailsMock);
 
-        EasyMock.expect(personalDetailsMock.getEnglishFirstLanguage()).andReturn(true);
-        EasyMock.expect(personalDetailsMock.getLanguageQualifications()).andReturn(new ArrayList<LanguageQualification>());
-        
         EasyMock.replay(personalDetailDAOMock, personalDetailsMock);
         
         detailsService.save(personalDetailsMock);

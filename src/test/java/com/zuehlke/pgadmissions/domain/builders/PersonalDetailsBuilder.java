@@ -36,7 +36,7 @@ public class PersonalDetailsBuilder {
 
     private Boolean englishFirstLanguage;
     private Boolean languageQualificationAvailable;
-    private List<LanguageQualification> languageQualifications = new ArrayList<LanguageQualification>();
+    private LanguageQualification languageQualification;
 
     private Boolean passportAvailable;
     private Boolean requiresVisa;
@@ -47,13 +47,8 @@ public class PersonalDetailsBuilder {
         return this;
     }
 
-    public PersonalDetailsBuilder languageQualifications(List<LanguageQualification> languageQualifications) {
-        this.languageQualifications = languageQualifications;
-        return this;
-    }
-
-    public PersonalDetailsBuilder languageQualifications(LanguageQualification... languageQualifications) {
-        this.languageQualifications = new ArrayList<LanguageQualification>(Arrays.asList(languageQualifications));
+    public PersonalDetailsBuilder languageQualification(LanguageQualification languageQualification) {
+        this.languageQualification = languageQualification;
         return this;
     }
 
@@ -159,7 +154,7 @@ public class PersonalDetailsBuilder {
         personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
         personalDetails.setRequiresVisa(requiresVisa);
         personalDetails.setPhoneNumber(phoneNumber);
-        personalDetails.setLanguageQualifications(languageQualifications);
+        personalDetails.setLanguageQualification(languageQualification);
         personalDetails.setPassportInformation(passportInformation);
         personalDetails.setLanguageQualificationAvailable(languageQualificationAvailable);
         personalDetails.setPassportAvailable(passportAvailable);

@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,7 +21,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
 
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.Title;
@@ -56,12 +52,9 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @Column(name = "language_qualification_available")
     private Boolean languageQualificationAvailable;
 
-    @Valid
-    @OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE,
-            javax.persistence.CascadeType.MERGE }, orphanRemoval = true)
-    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-    @JoinColumn(name = "application_form_personal_detail_id")
-    private List<LanguageQualification> languageQualifications = new ArrayList<LanguageQualification>();
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "language_qualification_id")
+    private LanguageQualification languageQualification;
 
     @Column(name = "requires_visa")
     private Boolean requiresVisa;
@@ -108,8 +101,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @JoinColumn(name = "domicile_id")
     private Domicile residenceCountry;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_form_id")
+    @OneToOne(mappedBy = "personalDetails", fetch = FetchType.LAZY)
     private ApplicationForm application = null;
 
     public void setId(Integer id) {
@@ -280,9 +272,6 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 
     public void setLanguageQualificationAvailable(Boolean languageQualificationAvailable) {
         this.languageQualificationAvailable = languageQualificationAvailable;
-        if (BooleanUtils.isNotTrue(languageQualificationAvailable)) {
-            this.languageQualifications = new ArrayList<LanguageQualification>();
-        }
     }
 
     public PassportInformation getPassportInformation() {
@@ -296,33 +285,12 @@ public class PersonalDetails implements FormSectionObject, Serializable {
         }
     }
 
-    public List<LanguageQualification> getLanguageQualifications() {
-        return languageQualifications;
+    public LanguageQualification getLanguageQualification() {
+        return languageQualification;
     }
 
-    public void setLanguageQualifications(List<LanguageQualification> languageQualifications) {
-        this.languageQualifications = languageQualifications;
-    }
-
-    public void addLanguageQualification(LanguageQualification languageQualification) {
-        if (languageQualification != null && languageQualification.getPersonalDetails() == null) {
-            languageQualification.setPersonalDetails(this);
-            this.languageQualifications.add(languageQualification);
-        } else if (languageQualification != null) {
-            this.languageQualifications.add(languageQualification);
-        }
-    }
-
-    public List<LanguageQualification> getLanguageQualificationToSend() {
-        List<LanguageQualification> result = new ArrayList<LanguageQualification>(1);
-        for (LanguageQualification languageQualification : languageQualifications) {
-            if (BooleanUtils.isTrue(languageQualification.getSendToUCL())) {
-                Validate.notNull(languageQualification.getLanguageQualificationDocument(), "LanguageQualification with id: " + languageQualification.getId()
-                        + " is marked for sending to UCL but has no document assosiated with it.");
-                result.add(languageQualification);
-            }
-        }
-        return result;
+    public void setLanguageQualification(LanguageQualification languageQualification) {
+        this.languageQualification = languageQualification;
     }
 
 }

@@ -104,17 +104,17 @@ $(document).ready(function() {
 	});
 
 	// -------------------------------------------------------------------------------
-	// Is English your first language?*
-	// -------------------------------------------------------------------------------
-	$("input[name='englishFirstLanguage']").bind('change',
-			function() {
-				var returnVal = isEnglishFirstLanguage();
-				if (returnVal) {
-					ajaxDeleteAllLanguageQualifications();
-				}
-			});
-
-	// -------------------------------------------------------------------------------
+    // Is English your first language?*
+    // -------------------------------------------------------------------------------
+    $("input[name='englishFirstLanguage']").bind('change',
+            function() {
+                var returnVal = isEnglishFirstLanguage();
+                if (returnVal) {
+                    ajaxDeleteAllLanguageQualifications();
+                }
+            });
+  
+    // -------------------------------------------------------------------------------
 	// Language Qualification available
 	// -------------------------------------------------------------------------------
 	$("input[name='languageQualificationAvailable']").bind('change',function() {
@@ -128,7 +128,6 @@ $(document).ready(function() {
 			enableLanguageQualifications();
 		} else {
 			disableLanguageQualifications();
-			ajaxDeleteAllLanguageQualifications();
 		}
 	});
 
@@ -291,54 +290,6 @@ function ajaxLanguageQualificationDocumentDelete() {
 
 }
 
-function ajaxDeleteAllLanguageQualifications() {
-	var postData = {
-		applicationId : $('#applicationId').val(),
-		cacheBreaker : new Date().getTime(),
-	};
-
-	if ($('input:radio[name=englishFirstLanguage]:checked').length > 0) {
-		postData.englishFirstLanguage = $(
-				'input:radio[name=englishFirstLanguage]:checked').val();
-	}
-
-	if ($('input:radio[name=languageQualificationAvailable]:checked').length > 0) {
-		postData.languageQualificationAvailable = $(
-				'input:radio[name=languageQualificationAvailable]:checked')
-				.val();
-	}
-
-	$.ajax({
-		type : 'POST',
-		statusCode : {
-			401 : function() {
-				window.location.reload();
-			},
-			500 : function() {
-				window.location.href = "/pgadmissions/error";
-			},
-			404 : function() {
-				window.location.href = "/pgadmissions/404";
-			},
-			400 : function() {
-				window.location.href = "/pgadmissions/400";
-			},
-			403 : function() {
-				window.location.href = "/pgadmissions/404";
-			}
-		},
-		url : "/pgadmissions/update/deleteAllLanguageQualifications",
-		data : postData,
-		success : function(data) {
-			$('#languageQualification_div').html(data);
-			bindDatePicker('#dateOfExamination');
-			addToolTips();
-		},
-		complete : function() {
-		}
-	});
-}
-
 function selectValue(elementName) {
 	var selectedType = $('#qualificationType').val();
 	if (selectedType === "IELTS_ACADEMIC") {
@@ -494,7 +445,7 @@ function clearLanguageQualification() {
 			.hide();
 
 	ajaxLanguageQualificationDocumentDelete();
-	$("#languageQualificationDocument").val();
+	deleteQualificationDocumentFile();
 }
 
 function disableOtherLanguageQualification() {
@@ -597,21 +548,21 @@ function postPersonalDetailsData(message) {
 		'passportInformation.passportIssueDate' : $("#passportIssueDate").val(),
 		'passportInformation.passportExpiryDate' : $("#passportExpiryDate")
 				.val(),
-		'languageQualifications[0].languageQualificationId' : $(
+		'languageQualification.languageQualificationId' : $(
 				'#languageQualificationId').val(),
-		'languageQualifications[0].qualificationType' : $('#qualificationType')
+		'languageQualification.qualificationType' : $('#qualificationType')
 				.val(),
-		'languageQualifications[0].otherQualificationTypeName' : $(
+		'languageQualification.otherQualificationTypeName' : $(
 				'#otherQualificationTypeName').val(),
-		'languageQualifications[0].dateOfExamination' : $('#dateOfExamination')
+		'languageQualification.dateOfExamination' : $('#dateOfExamination')
 				.val(),
-		'languageQualifications[0].overallScore' : selectValue('overallScore'),
-		'languageQualifications[0].readingScore' : selectValue('readingScore'),
-		'languageQualifications[0].writingScore' : selectValue('writingScore'),
-		'languageQualifications[0].speakingScore' : selectValue('speakingScore'),
-		'languageQualifications[0].listeningScore' : selectValue('listeningScore'),
-		'languageQualifications[0].examTakenOnline' : examTakenOnline,
-		'languageQualifications[0].languageQualificationDocument' : documentLanguageQualification,
+		'languageQualification.overallScore' : selectValue('overallScore'),
+		'languageQualification.readingScore' : selectValue('readingScore'),
+		'languageQualification.writingScore' : selectValue('writingScore'),
+		'languageQualification.speakingScore' : selectValue('speakingScore'),
+		'languageQualification.listeningScore' : selectValue('listeningScore'),
+		'languageQualification.examTakenOnline' : examTakenOnline,
+		'languageQualification.languageQualificationDocument' : documentLanguageQualification,
 		message : message,
 		acceptedTerms : acceptedTheTerms,
 		cacheBreaker : new Date().getTime()

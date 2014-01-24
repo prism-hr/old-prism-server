@@ -194,12 +194,12 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         headerEvent = new HeaderEvent(new Chunk(form.getProgram().getTitle(), SMALLER_FONT), new Chunk(form.getApplicationNumber(), SMALLER_FONT),
-                        submittedDateHeader);
+                submittedDateHeader);
         writer.setPageEvent(headerEvent);
     }
 
     protected void addCoverPage(final ApplicationForm form, final Document pdfDocument, final PdfWriter writer) throws MalformedURLException, IOException,
-                    DocumentException {
+            DocumentException {
         pdfDocument.newPage();
 
         Image image = Image.getInstance(this.getClass().getResource("/prism_logo.png"));
@@ -225,7 +225,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
         RegisteredUser applicant = form.getApplicant();
         String fullName = Joiner.on(" ").skipNulls()
-                        .join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3(), applicant.getLastName());
+                .join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3(), applicant.getLastName());
         table.addCell(newTableCell(fullName, SMALL_FONT));
         table.addCell(newTableCell("Programme", SMALL_BOLD_FONT));
         table.addCell(newTableCell(form.getProgram().getTitle(), SMALL_FONT));
@@ -507,71 +507,71 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getPersonalDetails().getLanguageQualifications().isEmpty()) {
+        if (form.getPersonalDetails().getLanguageQualification() == null) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("English Language Qualifications", SMALL_BOLD_FONT));
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
             int counter = 1;
-            for (LanguageQualification qualification : form.getPersonalDetails().getLanguageQualifications()) {
-                table = new PdfPTable(2);
-                table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
-                PdfPCell headerCell = newTableCell("English Language Qualification (" + counter++ + ")", SMALL_BOLD_FONT);
-                headerCell.setColspan(2);
-                table.addCell(headerCell);
+            LanguageQualification qualification = form.getPersonalDetails().getLanguageQualification();
+            table = new PdfPTable(2);
+            table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
+            PdfPCell headerCell = newTableCell("English Language Qualification (" + counter++ + ")", SMALL_BOLD_FONT);
+            headerCell.setColspan(2);
+            table.addCell(headerCell);
 
-                table.addCell(newTableCell("Qualification Type", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getQualificationType().getDisplayValue(), SMALL_FONT));
+            table.addCell(newTableCell("Qualification Type", SMALL_BOLD_FONT));
+            table.addCell(newTableCell(qualification.getQualificationType().getDisplayValue(), SMALL_FONT));
 
-                table.addCell(newTableCell("Other Qualification Type Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getOtherQualificationTypeName(), SMALL_FONT));
+            table.addCell(newTableCell("Other Qualification Type Name", SMALL_BOLD_FONT));
+            table.addCell(newTableCell(qualification.getOtherQualificationTypeName(), SMALL_FONT));
 
-                table.addCell(newTableCell("Date of Examination", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(dateFormat.format(qualification.getDateOfExamination()), SMALL_FONT));
+            table.addCell(newTableCell("Date of Examination", SMALL_BOLD_FONT));
+            table.addCell(newTableCell(dateFormat.format(qualification.getDateOfExamination()), SMALL_FONT));
 
-                table.addCell(newTableCell("Overall Score", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getOverallScore(), SMALL_FONT));
+            table.addCell(newTableCell("Overall Score", SMALL_BOLD_FONT));
+            table.addCell(newTableCell(qualification.getOverallScore(), SMALL_FONT));
 
-                table.addCell(newTableCell("Reading Score", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getReadingScore(), SMALL_FONT));
+            table.addCell(newTableCell("Reading Score", SMALL_BOLD_FONT));
+            table.addCell(newTableCell(qualification.getReadingScore(), SMALL_FONT));
 
-                table.addCell(newTableCell("Essay / Writing Score", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getWritingScore(), SMALL_FONT));
+            table.addCell(newTableCell("Essay / Writing Score", SMALL_BOLD_FONT));
+            table.addCell(newTableCell(qualification.getWritingScore(), SMALL_FONT));
 
-                table.addCell(newTableCell("Speaking Score", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getSpeakingScore(), SMALL_FONT));
+            table.addCell(newTableCell("Speaking Score", SMALL_BOLD_FONT));
+            table.addCell(newTableCell(qualification.getSpeakingScore(), SMALL_FONT));
 
-                table.addCell(newTableCell("Listening Score", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getListeningScore(), SMALL_FONT));
+            table.addCell(newTableCell("Listening Score", SMALL_BOLD_FONT));
+            table.addCell(newTableCell(qualification.getListeningScore(), SMALL_FONT));
 
-                table.addCell(newTableCell("Did you sit the exam online?", SMALL_BOLD_FONT));
-                if (qualification.getExamTakenOnline() == null) {
-                    table.addCell(newTableCell(null, SMALL_FONT));
+            table.addCell(newTableCell("Did you sit the exam online?", SMALL_BOLD_FONT));
+            if (qualification.getExamTakenOnline() == null) {
+                table.addCell(newTableCell(null, SMALL_FONT));
+            } else {
+                if (BooleanUtils.isTrue(qualification.getExamTakenOnline())) {
+                    table.addCell(newTableCell("Yes", SMALL_FONT));
                 } else {
-                    if (BooleanUtils.isTrue(qualification.getExamTakenOnline())) {
-                        table.addCell(newTableCell("Yes", SMALL_FONT));
-                    } else {
-                        table.addCell(newTableCell("No", SMALL_FONT));
-                    }
-                }
-
-                table.addCell(newTableCell("Certificate (PDF)", SMALL_BOLD_FONT));
-                if (includeAttachments) {
-                    if (qualification.getLanguageQualificationDocument() != null) {
-                        table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                        bookmarkMap.put(appendixCounter++, qualification.getLanguageQualificationDocument());
-                    } else {
-                        table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
-                    }
-                } else {
-                    if (qualification.getLanguageQualificationDocument() != null) {
-                        table.addCell(newTableCell(PROVIDED, SMALL_FONT));
-                    } else {
-                        table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
-                    }
+                    table.addCell(newTableCell("No", SMALL_FONT));
                 }
             }
+
+            table.addCell(newTableCell("Certificate (PDF)", SMALL_BOLD_FONT));
+            if (includeAttachments) {
+                if (qualification.getLanguageQualificationDocument() != null) {
+                    table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
+                    bookmarkMap.put(appendixCounter++, qualification.getLanguageQualificationDocument());
+                } else {
+                    table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                }
+            } else {
+                if (qualification.getLanguageQualificationDocument() != null) {
+                    table.addCell(newTableCell(PROVIDED, SMALL_FONT));
+                } else {
+                    table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
+                }
+            }
+
         }
 
         pdfDocument.add(table);
@@ -1007,7 +1007,8 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     try {
                         readPdf(pdfDocument, doc, pdfWriter);
                     } catch (Exception e) {
-                        log.warn(String.format("Error in generating pdf while appending supporting document %s for %s", form.getApplicationNumber(),
+                        log.warn(
+                                String.format("Error in generating pdf while appending supporting document %s for %s", form.getApplicationNumber(),
                                         doc.getFileName()), e);
                     }
                 }
@@ -1050,7 +1051,8 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     try {
                         readPdf(pdfDocument, refDocument, pdfWriter);
                     } catch (Exception e) {
-                        log.warn(String.format("Error in generating pdf while appending supporting document %s for %s", form.getApplicationNumber(),
+                        log.warn(
+                                String.format("Error in generating pdf while appending supporting document %s for %s", form.getApplicationNumber(),
                                         refDocument.getFileName()), e);
                     }
                 }

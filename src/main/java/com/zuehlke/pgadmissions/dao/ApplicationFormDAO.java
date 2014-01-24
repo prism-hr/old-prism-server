@@ -128,7 +128,7 @@ public class ApplicationFormDAO {
     public ApplicationForm getApplicationByDocument(Document document) {
         return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
         		.createAlias("personalDetails", "personalDetails")
-        		.createAlias("personalDetails.languageQualifications", "languageQualification")
+        		.createAlias("personalDetails.languageQualification", "languageQualification")
         		.createAlias("qualifications", "qualification")
         		.createAlias("fundings", "funding")
         		.createAlias("applicationComments", "comment")

@@ -89,7 +89,7 @@
     </div>
       
       <#if applicationForm.personalDetails.isLanguageQualificationAvailableSet() && applicationForm.personalDetails.languageQualificationAvailable>
-      <#assign languageQualification = applicationForm.personalDetails.languageQualifications[0]>
+      <#assign languageQualification = applicationForm.personalDetails.languageQualification>
       <div class="row-group">
           <div class="admin_row">
             <label class="admin_header">Language Qualifications</label>

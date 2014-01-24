@@ -88,7 +88,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Enumerated(EnumType.STRING)
     @Column(name = "next_status")
     private ApplicationFormStatus nextStatus = null;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status_when_withdrawn")
     private ApplicationFormStatus statusWhenWithdrawn = null;
@@ -245,7 +245,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Column(name = "avg_rating", precision = 3, scale = 2)
     private BigDecimal averageRating;
-    
+
     @Column(name = "use_custom_reference_questions")
     private Boolean useCustomReferenceQuestions = null;
 
@@ -434,6 +434,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setCv(Document cv) {
+        cv.setIsReferenced(true);
         this.cv = cv;
     }
 
@@ -442,6 +443,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setPersonalStatement(Document personalStatement) {
+        personalStatement.setIsReferenced(true);
         this.personalStatement = personalStatement;
     }
 
@@ -549,30 +551,30 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setStatus(ApplicationFormStatus status) {
-    	if (status == ApplicationFormStatus.WITHDRAWN) {
-    		this.statusWhenWithdrawn = this.status;
-    	}
-    	
+        if (status == ApplicationFormStatus.WITHDRAWN) {
+            this.statusWhenWithdrawn = this.status;
+        }
+
         this.status = status;
         this.nextStatus = null;
-        
-        if (Arrays.asList(ApplicationFormStatus.UNSUBMITTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,
-        		ApplicationFormStatus.INTERVIEW).contains(status)) {
-        	this.isEditableByApplicant = true;
+
+        if (Arrays.asList(ApplicationFormStatus.UNSUBMITTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW)
+                .contains(status)) {
+            this.isEditableByApplicant = true;
         } else {
-        	this.isEditableByApplicant = false;
+            this.isEditableByApplicant = false;
         }
-        
+
     }
 
     public ApplicationFormStatus getNextStatus() {
         return nextStatus;
     }
-    
+
     public void setNextStatus(ApplicationFormStatus nextStatus) {
         this.nextStatus = nextStatus;
     }
-    
+
     public ApplicationFormStatus getStatusWhenWithdrawn() {
         return statusWhenWithdrawn;
     }
@@ -1083,7 +1085,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return stateChangeComment;
     }
-    
+
     public OfferRecommendedComment getOfferRecommendedComment() {
         List<Comment> commentsReversed = Lists.reverse(getApplicationComments());
         OfferRecommendedComment offerRecommendedComment = null;
@@ -1102,5 +1104,5 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public void setUseCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
         this.useCustomReferenceQuestions = useCustomReferenceQuestions;
     }
-    
+
 }

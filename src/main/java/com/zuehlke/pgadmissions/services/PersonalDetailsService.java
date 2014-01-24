@@ -29,9 +29,6 @@ public class PersonalDetailsService {
             personalDetails.setPassportInformation(null);
         }
         
-        if (BooleanUtils.isTrue(personalDetails.getEnglishFirstLanguage()) || BooleanUtils.isNotTrue(personalDetails.getLanguageQualificationAvailable())) {
-            personalDetails.getLanguageQualifications().clear();
-        }
         personalDetailDAO.save(personalDetails);
     }
 }

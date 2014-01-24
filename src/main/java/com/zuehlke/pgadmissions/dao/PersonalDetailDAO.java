@@ -21,13 +21,9 @@ public class PersonalDetailDAO {
     }
 
     public void save(PersonalDetails personalDetails) {
-        if (personalDetails.getId() == null) {
-            sessionFactory.getCurrentSession().saveOrUpdate(personalDetails);
-        } else {
-            sessionFactory.getCurrentSession().merge(personalDetails);
-        }
+        sessionFactory.getCurrentSession().saveOrUpdate(personalDetails);
     }
-    
+
     public PersonalDetails getPersonalDetailsById(Integer id) {
         return (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, id);
     }

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
+import static com.google.common.base.Objects.firstNonNull;
+
 import java.util.Date;
 import java.util.List;
 
@@ -35,8 +37,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
@@ -129,8 +131,8 @@ public class PersonalDetailsController {
     public void registerPropertyEditorsForPersonalDetails(WebDataBinder binder) {
         binder.setValidator(personalDetailsValidator);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
-        binder.registerCustomEditor(String.class,"firstNationality", new StringTrimmerEditor(true));
-        binder.registerCustomEditor(String.class,"secondNationality", new StringTrimmerEditor(true));
+        binder.registerCustomEditor(String.class, "firstNationality", new StringTrimmerEditor(true));
+        binder.registerCustomEditor(String.class, "secondNationality", new StringTrimmerEditor(true));
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(Language.class, languagePropertyEditor);
         binder.registerCustomEditor(Country.class, countryPropertyEditor);
@@ -152,8 +154,8 @@ public class PersonalDetailsController {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
 
-        if (personalDetails.getLanguageQualifications().isEmpty()) {
-            personalDetails.addLanguageQualification(new LanguageQualification());
+        if (personalDetails.getLanguageQualification() == null) {
+            personalDetails.setLanguageQualification(new LanguageQualification());
         }
 
         model.addAttribute("personalDetails", personalDetails);
@@ -174,11 +176,11 @@ public class PersonalDetailsController {
         }
 
         if (BooleanUtils.isNotTrue(personalDetails.getLanguageQualificationAvailable())) {
-            personalDetails.getLanguageQualifications().clear();
+            personalDetails.setLanguageQualification(null);
         }
-        
+
         ApplicationForm applicationForm = personalDetails.getApplication();
-        
+
         userService.updateCurrentUser(updatedUser);
         personalDetailsService.save(personalDetails);
         applicationsService.save(applicationForm);
@@ -186,26 +188,11 @@ public class PersonalDetailsController {
 
         sessionStatus.setComplete();
 
-        if (personalDetails.getLanguageQualifications().isEmpty()) {
-            personalDetails.addLanguageQualification(new LanguageQualification());
+        if (personalDetails.getLanguageQualification() == null) {
+            personalDetails.setLanguageQualification(new LanguageQualification());
         }
 
         return "redirect:/update/getPersonalDetails?applicationId=" + personalDetails.getApplication().getApplicationNumber();
-    }
-
-    @RequestMapping(value = "/deleteAllLanguageQualifications", method = RequestMethod.POST)
-    public String deleteAllLanguageQualifications(@RequestParam(value = "englishFirstLanguage", required = false) Boolean englishFirstLanguage,
-            @RequestParam(value = "languageQualificationAvailable", required = false) Boolean languageQualificationAvailable,
-            @ModelAttribute("personalDetails") PersonalDetails personalDetails, Model model) {
-        for (LanguageQualification languageQualification : personalDetails.getLanguageQualifications()) {
-            languageQualification.setLanguageQualificationDocument(null);
-        }
-
-        personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
-        personalDetails.setLanguageQualificationAvailable(languageQualificationAvailable);
-        personalDetails.getLanguageQualifications().clear();
-        personalDetails.addLanguageQualification(new LanguageQualification());
-        return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
     }
 
     @RequestMapping(value = "/deleteLanguageQualificationsDocument", method = RequestMethod.POST)
@@ -275,17 +262,14 @@ public class PersonalDetailsController {
 
     public PersonalDetails getPersonalDetails(String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        if (applicationForm.getPersonalDetails() == null) {
-            return new PersonalDetails();
-        }
-        return applicationForm.getPersonalDetails();
+        return firstNonNull(applicationForm.getPersonalDetails(), new PersonalDetails());
     }
 
     @ModelAttribute
     public ApplicationForm getApplicationForm(String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
         if (application == null) {
-            throw new ResourceNotFoundException();
+            throw new MissingApplicationFormException(applicationId);
         }
         return application;
     }

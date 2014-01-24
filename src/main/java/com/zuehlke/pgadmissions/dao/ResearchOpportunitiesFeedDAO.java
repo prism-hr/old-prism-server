@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -44,7 +45,7 @@ public class ResearchOpportunitiesFeedDAO {
     @SuppressWarnings("unchecked")
     public boolean isUniqueFeedTitleForUser(final String title, final RegisteredUser user) {
         List<Integer> list = sessionFactory.getCurrentSession().createCriteria(ResearchOpportunitiesFeed.class)
-                .setProjection(Projections.property("id")).add(Restrictions.eq("title", title).ignoreCase())
+                .setProjection(Projections.property("id")).add(Restrictions.ilike("title", title, MatchMode.EXACT))
                 .add(Restrictions.eq("user", user)).list();
         return list.isEmpty();
     }

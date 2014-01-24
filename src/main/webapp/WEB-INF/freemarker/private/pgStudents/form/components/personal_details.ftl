@@ -1,23 +1,5 @@
 <#-- Assignments -->
 <#assign errorCode = RequestParameters.errorCode! />
-<#if personalDetails?has_content>
-    <#assign hasPersonalDetails = true>
-<#else>
-    <#assign hasPersonalDetails = false>
-</#if>
-
-<#if personalDetails.languageProficiencies?has_content>
-    <#assign proficiencyExist = true/>
-<#else>
-    <#assign proficiencyExist = false>
-</#if>
-
-
-<#if personalDetails.languageQualifications?has_content>
-  <#assign hasLanguageQualifications = true>
-<#else>
-  <#assign hasLanguageQualifications = false>
-</#if>
 
 <#import "/spring.ftl" as spring />
 <#setting locale = "en_US">

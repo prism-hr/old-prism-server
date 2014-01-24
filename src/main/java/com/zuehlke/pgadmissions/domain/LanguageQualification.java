@@ -26,19 +26,18 @@ public class LanguageQualification implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "language_qualification_document_id")
     private Document languageQualificationDocument;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_form_personal_detail_id")
-    private PersonalDetails personalDetails = null;
-    
+
+    @OneToOne(mappedBy = "languageQualification")
+    private PersonalDetails personalDetails;
+
     @Column(name = "qualification_type")
     @Enumerated(EnumType.STRING)
     LanguageQualificationEnum qualificationType;
-    
+
     @Column(name = "other_qualification_type_name")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
     private String otherQualificationTypeName;
@@ -63,13 +62,10 @@ public class LanguageQualification implements Serializable {
 
     @Column(name = "exam_taken_online")
     private Boolean examTakenOnline;
-    
-	@Column(name="send_to_ucl")
-	private Boolean sendToUCL;
 
-	public LanguageQualification() {
+    public LanguageQualification() {
     }
-    
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -141,7 +137,7 @@ public class LanguageQualification implements Serializable {
     public void setListeningScore(String listeningScore) {
         this.listeningScore = listeningScore;
     }
-    
+
     // freemarker convinience method
     public boolean isExamTakenOnlineSet() {
         return (examTakenOnline != null);
@@ -162,7 +158,7 @@ public class LanguageQualification implements Serializable {
     public void setPersonalDetails(PersonalDetails personalDetails) {
         this.personalDetails = personalDetails;
     }
-    
+
     public Document getLanguageQualificationDocument() {
         return languageQualificationDocument;
     }
@@ -170,21 +166,13 @@ public class LanguageQualification implements Serializable {
     public void setLanguageQualificationDocument(Document languageQualificationDocument) {
         this.languageQualificationDocument = languageQualificationDocument;
     }
-    
-    public Boolean getSendToUCL() {
-		return sendToUCL;
-	}
-    
-    public void setSendToUCL(Boolean sendToUCL) {
-		this.sendToUCL = sendToUCL;
-	}
 
     @Override
     public String toString() {
         return String
                 .format("LanguageQualification [personalDetails=%s, qualificationType=%s, otherQualificationTypeName=%s, dateOfExamination=%s, overallScore=%s, readingScore=%s, writingScore=%s, speakingcore=%s, listeningScore=%s, examTakenOnline=%s]",
-                        personalDetails, qualificationType, otherQualificationTypeName, dateOfExamination,
-                        overallScore, readingScore, writingScore, speakingScore, listeningScore, examTakenOnline);
+                        personalDetails, qualificationType, otherQualificationTypeName, dateOfExamination, overallScore, readingScore, writingScore,
+                        speakingScore, listeningScore, examTakenOnline);
     }
 
 }

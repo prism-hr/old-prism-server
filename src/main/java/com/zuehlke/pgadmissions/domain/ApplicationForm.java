@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -36,6 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -88,7 +90,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Enumerated(EnumType.STRING)
     @Column(name = "next_status")
     private ApplicationFormStatus nextStatus = null;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status_when_withdrawn")
     private ApplicationFormStatus statusWhenWithdrawn = null;
@@ -147,8 +149,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
-    @Valid
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "personal_detail_id")
     private PersonalDetails personalDetails;
 
     @OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
@@ -546,30 +548,30 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setStatus(ApplicationFormStatus status) {
-    	if (status == ApplicationFormStatus.WITHDRAWN) {
-    		this.statusWhenWithdrawn = this.status;
-    	}
-    	
+        if (status == ApplicationFormStatus.WITHDRAWN) {
+            this.statusWhenWithdrawn = this.status;
+        }
+
         this.status = status;
         this.nextStatus = null;
-        
-        if (Arrays.asList(ApplicationFormStatus.UNSUBMITTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,
-        		ApplicationFormStatus.INTERVIEW).contains(status)) {
-        	this.isEditableByApplicant = true;
+
+        if (Arrays.asList(ApplicationFormStatus.UNSUBMITTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW)
+                .contains(status)) {
+            this.isEditableByApplicant = true;
         } else {
-        	this.isEditableByApplicant = false;
+            this.isEditableByApplicant = false;
         }
-        
+
     }
 
     public ApplicationFormStatus getNextStatus() {
         return nextStatus;
     }
-    
+
     public void setNextStatus(ApplicationFormStatus nextStatus) {
         this.nextStatus = nextStatus;
     }
-    
+
     public ApplicationFormStatus getStatusWhenWithdrawn() {
         return statusWhenWithdrawn;
     }
@@ -1080,5 +1082,5 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         }
         return stateChangeComment;
     }
-    
+
 }

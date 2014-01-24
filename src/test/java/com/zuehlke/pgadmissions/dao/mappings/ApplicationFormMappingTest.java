@@ -128,14 +128,12 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         save(country1, country2, country3, nationality1);
 
         ApplicationForm application = new ApplicationFormBuilder().applicant(user).program(program).build();
-
-        sessionFactory.getCurrentSession().save(application);
-        flushAndClearSession();
         PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).firstNationality(nationality1)
                 .dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).title(Title.MR).gender(Gender.MALE).residenceDomicile(country3)
                 .requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").applicationForm(application).build();
+        application.setPersonalDetails(personalDetails);
 
-        sessionFactory.getCurrentSession().save(personalDetails);
+        sessionFactory.getCurrentSession().save(application);
         flushAndClearSession();
 
         ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());

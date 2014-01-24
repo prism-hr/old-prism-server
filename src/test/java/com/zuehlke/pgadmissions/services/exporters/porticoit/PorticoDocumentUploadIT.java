@@ -695,11 +695,8 @@ public class PorticoDocumentUploadIT {
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder) {
             @Override
             protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
-                List<LanguageQualification> languageQualifications = applicationForm.getPersonalDetails().getLanguageQualificationToSend();
-                if (languageQualifications.size() > 1) {
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 1 languageQualification marked for sending to UCL");
-                }
-                if (!languageQualifications.isEmpty()) {
+                LanguageQualification languageQualification = applicationForm.getPersonalDetails().getLanguageQualification();
+                if (languageQualification != null) {
                     String filename = getRandomFilename();
                     zos.putNextEntry(new ZipEntry(filename));
                     zos.write(FileUtils.readFileToByteArray(validPdf.getFile()));
@@ -719,16 +716,13 @@ public class PorticoDocumentUploadIT {
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder) {
             @Override
             protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
-                List<LanguageQualification> languageQualifications = applicationForm.getPersonalDetails().getLanguageQualificationToSend();
-                if (languageQualifications.size() > 1) {
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 1 languageQualification marked for sending to UCL");
-                }
-                if (!languageQualifications.isEmpty()) {
+                LanguageQualification languageQualification = applicationForm.getPersonalDetails().getLanguageQualification();
+                if (languageQualification != null) {
                     String filename = getRandomFilename();
                     zos.putNextEntry(new ZipEntry(filename));
                     zos.write(FileUtils.readFileToByteArray(validPdf.getFile()));
                     zos.closeEntry();            
-                    contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", languageQualifications.get(0).getLanguageQualificationDocument().getFileName());
+                    contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", languageQualification.getLanguageQualificationDocument().getFileName());
                 }
             }
         });
@@ -1234,11 +1228,8 @@ public class PorticoDocumentUploadIT {
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder) {
             @Override
             protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
-                List<LanguageQualification> languageQualifications = applicationForm.getPersonalDetails().getLanguageQualificationToSend();
-                if (languageQualifications.size() > 1) {
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 1 languageQualification marked for sending to UCL");
-                }
-                if (!languageQualifications.isEmpty()) {
+                LanguageQualification languageQualification = applicationForm.getPersonalDetails().getLanguageQualification();
+                if (languageQualification != null) {
                     String filename = getRandomFilename();
                     zos.putNextEntry(new ZipEntry(filename));
                     zos.write(FileUtils.readFileToByteArray(validPdf.getFile()));
@@ -1258,17 +1249,14 @@ public class PorticoDocumentUploadIT {
         uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder) {
             @Override
             protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
-                List<LanguageQualification> languageQualifications = applicationForm.getPersonalDetails().getLanguageQualificationToSend();
-                if (languageQualifications.size() > 1) {
-                    throw new CouldNotCreateAttachmentsPack("There should be at most 1 languageQualification marked for sending to UCL");
-                }
-                if (!languageQualifications.isEmpty()) {
+                LanguageQualification languageQualification = applicationForm.getPersonalDetails().getLanguageQualification();
+                if (languageQualification != null) {
                     String filename = getRandomFilename();
                     zos.putNextEntry(new ZipEntry(filename));
                     zos.write(FileUtils.readFileToByteArray(validPdf.getFile()));
                     zos.closeEntry();            
                     contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", StringUtils.EMPTY);
-                    contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", languageQualifications.get(0).getLanguageQualificationDocument().getFileName());
+                    contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", languageQualification.getLanguageQualificationDocument().getFileName());
                 }
             }
         });

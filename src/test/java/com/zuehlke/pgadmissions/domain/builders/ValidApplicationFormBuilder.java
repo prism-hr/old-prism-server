@@ -156,11 +156,11 @@ public class ValidApplicationFormBuilder {
                                 .passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
                                 .passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
                 .languageQualificationAvailable(true)
-                .languageQualifications(
+                .languageQualification(
                         new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false)
                                 .languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar")
-                                .overallScore("1").readingScore("1").speakingScore("1").writingScore("1").sendToUCL(true)
-                                .languageQualificationDocument(languageQualificationDocument).sendToUCL(true).build()).phoneNumber("+44 (0) 123 123 1234")
+                                .overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
+                                .languageQualificationDocument(languageQualificationDocument).build()).phoneNumber("+44 (0) 123 123 1234")
                 .residenceDomicile(domicile).title(Title.MR).build();
         additionalInformation = new AdditionalInformationBuilder().id(Integer.MAX_VALUE).setConvictions(false).build();
         instance = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013")

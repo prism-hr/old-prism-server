@@ -18,7 +18,7 @@ ALTER TABLE APPLICATION_FORM
  ADD CONSTRAINT application_form_personal_detail_fk FOREIGN KEY (personal_detail_id) REFERENCES APPLICATION_FORM_PERSONAL_DETAIL (id)
 ;
 
---language qualification
+-- language qualification
 ALTER TABLE APPLICATION_FORM_PERSONAL_DETAIL
  ADD COLUMN language_qualification_id INT(10) UNSIGNED
 ;
@@ -42,7 +42,7 @@ ALTER TABLE APPLICATION_FORM_PERSONAL_DETAIL_LANGUAGE_QUALIFICATIONS
 	DROP COLUMN send_to_ucl
 ;
 
---passport information
+-- passport information
 ALTER TABLE APPLICATION_FORM_PERSONAL_DETAIL
  ADD COLUMN passport_information_id INT(10) UNSIGNED
 ;

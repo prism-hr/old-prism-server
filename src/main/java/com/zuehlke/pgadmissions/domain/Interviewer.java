@@ -1,17 +1,13 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity(name = "INTERVIEWER")
 public class Interviewer implements Serializable {
@@ -24,10 +20,6 @@ public class Interviewer implements Serializable {
 
     @OneToOne(mappedBy = "interviewer")
     private InterviewComment interviewComment;
-
-    @Column(name = "last_notified")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastNotified;
 
     @ManyToOne
     @JoinColumn(name = "registered_user_id")
@@ -52,15 +44,7 @@ public class Interviewer implements Serializable {
     public void setUser(RegisteredUser user) {
         this.user = user;
     }
-
-    public Date getLastNotified() {
-        return lastNotified;
-    }
-
-    public void setLastNotified(Date lastNotified) {
-        this.lastNotified = lastNotified;
-    }
-
+    
     public InterviewComment getInterviewComment() {
         return interviewComment;
     }

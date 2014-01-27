@@ -405,7 +405,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setCv(Document cv) {
-        cv.setIsReferenced(true);
+        if (cv != null) {
+            cv.setIsReferenced(true);
+        }
         this.cv = cv;
     }
 
@@ -414,7 +416,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setPersonalStatement(Document personalStatement) {
-        personalStatement.setIsReferenced(true);
+        if (personalStatement != null) {
+            personalStatement.setIsReferenced(true);
+        }
         this.personalStatement = personalStatement;
     }
 

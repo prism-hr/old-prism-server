@@ -115,9 +115,8 @@ public class ApplicationFormUserRoleService {
         deassignFromStateBoundedWorkers(application);
 
         for (Referee referee : application.getReferees()) {
-            Date assignedTimestamp = new Date();
             createApplicationFormUserRole(application, referee.getUser(), Authority.REFEREE, false, 
-            		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_REFERENCE), assignedTimestamp, false, true, assignedTimestamp));
+            		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_REFERENCE), new Date(), false, true));
         }
 
         Boolean anyUnsure = application.getValidationComment().isAtLeastOneAnswerUnsure();
@@ -201,9 +200,8 @@ public class ApplicationFormUserRoleService {
             for (InterviewParticipant participant : interview.getParticipants()) {
                 Boolean isApplicant = participant.getUser().getId().equals(application.getApplicant().getId());
                 Authority authority = isApplicant ? Authority.APPLICANT : Authority.INTERVIEWER;
-                Date assignedTimestamp = new Date();
                 createApplicationFormUserRole(application, participant.getUser(), authority, false, 
-                		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY), assignedTimestamp, false, true, assignedTimestamp));
+                		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY), new Date(), false, true));
             }
         } else {
             for (Interviewer interviewer : interview.getInterviewers()) {
@@ -379,6 +377,16 @@ public class ApplicationFormUserRoleService {
         for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByApplicationFormAndUser(applicationForm, registeredUser)) {
             applicationFormUserRole.setRaisesUpdateFlag(false);
         }
+    }
+    
+    public void updateRaisesUrgentFlag() {
+        applicationFormUserRoleDAO.updateRaisesUrgentFlag();
+    }
+    
+    public void updateLastNotifiedTimestamp(ApplicationForm application, RegisteredUser user, Authority authority, ApplicationFormAction action) {
+        ApplicationFormActionRequired requiredAction = applicationFormUserRoleDAO.findActionForUpdate(application, user, authority, action);
+        requiredAction.setLastNotifiedTimestamp(new Date());
+        applicationFormUserRoleDAO.save(requiredAction.getApplicationFormUserRole());
     }
 
     private ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Authority authority,

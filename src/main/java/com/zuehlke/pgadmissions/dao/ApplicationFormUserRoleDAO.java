@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.dto.ActionDefinition;
 public class ApplicationFormUserRoleDAO {
 
     private final SessionFactory sessionFactory;
-
+    
     public ApplicationFormUserRoleDAO() {
         this(null);
     }
@@ -75,6 +75,16 @@ public class ApplicationFormUserRoleDAO {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
         		.add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.in("role.id", authorities)).list();
+    }
+    
+    public ApplicationFormActionRequired findActionForUpdate(ApplicationForm application, RegisteredUser user, Authority authority, ApplicationFormAction action) {
+        return (ApplicationFormActionRequired) sessionFactory.getCurrentSession().createCriteria(ApplicationFormActionRequired.class)
+            .createAlias("applicationFormUserRole", "applicationFormUserRole", JoinType.INNER_JOIN)
+            .createAlias("applicationFormUserRole.role", "role", JoinType.INNER_JOIN)
+            .add(Restrictions.eq("action.id", action))
+            .add(Restrictions.eq("applicationFormUserRole.applicationForm", application))
+            .add(Restrictions.eq("applicationFormUserRole.user", user))
+            .add(Restrictions.eq("role.id", authority)).uniqueResult();
     }
 
     public ApplicationFormUserRole get(Integer id) {

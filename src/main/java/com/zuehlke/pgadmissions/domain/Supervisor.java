@@ -29,10 +29,6 @@ public class Supervisor implements Serializable {
     @Valid
     private RegisteredUser user;
 
-    @Column(name = "last_notified")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastNotified;
-
     @Column(name = "confirmed_supervision_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date confirmedSupervisionDate;
@@ -65,15 +61,7 @@ public class Supervisor implements Serializable {
     public void setUser(RegisteredUser user) {
         this.user = user;
     }
-
-    public Date getLastNotified() {
-        return lastNotified;
-    }
-
-    public void setLastNotified(Date lastNotified) {
-        this.lastNotified = lastNotified;
-    }
-
+    
     public ApprovalRound getApprovalRound() {
         return approvalRound;
     }

@@ -130,8 +130,13 @@ public class ApplicationFormUserRole implements Serializable {
     public Date getAssignedTimestamp() {
     	return assignedTimestamp;
     }
+    
+    public void setAssignedTimestamp(Date assignedTimestamp) {
+        this.assignedTimestamp = assignedTimestamp;
+    }
 
     public List<ApplicationFormActionRequired> getActions() {
         return actions;
     }
+    
 }

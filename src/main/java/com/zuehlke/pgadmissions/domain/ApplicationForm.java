@@ -235,6 +235,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "avg_rating", precision = 3, scale = 2)
     private BigDecimal averageRating;
 
+    @Column(name = "use_custom_reference_questions")
+    private Boolean useCustomReferenceQuestions = null;
+
     public List<Qualification> getQualifications() {
         return qualifications;
     }
@@ -402,6 +405,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setCv(Document cv) {
+        cv.setIsReferenced(true);
         this.cv = cv;
     }
 
@@ -410,6 +414,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setPersonalStatement(Document personalStatement) {
+        personalStatement.setIsReferenced(true);
         this.personalStatement = personalStatement;
     }
 
@@ -998,6 +1003,25 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             }
         }
         return stateChangeComment;
+    }
+
+    public OfferRecommendedComment getOfferRecommendedComment() {
+        List<Comment> commentsReversed = Lists.reverse(getApplicationComments());
+        OfferRecommendedComment offerRecommendedComment = null;
+        for (Comment comment : commentsReversed) {
+            if (comment instanceof OfferRecommendedComment) {
+                offerRecommendedComment = (OfferRecommendedComment) comment;
+            }
+        }
+        return offerRecommendedComment;
+    }
+
+    public Boolean getUseCustomReferenceQuestions() {
+        return useCustomReferenceQuestions;
+    }
+
+    public void setUseCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
+        this.useCustomReferenceQuestions = useCustomReferenceQuestions;
     }
 
 }

@@ -92,6 +92,7 @@ $(document).on('click', '#refereeSaveButton', function(event) {
 // --------------------------------------------------------------------------------
 $(document).on('click', '.addReferenceButton', function(event) {
     postRefereesData(false, true, event);
+    $('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
 });
 
 function clearRefereeFormErrors() {
@@ -171,6 +172,7 @@ function attachReferenceEditListeners () {
     $('.editReferenceButton').each(function() {
     	$(this).on("click", function(event) {
     		editReferenceData(event);
+    	    $('html,body').animate({ scrollTop: $('#referee-H2').offset().top }, 'fast');
         });
     });
 }

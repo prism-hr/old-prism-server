@@ -178,6 +178,7 @@ public class Qualification implements FormSectionObject, Serializable {
 	}
 
 	public void setProofOfAward(Document proofOfAward) {
+	    proofOfAward.setIsReferenced(true);
 		this.proofOfAward = proofOfAward;
 	}
 

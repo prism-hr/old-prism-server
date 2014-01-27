@@ -49,6 +49,10 @@ public class StateChangeDTO {
 	private HomeOrOverseas[] homeOrOverseasOptions;
 	
 	private List<ApplicationFormStatus> stati;
+	
+	private Boolean useCustomReferenceQuestions;
+	
+	private Boolean useCustomQuestions;
     
     public StateChangeDTO() {
     }
@@ -218,5 +222,21 @@ public class StateChangeDTO {
 	public void setStati(List<ApplicationFormStatus> stati) {
 		this.stati = stati;
 	}
+
+    public Boolean getUseCustomReferenceQuestions() {
+        return useCustomReferenceQuestions;
+    }
+
+    public void setUseCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
+        this.useCustomReferenceQuestions = useCustomReferenceQuestions;
+    }
+
+    public Boolean getUseCustomQuestions() {
+        return useCustomQuestions;
+    }
+
+    public void setUseCustomQuestions(Boolean useCustomQuestions) {
+        this.useCustomQuestions = useCustomQuestions;
+    }
 
 }

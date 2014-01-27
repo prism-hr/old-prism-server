@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.ActionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormUserRoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
@@ -33,13 +35,17 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
 
 public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
+    private ActionDAO actionDAO;
     private RoleDAO roleDAO;
     private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
-
+    private Action comment;
+    private Action eligibility;
+    private Action reference;
     private RegisteredUser user;
     private Program program;
     private ApplicationForm application;
@@ -53,7 +59,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
                 .interestedInApplicant(true).build();
 
         ApplicationFormActionRequired actionRequired1 = new ApplicationFormActionRequired();
-        actionRequired1.setAction(ApplicationFormAction.PROVIDE_REFERENCE);
+        actionRequired1.setAction(reference);
         actionRequired1.setBindDeadlineToDueDate(false);
         actionRequired1.setDeadlineTimestamp(new Date());
         applicationFormUserRole.getActions().add(actionRequired1);
@@ -71,7 +77,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
         assertEquals(1, returned.getActions().size());
         ApplicationFormActionRequired actionRequired = returned.getActions().get(0);
-        assertEquals(ApplicationFormAction.PROVIDE_REFERENCE, actionRequired.getAction());
+        assertEquals(reference, actionRequired.getAction());
         assertFalse(actionRequired.getBindDeadlineToDueDate());
 
     }
@@ -132,11 +138,11 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         ApplicationFormUserRole role3 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(superAdministratorRole)
                 .interestedInApplicant(true).build();
 
-        role1.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.COMMENT, new Date(), false, false));
-        role1.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.PROVIDE_REFERENCE, new Date(), false, false));
-        role1.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.CONFIRM_ELIGIBILITY, new Date(), false, false));
+        role1.getActions().add(new ApplicationFormActionRequired(comment, new Date(), false, false));
+        role1.getActions().add(new ApplicationFormActionRequired(reference, new Date(), false, false));
+        role1.getActions().add(new ApplicationFormActionRequired(eligibility, new Date(), false, false));
 
-        role2.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.CONFIRM_ELIGIBILITY, new Date(), false, false));
+        role2.getActions().add(new ApplicationFormActionRequired(eligibility, new Date(), false, false));
 
         save(role1, role2, role3);
 
@@ -202,7 +208,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
                 .interestedInApplicant(true).build();
 
-        role1.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.PROVIDE_REFERENCE, new Date(), false, false));
+        role1.getActions().add(new ApplicationFormActionRequired(reference, new Date(), false, false));
 
         save(role1);
 
@@ -231,7 +237,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         ApplicationFormUserRole role1 = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
                 .interestedInApplicant(true).build();
 
-        role1.getActions().add(new ApplicationFormActionRequired(ApplicationFormAction.PROVIDE_REFERENCE, new Date(), false, false));
+        role1.getActions().add(new ApplicationFormActionRequired(reference, new Date(), false, false));
 
         save(role1);
 
@@ -251,6 +257,10 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
         
         program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
+        
+        comment = new ActionBuilder().id(ApplicationFormAction.COMMENT).notification(null).build();
+        reference = new ActionBuilder().id(ApplicationFormAction.PROVIDE_REFERENCE).notification(NotificationMethod.INDIVIDUAL).build();
+        eligibility = new ActionBuilder().id(ApplicationFormAction.CONFIRM_ELIGIBILITY).notification(NotificationMethod.INDIVIDUAL).build();
 
         Date lastUpdatedDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 06 2011 14:05:23");
         application = new ApplicationForm();

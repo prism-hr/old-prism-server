@@ -71,5 +71,12 @@ public class DocumentDAO {
 			sessionFactory.getCurrentSession().save(qualification);
 		}
 	}
+	
+	public void deleteOrphanDocuments() {
+	    sessionFactory.getCurrentSession().createSQLQuery(
+            "DELETE FROM DOCUMENT " +
+            "WHERE is_referenced = 0 " + 
+                "AND DATE(uploaded_time_stamp) < CURRENT_DATE - INTERVAL 1 WEEK").executeUpdate();
+	}
 
 }

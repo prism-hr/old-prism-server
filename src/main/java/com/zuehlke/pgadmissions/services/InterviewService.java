@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
@@ -97,7 +96,6 @@ public class InterviewService {
         applicationForm.getEvents().add(eventFactory.createEvent(interview));
 
         removeApplicationAdministratorReminders(interview);
-        applicationForm.removeNotificationRecord(NotificationType.INTERVIEW_FEEDBACK_REMINDER);
 
         applicationFormDAO.save(applicationForm);
 
@@ -200,8 +198,6 @@ public class InterviewService {
         ApplicationForm application = interview.getApplication();
         // Check if the interview administration was delegated
         if (application.getApplicationAdministrator() != null && interview.isScheduled()) {
-            // We remove the notification record so that the delegate does not receive reminders any longer
-            application.removeNotificationRecord(NotificationType.INTERVIEW_ADMINISTRATION_REQUEST, NotificationType.INTERVIEW_ADMINISTRATION_REMINDER);
             application.setSuppressStateChangeNotifications(false);
         }
     }

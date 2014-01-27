@@ -2,16 +2,13 @@ package com.zuehlke.pgadmissions.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Assert;
@@ -26,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewVoteCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
-import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -38,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class ApplicationFormTest {
 
@@ -82,33 +77,6 @@ public class ApplicationFormTest {
         assertFalse(applicationForm.isDecided());
         applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).build();
         assertFalse(applicationForm.isDecided());
-    }
-
-    @Test
-    public void shouldReturnNotificationOfCorrectType() {
-        NotificationRecord validationReminder = new NotificationRecordBuilder().id(1).notificationType(NotificationType.VALIDATION_REMINDER).build();
-        NotificationRecord submissionUpdateNotification = new NotificationRecordBuilder().id(2).notificationType(NotificationType.UPDATED_NOTIFICATION).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().notificationRecords(validationReminder).build();
-        assertEquals(validationReminder, applicationForm.getNotificationForType(NotificationType.VALIDATION_REMINDER));
-        assertNull(applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION));
-        applicationForm.addNotificationRecord(submissionUpdateNotification);
-        assertEquals(submissionUpdateNotification, applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION));
-    }
-
-    @Test
-    public void shouldNotAddDuplicateNotificationTypeButUpdateExistingOne() throws ParseException {
-        NotificationRecord updatedNotification = new NotificationRecordBuilder().notificationType(NotificationType.UPDATED_NOTIFICATION)
-                .notificationDate(DateUtils.parseDate("2012-09-09T00:03:00", new String[] { "yyyy-MM-dd'T'HH:mm:ss" })).build();
-
-        NotificationRecord duplicateNpdatedNotification = new NotificationRecordBuilder().notificationType(NotificationType.UPDATED_NOTIFICATION)
-                .notificationDate(new Date()).build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().notificationRecords(updatedNotification).build();
-
-        applicationForm.addNotificationRecord(duplicateNpdatedNotification);
-
-        assertEquals(1, applicationForm.getNotificationRecords().size());
-        assertEquals(updatedNotification.getDate(), applicationForm.getNotificationRecords().get(0).getDate());
     }
 
     @Test

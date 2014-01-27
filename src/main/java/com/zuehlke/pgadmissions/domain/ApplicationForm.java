@@ -30,8 +30,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -43,7 +41,6 @@ import org.hibernate.annotations.GenerationTime;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Entity(name = "APPLICATION_FORM")
@@ -70,11 +67,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
     @JoinColumn(name = "rejection_id")
     private Rejection rejection;
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-    @JoinColumn(name = "application_form_id")
-    private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -586,58 +578,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean isInApprovalStage() {
         return status == ApplicationFormStatus.APPROVAL;
-    }
-
-    public List<NotificationRecord> getNotificationRecords() {
-        return notificationRecords;
-    }
-
-    public void setNotificationRecords(List<NotificationRecord> notificationRecords) {
-        this.notificationRecords.clear();
-        this.notificationRecords.addAll(notificationRecords);
-    }
-
-    public NotificationRecord getNotificationForType(NotificationType type) {
-        for (NotificationRecord notification : notificationRecords) {
-            if (notification.getNotificationType() == type) {
-                return notification;
-            }
-        }
-        return null;
-    }
-
-    public NotificationRecord getNotificationForType(String strType) {
-        return getNotificationForType(NotificationType.valueOf(strType));
-    }
-
-    public boolean addNotificationRecord(NotificationRecord record) {
-        for (NotificationRecord existingRecord : notificationRecords) {
-            if (existingRecord.getNotificationType() == record.getNotificationType()) {
-                existingRecord.setDate(record.getDate());
-                existingRecord.setUser(record.getUser());
-                return false;
-            }
-        }
-        return notificationRecords.add(record);
-    }
-
-    public boolean removeNotificationRecord(NotificationRecord record) {
-        return notificationRecords.remove(record);
-    }
-
-    public void removeNotificationRecord(final NotificationType... recordTypes) {
-        CollectionUtils.filter(notificationRecords, new Predicate() {
-            @Override
-            public boolean evaluate(Object object) {
-                NotificationRecord existingRecord = (NotificationRecord) object;
-                for (NotificationType type : recordTypes) {
-                    if (type == existingRecord.getNotificationType()) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        });
     }
 
     public boolean hasAcceptedTheTerms() {

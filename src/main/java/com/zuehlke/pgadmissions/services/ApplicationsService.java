@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationType.APPLICANT_SUBMISSION_NOTIFICATION;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -95,12 +92,6 @@ public class ApplicationsService {
     public void sendSubmissionConfirmationToApplicant(final ApplicationForm applicationForm) {
         try {
             mailService.sendSubmissionConfirmationToApplicant(applicationForm);
-            NotificationRecord notificationRecord = applicationForm.getNotificationForType(APPLICANT_SUBMISSION_NOTIFICATION);
-            if (notificationRecord == null) {
-                notificationRecord = new NotificationRecord(APPLICANT_SUBMISSION_NOTIFICATION);
-                applicationForm.addNotificationRecord(notificationRecord);
-            }
-            notificationRecord.setDate(new Date());
             applicationFormDAO.save(applicationForm);
         } catch (Exception e) {
             log.warn("{}", e);

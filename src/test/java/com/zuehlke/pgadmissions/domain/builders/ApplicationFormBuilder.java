@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -44,7 +43,6 @@ public class ApplicationFormBuilder {
     private Date batchDeadline;
     private Date dueDate;
     private Boolean acceptedTerms;
-    private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
     private List<Event> events = new ArrayList<Event>();
     private List<Qualification> qualifications = new ArrayList<Qualification>();
     private List<Referee> referees = new ArrayList<Referee>();
@@ -210,13 +208,6 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder notificationRecords(NotificationRecord... notificationRecords) {
-        for (NotificationRecord notificationRecord : notificationRecords) {
-            this.notificationRecords.add(notificationRecord);
-        }
-        return this;
-    }
-
     public ApplicationFormBuilder events(Event... events) {
         for (Event event : events) {
             this.events.add(event);
@@ -330,7 +321,6 @@ public class ApplicationFormBuilder {
         application.setProjectTitle(projectTitle);
         application.setStatus(status);
         application.setAdditionalInformation(info);
-        application.setNotificationRecords(notificationRecords);
         application.setLastUpdated(lastUpdated);
         application.setAcceptedTermsOnSubmission(acceptedTerms);
         application.getApplicationComments().addAll(comments);

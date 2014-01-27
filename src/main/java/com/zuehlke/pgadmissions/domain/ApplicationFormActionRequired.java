@@ -42,6 +42,10 @@ public class ApplicationFormActionRequired implements Serializable {
     @Column(name = "assigned_timestamp")
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date assignedTimestamp = new Date();
+    
+    @Column(name = "last_notified_timestamp")
+    @Temporal(value = TemporalType.DATE)
+    private Date lastNotifiedTimestamp;
 
     @ManyToOne
     @JoinColumn(name = "application_form_user_role_id", nullable = false, updatable = false, insertable = false)
@@ -107,6 +111,14 @@ public class ApplicationFormActionRequired implements Serializable {
 
     public void setApplicationFormUserRole(ApplicationFormUserRole applicationFormUserRole) {
         this.applicationFormUserRole = applicationFormUserRole;
+    }
+
+    public Date getLastNotifiedTimestamp() {
+        return lastNotifiedTimestamp;
+    }
+
+    public void setLastNotifiedTimestamp(Date lastNotifiedTimestamp) {
+        this.lastNotifiedTimestamp = lastNotifiedTimestamp;
     }
 
 }

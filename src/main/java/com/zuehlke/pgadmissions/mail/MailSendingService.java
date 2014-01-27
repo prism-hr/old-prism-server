@@ -34,10 +34,7 @@ import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -50,20 +47,17 @@ public class MailSendingService extends AbstractMailSendingService {
 
     private final String uclProspectusLink;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
     public MailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public MailSendingService(final MailSender mailSender, final ConfigurationService configurationService, final ApplicationFormDAO formDAO,
             final UserDAO userDAO, final RoleDAO roleDAO, final RefereeDAO refereeDAO, final EncryptionUtils encryptionUtils,
             @Value("${application.host}") final String host, @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel,
-            final ApplicationFormUserRoleService applicationFormUserRoleService, @Value("${ucl.prospectus.url}") final String uclProspectusLink) {
+            @Value("${ucl.prospectus.url}") final String uclProspectusLink) {
         super(mailSender, formDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.admissionsOfferServiceLevel = admissionsOfferServiceLevel;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.uclProspectusLink = uclProspectusLink;
     }
 
@@ -81,7 +75,7 @@ public class MailSendingService extends AbstractMailSendingService {
 
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_NOTIFICATION);
             sendEmail(message);
-            applicationFormUserRoleService.updateLastNotifiedTimestamp(application, referee.getUser(), Authority.REFEREE, ApplicationFormAction.PROVIDE_REFERENCE);
+            referee.setLastNotified(new Date());
         } catch (Exception e) {
             log.error("Error while sending reference request mail: {}", e);
         }
@@ -235,12 +229,7 @@ public class MailSendingService extends AbstractMailSendingService {
                         getAdminsEmailsCommaSeparatedAsString(admins), participant, application, getHostName() });
                 message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_NOTIFICATION);
                 sendEmail(message);
-                RegisteredUser user = participant.getUser();
-                Authority authority = Authority.INTERVIEWER;
-                if (user.isApplicant(application)) {
-                    authority = Authority.APPLICANT;
-                }
-                applicationFormUserRoleService.updateLastNotifiedTimestamp(application, participant.getUser(), authority, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
+                participant.setLastNotified(new Date());
             } catch (Exception e) {
                 log.error("Error while sending interview vote notification email to interview participant: " + participant.getUser().getEmail(), e);
             }

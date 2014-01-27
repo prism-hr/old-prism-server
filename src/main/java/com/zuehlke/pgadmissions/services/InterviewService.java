@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
@@ -114,8 +115,14 @@ public class InterviewService {
 
         if (previousStatus == ApplicationFormStatus.VALIDATION) {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
+            StateChangeComment latestStateChangeComment = applicationForm.getLatestStateChangeComment();
+            interview.setUseCustomQuestions(latestStateChangeComment.getUseCustomQuestions());
+            interviewDAO.save(interview);
+            applicationForm.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
+            applicationFormDAO.save(applicationForm);
             applicationFormUserRoleService.validationStageCompleted(applicationForm);
         }
+        
         applicationFormUserRoleService.movedToInterviewStage(interview);
         applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
     }

@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -76,11 +77,10 @@ public class ApprovalService {
         supervisor.setConfirmedSupervision(confirmed);
 
         if (BooleanUtils.isTrue(confirmed)) {
-            // override secondary supervisor
             Supervisor secondarySupervisor = approvalRound.getSecondarySupervisor();
             if (!secondarySupervisor.getUser().getEmail().equals(confirmSupervisionDTO.getSecondarySupervisorEmail())) {
                 RegisteredUser user = userService.getUserByEmail(confirmSupervisionDTO.getSecondarySupervisorEmail());
-                approvalRound.getSupervisors().remove(secondarySupervisor); // remove old supervisor
+                approvalRound.getSupervisors().remove(secondarySupervisor);
 
                 Supervisor newSecondarySupervisor = new Supervisor();
                 newSecondarySupervisor.setUser(user);
@@ -174,8 +174,8 @@ public class ApprovalService {
         }
 
         approvalRound.setRecommendedStartDate(startDate);
-        approvalRoundDAO.saveAndInitialise(approvalRound);
-        return approvalRound;
+        approvalRoundDAO.save(approvalRound);
+        return approvalRoundDAO.initialise(approvalRound);
     }
 
     public void moveApplicationToApproval(ApplicationForm form, ApprovalRound approvalRound, RegisteredUser initiator) {
@@ -214,8 +214,12 @@ public class ApprovalService {
 
         if (sendReferenceRequest) {
             mailSendingService.sendReferenceRequest(form.getReferees(), form);
+            StateChangeComment latestStateChangeComment = form.getLatestStateChangeComment();
+            form.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
+            applicationDAO.save(form);
             applicationFormUserRoleService.validationStageCompleted(form);
         }
+        
         commentDAO.save(approvalComment);
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
         applicationFormUserRoleService.registerApplicationUpdate(form, initiator, ApplicationUpdateScope.ALL_USERS);

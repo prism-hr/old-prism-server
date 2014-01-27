@@ -280,15 +280,19 @@ public class StateTransitionController {
 	    		validationComment.setEnglishCompentencyOk(stateChangeDTO.getEnglishCompentencyOk());
 	    		validationComment.setHomeOrOverseas(stateChangeDTO.getHomeOrOverseas());
 	    		stateChangeComment = (StateChangeComment) validationComment;
+	    		applicationForm.setUseCustomReferenceQuestions(stateChangeDTO.getUseCustomReferenceQuestions());
+	    		stateChangeComment.setUseCustomReferenceQuestions(stateChangeDTO.getUseCustomReferenceQuestions());
 	    		stateChangeComment.setType(CommentType.VALIDATION);
 	    		break;
 	    	case REVIEW:
 	    		stateChangeComment = new ReviewEvaluationComment();    		
 	    		stateChangeComment.setType(CommentType.REVIEW_EVALUATION);
+	    		stateChangeComment.setUseCustomQuestions(stateChangeDTO.getUseCustomQuestions());
 	    		break;
 	    	case INTERVIEW:
 	    		stateChangeComment = new InterviewEvaluationComment();
 	    		stateChangeComment.setType(CommentType.INTERVIEW_EVALUATION);
+	            stateChangeComment.setUseCustomQuestions(stateChangeDTO.getUseCustomQuestions());
 	    		break;
 	    	case APPROVAL:
 	    		stateChangeComment = new ApprovalEvaluationComment();

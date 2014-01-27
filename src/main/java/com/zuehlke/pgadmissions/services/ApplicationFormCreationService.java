@@ -17,6 +17,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -43,15 +44,20 @@ public class ApplicationFormCreationService {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private ApplicationFormCopyHelper applicationFormCopyHelper;
+
     public ApplicationForm createOrGetUnsubmittedApplicationForm(final RegisteredUser applicant, final Program program, Project project) {
         ApplicationFormCreationService thisBean = applicationContext.getBean(ApplicationFormCreationService.class);
-        
+
         ApplicationForm applicationForm = thisBean.findMostRecentApplication(applicant, program, project);
         if (applicationForm != null) {
             return applicationForm;
         }
 
         applicationForm = thisBean.createNewApplicationForm(applicant, program, project);
+
+        thisBean.fillWithDataFromPreviousApplication(applicationForm);
 
         thisBean.addSuggestedSupervisors(applicationForm, project);
 
@@ -61,9 +67,18 @@ public class ApplicationFormCreationService {
         return applicationForm;
     }
 
+    protected void fillWithDataFromPreviousApplication(ApplicationForm applicationForm) {
+        ApplicationForm previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(applicationForm);
+        if (previousApplication == null) {
+            return;
+        }
+
+        applicationFormCopyHelper.copyApplicationFormData(applicationForm, previousApplication);
+    }
+
     protected ApplicationForm createNewApplicationForm(RegisteredUser applicant, Program program, Project project) {
         ApplicationFormCreationService thisBean = applicationContext.getBean(ApplicationFormCreationService.class);
-        
+
         String applicationNumber = thisBean.generateNewApplicationNumber(program);
 
         ApplicationForm applicationForm = new ApplicationForm();

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
@@ -28,6 +31,10 @@ public class Referee implements FormSectionObject, Serializable {
 	
 	@Transient
 	private boolean acceptedTerms;
+	
+	@Column(name = "last_notified")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastNotified;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "registered_user_id")
@@ -189,6 +196,14 @@ public class Referee implements FormSectionObject, Serializable {
 
 	public void setDeclined(boolean declined) {
 		this.declined = declined;
+	}
+
+	public Date getLastNotified() {
+		return lastNotified;
+	}
+
+	public void setLastNotified(Date lastNotified) {
+		this.lastNotified = lastNotified;
 	}
 
 	public boolean isEditable() {

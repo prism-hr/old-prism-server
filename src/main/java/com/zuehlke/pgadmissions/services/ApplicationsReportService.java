@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javassist.bytecode.stackmap.TypeData.ClassName;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,6 @@ import com.google.visualization.datasource.datatable.value.NumberValue;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
-
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
@@ -60,11 +60,11 @@ import com.zuehlke.pgadmissions.utils.MathUtils;
 public class ApplicationsReportService {
 
     private static final String N_R = "N/R";
-    
-    private static Logger logger = Logger.getLogger(ClassName.class.getName());
+
+    private static Logger logger = LoggerFactory.getLogger(ClassName.class.getName());
 
     private final ApplicationsService applicationsService;
-    
+
     private final ApplicantRatingService applicantRatingService;
 
     public ApplicationsReportService() {
@@ -124,7 +124,7 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.TEXT, "Negative Review Endorsements"));
         cd.add(new ColumnDescription("averageReviewRating", ValueType.TEXT, "Average Review Rating"));
 
-        //interview report
+        // interview report
         cd.add(new ColumnDescription("interviewStages", ValueType.NUMBER, "Interview Stages"));
         cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time (hours)"));
         cd.add(new ColumnDescription("interviewReports", ValueType.NUMBER, "Interview Reports"));
@@ -141,19 +141,19 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("outcomedate", ValueType.DATE, "Outcome Date"));
         cd.add(new ColumnDescription("outcomeType", ValueType.TEXT, "Outcome Type"));
         cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT, "Outcome Note"));
-        
+
         data.addColumns(cd);
-        
+
         List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplicationsForReport(user, filtering);
-        
+
         for (ApplicationForm app : applications) {
 
-            if (!app.isSubmitted() || app.getStatusWhenWithdrawn() == ApplicationFormStatus.UNSUBMITTED) {
+            if (!app.isSubmitted() || app.getStatusWhenWithdrawn() == ApplicationFormStatus.UNSUBMITTED || app.getPersonalDetails() == null) {
                 continue;
             }
-            
+
             try {
-            	RegisteredUser applicant = app.getApplicant();
+                RegisteredUser applicant = app.getApplicant();
                 PersonalDetails personalDetails = app.getPersonalDetails();
                 String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
                 Program program = app.getProgram();
@@ -238,13 +238,13 @@ public class ApplicationsReportService {
                 } catch (TypeMismatchException e) {
                     throw new RuntimeException(e);
                 }
-            	
+
             } catch (NullPointerException e) {
-            	logger.info("User tried to download spreadsheet report for corrupted application: " + app.getApplicationNumber() + ".");
-            	continue;
+                logger.info("User tried to download spreadsheet report for corrupted application: " + app.getApplicationNumber() + ".", e);
+                continue;
             }
         }
-    
+
         return data;
     }
 
@@ -298,6 +298,9 @@ public class ApplicationsReportService {
     }
 
     private DateValue getDateValue(Date date) {
+        if (date == null) {
+            return null;
+        }
         GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         calendar.setTime(date);
         return new DateValue(calendar);
@@ -480,7 +483,7 @@ public class ApplicationsReportService {
         }
         return StringUtils.EMPTY;
     }
-    
+
     private String getAverageRatingForAllInterviewRounds(ApplicationForm app) {
         List<Interview> interviews = app.getInterviews();
         if (interviews.isEmpty()) {
@@ -500,7 +503,7 @@ public class ApplicationsReportService {
         BigDecimal referenceRating = applicantRatingService.getAverageReferenceRating(app);
         return MathUtils.formatRating(referenceRating);
     }
-    
+
     private String getAverageRatingForAllReviewRounds(ApplicationForm app) {
         List<ReviewRound> reviewRounds = app.getReviewRounds();
         if (reviewRounds.isEmpty()) {

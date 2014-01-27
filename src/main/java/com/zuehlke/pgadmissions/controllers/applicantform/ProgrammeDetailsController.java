@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
+import static com.google.common.base.Objects.firstNonNull;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -86,8 +88,9 @@ public class ProgrammeDetailsController {
         }
 
         ApplicationForm applicationForm = programmeDetails.getApplication();
-        
-        programmeDetails.setStudyOptionCode(programmeDetailsService.getStudyOptionCodeForProgram(applicationForm.getProgram(), programmeDetails.getStudyOption()));
+
+        programmeDetails.setStudyOptionCode(programmeDetailsService.getStudyOptionCodeForProgram(applicationForm.getProgram(),
+                programmeDetails.getStudyOption()));
         programmeDetailsService.save(programmeDetails);
         applicationsService.save(applicationForm);
         applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
@@ -167,16 +170,12 @@ public class ProgrammeDetailsController {
     @ModelAttribute
     public ProgrammeDetails getProgrammeDetails(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-
-        if (applicationForm.getProgrammeDetails() == null) {
-            return new ProgrammeDetails();
-        }
-        return applicationForm.getProgrammeDetails();
+        return firstNonNull(applicationForm.getProgrammeDetails(), new ProgrammeDetails());
     }
 
     @ModelAttribute("user")
     private RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
     }
-    
+
 }

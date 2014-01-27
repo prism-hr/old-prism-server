@@ -150,7 +150,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "personal_detail_id")
     private PersonalDetails personalDetails;
 
-    @OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "programme_details_id")
     @Valid
     private ProgrammeDetails programmeDetails;
 
@@ -389,9 +390,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public ProgrammeDetails getProgrammeDetails() {
-        if (programmeDetails == null) {
-            return new ProgrammeDetails();
-        }
         return programmeDetails;
     }
 

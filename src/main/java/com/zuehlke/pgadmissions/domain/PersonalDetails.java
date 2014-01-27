@@ -212,32 +212,12 @@ public class PersonalDetails implements FormSectionObject, Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    // convenience metod for Freemarker
-    public boolean isEnglishFirstLanguageSet() {
-        return (englishFirstLanguage != null);
-    }
-
     public Boolean getEnglishFirstLanguage() {
         return englishFirstLanguage;
     }
 
     public void setEnglishFirstLanguage(Boolean englishFirstLanguage) {
         this.englishFirstLanguage = englishFirstLanguage;
-    }
-
-    // convenience metod for Freemarker
-    public boolean isRequiresVisaSet() {
-        return (requiresVisa != null);
-    }
-
-    // convenience metod for Freemarker
-    public boolean isLanguageQualificationAvailableSet() {
-        return (languageQualificationAvailable != null);
-    }
-
-    // convenience metod for Freemarker
-    public boolean isPassportAvailableSet() {
-        return (passportAvailable != null);
     }
 
     public Boolean getRequiresVisa() {

@@ -60,14 +60,6 @@ public class ApplicationFormActionRequired implements Serializable {
         this.bindDeadlineToDueDate = bindDeadlineToDueDate;
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
-    
-    public ApplicationFormActionRequired(Action action, Date deadlineTimestamp, Boolean bindDeadlineToDueDate, Boolean raisesUrgentFlag, Date lastNotifiedTimestamp) {
-        this.action = action;
-        this.deadlineTimestamp = deadlineTimestamp;
-        this.bindDeadlineToDueDate = bindDeadlineToDueDate;
-        this.raisesUrgentFlag = raisesUrgentFlag;
-        this.lastNotifiedTimestamp = lastNotifiedTimestamp;
-    }
 
     public Integer getId() {
         return id;

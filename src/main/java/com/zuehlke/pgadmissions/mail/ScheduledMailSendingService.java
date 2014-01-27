@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
@@ -32,8 +31,11 @@ import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -49,30 +51,31 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     private final ApplicationContext applicationContext;
 
     private final InterviewParticipantDAO interviewParticipantDAO;
-    
-    private final ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public ScheduledMailSendingService() {
         this(null, null, null, null, null, null, null, null, null, null, null);
     }
-    
+
     @Autowired
     public ScheduledMailSendingService(final MailSender mailSender, final ApplicationFormDAO applicationFormDAO,
-            final ConfigurationService configurationService, final RefereeDAO refereeDAO, final UserDAO userDAO, final RoleDAO roleDAO,
-            final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host, final ApplicationContext applicationContext,
-            InterviewParticipantDAO interviewParticipantDAO, ApplicationFormUserRoleDAO applicationFormUserRoleDAO) {
+            final ConfigurationService configurationService, final RefereeDAO refereeDAO, final UserDAO userDAO,
+            final RoleDAO roleDAO, final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host,
+            final ApplicationContext applicationContext, InterviewParticipantDAO interviewParticipantDAO,
+            ApplicationFormUserRoleService applicationFormUserRoleService) {
         super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.refereeDAO = refereeDAO;
         this.userDAO = userDAO;
         this.applicationContext = applicationContext;
         this.interviewParticipantDAO = interviewParticipantDAO;
-        this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     public void sendDigestsToUsers() {
         ScheduledMailSendingService thisProxy = applicationContext.getBean(this.getClass());
         Date baselineDate = new Date();
-        
+
         log.trace("Sending task reminder to users");
         for (RegisteredUser user : thisProxy.getUsersForTaskReminder(baselineDate)) {
             thisProxy.sendDigestEmail(user, DigestNotificationType.TASK_REMINDER);
@@ -94,19 +97,19 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public List<RegisteredUser> getUsersForTaskNotification(Date baselineDate) {
-        updateApplicationFormActionUrgentFlag();
+        applicationFormUserRoleService.updateRaisesUrgentFlag();
         return userDAO.getUsersDueTaskNotification(baselineDate);
     }
 
     @Transactional
     public List<RegisteredUser> getUsersForTaskReminder(Date baselineDate) {
-        updateApplicationFormActionUrgentFlag();
+        applicationFormUserRoleService.updateRaisesUrgentFlag();
         return userDAO.getUsersDueTaskReminder(baselineDate);
     }
 
     @Transactional
     public List<RegisteredUser> getUsersForUpdateNotification(Date baselineDate) {
-        updateApplicationFormActionUrgentFlag();
+        applicationFormUserRoleService.updateRaisesUrgentFlag();
         return userDAO.getUsersDueUpdateNotification(baselineDate);
     }
 
@@ -114,11 +117,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public boolean sendDigestEmail(RegisteredUser user, DigestNotificationType digestNotificationType) {
         return sendDigest(user, digestNotificationType);
     }
-    
+
     private boolean sendDigest(final RegisteredUser user, DigestNotificationType digestNotificationType) {
         try {
+            userDAO.initialise(user);
             EmailModelBuilder modelBuilder = new EmailModelBuilder() {
-
+                
                 @Override
                 public Map<String, Object> build() {
                     Map<String, Object> model = new HashMap<String, Object>();
@@ -132,32 +136,32 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             messageBuilder.model(modelBuilder);
             messageBuilder.to(user);
             EmailTemplateName templateName;
-            
+
             switch (digestNotificationType) {
-	            case TASK_REMINDER:
-	                templateName = DIGEST_TASK_REMINDER;
-	                break;
-	            case TASK_NOTIFICATION:
-	                templateName = DIGEST_TASK_NOTIFICATION;
-	                break;
-	            case UPDATE_NOTIFICATION:
-	                templateName = DIGEST_UPDATE_NOTIFICATION;
-	                break;
-	            default:
-	                throw new RuntimeException();
+            case TASK_REMINDER:
+                templateName = DIGEST_TASK_REMINDER;
+                break;
+            case TASK_NOTIFICATION:
+                templateName = DIGEST_TASK_NOTIFICATION;
+                break;
+            case UPDATE_NOTIFICATION:
+                templateName = DIGEST_UPDATE_NOTIFICATION;
+                break;
+            default:
+                throw new RuntimeException();
             }
-            
+
             messageBuilder.subject(resolveMessage(templateName, (Object[]) null));
             messageBuilder.emailTemplate(templateName);
             PrismEmailMessage message = messageBuilder.build();
             sendEmail(message);
-            
+
             if (digestNotificationType == DigestNotificationType.UPDATE_NOTIFICATION) {
                 user.setLatestUpdateNotificationDate(new Date());
             } else {
-            	user.setLatestTaskNotificationDate(new Date());
+                user.setLatestTaskNotificationDate(new Date());
             }
-            
+
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -182,15 +186,14 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             Referee referee = refereeDAO.getRefereeById(refereeId);
             String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
 
-            ApplicationForm applicationForm = referee.getApplication();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
+            ApplicationForm application = referee.getApplication();
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
-                    adminsEmails, referee, applicationForm, applicationForm.getApplicant(), getHostName() });
+                    adminsEmails, referee, application, application.getApplicant(), getHostName() });
 
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
             sendEmail(message);
-            referee.setLastNotified(new Date());
-            refereeDAO.save(referee);
+            applicationFormUserRoleService.updateLastNotifiedTimestamp(application, referee.getUser(), Authority.REFEREE, ApplicationFormAction.PROVIDE_REFERENCE);
         } catch (Exception e) {
             log.error("Error while sending reference reminder email to referee: ", e);
             return false;
@@ -222,7 +225,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
             message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_REMINDER);
             sendEmail(message);
-            participant.setLastNotified(new Date());
+            RegisteredUser user = participant.getUser();
+            Authority authority = Authority.INTERVIEWER;
+            if (user.isApplicant(application)) {
+                authority = Authority.APPLICANT;
+            }
+            applicationFormUserRoleService.updateLastNotifiedTimestamp(application, participant.getUser(), authority, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
         } catch (Exception e) {
             log.error("Error while sending interview vote reminder email to interview participant: " + participant.getUser().getDisplayName(), e);
             return false;
@@ -262,9 +270,5 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         }
         return true;
     }
-    
-    private void updateApplicationFormActionUrgentFlag() {
-        applicationFormUserRoleDAO.updateRaisesUrgentFlag();
-    }
-    
+
 }

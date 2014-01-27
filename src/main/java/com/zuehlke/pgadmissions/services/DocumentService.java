@@ -69,4 +69,9 @@ public class DocumentService {
             documentDAO.deleteDocument(proofOfAward);
         }
     }
+    
+    public void deleteOrphanDocuments() {
+        documentDAO.deleteOrphanDocuments();
+    }
+    
 }

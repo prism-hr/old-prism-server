@@ -43,7 +43,6 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -289,7 +288,6 @@ public class PersonalDetailsControllerTest {
         EasyMock.replay(personalDetailsServiceMock, applicationsServiceMock, userServiceMock);
         String view = controller.editPersonalDetails(personalDetails, personalDetailsErrors, updatedUser, updatedUserErrors, modelMock, sessionStatusMock);
 
-        assertNull(personalDetails.getLanguageQualification().getId());
         EasyMock.verify(personalDetailsServiceMock, applicationsServiceMock, userServiceMock);
         assertEquals("redirect:/update/getPersonalDetails?applicationId=ABC", view);
     }

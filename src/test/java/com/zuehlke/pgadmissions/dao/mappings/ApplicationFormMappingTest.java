@@ -90,7 +90,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setApplicationAdministrator(applicationAdmin);
         application.setApplicationNumber("ABC");
-        assertNotNull(application.getPersonalDetails());
         assertNull(application.getId());
 
         sessionFactory.getCurrentSession().save(application);
@@ -112,9 +111,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertEquals(project.getId(), reloadedApplication.getProject().getId());
         assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
         assertEquals("title", reloadedApplication.getProjectTitle());
-        assertNotNull(application.getPersonalDetails());
         assertEquals(lastUpdatedDate, application.getLastUpdated());
-        assertNull(application.getPersonalDetails().getId());
         assertEquals(applicationAdmin, application.getApplicationAdministrator());
         assertEquals("ABC", application.getApplicationNumber());
     }
@@ -440,7 +437,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setApplicationAdministrator(applicationAdmin);
         application.setApplicationNumber("ABC");
-        assertNotNull(application.getPersonalDetails());
         assertNull(application.getId());
 
         sessionFactory.getCurrentSession().save(application);
@@ -466,9 +462,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertTrue(project.isDisabled());
         assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
         assertEquals("title", reloadedApplication.getProjectTitle());
-        assertNotNull(application.getPersonalDetails());
         assertEquals(lastUpdatedDate, application.getLastUpdated());
-        assertNull(application.getPersonalDetails().getId());
         assertEquals(applicationAdmin, application.getApplicationAdministrator());
         assertEquals("ABC", application.getApplicationNumber());
     }

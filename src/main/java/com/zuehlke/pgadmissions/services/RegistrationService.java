@@ -112,13 +112,10 @@ public class RegistrationService {
 			}
 			userDAO.save(user);
 		} else if (interviewer != null) {
-			interviewer.setLastNotified(null);
 			interviewerDAO.save(interviewer);
 		} else if (reviewer != null) {
-			reviewer.setLastNotified(null);
 			reviewerDAO.save(reviewer);
 		} else if (supervisor != null) {
-			supervisor.setLastNotified(null);
 			supervisorDAO.save(supervisor);
 		} else if (referee != null) {
 			referee.setLastNotified(null);

@@ -1,0 +1,1 @@
+ALTER TABLE NATIONALITY DROP COLUMN primary_nationality;

@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import org.hibernate.Hibernate;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 
 @Repository
 public class ApprovalRoundDAO {
@@ -30,13 +28,9 @@ public class ApprovalRoundDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(approvalRound);
 	}
 	
-	public void saveAndInitialise(ApprovalRound approvalRound)
+	public ApprovalRound initialise(ApprovalRound approvalRound)
 	{
-	    save(approvalRound);
-	    for (Supervisor supervisor : approvalRound.getSupervisors()) {
-	        Hibernate.initialize(supervisor);
-	        Hibernate.initialize(supervisor.getUser());
-	    }
+	    return getApprovalRoundById(approvalRound.getId());
 	}
 
 }

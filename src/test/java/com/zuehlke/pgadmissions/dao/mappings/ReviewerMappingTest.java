@@ -36,7 +36,7 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldSaveAndLoadReviewer() throws ParseException{
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");		
-		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).lastNotified(lastNotified).build();
+		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).build();
 		save(reviewer);
 		assertNotNull(reviewer.getId());
 		Reviewer reloadedReviewer = (Reviewer) sessionFactory.getCurrentSession().get(Reviewer.class,reviewer.getId());
@@ -48,13 +48,12 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 		assertNotSame(reviewer, reloadedReviewer);
 		assertEquals(reviewer.getId(), reloadedReviewer.getId());
 		assertEquals(rewiewerUser.getId(), reloadedReviewer.getUser().getId());
-		assertEquals(lastNotified, reloadedReviewer.getLastNotified());
 	}
 	
 	@Test	
 	public void shouldLoadReviewerWithReviewRound() throws ParseException{
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");		
-		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).lastNotified(lastNotified).build();
+		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).build();
 		save(reviewer);
 		
 		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).application(applicationForm).build();

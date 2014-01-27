@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -56,9 +55,9 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         save(interview);
         flushAndClearSession();
 
-        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
+        List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertNotNull(participants);
-        assertTrue(participants.contains(participant.getId()));
+        assertTrue(participants.contains(participant));
     }
 
     @Test
@@ -76,10 +75,10 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
 
         save(interview);
         flushAndClearSession();
-
-        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
+        
+        List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertNotNull(participants);
-        assertFalse(participants.contains(participant.getId()));
+        assertTrue(participants.contains(participant));
     }
 
     @Test
@@ -98,9 +97,9 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         save(interview);
         flushAndClearSession();
 
-        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
+        List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertNotNull(participants);
-        assertFalse(participants.contains(participant.getId()));
+        assertTrue(participants.contains(participant));
     }
 
     @Test
@@ -119,9 +118,9 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         save(interview);
         flushAndClearSession();
 
-        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
+        List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertNotNull(participants);
-        assertFalse(participants.contains(participant.getId()));
+        assertTrue(participants.contains(participant));
     }
 
     @Test
@@ -140,9 +139,9 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         save(interview);
         flushAndClearSession();
 
-        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
+        List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertNotNull(participants);
-        assertFalse(participants.contains(participant.getId()));
+        assertTrue(participants.contains(participant));
     }
 
     @Before

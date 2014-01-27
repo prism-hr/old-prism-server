@@ -97,7 +97,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Valid
     private Address contactAddress;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cv_id")
     private Document cv = null;
 
@@ -108,7 +108,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "accepted_terms")
     private Boolean acceptedTermsOnSubmission;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_statement_id")
     private Document personalStatement;
 

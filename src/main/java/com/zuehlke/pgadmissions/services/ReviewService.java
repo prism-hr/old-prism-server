@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -56,26 +57,30 @@ public class ReviewService {
 	    else {
 	        baseDate = new DateTime(application.getBatchDeadline());
 	    }
+	    
 		application.setLatestReviewRound(reviewRound);
 		reviewRound.setApplication(application);
 		reviewRoundDAO.save(reviewRound);
 		StageDuration reviewStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.REVIEW);
 		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, reviewStageDuration.getDurationInMinutes());
         application.setDueDate(dueDate.toDate());
-        boolean sendReferenceRequest = application.getStatus()==ApplicationFormStatus.VALIDATION;
+        boolean sendReferenceRequest = application.getStatus() == ApplicationFormStatus.VALIDATION;
         application.setStatus(ApplicationFormStatus.REVIEW);
 		application.getEvents().add(eventFactory.createEvent(reviewRound));
+		
         if (sendReferenceRequest) {
             mailService.sendReferenceRequest(application.getReferees(), application);
+            StateChangeComment latestStateChangeComment = application.getLatestStateChangeComment();
+            reviewRound.setUseCustomQuestions(latestStateChangeComment.getUseCustomQuestions());
+            reviewRoundDAO.save(reviewRound);
+            application.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
+            applicationDAO.save(application);
             applicationFormUserRoleService.validationStageCompleted(application);
         }
+        
         applicationFormUserRoleService.movedToReviewStage(reviewRound);
         applicationFormUserRoleService.registerApplicationUpdate(application, initiator, ApplicationUpdateScope.ALL_USERS);
 		applicationDAO.save(application);
-	}
-
-	public void save(ReviewRound reviewRound) {
-		reviewRoundDAO.save(reviewRound);
 	}
 
 	public void createReviewerInNewReviewRound(ApplicationForm applicationForm, RegisteredUser newUser) {
@@ -87,11 +92,11 @@ public class ReviewService {
 			ReviewRound reviewRound = newReviewRound();
 			reviewRound.getReviewers().add(reviewer);
 			reviewRound.setApplication(applicationForm);
-			save(reviewRound);
+			reviewRoundDAO.save(reviewRound);
 			applicationForm.setLatestReviewRound(reviewRound);
 		} else {
 			latestReviewRound.getReviewers().add(reviewer);
-			save(latestReviewRound);
+			reviewRoundDAO.save(latestReviewRound);
 		}
 
 	}

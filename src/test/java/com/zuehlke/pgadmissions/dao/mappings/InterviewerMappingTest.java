@@ -34,7 +34,7 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadInterviewer() throws ParseException {
         Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");
-        Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).lastNotified(lastNotified).build();
+        Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).build();
         save(interviewer);
         assertNotNull(interviewer.getId());
         Interviewer reloadedInterviewer = (Interviewer) sessionFactory.getCurrentSession().get(Interviewer.class, interviewer.getId());
@@ -47,7 +47,6 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase {
         assertEquals(interviewer.getId(), reloadedInterviewer.getId());
 
         assertEquals(interviewerUser.getId(), reloadedInterviewer.getUser().getId());
-        assertEquals(lastNotified, reloadedInterviewer.getLastNotified());
     }
 
     @Test

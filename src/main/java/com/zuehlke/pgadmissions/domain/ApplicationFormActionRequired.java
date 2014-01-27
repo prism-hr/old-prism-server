@@ -45,7 +45,7 @@ public class ApplicationFormActionRequired implements Serializable {
     
     @Column(name = "last_notified_timestamp")
     @Temporal(value = TemporalType.DATE)
-    private Date lastNotifiedTimestamp;
+    private Date lastNotifiedTimestamp = null;
 
     @ManyToOne
     @JoinColumn(name = "application_form_user_role_id", nullable = false, updatable = false, insertable = false)
@@ -59,6 +59,14 @@ public class ApplicationFormActionRequired implements Serializable {
         this.deadlineTimestamp = deadlineTimestamp;
         this.bindDeadlineToDueDate = bindDeadlineToDueDate;
         this.raisesUrgentFlag = raisesUrgentFlag;
+    }
+    
+    public ApplicationFormActionRequired(Action action, Date deadlineTimestamp, Boolean bindDeadlineToDueDate, Boolean raisesUrgentFlag, Date lastNotifiedTimestamp) {
+        this.action = action;
+        this.deadlineTimestamp = deadlineTimestamp;
+        this.bindDeadlineToDueDate = bindDeadlineToDueDate;
+        this.raisesUrgentFlag = raisesUrgentFlag;
+        this.lastNotifiedTimestamp = lastNotifiedTimestamp;
     }
 
     public Integer getId() {

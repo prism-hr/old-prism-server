@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewTimeslotBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
-import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -46,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.CommentFactory;
@@ -94,7 +92,6 @@ public class InterviewServiceTest {
                 .build();
         Referee referee = new RefereeBuilder().build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
-        applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_FEEDBACK_REMINDER).build());
 
         StageDuration duration = new StageDurationBuilder().duration(1).unit(DurationUnitEnum.DAYS).build();
         RegisteredUser user = new RegisteredUser();
@@ -123,7 +120,6 @@ public class InterviewServiceTest {
 
         assertEquals(1, applicationForm.getEvents().size());
         assertEquals(interviewStateChangeEvent, applicationForm.getEvents().get(0));
-        assertTrue(applicationForm.getNotificationRecords().isEmpty());
     }
 
     @Test
@@ -135,7 +131,6 @@ public class InterviewServiceTest {
                 .takenPlace(true).furtherDetails("applicant!").furtherInterviewerDetails("interviewer!").build();
         Referee referee = new RefereeBuilder().build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
-        applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.INTERVIEW_FEEDBACK_REMINDER).build());
 
         StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
 
@@ -163,7 +158,6 @@ public class InterviewServiceTest {
 
         assertEquals(1, applicationForm.getEvents().size());
         assertEquals(interviewStateChangeEvent, applicationForm.getEvents().get(0));
-        assertTrue(applicationForm.getNotificationRecords().isEmpty());
     }
 
     @Test

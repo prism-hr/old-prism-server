@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -50,7 +49,6 @@ import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
-import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
@@ -64,7 +62,6 @@ import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
@@ -250,39 +247,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         Integer id = application.getId();
         ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
         assertEquals(2, reloadedApplication.getQualifications().size());
-    }
-
-    @Test
-    public void shouldSaveAndLoadNotificationRecordsWithApplication() throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-        NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26"))
-                .notificationType(NotificationType.UPDATED_NOTIFICATION).build();
-        NotificationRecord recordTwo = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("03 12 2011 14:09:26"))
-                .notificationType(NotificationType.VALIDATION_REMINDER).build();
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).notificationRecords(recordOne, recordTwo).build();
-
-        save(application);
-        Integer recordOneId = recordOne.getId();
-        assertNotNull(recordOneId);
-        assertNotNull(recordTwo.getId());
-        flushAndClearSession();
-
-        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(2, reloadedApplication.getNotificationRecords().size());
-
-        assertTrue(listContainsId(recordOne, reloadedApplication.getNotificationRecords()));
-        assertTrue(listContainsId(recordTwo, reloadedApplication.getNotificationRecords()));
-
-        recordOne = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId);
-        reloadedApplication.removeNotificationRecord(recordOne);
-        save(reloadedApplication);
-        flushAndClearSession();
-
-        reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(1, reloadedApplication.getNotificationRecords().size());
-        assertTrue(listContainsId(recordTwo, reloadedApplication.getNotificationRecords()));
-
-        assertNull(sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId));
     }
 
     @Test
@@ -498,15 +462,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     private boolean listContainsId(Comment comment, List<Comment> comments) {
         for (Comment entry : comments) {
             if (entry.getId().equals(comment.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean listContainsId(NotificationRecord record, List<NotificationRecord> notificationRecords) {
-        for (NotificationRecord entry : notificationRecords) {
-            if (entry.getId().equals(record.getId())) {
                 return true;
             }
         }

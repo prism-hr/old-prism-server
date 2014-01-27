@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
@@ -25,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
@@ -186,7 +184,6 @@ public class ApprovalService {
         checkSendToPorticoStatus(form, approvalRound);
         copyLastNotifiedForRepeatSupervisors(form, approvalRound);
         form.setLatestApprovalRound(approvalRound);
-        form.addNotificationRecord(new NotificationRecord(NotificationType.APPROVAL_REMINDER));
 
         approvalRound.setApplication(form);
         approvalRoundDAO.save(approvalRound);
@@ -200,7 +197,6 @@ public class ApprovalService {
         boolean sendReferenceRequest = form.getStatus() == ApplicationFormStatus.VALIDATION;
 
         form.setStatus(ApplicationFormStatus.APPROVAL);
-        resetNotificationRecords(form);
 
         applicationDAO.save(form);
 
@@ -240,11 +236,6 @@ public class ApprovalService {
                 }
             }
         }
-    }
-
-    private void resetNotificationRecords(ApplicationForm form) {
-        form.removeNotificationRecord(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION, NotificationType.APPROVAL_RESTART_REQUEST_REMINDER,
-                NotificationType.APPROVAL_NOTIFICATION);
     }
 
     private void checkApplicationStatus(ApplicationForm form) {

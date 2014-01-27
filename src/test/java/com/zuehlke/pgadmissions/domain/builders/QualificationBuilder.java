@@ -7,7 +7,6 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class QualificationBuilder {
 
@@ -21,7 +20,7 @@ public class QualificationBuilder {
 	private Date award_date;
 	private ApplicationForm application;
 	private Integer id;
-	private CheckedStatus completed;
+	private Boolean completed;
 	private Domicile country;
 	private Document proofOfAward;
     private boolean sendToUCL;
@@ -83,7 +82,7 @@ public class QualificationBuilder {
 		return this;
 	}
 
-	public QualificationBuilder isCompleted(CheckedStatus isCompleted) {
+	public QualificationBuilder isCompleted(Boolean isCompleted) {
 		this.completed = isCompleted;
 		return this;
 	}

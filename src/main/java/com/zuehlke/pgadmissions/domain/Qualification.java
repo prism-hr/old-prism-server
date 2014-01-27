@@ -5,8 +5,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,7 +14,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import org.apache.commons.lang.BooleanUtils;
+
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="APPLICATION_FORM_QUALIFICATION")
@@ -79,9 +78,8 @@ public class Qualification implements FormSectionObject, Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date qualificationStartDate;
 	
-	@Enumerated(EnumType.STRING)
 	@Column(name="completed")
-	private CheckedStatus completed;
+	private Boolean completed;
 	
 	@Column(name="send_to_ucl")
 	private Boolean sendToUCL;
@@ -155,18 +153,15 @@ public class Qualification implements FormSectionObject, Serializable {
 		return id;
 	}
 
-	public CheckedStatus getCompleted() {
+	public Boolean getCompleted() {
 		return completed;
 	}
 	
 	public boolean isQualificationCompleted(){
-		if(completed == null){
-			return false;
-		}
-		return completed.equals(CheckedStatus.YES);
+		return BooleanUtils.isTrue(completed);
 	}
 
-	public void setCompleted(CheckedStatus completed) {
+	public void setCompleted(Boolean completed) {
 		this.completed = completed;
 	}
 

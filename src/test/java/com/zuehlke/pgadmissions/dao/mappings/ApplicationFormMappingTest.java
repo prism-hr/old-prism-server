@@ -62,7 +62,6 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
@@ -235,11 +234,11 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
         DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
         Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
-                .title("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
+                .title("").languageOfStudy("Abkhazian").subject("").isCompleted(true).institutionCode("AS009Z")
                 .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0))
                 .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
         Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").title("")
-                .isCompleted(CheckedStatus.YES).institution("").languageOfStudy("Achinese").subject("").institutionCode("AS008Z")
+                .isCompleted(true).institution("").languageOfStudy("Achinese").subject("").institutionCode("AS008Z")
                 .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0))
                 .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
 

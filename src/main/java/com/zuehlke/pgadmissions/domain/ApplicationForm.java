@@ -37,7 +37,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -384,14 +383,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public PersonalDetails getPersonalDetails() {
-        if (personalDetails == null) {
-            return new PersonalDetails();
-        }
         return personalDetails;
-    }
-
-    public boolean isPersonalDetailsNull() {
-        return personalDetails == null;
     }
 
     public void setPersonalDetails(PersonalDetails personalDetails) {

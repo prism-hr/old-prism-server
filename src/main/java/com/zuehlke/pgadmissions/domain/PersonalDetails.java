@@ -19,7 +19,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -54,6 +53,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "language_qualification_id")
+    @Valid
     private LanguageQualification languageQualification;
 
     @Column(name = "requires_visa")
@@ -62,8 +62,9 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @Column(name = "passport_available")
     private Boolean passportAvailable;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "passport_information_id")
     @Valid
-    @OneToOne(orphanRemoval = true, mappedBy = "personalDetails", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private PassportInformation passportInformation;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -245,9 +246,6 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 
     public void setRequiresVisa(Boolean requiresVisa) {
         this.requiresVisa = requiresVisa;
-        if (BooleanUtils.isNotTrue(requiresVisa)) {
-            this.passportInformation = null;
-        }
     }
 
     public Boolean getPassportAvailable() {
@@ -280,9 +278,6 @@ public class PersonalDetails implements FormSectionObject, Serializable {
 
     public void setPassportInformation(PassportInformation passportInformation) {
         this.passportInformation = passportInformation;
-        if (this.passportInformation != null) {
-            this.passportInformation.setPersonalDetails(this);
-        }
     }
 
     public LanguageQualification getLanguageQualification() {

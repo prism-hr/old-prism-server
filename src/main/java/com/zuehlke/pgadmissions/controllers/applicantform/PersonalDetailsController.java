@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -152,7 +151,12 @@ public class PersonalDetailsController {
     @RequestMapping(value = "/getPersonalDetails", method = RequestMethod.GET)
     public String getPersonalDetailsView(@RequestParam String applicationId, Model model) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
+        
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
+        if(personalDetails == null){
+            personalDetails = new PersonalDetails();
+            applicationForm.setPersonalDetails(personalDetails);
+        }
 
         if (personalDetails.getLanguageQualification() == null) {
             personalDetails.setLanguageQualification(new LanguageQualification());
@@ -175,10 +179,6 @@ public class PersonalDetailsController {
             return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
         }
 
-        if (BooleanUtils.isNotTrue(personalDetails.getLanguageQualificationAvailable())) {
-            personalDetails.setLanguageQualification(null);
-        }
-
         ApplicationForm applicationForm = personalDetails.getApplication();
 
         userService.updateCurrentUser(updatedUser);
@@ -187,10 +187,6 @@ public class PersonalDetailsController {
         applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getUser(), ApplicationUpdateScope.ALL_USERS);
 
         sessionStatus.setComplete();
-
-        if (personalDetails.getLanguageQualification() == null) {
-            personalDetails.setLanguageQualification(new LanguageQualification());
-        }
 
         return "redirect:/update/getPersonalDetails?applicationId=" + personalDetails.getApplication().getApplicationNumber();
     }

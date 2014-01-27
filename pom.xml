@@ -8,8 +8,9 @@
     <version>2.20.2-SNAPSHOT</version>
 
     <properties>
-        <spring.version>3.1.4.RELEASE</spring.version>
-        <hibernate.version>4.1.9.Final</hibernate.version>
+        <spring.version>3.2.6.RELEASE</spring.version>
+        <spring.security.version>3.2.0.RELEASE</spring.security.version>
+        <hibernate.version>4.1.10.Final</hibernate.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -22,8 +23,8 @@
 
     <scm>
         <connection>scm:hg:http://mercurial.alumeni.co.uk/mercurial/pgadmissions/</connection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencies>
 
@@ -71,24 +72,29 @@
             <version>${spring.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring.security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring.security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring.security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring.security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -798,5 +804,5 @@
             </build>
         </profile>
     </profiles>
-    
+
 </project>

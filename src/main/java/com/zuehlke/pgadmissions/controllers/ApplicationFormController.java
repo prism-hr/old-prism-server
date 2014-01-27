@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
+import com.zuehlke.pgadmissions.services.ApplicationFormCreationService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -24,7 +25,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class ApplicationFormController {
 
     private final ProgramDAO programDAO;
-    private final ApplicationsService applicationService;
+    private final ApplicationFormCreationService applicationFormCreationService;
     private final ProgramInstanceDAO programInstanceDAO;
     private final UserService userService;
     private final ProgramsService programsService;
@@ -34,10 +35,10 @@ public class ApplicationFormController {
     }
 
     @Autowired
-    public ApplicationFormController(ProgramDAO programDAO, ApplicationsService applicationService, ProgramInstanceDAO programInstanceDAO,
+    public ApplicationFormController(ProgramDAO programDAO, ApplicationFormCreationService applicationFormCreationService, ProgramInstanceDAO programInstanceDAO,
             UserService userService, ProgramsService programsService) {
         this.programDAO = programDAO;
-        this.applicationService = applicationService;
+        this.applicationFormCreationService = applicationFormCreationService;
         this.programInstanceDAO = programInstanceDAO;
         this.userService = userService;
         this.programsService = programsService;
@@ -62,7 +63,7 @@ public class ApplicationFormController {
                 throw new CannotApplyToProjectException(project);
             }
         }
-        ApplicationForm applicationForm = applicationService.createOrGetUnsubmittedApplicationForm(user, program, project);
+        ApplicationForm applicationForm = applicationFormCreationService.createOrGetUnsubmittedApplicationForm(user, program, project);
         return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
     }
 

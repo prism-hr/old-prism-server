@@ -12,10 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 
 @Entity(name = "PROGRAM_INSTANCE")
 public class ProgramInstance implements ProgramInstanceInterface, ImportedObject, Serializable {
@@ -53,9 +49,6 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
     @Temporal(TemporalType.DATE)
     private Date disabledDate;
 
-    @Transient
-    private int sequence;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
     private Program program;
@@ -74,14 +67,6 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
 
     public void setApplicationDeadline(Date applicationDeadline) {
         this.applicationDeadline = applicationDeadline;
-    }
-
-    public int getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(int sequence) {
-        this.sequence = sequence;
     }
 
     public Program getProgram() {

@@ -55,7 +55,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
@@ -71,7 +70,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -118,11 +116,6 @@ public class ApprovalServiceTest {
 
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).build();
-        applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(2).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION)
-                .build());
-        applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(5).notificationType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER)
-                .build());
-        applicationForm.addNotificationRecord(new NotificationRecordBuilder().id(4).notificationType(NotificationType.APPROVAL_NOTIFICATION).build());
         applyValidSendToPorticoData(applicationForm);
         expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
@@ -148,10 +141,6 @@ public class ApprovalServiceTest {
         assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getStatus());
         assertEquals(1, applicationForm.getEvents().size());
         assertEquals(event, applicationForm.getEvents().get(0));
-        assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_NOTIFICATION));
-        assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_RESTART_REQUEST_REMINDER));
-        assertNull(applicationForm.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION));
-
     }
 
     @Test
@@ -475,7 +464,7 @@ public class ApprovalServiceTest {
         secondary.setUser(secondarySupervisor);
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).project(project)
-                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build()).build();
+                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build()).programmeDetails(new ProgrammeDetails()).build();
 
         final ProgramInstance programInstance = new ProgramInstance();
         programInstance.setId(1);

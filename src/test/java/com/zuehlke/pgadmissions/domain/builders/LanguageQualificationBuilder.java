@@ -32,16 +32,6 @@ public class LanguageQualificationBuilder {
     private Boolean examTakenOnline;
     
     private Document qualificationDocument;
-
-    private boolean sendToUCL;
-
-    public LanguageQualificationBuilder() {
-    }
-    
-    public LanguageQualificationBuilder sendToUCL(boolean flag) {
-        this.sendToUCL = flag;
-        return this;
-    }    
     
     public LanguageQualificationBuilder languageQualificationDocument(Document document) {
         this.qualificationDocument = document;
@@ -117,7 +107,6 @@ public class LanguageQualificationBuilder {
         qualification.setSpeakingScore(speakingcore);
         qualification.setWritingScore(writingScore);
         qualification.setLanguageQualificationDocument(qualificationDocument);
-        qualification.setSendToUCL(sendToUCL);
         return qualification;
     }
 }

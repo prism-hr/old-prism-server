@@ -29,6 +29,17 @@
                 		My Applications
                 	</a>
                 </li>    
+                <#if loggedInUser.isInRole('SUPERADMINISTRATOR') >
+                  	<li
+                  		<#if activeTab=="requests">
+                  			class="current"
+                  		</#if>>
+                  		<a href="<@spring.url '/requests'/>">
+                  			<i class="icon-rocket"></i>
+                  			Requests
+                  		</a>
+                  	</li>
+                </#if>
                 <#if loggedInUser.isInRole('SUPERADMINISTRATOR') || loggedInUser.programsOfWhichAdministrator?has_content || loggedInUser.isInRole('ADMITTER')>
                   	<li
                   		<#if activeTab=="users">

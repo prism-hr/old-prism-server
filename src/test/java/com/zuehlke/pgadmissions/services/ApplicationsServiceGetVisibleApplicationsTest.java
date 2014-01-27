@@ -18,13 +18,12 @@ import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.unitils.inject.util.InjectionUtils;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
-import com.zuehlke.pgadmissions.dao.CountriesDAO;
-import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -84,32 +83,23 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
-
     private QualificationInstitution institution;
     
-    private CountriesDAO countriesDAO;
-    
-    private DomicileDAO domicileDAO;
-
     @Before
     public void prepare() {
 
         userDAO = new UserDAO(sessionFactory, null, null);
+        
         applicationFormListDAO = new ApplicationFormListDAO(sessionFactory, userDAO);
 
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);
 
         applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
         
-        countriesDAO = new CountriesDAO(sessionFactory);
-        
-        domicileDAO = new DomicileDAO(sessionFactory);
-
-        applicationFormUserRoleService = new ApplicationFormUserRoleService();
-
-        applicationsService = new ApplicationsService(applicationFormDAO, applicationFormListDAO, null, null, null, applicationFormUserRoleDAO,
-                applicationFormUserRoleService, countriesDAO, domicileDAO);
+        applicationsService = new ApplicationsService();
+        InjectionUtils.injectInto(applicationFormListDAO, applicationsService, "applicationFormListDAO");
+        InjectionUtils.injectInto(applicationFormDAO, applicationsService, "applicationFormDAO");
+        InjectionUtils.injectInto(applicationFormUserRoleDAO, applicationsService, "applicationFormUserRoleDAO");
 
         roleDAO = new RoleDAO(sessionFactory);
 
@@ -138,16 +128,16 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         applicationDescriptor.setApplicationFormId(form.getId());
         applicationDescriptor.setApplicationFormStatus(ApplicationFormStatus.REVIEW);
 
-        ApplicationFormListDAO applicationFormDAOMock = EasyMock.createMock(ApplicationFormListDAO.class);
-        ApplicationsService applicationsService = new ApplicationsService(null, applicationFormDAOMock, null, null, null, applicationFormUserRoleDAO,
-                applicationFormUserRoleService, countriesDAO, domicileDAO);
+        ApplicationFormListDAO applicationFormListDAOMock = EasyMock.createMock(ApplicationFormListDAO.class);
+        InjectionUtils.injectInto(applicationFormListDAOMock, applicationsService, "applicationFormListDAO");
+        
         RegisteredUser user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
         ApplicationsFiltering filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
-        EasyMock.expect(applicationFormDAOMock.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE)).andReturn(
+        EasyMock.expect(applicationFormListDAOMock.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE)).andReturn(
                 Arrays.asList(applicationDescriptor));
-        EasyMock.replay(applicationFormDAOMock);
+        EasyMock.replay(applicationFormListDAOMock);
         List<ApplicationDescriptor> visibleApplications = applicationsService.getAllVisibleAndMatchedApplicationsForList(user, filtering);
-        EasyMock.verify(applicationFormDAOMock);
+        EasyMock.verify(applicationFormListDAOMock);
         assertThat(visibleApplications, contains(applicationDescriptor));
         Assert.assertEquals(1, visibleApplications.size());
     }

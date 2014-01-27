@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -50,7 +49,6 @@ import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
-import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
@@ -62,10 +60,8 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
@@ -90,7 +86,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setApplicationAdministrator(applicationAdmin);
         application.setApplicationNumber("ABC");
-        assertNotNull(application.getPersonalDetails());
         assertNull(application.getId());
 
         sessionFactory.getCurrentSession().save(application);
@@ -112,9 +107,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertEquals(project.getId(), reloadedApplication.getProject().getId());
         assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
         assertEquals("title", reloadedApplication.getProjectTitle());
-        assertNotNull(application.getPersonalDetails());
         assertEquals(lastUpdatedDate, application.getLastUpdated());
-        assertNull(application.getPersonalDetails().getId());
         assertEquals(applicationAdmin, application.getApplicationAdministrator());
         assertEquals("ABC", application.getApplicationNumber());
     }
@@ -128,14 +121,12 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         save(country1, country2, country3, nationality1);
 
         ApplicationForm application = new ApplicationFormBuilder().applicant(user).program(program).build();
-
-        sessionFactory.getCurrentSession().save(application);
-        flushAndClearSession();
         PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).firstNationality(nationality1)
                 .dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).title(Title.MR).gender(Gender.MALE).residenceDomicile(country3)
                 .requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").applicationForm(application).build();
+        application.setPersonalDetails(personalDetails);
 
-        sessionFactory.getCurrentSession().save(personalDetails);
+        sessionFactory.getCurrentSession().save(application);
         flushAndClearSession();
 
         ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
@@ -240,11 +231,11 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
         DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
         Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
-                .title("").languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
+                .title("").languageOfStudy("Abkhazian").subject("").isCompleted(true).institutionCode("AS009Z")
                 .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0))
                 .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
         Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").title("")
-                .isCompleted(CheckedStatus.YES).institution("").languageOfStudy("Achinese").subject("").institutionCode("AS008Z")
+                .isCompleted(true).institution("").languageOfStudy("Achinese").subject("").institutionCode("AS008Z")
                 .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0))
                 .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
 
@@ -256,39 +247,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         Integer id = application.getId();
         ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
         assertEquals(2, reloadedApplication.getQualifications().size());
-    }
-
-    @Test
-    public void shouldSaveAndLoadNotificationRecordsWithApplication() throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-        NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26"))
-                .notificationType(NotificationType.UPDATED_NOTIFICATION).build();
-        NotificationRecord recordTwo = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("03 12 2011 14:09:26"))
-                .notificationType(NotificationType.VALIDATION_REMINDER).build();
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).notificationRecords(recordOne, recordTwo).build();
-
-        save(application);
-        Integer recordOneId = recordOne.getId();
-        assertNotNull(recordOneId);
-        assertNotNull(recordTwo.getId());
-        flushAndClearSession();
-
-        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(2, reloadedApplication.getNotificationRecords().size());
-
-        assertTrue(listContainsId(recordOne, reloadedApplication.getNotificationRecords()));
-        assertTrue(listContainsId(recordTwo, reloadedApplication.getNotificationRecords()));
-
-        recordOne = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId);
-        reloadedApplication.removeNotificationRecord(recordOne);
-        save(reloadedApplication);
-        flushAndClearSession();
-
-        reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(1, reloadedApplication.getNotificationRecords().size());
-        assertTrue(listContainsId(recordTwo, reloadedApplication.getNotificationRecords()));
-
-        assertNull(sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId));
     }
 
     @Test
@@ -442,7 +400,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setApplicationAdministrator(applicationAdmin);
         application.setApplicationNumber("ABC");
-        assertNotNull(application.getPersonalDetails());
         assertNull(application.getId());
 
         sessionFactory.getCurrentSession().save(application);
@@ -468,9 +425,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertTrue(project.isDisabled());
         assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
         assertEquals("title", reloadedApplication.getProjectTitle());
-        assertNotNull(application.getPersonalDetails());
         assertEquals(lastUpdatedDate, application.getLastUpdated());
-        assertNull(application.getPersonalDetails().getId());
         assertEquals(applicationAdmin, application.getApplicationAdministrator());
         assertEquals("ABC", application.getApplicationNumber());
     }
@@ -507,15 +462,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     private boolean listContainsId(Comment comment, List<Comment> comments) {
         for (Comment entry : comments) {
             if (entry.getId().equals(comment.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean listContainsId(NotificationRecord record, List<NotificationRecord> notificationRecords) {
-        for (NotificationRecord entry : notificationRecords) {
-            if (entry.getId().equals(record.getId())) {
                 return true;
             }
         }

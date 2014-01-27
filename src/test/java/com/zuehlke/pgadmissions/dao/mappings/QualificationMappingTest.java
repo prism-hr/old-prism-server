@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
 public class QualificationMappingTest extends AutomaticRollbackTestCase{
@@ -47,7 +46,7 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 		
         Qualification qualification = new QualificationBuilder().id(3)
                 .awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("").institution("").title("")
-                .languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
+                .languageOfStudy("Abkhazian").subject("").isCompleted(true).proofOfAward(document)
                 .institutionCode("ASZ009").startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
                 .type(qualificationTypeDAO.getAllQualificationTypes().get(0))
                 .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();

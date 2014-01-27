@@ -45,7 +45,6 @@ public class InterviewerPropertyEditor extends PropertyEditorSupport {
         }
         Interviewer interviewer = new Interviewer();
         interviewer.setUser(user);
-        interviewer.setFirstAdminNotification(true);
         setValue(interviewer);
     }
 

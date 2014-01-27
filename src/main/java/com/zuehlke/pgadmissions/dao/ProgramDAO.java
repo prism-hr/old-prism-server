@@ -9,8 +9,10 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -100,6 +103,12 @@ public class ProgramDAO {
 	            .list();
 	}
 	
-	
+    public Program getLastCustomProgram(QualificationInstitution institution) {
+        String matcher = String.format("%s_%%", institution.getCode());
+        DetachedCriteria maxCustomCode = DetachedCriteria.forClass(Program.class).setProjection(Projections.max("code"))
+                .add(Restrictions.like("code", matcher));
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .add(Property.forName("code").eq(maxCustomCode)).uniqueResult();
+    }	
 
 }

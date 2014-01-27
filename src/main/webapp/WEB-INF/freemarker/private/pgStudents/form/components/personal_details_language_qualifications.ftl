@@ -12,13 +12,13 @@
                         <option value="">Select...</option>
                         <#list languageQualificationTypes as qtype>
                             <option value="${qtype}"
-                            <#if personalDetails.languageQualifications[0].qualificationType?? && personalDetails.languageQualifications[0].qualificationType.displayValue == qtype.displayValue>
+                            <#if personalDetails.languageQualification.qualificationType?? && personalDetails.languageQualification.qualificationType.displayValue == qtype.displayValue>
                                 selected="selected"
                             </#if>
                             >${qtype.displayValue?html}</option>
                         </#list>
                     </select>   
-                    <@spring.bind "personalDetails.languageQualifications[0].qualificationType" />
+                    <@spring.bind "personalDetails.languageQualification.qualificationType" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                             <i class="icon-warning-sign"></i>${error} 
@@ -32,8 +32,8 @@
                 <label for="otherQualificationTypeName" id="lbl-otherQualificationTypeName" class="plain-label grey-label">Other Qualification Type Name<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.type.other'/>"></span>
                 <div class="field">
-                    <input class="full" readonly disabled="disabled" type="text" name="otherQualificationTypeName" id="otherQualificationTypeName" value="${(personalDetails.languageQualifications[0].otherQualificationTypeName?html)!}" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled" />
-                    <@spring.bind "personalDetails.languageQualifications[0].otherQualificationTypeName" />
+                    <input class="full" readonly disabled="disabled" type="text" name="otherQualificationTypeName" id="otherQualificationTypeName" value="${(personalDetails.languageQualification.otherQualificationTypeName?html)!}" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled" />
+                    <@spring.bind "personalDetails.languageQualification.otherQualificationTypeName" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                             <i class="icon-warning-sign"></i>${error} 
@@ -48,11 +48,11 @@
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.date'/>"></span>
                 <div class="field">
                     <#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>
-                        <input class="half date" type="text" readonly value="${(personalDetails.languageQualifications[0].dateOfExamination?string('dd MMM yyyy'))!}" name="dateOfExamination" id="dateOfExamination" readonly="readonly" disabled="disabled"/>                      
+                        <input class="half date" type="text" readonly value="${(personalDetails.languageQualification.dateOfExamination?string('dd MMM yyyy'))!}" name="dateOfExamination" id="dateOfExamination" readonly="readonly" disabled="disabled"/>                      
                     <#else>
-                        <input class="full" readonly type="text" disabled="disabled" value="${(personalDetails.languageQualifications[0].dateOfExamination?string('dd MMM yyyy'))!}" name="dateOfExamination" id="dateOfExamination" />
+                        <input class="full" readonly type="text" disabled="disabled" value="${(personalDetails.languageQualification.dateOfExamination?string('dd MMM yyyy'))!}" name="dateOfExamination" id="dateOfExamination" />
                     </#if>  
-                     <@spring.bind "personalDetails.languageQualifications[0].dateOfExamination" />
+                     <@spring.bind "personalDetails.languageQualification.dateOfExamination" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                             <i class="icon-warning-sign"></i>${error} 
@@ -68,8 +68,8 @@
                 <label id="lbl-overallScore" class="plain-label grey-label" for="overallScoreFree">Overall Score<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.score.overall'/>"></span>
                 <div class="field">
-                    <input class="full" readonly type="text" value="${(personalDetails.languageQualifications[0].overallScore?html)!}" name="overallScore" id="overallScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
-                    <select class="full" readonly="readonly" style="display:none" name="overallScore" id="overallScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
+                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.overallScore?html)!}" name="overallScore" id="overallScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
+                    <select class="full" readonly="readonly" style="display:none" name="overallScore" id="overallScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <option value="4.0">4.0</option>
                         <option value="4.5">4.5</option>
@@ -83,7 +83,7 @@
                         <option value="8.5">8.5</option>
                         <option value="9.0">9.0</option>
                     </select>
-                    <@spring.bind "personalDetails.languageQualifications[0].overallScore" />
+                    <@spring.bind "personalDetails.languageQualification.overallScore" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                             <i class="icon-warning-sign"></i>${error} 
@@ -97,8 +97,8 @@
                 <label id="lbl-readingScore" class="plain-label grey-label" for="readingScoreFree">Reading Score<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.score.reading'/>"></span>
                 <div class="field">
-                    <input class="full" readonly type="text" value="${(personalDetails.languageQualifications[0].readingScore?html)!}" name="readingScore" id="readingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
-                    <select class="full" readonly="readonly" style="display:none" name="readingScore" id="readingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
+                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.readingScore?html)!}" name="readingScore" id="readingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
+                    <select class="full" readonly="readonly" style="display:none" name="readingScore" id="readingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <option value="4.0">4.0</option>
                         <option value="4.5">4.5</option>
@@ -112,7 +112,7 @@
                         <option value="8.5">8.5</option>
                         <option value="9.0">9.0</option>
                     </select>
-                    <@spring.bind "personalDetails.languageQualifications[0].readingScore" />
+                    <@spring.bind "personalDetails.languageQualification.readingScore" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                             <i class="icon-warning-sign"></i>${error} 
@@ -126,8 +126,8 @@
                 <label id="lbl-writingScore" class="plain-label grey-label" for="writingScoreFree">Essay / Writing Score<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.score.writing'/>"></span>
                 <div class="field">
-                    <input class="full" readonly type="text" value="${(personalDetails.languageQualifications[0].writingScore?html)!}" name="writingScore" id="writingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
-                    <select class="full" readonly="readonly" style="display:none" name="writingScore" id="writingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
+                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.writingScore?html)!}" name="writingScore" id="writingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
+                    <select class="full" readonly="readonly" style="display:none" name="writingScore" id="writingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <option value="4.0">4.0</option>
                         <option value="4.5">4.5</option>
@@ -141,7 +141,7 @@
                         <option value="8.5">8.5</option>
                         <option value="9.0">9.0</option>
                     </select>
-                    <@spring.bind "personalDetails.languageQualifications[0].writingScore" />
+                    <@spring.bind "personalDetails.languageQualification.writingScore" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                             <i class="icon-warning-sign"></i>${error} 
@@ -155,8 +155,8 @@
                 <label id="lbl-speakingScore" class="plain-label grey-label" for="speakingScoreFree">Speaking Score<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.score.speaking'/>"></span>
                 <div class="field">
-                    <input class="full" readonly type="text" value="${(personalDetails.languageQualifications[0].speakingScore?html)!}" name="speakingScore" id="speakingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
-                    <select class="full" readonly="readonly" style="display:none" name="speakingScore" id="speakingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
+                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.speakingScore?html)!}" name="speakingScore" id="speakingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
+                    <select class="full" readonly="readonly" style="display:none" name="speakingScore" id="speakingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <option value="4.0">4.0</option>
                         <option value="4.5">4.5</option>
@@ -170,7 +170,7 @@
                         <option value="8.5">8.5</option>
                         <option value="9.0">9.0</option>
                     </select>   
-                    <@spring.bind "personalDetails.languageQualifications[0].speakingScore" />
+                    <@spring.bind "personalDetails.languageQualification.speakingScore" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                             <i class="icon-warning-sign"></i>${error} 
@@ -184,8 +184,8 @@
                 <label id="lbl-listeningScore" class="plain-label grey-label" for="listeningScoreFree">Listening Score<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.score.listening'/>"></span>
                 <div class="field">
-                    <input class="full" readonly type="text" value="${(personalDetails.languageQualifications[0].listeningScore?html)!}" name="listeningScore" id="listeningScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
-                    <select class="full" readonly="readonly" style="display:none" name="listeningScore" id="listeningScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
+                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.listeningScore?html)!}" name="listeningScore" id="listeningScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
+                    <select class="full" readonly="readonly" style="display:none" name="listeningScore" id="listeningScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <option value="4.0">4.0</option>
                         <option value="4.5">4.5</option>
@@ -199,7 +199,7 @@
                         <option value="8.5">8.5</option>
                         <option value="9.0">9.0</option>
                     </select>    
-                    <@spring.bind "personalDetails.languageQualifications[0].listeningScore" />
+                    <@spring.bind "personalDetails.languageQualification.listeningScore" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                             <i class="icon-warning-sign"></i>${error} 
@@ -215,7 +215,7 @@
                 <div class="field">
                     <label class="grey-label">
                         <input type="radio" name="examTakenOnline" id="examTakenOnlineYes" value="true" readonly disabled="disabled"
-                        <#if personalDetails.languageQualifications[0].isExamTakenOnlineSet() && personalDetails.languageQualifications[0].getExamTakenOnline()>
+                        <#if personalDetails.languageQualification.isExamTakenOnlineSet() && personalDetails.languageQualification.getExamTakenOnline()>
                             checked="checked"
                         </#if>
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -224,14 +224,14 @@
                     </label>                            
                     <label class="grey-label">
                         <input type="radio" name="examTakenOnline" id="examTakenOnlineNo" value="false" readonly disabled="disabled"
-                        <#if personalDetails.languageQualifications[0].isExamTakenOnlineSet() && !personalDetails.languageQualifications[0].getExamTakenOnline()>
+                        <#if personalDetails.languageQualification.isExamTakenOnlineSet() && !personalDetails.languageQualification.getExamTakenOnline()>
                             checked="checked"
                         </#if>
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                             disabled="disabled"
                         </#if>/> No
                     </label>
-                    <@spring.bind "personalDetails.languageQualifications[0].examTakenOnline" />
+                    <@spring.bind "personalDetails.languageQualification.examTakenOnline" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                                     <i class="icon-warning-sign"></i>${error} 
@@ -245,7 +245,7 @@
             <div class="row">
                 <label for="languageQualificationDocument" id="lbl-languageQualificationDocument" class="plain-label grey-label">Certificate (PDF)<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.pdf'/>"></span>
-                <div class="field <#if personalDetails.languageQualifications[0].languageQualificationDocument??>uploaded</#if>" id="uploadFields">
+                <div class="field <#if personalDetails.languageQualification.languageQualificationDocument??>uploaded</#if>" id="uploadFields">
                       <div class="fileupload fileupload-new" data-provides="fileupload">
                         <div class="input-append">
                           <div class="uneditable-input span4 disabled" > <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span> </div>
@@ -255,12 +255,12 @@
                       </div>
 
                     <ul id="langqualUploadedDocument"  class="uploaded-files">
-                        <#if personalDetails.languageQualifications[0].languageQualificationDocument??> 
+                        <#if personalDetails.languageQualification.languageQualificationDocument??> 
                             
                              <li class="done">
                              <span class="uploaded-file" name="supportingDocumentSpan">
-                             <input type="hidden" class="file" id="document_LANGUAGE_QUALIFICATION" value="${(encrypter.encrypt(personalDetails.languageQualifications[0].languageQualificationDocument.id))!}"/> 
-                             <a id="lqLink" class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(personalDetails.languageQualifications[0].languageQualificationDocument.id))!}'/>" target="_blank">                  ${(personalDetails.languageQualifications[0].languageQualificationDocument.fileName?html)!}</a>
+                             <input type="hidden" class="file" id="document_LANGUAGE_QUALIFICATION" value="${(encrypter.encrypt(personalDetails.languageQualification.languageQualificationDocument.id))!}"/> 
+                             <a id="lqLink" class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(personalDetails.languageQualification.languageQualificationDocument.id))!}'/>" target="_blank">                  ${(personalDetails.languageQualification.languageQualificationDocument.fileName?html)!}</a>
                              
                             <a id="deleteLq" class="btn btn-danger delete" data-desc="delete Language Qualification"><i class="icon-trash icon-large"></i> Delete</a> 
                             </span>
@@ -268,7 +268,7 @@
                     </ul>
                     
                     <span class="progress" style="display: none;"></span> 
-                    <@spring.bind "personalDetails.languageQualifications[0].languageQualificationDocument" />
+                    <@spring.bind "personalDetails.languageQualification.languageQualificationDocument" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                                     <i class="icon-warning-sign"></i>${error} 

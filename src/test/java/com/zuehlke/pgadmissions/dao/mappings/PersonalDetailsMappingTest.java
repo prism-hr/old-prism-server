@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao.mappings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -101,12 +102,8 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldSaveAndLoadPersonalDetailsWithLanguageQualifications() throws ParseException {
-        LanguageQualification languageQualification1 = new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false)
-                .languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar").overallScore("1")
-                .readingScore("1").speakingScore("1").writingScore("1").build();
-
-        LanguageQualification languageQualification2 = new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false)
+    public void shouldSaveAndLoadPersonalDetailsWithLanguageQualification() throws ParseException {
+        LanguageQualification languageQualification = new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false)
                 .languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar").overallScore("1")
                 .readingScore("1").speakingScore("1").writingScore("1").build();
 
@@ -114,8 +111,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
                 .title(Title.BROTHER).gender(Gender.MALE).residenceDomicile(country3).requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
                 .applicationForm(applicationForm).firstNationality(nationality1).build();
 
-        personalDetails.addLanguageQualification(languageQualification1);
-        personalDetails.addLanguageQualification(languageQualification2);
+        personalDetails.setLanguageQualification(languageQualification);
 
         sessionFactory.getCurrentSession().save(personalDetails);
 
@@ -125,11 +121,11 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
         assertNotSame(personalDetails, reloadedDetails);
 
-        assertNotNull(reloadedDetails.getLanguageQualifications().get(0));
+        assertNotNull(reloadedDetails.getLanguageQualification());
 
-        assertNotNull(reloadedDetails.getLanguageQualifications().get(0).getPersonalDetails());
+        assertNotNull(reloadedDetails.getLanguageQualification().getPersonalDetails());
 
-        reloadedDetails.getLanguageQualifications().remove(0);
+        reloadedDetails.setLanguageQualification(null);
 
         sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
 
@@ -139,7 +135,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
         assertNotSame(personalDetails, reloadedDetails);
 
-        assertEquals(1, reloadedDetails.getLanguageQualifications().size());
+        assertNull(reloadedDetails.getLanguageQualification());
     }
 
     @Test

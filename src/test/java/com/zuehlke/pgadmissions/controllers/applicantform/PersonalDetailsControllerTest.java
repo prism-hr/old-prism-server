@@ -43,8 +43,8 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
@@ -130,7 +130,7 @@ public class PersonalDetailsControllerTest {
         EasyMock.replay(modelMock);
 
         assertEquals("/private/pgStudents/form/components/personal_details", controller.getPersonalDetailsView("1", modelMock));
-        assertNotNull(personalDetails.getLanguageQualifications().get(0));
+        assertNotNull(personalDetails.getLanguageQualification());
 
     }
 
@@ -202,7 +202,7 @@ public class PersonalDetailsControllerTest {
         assertEquals(applicationForm, returnedApplicationForm);
     }
 
-    @Test(expected = ResourceNotFoundException.class)
+    @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
@@ -276,7 +276,7 @@ public class PersonalDetailsControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
         LanguageQualification languageQualification = new LanguageQualificationBuilder().id(2).build();
         PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(applicationForm).languageQualificationAvailable(false).build();
-        personalDetails.addLanguageQualification(languageQualification);
+        personalDetails.setLanguageQualification(languageQualification);
         BindingResult personalDetailsErrors = new BeanPropertyBindingResult(personalDetails, "personalDetails");
 
         RegisteredUser updatedUser = new RegisteredUserBuilder().firstName("Jakub").firstName2("Marcin").firstName3("Jozef").lastName("Fibinger").build();
@@ -288,7 +288,6 @@ public class PersonalDetailsControllerTest {
         EasyMock.replay(personalDetailsServiceMock, applicationsServiceMock, userServiceMock);
         String view = controller.editPersonalDetails(personalDetails, personalDetailsErrors, updatedUser, updatedUserErrors, modelMock, sessionStatusMock);
 
-        assertNull(personalDetails.getLanguageQualifications().get(0).getId());
         EasyMock.verify(personalDetailsServiceMock, applicationsServiceMock, userServiceMock);
         assertEquals("redirect:/update/getPersonalDetails?applicationId=ABC", view);
     }

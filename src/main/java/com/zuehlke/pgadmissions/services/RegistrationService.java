@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -32,41 +30,30 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Transactional
 public class RegistrationService {
 
-    private final Logger log = LoggerFactory.getLogger(RegistrationService.class);
+	private final Logger log = LoggerFactory.getLogger(RegistrationService.class);
 
 	private final EncryptionUtils encryptionUtils;
-	
+
 	private final RoleDAO roleDAO;
-	
+
 	private final UserDAO userDAO;
 
 	private final InterviewerDAO interviewerDAO;
-	
+
 	private final ReviewerDAO reviewerDAO;
-	
+
 	private final SupervisorDAO supervisorDAO;
-	
+
 	private final RefereeDAO refereeDAO;
-	
+
 	private final MailSendingService mailService;
 
-	private final String host;
-	
 	public RegistrationService() {
-		this(null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public RegistrationService(
-	        final EncryptionUtils encryptionUtils, 
-	        final RoleDAO roleDAO, 
-	        final UserDAO userDAO,
-			final InterviewerDAO interviewerDAO, 
-			final ReviewerDAO reviewerDAO, 
-			final SupervisorDAO supervisorDAO, 
-			final RefereeDAO refereeDAO,
-			final MailSendingService mailService,
-			@Value("${application.host}") final String host) {
+	public RegistrationService(final EncryptionUtils encryptionUtils, final RoleDAO roleDAO, final UserDAO userDAO, final InterviewerDAO interviewerDAO, final ReviewerDAO reviewerDAO, final SupervisorDAO supervisorDAO, final RefereeDAO refereeDAO, final MailSendingService mailService) {
 		this.encryptionUtils = encryptionUtils;
 		this.roleDAO = roleDAO;
 		this.userDAO = userDAO;
@@ -75,7 +62,6 @@ public class RegistrationService {
 		this.mailService = mailService;
 		this.supervisorDAO = supervisorDAO;
 		this.refereeDAO = refereeDAO;
-		this.host = host;
 	}
 
 	public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser, String queryString) {
@@ -94,21 +80,20 @@ public class RegistrationService {
 	public RegisteredUser updateOrSaveUser(RegisteredUser pendingUser, String queryString) {
 		RegisteredUser user = null;
 		if (StringUtils.isNotEmpty(pendingUser.getActivationCode())) {
-		    // User has been invited to join PRISM
-		    user = userDAO.getUserByActivationCode(pendingUser.getActivationCode());
-		    user.setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
-	        user.setUsername(user.getEmail());
+			// User has been invited to join PRISM
+			user = userDAO.getUserByActivationCode(pendingUser.getActivationCode());
+			user.setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
+			user.setUsername(user.getEmail());
 		} else {
-		    // User is an applicant
-		    user = processPendingApplicantUser(pendingUser, queryString);
+			// User is an applicant
+			user = processPendingApplicantUser(pendingUser, queryString);
 		}
-		
+
 		try {
 			userDAO.save(user);
-		}
-		catch (Exception e) {
-		    log.error("Could not save user: {}", user.getEmail());
-		    return null;
+		} catch (Exception e) {
+			log.error("Could not save user: {}", user.getEmail());
+			return null;
 		}
 
 		sendConfirmationEmail(user);
@@ -143,18 +128,10 @@ public class RegistrationService {
 
 	public void sendConfirmationEmail(RegisteredUser newUser) {
 		try {
-			mailService.sendRegistrationConfirmation(newUser, getRegistrationConfirmationAction(newUser));
+			mailService.sendRegistrationConfirmation(newUser);
 		} catch (Exception e) {
 			log.warn("{}", e);
 		}
-	}
-
-	Map<String, Object> populateModelForRegistrationConfirmation(RegisteredUser newUser) {
-		Map<String, Object> model = modelMap();
-		model.put("user", newUser);
-		model.put("host", host);
-		model.put("action", getRegistrationConfirmationAction(newUser));
-		return model;
 	}
 
 	public RegisteredUser findUserForActivationCode(String activationCode) {
@@ -163,22 +140,6 @@ public class RegistrationService {
 
 	Map<String, Object> modelMap() {
 		return new HashMap<String, Object>();
-	}
-
-	protected String getRegistrationConfirmationAction(RegisteredUser user) {
-		if (user.isInRole(Authority.APPLICANT)) {
-			return "complete your application";
-		}
-		if (user.getDirectToUrl() == null) {
-			return "continue";
-		}
-		if (user.getDirectToUrl().startsWith(DirectURLsEnum.ADD_REFERENCE.displayValue())) {
-			return "complete your reference";
-		}
-		if (user.getDirectToUrl().startsWith(DirectURLsEnum.ADD_REVIEW.displayValue())) {
-			return "complete your review";
-		}
-		return "view the application";
 	}
 
 }

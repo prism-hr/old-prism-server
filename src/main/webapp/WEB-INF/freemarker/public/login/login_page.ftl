@@ -56,7 +56,11 @@
         
         <!-- Prospectus container -->
         <div id="pContainer">
-			<#include "/private/prospectus/adverts.ftl"/>
+          <#if Request['CLICKED_ON_CREATE_OPPORTUNITY']??>
+            <#include "/private/prospectus/create_new_opportunity.ftl"/>
+          <#else>
+            <#include "/private/prospectus/adverts.ftl"/>
+          </#if>
         </div>
         <!-- ENd Prospectus container -->
         

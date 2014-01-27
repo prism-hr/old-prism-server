@@ -10,7 +10,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -20,7 +19,6 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
@@ -30,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
@@ -40,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
@@ -275,38 +271,6 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldSaveAndLoadNotificationRecordsWithUser() throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-        NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26"))
-                .notificationType(NotificationType.APPLICANT_SUBMISSION_NOTIFICATION).build();
-        NotificationRecord recordTwo = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("03 12 2011 14:09:26"))
-                .notificationType(NotificationType.REFEREE_RESPONDED_NOTIFICATION).build();
-        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).notificationRecords(recordOne, recordTwo).build();
-
-        save(user);
-        Integer recordOneId = recordOne.getId();
-        assertNotNull(recordOneId);
-        assertNotNull(recordTwo.getId());
-        flushAndClearSession();
-
-        RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
-        assertEquals(2, reloadedUser.getNotificationRecords().size());
-        assertTrue(listContainsId(recordOne, reloadedUser.getNotificationRecords()));
-        assertTrue(listContainsId(recordTwo, reloadedUser.getNotificationRecords()));
-
-        recordOne = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId);
-        reloadedUser.getNotificationRecords().remove(recordOne);
-        save(reloadedUser);
-        flushAndClearSession();
-
-        reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
-        assertEquals(1, reloadedUser.getNotificationRecords().size());
-        assertEquals(recordTwo.getId(), reloadedUser.getNotificationRecords().get(0).getId());
-        assertNull(sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId));
-    }
-
-    @Test
     public void shouldSaveAndLoadPendingRoleNotificationsWithUser() throws ParseException {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
@@ -357,15 +321,6 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
     private boolean listContainsId(Role role, List<Role> roles) {
         for (Role entry : roles) {
             if (entry.getId().equals(role.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean listContainsId(NotificationRecord record, List<NotificationRecord> notificationRecords) {
-        for (NotificationRecord entry : notificationRecords) {
-            if (entry.getId().equals(record.getId())) {
                 return true;
             }
         }

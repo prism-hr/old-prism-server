@@ -1,23 +1,5 @@
 <#-- Assignments -->
 <#assign errorCode = RequestParameters.errorCode! />
-<#if personalDetails?has_content>
-    <#assign hasPersonalDetails = true>
-<#else>
-    <#assign hasPersonalDetails = false>
-</#if>
-
-<#if personalDetails.languageProficiencies?has_content>
-    <#assign proficiencyExist = true/>
-<#else>
-    <#assign proficiencyExist = false>
-</#if>
-
-
-<#if personalDetails.languageQualifications?has_content>
-  <#assign hasLanguageQualifications = true>
-<#else>
-  <#assign hasLanguageQualifications = false>
-</#if>
 
 <#import "/spring.ftl" as spring />
 <#setting locale = "en_US">
@@ -227,7 +209,7 @@
                 <div class="field">
                     <label>
                         <input type="radio" name="englishFirstLanguage" id="englishFirstLanguageYes" value="true"
-                        <#if personalDetails.isEnglishFirstLanguageSet() && personalDetails.getEnglishFirstLanguage()>
+                        <#if personalDetails.englishFirstLanguage?? && personalDetails.englishFirstLanguage>
                             checked="checked"
                         </#if>
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -236,7 +218,7 @@
                     </label>                            
                     <label>
                         <input type="radio" name="englishFirstLanguage" id="englishFirstLanguageNo" value="false"
-                        <#if personalDetails.isEnglishFirstLanguageSet() && !personalDetails.getEnglishFirstLanguage()>
+                        <#if personalDetails.englishFirstLanguage?? && !personalDetails.englishFirstLanguage>
                             checked="checked"
                         </#if>
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -258,7 +240,7 @@
                 <div class="field">
                     <label class="grey-label">
                         <input type="radio" name="languageQualificationAvailable" id="languageQualificationAvailableYes" value="true" disabled="disabled"
-                        <#if personalDetails.isLanguageQualificationAvailableSet() && personalDetails.getLanguageQualificationAvailable()>
+                        <#if personalDetails.languageQualificationAvailable?? && personalDetails.languageQualificationAvailable>
                             checked="checked"
                         </#if>
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -267,7 +249,7 @@
                     </label>                            
                     <label class="grey-label">
                         <input type="radio" name="languageQualificationAvailable" id="languageQualificationAvailableNo" value="false" disabled="disabled"
-                        <#if personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()>
+                        <#if personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable>
                             checked="checked"
                         </#if>
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -320,7 +302,7 @@
                     <div class="field">                             
                         <label>
                             <input type="radio" name="requiresVisa" id="requiresVisaYes" value="true"
-                            <#if  personalDetails.isRequiresVisaSet() && personalDetails.getRequiresVisa() >
+                            <#if  personalDetails.requiresVisa?? && personalDetails.requiresVisa >
                                       checked="checked"
                             </#if>
                             <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -329,7 +311,7 @@
                         </label>
                         <label>
                             <input type="radio" name="requiresVisa" id="requiresVisaNo" value="false"
-                            <#if personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa()>
+                            <#if personalDetails.requiresVisa?? && !personalDetails.requiresVisa>
                                       checked="checked"
                             </#if>
                             <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -351,7 +333,7 @@
                     <div class="field">                             
                         <label>
                             <input type="radio" name="passportAvailable" id="passportAvailableYes" value="true"
-                            <#if personalDetails.isPassportAvailableSet() && personalDetails.getPassportAvailable() >
+                            <#if personalDetails.passportAvailable?? && personalDetails.passportAvailable >
                                       checked="checked"
                             </#if>
                             <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -360,7 +342,7 @@
                         </label>
                         <label>
                             <input type="radio" name="passportAvailable" id="passportAvailableNo" value="false"
-                            <#if personalDetails.isPassportAvailableSet() && !personalDetails.getPassportAvailable()>
+                            <#if personalDetails.passportAvailable?? && !personalDetails.passportAvailable>
                                       checked="checked"
                             </#if>
                             <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -381,7 +363,7 @@
                     <label id="lbl_passportNumber" class="plain-label" for="passportNumber">Passport Number</label>
                     <span class="hint" data-desc="<@spring.message 'personalDetails.passportNumber'/>"></span>
                     <div class="field">                     
-                        <input class="full" readonly type="text" value="${(personalDetails.passportInformation.passportNumber?html)!}" name="passportNumber" id="passportNumber" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa()) >disabled="disabled"</#if> />  
+                        <input class="full" readonly type="text" value="${(personalDetails.passportInformation.passportNumber?html)!}" name="passportNumber" id="passportNumber" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.requiresVisa?? && !personalDetails.requiresVisa) >disabled="disabled"</#if> />  
 
                         <@spring.bind "personalDetails.passportInformation.passportNumber" /> 
                         <#list spring.status.errorMessages as error>
@@ -397,7 +379,7 @@
                     <label id="lbl_nameOnPassport" class="plain-label" for="nameOnPassport">Name on Passport</label>
                     <span class="hint" data-desc="<@spring.message 'personalDetails.nameOnPassport'/>"></span>
                     <div class="field">
-                        <input class="full" readonly type="text" value="${(personalDetails.passportInformation.nameOnPassport?html)!}" name="nameOnPassport" id="nameOnPassport" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>disabled="disabled"</#if> />   
+                        <input class="full" readonly type="text" value="${(personalDetails.passportInformation.nameOnPassport?html)!}" name="nameOnPassport" id="nameOnPassport" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.requiresVisa?? && !personalDetails.requiresVisa)>disabled="disabled"</#if> />   
                         <@spring.bind "personalDetails.passportInformation.nameOnPassport" /> 
                         <#list spring.status.errorMessages as error>
                           <div class="alert alert-error">
@@ -412,7 +394,7 @@
                     <label id="lbl_passportIssueDate" class="plain-label" for="passportIssueDate">Passport Issue Date</label>
                     <span class="hint" data-desc="<@spring.message 'personalDetails.passportIssueDate'/>"></span>
                     <div class="field">
-                        <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>
+                        <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.requiresVisa?? && !personalDetails.requiresVisa)>
                             <input class="full" readonly type="text" disabled="disabled" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate" />             
                         <#else>
                             <input class="half date" readonly type="text" value="${(personalDetails.passportInformation.passportIssueDate?string('dd MMM yyyy'))!}" name="passportIssueDate" id="passportIssueDate"/>
@@ -432,7 +414,7 @@
                     <label id="lbl_passportExpiryDate" class="plain-label" for="passportExpiryDate">Passport Expiry Date</label>
                     <span class="hint" data-desc="<@spring.message 'personalDetails.passportExpiryDate'/>"></span>
                     <div class="field">
-                        <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isRequiresVisaSet() && !personalDetails.getRequiresVisa())>
+                        <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.requiresVisa?? && !personalDetails.requiresVisa)>
                             <input class="full" readonly type="text" disabled="disabled" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate" />             
                         <#else>
                             <input class="half date" readonly type="text" value="${(personalDetails.passportInformation.passportExpiryDate?string('dd MMM yyyy'))!}" name="passportExpiryDate" id="passportExpiryDate"/>

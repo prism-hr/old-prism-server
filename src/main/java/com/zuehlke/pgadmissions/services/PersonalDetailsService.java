@@ -12,26 +12,20 @@ import com.zuehlke.pgadmissions.domain.PersonalDetails;
 @Transactional
 public class PersonalDetailsService {
 
-    private final PersonalDetailDAO personalDetailDAO;
-
-    public PersonalDetailsService() {
-        this(null);
-    }
-
     @Autowired
-    public PersonalDetailsService(PersonalDetailDAO personalDetailDAO) {
-        this.personalDetailDAO = personalDetailDAO;
-    }
+    private PersonalDetailDAO personalDetailDAO;
 
     public void save(PersonalDetails personalDetails) {
+        
+        if (BooleanUtils.isNotTrue(personalDetails.getLanguageQualificationAvailable())) {
+            personalDetails.setLanguageQualification(null);
+        }
+        
         if (BooleanUtils.isNotTrue(personalDetails.getPassportAvailable()) || BooleanUtils.isNotTrue(personalDetails.getRequiresVisa())) {
             personalDetails.setPassportAvailable(false);
             personalDetails.setPassportInformation(null);
         }
         
-        if (BooleanUtils.isTrue(personalDetails.getEnglishFirstLanguage()) || BooleanUtils.isNotTrue(personalDetails.getLanguageQualificationAvailable())) {
-            personalDetails.getLanguageQualifications().clear();
-        }
         personalDetailDAO.save(personalDetails);
     }
 }

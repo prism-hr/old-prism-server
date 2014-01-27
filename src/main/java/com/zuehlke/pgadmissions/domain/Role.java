@@ -29,7 +29,18 @@ public class Role implements GrantedAuthority, Serializable {
     @Column(name = "update_visibility")
     @Enumerated(EnumType.ORDINAL)
     private ApplicationUpdateScope updateVisibility = ApplicationUpdateScope.ALL_USERS;
+    
+    @Column(name = "do_send_update_notification")
+    private Boolean doSendUpdateNotification = false;
+    
+    public Authority getId() {
+        return id;
+    }
 
+    public void setId(Authority id) {
+        this.id = id;
+    }
+    
     @Override
     public String getAuthority() {
         if (id == null) {
@@ -37,17 +48,21 @@ public class Role implements GrantedAuthority, Serializable {
         }
         return id.toString();
     }
-
-    public void setId(Authority id) {
-        this.id = id;
-    }
-
-    public Authority getId() {
-        return id;
-    }
     
     public ApplicationUpdateScope getUpdateVisibility() {
-    	return updateVisibility;
+        return updateVisibility;
+    }
+
+    public void setUpdateVisibility(ApplicationUpdateScope updateVisibility) {
+        this.updateVisibility = updateVisibility;
+    }
+    
+    public Boolean getDoSendUpdateNotification() {
+        return doSendUpdateNotification;
+    }
+
+    public void setDoSendUpdateNotification(Boolean doSendUpdateNotification) {
+        this.doSendUpdateNotification = doSendUpdateNotification;
     }
 
     @Override
@@ -67,4 +82,5 @@ public class Role implements GrantedAuthority, Serializable {
 
         return Objects.equal(id, other.getId());
     }
+    
 }

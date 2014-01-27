@@ -59,7 +59,7 @@ public class ApplicationFormController {
         Project project = null;
         if (projectId != null) {
             project = programsService.getProject(projectId);
-            if (project==null || !project.isAcceptingApplications()) {
+            if (project == null || !project.isAcceptingApplications()) {
                 throw new CannotApplyToProjectException(project);
             }
         }

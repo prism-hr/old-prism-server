@@ -62,6 +62,9 @@ public class Document implements Serializable {
 	@Column(name = "file_content")
 	@Type(type ="binary")
 	private byte[] content;
+	
+	@Column(name = "is_referenced")
+    private Boolean isReferenced;
 
 	public void setId(Integer id) {
 		this.id = id;
@@ -136,4 +139,13 @@ public class Document implements Serializable {
     public void setFileData(MultipartFile fileData) {
         this.fileData = fileData;
     }
+
+    public Boolean getIsReferenced() {
+        return isReferenced;
+    }
+
+    public void setIsReferenced(Boolean isReferenced) {
+        this.isReferenced = isReferenced;
+    }
+    
 }

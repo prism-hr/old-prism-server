@@ -92,15 +92,21 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         addHandler(CannotApplyToProgramException.class, new PgadmissionExceptionHandler<CannotApplyToProgramException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotApplyToProgramException ex, HttpServletRequest request) {
+                if (ex.getProgram() == null) {
+                    return new AlertDefinition(AlertType.INFO, "The programme that you attempted to apply for cannot be found" , null);
+                }
                 return new AlertDefinition(AlertType.INFO, ex.getProgram().getTitle() + " is no longer accepting applications" , null);
             }
         });
         addHandler(CannotApplyToProjectException.class, new PgadmissionExceptionHandler<CannotApplyToProjectException>() {
         	@Override
         	public AlertDefinition handlePgadmissionsException(CannotApplyToProjectException ex, HttpServletRequest request) {
+        	    if (ex.getProject() == null) {
+        	        return new AlertDefinition(AlertType.INFO, "The project that you attempted to apply for cannot be found" , null);
+        	    }
         		return new AlertDefinition(AlertType.INFO, ex.getProject().getAdvert().getTitle() + " is no longer accepting applications" , null);
         	}
         });
-
     }
+    
 }

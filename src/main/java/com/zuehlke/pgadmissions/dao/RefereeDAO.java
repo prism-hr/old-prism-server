@@ -1,17 +1,14 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections.Closure;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -49,47 +46,28 @@ public class RefereeDAO {
         sessionFactory.getCurrentSession().delete(referee);
     }
 
-    public List<Integer> getRefereesIdsDueAReminder() {
+    public List<Referee> getRefereesDueReminder() {
         Date today = Calendar.getInstance().getTime();
         ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class)
                 .add(Restrictions.eq("reminderType", ReminderType.REFERENCE)).uniqueResult();
         Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
-        List<Referee> referees = (List<Referee>) sessionFactory
-                .getCurrentSession()
-                .createCriteria(Referee.class)
-                .createAlias("application", "application")
+        return (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
+                .createAlias("application", "application", JoinType.INNER_JOIN)
+                .createAlias("reference", "reference", JoinType.LEFT_OUTER_JOIN)
+                .add(Restrictions.isNull("reference.id"))
                 .add(Restrictions.eq("declined", false))
                 .add(Restrictions.isNotNull("user"))
-                .add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[] { ApplicationFormStatus.WITHDRAWN,
-                        ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED })))
+                .add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.WITHDRAWN,
+                        ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED})))
                 .add(Restrictions.le("lastNotified", dateWithSubtractedInterval)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-        final List<Integer> result = new ArrayList<Integer>(referees.size());
-        CollectionUtils.forAllDo(referees, new Closure() {
-            @Override
-            public void execute(Object input) {
-                Referee referee = (Referee) input;
-                if (!referee.hasProvidedReference()) {
-                    result.add(referee.getId());
-                }
-            }
-        });
-        return result;
     }
 
     public List<Referee> getRefereesWhoDidntProvideReferenceYet(ApplicationForm form) {
-        List<Referee> referees = (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class).add(Restrictions.eq("declined", false))
+        return (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
+                .createAlias("reference", "reference", JoinType.LEFT_OUTER_JOIN)
+                .add(Restrictions.isNull("reference.id"))
+                .add(Restrictions.eq("declined", false))
                 .add(Restrictions.eq("application", form)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-        CollectionUtils.filter(referees, new Predicate() {
-            @Override
-            public boolean evaluate(final Object object) {
-                Referee referee = (Referee) object;
-                if (!referee.hasProvidedReference()) {
-                    return true;
-                }
-                return false;
-            }
-        });
-        return referees;
     }
 
     public Referee getRefereeByUser(RegisteredUser user) {
@@ -99,4 +77,9 @@ public class RefereeDAO {
     public void refresh(Referee referee) {
         sessionFactory.getCurrentSession().refresh(referee);
     }
+    
+    public Referee initialise(Referee referee) {
+        return getRefereeById(referee.getId());
+    }
+    
 }

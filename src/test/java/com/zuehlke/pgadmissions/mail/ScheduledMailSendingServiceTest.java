@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
@@ -48,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
@@ -66,7 +66,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
     private ApplicationFormListDAO applicationFormListDAOMock;
 
-    private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     private static final String HOST = "http://localhost:8080";
 
@@ -80,7 +80,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         interviewParticipantDAOMock = createMock(InterviewParticipantDAO.class);
         applicationFormListDAOMock = createMock(ApplicationFormListDAO.class);
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, configurationServiceMock, refereeDAOMock, userDAOMock, roleDAOMock,
-                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleDAO);
+                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleService);
     }
 
     @Test
@@ -149,7 +149,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     @Test
     public void shouldSendReferenceReminder() throws Exception {
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, configurationServiceMock, refereeDAOMock, userDAOMock, roleDAOMock,
-                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleDAO) {
+                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleService) {
             @Override
             protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
                 return null;
@@ -170,7 +170,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         String subjectToReturn = "REMINDER: " + SAMPLE_APPLICANT_NAME + " " + SAMPLE_APPLICANT_SURNAME + " " + "Application " + SAMPLE_APPLICATION_NUMBER
                 + " for UCL " + SAMPLE_PROGRAM_TITLE + " - Reference Request";
 
-        expect(refereeDAOMock.getRefereesIdsDueAReminder()).andReturn(asList(0));
+        expect(refereeDAOMock.getRefereesDueReminder()).andReturn(asList(referee));
 
         expect(refereeDAOMock.getRefereeById(0)).andReturn(referee);
 
@@ -217,7 +217,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         String subjectToReturn = "REMINDER: " + SAMPLE_APPLICANT_NAME + " " + SAMPLE_APPLICANT_SURNAME + " " + "Application " + SAMPLE_APPLICATION_NUMBER
                 + " for UCL " + SAMPLE_PROGRAM_TITLE + " - Reference Request";
 
-        expect(interviewParticipantDAOMock.getInterviewParticipantsIdsDueAReminder()).andReturn(Arrays.asList(0));
+        expect(interviewParticipantDAOMock.getInterviewParticipantsDueReminder()).andReturn(Arrays.asList(participant));
 
         expect(interviewParticipantDAOMock.getParticipantById(0)).andReturn(participant);
 

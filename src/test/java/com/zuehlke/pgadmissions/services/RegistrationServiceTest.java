@@ -20,20 +20,14 @@ import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.Supervisor;
-import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -125,30 +119,6 @@ public class RegistrationServiceTest {
 	}
 
 	@Test
-	public void shouldClearNotificationDatesFromSupervisor() {
-		RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").build();
-		Supervisor supervisor = new SupervisorBuilder().id(1).lastNotified(new Date()).user(databaseUser).build();
-		EasyMock.expect(supervisorDAOMock.getSupervisorByUser(databaseUser)).andReturn(supervisor);
-		supervisorDAOMock.save(supervisor);
-		EasyMock.replay(supervisorDAOMock);
-		registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
-		EasyMock.verify(supervisorDAOMock);
-		Assert.assertNull(supervisor.getLastNotified());
-	}
-
-	@Test
-	public void shouldClearNotificationDatesFromInterviewer() {
-		RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").build();
-		Interviewer interviewer = new InterviewerBuilder().id(1).lastNotified(new Date()).user(databaseUser).build();
-		EasyMock.expect(interviewerDAOMock.getInterviewerByUser(databaseUser)).andReturn(interviewer);
-		interviewerDAOMock.save(interviewer);
-		EasyMock.replay(interviewerDAOMock);
-		registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
-		EasyMock.verify(interviewerDAOMock);
-		Assert.assertNull(interviewer.getLastNotified());
-	}
-
-	@Test
 	public void shouldClearNotificationDatesFromReferee() {
 		RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").build();
 		Referee referee = new RefereeBuilder().id(1).lastNotified(new Date()).user(databaseUser).build();
@@ -158,18 +128,6 @@ public class RegistrationServiceTest {
 		registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
 		EasyMock.verify(refereeDAOMock);
 		Assert.assertNull(referee.getLastNotified());
-	}
-
-	@Test
-	public void shouldClearNotificationDatesFromReviewer() {
-		RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").build();
-		Reviewer reviewer = new ReviewerBuilder().id(1).lastNotified(new Date()).user(databaseUser).build();
-		EasyMock.expect(reviewerDAOMock.getReviewerByUser(databaseUser)).andReturn(reviewer);
-		reviewerDAOMock.save(reviewer);
-		EasyMock.replay(reviewerDAOMock);
-		registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
-		EasyMock.verify(reviewerDAOMock);
-		Assert.assertNull(reviewer.getLastNotified());
 	}
 
 	@Test
@@ -303,4 +261,5 @@ public class RegistrationServiceTest {
 
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, interviewerDAOMock, reviewerDAOMock, supervisorDAOMock, refereeDAOMock, mailServiceMock);
 	}
+	
 }

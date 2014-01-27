@@ -16,8 +16,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -141,42 +139,6 @@ public class ApprovalServiceTest {
         assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getStatus());
         assertEquals(1, applicationForm.getEvents().size());
         assertEquals(event, applicationForm.getEvents().get(0));
-    }
-
-    @Test
-    public void shouldCopyLastNotifiedForSupervisorsWhoWereAlsoInPreviousRound() throws ParseException {
-        Date lastNotified = new SimpleDateFormat("dd MM yyyy").parse("05 06 2012");
-        RegisteredUser initiator = new RegisteredUserBuilder().id(10).build();
-        RegisteredUser repeatUser = new RegisteredUserBuilder().id(1).build();
-        Supervisor repeatSupervisorOld = new SupervisorBuilder().id(1).user(repeatUser).lastNotified(lastNotified).build();
-        Supervisor repeatSupervisorNew = new SupervisorBuilder().id(2).user(repeatUser).build();
-
-        RegisteredUser nonRepeatUser = new RegisteredUserBuilder().id(2).build();
-        Supervisor nonRepeatUserSupervisor = new SupervisorBuilder().id(3).user(nonRepeatUser).build();
-        ApprovalRound previousApprovalRound = new ApprovalRoundBuilder().id(1).supervisors(repeatSupervisorOld).build();
-
-        ApprovalRound newApprovalRound = new ApprovalRoundBuilder().id(2).supervisors(repeatSupervisorNew, nonRepeatUserSupervisor).build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().latestApprovalRound(previousApprovalRound).status(ApplicationFormStatus.APPROVAL).id(1)
-                .build();
-        applyValidSendToPorticoData(applicationForm);
-        expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
-                new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
-        approvalRoundDAOMock.save(newApprovalRound);
-        applicationFormDAOMock.save(applicationForm);
-
-        commentDAOMock.save(isA(ApprovalComment.class));
-        StateChangeEvent event = new ApprovalStateChangeEventBuilder().id(1).build();
-        expect(eventFactoryMock.createEvent(newApprovalRound)).andReturn(event);
-
-        replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock, commentDAOMock);
-        approvalService.moveApplicationToApproval(applicationForm, newApprovalRound, initiator);
-        verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock, commentDAOMock);
-
-        assertNull(nonRepeatUserSupervisor.getLastNotified());
-        assertEquals(lastNotified, repeatSupervisorNew.getLastNotified());
-        assertSame(newApprovalRound, applicationForm.getLatestApprovalRound());
-
     }
 
     @Test

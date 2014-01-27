@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
@@ -142,30 +143,12 @@ public class AdditionalInformationControllerTest {
 		EasyMock.verify(userMock, applicationServiceMock, addInfoServiceMock);
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void throwRNFEIfApplicationFormDoesNotExist() {
+	@Test(expected = MissingApplicationFormException.class)
+	public void shouldThrowExceptionIfApplicationFormDoesNotExist() {
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
 		EasyMock.replay(applicationServiceMock, addInfoServiceMock);
 		controller.getAdditionalInformation("1");
 	}
-
-/*	@Test(expected = ResourceNotFoundException.class)
-	public void throwRNFEIfUserCantseeForm() {
-		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
-		EasyMock.replay(userServiceMock);
-		AdditionalInformation additionalInfo = new AdditionalInformationBuilder().id(200).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(100).build();
-		applicationForm.setAdditionalInformation(additionalInfo);
-
-		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
-
-		EasyMock.replay(userMock, applicationServiceMock, addInfoServiceMock);
-		controller.getAdditionalInformation("100");
-	}*/
 
 	@Test
 	public void shouldBindPropertyEditors() {
@@ -194,13 +177,6 @@ public class AdditionalInformationControllerTest {
 		ApplicationForm returnedApplicationForm = controller.getApplicationForm("100");
 		Assert.assertEquals(applicationForm, returnedApplicationForm);
 		EasyMock.verify(applicationServiceMock);
-	}
-
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowRNFEIfNullApplication() {
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
-		EasyMock.replay(applicationServiceMock);
-		controller.getApplicationForm("1");
 	}
 
 }

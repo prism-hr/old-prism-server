@@ -12,7 +12,7 @@ public class AdditionalInformationValidator extends FormSectionObjectValidator i
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return AdditionalInformation.class.equals(clazz);
+		return AdditionalInformation.class.isAssignableFrom(clazz);
 	}
 
 	@Override

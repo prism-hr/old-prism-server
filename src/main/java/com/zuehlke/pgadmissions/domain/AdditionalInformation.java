@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
@@ -29,9 +28,8 @@ public class AdditionalInformation implements FormSectionObject, Serializable {
 	@Transient
 	private boolean acceptedTerms;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_form_id")
-	private ApplicationForm application = null;
+	@OneToOne(mappedBy = "additionalInformation", fetch = FetchType.LAZY)
+	private ApplicationForm application;
 
 	@Column(name = "has_convictions")
 	private Boolean convictions;
@@ -56,9 +54,6 @@ public class AdditionalInformation implements FormSectionObject, Serializable {
 		this.application = application;
 	}
 
-	// no default value for the convictions (the user has to set this property
-	// explicitly) therefore it is easier to use this boolean flag as a
-	// regular bean property -> no hasConvictions() method.
 	public Boolean getConvictions() {
 		return convictions;
 	}

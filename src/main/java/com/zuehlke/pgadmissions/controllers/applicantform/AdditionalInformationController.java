@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
+import static com.google.common.base.Objects.firstNonNull;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +19,8 @@ import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
@@ -45,12 +47,9 @@ public class AdditionalInformationController {
     }
 
     @Autowired
-    public AdditionalInformationController(ApplicationsService applicationService,
-            UserService userService,
-            ApplicationFormPropertyEditor applicationFormPropertyEditor,
-            BooleanPropertyEditor booleanEditor,
-            AdditionalInfoService addInfoServiceMock, AdditionalInformationValidator infoValidator,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+    public AdditionalInformationController(ApplicationsService applicationService, UserService userService,
+            ApplicationFormPropertyEditor applicationFormPropertyEditor, BooleanPropertyEditor booleanEditor, AdditionalInfoService addInfoServiceMock,
+            AdditionalInformationValidator infoValidator, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -62,16 +61,16 @@ public class AdditionalInformationController {
 
     @RequestMapping(value = "/editAdditionalInformation", method = RequestMethod.POST)
     public String editAdditionalInformation(@Valid AdditionalInformation info, BindingResult result) {
-    	ApplicationForm applicationForm = info.getApplication();
-        
+        ApplicationForm applicationForm = info.getApplication();
+
         if (applicationForm.isDecided()) {
             throw new CannotUpdateApplicationException(info.getApplication().getApplicationNumber());
         }
-        
+
         if (result.hasErrors()) {
             return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
         }
-        
+
         additionalService.save(info);
         applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
@@ -86,11 +85,8 @@ public class AdditionalInformationController {
 
     @ModelAttribute("additionalInformation")
     public AdditionalInformation getAdditionalInformation(@RequestParam String applicationId) {
-        ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new ResourceNotFoundException();
-        }
-        return application.getAdditionalInformation();
+        ApplicationForm application = getApplicationForm(applicationId);
+        return firstNonNull(application.getAdditionalInformation(), new AdditionalInformation());
     }
 
     @ModelAttribute("message")
@@ -123,7 +119,7 @@ public class AdditionalInformationController {
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
         if (application == null) {
-            throw new ResourceNotFoundException();
+            throw new MissingApplicationFormException(applicationId);
         }
         return application;
     }

@@ -193,7 +193,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Valid
     private List<Referee> referees = new ArrayList<Referee>();
 
-    @OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "additional_info_id")
     @Valid
     private AdditionalInformation additionalInformation;
 
@@ -382,9 +383,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public AdditionalInformation getAdditionalInformation() {
-        if (additionalInformation == null) {
-            return new AdditionalInformation();
-        }
         return additionalInformation;
     }
 

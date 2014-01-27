@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.components;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -17,6 +20,10 @@ import com.zuehlke.pgadmissions.domain.Referee;
 @Component
 public class ApplicationFormCopyHelper {
 
+    @Autowired
+    private DocumentDAO documentDAO;
+    
+    @Transactional
     public void copyApplicationFormData(ApplicationForm to, ApplicationForm from) {
         if (from.getPersonalDetails() != null) {
             PersonalDetails personalDetails = new PersonalDetails();
@@ -187,6 +194,7 @@ public class ApplicationFormCopyHelper {
         to.setAddress4(from.getAddress4());
         to.setAddress5(from.getAddress5());
         to.setDomicile(from.getDomicile());
+        
         return to;
     }
 
@@ -200,6 +208,9 @@ public class ApplicationFormCopyHelper {
         to.setContentType(from.getContentType());
         to.setFileName(from.getFileName());
         to.setContent(from.getContent());
+        
+        documentDAO.save(to);
+        
         return to;
     }
 

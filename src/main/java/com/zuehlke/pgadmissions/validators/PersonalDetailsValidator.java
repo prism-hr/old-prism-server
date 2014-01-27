@@ -34,7 +34,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(PersonalDetails.class);
+        return PersonalDetails.class.isAssignableFrom(clazz);
     }
 
     @Override
@@ -94,14 +94,12 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
         }
 
         if (BooleanUtils.isTrue(personalDetail.getLanguageQualificationAvailable())) {
-            if (personalDetail.getLanguageQualifications().isEmpty()) {
-                errors.rejectValue("languageQualifications", EMPTY_FIELD_ERROR_MESSAGE);
+            if (personalDetail.getLanguageQualification() == null) {
+                errors.rejectValue("languageQualification", EMPTY_FIELD_ERROR_MESSAGE);
             } else {
-                for (int idx = 0; idx < personalDetail.getLanguageQualifications().size(); idx++) {
-                    errors.pushNestedPath(String.format("languageQualifications[%s]", idx));
-                    ValidationUtils.invokeValidator(languageQualificationValidator, personalDetail.getLanguageQualifications().get(idx), errors);
-                    errors.popNestedPath();
-                }
+                errors.pushNestedPath("languageQualification");
+                ValidationUtils.invokeValidator(languageQualificationValidator, personalDetail.getLanguageQualification(), errors);
+                errors.popNestedPath();
             }
         }
     }

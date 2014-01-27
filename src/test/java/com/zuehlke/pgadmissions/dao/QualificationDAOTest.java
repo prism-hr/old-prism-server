@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class QualificationDAOTest extends AutomaticRollbackTestCase {
 
@@ -33,7 +32,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	    DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
         Qualification qualification = new QualificationBuilder()
                 .awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("").title("")
-                .languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
+                .languageOfStudy("Abkhazian").subject("").isCompleted(true).institutionCode("AS009Z")
                 .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
                 .type(qualificationTypeDAO.getAllQualificationTypes().get(0))
                 .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
@@ -50,7 +49,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	    DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
         Qualification qualification = new QualificationBuilder()
                 .awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("").title("")
-                .languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
+                .languageOfStudy("Abkhazian").subject("").isCompleted(true).institutionCode("AS009Z")
                 .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
                 .type(qualificationTypeDAO.getAllQualificationTypes().get(0))
                 .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
@@ -70,7 +69,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		 DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
         Qualification qualification = new QualificationBuilder()
                 .awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("").title("")
-                .languageOfStudy("Abkhazian").subject("").isCompleted(CheckedStatus.YES).institutionCode("AS009Z")
+                .languageOfStudy("Abkhazian").subject("").isCompleted(true).institutionCode("AS009Z")
                 .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
                 .type(qualificationTypeDAO.getAllQualificationTypes().get(0))
                 .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();

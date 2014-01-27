@@ -41,602 +41,580 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Service
 public class MailSendingService extends AbstractMailSendingService {
 
-    private final Logger log = LoggerFactory.getLogger(MailSendingService.class);
+	private final Logger log = LoggerFactory.getLogger(MailSendingService.class);
 
-    private final String admissionsOfferServiceLevel;
+	private final String admissionsOfferServiceLevel;
 
-    private final String uclProspectusLink;
+	private final String uclProspectusLink;
 
-    public MailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null);
-    }
+	public MailSendingService() {
+		this(null, null, null, null, null, null, null, null, null, null);
+	}
 
-    @Autowired
-    public MailSendingService(final MailSender mailSender, final ConfigurationService configurationService, final ApplicationFormDAO formDAO,
-            final UserDAO userDAO, final RoleDAO roleDAO, final RefereeDAO refereeDAO, final EncryptionUtils encryptionUtils,
-            @Value("${application.host}") final String host, @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel,
-            @Value("${ucl.prospectus.url}") final String uclProspectusLink) {
-        super(mailSender, formDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
-        this.admissionsOfferServiceLevel = admissionsOfferServiceLevel;
-        this.uclProspectusLink = uclProspectusLink;
-    }
+	@Autowired
+	public MailSendingService(final MailSender mailSender, final ConfigurationService configurationService, final ApplicationFormDAO formDAO, final UserDAO userDAO, final RoleDAO roleDAO, final RefereeDAO refereeDAO, final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host, @Value("${admissions.servicelevel.offer}") final String admissionsOfferServiceLevel, @Value("${ucl.prospectus.url}") final String uclProspectusLink) {
+		super(mailSender, formDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
+		this.admissionsOfferServiceLevel = admissionsOfferServiceLevel;
+		this.uclProspectusLink = uclProspectusLink;
+	}
 
-    private void sendReferenceRequest(Referee referee, ApplicationForm applicationForm) {
+	private void sendReferenceRequest(Referee referee, ApplicationForm applicationForm) {
 
-        processRefereeAndGetAsUser(referee);
+		processRefereeAndGetAsUser(referee);
 
-        PrismEmailMessage message = null;
-        try {
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "referee", "adminsEmails", "applicant", "application", "programme", "host" },
-                    new Object[] { referee, adminsEmails, applicationForm.getApplicant(), applicationForm, applicationForm.getProgrammeDetails(), host });
+		PrismEmailMessage message = null;
+		try {
+			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(applicationForm.getProgram().getAdministrators());
+			EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "referee", "adminsEmails", "applicant", "application", "programme", "host" }, new Object[] { referee, adminsEmails, applicationForm.getApplicant(), applicationForm, applicationForm.getProgrammeDetails(), host });
 
-            String subject = resolveMessage(REFEREE_NOTIFICATION, applicationForm);
+			String subject = resolveMessage(REFEREE_NOTIFICATION, applicationForm);
 
-            message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_NOTIFICATION);
-            sendEmail(message);
-        } catch (Exception e) {
-            log.error("Error while sending reference request mail: {}", e);
-        }
-    }
+			message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_NOTIFICATION);
+			sendEmail(message);
+		} catch (Exception e) {
+			log.error("Error while sending reference request mail: {}", e);
+		}
+	}
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users that they are required to provide references.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Referees
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Referees are notified to provide references, when:
-     * <ol>
-     * <li>Administrators move applications from the validation state into a state, that:
-     * <ol>
-     * <li>Is not the rejected or approved state</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    public void sendReferenceRequest(List<Referee> referees, ApplicationForm applicationForm) {
-        for (Referee referee : referees) {
-            referee.setLastNotified(new Date());
-            sendReferenceRequest(referee, applicationForm);
-        }
-    }
+	/**
+	 * <p>
+	 * <b>Summary</b><br/>
+	 * Informs users that they are required to provide references.
+	 * <p/>
+	 * <p>
+	 * <b>Recipients</b> Referees
+	 * </p>
+	 * <p>
+	 * <b>Previous Email Template Name</b><br/>
+	 * Kevin to Insert
+	 * </p>
+	 * <p>
+	 * <b>Business Rules</b><br/>
+	 * <ol>
+	 * <li>Referees are notified to provide references, when:
+	 * <ol>
+	 * <li>Administrators move applications from the validation state into a
+	 * state, that:
+	 * <ol>
+	 * <li>Is not the rejected or approved state</li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * <p>
+	 * <b>Notification Type</b> Immediate Notification
+	 * </p>
+	 */
+	public void sendReferenceRequest(List<Referee> referees, ApplicationForm applicationForm) {
+		for (Referee referee : referees) {
+			referee.setLastNotified(new Date());
+			sendReferenceRequest(referee, applicationForm);
+		}
+	}
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users that they have submitted applications.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Applicant
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * APPLICATION_SUBMIT_CONFIRMATION
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Applicants are notified, when:
-     * <ol>
-     * <li>They submit applications.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    public void sendSubmissionConfirmationToApplicant(ApplicationForm form) {
-        PrismEmailMessage message = null;
-        try {
-            RegisteredUser applicant = form.getApplicant();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
-                    "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
-                            admissionsOfferServiceLevel, form.getOutcomeOfStage() });
+	/**
+	 * <p>
+	 * <b>Summary</b><br/>
+	 * Informs users that they have submitted applications.
+	 * <p/>
+	 * <p>
+	 * <b>Recipients</b> Applicant
+	 * </p>
+	 * <p>
+	 * <b>Previous Email Template Name</b><br/>
+	 * APPLICATION_SUBMIT_CONFIRMATION
+	 * </p>
+	 * <p>
+	 * <b>Business Rules</b><br/>
+	 * <ol>
+	 * <li>Applicants are notified, when:
+	 * <ol>
+	 * <li>They submit applications.</li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * <p>
+	 * <b>Notification Type</b> Immediate Notification
+	 * </p>
+	 */
+	public void sendSubmissionConfirmationToApplicant(ApplicationForm form) {
+		PrismEmailMessage message = null;
+		try {
+			RegisteredUser applicant = form.getApplicant();
+			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
+			EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" }, new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, form.getOutcomeOfStage() });
 
-            Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
-                model.put("reason", form.getRejection().getRejectionReason());
-                if (form.getRejection().isIncludeProspectusLink()) {
-                    model.put("prospectusLink", uclProspectusLink);
-                }
+			Map<String, Object> model = modelBuilder.build();
+			if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
+				model.put("reason", form.getRejection().getRejectionReason());
+				if (form.getRejection().isIncludeProspectusLink()) {
+					model.put("prospectusLink", uclProspectusLink);
+				}
 
-            }
+			}
 
-            Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle() };
-            String subject = resolveMessage(APPLICATION_SUBMIT_CONFIRMATION, args);
+			Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle() };
+			String subject = resolveMessage(APPLICATION_SUBMIT_CONFIRMATION, args);
 
-            message = buildMessage(applicant, subject, model, APPLICATION_SUBMIT_CONFIRMATION);
-            sendEmail(message);
-        } catch (Exception e) {
-            log.error("Error while sending submission confirmation to applicant: {}", e);
-        }
-    }
+			message = buildMessage(applicant, subject, model, APPLICATION_SUBMIT_CONFIRMATION);
+			sendEmail(message);
+		} catch (Exception e) {
+			log.error("Error while sending submission confirmation to applicant: {}", e);
+		}
+	}
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when applications have been rejected.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Applicant
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Administrators can reject applications, when:
-     * <ol>
-     * <li>They are not in the rejected, approved or withdrawn states.</li>
-     * </ol>
-     * </li>
-     * <li>Approvers can reject applications, when:
-     * <ol>
-     * <li>They are in the approval state.</li>
-     * </ol>
-     * </li>
-     * <li>Applicants are notified of rejections, when:
-     * <ol>
-     * <li>Applications are rejected by Administrators or Approvers.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    // TODO: Current business logic is incorrect. Administrator cannot reject application when it is in approval state.
-    public void sendRejectionConfirmationToApplicant(ApplicationForm form) {
-        PrismEmailMessage message = null;
-        try {
-            RegisteredUser applicant = form.getApplicant();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
-                    "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
-                            admissionsOfferServiceLevel, form.getOutcomeOfStage() });
+	/**
+	 * <p>
+	 * <b>Summary</b><br/>
+	 * Informs users when applications have been rejected.
+	 * <p/>
+	 * <p>
+	 * <b>Recipients</b> Applicant
+	 * </p>
+	 * <p>
+	 * <b>Previous Email Template Name</b><br/>
+	 * Kevin to Insert
+	 * </p>
+	 * <p>
+	 * <b>Business Rules</b><br/>
+	 * <ol>
+	 * <li>Administrators can reject applications, when:
+	 * <ol>
+	 * <li>They are not in the rejected, approved or withdrawn states.</li>
+	 * </ol>
+	 * </li>
+	 * <li>Approvers can reject applications, when:
+	 * <ol>
+	 * <li>They are in the approval state.</li>
+	 * </ol>
+	 * </li>
+	 * <li>Applicants are notified of rejections, when:
+	 * <ol>
+	 * <li>Applications are rejected by Administrators or Approvers.</li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * <p>
+	 * <b>Notification Type</b> Immediate Notification
+	 * </p>
+	 */
+	// TODO: Current business logic is incorrect. Administrator cannot reject
+	// application when it is in approval state.
+	public void sendRejectionConfirmationToApplicant(ApplicationForm form) {
+		PrismEmailMessage message = null;
+		try {
+			RegisteredUser applicant = form.getApplicant();
+			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
+			EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" }, new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, form.getOutcomeOfStage() });
 
-            Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
-                model.put("reason", form.getRejection().getRejectionReason());
-                if (form.getRejection().isIncludeProspectusLink()) {
-                    model.put("prospectusLink", uclProspectusLink);
-                }
-            }
+			Map<String, Object> model = modelBuilder.build();
+			if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
+				model.put("reason", form.getRejection().getRejectionReason());
+				if (form.getRejection().isIncludeProspectusLink()) {
+					model.put("prospectusLink", uclProspectusLink);
+				}
+			}
 
-            Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
-                    form.getOutcomeOfStage().displayValue() };
-            String subject = resolveMessage(REJECTED_NOTIFICATION, args);
+			Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(), form.getOutcomeOfStage().displayValue() };
+			String subject = resolveMessage(REJECTED_NOTIFICATION, args);
 
-            message = buildMessage(applicant, subject, model, REJECTED_NOTIFICATION);
-            sendEmail(message);
-        } catch (Exception e) {
-            log.error("Error while sending rejection confirmation to applicant: {}", e);
-        }
-    }
+			message = buildMessage(applicant, subject, model, REJECTED_NOTIFICATION);
+			sendEmail(message);
+		} catch (Exception e) {
+			log.error("Error while sending rejection confirmation to applicant: {}", e);
+		}
+	}
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when applications have been approved.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Applicant
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Administrators can approve applications, while:
-     * <ol>
-     * <li>They are not in the rejected, approved or withdrawn states.</li>
-     * </ol>
-     * </li>
-     * <li>Approvers can approve applications, while:
-     * <ol>
-     * <li>They are in the approval state.</li>
-     * </ol>
-     * </li>
-     * <li>Applicants are notified, when:
-     * <ol>
-     * <li>Applications are approved.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    public void sendApprovedNotification(ApplicationForm form) {
-        PrismEmailMessage message = null;
-        try {
-            RegisteredUser applicant = form.getApplicant();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
-                    "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
-                            admissionsOfferServiceLevel, form.getOutcomeOfStage() });
+	/**
+	 * <p>
+	 * <b>Summary</b><br/>
+	 * Informs users when applications have been approved.
+	 * <p/>
+	 * <p>
+	 * <b>Recipients</b> Applicant
+	 * </p>
+	 * <p>
+	 * <b>Previous Email Template Name</b><br/>
+	 * Kevin to Insert
+	 * </p>
+	 * <p>
+	 * <b>Business Rules</b><br/>
+	 * <ol>
+	 * <li>Administrators can approve applications, while:
+	 * <ol>
+	 * <li>They are not in the rejected, approved or withdrawn states.</li>
+	 * </ol>
+	 * </li>
+	 * <li>Approvers can approve applications, while:
+	 * <ol>
+	 * <li>They are in the approval state.</li>
+	 * </ol>
+	 * </li>
+	 * <li>Applicants are notified, when:
+	 * <ol>
+	 * <li>Applications are approved.</li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * <p>
+	 * <b>Notification Type</b> Immediate Notification
+	 * </p>
+	 */
+	public void sendApprovedNotification(ApplicationForm form) {
+		PrismEmailMessage message = null;
+		try {
+			RegisteredUser applicant = form.getApplicant();
+			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
+			EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" }, new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, form.getOutcomeOfStage() });
 
-            Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
-                model.put("reason", form.getRejection().getRejectionReason());
-                if (form.getRejection().isIncludeProspectusLink()) {
-                    model.put("prospectusLink", uclProspectusLink);
-                }
-            }
+			Map<String, Object> model = modelBuilder.build();
+			if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
+				model.put("reason", form.getRejection().getRejectionReason());
+				if (form.getRejection().isIncludeProspectusLink()) {
+					model.put("prospectusLink", uclProspectusLink);
+				}
+			}
 
-            String subject = resolveMessage(MOVED_TO_APPROVED_NOTIFICATION, form, form.getOutcomeOfStage());
+			String subject = resolveMessage(MOVED_TO_APPROVED_NOTIFICATION, form, form.getOutcomeOfStage());
 
-            message = buildMessage(applicant, subject, model, MOVED_TO_APPROVED_NOTIFICATION);
-            sendEmail(message);
-        } catch (Exception e) {
-            log.error("Error while sending approved notification email to applicant: {}", e);
-        }
-    }
+			message = buildMessage(applicant, subject, model, MOVED_TO_APPROVED_NOTIFICATION);
+			sendEmail(message);
+		} catch (Exception e) {
+			log.error("Error while sending approved notification email to applicant: {}", e);
+		}
+	}
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when interviews have been scheduled.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Interviewer
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Administrators and Delegate Interview Administrators can schedule interviews, while:
-     * <ol>
-     * <li>Applications are in the current interview state, and;</li>
-     * <li>Interviews have not been scheduled.</li>
-     * </ol>
-     * </li>
-     * <li>Interviewers are notified, when:
-     * <ol>
-     * <li>Interviews have been scheduled.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    public void sendInterviewConfirmationToInterviewers(List<Interviewer> interviewers) {
-        PrismEmailMessage message = null;
-        for (Interviewer interviewer : interviewers) {
-            try {
-                ApplicationForm applicationForm = interviewer.getInterview().getApplication();
-                String subject = resolveMessage(INTERVIEWER_NOTIFICATION, applicationForm);
-                List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
-                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "interviewer", "application", "applicant", "host" },
-                        new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), interviewer, applicationForm, applicationForm.getApplicant(),
-                                getHostName() });
-                message = buildMessage(interviewer.getUser(), subject, modelBuilder.build(), INTERVIEWER_NOTIFICATION);
-                sendEmail(message);
-            } catch (Exception e) {
-                log.error("Error while sending interview confirmation email to interviewer: {}", e);
-            }
-        }
-    }
+	/**
+	 * <p>
+	 * <b>Summary</b><br/>
+	 * Informs users when interviews have been scheduled.
+	 * <p/>
+	 * <p>
+	 * <b>Recipients</b> Interviewer
+	 * </p>
+	 * <p>
+	 * <b>Previous Email Template Name</b><br/>
+	 * Kevin to Insert
+	 * </p>
+	 * <p>
+	 * <b>Business Rules</b><br/>
+	 * <ol>
+	 * <li>Administrators and Delegate Interview Administrators can schedule
+	 * interviews, while:
+	 * <ol>
+	 * <li>Applications are in the current interview state, and;</li>
+	 * <li>Interviews have not been scheduled.</li>
+	 * </ol>
+	 * </li>
+	 * <li>Interviewers are notified, when:
+	 * <ol>
+	 * <li>Interviews have been scheduled.</li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * <p>
+	 * <b>Notification Type</b> Immediate Notification
+	 * </p>
+	 */
+	public void sendInterviewConfirmationToInterviewers(List<Interviewer> interviewers) {
+		PrismEmailMessage message = null;
+		for (Interviewer interviewer : interviewers) {
+			try {
+				ApplicationForm applicationForm = interviewer.getInterview().getApplication();
+				String subject = resolveMessage(INTERVIEWER_NOTIFICATION, applicationForm);
+				List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
+				EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "interviewer", "application", "applicant", "host" }, new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), interviewer, applicationForm, applicationForm.getApplicant(), getHostName() });
+				message = buildMessage(interviewer.getUser(), subject, modelBuilder.build(), INTERVIEWER_NOTIFICATION);
+				sendEmail(message);
+			} catch (Exception e) {
+				log.error("Error while sending interview confirmation email to interviewer: {}", e);
+			}
+		}
+	}
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when interviews have been scheduled.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Applicant
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <li>Administrators and Delegate Interview Administrators can schedule interviews, while:
-     * <ol>
-     * <li>Applications are in the current interview state, and;</li>
-     * <li>Interviews have not been scheduled.</li>
-     * </ol>
-     * </li>
-     * <ol>
-     * <li>Applicants are notified, when:
-     * <ol>
-     * <li>Interviews have been scheduled.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     * 
-     * @param applicationForm
-     */
-    public void sendInterviewConfirmationToApplicant(ApplicationForm applicationForm) {
-        PrismEmailMessage message = null;
-        try {
-            String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, applicationForm, applicationForm.getOutcomeOfStage());
-            List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
-            EmailModelBuilder modelBuilder = getModelBuilder(
-                    new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), applicationForm, applicationForm.getApplicant(),
-                            configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, applicationForm.getOutcomeOfStage() });
+	/**
+	 * <p>
+	 * <b>Summary</b><br/>
+	 * Informs users when interviews have been scheduled.
+	 * <p/>
+	 * <p>
+	 * <b>Recipients</b> Applicant
+	 * </p>
+	 * <p>
+	 * <b>Previous Email Template Name</b><br/>
+	 * Kevin to Insert
+	 * </p>
+	 * <p>
+	 * <b>Business Rules</b><br/>
+	 * <li>Administrators and Delegate Interview Administrators can schedule
+	 * interviews, while:
+	 * <ol>
+	 * <li>Applications are in the current interview state, and;</li>
+	 * <li>Interviews have not been scheduled.</li>
+	 * </ol>
+	 * </li>
+	 * <ol>
+	 * <li>Applicants are notified, when:
+	 * <ol>
+	 * <li>Interviews have been scheduled.</li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * <p>
+	 * <b>Notification Type</b> Immediate Notification
+	 * </p>
+	 * 
+	 * @param applicationForm
+	 */
+	public void sendInterviewConfirmationToApplicant(ApplicationForm applicationForm) {
+		PrismEmailMessage message = null;
+		try {
+			String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, applicationForm, applicationForm.getOutcomeOfStage());
+			List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
+			EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" }, new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), applicationForm, applicationForm.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, applicationForm.getOutcomeOfStage() });
 
-            Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.REJECTED.equals(applicationForm.getStatus())) {
-                model.put("reason", applicationForm.getRejection().getRejectionReason());
-                if (applicationForm.getRejection().isIncludeProspectusLink()) {
-                    model.put("prospectusLink", uclProspectusLink);
-                }
+			Map<String, Object> model = modelBuilder.build();
+			if (ApplicationFormStatus.REJECTED.equals(applicationForm.getStatus())) {
+				model.put("reason", applicationForm.getRejection().getRejectionReason());
+				if (applicationForm.getRejection().isIncludeProspectusLink()) {
+					model.put("prospectusLink", uclProspectusLink);
+				}
 
-            }
+			}
 
-            message = buildMessage(applicationForm.getApplicant(), subject, model, MOVED_TO_INTERVIEW_NOTIFICATION);
-            sendEmail(message);
-        } catch (Exception e) {
-            log.error("Error while sending interview confirmation email to applicant: {}", e);
-        }
-    }
+			message = buildMessage(applicationForm.getApplicant(), subject, model, MOVED_TO_INTERVIEW_NOTIFICATION);
+			sendEmail(message);
+		} catch (Exception e) {
+			log.error("Error while sending interview confirmation email to applicant: {}", e);
+		}
+	}
 
-    public void sendInterviewVoteNotificationToInterviewerParticipants(Interview interview) {
-        ApplicationForm applicationForm = interview.getApplication();
+	public void sendInterviewVoteNotificationToInterviewerParticipants(Interview interview) {
+		ApplicationForm applicationForm = interview.getApplication();
 
-        String subject = resolveMessage(INTERVIEW_VOTE_NOTIFICATION, applicationForm);
+		String subject = resolveMessage(INTERVIEW_VOTE_NOTIFICATION, applicationForm);
 
-        PrismEmailMessage message = null;
-        for (InterviewParticipant participant : interview.getParticipants()) {
-            try {
-                List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
-                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
-                        getAdminsEmailsCommaSeparatedAsString(admins), participant, applicationForm, getHostName() });
-                message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_NOTIFICATION);
-                sendEmail(message);
-                participant.setLastNotified(new Date());
-            } catch (Exception e) {
-                log.error("Error while sending interview vote notification email to interview participant: " + participant.getUser().getEmail(), e);
-            }
-        }
-    }
+		PrismEmailMessage message = null;
+		for (InterviewParticipant participant : interview.getParticipants()) {
+			try {
+				List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
+				EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), participant, applicationForm, getHostName() });
+				message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_NOTIFICATION);
+				sendEmail(message);
+				participant.setLastNotified(new Date());
+			} catch (Exception e) {
+				log.error("Error while sending interview vote notification email to interview participant: " + participant.getUser().getEmail(), e);
+			}
+		}
+	}
 
-    /**
-     * @param participant
-     *            interview participant who has posted a vote.
-     */
-    public void sendInterviewVoteConfirmationToAdministrators(InterviewParticipant participant) {
-        Interview interview = participant.getInterview();
-        ApplicationForm application = interview.getApplication();
-        Collection<RegisteredUser> administrators = getApplicationOrProgramAdministrators(application);
+	/**
+	 * @param participant
+	 *            interview participant who has posted a vote.
+	 */
+	public void sendInterviewVoteConfirmationToAdministrators(InterviewParticipant participant) {
+		Interview interview = participant.getInterview();
+		ApplicationForm application = interview.getApplication();
+		Collection<RegisteredUser> administrators = getApplicationOrProgramAdministrators(application);
 
-        PrismEmailMessage message = null;
-        String subject = resolveMessage(INTERVIEW_VOTE_CONFIRMATION, application);
-        for (RegisteredUser administrator : administrators) {
-            if (administrator.getId() == participant.getUser().getId()) {
-                continue; // administrator has voted himself, no need to notify him
-            }
-            try {
-                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "administrator", "application", "participant", "host" }, new Object[] {
-                        administrator, application, participant, getHostName() });
-                message = buildMessage(administrator, subject, modelBuilder.build(), INTERVIEW_VOTE_CONFIRMATION);
-                sendEmail(message);
-            } catch (Exception e) {
-                log.error("Error while sending interview vote confirmation email to administrator: " + administrator.getDisplayName(), e.getMessage());
-            }
-        }
-    }
+		PrismEmailMessage message = null;
+		String subject = resolveMessage(INTERVIEW_VOTE_CONFIRMATION, application);
+		for (RegisteredUser administrator : administrators) {
+			if (administrator.getId() == participant.getUser().getId()) {
+				continue; // administrator has voted himself, no need to notify
+							// him
+			}
+			try {
+				EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "administrator", "application", "participant", "host" }, new Object[] { administrator, application, participant, getHostName() });
+				message = buildMessage(administrator, subject, modelBuilder.build(), INTERVIEW_VOTE_CONFIRMATION);
+				sendEmail(message);
+			} catch (Exception e) {
+				log.error("Error while sending interview vote confirmation email to administrator: " + administrator.getDisplayName(), e.getMessage());
+			}
+		}
+	}
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when a data export has failed.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Super Administrator
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Super Administrators are notified, when:
-     * <ol>
-     * <li>A data export has failed.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    public void sendExportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
-        PrismEmailMessage message = null;
-        if (messageCode == null) {
-            log.error("Error while sending export error message: messageCode is null");
-            return;
-        }
-        String subject = resolveMessage(EXPORT_ERROR, (Object[]) null);
-        for (RegisteredUser user : superadmins) {
-            try {
-                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageCode,
-                        timestamp, getHostName() });
-                message = buildMessage(user, subject, modelBuilder.build(), EXPORT_ERROR);
-                sendEmail(message);
-            } catch (Exception e) {
-                log.error("Error while sending export error message: {}", e);
-            }
-        }
-    }
+	/**
+	 * <p>
+	 * <b>Summary</b><br/>
+	 * Informs users when a data export has failed.
+	 * <p/>
+	 * <p>
+	 * <b>Recipients</b> Super Administrator
+	 * </p>
+	 * <p>
+	 * <b>Previous Email Template Name</b><br/>
+	 * Kevin to Insert
+	 * </p>
+	 * <p>
+	 * <b>Business Rules</b><br/>
+	 * <ol>
+	 * <li>Super Administrators are notified, when:
+	 * <ol>
+	 * <li>A data export has failed.</li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * <p>
+	 * <b>Notification Type</b> Immediate Notification
+	 * </p>
+	 */
+	public void sendExportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
+		PrismEmailMessage message = null;
+		if (messageCode == null) {
+			log.error("Error while sending export error message: messageCode is null");
+			return;
+		}
+		String subject = resolveMessage(EXPORT_ERROR, (Object[]) null);
+		for (RegisteredUser user : superadmins) {
+			try {
+				EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageCode, timestamp, getHostName() });
+				message = buildMessage(user, subject, modelBuilder.build(), EXPORT_ERROR);
+				sendEmail(message);
+			} catch (Exception e) {
+				log.error("Error while sending export error message: {}", e);
+			}
+		}
+	}
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when a data import has failed.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Super Administrator
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Super Administrators are notified, when:
-     * <ol>
-     * <li>A data import has failed.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    public void sendImportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
-        PrismEmailMessage message = null;
-        if (messageCode == null) {
-            log.error("Error while sending import error message: messageCode is null");
-            return;
-        }
-        String subject = resolveMessage(IMPORT_ERROR, (Object[]) null);
-        for (RegisteredUser user : superadmins) {
-            try {
-                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageCode,
-                        timestamp, getHostName() });
-                message = buildMessage(user, subject, modelBuilder.build(), IMPORT_ERROR);
-                sendEmail(message);
-            } catch (Exception e) {
-                log.error("Error while sending import error message: {}", e);
-            }
-        }
-    }
+	/**
+	 * <p>
+	 * <b>Summary</b><br/>
+	 * Informs users when a data import has failed.
+	 * <p/>
+	 * <p>
+	 * <b>Recipients</b> Super Administrator
+	 * </p>
+	 * <p>
+	 * <b>Previous Email Template Name</b><br/>
+	 * Kevin to Insert
+	 * </p>
+	 * <p>
+	 * <b>Business Rules</b><br/>
+	 * <ol>
+	 * <li>Super Administrators are notified, when:
+	 * <ol>
+	 * <li>A data import has failed.</li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * <p>
+	 * <b>Notification Type</b> Immediate Notification
+	 * </p>
+	 */
+	public void sendImportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
+		PrismEmailMessage message = null;
+		if (messageCode == null) {
+			log.error("Error while sending import error message: messageCode is null");
+			return;
+		}
+		String subject = resolveMessage(IMPORT_ERROR, (Object[]) null);
+		for (RegisteredUser user : superadmins) {
+			try {
+				EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageCode, timestamp, getHostName() });
+				message = buildMessage(user, subject, modelBuilder.build(), IMPORT_ERROR);
+				sendEmail(message);
+			} catch (Exception e) {
+				log.error("Error while sending import error message: {}", e);
+			}
+		}
+	}
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users that they are required to confirm registrations.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Users
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Users can register, when they are:
-     * <ol>
-     * <li>Invited to do so by Administrators, or;</li>
-     * <li>In the process of initiating applications;</li>
-     * </ol>
-     * </li>
-     * <li>They are notified to confirm registrations, when:
-     * <ol>
-     * <li>Submitted registrations.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    public void sendRegistrationConfirmation(RegisteredUser user, String action) {
-        PrismEmailMessage message = null;
-        if (action == null) {
-            log.error("Error while sending confirmation email to registering user: action is null");
-            return;
-        }
+	/**
+	 * <p>
+	 * <b>Summary</b><br/>
+	 * Informs users that they are required to confirm registrations.
+	 * <p/>
+	 * <p>
+	 * <b>Recipients</b> Users
+	 * </p>
+	 * <p>
+	 * <b>Previous Email Template Name</b><br/>
+	 * Kevin to Insert
+	 * </p>
+	 * <p>
+	 * <b>Business Rules</b><br/>
+	 * <ol>
+	 * <li>Users can register, when they are:
+	 * <ol>
+	 * <li>Invited to do so by Administrators, or;</li>
+	 * <li>In the process of initiating applications;</li>
+	 * </ol>
+	 * </li>
+	 * <li>They are notified to confirm registrations, when:
+	 * <ol>
+	 * <li>Submitted registrations.</li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * <p>
+	 * <b>Notification Type</b> Immediate Notification
+	 * </p>
+	 */
+	public void sendRegistrationConfirmation(RegisteredUser user) {
+		PrismEmailMessage message = null;
 
-        try {
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "action", "host" }, new Object[] { user, action, getHostName() });
-            String subject = resolveMessage(REGISTRATION_CONFIRMATION, (Object[]) null);
-            message = buildMessage(user, subject, modelBuilder.build(), REGISTRATION_CONFIRMATION);
-            sendEmail(message);
-        } catch (Exception e) {
-            log.error("Error while sending confirmation email to registering user: {}", e);
-        }
-    }
+		try {
+			EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "host" }, new Object[] { user, getHostName() });
+			String subject = resolveMessage(REGISTRATION_CONFIRMATION, (Object[]) null);
+			message = buildMessage(user, subject, modelBuilder.build(), REGISTRATION_CONFIRMATION);
+			sendEmail(message);
+		} catch (Exception e) {
+			log.error("Error while sending confirmation email to registering user: {}", e);
+		}
+	}
 
-    /**
-     * <p>
-     * <b>Summary</b><br/>
-     * Informs users when temporary passwords have been set for their account.
-     * <p/>
-     * <p>
-     * <b>Recipients</b> Any User Role
-     * </p>
-     * <p>
-     * <b>Previous Email Template Name</b><br/>
-     * Kevin to Insert
-     * </p>
-     * <p>
-     * <b>Business Rules</b><br/>
-     * <ol>
-     * <li>Users can request a temporary password, at:
-     * <ol>
-     * <li>Any time.</li>
-     * </ol>
-     * </li>
-     * <li>Users are notified, when:
-     * <ol>
-     * <li>Their temporary password has been created.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * <p>
-     * <b>Notification Type</b> Immediate Notification
-     * </p>
-     */
-    public void sendResetPasswordMessage(final RegisteredUser user, final String newPassword) throws PrismMailMessageException {
-        PrismEmailMessage message = null;
-        try {
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "newPassword", "host" }, new Object[] { user, newPassword, getHostName() });
-            String subject = resolveMessage(NEW_PASSWORD_CONFIRMATION, (Object[]) null);
-            message = buildMessage(user, subject, modelBuilder.build(), NEW_PASSWORD_CONFIRMATION);
-            sendEmail(message);
-        } catch (Exception e) {
-            log.error("Error while sending reset password email: {}", e);
-        }
-    }
+	/**
+	 * <p>
+	 * <b>Summary</b><br/>
+	 * Informs users when temporary passwords have been set for their account.
+	 * <p/>
+	 * <p>
+	 * <b>Recipients</b> Any User Role
+	 * </p>
+	 * <p>
+	 * <b>Previous Email Template Name</b><br/>
+	 * Kevin to Insert
+	 * </p>
+	 * <p>
+	 * <b>Business Rules</b><br/>
+	 * <ol>
+	 * <li>Users can request a temporary password, at:
+	 * <ol>
+	 * <li>Any time.</li>
+	 * </ol>
+	 * </li>
+	 * <li>Users are notified, when:
+	 * <ol>
+	 * <li>Their temporary password has been created.</li>
+	 * </ol>
+	 * </li>
+	 * </ol>
+	 * </p>
+	 * <p>
+	 * <b>Notification Type</b> Immediate Notification
+	 * </p>
+	 */
+	public void sendResetPasswordMessage(final RegisteredUser user, final String newPassword) throws PrismMailMessageException {
+		PrismEmailMessage message = null;
+		try {
+			EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "newPassword", "host" }, new Object[] { user, newPassword, getHostName() });
+			String subject = resolveMessage(NEW_PASSWORD_CONFIRMATION, (Object[]) null);
+			message = buildMessage(user, subject, modelBuilder.build(), NEW_PASSWORD_CONFIRMATION);
+			sendEmail(message);
+		} catch (Exception e) {
+			log.error("Error while sending reset password email: {}", e);
+		}
+	}
 
 }

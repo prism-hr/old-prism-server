@@ -5,10 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,9 +22,8 @@ public class PassportInformation implements Serializable {
     @GeneratedValue
     private Integer id;
     
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_form_personal_detail_id")
-    private PersonalDetails personalDetails = null;
+    @OneToOne(mappedBy = "passportInformation")
+    private PersonalDetails personalDetails;
 
     @ESAPIConstraint(rule = "LettersAndNumbersOnly", maxLength = 35, message = "{text.field.nonlettersandnumbers}")
     @Column(name = "passport_number")

@@ -188,7 +188,7 @@
             </div>
                
           </div>
-          <table class="data table table-striped table-condensed table-bordered table-hover" id="appliList" border="0">
+          <table class="data table table-striped table-condensed table-bordered table-hover appliList" id="appliList" border="0">
             <colgroup>
             <col style="width: 46px" />
             <col style="width: 25%" />

@@ -162,7 +162,7 @@ public class ApplicationSumaryServiceTest {
         assertEquals(CV_FILE_NAME, result.get("cvFilename"));
         assertEquals("1", result.get("numberOfReferences"));
         assertEquals("TMRSECSING01-2013-000004", result.get("applicationNumber"));
-        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not Provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
     }
 
@@ -203,7 +203,7 @@ public class ApplicationSumaryServiceTest {
         assertEquals("XYZ", result.get("cvId"));
         assertEquals(CV_FILE_NAME, result.get("cvFilename"));
         assertEquals("1", result.get("numberOfReferences"));
-        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"None provided\",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"None provided\",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not Provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
         assertEquals("TMRSECSING01-2013-000004", result.get("applicationNumber"));
     }
@@ -245,7 +245,7 @@ public class ApplicationSumaryServiceTest {
         assertEquals("XYZ", result.get("cvId"));
         assertEquals(CV_FILE_NAME, result.get("cvFilename"));
         assertEquals("1", result.get("numberOfReferences"));
-        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"None provided\",\"skype\":\"Not provided\"}";
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"None provided\",\"skype\":\"Not Provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
         assertEquals("TMRSECSING01-2013-000004", result.get("applicationNumber"));
     }
@@ -287,7 +287,7 @@ public class ApplicationSumaryServiceTest {
         assertEquals("XYZ", result.get("cvId"));
         assertEquals(CV_FILE_NAME, result.get("cvFilename"));
         assertEquals("1", result.get("numberOfReferences"));
-        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not Provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
         assertEquals("TMRSECSING01-2013-000004", result.get("applicationNumber"));
     }
@@ -325,7 +325,7 @@ public class ApplicationSumaryServiceTest {
         assertEquals(PERSONAL_STATEMENT_FILE_NAME, result.get("personalStatementFilename"));
         assertEquals("false", result.get("cvProvided"));
         assertEquals("1", result.get("numberOfReferences"));
-        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not Provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
         assertEquals("TMRSECSING01-2013-000004", result.get("applicationNumber"));
     }
@@ -363,7 +363,7 @@ public class ApplicationSumaryServiceTest {
         assertEquals("XYZ", result.get("cvId"));
         assertEquals(CV_FILE_NAME, result.get("cvFilename"));
         assertEquals("1", result.get("numberOfReferences"));
-        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not provided\"}";
+        String expectedApplicantJson = "{\"title\":\"Lord\",\"phoneNumber\":\"+393407965218\",\"fundingRequirements\":\"0\",\"email\":\"capatonda@mail.com\",\"applicationStatus\":\"Offer Recommended\",\"name\":\"Maccio Capatonda\",\"mostRecentQualification\":\"Laurea in cura del cane e del gatto \",\"mostRecentEmployment\":\"Shortcuts production\",\"skype\":\"Not Provided\"}";
         assertEquals(expectedApplicantJson, result.get("applicant"));
     }
 

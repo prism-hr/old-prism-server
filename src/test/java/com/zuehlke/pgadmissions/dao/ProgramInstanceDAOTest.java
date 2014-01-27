@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.dao;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -13,7 +15,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.junit.Before;
+import org.hamcrest.Matchers;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -31,12 +34,12 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
     private QualificationInstitution institution;
 
     @Override
-    public void setup(){
+    public void setup() {
         super.setup();
-        institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
         save(institution);
     }
-    
+
     @Test
     public void shouldNotReturnProgramInstanceForOtherProgram() {
         Program progOne = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
@@ -45,10 +48,10 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         Date now = Calendar.getInstance().getTime();
         Date oneYearInFuture = DateUtils.addYears(now, 1);
 
-        ProgramInstance programInstanceOne = new ProgramInstanceBuilder().program(progOne).applicationDeadline(oneYearInFuture).sequence(1)
-                .studyOption("31", "Part-time").applicationStartDate(now).academicYear("2013").enabled(true).build();
-        ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().program(progTwo).applicationDeadline(oneYearInFuture).sequence(1)
-                .studyOption("31", "Part-time").applicationStartDate(now).academicYear("2013").enabled(true).build();
+        ProgramInstance programInstanceOne = new ProgramInstanceBuilder().program(progOne).applicationDeadline(oneYearInFuture).studyOption("31", "Part-time")
+                .applicationStartDate(now).academicYear("2013").enabled(true).build();
+        ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().program(progTwo).applicationDeadline(oneYearInFuture).studyOption("31", "Part-time")
+                .applicationStartDate(now).academicYear("2013").enabled(true).build();
         save(programInstanceOne, programInstanceTwo);
         flushAndClearSession();
 
@@ -66,8 +69,8 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         Date now = Calendar.getInstance().getTime();
         Date oneYearInFuture = DateUtils.addYears(now, 1);
 
-        ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearInFuture).sequence(1)
-                .studyOption("31", "Part-time").applicationStartDate(now).applicationStartDate(now).academicYear("2013").enabled(true).build();
+        ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearInFuture).studyOption("31", "Part-time")
+                .applicationStartDate(now).applicationStartDate(now).academicYear("2013").enabled(true).build();
 
         save(programInstance);
         flushAndClearSession();
@@ -84,7 +87,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         save(program);
         Date now = Calendar.getInstance().getTime();
         Date today = DateUtils.truncate(now, Calendar.DATE);
-        ProgramInstance programInstance = new ProgramInstanceBuilder().applicationDeadline(today).program(program).sequence(1).studyOption("31", "Part-time")
+        ProgramInstance programInstance = new ProgramInstanceBuilder().applicationDeadline(today).program(program).studyOption("31", "Part-time")
                 .applicationStartDate(now).applicationStartDate(now).academicYear("2013").enabled(true).build();
         save(programInstance);
         flushAndClearSession();
@@ -101,8 +104,8 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         save(program);
         Date now = Calendar.getInstance().getTime();
         Date oneYearAgo = DateUtils.addYears(now, -1);
-        ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAgo).sequence(1)
-                .studyOption("31", "Part-time").applicationStartDate(now).academicYear("2013").enabled(true).build();
+        ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAgo).studyOption("31", "Part-time")
+                .applicationStartDate(now).academicYear("2013").enabled(true).build();
         save(programInstance);
         flushAndClearSession();
 
@@ -119,9 +122,9 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         save(progOne, progTwo);
         Date now = Calendar.getInstance().getTime();
         Date today = DateUtils.truncate(now, Calendar.DATE);
-        ProgramInstance programInstanceOne = new ProgramInstanceBuilder().program(progOne).applicationDeadline(today).sequence(1).studyOption("1", "Full-time")
+        ProgramInstance programInstanceOne = new ProgramInstanceBuilder().program(progOne).applicationDeadline(today).studyOption("1", "Full-time")
                 .applicationStartDate(now).academicYear("2013").enabled(true).build();
-        ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().program(progTwo).applicationDeadline(today).sequence(1).studyOption("1", "Full-time")
+        ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().program(progTwo).applicationDeadline(today).studyOption("1", "Full-time")
                 .applicationStartDate(now).academicYear("2013").enabled(true).build();
         save(programInstanceOne, programInstanceTwo);
         flushAndClearSession();
@@ -140,7 +143,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         save(institution, program);
         Date now = Calendar.getInstance().getTime();
         Date today = DateUtils.truncate(now, Calendar.DATE);
-        ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(today).sequence(1).studyOption("1", "Full-time")
+        ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(today).studyOption("1", "Full-time")
                 .applicationStartDate(now).academicYear("2013").enabled(true).build();
         save(programInstance);
         flushAndClearSession();
@@ -158,8 +161,8 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         save(institution, program);
         Date now = Calendar.getInstance().getTime();
         Date oneYearAgo = DateUtils.addYears(now, -1);
-        ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAgo).sequence(1)
-                .studyOption("1", "Full-time").applicationStartDate(now).academicYear("2013").enabled(true).build();
+        ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAgo).studyOption("1", "Full-time")
+                .applicationStartDate(now).academicYear("2013").enabled(true).build();
         save(programInstance);
         flushAndClearSession();
 
@@ -175,8 +178,8 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         save(program);
         Date now = Calendar.getInstance().getTime();
         Date oneYearAgo = DateUtils.addYears(now, -1);
-        ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAgo).sequence(1)
-                .studyOption("1", "Full-time").applicationStartDate(now).academicYear("2013").enabled(true).build();
+        ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAgo).studyOption("1", "Full-time")
+                .applicationStartDate(now).academicYear("2013").enabled(true).build();
         save(programInstance);
         flushAndClearSession();
 
@@ -194,14 +197,14 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         Date eightMonthsAgo = DateUtils.addMonths(now, -8);
         Date fourMonthsFromNow = DateUtils.addMonths(now, 4);
         Date oneYearAndfourMonthsFromNow = DateUtils.addMonths(now, 16);
-        ProgramInstance programInstanceOne = new ProgramInstanceBuilder().program(program).applicationDeadline(eightMonthsAgo).sequence(1)
+        ProgramInstance programInstanceOne = new ProgramInstanceBuilder().program(program).applicationDeadline(eightMonthsAgo)
                 .studyOption("31", "Modular/flexible study").applicationStartDate(now).academicYear("2013").enabled(true).build();
 
-        ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow).sequence(2)
+        ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow)
                 .studyOption("31", "Modular/flexible study").applicationStartDate(now).academicYear("2013").enabled(true).build();
-        ProgramInstance programInstanceThree = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAndfourMonthsFromNow).sequence(3)
+        ProgramInstance programInstanceThree = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAndfourMonthsFromNow)
                 .studyOption("31", "Modular/flexible study").applicationStartDate(now).academicYear("2013").enabled(true).build();
-        ProgramInstance programInstanceFour = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow).sequence(4)
+        ProgramInstance programInstanceFour = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow)
                 .studyOption("31", "Part-time").applicationStartDate(now).academicYear("2013").enabled(true).build();
         save(programInstanceOne, programInstanceThree, programInstanceFour, programInstanceTwo);
         flushAndClearSession();
@@ -223,14 +226,14 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
         Date startDateInOneMonth = DateUtils.addMonths(now, 1);
 
-        ProgramInstance programInstanceOne = new ProgramInstanceBuilder().program(program).applicationDeadline(eightMonthsAgo).sequence(1)
+        ProgramInstance programInstanceOne = new ProgramInstanceBuilder().program(program).applicationDeadline(eightMonthsAgo)
                 .studyOption("31", "Modular/flexible study").applicationStartDate(yesterday).academicYear("2013").enabled(true).build();
 
-        ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow).sequence(2)
+        ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow)
                 .studyOption("31", "Modular/flexible study").applicationStartDate(startDateInOneMonth).academicYear("2013").enabled(true).build();
-        ProgramInstance programInstanceThree = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAndfourMonthsFromNow).sequence(3)
+        ProgramInstance programInstanceThree = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAndfourMonthsFromNow)
                 .studyOption("1", "Full-time").applicationStartDate(yesterday).academicYear("2013").enabled(true).build();
-        ProgramInstance programInstanceFour = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow).sequence(4)
+        ProgramInstance programInstanceFour = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow)
                 .studyOption("31", "Part-time").applicationStartDate(yesterday).academicYear("2013").enabled(true).build();
         save(programInstanceOne, programInstanceThree, programInstanceFour, programInstanceTwo);
         flushAndClearSession();
@@ -245,8 +248,6 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldFindAllProgramInstancesForProgramFeed() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
-
         ProgramFeed programFeed1 = new ProgramFeedBuilder().feedUrl("url").institution(institution).build();
         ProgramFeed programFeed2 = new ProgramFeedBuilder().feedUrl("url2").institution(institution).build();
 
@@ -261,13 +262,50 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         ProgramInstance programInstance3 = new ProgramInstanceBuilder().identifier("i3").program(program3).academicYear("1985")
                 .applicationStartDate(new Date()).applicationDeadline(new Date()).enabled(true).build();
 
-        save(institution, programFeed1, programFeed2, program1, program2, program3, programInstance1, programInstance2, programInstance3);
+        save(programFeed1, programFeed2, program1, program2, program3, programInstance1, programInstance2, programInstance3);
         flushAndClearSession();
 
         ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
         List<ProgramInstance> instances = dao.getAllProgramInstances(programFeed2);
 
         assertThat(instances, containsInAnyOrder(hasProperty("identifier", equalTo("i2")), hasProperty("identifier", equalTo("i3"))));
+    }
+
+    @Test
+    public void shouldGetDistinctsStudyOptions() {
+        ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
+        List<Object[]> studyOptions = dao.getDistinctStudyOptions();
+        assertTrue(studyOptions.size() > 0);
+    }
+
+    @Test
+    public void shouldGetLapsedInstances() {
+        Program program = ProgramBuilder.aProgram(institution).build();
+        DateTime today = new DateTime().withTimeAtStartOfDay();
+        DateTime yesterday = today.minusDays(1);
+        DateTime tomorrow = today.plusDays(1);
+
+        ProgramInstance instance1 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(true).disabledDate(yesterday.toDate())
+                .build();
+        ProgramInstance instance2 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(true).disabledDate(today.toDate()).build();
+        ProgramInstance instance3 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(true).disabledDate(tomorrow.toDate())
+                .build();
+        ProgramInstance instance4 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(false).disabledDate(yesterday.toDate())
+                .build();
+        ProgramInstance instance5 = ProgramInstanceBuilder.aProgramInstance(program).identifier("000").enabled(true).disabledDate(yesterday.toDate())
+                .build();
+
+        save(program, instance1, instance2, instance3, instance4, instance5);
+        flushAndClearSession();
+
+        ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
+        List<ProgramInstance> lapsedInstances = dao.getLapsedInstances();
+
+        assertThat(lapsedInstances, hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance1.getId()))));
+        assertThat(lapsedInstances, not(hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance2.getId())))));
+        assertThat(lapsedInstances, not(hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance3.getId())))));
+        assertThat(lapsedInstances, not(hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance4.getId())))));
+        assertThat(lapsedInstances, not(hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance5.getId())))));
     }
 
     private boolean listContainsId(ProgramInstance instance, List<ProgramInstance> instances) {

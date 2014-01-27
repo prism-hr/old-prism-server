@@ -126,13 +126,6 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 			javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "user_id")
-	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
-
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = {
-			javax.persistence.CascadeType.PERSIST,
-			javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "user_id")
 	private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = {
@@ -325,10 +318,6 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 
 	public String getNewPassword() {
 		return newPassword;
-	}
-
-	public List<NotificationRecord> getNotificationRecords() {
-		return notificationRecords;
 	}
 
 	public String getOriginalApplicationQueryString() {
@@ -671,12 +660,6 @@ public class RegisteredUser extends Authorisable implements UserDetails,
 
 	public void setNewPassword(final String newPassword) {
 		this.newPassword = newPassword;
-	}
-
-	public void setNotificationRecords(
-			final List<NotificationRecord> notificationRecords) {
-		this.notificationRecords.clear();
-		this.notificationRecords.addAll(notificationRecords);
 	}
 
 	public void setOriginalApplicationQueryString(final String queryString) {

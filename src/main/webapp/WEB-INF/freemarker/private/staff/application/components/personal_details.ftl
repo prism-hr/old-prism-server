@@ -72,24 +72,26 @@
       <div class="admin_row">
         <label class="admin_row_label">Nationality</label>
         <div class="field">
-            <#if applicationForm.personalDetails.firstNationality??>${applicationForm.personalDetails.firstNationality.name}</#if>
-            <#if applicationForm.personalDetails.secondNationality??>, ${applicationForm.personalDetails.secondNationality.name}</#if>          
+            <#if applicationForm.personalDetails?? && applicationForm.personalDetails.firstNationality??>${applicationForm.personalDetails.firstNationality.name}</#if>
+            <#if applicationForm.personalDetails?? && applicationForm.personalDetails.secondNationality??>, ${applicationForm.personalDetails.secondNationality.name}</#if>          
         </div>
       </div>
       
       <div class="admin_row">
         <span class="admin_row_label">Is English your first language?</span>
-        <div class="field"><#if applicationForm.personalDetails.isEnglishFirstLanguageSet() && applicationForm.personalDetails.englishFirstLanguage>Yes<#else>No</#if></div>
+        <div class="field">${(applicationForm.personalDetails.englishFirstLanguage?string("Yes", "No"))!"Not Provided"}</div>
       </div>                              
       
       <div class="admin_row">
         <span class="admin_row_label">Do you have an English language qualification?</span>
-        <div class="field"><#if applicationForm.personalDetails.isLanguageQualificationAvailableSet() && applicationForm.personalDetails.languageQualificationAvailable>Yes<#else>No</#if></div>
+        <div class="field">
+          ${(applicationForm.personalDetails.languageQualificationAvailable?string("Yes", "No"))!"Not Provided"}
+        </div>
       </div>                              
     </div>
       
-      <#if applicationForm.personalDetails.isLanguageQualificationAvailableSet() && applicationForm.personalDetails.languageQualificationAvailable>
-      <#assign languageQualification = applicationForm.personalDetails.languageQualifications[0]>
+      <#if applicationForm.personalDetails?? && applicationForm.personalDetails.languageQualificationAvailable?? && applicationForm.personalDetails.languageQualificationAvailable>
+      <#assign languageQualification = applicationForm.personalDetails.languageQualification>
       <div class="row-group">
           <div class="admin_row">
             <label class="admin_header">Language Qualifications</label>
@@ -164,12 +166,16 @@
       <!-- VISA - Passport -->
       <div class="admin_row">
         <span class="admin_row_label">Do you require a visa to study in the UK?</span>
-        <div class="field"><#if applicationForm.personalDetails.isRequiresVisaSet() && applicationForm.personalDetails.requiresVisa>Yes<#else>No</#if></div>
+        <div class="field">
+          ${(applicationForm.personalDetails.requiresVisa?string("Yes", "No"))!"Not Provided"}
+        </div>
       </div>
       
       <div class="admin_row">
         <span class="admin_row_label">Do you have a passport?</span>
-        <div class="field"><#if applicationForm.personalDetails.isPassportAvailableSet() && applicationForm.personalDetails.getPassportAvailable()>Yes<#else>No</#if></div>
+        <div class="field">
+          ${(applicationForm.personalDetails.passportAvailable?string("Yes", "No"))!"Not Provided"}
+        </div>
       </div> 
       
       <div class="admin_row">

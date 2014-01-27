@@ -131,4 +131,8 @@ public class ProgramBuilder {
         program.setProgramFeed(programFeed);
         return program;
     }
+    
+    public static ProgramBuilder aProgram(QualificationInstitution institution) {
+        return new ProgramBuilder().code("AAA").title("Amazing program!").enabled(true).atasRequired(false).institution(institution);
+    }
 }

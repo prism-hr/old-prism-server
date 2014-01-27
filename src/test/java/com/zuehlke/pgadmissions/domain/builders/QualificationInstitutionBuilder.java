@@ -46,6 +46,10 @@ public class QualificationInstitutionBuilder {
         return institution;
     }
     
+    public static QualificationInstitutionBuilder aQualificationInstitution(){
+        return new QualificationInstitutionBuilder().code("AGH").name("Akademia Gorniczo-Hutnicza").countryCode("PL").enabled(true);
+    }
+    
     public QualificationInstitutionReference buildAsReference() {
         QualificationInstitutionReference institution = new QualificationInstitutionReference();
         institution.setId(id);

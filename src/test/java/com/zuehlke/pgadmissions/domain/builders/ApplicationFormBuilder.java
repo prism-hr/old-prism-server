@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -27,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class ApplicationFormBuilder {
 
@@ -44,8 +42,7 @@ public class ApplicationFormBuilder {
     private Date submittedDate;
     private Date batchDeadline;
     private Date dueDate;
-    private CheckedStatus acceptedTerms;
-    private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
+    private Boolean acceptedTerms;
     private List<Event> events = new ArrayList<Event>();
     private List<Qualification> qualifications = new ArrayList<Qualification>();
     private List<Referee> referees = new ArrayList<Referee>();
@@ -159,7 +156,7 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder acceptedTerms(CheckedStatus acceptedTerms) {
+    public ApplicationFormBuilder acceptedTerms(Boolean acceptedTerms) {
         this.acceptedTerms = acceptedTerms;
         return this;
     }
@@ -207,13 +204,6 @@ public class ApplicationFormBuilder {
     public ApplicationFormBuilder qualification(Qualification... qualifications) {
         for (Qualification qual : qualifications) {
             this.qualifications.add(qual);
-        }
-        return this;
-    }
-
-    public ApplicationFormBuilder notificationRecords(NotificationRecord... notificationRecords) {
-        for (NotificationRecord notificationRecord : notificationRecords) {
-            this.notificationRecords.add(notificationRecord);
         }
         return this;
     }
@@ -331,7 +321,6 @@ public class ApplicationFormBuilder {
         application.setProjectTitle(projectTitle);
         application.setStatus(status);
         application.setAdditionalInformation(info);
-        application.setNotificationRecords(notificationRecords);
         application.setLastUpdated(lastUpdated);
         application.setAcceptedTermsOnSubmission(acceptedTerms);
         application.getApplicationComments().addAll(comments);

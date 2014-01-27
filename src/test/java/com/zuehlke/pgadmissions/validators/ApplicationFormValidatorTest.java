@@ -35,7 +35,6 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -199,7 +198,7 @@ public class ApplicationFormValidatorTest {
 	
 	@Test
 	public void shouldRejectIfNotAcceptedTheTerms() {
-		applicationForm.setAcceptedTermsOnSubmission(CheckedStatus.NO);
+		applicationForm.setAcceptedTermsOnSubmission(false);
 		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "acceptedTermsOnSubmission");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetails.getStudyOption())).andReturn(Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
@@ -218,7 +217,7 @@ public class ApplicationFormValidatorTest {
 		program.setInstances(Arrays.asList(programInstance));
 		programmeDetails = new ProgrammeDetailsBuilder().studyOption("1", "Full-time").id(2).build();
 		applicationForm = new ApplicationFormBuilder().program(program).programmeDetails(programmeDetails)
-				.acceptedTerms(CheckedStatus.YES).personalDetails(new PersonalDetailsBuilder().id(1).build())
+				.acceptedTerms(true).personalDetails(new PersonalDetailsBuilder().id(1).build())
 				.additionalInformation(new AdditionalInformationBuilder().id(3).build())//
 				.currentAddress(new AddressBuilder().address1("address").build()).contactAddress(new AddressBuilder().address1("address").build())//
 				.referees(new Referee(), new Referee(), new Referee())//

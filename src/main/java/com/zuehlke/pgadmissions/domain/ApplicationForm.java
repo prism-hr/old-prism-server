@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -29,8 +30,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -42,8 +41,6 @@ import org.hibernate.annotations.GenerationTime;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Entity(name = "APPLICATION_FORM")
@@ -70,11 +67,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
     @JoinColumn(name = "rejection_id")
     private Rejection rejection;
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-    @JoinColumn(name = "application_form_id")
-    private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
     @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -114,8 +106,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     private Date dueDate;
 
     @Column(name = "accepted_terms")
-    @Enumerated(EnumType.STRING)
-    private CheckedStatus acceptedTermsOnSubmission;
+    private Boolean acceptedTermsOnSubmission;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_statement_id")
@@ -147,11 +138,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
-    @Valid
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "personal_detail_id")
     private PersonalDetails personalDetails;
 
-    @OneToOne(mappedBy = "application", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "programme_details_id")
     @Valid
     private ProgrammeDetails programmeDetails;
 
@@ -385,14 +377,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public PersonalDetails getPersonalDetails() {
-        if (personalDetails == null) {
-            return new PersonalDetails();
-        }
         return personalDetails;
-    }
-
-    public boolean isPersonalDetailsNull() {
-        return personalDetails == null;
     }
 
     public void setPersonalDetails(PersonalDetails personalDetails) {
@@ -400,9 +385,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public ProgrammeDetails getProgrammeDetails() {
-        if (programmeDetails == null) {
-            return new ProgrammeDetails();
-        }
         return programmeDetails;
     }
 
@@ -603,60 +585,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return status == ApplicationFormStatus.APPROVAL;
     }
 
-    public List<NotificationRecord> getNotificationRecords() {
-        return notificationRecords;
-    }
-
-    public void setNotificationRecords(List<NotificationRecord> notificationRecords) {
-        this.notificationRecords.clear();
-        this.notificationRecords.addAll(notificationRecords);
-    }
-
-    public NotificationRecord getNotificationForType(NotificationType type) {
-        for (NotificationRecord notification : notificationRecords) {
-            if (notification.getNotificationType() == type) {
-                return notification;
-            }
-        }
-        return null;
-    }
-
-    public NotificationRecord getNotificationForType(String strType) {
-        return getNotificationForType(NotificationType.valueOf(strType));
-    }
-
-    public boolean addNotificationRecord(NotificationRecord record) {
-        for (NotificationRecord existingRecord : notificationRecords) {
-            if (existingRecord.getNotificationType() == record.getNotificationType()) {
-                existingRecord.setDate(record.getDate());
-                existingRecord.setUser(record.getUser());
-                return false;
-            }
-        }
-        return notificationRecords.add(record);
-    }
-
-    public boolean removeNotificationRecord(NotificationRecord record) {
-        return notificationRecords.remove(record);
-    }
-
-    public void removeNotificationRecord(final NotificationType... recordTypes) {
-        CollectionUtils.filter(notificationRecords, new Predicate() {
-            @Override
-            public boolean evaluate(Object object) {
-                NotificationRecord existingRecord = (NotificationRecord) object;
-                for (NotificationType type : recordTypes) {
-                    if (type == existingRecord.getNotificationType()) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        });
-    }
-
     public boolean hasAcceptedTheTerms() {
-        return acceptedTermsOnSubmission == CheckedStatus.YES;
+        return BooleanUtils.isTrue(acceptedTermsOnSubmission);
     }
 
     public Date getLastUpdated() {
@@ -667,11 +597,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.lastUpdated = lastUpdated;
     }
 
-    public CheckedStatus getAcceptedTermsOnSubmission() {
+    public Boolean getAcceptedTermsOnSubmission() {
         return acceptedTermsOnSubmission;
     }
 
-    public void setAcceptedTermsOnSubmission(CheckedStatus acceptedTerms) {
+    public void setAcceptedTermsOnSubmission(Boolean acceptedTerms) {
         this.acceptedTermsOnSubmission = acceptedTerms;
     }
 

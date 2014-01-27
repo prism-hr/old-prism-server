@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -42,7 +41,6 @@ public class RegisteredUserBuilder {
     private List<Program> programsOfWhichApprover = new ArrayList<Program>();
     private List<Program> programsOfWhichViewer = new ArrayList<Program>();
 
-    private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
     private ApplicationsFiltering filtering;
 
@@ -50,29 +48,24 @@ public class RegisteredUserBuilder {
 
     private RegisteredUser primaryAccount;
     private List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
-    
+
     public RegisteredUserBuilder linkedAccounts(final RegisteredUser... user) {
         linkedAccounts.addAll(Arrays.asList(user));
         return this;
     }
-    
+
     public RegisteredUserBuilder applicationListLastAccessTimestamp(Date applicationListLastAccessTimestamp) {
-    	this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
-    	return this;
+        this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
+        return this;
     }
-    
+
     public RegisteredUserBuilder upi(final String upi) {
         this.upi = upi;
         return this;
     }
-    
+
     public RegisteredUserBuilder pendingRoleNotifications(PendingRoleNotification... pendingRoleNotifications) {
         this.pendingRoleNotifications.addAll(Arrays.asList(pendingRoleNotifications));
-        return this;
-    }
-
-    public RegisteredUserBuilder notificationRecords(NotificationRecord... notifications) {
-        this.notificationRecords.addAll(Arrays.asList(notifications));
         return this;
     }
 
@@ -112,7 +105,7 @@ public class RegisteredUserBuilder {
         }
         return this;
     }
-    
+
     public RegisteredUserBuilder filtering(ApplicationsFiltering filtering) {
         this.filtering = filtering;
         return this;
@@ -225,24 +218,23 @@ public class RegisteredUserBuilder {
         user.setCredentialsNonExpired(credentialsNonExpired);
         user.setActivationCode(activationCode);
         user.getRoles().addAll(roles);
-        
+
         user.setProgramsOfWhichAdministrator(programsOfWhichAdministrator);
         user.setProgramsOfWhichApprover(programsOfWhichApprover);
         user.setProgramsOfWhichViewer(programsOfWhichViewer);
         user.setConfirmPassword(confirmPassword);
         user.setReferees(referees);
         user.setComments(comments);
-        user.setNotificationRecords(notificationRecords);
         user.setPendingRoleNotifications(pendingRoleNotifications);
         user.setDirectToUrl(directURL);
         user.setOriginalApplicationQueryString(originalApplicationQueryString);
         user.setFiltering(filtering);
-        
+
         user.setUpi(upi);
         user.setApplicationListLastAccessTimestamp(applicationListLastAccessTimestamp);
         user.setLinkedAccounts(linkedAccounts);
         user.setPrimaryAccount(primaryAccount);
-        
+
         return user;
     }
 }

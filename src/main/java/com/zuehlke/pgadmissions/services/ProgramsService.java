@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +19,10 @@ import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -29,20 +32,20 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 @Transactional
 public class ProgramsService {
 
-    private final ProgramDAO programDAO;
-    private final AdvertDAO advertDAO;
-    private final ProjectDAO projectDAO;
-
-    ProgramsService() {
-        this(null, null, null);
-    }
+    @Autowired
+    private ProgramDAO programDAO;
 
     @Autowired
-    public ProgramsService(ProgramDAO programDAO, AdvertDAO advertDAO, ProjectDAO projectDAO) {
-        this.programDAO = programDAO;
-        this.advertDAO = advertDAO;
-        this.projectDAO = projectDAO;
-    }
+    private AdvertDAO advertDAO;
+
+    @Autowired
+    private ProjectDAO projectDAO;
+
+    @Autowired
+    private QualificationInstitutionService qualificationInstitutionService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public List<Program> getAllPrograms() {
         return programDAO.getAllPrograms();
@@ -64,14 +67,14 @@ public class ProgramsService {
         if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
             return programDAO.getAllPrograms();
         }
-        
+
         Set<Program> programs = new TreeSet<Program>(new Comparator<Program>() {
             @Override
             public int compare(Program p1, Program p2) {
                 return p1.getTitle().compareTo(p2.getTitle());
             }
         });
-        
+
         programs.addAll(user.getProgramsOfWhichAdministrator());
         programs.addAll(user.getProgramsOfWhichApprover());
         programs.addAll(programDAO.getProgramsOfWhichPreviousReviewer(user));
@@ -105,11 +108,11 @@ public class ProgramsService {
     public void saveProject(Project project) {
         projectDAO.save(project);
     }
-    
+
     public void removeProject(int projectId) {
         Project project = getProject(projectId);
-        if(project==null){
-        	return;
+        if (project == null) {
+            return;
         }
         project.setDisabled(true);
         project.getAdvert().setActive(false);
@@ -147,6 +150,40 @@ public class ProgramsService {
             formattedDate = new SimpleDateFormat("dd MMM yyyy").format(closingDate);
         }
         return formattedDate;
+    }
+
+    public Program createNewCustomProgram(OpportunityRequest opportunityRequest) {
+        ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
+        
+        Advert advert = new Advert();
+        advert.setActive(true);
+        advert.setDescription(opportunityRequest.getProgramDescription());
+        advert.setStudyDuration(opportunityRequest.getStudyDuration());
+
+        QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest);
+
+        Program program = new Program();
+        program.setAdvert(advert);
+        program.setInstitution(institution);
+        program.setEnabled(true);
+        program.setTitle(opportunityRequest.getProgramTitle());
+        program.setAtasRequired(opportunityRequest.getAtasRequired());
+        program.setCode(thisBean.generateNextProgramCode(institution));
+        
+        programDAO.save(program);
+        return program;
+    }
+
+    protected String generateNextProgramCode(QualificationInstitution institution) {
+        Program lastCustomProgram = programDAO.getLastCustomProgram(institution);
+        Integer codeNumber;
+        if (lastCustomProgram != null) {
+            codeNumber = Integer.valueOf(lastCustomProgram.getCode().split("_")[1]);
+            codeNumber++;
+        } else {
+            codeNumber = 0;
+        }
+        return String.format("%s_%05d", institution.getCode(), codeNumber);
     }
 
 }

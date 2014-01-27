@@ -25,17 +25,8 @@ public class ApplicationFormCopyHelper {
             copyPersonalDetailsData(to.getPersonalDetails(), from.getPersonalDetails());
         }
 
-        if (from.getCurrentAddress() != null) {
-            Address currentAddress = new Address();
-            to.setCurrentAddress(currentAddress);
-            copyAddress(to.getCurrentAddress(), from.getCurrentAddress());
-        }
-
-        if (from.getContactAddress() != null) {
-            Address contactAddress = new Address();
-            to.setContactAddress(contactAddress);
-            copyAddress(to.getContactAddress(), from.getContactAddress());
-        }
+        to.setCurrentAddress(copyAddress(from.getCurrentAddress()));
+        to.setContactAddress(copyAddress(from.getContactAddress()));
 
         for (Qualification fromQualification : from.getQualifications()) {
             Qualification qualification = new Qualification();
@@ -43,39 +34,32 @@ public class ApplicationFormCopyHelper {
             qualification.setApplication(to);
             copyQualification(qualification, fromQualification);
         }
-        
-        for(EmploymentPosition fromEmployment : from.getEmploymentPositions()) {
+
+        for (EmploymentPosition fromEmployment : from.getEmploymentPositions()) {
             EmploymentPosition employment = new EmploymentPosition();
             to.getEmploymentPositions().add(employment);
             employment.setApplication(to);
             copyEmploymentPosition(employment, fromEmployment);
         }
-        
-        for(Funding fromFunding : from.getFundings()){
+
+        for (Funding fromFunding : from.getFundings()) {
             Funding funding = new Funding();
             to.getFundings().add(funding);
             funding.setApplication(to);
             copyFunding(funding, fromFunding);
         }
-        
-        for(Referee fromReferee : from.getReferees()) {
+
+        for (Referee fromReferee : from.getReferees()) {
             Referee referee = new Referee();
             to.getReferees().add(referee);
             referee.setApplication(to);
             copyReferee(referee, fromReferee);
         }
-        
-        Document previousPs = from.getPersonalStatement();
-        Document ps = new Document();
-        copyDocument(ps, previousPs);
-        to.setPersonalStatement(ps);
 
-        Document previousCv = from.getCv();
-        Document cv = new Document();
-        copyDocument(cv, previousCv);
-        to.setCv(cv);
-        
-        if(from.getAdditionalInformation() != null){
+        to.setPersonalStatement(copyDocument(from.getPersonalStatement()));
+        to.setCv(copyDocument(from.getCv()));
+
+        if (from.getAdditionalInformation() != null) {
             AdditionalInformation additionalInformation = new AdditionalInformation();
             to.setAdditionalInformation(additionalInformation);
             additionalInformation.setApplication(to);
@@ -94,13 +78,7 @@ public class ApplicationFormCopyHelper {
         to.setEmail(from.getEmail());
         to.setJobEmployer(from.getJobEmployer());
         to.setJobTitle(from.getJobTitle());
-        
-        if(from.getAddressLocation() != null){
-            Address address = new Address();
-            to.setAddressLocation(address);
-            copyAddress(address, from.getAddressLocation());
-        }
-        
+        to.setAddressLocation(copyAddress(from.getAddressLocation()));
         to.setPhoneNumber(from.getPhoneNumber());
         to.setMessenger(from.getMessenger());
     }
@@ -110,28 +88,17 @@ public class ApplicationFormCopyHelper {
         to.setDescription(from.getDescription());
         to.setValue(from.getValue());
         to.setAwardDate(from.getAwardDate());
-        
-        Document previousDocument = from.getDocument();
-        Document document = new Document();
-        copyDocument(document, previousDocument);
-        to.setDocument(document);
+        to.setDocument(copyDocument(from.getDocument()));
     }
 
     private void copyEmploymentPosition(EmploymentPosition to, EmploymentPosition from) {
         to.setEmployerName(from.getEmployerName());
-        
-        if(from.getEmployerAddress() != null){
-            Address address = new Address();
-            to.setEmployerAddress(address);
-            copyAddress(address, from.getEmployerAddress());
-        }
-        
+        to.setEmployerAddress(copyAddress(from.getEmployerAddress()));
         to.setPosition(from.getPosition());
         to.setRemit(from.getRemit());
         to.setStartDate(from.getStartDate());
         to.setCurrent(from.isCurrent());
         to.setEndDate(from.getEndDate());
-        
     }
 
     private void copyQualification(Qualification to, Qualification from) {
@@ -148,20 +115,8 @@ public class ApplicationFormCopyHelper {
         to.setQualificationGrade(from.getQualificationGrade());
         to.setQualificationAwardDate(from.getQualificationAwardDate());
 
-        Document previousDocument = from.getProofOfAward();
-        Document document = new Document();
-        copyDocument(document, previousDocument);
-        to.setProofOfAward(document);
+        to.setProofOfAward(copyDocument(from.getProofOfAward()));
 
-    }
-
-    private void copyAddress(Address to, Address from) {
-        to.setAddress1(from.getAddress1());
-        to.setAddress2(from.getAddress2());
-        to.setAddress3(from.getAddress3());
-        to.setAddress4(from.getAddress4());
-        to.setAddress5(from.getAddress5());
-        to.setDomicile(from.getDomicile());
     }
 
     private void copyPersonalDetailsData(PersonalDetails to, PersonalDetails from) {
@@ -218,21 +173,34 @@ public class ApplicationFormCopyHelper {
         to.setSpeakingScore(from.getSpeakingScore());
         to.setListeningScore(from.getListeningScore());
         to.setExamTakenOnline(from.getExamTakenOnline());
-
-        Document previousDocument = from.getLanguageQualificationDocument();
-        Document document = new Document();
-
-        copyDocument(document, previousDocument);
-
-        to.setLanguageQualificationDocument(document);
+        to.setLanguageQualificationDocument(copyDocument(from.getLanguageQualificationDocument()));
     }
 
-    private void copyDocument(Document to, Document from) {
+    private Address copyAddress(Address from) {
+        if (from == null) {
+            return null;
+        }
+        Address to = new Address();
+        to.setAddress1(from.getAddress1());
+        to.setAddress2(from.getAddress2());
+        to.setAddress3(from.getAddress3());
+        to.setAddress4(from.getAddress4());
+        to.setAddress5(from.getAddress5());
+        to.setDomicile(from.getDomicile());
+        return to;
+    }
+
+    private Document copyDocument(Document from) {
+        if (from == null) {
+            return null;
+        }
+        Document to = new Document();
         to.setUploadedBy(from.getUploadedBy());
         to.setType(from.getType());
         to.setContentType(from.getContentType());
         to.setFileName(from.getFileName());
         to.setContent(from.getContent());
+        return to;
     }
 
 }

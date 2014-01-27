@@ -56,9 +56,8 @@ public class ProgrammeDetails implements FormSectionObject, Serializable {
 	@Column (name = "sources_of_interest_text")
 	private String sourcesOfInterestText;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_form_id")
-	private ApplicationForm application = null;
+	@OneToOne(mappedBy = "programmeDetails", fetch = FetchType.LAZY)
+	private ApplicationForm application;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })

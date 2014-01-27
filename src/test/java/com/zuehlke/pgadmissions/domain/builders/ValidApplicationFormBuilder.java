@@ -91,7 +91,7 @@ public class ValidApplicationFormBuilder {
     public ApplicationForm build(SessionFactory sessionFactory) {
         ApplicationForm applicationForm = build();
         save(sessionFactory, user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser,
-                language, country, domicile, address, institution, program, employmentPosition, disability, ethnicity, applicationForm);
+                language, country, domicile, address, institution, program, employmentPosition, disability, ethnicity, interest, applicationForm);
         program.setCode("TMRMBISING001");
         return applicationForm;
     }

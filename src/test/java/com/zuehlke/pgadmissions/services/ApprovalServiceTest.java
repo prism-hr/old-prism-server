@@ -475,7 +475,7 @@ public class ApprovalServiceTest {
         secondary.setUser(secondarySupervisor);
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").program(program).project(project)
-                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build()).build();
+                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build()).programmeDetails(new ProgrammeDetails()).build();
 
         final ProgramInstance programInstance = new ProgramInstance();
         programInstance.setId(1);

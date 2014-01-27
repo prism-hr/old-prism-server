@@ -32,7 +32,7 @@
                 <label for="otherQualificationTypeName" id="lbl-otherQualificationTypeName" class="plain-label grey-label">Other Qualification Type Name<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.type.other'/>"></span>
                 <div class="field">
-                    <input class="full" readonly disabled="disabled" type="text" name="otherQualificationTypeName" id="otherQualificationTypeName" value="${(personalDetails.languageQualification.otherQualificationTypeName?html)!}" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled" />
+                    <input class="full" readonly disabled="disabled" type="text" name="otherQualificationTypeName" id="otherQualificationTypeName" value="${(personalDetails.languageQualification.otherQualificationTypeName?html)!}" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled" />
                     <@spring.bind "personalDetails.languageQualification.otherQualificationTypeName" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
@@ -68,8 +68,8 @@
                 <label id="lbl-overallScore" class="plain-label grey-label" for="overallScoreFree">Overall Score<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.score.overall'/>"></span>
                 <div class="field">
-                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.overallScore?html)!}" name="overallScore" id="overallScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
-                    <select class="full" readonly="readonly" style="display:none" name="overallScore" id="overallScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
+                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.overallScore?html)!}" name="overallScore" id="overallScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
+                    <select class="full" readonly="readonly" style="display:none" name="overallScore" id="overallScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <option value="4.0">4.0</option>
                         <option value="4.5">4.5</option>
@@ -97,8 +97,8 @@
                 <label id="lbl-readingScore" class="plain-label grey-label" for="readingScoreFree">Reading Score<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.score.reading'/>"></span>
                 <div class="field">
-                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.readingScore?html)!}" name="readingScore" id="readingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
-                    <select class="full" readonly="readonly" style="display:none" name="readingScore" id="readingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
+                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.readingScore?html)!}" name="readingScore" id="readingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
+                    <select class="full" readonly="readonly" style="display:none" name="readingScore" id="readingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <option value="4.0">4.0</option>
                         <option value="4.5">4.5</option>
@@ -126,8 +126,8 @@
                 <label id="lbl-writingScore" class="plain-label grey-label" for="writingScoreFree">Essay / Writing Score<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.score.writing'/>"></span>
                 <div class="field">
-                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.writingScore?html)!}" name="writingScore" id="writingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
-                    <select class="full" readonly="readonly" style="display:none" name="writingScore" id="writingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
+                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.writingScore?html)!}" name="writingScore" id="writingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
+                    <select class="full" readonly="readonly" style="display:none" name="writingScore" id="writingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <option value="4.0">4.0</option>
                         <option value="4.5">4.5</option>
@@ -155,8 +155,8 @@
                 <label id="lbl-speakingScore" class="plain-label grey-label" for="speakingScoreFree">Speaking Score<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.score.speaking'/>"></span>
                 <div class="field">
-                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.speakingScore?html)!}" name="speakingScore" id="speakingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
-                    <select class="full" readonly="readonly" style="display:none" name="speakingScore" id="speakingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
+                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.speakingScore?html)!}" name="speakingScore" id="speakingScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
+                    <select class="full" readonly="readonly" style="display:none" name="speakingScore" id="speakingScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <option value="4.0">4.0</option>
                         <option value="4.5">4.5</option>
@@ -184,8 +184,8 @@
                 <label id="lbl-listeningScore" class="plain-label grey-label" for="listeningScoreFree">Listening Score<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.score.listening'/>"></span>
                 <div class="field">
-                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.listeningScore?html)!}" name="listeningScore" id="listeningScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
-                    <select class="full" readonly="readonly" style="display:none" name="listeningScore" id="listeningScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.isLanguageQualificationAvailableSet() && !personalDetails.getLanguageQualificationAvailable()) >disabled="disabled"</#if> >
+                    <input class="full" readonly type="text" value="${(personalDetails.languageQualification.listeningScore?html)!}" name="listeningScore" id="listeningScoreFree" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled"/>
+                    <select class="full" readonly="readonly" style="display:none" name="listeningScore" id="listeningScoreSelect" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> >
                         <option value="">Select...</option>
                         <option value="4.0">4.0</option>
                         <option value="4.5">4.5</option>

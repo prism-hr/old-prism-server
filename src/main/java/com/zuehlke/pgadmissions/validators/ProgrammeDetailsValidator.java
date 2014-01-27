@@ -34,7 +34,7 @@ public class ProgrammeDetailsValidator extends FormSectionObjectValidator implem
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return ProgrammeDetails.class.equals(clazz);
+		return ProgrammeDetails.class.isAssignableFrom(clazz);
 	}
 
 	@Override

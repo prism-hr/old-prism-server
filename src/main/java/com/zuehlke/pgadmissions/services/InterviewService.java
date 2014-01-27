@@ -95,8 +95,6 @@ public class InterviewService {
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
         applicationForm.getEvents().add(eventFactory.createEvent(interview));
 
-        removeApplicationAdministratorReminders(interview);
-
         applicationFormDAO.save(applicationForm);
 
         if (!interview.getTakenPlace()) {
@@ -164,7 +162,6 @@ public class InterviewService {
         
         ApplicationForm application = interview.getApplication(); 
         assignInterviewDueDate(interview, application);
-        removeApplicationAdministratorReminders(interview);
         sendConfirmationEmails(interview);    
         applicationFormUserRoleService.interviewConfirmed(interview);
         applicationFormUserRoleService.registerApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
@@ -191,14 +188,6 @@ public class InterviewService {
             mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
         } catch (Exception e) {
             log.warn("{}", e);
-        }
-    }
-
-    private void removeApplicationAdministratorReminders(final Interview interview) {
-        ApplicationForm application = interview.getApplication();
-        // Check if the interview administration was delegated
-        if (application.getApplicationAdministrator() != null && interview.isScheduled()) {
-            application.setSuppressStateChangeNotifications(false);
         }
     }
 

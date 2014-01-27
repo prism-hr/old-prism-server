@@ -65,18 +65,12 @@ public class ApplicationFormBuilder {
     private String applicationNumber;
     private String uclBookingReferenceNumber;
     private String ipAddress;
-    private Boolean suppressChangeStateNotifications;
     private Boolean isEditableByApplicant = true;
     private Project project = null;
     private BigDecimal averageRating;
 
     public ApplicationFormBuilder ipAddress(String ipAddress) {
         this.ipAddress = ipAddress;
-        return this;
-    }
-
-    public ApplicationFormBuilder suppressChangeStateNotifications(Boolean value) {
-        this.suppressChangeStateNotifications = value;
         return this;
     }
 
@@ -337,7 +331,6 @@ public class ApplicationFormBuilder {
         application.setRejectNotificationDate(rejectNotificationDate);
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         application.getEmploymentPositions().addAll(employmentPositions);
-        application.setSuppressStateChangeNotifications(this.suppressChangeStateNotifications);
         application.setIsEditableByApplicant(isEditableByApplicant);
         application.setProject(project);
         application.setAverageRating(averageRating);

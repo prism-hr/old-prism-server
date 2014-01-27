@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -176,14 +175,14 @@ public class ValidApplicationFormBuilder {
         qualification1 = new QualificationBuilder().id(Integer.MAX_VALUE - 1).awardDate(new Date()).grade("6").institutionCode("UK0000")
                 .institution("University of London").institutionCountry(domicile).languageOfStudy("English")
                 .startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).subject("Engineering").title("MSc").type(qualificationType)
-                .isCompleted(CheckedStatus.YES).proofOfAward(proofOfAwardDocument).sendToUCL(true).build();
+                .isCompleted(true).proofOfAward(proofOfAwardDocument).sendToUCL(true).build();
         qualification2 = new QualificationBuilder().id(Integer.MAX_VALUE - 2).awardDate(new Date()).grade("6").institutionCode("UK0000")
                 .institution("University of London").institutionCountry(domicile).languageOfStudy("English")
                 .startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).subject("Engineering").title("MSc").type(qualificationType)
-                .isCompleted(CheckedStatus.YES).proofOfAward(proofOfAwardDocument).sendToUCL(true).build();
+                .isCompleted(true).proofOfAward(proofOfAwardDocument).sendToUCL(true).build();
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
                 .type(FundingType.SCHOLARSHIP).value("5").build();
-        applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(CheckedStatus.YES).additionalInformation(additionalInformation)
+        applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
                 .appDate(new Date()).applicant(user).applicationAdministrator(user).applicationNumber("TMRMBISING01-2012-999999")
                 .batchDeadline(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).contactAddress(address).currentAddress(address)
                 .dueDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).employmentPositions(employmentPosition).fundings(funding)

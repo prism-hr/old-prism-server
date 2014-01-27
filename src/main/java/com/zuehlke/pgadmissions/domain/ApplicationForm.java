@@ -43,7 +43,6 @@ import org.hibernate.annotations.GenerationTime;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
@@ -115,8 +114,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     private Date dueDate;
 
     @Column(name = "accepted_terms")
-    @Enumerated(EnumType.STRING)
-    private CheckedStatus acceptedTermsOnSubmission;
+    private Boolean acceptedTermsOnSubmission;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_statement_id")
@@ -645,7 +643,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean hasAcceptedTheTerms() {
-        return acceptedTermsOnSubmission == CheckedStatus.YES;
+        return BooleanUtils.isTrue(acceptedTermsOnSubmission);
     }
 
     public Date getLastUpdated() {
@@ -656,11 +654,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.lastUpdated = lastUpdated;
     }
 
-    public CheckedStatus getAcceptedTermsOnSubmission() {
+    public Boolean getAcceptedTermsOnSubmission() {
         return acceptedTermsOnSubmission;
     }
 
-    public void setAcceptedTermsOnSubmission(CheckedStatus acceptedTerms) {
+    public void setAcceptedTermsOnSubmission(Boolean acceptedTerms) {
         this.acceptedTermsOnSubmission = acceptedTerms;
     }
 

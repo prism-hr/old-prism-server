@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class ApplicationFormBuilder {
 
@@ -44,7 +43,7 @@ public class ApplicationFormBuilder {
     private Date submittedDate;
     private Date batchDeadline;
     private Date dueDate;
-    private CheckedStatus acceptedTerms;
+    private Boolean acceptedTerms;
     private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
     private List<Event> events = new ArrayList<Event>();
     private List<Qualification> qualifications = new ArrayList<Qualification>();
@@ -159,7 +158,7 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder acceptedTerms(CheckedStatus acceptedTerms) {
+    public ApplicationFormBuilder acceptedTerms(Boolean acceptedTerms) {
         this.acceptedTerms = acceptedTerms;
         return this;
     }

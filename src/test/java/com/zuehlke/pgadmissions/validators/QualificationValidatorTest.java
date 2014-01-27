@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationTypeBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -198,7 +197,7 @@ public class QualificationValidatorTest {
     
     @Test
     public void shouldRejectQualificationAwardDateIfItIsInThePastAndNotCompleted() {
-        qualification.setCompleted(CheckedStatus.NO);
+        qualification.setCompleted(false);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -227,7 +226,7 @@ public class QualificationValidatorTest {
         qualification.setQualificationSubject("CS");
         qualification.setQualificationTitle("MS");
         qualification.setQualificationInstitutionCode("code");
-        qualification.setCompleted(CheckedStatus.YES);
+        qualification.setCompleted(true);
         qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
         qualification.setQualificationType(new QualificationTypeBuilder().name("degree").build());
 

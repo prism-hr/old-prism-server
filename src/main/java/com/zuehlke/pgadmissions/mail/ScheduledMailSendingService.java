@@ -31,8 +31,6 @@ import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -114,13 +112,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendDigestEmail(RegisteredUser user, DigestNotificationType digestNotificationType) {
-        return sendDigest(user, digestNotificationType);
+    public boolean sendDigestEmail(RegisteredUser proxyUser, DigestNotificationType digestNotificationType) {
+        return sendDigest(userDAO.initialise(proxyUser), digestNotificationType);
     }
 
     private boolean sendDigest(final RegisteredUser user, DigestNotificationType digestNotificationType) {
         try {
-            userDAO.initialise(user);
             EmailModelBuilder modelBuilder = new EmailModelBuilder() {
                 
                 @Override
@@ -172,20 +169,19 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendReferenceReminder() {
         log.trace("Sending reference reminder to users");
-        List<Integer> refereesDueAReminder = refereeDAO.getRefereesIdsDueAReminder();
-        for (Integer referee : refereesDueAReminder) {
-            applicationContext.getBean(this.getClass()).sendReferenceReminder(referee);
+        List<Referee> refereesDueAReminder = refereeDAO.getRefereesDueReminder();
+        for (Referee referee : refereesDueAReminder) {
+            applicationContext.getBean(this.getClass()).sendReferenceReminder(refereeDAO.initialise(referee));
         }
         log.trace("Finished sending reference reminder to users");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendReferenceReminder(Integer refereeId) {
+    public boolean sendReferenceReminder(Referee referee) {
         PrismEmailMessage message;
         try {
-            Referee referee = refereeDAO.getRefereeById(refereeId);
+            refereeDAO.initialise(referee);
             String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
-
             ApplicationForm application = referee.getApplication();
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
@@ -193,7 +189,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
             sendEmail(message);
-            applicationFormUserRoleService.updateLastNotifiedTimestamp(application, referee.getUser(), Authority.REFEREE, ApplicationFormAction.PROVIDE_REFERENCE);
+            referee.setLastNotified(new Date());
         } catch (Exception e) {
             log.error("Error while sending reference reminder email to referee: ", e);
             return false;
@@ -204,35 +200,28 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendInterviewParticipantVoteReminder() {
         log.trace("Sending interview scheduling reminder to users");
-        List<Integer> participantsDueAReminder = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
-        for (Integer participantId : participantsDueAReminder) {
-            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participantId);
+        List<InterviewParticipant> participantsDueAReminder = interviewParticipantDAO.getInterviewParticipantsDueReminder();
+        for (InterviewParticipant participant : participantsDueAReminder) {
+            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(interviewParticipantDAO.initialise(participant));
         }
         log.trace("Sending interview scheduling reminder to users");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendInterviewParticipantVoteReminder(Integer participantId) {
-        PrismEmailMessage message;
-        InterviewParticipant participant = interviewParticipantDAO.getParticipantById(participantId);
-        ApplicationForm application = participant.getInterview().getApplication();
+    public boolean sendInterviewParticipantVoteReminder(InterviewParticipant participant) {
         try {
+            PrismEmailMessage message;
+            ApplicationForm application = participant.getInterview().getApplication();
             String subject = resolveMessage(INTERVIEW_VOTE_REMINDER, application);
-
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
                     adminsEmails, participant, application, getHostName() });
 
             message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_REMINDER);
             sendEmail(message);
-            RegisteredUser user = participant.getUser();
-            Authority authority = Authority.INTERVIEWER;
-            if (user.isApplicant(application)) {
-                authority = Authority.APPLICANT;
-            }
-            applicationFormUserRoleService.updateLastNotifiedTimestamp(application, participant.getUser(), authority, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
+            participant.setLastNotified(new Date());
         } catch (Exception e) {
-            log.error("Error while sending interview vote reminder email to interview participant: " + participant.getUser().getDisplayName(), e);
+            log.error("Error while sending interview vote reminder email to participant:", e);
             return false;
         }
         return true;

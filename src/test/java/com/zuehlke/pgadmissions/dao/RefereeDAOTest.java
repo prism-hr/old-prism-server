@@ -117,12 +117,12 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
         save(refereeOne, refereeTwo, refereeThree, refereeFour);
         flushAndClearSession();
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
-        assertFalse(referees.contains(refereeOne.getId()));
-        assertFalse(referees.contains(refereeTwo.getId()));
-        assertFalse(referees.contains(refereeThree.getId()));
-        assertFalse(referees.contains(refereeFour.getId()));
+        assertFalse(referees.contains(refereeOne));
+        assertFalse(referees.contains(refereeTwo));
+        assertFalse(referees.contains(refereeThree));
+        assertFalse(referees.contains(refereeFour));
 
     }
 
@@ -136,7 +136,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
                 .email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).build();
         save(referee);
         flushAndClearSession();
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
         assertFalse(referees.contains(referee.getId()));
     }
@@ -155,7 +155,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         save(document, reference, referee);
 
         flushAndClearSession();
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
         assertFalse(referees.contains(referee.getId()));
     }
@@ -174,7 +174,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         save(referee);
 
         flushAndClearSession();
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
         assertFalse(referees.contains(referee.getId()));
     }
@@ -194,7 +194,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
         flushAndClearSession();
         assertEquals(referee.getId(), refereeDAO.getRefereeById(referee.getId()).getId());
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
         assertTrue(referees.contains(referee.getId()));
     }
@@ -211,7 +211,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         save(referee);
 
         flushAndClearSession();
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
         assertFalse(referees.contains(referee.getId()));
     }
@@ -235,7 +235,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         save(referee);
 
         flushAndClearSession();
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
         assertTrue(referees.contains(referee.getId()));
     }
@@ -258,7 +258,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         save(referee);
 
         flushAndClearSession();
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
         assertFalse(referees.contains(referee.getId()));
     }
@@ -281,7 +281,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         save(referee);
 
         flushAndClearSession();
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
         assertTrue(referees.contains(referee.getId()));
     }
@@ -301,7 +301,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         save(referee);
 
         flushAndClearSession();
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
         assertFalse(referees.contains(referee.getId()));
     }
@@ -321,7 +321,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         save(referee);
 
         flushAndClearSession();
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
         assertTrue(referees.contains(referee.getId()));
     }
@@ -341,7 +341,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         save(referee);
 
         flushAndClearSession();
-        List<Integer> referees = refereeDAO.getRefereesIdsDueAReminder();
+        List<Referee> referees = refereeDAO.getRefereesDueReminder();
         assertFalse(referees.contains(referee.getId()));
     }
 
@@ -423,4 +423,5 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         }
         return false;
     }
+    
 }

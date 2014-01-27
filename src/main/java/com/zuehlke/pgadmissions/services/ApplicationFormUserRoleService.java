@@ -115,8 +115,9 @@ public class ApplicationFormUserRoleService {
         deassignFromStateBoundedWorkers(application);
 
         for (Referee referee : application.getReferees()) {
+            Date assignedTimestamp = new Date();
             createApplicationFormUserRole(application, referee.getUser(), Authority.REFEREE, false, 
-            		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_REFERENCE), new Date(), false, true));
+            		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_REFERENCE), assignedTimestamp, false, true, assignedTimestamp));
         }
 
         Boolean anyUnsure = application.getValidationComment().isAtLeastOneAnswerUnsure();
@@ -126,7 +127,7 @@ public class ApplicationFormUserRoleService {
         if (BooleanUtils.isTrue(anyUnsure)) {
         	for (RegisteredUser admitter : admitters) {
                 createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false, 
-                		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_ELIGIBILITY), new Date(), false, true));        		
+                		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_ELIGIBILITY), new Date(), false, true));		
         	}
         	for (ApplicationFormUserRole superadministratorRole : superadministratorRoles) {
         		superadministratorRole.getActions().add(new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_ELIGIBILITY), new Date(), false, true));
@@ -134,7 +135,7 @@ public class ApplicationFormUserRoleService {
         	}
         } else {
         	for (RegisteredUser admitter : admitters) {
-                createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false);        		
+                createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false);
         	}
         }
         

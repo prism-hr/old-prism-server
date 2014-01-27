@@ -167,11 +167,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public void sendReferenceReminder() {
-        log.trace("Running sendReferenceReminder Task");
+        log.trace("Sending reference reminder to users");
         List<Integer> refereesDueAReminder = refereeDAO.getRefereesIdsDueAReminder();
         for (Integer referee : refereesDueAReminder) {
             applicationContext.getBean(this.getClass()).sendReferenceReminder(referee);
         }
+        log.trace("Finished sending reference reminder to users");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -199,11 +200,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public void sendInterviewParticipantVoteReminder() {
-        log.trace("Running interviewParticipantVoteReminder Task");
+        log.trace("Sending interview scheduling reminder to users");
         List<Integer> participantsDueAReminder = interviewParticipantDAO.getInterviewParticipantsIdsDueAReminder();
         for (Integer participantId : participantsDueAReminder) {
             applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participantId);
         }
+        log.trace("Sending interview scheduling reminder to users");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

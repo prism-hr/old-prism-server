@@ -160,7 +160,7 @@ public class ReviewServiceTest {
         ReviewRound reviewRound = new ReviewRoundBuilder().id(5).build();
         reviewRoundDAOMock.save(reviewRound);
         EasyMock.replay(reviewRoundDAOMock);
-        reviewRoundDAOMock.save(reviewRound);
+        reviewService.save(reviewRound);
         EasyMock.verify(reviewRoundDAOMock);
     }
 

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
@@ -60,15 +61,17 @@ public class OfferRecommendationController {
 
     private final SupervisorPropertyEditor supervisorPropertyEditor;
 
+    private final ApprovalRoundDAO approvalRoundDAO;
+
     public OfferRecommendationController() {
-        this(null, null, null, null, null,  null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public OfferRecommendationController(ApplicationsService applicationsService, UserService userService, ActionsProvider actionsProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService,  
-            OfferRecommendationService offerRecommendedService, OfferRecommendedCommentValidator offerRecommendedCommentValidator,
-            DatePropertyEditor datePropertyEditor, ProgramInstanceService programInstanceService, SupervisorPropertyEditor supervisorPropertyEditor) {
+            ApplicationFormUserRoleService applicationFormUserRoleService, OfferRecommendationService offerRecommendedService,
+            OfferRecommendedCommentValidator offerRecommendedCommentValidator, DatePropertyEditor datePropertyEditor,
+            ProgramInstanceService programInstanceService, SupervisorPropertyEditor supervisorPropertyEditor, ApprovalRoundDAO approvalRoundDAO) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
@@ -78,6 +81,7 @@ public class OfferRecommendationController {
         this.datePropertyEditor = datePropertyEditor;
         this.programInstanceService = programInstanceService;
         this.supervisorPropertyEditor = supervisorPropertyEditor;
+        this.approvalRoundDAO = approvalRoundDAO;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -104,8 +108,9 @@ public class OfferRecommendationController {
             offerRecommendedComment.setRecommendedConditions(approvalRound.getRecommendedConditions());
             offerRecommendedComment.getSupervisors().addAll(approvalRound.getSupervisors());
         }
+
         modelMap.put("offerRecommendedComment", offerRecommendedComment);
-        modelMap.put("approvalRound", approvalRound);
+        modelMap.put("approvalRound", approvalRoundDAO.initialise(approvalRound));
         applicationFormUserRoleService.deregisterApplicationUpdate(application, user);
         return OFFER_RECOMMENDATION_VIEW_NAME;
     }
@@ -121,7 +126,7 @@ public class OfferRecommendationController {
             modelMap.put("offerRecommendedComment", offerRecommendedComment);
             return OFFER_RECOMMENDATION_VIEW_NAME;
         }
-        
+
         if (offerRecommendedService.moveToApproved(application, offerRecommendedComment)) {
             offerRecommendedService.sendToPortico(application);
             modelMap.put("messageCode", "move.approved");
@@ -167,14 +172,14 @@ public class OfferRecommendationController {
         return getCurrentUser();
     }
 
-    @ModelAttribute("usersInterestedInApplication") 
-    public List<RegisteredUser> getUsersInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
+    @ModelAttribute("usersInterestedInApplication")
+    public List<RegisteredUser> getUsersInterestedInApplication(@RequestParam String applicationId) {
+        return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
-    
-    @ModelAttribute("usersPotentiallyInterestedInApplication") 
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
+
+    @ModelAttribute("usersPotentiallyInterestedInApplication")
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
+        return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
     }
-    
+
 }

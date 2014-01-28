@@ -18,6 +18,7 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.workflow.approval.OfferRecommendationController;
+import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -55,6 +56,8 @@ public class OfferRecommendationControllerTest {
     private ProgramInstanceService programInstanceServiceMock;
 
     private SupervisorPropertyEditor supervisorPropertyEditorMock;
+    
+    private ApprovalRoundDAO approvalRoundDAOMock;
 
     @Test
     public void shouldGetOfferRecommendationPage() {
@@ -171,8 +174,9 @@ public class OfferRecommendationControllerTest {
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         supervisorPropertyEditorMock = EasyMock.createMock(SupervisorPropertyEditor.class);
+        approvalRoundDAOMock = EasyMock.createMock(ApprovalRoundDAO.class);
         controller = new OfferRecommendationController(applicationsServiceMock, userServiceMock, actionsProviderMock, applicationFormUserRoleServiceMock,
                 offerRecommendationServiceMock, offerRecommendedCommentValidatorMock, datePropertyEditorMock, programInstanceServiceMock,
-                supervisorPropertyEditorMock);
+                supervisorPropertyEditorMock, approvalRoundDAOMock);
     }
 }

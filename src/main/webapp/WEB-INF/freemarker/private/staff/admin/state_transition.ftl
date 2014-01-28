@@ -171,7 +171,8 @@
 													</div>
 												</div>
 											</div>
-											<div class="row-group">
+											<div class="row-group" <#if >
+												>
 												<div class="row" id="useCustomReferenceQuestions">
 												    <label id="useCustomReferenceQuestionsLabel" class="plain-label normal">Do you wish to use custom reference questions?<em>*</em></label> 
 												    <span class="hint" data-desc="<@spring.message 'validateApp.useCustomReferenceQuestions'/>"> </span>

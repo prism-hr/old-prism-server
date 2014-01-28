@@ -94,12 +94,9 @@ public class ScheduledMailSendingServiceIT {
                 application2 = new ApplicationFormBuilder().applicant(applicant).program(program).applicationNumber("sampelNumber")
                         .status(ApplicationFormStatus.INTERVIEW).build();
 
-                referee1 = new RefereeBuilder().declined(false).application(application1).user(refereeUser1).reference(new ReferenceCommentBuilder().build())
-                        .lastNotified(lastNotified.toDate()).build();
-                referee2 = new RefereeBuilder().declined(false).application(application2).reference(new ReferenceCommentBuilder().build())
-                        .lastNotified(lastNotified.toDate()).user(refereeUser2).build();
-                referee3 = new RefereeBuilder().declined(false).application(application1).reference(new ReferenceCommentBuilder().build())
-                        .lastNotified(lastNotified.toDate()).user(refereeUser3).build();
+                referee1 = new RefereeBuilder().declined(false).application(application1).user(refereeUser1).reference(new ReferenceCommentBuilder().build()).build();
+                referee2 = new RefereeBuilder().declined(false).application(application2).reference(new ReferenceCommentBuilder().build()).user(refereeUser2).build();
+                referee3 = new RefereeBuilder().declined(false).application(application1).reference(new ReferenceCommentBuilder().build()).user(refereeUser3).build();
 
                 saveObjects(interval, mailTemplate, refereeUser1, refereeUser2, refereeUser3, programAdmin, applicant, institution, program, application1, application2,
                         referee1, referee2, referee3);

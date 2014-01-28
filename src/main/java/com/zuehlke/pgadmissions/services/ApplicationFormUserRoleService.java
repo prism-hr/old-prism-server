@@ -382,12 +382,6 @@ public class ApplicationFormUserRoleService {
     public void updateRaisesUrgentFlag() {
         applicationFormUserRoleDAO.updateRaisesUrgentFlag();
     }
-    
-    public void updateLastNotifiedTimestamp(ApplicationForm application, RegisteredUser user, Authority authority, ApplicationFormAction action) {
-        ApplicationFormActionRequired requiredAction = applicationFormUserRoleDAO.findActionForUpdate(application, user, authority, action);
-        requiredAction.setLastNotifiedTimestamp(new Date());
-        applicationFormUserRoleDAO.save(requiredAction.getApplicationFormUserRole());
-    }
 
     private ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Authority authority,
             Boolean interestedInApplicant, ApplicationFormActionRequired... actions) {

@@ -5,13 +5,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity(name = "QUALIFICATION_TYPE")
-public class QualificationType implements ImportedObject, Serializable {
+public class QualificationType implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = 2746228908173552617L;
 
@@ -22,12 +23,15 @@ public class QualificationType implements ImportedObject, Serializable {
     @Column(name = "enabled")
     private Boolean enabled;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
+    @Column(name = "code")
+    private String code;
+
     @Column(name = "name")
     private String name;
 
-    @Column(name = "code")
-    private String code;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "enabled_object_id")
+    private QualificationType enabledObject;
 
     public void setId(Integer id) {
         this.id = id;
@@ -38,6 +42,9 @@ public class QualificationType implements ImportedObject, Serializable {
     }
 
     public String getName() {
+        if (!enabled && enabledObject != null) {
+            return enabledObject.getName();
+        }
         return name;
     }
 
@@ -49,12 +56,16 @@ public class QualificationType implements ImportedObject, Serializable {
         return enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
-    @Override
     public String getCode() {
+        return code;
+    }
+
+    public String getStringCode() {
         return code;
     }
 
@@ -62,6 +73,15 @@ public class QualificationType implements ImportedObject, Serializable {
         this.code = code;
     }
 
+    @Override
+    public QualificationType getEnabledObject() {
+        return enabledObject;
+    }
+
+    @Override
+    public void setEnabledObject(SelfReferringImportedObject enabledObject) {
+        this.enabledObject = (QualificationType) enabledObject;
+    }
 
     @Override
     public Date getDisabledDate() {

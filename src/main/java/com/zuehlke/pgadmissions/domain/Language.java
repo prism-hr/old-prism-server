@@ -5,13 +5,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity(name = "LANGUAGE")
-public class Language implements ImportedObject, Serializable {
+public class Language implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = -4719304115154138995L;
 
@@ -25,9 +26,12 @@ public class Language implements ImportedObject, Serializable {
     @Column(name = "code")
     private String code;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
     @Column(name = "name")
     private String name;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "enabled_object_id")
+    private Language enabledObject;
 
     public void setId(Integer id) {
         this.id = id;
@@ -38,6 +42,9 @@ public class Language implements ImportedObject, Serializable {
     }
 
     public String getName() {
+        if (!enabled && enabledObject != null) {
+            return enabledObject.getName();
+        }
         return name;
     }
 
@@ -49,8 +56,17 @@ public class Language implements ImportedObject, Serializable {
         return enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getStringCode() {
+        return code;
     }
 
     public void setCode(String code) {
@@ -58,8 +74,13 @@ public class Language implements ImportedObject, Serializable {
     }
 
     @Override
-    public String getCode() {
-        return code;
+    public Language getEnabledObject() {
+        return enabledObject;
+    }
+
+    @Override
+    public void setEnabledObject(SelfReferringImportedObject enabledObject) {
+        this.enabledObject = (Language) enabledObject;
     }
 
     @Override
@@ -71,5 +92,4 @@ public class Language implements ImportedObject, Serializable {
     public void setDisabledDate(Date disabledDate) {
         // ignore
     }
-
 }

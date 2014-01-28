@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 @Entity(name = "INTERVIEW_PARTICIPANT")
@@ -37,6 +40,10 @@ public class InterviewParticipant implements Serializable {
     
     @Transient
     private Boolean canMakeIt = false;
+    
+    @Column(name = "last_notified")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastNotified;
 
     @ManyToOne
     @JoinColumn(name = "interview_id", updatable = false, insertable = false)
@@ -80,6 +87,14 @@ public class InterviewParticipant implements Serializable {
     
     public void setCanMakeIt(Boolean canMakeIt) {
         this.canMakeIt = canMakeIt;
+    }
+    
+    public Date getLastNotified() {
+        return lastNotified;
+    }
+
+    public void setLastNotified(Date lastNotified) {
+        this.lastNotified = lastNotified;
     }
 
     public Interview getInterview() {

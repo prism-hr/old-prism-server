@@ -10,7 +10,6 @@ import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -270,8 +269,8 @@ public class UserDAO {
                 .add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
     }
     
-    public void initialise(RegisteredUser user) {
-        Hibernate.initialize(user);
+    public RegisteredUser initialise(RegisteredUser user) {
+        return get(user.getId());
     }
     
     private Date getBaselineDate(Date seedDate) {

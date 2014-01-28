@@ -74,4 +74,9 @@ public class QualificationsImporter implements Importer {
 		return result;
 	}
 
+    @Override
+    public Class<?> getImportedType() {
+        return QualificationType.class;
+    }
+
 }

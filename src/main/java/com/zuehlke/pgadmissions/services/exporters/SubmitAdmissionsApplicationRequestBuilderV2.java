@@ -298,7 +298,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private DisabilityTp buildDisability() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         DisabilityTp disabilityTp = xmlFactory.createDisabilityTp();
-        disabilityTp.setCode(Integer.toString(personalDetails.getDisability().getCode()));
+        disabilityTp.setCode(personalDetails.getDisability().getCode());
         disabilityTp.setName(personalDetails.getDisability().getName());
         return disabilityTp;
     }
@@ -306,7 +306,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private EthnicityTp buildEthnicity() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         EthnicityTp ethnicityTp = xmlFactory.createEthnicityTp();
-        ethnicityTp.setCode(Integer.toString(personalDetails.getEthnicity().getCode()));
+        ethnicityTp.setCode(personalDetails.getEthnicity().getCode());
         ethnicityTp.setName(personalDetails.getEthnicity().getName());
         return ethnicityTp;
     }

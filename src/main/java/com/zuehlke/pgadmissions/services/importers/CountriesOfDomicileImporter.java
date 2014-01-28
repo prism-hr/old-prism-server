@@ -71,4 +71,9 @@ public class CountriesOfDomicileImporter implements Importer {
 		return result;
 	}
 
+    @Override
+    public Class<?> getImportedType() {
+        return Domicile.class;
+    }
+
 }

@@ -72,4 +72,9 @@ public class DisabilitiesImporter implements Importer {
 		return result;
 	}
 
+    @Override
+    public Class<?> getImportedType() {
+        return Disability.class;
+    }
+
 }

@@ -18,7 +18,7 @@ public class SourceOfInterestAdapter implements ImportData {
 	}
 
 	@Override
-	public String getStringCode() {
+	public String getCode() {
 		return sourceOfInterest.getCode();
 	}
 

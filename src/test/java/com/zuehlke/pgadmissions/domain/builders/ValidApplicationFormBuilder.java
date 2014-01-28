@@ -138,8 +138,8 @@ public class ValidApplicationFormBuilder {
                 .position("Software Engineer").current(true).startDate(DateUtils.addYears(new Date(), -2)).remit("Developer").employerName("Zuhlke Ltd.")
                 .toEmploymentPosition();
         language = new LanguageBuilder().code("GB").name("England").enabled(true).build();
-        disability = new DisabilityBuilder().code(0).name("No Disability").enabled(true).build();
-        ethnicity = new EthnicityBuilder().code(10).name("White").enabled(true).build();
+        disability = new DisabilityBuilder().code("0").name("No Disability").enabled(true).build();
+        ethnicity = new EthnicityBuilder().code("10").name("White").enabled(true).build();
         personalDetails = new PersonalDetailsBuilder()
                 .firstNationality(language)
                 .country(country)

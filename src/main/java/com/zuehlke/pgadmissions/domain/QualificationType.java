@@ -53,6 +53,7 @@ public class QualificationType implements ImportedObject, Serializable {
         this.enabled = enabled;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
@@ -61,10 +62,6 @@ public class QualificationType implements ImportedObject, Serializable {
         this.code = code;
     }
 
-    @Override
-    public String getStringCode() {
-        return code;
-    }
 
     @Override
     public Date getDisabledDate() {

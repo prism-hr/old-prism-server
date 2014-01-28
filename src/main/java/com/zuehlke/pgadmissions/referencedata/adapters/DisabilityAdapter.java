@@ -18,14 +18,14 @@ public class DisabilityAdapter implements ImportData {
 	}
 
 	@Override
-	public String getStringCode() {
+	public String getCode() {
 		return disability.getCode();
 	}
 
 	@Override
 	public com.zuehlke.pgadmissions.domain.Disability createDomainObject(List<? extends CodeObject> currentData, List<? extends CodeObject> changes) {
 		com.zuehlke.pgadmissions.domain.Disability result = new com.zuehlke.pgadmissions.domain.Disability();
-		result.setCode(Integer.parseInt(disability.getCode()));
+		result.setCode(disability.getCode());
 		result.setName(disability.getName());
 		result.setEnabled(true);
 		return result;

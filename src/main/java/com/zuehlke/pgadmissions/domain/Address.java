@@ -9,8 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import org.apache.commons.lang.StringUtils;
-
+import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="ADDRESS")
@@ -98,28 +97,12 @@ public class Address implements Serializable {
 	}
 	
 	public String getLocationString() {
-		StringBuilder sb = new StringBuilder();
-		if(StringUtils.isNotBlank(address1)) {
-			sb.append(address1);
-		}
-		if(StringUtils.isNotBlank(address2)) {
-			sb.append("\n"+address2);
-		}
-		if(StringUtils.isNotBlank(address3)) {
-			sb.append("\n"+address3);
-		}
-		if(StringUtils.isNotBlank(address4)) {
-			sb.append("\n"+address4);
-		}
-		if(StringUtils.isNotBlank(address5)) {
-			sb.append("\n"+address5);
-		}
-		return sb.toString();
+	    return Joiner.on('\n').skipNulls().join(address1, address2, address3, address4, address5);
 	}
 	
 	@Override
 	public String toString() {
-		return getLocationString() + "\n" + (domicile != null ? domicile.getName() : "");
+		return Joiner.on('\n').skipNulls().join(getLocationString(), domicile.getName());
 	}
 }
 

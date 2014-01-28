@@ -62,6 +62,7 @@ public class QualificationInstitutionReference implements ImportedObject, Serial
         this.domicileCode = domicileCode;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
@@ -80,8 +81,4 @@ public class QualificationInstitutionReference implements ImportedObject, Serial
         // ignore
     }
 
-    @Override
-    public String getStringCode() {
-        return this.code;
-    }
 }

@@ -110,7 +110,7 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
     }
 
     @Override
-    public String getStringCode() {
+    public String getCode() {
         return program.getCode();
     }
 

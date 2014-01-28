@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.LanguageDAO;
+import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.NationalityAdapter;
@@ -76,7 +77,7 @@ public class NationalitiesImporter implements Importer {
 	}
 
     @Override
-    public Class<?> getImportedType() {
+    public Class<? extends ImportedObject> getImportedType() {
         return Language.class;
     }
 

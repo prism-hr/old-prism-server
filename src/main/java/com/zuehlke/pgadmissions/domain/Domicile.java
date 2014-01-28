@@ -5,13 +5,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity(name = "DOMICILE")
-public class Domicile implements ImportedObject, Serializable {
+public class Domicile implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = -8250449282720149478L;
 
@@ -25,8 +26,12 @@ public class Domicile implements ImportedObject, Serializable {
     @Column(name = "code")
     private String code;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
+    @Column(name = "name")
     private String name;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "enabled_object_id")
+    private Domicile enabledObject;
 
     public void setId(Integer id) {
         this.id = id;
@@ -36,8 +41,10 @@ public class Domicile implements ImportedObject, Serializable {
         return id;
     }
 
-    @Override
     public String getName() {
+        if (!enabled && enabledObject != null) {
+            return enabledObject.getName();
+        }
         return name;
     }
 
@@ -45,7 +52,6 @@ public class Domicile implements ImportedObject, Serializable {
         this.name = name;
     }
 
-    @Override
     public Boolean getEnabled() {
         return enabled;
     }
@@ -65,6 +71,16 @@ public class Domicile implements ImportedObject, Serializable {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    @Override
+    public Domicile getEnabledObject() {
+        return enabledObject;
+    }
+
+    @Override
+    public void setEnabledObject(SelfReferringImportedObject enabledObject) {
+        this.enabledObject = (Domicile) enabledObject;
     }
 
     @Override

@@ -5,13 +5,20 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity(name = "DISABILITY")
-public class Disability implements ImportedObject, Serializable {
+public class Disability implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = 6141410638125684970L;
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @Column(name = "enabled")
     private Boolean enabled;
@@ -22,9 +29,9 @@ public class Disability implements ImportedObject, Serializable {
     @Column(name = "name")
     private String name;
 
-    @Id
-    @GeneratedValue
-    private Integer id;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "enabled_object_id")
+    private Disability enabledObject;
 
     public void setId(Integer id) {
         this.id = id;
@@ -35,6 +42,9 @@ public class Disability implements ImportedObject, Serializable {
     }
 
     public String getName() {
+        if (!enabled && enabledObject != null) {
+            return enabledObject.getName();
+        }
         return name;
     }
 
@@ -46,6 +56,7 @@ public class Disability implements ImportedObject, Serializable {
         return enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
@@ -55,11 +66,21 @@ public class Disability implements ImportedObject, Serializable {
     }
 
     public String getStringCode() {
-        return code.toString();
+        return code;
     }
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    @Override
+    public Disability getEnabledObject() {
+        return enabledObject;
+    }
+
+    @Override
+    public void setEnabledObject(SelfReferringImportedObject enabledObject) {
+        this.enabledObject = (Disability) enabledObject;
     }
 
     @Override
@@ -71,4 +92,5 @@ public class Disability implements ImportedObject, Serializable {
     public void setDisabledDate(Date disabledDate) {
         // ignore
     }
+    
 }

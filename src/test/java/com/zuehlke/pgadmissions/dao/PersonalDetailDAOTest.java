@@ -88,7 +88,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveEthnicityDisability() throws ParseException {
         PersonalDetailDAO personalDetailDAO = new PersonalDetailDAO(sessionFactory);
-        Ethnicity eth = new EthnicityBuilder().name("AAAA").enabled(true).build();
+        Ethnicity eth = new EthnicityBuilder().name("AAAA").code("1").enabled(true).build();
         save(eth);
 
         Disability dis = new DisabilityBuilder().name("BBBB").code("2").enabled(true).build();

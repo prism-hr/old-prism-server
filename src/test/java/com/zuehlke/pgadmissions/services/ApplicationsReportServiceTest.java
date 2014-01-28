@@ -96,7 +96,7 @@ public class ApplicationsReportServiceTest {
         // GIVEN
         RegisteredUser applicant1 = new RegisteredUserBuilder().id(6).firstName("Genowefa").lastName("Pigwa").email("gienia@pigwa.pl").build();
         Program program1 = new ProgramBuilder().code("ABC").title("BBC").build();
-        PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").build()).build();
+        PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").enabled(true).build()).build();
         ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(new SourcesOfInterestBuilder().name("fooBar").build()).build();
         ApplicationForm app1 = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).personalDetails(personalDetails).applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1).build();
         List<ApplicationForm> applications = Lists.newArrayList(app1);
@@ -163,7 +163,7 @@ public class ApplicationsReportServiceTest {
         RegisteredUser applicant1 = new RegisteredUserBuilder().id(8).firstName("Genowefa").lastName("Pigwa").email("gienia@pigwa.pl").build();
         ProgramInstance programInstance = new ProgramInstanceBuilder().applicationStartDate(tomorrow).applicationDeadline(dayAfterTomorrow).academicYear("1939").build();
         Program program1 = new ProgramBuilder().code("ABC").title("BBC").instances(programInstance).build();
-        PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").build()).build();
+        PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").enabled(true).build()).build();
         
         SuggestedSupervisor suggestedSupervisor1 = new SuggestedSupervisorBuilder().firstname("suggested").lastname("supervisor1").build();
         SuggestedSupervisor suggestedSupervisor2 = new SuggestedSupervisorBuilder().firstname("suggested").lastname("supervisor2").build();

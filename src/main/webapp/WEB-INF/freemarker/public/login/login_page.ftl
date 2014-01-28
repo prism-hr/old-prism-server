@@ -38,7 +38,11 @@
   <body class="old-ie">
   <![endif]-->
   <!--[if (gte IE 9)|!(IE)]><!-->
-  <body>
+  <#if Request['CLICKED_ON_CREATE_OPPORTUNITY']??>
+     <body class="opportunity">
+  <#else>
+     <body>
+  </#if>
   <!--<![endif]-->
 	
 	<!-- Scripts -->
@@ -48,7 +52,6 @@
 	<script type="text/javascript" src="<@spring.url '/design/default/js/login.js'/>"></script>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
     <div id="wrapper">
-    
     	<#include "/public/common/global_header.ftl"/>
       
         <!-- Middle. -->

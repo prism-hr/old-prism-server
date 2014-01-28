@@ -21,11 +21,9 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -116,18 +114,6 @@ public class RegistrationServiceTest {
 		for (PendingRoleNotification roleNotification : databaseUser.getPendingRoleNotifications()) {
 			Assert.assertNull(roleNotification.getNotificationDate());
 		}
-	}
-
-	@Test
-	public void shouldClearNotificationDatesFromReferee() {
-		RegisteredUser databaseUser = new RegisteredUserBuilder().id(4).email("someEmail@email.com").enabled(false).activationCode("abc").build();
-		Referee referee = new RefereeBuilder().id(1).lastNotified(new Date()).user(databaseUser).build();
-		EasyMock.expect(refereeDAOMock.getRefereeByUser(databaseUser)).andReturn(referee);
-		refereeDAOMock.save(referee);
-		EasyMock.replay(refereeDAOMock);
-		registrationService.sendInstructionsToRegisterIfActivationCodeIsMissing(databaseUser);
-		EasyMock.verify(refereeDAOMock);
-		Assert.assertNull(referee.getLastNotified());
 	}
 
 	@Test

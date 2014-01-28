@@ -4,6 +4,3 @@
 	<h1><span class="logoico">Prism</span> <span id="version"><@spring.message 'prism.version'/></span> <strong>Research Student Recruitment</strong></h1>
 	<div class="logotext">Prism</div>
 </div>
-<div id="header">
-    <!-- Custom theme header -->
-</div>

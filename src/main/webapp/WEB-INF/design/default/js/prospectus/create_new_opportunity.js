@@ -1,7 +1,11 @@
 $(document).ready(function() {
-    bindDatePicker($("#applicationStartDate"));
+    bindDatePicker($('#applicationStartDate'));
+    $('.selectpicker').selectpicker();
     
-	$('#plist').height(500);
+    $(window).bind('resize', function() { 
+        setHsize(); 
+    });
+    setHsize(); 
 	refreshControls();
 
     $('#institution').change(function() {
@@ -53,9 +57,22 @@ $(document).ready(function() {
             }
         });
     });
-
+    initEditors();
 });
-
+function setHsize() {
+ var container;
+ var paddings = 32;
+ var header = $('#pholder header').height();
+ var footer = $('#pholder footer').height();
+ var isEmbed = window != window.parent;
+ if (isEmbed) {
+    container =  $(window).height();
+ } else {
+    container =  $('#pholder').parent().parent().height();
+ }
+ var sum = container - header - footer - paddings;
+ $('#plist').height(sum);
+}
 function refreshControls(){
 	if ($('#institutionCountry').val() === "") {
 		$("#institution").attr("readonly", "readonly");
@@ -72,4 +89,15 @@ function refreshControls(){
         $("#otherInstitution").attr("readonly", "readonly");
         $("#otherInstitution").attr("disabled", "disabled");
     }
+    $("#institution").selectpicker('refresh');
+}
+function initEditors() {
+    tinymce.init({
+        selector: "#programDescription",
+        width: 480,
+        height : 180,
+        menubar: false,
+        content: "",
+        toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+    });
 }

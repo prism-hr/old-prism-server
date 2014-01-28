@@ -10,6 +10,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,13 +52,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
     private UserDAO userDAO;
 
-    private ApplicationFormDAO applicationFormDAO;
-
     private RoleDAO roleDAO;
-
-    private ActionDAO actionDAO;
-
-    private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 
     private ReminderIntervalDAO reminderIntervalDAOMock;
 
@@ -143,38 +138,41 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetUsersByRole() {
-        // clear out whatever test data is in there -remember, it will all be
-        // rolled back!
-        sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
-        sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_ACTION_OPTIONAL").executeUpdate();
-        sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_ACTION_REQUIRED").executeUpdate();
-        sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_USER_ROLE").executeUpdate();
-        sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
-        sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
-
-        Role roleOne = new RoleBuilder().id(Authority.APPLICANT).doSendUpdateNotification(false).build();
-        Role roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).doSendUpdateNotification(false).build();
-        save(roleOne, roleTwo);
-        flushAndClearSession();
+        Role roleOne = roleDAO.getRoleByAuthority(Authority.APPLICANT);
+        if (roleOne == null) {
+            roleOne = new RoleBuilder().id(Authority.APPLICANT).doSendUpdateNotification(false).build();
+            save(roleOne);
+        }
+        Role roleTwo = roleDAO.getRoleByAuthority(Authority.ADMINISTRATOR);
+        if (roleTwo == null) {
+            roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).doSendUpdateNotification(false).build();
+            save(roleTwo);
+        }
 
         RegisteredUser userOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(roleOne).build();
         RegisteredUser userTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).roles(roleOne, roleTwo)
                 .build();
-
         save(userOne, userTwo);
+        List<Integer> testUserIds = Arrays.asList(userOne.getId(), userTwo.getId());
 
-        flushAndClearSession();
-
-        List<RegisteredUser> usersInRole = userDAO.getUsersInRole(roleTwo);
-        assertEquals(1, usersInRole.size());
-        assertEquals(userTwo.getId(), usersInRole.get(0).getId());
-
-        usersInRole = userDAO.getUsersInRole(roleOne);
-        assertEquals(2, usersInRole.size());
-        assertTrue(listContainsId(userOne, usersInRole));
-        assertTrue(listContainsId(userTwo, usersInRole));
+        int roleOneHitCounter = 0;
+        for (RegisteredUser user : userDAO.getUsersInRole(roleOne)) {
+            if (testUserIds.contains(user.getId())) {
+                roleOneHitCounter++;
+            }
+        } 
+        assertEquals(2, roleOneHitCounter);
+   
+        int roleTwoHitCounter = 0;
+        for (RegisteredUser user : userDAO.getUsersInRole(roleTwo)) {
+            if (testUserIds.contains(user.getId())) {
+                roleTwoHitCounter++;
+            }
+        }
+        assertEquals(1, roleTwoHitCounter);
+        
     }
 
     @Test
@@ -576,10 +574,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         reminderIntervalDAOMock = EasyMock.createMock(ReminderIntervalDAO.class);
         notificationsDurationDAOMock = EasyMock.createMock(NotificationsDurationDAO.class);
         userDAO = new UserDAO(sessionFactory, reminderIntervalDAOMock, notificationsDurationDAOMock);
-        applicationFormDAO = new ApplicationFormDAO(sessionFactory);
         roleDAO = new RoleDAO(sessionFactory);
-        actionDAO = new ActionDAO(sessionFactory);
-        applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
 
         DateTime baseline = new DateTime(new Date());
         DateTime cleanBaseline = new DateTime(baseline.getYear(), baseline.getMonthOfYear(), baseline.getDayOfMonth(), 0, 0, 0);

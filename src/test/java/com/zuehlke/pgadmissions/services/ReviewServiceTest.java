@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -111,7 +112,8 @@ public class ReviewServiceTest {
 
         ReviewRound reviewRound = new ReviewRoundBuilder().id(1).build();
         Referee referee = new RefereeBuilder().build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
+        StateChangeComment stateChangeComment = new StateChangeComment();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).comments(stateChangeComment).status(ApplicationFormStatus.VALIDATION).id(1).build();
         EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
 
@@ -121,6 +123,8 @@ public class ReviewServiceTest {
         StateChangeEvent event = new ReviewStateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(reviewRound)).andReturn(event);
         mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
+        reviewRoundDAOMock.save(reviewRound);
+        applicationFormDAOMock.save(applicationForm);
         applicationFormUserRoleServiceMock.validationStageCompleted(applicationForm);
         applicationFormUserRoleServiceMock.movedToReviewStage(reviewRound);
         applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);

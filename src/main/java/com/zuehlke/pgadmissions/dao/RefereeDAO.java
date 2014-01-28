@@ -53,8 +53,8 @@ public class RefereeDAO {
         Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
         return (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
                 .createAlias("application", "application", JoinType.INNER_JOIN)
-                .createAlias("reference", "reference", JoinType.LEFT_OUTER_JOIN)
-                .add(Restrictions.isNull("reference.id"))
+                .createAlias("reference", "referenceComment", JoinType.LEFT_OUTER_JOIN)
+                .add(Restrictions.isNull("referenceComment.id"))
                 .add(Restrictions.eq("declined", false))
                 .add(Restrictions.isNotNull("user"))
                 .add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.WITHDRAWN,
@@ -64,8 +64,8 @@ public class RefereeDAO {
 
     public List<Referee> getRefereesWhoDidntProvideReferenceYet(ApplicationForm form) {
         return (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
-                .createAlias("reference", "reference", JoinType.LEFT_OUTER_JOIN)
-                .add(Restrictions.isNull("reference.id"))
+                .createAlias("reference", "referenceComment", JoinType.LEFT_OUTER_JOIN)
+                .add(Restrictions.isNull("referenceComment.id"))
                 .add(Restrictions.eq("declined", false))
                 .add(Restrictions.eq("application", form)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
@@ -78,8 +78,8 @@ public class RefereeDAO {
         sessionFactory.getCurrentSession().refresh(referee);
     }
     
-    public Referee initialise(Referee referee) {
-        return getRefereeById(referee.getId());
+    public Referee initialise(Referee proxyReferee) {
+        return getRefereeById(proxyReferee.getId());
     }
     
 }

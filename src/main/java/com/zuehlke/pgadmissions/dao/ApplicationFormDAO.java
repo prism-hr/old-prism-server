@@ -133,13 +133,16 @@ public class ApplicationFormDAO {
     }
 
     public ApplicationForm getPreviousApplicationForApplicant(ApplicationForm applicationForm) {
-        DetachedCriteria previousAppCriteria = DetachedCriteria.forClass(ApplicationForm.class) //
-                .setProjection(Projections.max("applicationTimestamp")) //
-                .add(Restrictions.eq("applicant", applicationForm.getApplicant())) //
+        DetachedCriteria previousAppCriteria = DetachedCriteria.forClass(ApplicationForm.class)
+                .setProjection(Projections.max("applicationTimestamp"))
+                .add(Restrictions.eq("applicant", applicationForm.getApplicant()))
                 .add(Restrictions.ne("id", applicationForm.getId()));
 
-        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+        int latestApplication = (Integer) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .setProjection(Projections.max("id"))
                 .add(Property.forName("applicationTimestamp").eq(previousAppCriteria)).uniqueResult();
+        
+        return get(latestApplication);
     }
 
 }

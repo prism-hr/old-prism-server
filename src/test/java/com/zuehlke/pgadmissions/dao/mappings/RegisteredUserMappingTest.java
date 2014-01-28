@@ -137,8 +137,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
         sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 
-        Role roleOne = new RoleBuilder().id(Authority.APPLICANT).build();
-        Role roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
+        Role roleOne = new RoleBuilder().id(Authority.APPLICANT).doSendUpdateNotification(false).build();
+        Role roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).doSendUpdateNotification(false).build();
         save(roleOne, roleTwo);
         flushAndClearSession();
 
@@ -166,7 +166,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
         sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_USER_ROLE").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
         sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
-        Role role = new RoleBuilder().id(Authority.APPLICANT).build();
+        Role role = new RoleBuilder().id(Authority.APPLICANT).doSendUpdateNotification(false).build();
         save(role);
         flushAndClearSession();
 

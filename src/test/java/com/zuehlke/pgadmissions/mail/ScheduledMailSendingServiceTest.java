@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.easymock.Capture;
-import org.joda.time.DateTime;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -103,15 +103,12 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
        
         ScheduledMailSendingService thisServiceMock = createMock(ScheduledMailSendingService.class);
 
-        DateTime baselineDateTime = new DateTime(new Date());
-        DateTime cleanBaselineDateTime = new DateTime(baselineDateTime.getYear(), baselineDateTime.getMonthOfYear(), baselineDateTime.getDayOfMonth(), 0, 0, 0);
-        Date cleanBaselineDate = cleanBaselineDateTime.toDate();
-        expect(thisServiceMock.getUsersForTaskReminder(cleanBaselineDate)).andReturn(potentialUsersForTaskReminder);
-        expect(thisServiceMock.getUsersForTaskNotification(cleanBaselineDate)).andReturn(potentialUsersForTaskNotification);
-        expect(thisServiceMock.getUsersForUpdateNotification(cleanBaselineDate)).andReturn(usersForUpdateNotification);
-
         expect(applicationContextMock.getBean(ScheduledMailSendingService.class)).andReturn(thisServiceMock);
-
+        
+        expect(thisServiceMock.getUsersForTaskReminder(EasyMock.isA(Date.class))).andReturn(potentialUsersForTaskReminder);
+        expect(thisServiceMock.getUsersForTaskNotification(EasyMock.isA(Date.class))).andReturn(potentialUsersForTaskNotification);
+        expect(thisServiceMock.getUsersForUpdateNotification(EasyMock.isA(Date.class))).andReturn(usersForUpdateNotification);
+        
         expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskReminder.get(0), DigestNotificationType.TASK_REMINDER)).andReturn(true);
         expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskReminder.get(1), DigestNotificationType.TASK_REMINDER)).andReturn(true);
         expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskNotification.get(0), DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
@@ -127,9 +124,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     @Test
     public void shouldSendUpdateEmail() {
         RegisteredUser user = new RegisteredUserBuilder().id(8).username("bebok").build();
-
         expect(mockMailSender.resolveSubject(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION, (Object) null)).andReturn("Ahoj!");
-
+        expect(userDAOMock.initialise(user)).andReturn(user);
         Capture<PrismEmailMessage> messageCapture = new Capture<PrismEmailMessage>();
         mockMailSender.sendEmail(capture(messageCapture));
 
@@ -172,7 +168,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
         expect(refereeDAOMock.getRefereesDueReminder()).andReturn(asList(referee));
 
-        expect(refereeDAOMock.getRefereeById(0)).andReturn(referee);
+        expect(refereeDAOMock.initialise(referee)).andReturn(referee);
 
         expect(
                 mockMailSender.resolveSubject(REFEREE_REMINDER, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME,
@@ -218,8 +214,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
                 + " for UCL " + SAMPLE_PROGRAM_TITLE + " - Reference Request";
 
         expect(interviewParticipantDAOMock.getInterviewParticipantsDueReminder()).andReturn(Arrays.asList(participant));
-
-        expect(interviewParticipantDAOMock.getParticipantById(0)).andReturn(participant);
+        expect(interviewParticipantDAOMock.initialise(participant)).andReturn(participant);
 
         expect(
                 mockMailSender.resolveSubject(EmailTemplateName.INTERVIEW_VOTE_REMINDER, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE,
@@ -229,6 +224,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 
         expect(applicationContextMock.getBean(isA(Class.class))).andReturn(service);
+        interviewParticipantDAOMock.save(participant);
 
         replay(mockMailSender, applicationContextMock, interviewParticipantDAOMock);
         service.sendInterviewParticipantVoteReminder();

@@ -57,7 +57,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
 
         List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertNotNull(participants);
-        assertTrue(participants.contains(participant));
+        assertTrue(participants.get(0).getId().equals(participant.getId()));
     }
 
     @Test
@@ -77,8 +77,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
         
         List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        assertNotNull(participants);
-        assertTrue(participants.contains(participant));
+        assertTrue(participants.size() == 0);
     }
 
     @Test
@@ -98,8 +97,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        assertNotNull(participants);
-        assertTrue(participants.contains(participant));
+        assertTrue(participants.size() == 0);
     }
 
     @Test
@@ -119,8 +117,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        assertNotNull(participants);
-        assertTrue(participants.contains(participant));
+        assertTrue(participants.size() == 0);
     }
 
     @Test
@@ -140,8 +137,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        assertNotNull(participants);
-        assertTrue(participants.contains(participant));
+        assertTrue(participants.size() == 0);
     }
 
     @Before

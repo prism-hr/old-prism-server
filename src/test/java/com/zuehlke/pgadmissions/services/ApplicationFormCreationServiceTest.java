@@ -89,6 +89,7 @@ public class ApplicationFormCreationServiceTest {
         expect(applicationContextMock.getBean(ApplicationFormCreationService.class)).andReturn(thisBeanMock);
         expect(thisBeanMock.findMostRecentApplication(applicant, program, project)).andReturn(null);
         expect(thisBeanMock.createNewApplicationForm(applicant, program, project)).andReturn(newApplicationForm);
+        thisBeanMock.fillWithDataFromPreviousApplication(newApplicationForm);
         thisBeanMock.addSuggestedSupervisors(newApplicationForm, project);
         applicationFormUserRoleServiceMock.applicationCreated(newApplicationForm);
 

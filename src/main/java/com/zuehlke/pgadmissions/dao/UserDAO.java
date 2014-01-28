@@ -194,7 +194,7 @@ public class UserDAO {
         Date expiryBaseline = getExpiryBaseline(seedDate);
         
         return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("registeredUser"))
+                .setProjection(Projections.groupProperty("user"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
@@ -213,7 +213,7 @@ public class UserDAO {
         Date expiryBaseline = getExpiryBaseline(seedDate);
         
         return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("registeredUser"))
+                .setProjection(Projections.groupProperty("user"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
@@ -233,7 +233,7 @@ public class UserDAO {
         Date baseline = getBaselineDate(seedDate);
         
         return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("registeredUser"))
+                .setProjection(Projections.groupProperty("user"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("role", "role", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("role.doSendUpdateNotification", true))
@@ -253,7 +253,7 @@ public class UserDAO {
         Date expiryBaseline = getExpiryBaseline(seedDate);
         
         return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("registeredUser"))
+                .setProjection(Projections.groupProperty("user"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
@@ -269,8 +269,8 @@ public class UserDAO {
                 .add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
     }
     
-    public RegisteredUser initialise(RegisteredUser user) {
-        return get(user.getId());
+    public RegisteredUser initialise(RegisteredUser proxyUser) {
+        return get(proxyUser.getId());
     }
     
     private Date getBaselineDate(Date seedDate) {

@@ -54,7 +54,7 @@ public class InterviewParticipantDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(participant);
     }
 
-    public InterviewParticipant initialise(InterviewParticipant participant) {
-        return getParticipantById(participant.getId());
+    public InterviewParticipant initialise(InterviewParticipant proxyParticipant) {
+        return getParticipantById(proxyParticipant.getId());
     }
 }

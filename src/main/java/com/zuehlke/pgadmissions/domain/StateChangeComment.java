@@ -33,7 +33,7 @@ public class StateChangeComment extends Comment {
     @Column(name = "use_custom_questions")
     private Boolean useCustomQuestions;
     
-    @Column(name = "use_custom__reference_questions")
+    @Column(name = "use_custom_reference_questions")
     private Boolean useCustomReferenceQuestions;
     
     @Transient

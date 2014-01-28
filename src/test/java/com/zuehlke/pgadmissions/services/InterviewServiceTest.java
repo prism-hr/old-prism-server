@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewStateChangeEventBuilder;
@@ -91,7 +92,8 @@ public class InterviewServiceTest {
         Interview interview = new InterviewBuilder().interviewers(interviewer).dueDate(dateFormat.parse("01 04 2012")).id(1).stage(InterviewStage.SCHEDULED)
                 .build();
         Referee referee = new RefereeBuilder().build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
+        StateChangeComment stateChangeComment = new StateChangeComment();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().comments(stateChangeComment).referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
 
         StageDuration duration = new StageDurationBuilder().duration(1).unit(DurationUnitEnum.DAYS).build();
         RegisteredUser user = new RegisteredUser();
@@ -105,6 +107,8 @@ public class InterviewServiceTest {
         mailServiceMock.sendInterviewConfirmationToApplicant(applicationForm);
         mailServiceMock.sendInterviewConfirmationToInterviewers(asList(interviewer));
         mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
+        interviewDAOMock.save(interview);
+        applicationFormDAOMock.save(applicationForm);
         applicationFormUserRoleServiceMock.validationStageCompleted(applicationForm);
         applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
         applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
@@ -130,7 +134,8 @@ public class InterviewServiceTest {
         Interview interview = new InterviewBuilder().interviewers(interviewer).dueDate(dateFormat.parse("01 04 2012")).id(1).stage(InterviewStage.SCHEDULED)
                 .takenPlace(true).furtherDetails("applicant!").furtherInterviewerDetails("interviewer!").build();
         Referee referee = new RefereeBuilder().build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).id(1).build();
+        StateChangeComment stateChangeComment = new StateChangeComment();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).comments(stateChangeComment).status(ApplicationFormStatus.VALIDATION).id(1).build();
 
         StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
 
@@ -141,6 +146,8 @@ public class InterviewServiceTest {
         InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(interview)).andReturn(interviewStateChangeEvent);
         mailServiceMock.sendReferenceRequest(asList(referee), applicationForm);
+        interviewDAOMock.save(interview);
+        applicationFormDAOMock.save(applicationForm);
         applicationFormUserRoleServiceMock.validationStageCompleted(applicationForm);
         applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         applicationFormUserRoleServiceMock.movedToInterviewStage(interview);

@@ -75,20 +75,20 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         Date baselineDate = new Date();
 
         log.trace("Sending task reminder to users");
-        for (RegisteredUser user : thisProxy.getUsersForTaskReminder(baselineDate)) {
-            thisProxy.sendDigestEmail(user, DigestNotificationType.TASK_REMINDER);
+        for (RegisteredUser proxyUser : thisProxy.getUsersForTaskReminder(baselineDate)) {
+            thisProxy.sendDigestEmail(proxyUser, DigestNotificationType.TASK_REMINDER);
         }
         log.trace("Finished sending task reminder to users");
 
         log.trace("Sending task notification to users");
-        for (RegisteredUser user : thisProxy.getUsersForTaskNotification(baselineDate)) {
-            thisProxy.sendDigestEmail(user, DigestNotificationType.TASK_NOTIFICATION);
+        for (RegisteredUser proxyUser : thisProxy.getUsersForTaskNotification(baselineDate)) {
+            thisProxy.sendDigestEmail(proxyUser, DigestNotificationType.TASK_NOTIFICATION);
         }
         log.trace("Finished sending task notification to users");
 
         log.trace("Sending update notification to users");
-        for (RegisteredUser user : thisProxy.getUsersForUpdateNotification(baselineDate)) {
-            thisProxy.sendDigestEmail(user, DigestNotificationType.UPDATE_NOTIFICATION);
+        for (RegisteredUser proxyUser : thisProxy.getUsersForUpdateNotification(baselineDate)) {
+            thisProxy.sendDigestEmail(proxyUser, DigestNotificationType.UPDATE_NOTIFICATION);
         }
         log.trace("Finished sending update notification to users");
     }
@@ -169,9 +169,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendReferenceReminder() {
         log.trace("Sending reference reminder to users");
-        List<Referee> refereesDueAReminder = refereeDAO.getRefereesDueReminder();
-        for (Referee referee : refereesDueAReminder) {
-            applicationContext.getBean(this.getClass()).sendReferenceReminder(refereeDAO.initialise(referee));
+        List<Referee> proxyReferees = refereeDAO.getRefereesDueReminder();
+        for (Referee proxyReferee : proxyReferees) {
+            applicationContext.getBean(this.getClass()).sendReferenceReminder(refereeDAO.initialise(proxyReferee));
         }
         log.trace("Finished sending reference reminder to users");
     }
@@ -180,7 +180,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public boolean sendReferenceReminder(Referee referee) {
         PrismEmailMessage message;
         try {
-            refereeDAO.initialise(referee);
             String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
             ApplicationForm application = referee.getApplication();
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
@@ -190,6 +189,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
             sendEmail(message);
             referee.setLastNotified(new Date());
+            refereeDAO.save(referee);
         } catch (Exception e) {
             log.error("Error while sending reference reminder email to referee: ", e);
             return false;
@@ -200,9 +200,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendInterviewParticipantVoteReminder() {
         log.trace("Sending interview scheduling reminder to users");
-        List<InterviewParticipant> participantsDueAReminder = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        for (InterviewParticipant participant : participantsDueAReminder) {
-            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(interviewParticipantDAO.initialise(participant));
+        List<InterviewParticipant> proxyParticipants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
+        for (InterviewParticipant proxyParticipant : proxyParticipants) {
+            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(interviewParticipantDAO.initialise(proxyParticipant));
         }
         log.trace("Sending interview scheduling reminder to users");
     }
@@ -220,6 +220,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_REMINDER);
             sendEmail(message);
             participant.setLastNotified(new Date());
+            interviewParticipantDAO.save(participant);
         } catch (Exception e) {
             log.error("Error while sending interview vote reminder email to participant:", e);
             return false;

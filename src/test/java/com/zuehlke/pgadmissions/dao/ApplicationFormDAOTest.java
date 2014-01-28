@@ -223,6 +223,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetPreviousApplicationForApplicant() {
         DateTime initialDate = new DateTime(2014, 5, 13, 15, 56);
+        
 
         RegisteredUser otherApplicant = new RegisteredUserBuilder().firstName("Other").lastName("Applicant").email("other@applicant.com").username("other")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
@@ -238,7 +239,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         
         ApplicationForm returned = applicationDAO.getPreviousApplicationForApplicant(recentApplicationForm);
         
-        assertEquals(applicationForm.getId(), returned.getId());
+        assertEquals(otherApplication.getId(), returned.getId());
     }
 
 }

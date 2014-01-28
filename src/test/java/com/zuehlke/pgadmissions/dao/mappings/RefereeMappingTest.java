@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +36,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadReferee() throws Exception {
+        Date lastNotified = new SimpleDateFormat("dd MM yyyy").parse("01 05 2012");
 
         Domicile addressDomicile = new DomicileBuilder().code("FF").enabled(true).name("FF").build();
 
@@ -41,7 +44,8 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         Referee referee = new RefereeBuilder().application(applicationForm).addressDomicile(addressDomicile).address1("loc").email("email").firstname("name")
-                        .jobEmployer("emplo").jobTitle("titl").lastname("lastname").phoneNumber("phoneNumber").declined(true).build();
+                        .jobEmployer("emplo").jobTitle("titl").lastname("lastname").phoneNumber("phoneNumber").declined(true).lastNotified(lastNotified)
+                        .build();
 
         save(referee);
         flushAndClearSession();
@@ -65,6 +69,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
         assertEquals(referee.getPhoneNumber(), reloadedReferee.getPhoneNumber());
         assertTrue(reloadedReferee.isDeclined());
+        assertEquals(lastNotified, reloadedReferee.getLastNotified());
     }
 
     @Test

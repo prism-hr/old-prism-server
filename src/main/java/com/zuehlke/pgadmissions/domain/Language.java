@@ -53,16 +53,12 @@ public class Language implements ImportedObject, Serializable {
         this.enabled = enabled;
     }
 
-    public String getCode() {
-        return code;
-    }
-
     public void setCode(String code) {
         this.code = code;
     }
 
     @Override
-    public String getStringCode() {
+    public String getCode() {
         return code;
     }
 

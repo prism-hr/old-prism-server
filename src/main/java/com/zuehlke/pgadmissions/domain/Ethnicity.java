@@ -21,7 +21,7 @@ public class Ethnicity implements ImportedObject, Serializable {
     private Boolean enabled;
 
     @Column(name = "code")
-    private Integer code;
+    private String code;
 
     @Column(name = "name")
     private String name;
@@ -50,16 +50,12 @@ public class Ethnicity implements ImportedObject, Serializable {
         this.enabled = enabled;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
     @Override
-    public String getStringCode() {
+    public String getCode() {
         return code.toString();
     }
 

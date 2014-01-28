@@ -16,15 +16,15 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 	@Test(expected = NullPointerException.class)
 	public void shouldThrowNullPointerException() {
 		DisabilityDAO disabilityDAO = new DisabilityDAO();
-		Disability disability = new DisabilityBuilder().id(1).name("ZZZZZZ").code(1).enabled(true).build();
+		Disability disability = new DisabilityBuilder().id(1).name("ZZZZZZ").code("1").enabled(true).build();
 		disabilityDAO.getDisabilityById(disability.getId());
 	}
 
 	@Test
 	public void shouldGetAllDisabilitiesInIDOrder() {
 		BigInteger numberOfDisabilities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from DISABILITY").uniqueResult();
-		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").code(1).enabled(true).build();
-		Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").code(2).enabled(true).build();
+		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").code("1").enabled(true).build();
+		Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").code("2").enabled(true).build();
 		save(disability1, disability2);
 		flushAndClearSession();
 		DisabilityDAO disabilityDAO = new DisabilityDAO(sessionFactory);
@@ -37,8 +37,8 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldGetDisabilityById() {
-		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").code(1).enabled(true).build();
-		Disability disability2 = new DisabilityBuilder().name("mmmmmm").code(2).enabled(true).build();
+		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").code("1").enabled(true).build();
+		Disability disability2 = new DisabilityBuilder().name("mmmmmm").code("2").enabled(true).build();
 
 		save(disability1, disability2);
 		flushAndClearSession();
@@ -52,8 +52,8 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetAllDisabilitiesEnabledOnly() {
         BigInteger numberOfDisabilities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from DISABILITY WHERE enabled = true").uniqueResult();
-        Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").code(1).enabled(false).build();
-        Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").code(2).enabled(true).build();
+        Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").code("1").enabled(false).build();
+        Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").code("2").enabled(true).build();
         save(disability1, disability2);
         flushAndClearSession();
         DisabilityDAO disabilityDAO = new DisabilityDAO(sessionFactory);

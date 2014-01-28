@@ -30,7 +30,7 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
     }
 
     @Override
-    public String getStringCode() {
+    public String getCode() {
         return programme.getProgramme().getCode();
     }
 
@@ -103,7 +103,7 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
             return program;
         }
         program = new Program();
-        program.setCode(getStringCode());
+        program.setCode(getCode());
         program.setTitle(getName());
         program.setEnabled(true);
         return program;
@@ -114,7 +114,7 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
             @Override
             public boolean evaluate(Object object) {
                 ProgramInstance instance = (ProgramInstance) object;
-                return instance.getStringCode().equals(getStringCode()) && instance.getName().equals(getName());
+                return instance.getCode().equals(getCode()) && instance.getName().equals(getName());
             }
         });
 

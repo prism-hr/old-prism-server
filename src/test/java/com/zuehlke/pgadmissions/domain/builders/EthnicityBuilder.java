@@ -6,9 +6,9 @@ public class EthnicityBuilder {
 	private String name;
 	private Integer id;
 	private Boolean enabled;
-	private int code;
+	private String code;
 
-	public EthnicityBuilder code(Integer code) {
+	public EthnicityBuilder code(String code) {
         this.code = code;
         return this;
     }

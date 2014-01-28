@@ -73,4 +73,9 @@ public class EthnicitesImporter implements Importer {
 		return result;
 	}
 
+    @Override
+    public Class<?> getImportedType() {
+        return Ethnicity.class;
+    }
+
 }

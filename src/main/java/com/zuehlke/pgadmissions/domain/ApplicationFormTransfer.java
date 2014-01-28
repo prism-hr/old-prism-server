@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -44,7 +45,7 @@ public class ApplicationFormTransfer implements Serializable {
     private Date createdTimestamp;
 
     /** The application form that constitutes my payload (a payload of the transfer I am representing). */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private ApplicationForm applicationForm;
 

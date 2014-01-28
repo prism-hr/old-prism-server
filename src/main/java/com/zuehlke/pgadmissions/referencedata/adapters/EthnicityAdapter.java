@@ -18,14 +18,14 @@ public class EthnicityAdapter implements ImportData {
 	}
 
 	@Override
-	public String getStringCode() {
+	public String getCode() {
 		return ethnicity.getCode();
 	}
 
 	@Override
 	public com.zuehlke.pgadmissions.domain.Ethnicity createDomainObject(List<? extends CodeObject> currentData, List<? extends CodeObject> changes) {
 		com.zuehlke.pgadmissions.domain.Ethnicity result = new com.zuehlke.pgadmissions.domain.Ethnicity();
-		result.setCode(Integer.parseInt(ethnicity.getCode()));
+		result.setCode(ethnicity.getCode());
 		result.setName(ethnicity.getName());
 		result.setEnabled(true);
 		return result;

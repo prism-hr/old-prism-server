@@ -18,7 +18,7 @@ public class QualificationInstitutionReferenceAdapter implements ImportData {
     }
 
     @Override
-    public String getStringCode() {
+    public String getCode() {
         return institution.getCode();
     }
     

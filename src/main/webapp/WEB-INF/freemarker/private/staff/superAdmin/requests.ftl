@@ -67,7 +67,41 @@
       
       <!-- content box -->
       <div class="content-box">
-        <div class="content-box-inner">
+        <div class="content-box-inner requestbox">
+          <!-- searchbox -->
+          <div id="table-bar">
+          <div id="search-box" class="clearfix"> 
+
+              <!-- Search/filter box. -->
+              <div class="filter">
+                <select class="selectCategory" name="searchCategory" id="searchCategory">
+                  <option value="">Column...</option>
+                </select>
+                <select class="selectPredicate" name="searchPredicate" id="searchPredicate_">
+                 <option value="">Column...</option>
+                </select>
+                <input type="text" placeholder="Filter by..." value="" name="searchTerm" id="searchTerm_new" class="filterInput">
+                <button class="btn remove btn-inverse" title="Remove filter"><i class="icon icon-minus"></i></button>
+                <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
+
+              </div>
+
+                  <div class="btn-actions">
+                    <div class="btn-group">
+                      <button id="search-go" class="btn btn-success enabled">Filter</button>
+                      <button data-toggle="dropdown" class="btn btn-success dropdown-toggle"><span class="caret"></span></button>
+                      <ul class="dropdown-menu">
+                        <li><a id="storeFiltersBtn" href="#">Save as Default Filter</a></li>
+                        <li><a href="/pgadmissions/applications?applyFilters=default">Load Default Filter</a></li>
+                        <li><a href="/pgadmissions/applications?applyFilters=urgent">Display Urgent Applications</a></li>
+                        <li><a href="/pgadmissions/applications?applyFilters=active">Display Active Applications</a></li>
+                      </ul>
+                    </div>
+                    <button id="search-reset" type="button" class="btn btn-info">Clear</button>
+                  </div>
+
+            </div>
+          </div>
 
           <table class="data table table-striped table-condensed table-bordered table-hover appliList" id="opportunityRequestsList" border="0">
             <colgroup>
@@ -91,8 +125,8 @@
               
               <#list opportunityRequests as opportunityRequest>
                 <tr id="row_${opportunityRequest.id?string}" class="applicationRow" >
-                  <td data-desc="This request requires your attention" class="flagred">
-                  ${opportunityRequest.author.displayName}
+                  <td data-desc="This request requires your attention" class="flagred applicant-name">
+                  <i class="icon-bell-alt"></i> ${opportunityRequest.author.displayName}
                   </td>
                   <td class="program-title">
                     ${opportunityRequest.programTitle} 
@@ -100,9 +134,13 @@
                   
                   <td class="status">
                     <@spring.message 'opportunityRequestStatus.${opportunityRequest.status.name()}'/>
+                    <!-- icon states to impement here -->
+                    <!--<span data-desc="Rejected" class="icon-status rejected">Rejected</span>
+                    <span data-desc="New Request" class="icon-status offer-recommended">New Request</span>
+                    <span data-desc="Validated" class="icon-status validation">Validated</span>-->
                   </td>
                   <td class="centre">
-                    <select class="opportunityRequestActionType selectpicker" data-request-id="${opportunityRequest.id?string}">
+                    <select class="opportunityRequestActionType selectpicker actionType" data-request-id="${opportunityRequest.id?string}">
                       <option class="title">Actions</option>
                       <#if opportunityRequest.status == "NEW">
                         <option value="approve">Approve</option>
@@ -118,7 +156,7 @@
             
             </tbody>
           </table>
-
+          <div border="0" id="loadMoreRequestsTable"> <a href="javascript:void(0);" class="proceed-link btn btn-large btn-block btn-primary" id="loadMoreApplications">Fetch More Requests</a> </div>
         </div>
         <!-- .content-box-inner --> 
       </div>

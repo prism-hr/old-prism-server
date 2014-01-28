@@ -17,7 +17,7 @@ public class Disability implements ImportedObject, Serializable {
     private Boolean enabled;
 
     @Column(name = "code")
-    private Integer code;
+    private String code;
 
     @Column(name = "name")
     private String name;
@@ -50,7 +50,7 @@ public class Disability implements ImportedObject, Serializable {
         this.enabled = enabled;
     }
 
-    public Integer getCode() {
+    public String getCode() {
         return code;
     }
 
@@ -58,7 +58,7 @@ public class Disability implements ImportedObject, Serializable {
         return code.toString();
     }
 
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

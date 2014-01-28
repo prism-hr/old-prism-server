@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionReferenceDAO;
+import com.zuehlke.pgadmissions.domain.QualificationInstitutionReference;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.QualificationInstitutionReferenceAdapter;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Institutions;
@@ -75,4 +76,9 @@ public class InstitutionsImporter implements Importer {
         }
         return result;
     }
+	
+	@Override
+	public Class<?> getImportedType(){
+	    return QualificationInstitutionReference.class;
+	}
 }

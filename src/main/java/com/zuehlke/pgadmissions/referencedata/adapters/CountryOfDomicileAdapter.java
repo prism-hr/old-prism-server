@@ -18,7 +18,7 @@ public class CountryOfDomicileAdapter implements ImportData {
 	}
 
 	@Override
-	public String getStringCode() {
+	public String getCode() {
 		return domicile.getCode();
 	}
 

@@ -52,20 +52,20 @@ public class ImportServiceTest {
         List<ImportedObject> changes = importService.merge(currentData, importData);
         // Again, I amended this to pass the test but I think there may be something wrong - Alastair
         Assert.assertEquals(6, changes.size());
-        Assert.assertEquals("N", changes.get(0).getStringCode());
+        Assert.assertEquals("N", changes.get(0).getCode());
         Assert.assertEquals(Boolean.TRUE, changes.get(0).getEnabled());
-        Assert.assertEquals("P", changes.get(1).getStringCode());
+        Assert.assertEquals("P", changes.get(1).getCode());
         Assert.assertEquals("Ppppp", changes.get(1).getName());
         Assert.assertEquals(Boolean.TRUE, changes.get(1).getEnabled());
-        Assert.assertEquals("P", changes.get(2).getStringCode());
+        Assert.assertEquals("P", changes.get(2).getCode());
         Assert.assertEquals("PP", changes.get(2).getName());
         Assert.assertEquals(Boolean.TRUE, changes.get(2).getEnabled());
-        Assert.assertEquals("PL", changes.get(3).getStringCode());
+        Assert.assertEquals("PL", changes.get(3).getCode());
         Assert.assertEquals("PL2", changes.get(3).getName());
         Assert.assertEquals(Boolean.FALSE, changes.get(3).getEnabled());
-        Assert.assertEquals("PP", changes.get(4).getStringCode());
+        Assert.assertEquals("PP", changes.get(4).getCode());
         Assert.assertEquals(Boolean.TRUE, changes.get(4).getEnabled());
-        Assert.assertEquals("UK", changes.get(5).getStringCode());
+        Assert.assertEquals("UK", changes.get(5).getCode());
         Assert.assertEquals(Boolean.FALSE, changes.get(5).getEnabled());
     }
 
@@ -125,7 +125,7 @@ public class ImportServiceTest {
         // I amended this to pass the test but I think there is something wrong with it - Alastair
         // There is a much simpler way of doing this - we should discuss
         Assert.assertEquals("B", change4.getName());
-        Assert.assertEquals("B", change4.getStringCode());
+        Assert.assertEquals("B", change4.getCode());
         Assert.assertEquals("D", change5.getName());
         Assert.assertEquals("D", change6.getName());
 

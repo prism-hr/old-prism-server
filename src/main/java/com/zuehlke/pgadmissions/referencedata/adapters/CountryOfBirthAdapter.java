@@ -18,7 +18,7 @@ public class CountryOfBirthAdapter implements ImportData {
 	}
 
 	@Override
-	public String getStringCode() {
+	public String getCode() {
 		return country.getCode();
 	}
 

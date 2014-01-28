@@ -18,7 +18,7 @@ public class NationalityAdapter implements ImportData {
 	}
 
 	@Override
-	public String getStringCode() {
+	public String getCode() {
 		return nationality.getCode();
 	}
 

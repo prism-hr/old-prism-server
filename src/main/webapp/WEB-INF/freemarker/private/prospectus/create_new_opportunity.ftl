@@ -1,6 +1,8 @@
-<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/opportunities.css' />"/>
 <script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/create_new_opportunity.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/tinymce/tinymce.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/tinymce/jquery.tinymce.min.js' />"></script>
+
 <div style="overflow:hidden; position:relative">
   <div id="pholder">
     <form id="applyForm" action="/pgadmissions/apply/new" method="POST" style="display:none;" <#if shouldOpenNewTab??>target="_blank"</#if>>
@@ -13,10 +15,8 @@
       <input type="hidden" id="prospectusSelectedAdvert" name="prospectusSelectedAdvert" value="${Request['prospectus.selectedAdvert']}"/>
     </#if>
     <header>
-      <h1>Create New Oppotunity
-        <a href="/pgadmissions/login" class="btn btn-primary">Go Back</a>
-      </h1>
-      
+      <a href="/pgadmissions/login" class="btn btn-danger go-back">Cancel</a>
+      <h1>Create New Oppotunity</h1>
     </header>
 
     <section id="plist">
@@ -30,11 +30,11 @@
           <div class="row-group">
           
             <#include "/private/prospectus/opportunity_details_part.ftl"/>
-        
+            <hr>
             <#assign pendingUser = opportunityRequest.author>
             
             <div class="row">
-              <label class="control-label" for="firstName">First Name <em>*</em></label>
+              <label class="plain-label" for="firstName">First Name <em>*</em></label>
               <span class="hint" data-desc="<@spring.message 'opportunityRequest.author.firstName'/>"></span>
               <div class="field">
                 <input id="firstName" type="text" name="author.firstName" value='${(opportunityRequest.author.firstName?html)!""}' />
@@ -47,7 +47,7 @@
               </div>
             </div>
             <div class="row">
-              <label class="control-label" for="lastName">Last Name <em>*</em></label>
+              <label class="plain-label" for="lastName">Last Name <em>*</em></label>
               <span class="hint" data-desc="<@spring.message 'opportunityRequest.author.lastName'/>"></span>
               <div class="field">
                 <input id="lastName" type="text" name="author.lastName" value='${(opportunityRequest.author.lastName?html)!""}' />
@@ -58,7 +58,7 @@
               </div>
             </div>
             <div class="row">
-              <label class="control-label" for="email">Email <em>*</em></label>
+              <label class="plain-label" for="email">Email <em>*</em></label>
               <span class="hint" data-desc="<@spring.message 'opportunityRequest.author.email'/>"></span>
               <div class="field">
                 <input id="email" type="email" placeholder="Email Address" name="author.email" value='${(opportunityRequest.author.email?html)!""}' />
@@ -69,7 +69,7 @@
               </div>
             </div>
             <div class="row">
-              <label class="control-label" for="password">Password <em>*</em></label>
+              <label class="plain-label" for="password">Password <em>*</em></label>
               <span class="hint" data-desc="<@spring.message 'myaccount.newPw'/>"></span>
               <div class="field">
                 <input id="password" type="password" name="author.password" placeholder="Password"/>
@@ -80,7 +80,7 @@
               </div>
             </div>
             <div class="row">
-              <label class="control-label" for="password">Confirm <em>*</em></label>
+              <label class="plain-label" for="password">Confirm <em>*</em></label>
               <span class="hint" data-desc="<@spring.message 'myaccount.confirmPw'/>"></span>
               <div class="field">
                 <input id="confirmPassword" type="password" name="author.confirmPassword" placeholder="Confirm password"/>

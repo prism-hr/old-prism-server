@@ -1,5 +1,4 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/opportunities.css' />"/>
-<script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/opportunities.js' />"></script>
 <div style="overflow:hidden; position:relative">
   <div id="pholder">
     <form id="applyForm" action="/pgadmissions/apply/new" method="POST" style="display:none;" <#if shouldOpenNewTab??>target="_blank"</#if>>
@@ -12,9 +11,8 @@
   		<input type="hidden" id="prospectusSelectedAdvert" name="prospectusSelectedAdvert" value="${Request['prospectus.selectedAdvert']}"/>
   	</#if>
     <header>
-      <h1>Research Study Opportunities
-        <a href="/pgadmissions/createOpportunity" class="btn btn-primary">Create New Opportunity</a>
-      </h1>
+      <a href="/pgadmissions/createOpportunity" class="btn btn-success newOportunity">Advertise Opportunity</a>
+      <h1>Research Study Opportunities</h1>
     </header>
     
     <section id="plist">
@@ -27,3 +25,4 @@
     </footer>
   </div>
 </div>
+<script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/opportunities.js' />"></script>

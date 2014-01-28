@@ -1985,6 +1985,13 @@ background: #909194;
 .row-group {
 	overflow: visible !important;
 }
+/* requests page */
+.requestbox .btn-group.bootstrap-select.actionType {
+	margin-bottom: 0;
+}
+.requestbox table.appliList thead th {
+	padding: 12px 6px;
+}
 @media (min-width:768px) and (max-width:979px) {
 
 }

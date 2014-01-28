@@ -1,4 +1,7 @@
 $(document).ready(function() {
+    bindDatePicker($("#applicationStartDate"));
+    $('.selectpicker').selectpicker();
+    
     refreshControls();
 
     $('#institution').change(function() {
@@ -60,7 +63,7 @@ $(document).ready(function() {
         $('#editAction').val('reject');
         $('#opportunityRequestEditForm').submit();
     });
-
+    initEditors();
 });
 
 function refreshControls(){
@@ -81,3 +84,13 @@ function refreshControls(){
     }
 }
    
+function initEditors() {
+    tinymce.init({
+        selector: "#programDescription",
+        width: 480,
+        height : 180,
+        menubar: false,
+        content: "",
+        toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+    });
+}

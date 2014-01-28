@@ -25,7 +25,7 @@ public class ImportService {
     private static class CodeComparator implements Comparator<CodeObject> {
         @Override
         public int compare(CodeObject o1, CodeObject o2) {
-            int compareResult = o1.getStringCode().compareTo(o2.getStringCode());
+            int compareResult = o1.getCode().compareTo(o2.getCode());
             return compareResult;
         }
     }

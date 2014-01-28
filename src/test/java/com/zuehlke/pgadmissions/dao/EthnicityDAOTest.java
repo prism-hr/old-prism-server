@@ -16,7 +16,7 @@ public class EthnicityDAOTest extends AutomaticRollbackTestCase {
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerException() {
         EthnicityDAO ethnicityDAO = new EthnicityDAO();
-        Ethnicity ethnicity = new EthnicityBuilder().id(1).name("ZZZZZZ").code(1).enabled(true).build();
+        Ethnicity ethnicity = new EthnicityBuilder().id(1).name("ZZZZZZ").code("1").enabled(true).build();
         ethnicityDAO.getEthnicityById(ethnicity.getId());
     }
 
@@ -24,8 +24,8 @@ public class EthnicityDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetAllEthnicitiesInIDOrder() {
         BigInteger numberOfEthnicities = (BigInteger) sessionFactory.getCurrentSession()
                 .createSQLQuery("select count(*) from ETHNICITY").uniqueResult();
-        Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").code(1).enabled(true).build();
-        Ethnicity ethnicity2 = new EthnicityBuilder().name("AAAAAAAA").code(2).enabled(true).build();
+        Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").code("1").enabled(true).build();
+        Ethnicity ethnicity2 = new EthnicityBuilder().name("AAAAAAAA").code("2").enabled(true).build();
         save(ethnicity1, ethnicity2);
         flushAndClearSession();
         EthnicityDAO ethnicityDAO = new EthnicityDAO(sessionFactory);
@@ -38,8 +38,8 @@ public class EthnicityDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetEthnicityById() {
-        Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").code(1).enabled(true).build();
-        Ethnicity ethnicity2 = new EthnicityBuilder().name("mmmmmm").code(2).enabled(true).build();
+        Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").code("1").enabled(true).build();
+        Ethnicity ethnicity2 = new EthnicityBuilder().name("mmmmmm").code("2").enabled(true).build();
 
         save(ethnicity1, ethnicity2);
         flushAndClearSession();
@@ -53,8 +53,8 @@ public class EthnicityDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetAllEnabledEthnicities() {
         BigInteger numberOfEthnicities = (BigInteger) sessionFactory.getCurrentSession()
                 .createSQLQuery("select count(*) from ETHNICITY").uniqueResult();
-        Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").code(1).enabled(true).build();
-        Ethnicity ethnicity2 = new EthnicityBuilder().name("AAAAAAAA").code(2).enabled(false).build();
+        Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").code("1").enabled(true).build();
+        Ethnicity ethnicity2 = new EthnicityBuilder().name("AAAAAAAA").code("2").enabled(false).build();
         save(ethnicity1, ethnicity2);
         flushAndClearSession();
         EthnicityDAO ethnicityDAO = new EthnicityDAO(sessionFactory);

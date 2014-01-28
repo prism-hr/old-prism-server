@@ -164,7 +164,7 @@ button.blue,a.button.blue,span.indicator.blue {
     background: rgb(0, 188, 241); /* Old browsers */
 }
 
-button span {
+/*button span {
     background: url(../../images/bg_button_icon.png) no-repeat;
     display: inline-block;
     height: 10px;
@@ -173,7 +173,7 @@ button span {
     text-indent: 999px;
     vertical-align: middle;
     width: 10px;
-}
+}*/
 
 button.plus span {
     background-position: 0 -10px;
@@ -734,7 +734,10 @@ div#ajaxloader {
     line-height: 16px;
     padding-left: 34px;
 }
-
+.newOportunity, .go-back {
+    float:right;
+    font-weight: bold;
+}
 #topBar h1 strong {
     font-size: 16px;
     padding-left: 6px;

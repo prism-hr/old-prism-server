@@ -137,4 +137,9 @@ public class ProgrammesImporter implements IProgrammesImporter {
         return result;
     }
 
+    @Override
+    public Class<?> getImportedType() {
+        return ProgramInstance.class;
+    }
+
 }

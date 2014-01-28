@@ -224,6 +224,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "use_custom_reference_questions")
     private Boolean useCustomReferenceQuestions = null;
 
+    @OneToOne(mappedBy = "applicationForm", fetch = FetchType.LAZY)
+    private ApplicationFormTransfer applicationFormTransfer;
+
     public List<Qualification> getQualifications() {
         return qualifications;
     }
@@ -771,18 +774,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.isEditableByApplicant = isEditableByApplicant;
     }
 
-    public RequestRestartComment getLatestsRequestRestartComment() {
-        List<RequestRestartComment> requestRestartComments = new ArrayList<RequestRestartComment>();
-        for (Comment comment : applicationComments) {
-            if (comment instanceof RequestRestartComment) {
-                requestRestartComments.add((RequestRestartComment) comment);
-            }
-        }
-        Collections.sort(requestRestartComments);
-        if (!requestRestartComments.isEmpty()) {
-            return requestRestartComments.get(0);
-        }
-        return null;
+    public ApplicationFormTransfer getApplicationFormTransfer() {
+        return applicationFormTransfer;
+    }
+
+    public void setApplicationFormTransfer(ApplicationFormTransfer applicationFormTransfer) {
+        this.applicationFormTransfer = applicationFormTransfer;
     }
 
     public ApplicationFormStatus getOutcomeOfStage() {

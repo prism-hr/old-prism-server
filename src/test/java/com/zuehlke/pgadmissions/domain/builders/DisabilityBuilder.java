@@ -10,9 +10,9 @@ public class DisabilityBuilder {
 	
 	private Boolean enabled;
 
-	private Integer code;
+	private String code;
 	
-	public DisabilityBuilder code(Integer code) {
+	public DisabilityBuilder code(String code) {
         this.code = code;
         return this;
     }

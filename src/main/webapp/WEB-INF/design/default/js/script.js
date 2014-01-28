@@ -315,7 +315,7 @@ function addCounter() {
             }
         }
         // Counting on keyup
-        $(this).keyup(function count(){
+        $(this).on('keyup change', function count(){
             counter = $(this).data("maxlength") - $(this).val().length;
             if  (counter <= 10) {
 

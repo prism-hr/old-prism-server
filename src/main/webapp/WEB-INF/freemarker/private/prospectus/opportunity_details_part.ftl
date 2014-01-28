@@ -1,5 +1,5 @@
 <div class="row">
-  <label class="control-label" for="institutionCountry">Institution Country<em>*</em></label>
+  <label class="plain-label" for="institutionCountry">Institution Country<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionCountry'/>"></span>
   <div class="field">
     <select class="full selectpicker" data-live-search="true" data-size="6" id="institutionCountry" name="institutionCountry">
@@ -21,7 +21,7 @@
 </div>
 
 <div class="row">
-  <label id="lbl-providerName" class="control-label" for="institution">Institution Name<em>*</em></label>
+  <label id="lbl-providerName" class="plain-label" for="institution">Institution Name<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionName'/>"></span>
   <div class="field">
     <select class="full selectpicker" disabled="disabled" data-live-search="true" data-size="6"  id="institution" name="institutionCode">
@@ -46,7 +46,7 @@
 </div>
 
 <div class="row">
-  <label id="lbl-otherInstitutionProviderName" class="control-label" for="otherInstitutionProviderName">Please Specify<em>*</em></label>
+  <label id="lbl-otherInstitutionProviderName" class="plain-label" for="otherInstitutionProviderName">Please Specify<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
   <div class="field">
     <input readonly disabled="disabled" id="otherInstitution" name="otherInstitution" class="full" type="text" value="${(opportunityRequest.otherInstitution?html)!}" />
@@ -60,7 +60,7 @@
 </div>
 
 <div class="row">
-  <label id="programTitleLabel" class="control-label" for="programTitle">Program Title<em>*</em></label>
+  <label id="programTitleLabel" class="plain-label" for="programTitle">Program Title<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.programTitle'/>"></span>
   <div class="field">
     <input id="programTitle" name="programTitle" class="full" type="text" value="${(opportunityRequest.programTitle?html)!}" />
@@ -74,7 +74,7 @@
 </div>
 
 <div class="row">
-  <label id="programDescriptionLabel" class="control-label" for="programDescription">Program Description<em>*</em></label>
+  <label id="programDescriptionLabel" class="plain-label" for="programDescription">Program Description<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.programDescription'/>"></span>
   <div class="field">
     <textarea id="programDescription" name="programDescription" class="max" cols="70" rows="6">${(opportunityRequest.programDescription?html)!}</textarea>
@@ -88,10 +88,10 @@
 </div>
 
 <div class="row">
-  <label class="control-label" for="studyOption">Study Options<em>*</em></label>
+  <label class="plain-label" for="studyOption">Study Options<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.studyOptions'/>"></span>
   <div class="field">
-    <select multiple class="full selectpicker" data-live-search="true" data-size="6" id="studyOptions" name="studyOptions">
+    <select multiple size="3" class="full" id="studyOptions" name="studyOptions">
       <#assign selectedOptionsString = opportunityRequest.studyOptions!"">    
       <#assign selectedOptions = selectedOptionsString?split(",")>
       <#list studyOptions as studyOption>
@@ -173,7 +173,7 @@
   <label class="plain-label" for="advertisingDuration">Advertising Duration (in years)<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.advertisingDuration'/>"></span>
   <div class="field">
-    <select class="full selectpicker" data-live-search="true" data-size="6" id="advertisingDuration" name="advertisingDuration">
+    <select class="full" id="advertisingDuration" name="advertisingDuration">
       <option value="">Select...</option>
       <#list [1, 2, 3, 4, 5] as duration>
         <option value="${duration?html}"

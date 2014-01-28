@@ -75,4 +75,9 @@ public class NationalitiesImporter implements Importer {
 		return result;
 	}
 
+    @Override
+    public Class<?> getImportedType() {
+        return Language.class;
+    }
+
 }

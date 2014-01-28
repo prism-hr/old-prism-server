@@ -32,9 +32,21 @@
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/bootstrap.min.css' />"/>
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/font-awesome.min.css' />"/>
     <script type="text/javascript" src="<@spring.url '/design/default/js/bootstrap.min.js' />"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/tinymce/tinymce.min.js' />"></script>
+    <script type="text/javascript" src="<@spring.url '/design/default/js/tinymce/jquery.tinymce.min.js' />"></script>
       
   </head>
-  
+  <style type="text/css">
+    #advertisingDuration {
+      width: 80px !important;
+    }
+    #studyOptions {
+      width: 170px !important;
+    }
+    span.count {
+       display: none;
+    }
+  </style>
   <!--[if IE 9]>
   <body class="ie9">
   <![endif]-->

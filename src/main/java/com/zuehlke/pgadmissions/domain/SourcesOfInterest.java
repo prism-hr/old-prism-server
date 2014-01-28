@@ -50,6 +50,7 @@ public class SourcesOfInterest implements ImportedObject, Serializable {
         this.enabled = enabled;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
@@ -72,8 +73,4 @@ public class SourcesOfInterest implements ImportedObject, Serializable {
         // ignore
     }
 
-    @Override
-    public String getStringCode() {
-        return code;
-    }
 }

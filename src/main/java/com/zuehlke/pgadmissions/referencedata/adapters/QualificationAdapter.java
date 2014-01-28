@@ -18,7 +18,7 @@ public class QualificationAdapter implements ImportData {
 	}
 
 	@Override
-	public String getStringCode() {
+	public String getCode() {
 		return qualification.getCode();
 	}
 

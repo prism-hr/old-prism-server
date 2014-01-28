@@ -8,6 +8,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -49,6 +50,8 @@ public class StateChangeDTO {
 	private HomeOrOverseas[] homeOrOverseasOptions;
 	
 	private List<ApplicationFormStatus> stati;
+	
+	private List<ScoringStage> customQuestionCoverage;
 	
 	private Boolean useCustomReferenceQuestions;
 	
@@ -237,6 +240,14 @@ public class StateChangeDTO {
 
     public void setUseCustomQuestions(Boolean useCustomQuestions) {
         this.useCustomQuestions = useCustomQuestions;
+    }
+
+    public List<ScoringStage> getcustomQuestionCoverage() {
+        return customQuestionCoverage;
+    }
+
+    public void setCustomQuestionCoverage(List<ScoringStage> customQuestionCoverage) {
+        this.customQuestionCoverage = customQuestionCoverage;
     }
 
 }

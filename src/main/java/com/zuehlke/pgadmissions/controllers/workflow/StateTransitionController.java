@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -33,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.StateChangeDTO;
@@ -133,6 +135,7 @@ public class StateTransitionController {
 	    	stateChangeDTO.setHomeOrOverseasOptions(HomeOrOverseas.values());
     	}
     	
+    	stateChangeDTO.setCustomQuestionCoverage((List<ScoringStage>) new ArrayList<ScoringStage>(applicationForm.getProgram().getScoringDefinitions().keySet()));
     	stateChangeDTO.setStati(getAvailableNextStati(applicationForm, registeredUser));
     	return stateChangeDTO;
     }

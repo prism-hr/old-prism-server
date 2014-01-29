@@ -25,21 +25,20 @@ public class ImportDataReferenceUpdater {
         if (!SelfReferringImportedObject.class.isAssignableFrom(importedType)) {
             return;
         }
-        
+
         List<ImportedObject> disabledObjects = importedDataDAO.getDisabledImportedObjectsWithoutActiveReference(importedType);
         int counter = 0;
-        for(ImportedObject disabledObject : disabledObjects) {
+        for (ImportedObject disabledObject : disabledObjects) {
             SelfReferringImportedObject enabledObject = (SelfReferringImportedObject) importedDataDAO.getEnabledVersion(disabledObject);
-            if(enabledObject != null) {
-            SelfReferringImportedObject disabledSRObject = (SelfReferringImportedObject) disabledObject;
-            
-            disabledSRObject.setEnabledObject(enabledObject);
-            counter++;
+            if (enabledObject != null) {
+                SelfReferringImportedObject disabledSRObject = (SelfReferringImportedObject) disabledObject;
+                disabledSRObject.setEnabledObject(enabledObject);
+                counter++;
             } else {
                 logger.warn("Could not find enabled object of type " + importedType.getSimpleName() + " with code: " + disabledObject.getCode());
             }
         }
-        logger.info("" + counter + " disabled import objects of type " + importedType.getSimpleName() + " has been updated to point enable one") ;
+        logger.info("" + counter + " disabled import objects of type " + importedType.getSimpleName() + " has been updated to point enable one");
     }
 
 }

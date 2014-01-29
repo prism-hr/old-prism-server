@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.DisabilityDAO;
+import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.DisabilityAdapter;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Disabilities;
@@ -73,8 +74,8 @@ public class DisabilitiesImporter implements Importer {
 	}
 
     @Override
-    public Class<?> getImportedType() {
-        return Disability.class;
+    public Class<? extends ImportedObject> getImportedType() {
+        return com.zuehlke.pgadmissions.domain.Disability.class;
     }
 
 }

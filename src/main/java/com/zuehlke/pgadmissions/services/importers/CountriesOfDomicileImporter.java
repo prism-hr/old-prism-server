@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.CountryOfDomicileAdapter;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Domiciles;
@@ -72,7 +73,7 @@ public class CountriesOfDomicileImporter implements Importer {
 	}
 
     @Override
-    public Class<?> getImportedType() {
+    public Class<? extends ImportedObject> getImportedType() {
         return Domicile.class;
     }
 

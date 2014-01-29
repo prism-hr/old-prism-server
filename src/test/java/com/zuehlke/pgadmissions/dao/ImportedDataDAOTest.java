@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -22,12 +23,26 @@ public class ImportedDataDAOTest extends AutomaticRollbackTestCase {
         Disability disability2 = new DisabilityBuilder().code("idTest1").name("name2").enabled(true).enabledObject(disability1).build();
         Disability disability3 = new DisabilityBuilder().code("idTest1").name("name3").enabled(false).enabledObject(null).build();
         Disability disability4 = new DisabilityBuilder().code("idTest1").name("name4").enabled(false).enabledObject(disability1).build();
-
         save(disability1, disability2, disability3, disability4);
+        
+        List<Disability> testDisabilities = new ArrayList<Disability>();
+        testDisabilities.add(disability1);
+        testDisabilities.add(disability2);
+        testDisabilities.add(disability3);
+        testDisabilities.add(disability4);
 
         List<ImportedObject> returned = importedDataDAO.getDisabledImportedObjectsWithoutActiveReference(Disability.class);
-        assertEquals(1, returned.size());
-        assertEquals("name3", returned.get(0).getName());
+        
+        assertTrue(returned.contains(disability3));
+        
+        int selectCounter = 0;
+        for (ImportedObject object: testDisabilities) {
+            if (returned.contains(object)) {
+                selectCounter++;
+            }
+        }
+        
+        assertEquals(1, selectCounter);
     }
 
     @Test

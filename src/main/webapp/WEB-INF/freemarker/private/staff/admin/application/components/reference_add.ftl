@@ -120,14 +120,14 @@
             </#list>
         </div>
         
-        <#-- <#if isEditedReferee == 1>
+        <#-- <#if isEditedReferee == 1 && >
 			<#assign scores = refereesAdminEditDTO.scores>
 			<#if refereesAdminEditDTO.alert??>
 				<#assign alertForScoringQuestions=refereesAdminEditDTO.alert>
 			</#if>
 		</#if> -->
         
-        <#if !(scores)?has_content>
+        <#if !(scores)?has_content && applicationForm.useCustomReferenceQuestions>
 	        <!-- Add reference add button -->
 	        <div class="row">
 	            <div class="field">
@@ -145,7 +145,7 @@
     
 </div>
 
-<#if (scores)?has_content>
+<#if (scores)?has_content && applicationForm.useCustomReferenceQuestions>
 	<div class="row-group">
 	    <div id="scoring-questions_${encRefereeId}">
 	      <#assign errorsContainerName = "refereesAdminEditDTO">

@@ -52,7 +52,7 @@ public class ReviewRound implements Serializable {
     private BigDecimal averageRating;
     
     @Column(name = "use_custom_questions")
-    private Boolean useCustomQuestions = null;
+    private Boolean useCustomQuestions = false;
 
     public void setId(Integer id) {
         this.id = id;

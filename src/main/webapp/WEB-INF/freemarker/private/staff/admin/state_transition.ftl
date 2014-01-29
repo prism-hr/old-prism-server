@@ -171,8 +171,7 @@
 													</div>
 												</div>
 											</div>
-											<div class="row-group" <#if >
-												>
+											<div class="row-group" <#if !stateChangeDTO.displayCustomReferenceQuestionsOption()>style="display:none"</#if>>
 												<div class="row" id="useCustomReferenceQuestions">
 												    <label id="useCustomReferenceQuestionsLabel" class="plain-label normal">Do you wish to use custom reference questions?<em>*</em></label> 
 												    <span class="hint" data-desc="<@spring.message 'validateApp.useCustomReferenceQuestions'/>"> </span>
@@ -211,7 +210,7 @@
 														<div class="alert alert-error"> <i class="icon-warning-sign"></i>${error}</div>
 													</#list>
 												</div>
-												<div id="customQuestionSection" style="display:none">
+												<div id="customQuestionSection" <#if !stateChangeDTO.displayCustomQuestionsOption()>style="display:none"</#if>>
 													<label id="useCustomQuestionsLabel" class="plain-label normal">Do you wish to use custom questions?<em>*</em></label> 
 												    <span class="hint" data-desc="<@spring.message 'validateApp.useCustomQuestions'/>"> </span>
 												    <div id="useCustomQuestionsDiv" class="field">
@@ -340,6 +339,9 @@
 										</div>
 									</form>
 									<input type="hidden" id="applicationId" value="${(stateChangeDTO.applicationForm.applicationNumber)!}"/>
+									<#list stateChangeDTO.customQuestionCoverage as scoringStage>
+										<input type="hidden" name="customQuestionCoverage" value="${(scoringStage)!}"/>
+									</#list>
 								</div>
 							</section>
 							<#include "/private/staff/admin/comment/timeline_application.ftl"/>

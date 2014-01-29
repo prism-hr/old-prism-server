@@ -6,6 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.StateChangeDTO;
 
 @Component
@@ -56,6 +57,21 @@ public class StateChangeValidator extends AbstractValidator {
         if (BooleanUtils.isNotTrue(stateChangeDTO.getConfirmNextStage())) {
             errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
         }
+        
+        if (stateChangeDTO.getApplicationForm().getStatus().equals(ApplicationFormStatus.VALIDATION)
+                && stateChangeDTO.getApplicationForm().getProgram().getCustomQuestionCoverage().contains(ScoringStage.REFERENCE)
+                && stateChangeDTO.getUseCustomReferenceQuestions() == null) {
+            errors.rejectValue("useCustomReferenceQuestions", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        }
+        
+        if ((nextStatus == ApplicationFormStatus.REVIEW
+                && stateChangeDTO.getcustomQuestionCoverage().contains(ScoringStage.REVIEW))
+                || (nextStatus == ApplicationFormStatus.INTERVIEW
+                        && stateChangeDTO.getcustomQuestionCoverage().contains(ScoringStage.INTERVIEW))
+                && stateChangeDTO.getUseCustomQuestions() == null) {
+            errors.rejectValue("useCustomQuestions", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        }
+        
     }
 
 }

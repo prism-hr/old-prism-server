@@ -75,45 +75,45 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         Date baselineDate = new Date();
 
         log.trace("Sending task reminder to users");
-        for (RegisteredUser proxyUser : thisProxy.getUsersForTaskReminder(baselineDate)) {
-            thisProxy.sendDigestEmail(proxyUser, DigestNotificationType.TASK_REMINDER);
+        for (Integer user : thisProxy.getUsersForTaskReminder(baselineDate)) {
+            thisProxy.sendDigestEmail(userDAO.get(user), DigestNotificationType.TASK_REMINDER);
         }
         log.trace("Finished sending task reminder to users");
 
         log.trace("Sending task notification to users");
-        for (RegisteredUser proxyUser : thisProxy.getUsersForTaskNotification(baselineDate)) {
-            thisProxy.sendDigestEmail(proxyUser, DigestNotificationType.TASK_NOTIFICATION);
+        for (Integer user : thisProxy.getUsersForTaskNotification(baselineDate)) {
+            thisProxy.sendDigestEmail(userDAO.get(user), DigestNotificationType.TASK_NOTIFICATION);
         }
         log.trace("Finished sending task notification to users");
 
         log.trace("Sending update notification to users");
-        for (RegisteredUser proxyUser : thisProxy.getUsersForUpdateNotification(baselineDate)) {
-            thisProxy.sendDigestEmail(proxyUser, DigestNotificationType.UPDATE_NOTIFICATION);
+        for (Integer user : thisProxy.getUsersForUpdateNotification(baselineDate)) {
+            thisProxy.sendDigestEmail(userDAO.get(user), DigestNotificationType.UPDATE_NOTIFICATION);
         }
         log.trace("Finished sending update notification to users");
     }
 
     @Transactional
-    public List<RegisteredUser> getUsersForTaskNotification(Date baselineDate) {
+    public List<Integer> getUsersForTaskNotification(Date baselineDate) {
         applicationFormUserRoleService.updateRaisesUrgentFlag();
         return userDAO.getUsersDueTaskNotification(baselineDate);
     }
 
     @Transactional
-    public List<RegisteredUser> getUsersForTaskReminder(Date baselineDate) {
+    public List<Integer> getUsersForTaskReminder(Date baselineDate) {
         applicationFormUserRoleService.updateRaisesUrgentFlag();
         return userDAO.getUsersDueTaskReminder(baselineDate);
     }
 
     @Transactional
-    public List<RegisteredUser> getUsersForUpdateNotification(Date baselineDate) {
+    public List<Integer> getUsersForUpdateNotification(Date baselineDate) {
         applicationFormUserRoleService.updateRaisesUrgentFlag();
         return userDAO.getUsersDueUpdateNotification(baselineDate);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendDigestEmail(RegisteredUser proxyUser, DigestNotificationType digestNotificationType) {
-        return sendDigest(userDAO.initialise(proxyUser), digestNotificationType);
+    public boolean sendDigestEmail(RegisteredUser user, DigestNotificationType digestNotificationType) {
+        return sendDigest(user, digestNotificationType);
     }
 
     private boolean sendDigest(final RegisteredUser user, DigestNotificationType digestNotificationType) {
@@ -169,9 +169,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendReferenceReminder() {
         log.trace("Sending reference reminder to users");
-        List<Referee> proxyReferees = refereeDAO.getRefereesDueReminder();
-        for (Referee proxyReferee : proxyReferees) {
-            applicationContext.getBean(this.getClass()).sendReferenceReminder(refereeDAO.initialise(proxyReferee));
+        List<Integer> referees = refereeDAO.getRefereesDueReminder();
+        for (Integer referee : referees) {
+            applicationContext.getBean(this.getClass()).sendReferenceReminder(refereeDAO.getRefereeById(referee));
         }
         log.trace("Finished sending reference reminder to users");
     }
@@ -200,9 +200,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendInterviewParticipantVoteReminder() {
         log.trace("Sending interview scheduling reminder to users");
-        List<InterviewParticipant> proxyParticipants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        for (InterviewParticipant proxyParticipant : proxyParticipants) {
-            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(interviewParticipantDAO.initialise(proxyParticipant));
+        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
+        for (Integer participant : participants) {
+            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(interviewParticipantDAO.getParticipantById(participant));
         }
         log.trace("Sending interview scheduling reminder to users");
     }

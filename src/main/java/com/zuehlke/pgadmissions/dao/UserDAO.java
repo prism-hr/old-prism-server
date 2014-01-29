@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
@@ -189,12 +188,12 @@ public class UserDAO {
         save(user);
     }
     
-    public List<RegisteredUser> getUsersDueTaskReminder(Date seedDate) {
+    public List<Integer> getUsersDueTaskReminder(Date seedDate) {
         Date reminderBaseline = getReminderBaseline(seedDate, ReminderType.TASK);
         Date expiryBaseline = getExpiryBaseline(seedDate);
         
-        return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("user"))
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("registeredUser.id"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
@@ -208,12 +207,12 @@ public class UserDAO {
                 .add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
     }
     
-    public List<RegisteredUser> getUsersDueTaskNotification(Date seedDate) {
+    public List<Integer> getUsersDueTaskNotification(Date seedDate) {
         Date reminderBaseline = getReminderBaseline(seedDate, ReminderType.TASK);
         Date expiryBaseline = getExpiryBaseline(seedDate);
         
-        return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("user"))
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("registeredUser.id"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
@@ -229,11 +228,11 @@ public class UserDAO {
                 .add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
     }
     
-    public List<RegisteredUser> getUsersDueUpdateNotification(Date seedDate) {
+    public List<Integer> getUsersDueUpdateNotification(Date seedDate) {
         Date baseline = getBaselineDate(seedDate);
         
-        return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("user"))
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("registeredUser.id"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("role", "role", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("role.doSendUpdateNotification", true))
@@ -246,31 +245,6 @@ public class UserDAO {
                 .add(Restrictions.eq("registeredUser.accountNonExpired", true))
                 .add(Restrictions.eq("registeredUser.accountNonLocked", true))
                 .add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
-    }
-    
-    public List<RegisteredUser> getUsersDueReferenceReminder(Date seedDate) {
-        Date reminderBaseline = getReminderBaseline(seedDate, ReminderType.REFERENCE);
-        Date expiryBaseline = getExpiryBaseline(seedDate);
-        
-        return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("user"))
-                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
-                .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
-                .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("action.id", ApplicationFormAction.PROVIDE_REFERENCE))
-                .add(Restrictions.eq("raisesUrgentFlag", true))
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.isNull("registeredUser.latestTaskNotificationDate"))
-                        .add(Restrictions.lt("applicationFormActionRequired.lastNotifiedTimestamp", reminderBaseline)))
-                .add(Restrictions.gt("applicationFormActionRequired.deadlineTimestamp", expiryBaseline))
-                .add(Restrictions.eq("registeredUser.enabled", true))
-                .add(Restrictions.eq("registeredUser.accountNonExpired", true))
-                .add(Restrictions.eq("registeredUser.accountNonLocked", true))
-                .add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
-    }
-    
-    public RegisteredUser initialise(RegisteredUser proxyUser) {
-        return get(proxyUser.getId());
     }
     
     private Date getBaselineDate(Date seedDate) {

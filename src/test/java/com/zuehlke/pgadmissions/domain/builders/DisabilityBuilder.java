@@ -12,6 +12,8 @@ public class DisabilityBuilder {
 
 	private String code;
 	
+	private Disability enabledObject;
+	
 	public DisabilityBuilder code(String code) {
         this.code = code;
         return this;
@@ -31,6 +33,11 @@ public class DisabilityBuilder {
         this.enabled = enabled;
         return this;
     }
+	
+	public DisabilityBuilder enabledObject(Disability enabledObject){
+	    this.enabledObject = enabledObject;
+	    return this;
+	}
 
 	public Disability build() {
 		Disability disability = new Disability();
@@ -38,6 +45,7 @@ public class DisabilityBuilder {
 		disability.setName(name);
 		disability.setEnabled(enabled);
 		disability.setCode(code);
+		disability.setEnabledObject(enabledObject);
 		return disability;
 	}
 }

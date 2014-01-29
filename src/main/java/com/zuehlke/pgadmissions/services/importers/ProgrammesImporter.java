@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProgramFeedDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
+import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -138,7 +139,7 @@ public class ProgrammesImporter implements IProgrammesImporter {
     }
 
     @Override
-    public Class<?> getImportedType() {
+    public Class<? extends ImportedObject> getImportedType() {
         return ProgramInstance.class;
     }
 

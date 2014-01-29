@@ -102,7 +102,8 @@ public class Address implements Serializable {
 	
 	@Override
 	public String toString() {
-		return Joiner.on('\n').skipNulls().join(getLocationString(), domicile.getName());
+	    String domicileName = domicile == null ? null : domicile.getName();
+		return Joiner.on('\n').skipNulls().join(getLocationString(), domicileName);
 	}
 }
 

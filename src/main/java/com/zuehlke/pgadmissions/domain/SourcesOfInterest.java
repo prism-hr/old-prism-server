@@ -5,11 +5,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity(name = "SOURCES_OF_INTEREST")
-public class SourcesOfInterest implements ImportedObject, Serializable {
+public class SourcesOfInterest implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = -3309557608853073374L;
 
@@ -26,6 +29,10 @@ public class SourcesOfInterest implements ImportedObject, Serializable {
     @Column(name = "name")
     private String name;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "enabled_object_id")
+    private SourcesOfInterest enabledObject;
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -35,6 +42,9 @@ public class SourcesOfInterest implements ImportedObject, Serializable {
     }
 
     public String getName() {
+        if (!enabled && enabledObject != null) {
+            return enabledObject.getName();
+        }
         return name;
     }
 
@@ -46,12 +56,16 @@ public class SourcesOfInterest implements ImportedObject, Serializable {
         return enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
-    @Override
     public String getCode() {
+        return code;
+    }
+
+    public String getStringCode() {
         return code;
     }
 
@@ -59,8 +73,14 @@ public class SourcesOfInterest implements ImportedObject, Serializable {
         this.code = code;
     }
 
-    public boolean isFreeText() {
-        return code.equalsIgnoreCase("OTHER") || code.equalsIgnoreCase("NEWS_AD") || code.equalsIgnoreCase("OTH_ACAD ") || code.equalsIgnoreCase("OTH_WEB");
+    @Override
+    public SourcesOfInterest getEnabledObject() {
+        return enabledObject;
+    }
+
+    @Override
+    public void setEnabledObject(SelfReferringImportedObject enabledObject) {
+        this.enabledObject = (SourcesOfInterest) enabledObject;
     }
 
     @Override
@@ -71,6 +91,12 @@ public class SourcesOfInterest implements ImportedObject, Serializable {
     @Override
     public void setDisabledDate(Date disabledDate) {
         // ignore
+    }
+    
+    
+    public boolean isFreeText() {
+        return getCode().equalsIgnoreCase("OTHER") || getCode().equalsIgnoreCase("NEWS_AD") || getCode().equalsIgnoreCase("OTH_ACAD ")
+                || getCode().equalsIgnoreCase("OTH_WEB");
     }
 
 }

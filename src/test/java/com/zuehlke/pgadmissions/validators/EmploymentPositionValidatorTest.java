@@ -143,7 +143,7 @@ public class EmploymentPositionValidatorTest {
         position.setCurrent(false);
         position.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
         position.setPosition("head of department");
-        position.setEmployerAddress(new AddressBuilder().address1("address").address3("address3").domicile(new DomicileBuilder().id(1).build()).build());
+        position.setEmployerAddress(new AddressBuilder().address1("address").address3("address3").domicile(new DomicileBuilder().id(1).enabled(true).build()).build());
 
         positionValidator = new EmploymentPositionValidator();
         positionValidator.setValidator((javax.validation.Validator) validator);

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.CountryOfBirthAdapter;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Countries;
@@ -72,7 +73,7 @@ public class CountriesOfBirthImporter implements Importer {
     }
 
     @Override
-    public Class<?> getImportedType() {
+    public Class<? extends ImportedObject> getImportedType() {
         return Country.class;
     }
 

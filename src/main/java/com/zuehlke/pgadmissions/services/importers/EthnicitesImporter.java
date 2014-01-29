@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.EthnicityDAO;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
+import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.EthnicityAdapter;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Ethnicities;
@@ -74,7 +75,7 @@ public class EthnicitesImporter implements Importer {
 	}
 
     @Override
-    public Class<?> getImportedType() {
+    public Class<? extends ImportedObject> getImportedType() {
         return Ethnicity.class;
     }
 

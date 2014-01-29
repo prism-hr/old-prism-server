@@ -170,20 +170,20 @@
 </div>
 
 <div class="row">
-  <label class="plain-label" for="advertisingDuration">Advertising Duration (in years)<em>*</em></label>
-  <span class="hint" data-desc="<@spring.message 'opportunityRequest.advertisingDuration'/>"></span>
+  <label class="plain-label" for="advertisingDeadlineYear">Advertise deadline<em>*</em></label>
+  <span class="hint" data-desc="<@spring.message 'opportunityRequest.advertisingDeadlineYear'/>"></span>
   <div class="field">
-    <select class="full" id="advertisingDuration" name="advertisingDuration">
+    <select class="full" id="advertisingDeadlineYear" name="advertisingDeadlineYear">
       <option value="">Select...</option>
-      <#list [1, 2, 3, 4, 5] as duration>
-        <option value="${duration?html}"
-          <#if opportunityRequest.advertisingDuration?? && opportunityRequest.advertisingDuration == duration> selected="selected"</#if>
-          >${duration?html}
+      <#list advertisingDeadlines as advertisingDeadline>
+        <option value="${advertisingDeadline?c}"
+          <#if opportunityRequest.advertisingDeadlineYear?? && opportunityRequest.advertisingDeadlineYear == advertisingDeadline> selected="selected"</#if>
+          >30 September ${advertisingDeadline?c}
         </option>
       </#list>
     </select>
  
-    <@spring.bind "opportunityRequest.advertisingDuration" />
+    <@spring.bind "opportunityRequest.advertisingDeadlineYear" />
     <#list spring.status.errorMessages as error>
       <div class="alert alert-error"> <i class="icon-warning-sign"></i>
         ${error}

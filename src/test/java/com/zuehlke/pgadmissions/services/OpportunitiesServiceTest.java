@@ -119,7 +119,7 @@ public class OpportunitiesServiceTest {
         assertEquals(newOpportunityRequest.getStudyDuration(), request.getStudyDuration());
         assertEquals(newOpportunityRequest.getAtasRequired(), request.getAtasRequired());
         assertEquals(newOpportunityRequest.getApplicationStartDate(), request.getApplicationStartDate());
-        assertEquals(newOpportunityRequest.getAdvertisingDuration(), request.getAdvertisingDuration());
+        assertEquals(newOpportunityRequest.getAdvertisingDeadlineYear(), request.getAdvertisingDeadlineYear());
         assertEquals(newOpportunityRequest.getStudyOptions(), request.getStudyOptions());
     }
 

@@ -3,10 +3,13 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -61,7 +64,7 @@ public class OpportunitiesService {
         opportunityRequest.setStudyDuration(newOpportunityRequest.getStudyDuration());
         opportunityRequest.setAtasRequired(newOpportunityRequest.getAtasRequired());
         opportunityRequest.setApplicationStartDate(newOpportunityRequest.getApplicationStartDate());
-        opportunityRequest.setAdvertisingDuration(newOpportunityRequest.getAdvertisingDuration());
+        opportunityRequest.setAdvertisingDeadlineYear(newOpportunityRequest.getAdvertisingDeadlineYear());
         opportunityRequest.setStudyOptions(newOpportunityRequest.getStudyOptions());
 
         Program program = programsService.createNewCustomProgram(opportunityRequest);
@@ -73,6 +76,18 @@ public class OpportunitiesService {
     public void rejectOpportunityRequest(Integer requestId) {
         OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
         opportunityRequest.setStatus(OpportunityRequestStatus.REJECTED);
+    }
+
+    public List<Integer> getPossibleAdvertisingDeadlines() {
+        int startYear = new DateTime().getYear();
+        if(new DateTime().getMonthOfYear() >= DateTimeConstants.SEPTEMBER){
+            startYear++;
+        }
+        List<Integer> advertisingDeadlines = Lists.newArrayListWithCapacity(10);
+        for(int i = 0 ; i < 10 ; i++){
+            advertisingDeadlines.add(startYear + i);
+        }
+        return advertisingDeadlines;
     }
 
 }

@@ -283,7 +283,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
         List<Integer> referees = refereeDAO.getRefereesDueReminder();
         assertNotNull(referees);
-        assertTrue(referees.get(0).equals(referee.getId()));
+        assertTrue(referees.contains(referee.getId()));
     }
 
     @Test

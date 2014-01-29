@@ -132,8 +132,7 @@ public class StateTransitionController {
 	    	stateChangeDTO.setValidationQuestionOptions(ValidationQuestionOptions.values());
 	    	stateChangeDTO.setHomeOrOverseasOptions(HomeOrOverseas.values());
     	}
-    	
-    	stateChangeDTO.setCustomQuestionCoverage(applicationForm.getProgram().getCustomQuestionCoverage());
+
     	stateChangeDTO.setStati(getAvailableNextStati(applicationForm, registeredUser));
     	return stateChangeDTO;
     }

@@ -53,8 +53,6 @@ public class StateChangeDTO {
 
     private List<ApplicationFormStatus> stati;
 
-    private List<ScoringStage> customQuestionCoverage;
-
     private Boolean useCustomReferenceQuestions;
 
     private Boolean useCustomQuestions;
@@ -243,21 +241,17 @@ public class StateChangeDTO {
         this.useCustomQuestions = useCustomQuestions;
     }
 
-    public List<ScoringStage> getcustomQuestionCoverage() {
-        return customQuestionCoverage;
-    }
-
-    public void setCustomQuestionCoverage(List<ScoringStage> customQuestionCoverage) {
-        this.customQuestionCoverage = customQuestionCoverage;
+    public List<ScoringStage> getCustomQuestionCoverage() {
+        return applicationForm.getProgram().getCustomQuestionCoverage();
     }
 
     public boolean displayCustomQuestionsOption() {
-        return (this.nextStatus == ApplicationFormStatus.REVIEW && this.customQuestionCoverage.contains(ScoringStage.REVIEW))
-                || (this.nextStatus == ApplicationFormStatus.INTERVIEW && this.customQuestionCoverage.contains(ScoringStage.INTERVIEW));
+        return (this.nextStatus == ApplicationFormStatus.REVIEW && getCustomQuestionCoverage().contains(ScoringStage.REVIEW))
+                || (this.nextStatus == ApplicationFormStatus.INTERVIEW && getCustomQuestionCoverage().contains(ScoringStage.INTERVIEW));
     }
 
     public boolean displayCustomReferenceQuestionsOption() {
-        return this.status == ApplicationFormStatus.VALIDATION && this.customQuestionCoverage.contains(ScoringStage.REFERENCE);
+        return this.status == ApplicationFormStatus.VALIDATION && getCustomQuestionCoverage().contains(ScoringStage.REFERENCE);
     }
 
 }

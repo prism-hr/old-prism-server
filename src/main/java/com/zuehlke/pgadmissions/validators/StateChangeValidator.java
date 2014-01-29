@@ -59,15 +59,15 @@ public class StateChangeValidator extends AbstractValidator {
         }
         
         if (stateChangeDTO.getApplicationForm().getStatus().equals(ApplicationFormStatus.VALIDATION)
-                && stateChangeDTO.getApplicationForm().getProgram().getCustomQuestionCoverage().contains(ScoringStage.REFERENCE)
+                && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.REFERENCE)
                 && stateChangeDTO.getUseCustomReferenceQuestions() == null) {
             errors.rejectValue("useCustomReferenceQuestions", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
         
         if ((nextStatus == ApplicationFormStatus.REVIEW
-                && stateChangeDTO.getcustomQuestionCoverage().contains(ScoringStage.REVIEW))
+                && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.REVIEW))
                 || (nextStatus == ApplicationFormStatus.INTERVIEW
-                        && stateChangeDTO.getcustomQuestionCoverage().contains(ScoringStage.INTERVIEW))
+                        && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.INTERVIEW))
                 && stateChangeDTO.getUseCustomQuestions() == null) {
             errors.rejectValue("useCustomQuestions", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }

@@ -68,6 +68,7 @@ public class ApplicationFormBuilder {
     private Boolean isEditableByApplicant = true;
     private Project project = null;
     private BigDecimal averageRating;
+    private Boolean useCustomReferenceQuestions = false;
 
     public ApplicationFormBuilder ipAddress(String ipAddress) {
         this.ipAddress = ipAddress;
@@ -293,6 +294,11 @@ public class ApplicationFormBuilder {
         this.averageRating = averageRating;
         return this;
     }
+    
+    public ApplicationFormBuilder useCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
+        this.useCustomReferenceQuestions = useCustomReferenceQuestions;
+        return this;
+    }
 
     public ApplicationForm build() {
         ApplicationForm application = new ApplicationForm();
@@ -334,6 +340,7 @@ public class ApplicationFormBuilder {
         application.setIsEditableByApplicant(isEditableByApplicant);
         application.setProject(project);
         application.setAverageRating(averageRating);
+        application.setUseCustomReferenceQuestions(useCustomReferenceQuestions);
 
         try {
             application.setIpAddressAsString(ipAddress);

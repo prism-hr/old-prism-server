@@ -109,12 +109,12 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         expect(thisServiceMock.getUsersForTaskNotification(EasyMock.isA(Date.class))).andReturn(potentialUsersForTaskNotification);
         expect(thisServiceMock.getUsersForUpdateNotification(EasyMock.isA(Date.class))).andReturn(usersForUpdateNotification);
         
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(potentialUsersForTaskReminder.get(0)), DigestNotificationType.TASK_REMINDER)).andReturn(true);
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(potentialUsersForTaskReminder.get(1)), DigestNotificationType.TASK_REMINDER)).andReturn(true);
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(potentialUsersForTaskNotification.get(0)), DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(potentialUsersForTaskNotification.get(1)), DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(usersForUpdateNotification.get(0)), DigestNotificationType.UPDATE_NOTIFICATION)).andReturn(true);
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(usersForUpdateNotification.get(1)), DigestNotificationType.UPDATE_NOTIFICATION)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskReminder.get(0), DigestNotificationType.TASK_REMINDER)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskReminder.get(1), DigestNotificationType.TASK_REMINDER)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskNotification.get(0), DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskNotification.get(1), DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(usersForUpdateNotification.get(0), DigestNotificationType.UPDATE_NOTIFICATION)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(usersForUpdateNotification.get(1), DigestNotificationType.UPDATE_NOTIFICATION)).andReturn(true);
 
         replay(userDAOMock, applicationContextMock, thisServiceMock);
         service.sendDigestsToUsers();
@@ -129,7 +129,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         mockMailSender.sendEmail(capture(messageCapture));
 
         replay(userDAOMock, applicationFormListDAOMock, mockMailSender);
-        boolean result = service.sendDigestEmail(user, DigestNotificationType.UPDATE_NOTIFICATION);
+        boolean result = service.sendDigestEmail(user.getId(), DigestNotificationType.UPDATE_NOTIFICATION);
         verify(userDAOMock, applicationFormListDAOMock, mockMailSender);
 
         assertTrue(result);

@@ -12,15 +12,23 @@ import com.zuehlke.pgadmissions.domain.ImportedObject;
 @Repository
 public class ImportedDataDAO {
 
+    private final SessionFactory sessionFactory;
+
+    ImportedDataDAO() {
+        this(null);
+    }
+
     @Autowired
-    private SessionFactory sessionFactory;
+    public ImportedDataDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+
+    }
 
     @SuppressWarnings("unchecked")
     public List<ImportedObject> getDisabledImportedObjectsWithoutActiveReference(Class<? extends ImportedObject> importedType) {
         return sessionFactory.getCurrentSession().createCriteria(importedType) //
                 .add(Restrictions.eq("enabled", false)) //
-                .add(Restrictions.isNull("enabledObject"))
-                .list();
+                .add(Restrictions.isNull("enabledObject")).list();
     }
 
     public ImportedObject getEnabledVersion(ImportedObject disabledObject) {

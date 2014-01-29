@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.prospectus;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Maps;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zuehlke.pgadmissions.domain.Advert;
@@ -40,7 +38,9 @@ import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.HibernateUtils;
+import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
+import com.zuehlke.pgadmissions.utils.GsonExclusionStrategies;
+import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
 import com.zuehlke.pgadmissions.validators.AbstractValidator;
 import com.zuehlke.pgadmissions.validators.ProgramAdvertValidator;
 import com.zuehlke.pgadmissions.validators.ProgramClosingDateValidator;
@@ -51,63 +51,42 @@ import freemarker.template.TemplateException;
 @RequestMapping("/prospectus/programme")
 public class ProgramConfigurationController {
 
-    private final UserService userService;
-
-    private final ProgramsService programsService;
-    private final String host;
-
-    private final ApplicationContext applicationContext;
-
-    private final DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
-
-    private final ProgramAdvertValidator programAdvertValidator;
-
-    private final ProgramClosingDateValidator closingDateValidator;
-    
-    private final DatePropertyEditor datePropertyEditor;
-    
-    private final ProgramPropertyEditor programPropertyEditor;
-
-    private final ApplyTemplateRenderer templateRenderer;
-    
-	private Gson gson;
-	
-	private final AdvertService advertsService;
-
-    public ProgramConfigurationController() {
-        this(null,null, null, null, null, null, null, null, null, null, null);
-    }
+    @Autowired
+    private UserService userService;
 
     @Autowired
-    public ProgramConfigurationController(UserService userService, ProgramsService programsService, AdvertService advertsService, @Value("${application.host}") final String host,
-            ApplicationContext applicationContext, ProgramAdvertValidator programAdvertValidator, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor,
-            ProgramClosingDateValidator closingDateValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor, ApplyTemplateRenderer templateRenderer) {
-        this.userService = userService;
-        this.programsService = programsService;
-		this.advertsService = advertsService;
-        this.host = host;
-        this.applicationContext = applicationContext;
-        this.programAdvertValidator = programAdvertValidator;
-        this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
-        this.closingDateValidator = closingDateValidator;
-        this.datePropertyEditor = datePropertyEditor;
-        this.programPropertyEditor = programPropertyEditor;
-		this.templateRenderer = templateRenderer;
-    }
+    private ProgramsService programsService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
+
+    @Autowired
+    private ProgramAdvertValidator programAdvertValidator;
+
+    @Autowired
+    private ProgramClosingDateValidator closingDateValidator;
+
+    @Autowired
+    private DatePropertyEditor datePropertyEditor;
+
+    @Autowired
+    private ProgramPropertyEditor programPropertyEditor;
+
+    @Autowired
+    private ApplyTemplateRenderer templateRenderer;
+
+    @Autowired
+    private AdvertService advertsService;
+
+    private Gson gson;
 
     @PostConstruct
     public void customizeGsonBuilder() throws IOException {
-        gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes f) {
-                return false;
-            }
-
-            @Override
-            public boolean shouldSkipClass(Class<?> clazz) {
-                return Program.class == clazz;
-            }
-        }).create();
+        gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY).
+                setExclusionStrategies(GsonExclusionStrategies.excludeClass(Program.class)).create();
     }
 
     @InitBinder("advert")
@@ -155,18 +134,16 @@ public class ProgramConfigurationController {
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
     public String getAdvertData(@RequestParam String programCode) throws TemplateException, IOException {
-        Advert advert = HibernateUtils.unproxy(getProgrameAdvert(programCode));
+        Advert advert = getProgrameAdvert(programCode);
 
         Map<String, Object> result = Maps.newHashMap();
         result.put("advert", advert);
 
         HashMap<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("programCode", programCode);
-        if(advert != null){
-        	dataMap.put("advertId", advert.getId());
+        if (advert != null) {
+            dataMap.put("advertId", advert.getId());
         }
-        dataMap.put("host", host);
-
         result.put("buttonToApply", templateRenderer.renderButton(dataMap));
         result.put("linkToApply", templateRenderer.renderLink(dataMap));
 
@@ -190,7 +167,7 @@ public class ProgramConfigurationController {
         }
 
         if (map.isEmpty()) {
-        	programsService.addProgramAdvert(programCode, advert);
+            programsService.addProgramAdvert(programCode, advert);
             map.put("advertId", advert.getId());
         }
         return gson.toJson(map);
@@ -199,33 +176,27 @@ public class ProgramConfigurationController {
     @RequestMapping(value = "/editProgramAdvert", method = RequestMethod.POST)
     @ResponseBody
     public String editProgramAdvert(@RequestParam String programCode, @Valid Advert advert, BindingResult result, HttpServletRequest request) {
-    	Map<String, Object> map = Maps.newHashMap();
-		if (result.hasErrors()) {
-		    for (FieldError error : result.getFieldErrors()) {
-		        map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
-		    }
-		}
-		if (map.isEmpty()) {
-			advertsService.edit(advert);
-		    map.put("advertId", advert.getId());
-		}
-		return gson.toJson(map);
+        Map<String, Object> map;
+        if (result.hasErrors()) {
+            map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
+        } else {
+            advertsService.edit(advert);
+            map = Collections.singletonMap("advertId", (Object) advert.getId());
+        }
+        return gson.toJson(map);
     }
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
     @ResponseBody
     public String addClosingDate(@Valid ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
-        Map<String, Object> map = Maps.newHashMap();
-
-        for (FieldError error : result.getFieldErrors()) {
-            map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
-        }
-
-        if (!result.hasErrors()) {
+        Map<String, Object> map;
+        if (result.hasErrors()) {
+            map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
+        } else {
             Program program = programClosingDate.getProgram();
             program.addClosingDate(programClosingDate);
             programsService.save(program);
-            map.put("programClosingDate", programClosingDate);
+            map = Collections.singletonMap("programClosingDate", (Object) programClosingDate);
         }
 
         return gson.toJson(map);
@@ -234,17 +205,14 @@ public class ProgramConfigurationController {
     @RequestMapping(value = "/updateClosingDate", method = RequestMethod.POST)
     @ResponseBody
     public String updateClosingDate(@Valid ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
-        Map<String, Object> map = Maps.newHashMap();
-
-        for (FieldError error : result.getFieldErrors()) {
-            map.put(error.getField(), applicationContext.getMessage(error, request.getLocale()));
-        }
-
-        if (!result.hasErrors()) {
+        Map<String, Object> map;
+        if (result.hasErrors()) {
+            map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
+        } else {
             Program program = programClosingDate.getProgram();
             program.updateClosingDate(programClosingDate);
             programsService.save(program);
-            map.put("programClosingDate", programClosingDate);
+            map = Collections.singletonMap("programClosingDate", (Object) programClosingDate);
         }
 
         return gson.toJson(map);

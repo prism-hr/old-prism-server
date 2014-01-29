@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
@@ -18,17 +19,17 @@ import freemarker.template.TemplateException;
 @Component
 public class ApplyTemplateRenderer {
 	
-	private final FreeMarkerConfigurer freeMarkerConfigurer;
+    @Autowired
+	private FreeMarkerConfigurer freeMarkerConfigurer;
+    
+    @Value("${application.host}")
+    private String host;
+    
 	private Template buttonToApplyTemplate;
 	private Template linkToApplyTemplate;
 	public static final String BUTTON_TO_APPLY = "/private/prospectus/button_to_apply.ftl";
 	public static final String LINK_TO_APPLY = "/private/prospectus/link_to_apply.ftl";
 
-	@Autowired
-	public ApplyTemplateRenderer(FreeMarkerConfigurer freeMarkerConfigurer) {
-		this.freeMarkerConfigurer = freeMarkerConfigurer;
-	}
-	
 	@SuppressWarnings("serial")
 	@PostConstruct
 	private void intializeTemplates() {
@@ -49,6 +50,7 @@ public class ApplyTemplateRenderer {
 	}
 
 	protected String processTemplate(Template template, Map<String, Object> dataMap) throws TemplateException, IOException {
+	    dataMap.put("host", host);
 	    StringWriter writer = new StringWriter();
 	    template.process(dataMap, writer);
 	    String result = writer.toString();

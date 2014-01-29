@@ -12,9 +12,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
@@ -263,9 +265,10 @@ public class FeedbackCommentValidatorTest {
 
     @Before
     public void setup() {
-        reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidateForProgramme(false).suitableCandidateForUCL(false).willingToInterview(true).willingToWorkWithApplicant(false).decline(false).applicantRating(3).build();
-        interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidateForUcl(false).suitableCandidateForProgramme(false).willingToSupervise(true).decline(false).applicantRating(2).build();
-        referenceComment = new ReferenceCommentBuilder().comment("reference comment").suitableForProgramme(false).suitableForUcl(false).applicantRating(4).build();
+        ApplicationForm application = new ApplicationFormBuilder().useCustomReferenceQuestions(false).build();
+        reviewComment = new ReviewCommentBuilder().comment("review comment").application(application).suitableCandidateForProgramme(false).suitableCandidateForUCL(false).willingToInterview(true).willingToWorkWithApplicant(false).decline(false).applicantRating(3).build();
+        interviewComment = new InterviewCommentBuilder().comment("interview comment").application(application).suitableCandidateForUcl(false).suitableCandidateForProgramme(false).willingToSupervise(true).decline(false).applicantRating(2).build();
+        referenceComment = new ReferenceCommentBuilder().comment("reference comment").application(application).suitableForProgramme(false).suitableForUcl(false).applicantRating(4).build();
 
         feedbackCommentValidator = new FeedbackCommentValidator();
         feedbackCommentValidator.setValidator((javax.validation.Validator) validator);

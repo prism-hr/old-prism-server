@@ -1,6 +1,10 @@
 package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -13,10 +17,14 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.StateChangeDTO;
 
@@ -41,7 +49,8 @@ public class StateChangeValidatorTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
 		stateChangeDTO.setComment("");
 		stateChangeDTO.setConfirmNextStage(true);
-        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        Program program = new ProgramBuilder().build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -53,7 +62,8 @@ public class StateChangeValidatorTest {
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
 		stateChangeDTO.setEnglishCompentencyOk(null);
         stateChangeDTO.setConfirmNextStage(true);
-        ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).build();
+        Program program = new ProgramBuilder().build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -65,7 +75,8 @@ public class StateChangeValidatorTest {
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
 		stateChangeDTO.setHomeOrOverseas(null);
         stateChangeDTO.setConfirmNextStage(true);
-        ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).build();
+        Program program = new ProgramBuilder().build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -77,7 +88,8 @@ public class StateChangeValidatorTest {
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
 		stateChangeDTO.setQualifiedForPhd(null);
         stateChangeDTO.setConfirmNextStage(true);
-        ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).build();
+        Program program = new ProgramBuilder().build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -89,7 +101,8 @@ public class StateChangeValidatorTest {
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
 		stateChangeDTO.setNextStatus(null);
         stateChangeDTO.setConfirmNextStage(true);
-        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        Program program = new ProgramBuilder().build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -101,7 +114,8 @@ public class StateChangeValidatorTest {
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
 		stateChangeDTO.setComment("");
 		stateChangeDTO.setConfirmNextStage(true);
-        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        Program program = new ProgramBuilder().build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -113,7 +127,8 @@ public class StateChangeValidatorTest {
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
 		stateChangeDTO.setNextStatus(null);
         stateChangeDTO.setConfirmNextStage(true);
-        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        Program program = new ProgramBuilder().build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -124,7 +139,8 @@ public class StateChangeValidatorTest {
 	public void shouldRejectIfNoConfirmationFieldWasSubmitted() {
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
 	    stateChangeDTO.setConfirmNextStage(null);
-        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        Program program = new ProgramBuilder().build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).build();
         stateChangeDTO.setApplicationForm(application);
 	    stateChangeValidator.validate(stateChangeDTO, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -135,12 +151,56 @@ public class StateChangeValidatorTest {
     public void shouldRejectIfNoConfirmationWasSelected() {
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
         stateChangeDTO.setConfirmNextStage(false);
-        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
+        Program program = new ProgramBuilder().build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).build();
         stateChangeDTO.setApplicationForm(application);
         stateChangeValidator.validate(stateChangeDTO, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("checkbox.mandatory", mappingResult.getFieldError("confirmNextStage").getCode());
     }
+	
+	@Test
+	public void shouldRejectIfRequiredCustomQuestionOptionsNotCompleted() {
+	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
+	    Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
+	    for (ScoringStage stage : ScoringStage.values()) {
+	        scoringDefinitions.put(stage, new ScoringDefinition());
+	    }
+	    Program program = new ProgramBuilder().scoringDefinitions(scoringDefinitions).build();
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).program(program).build();
+        stateChangeDTO.setApplicationForm(application);
+	    stateChangeDTO.setNextStatus(ApplicationFormStatus.REVIEW);
+	    stateChangeDTO.setConfirmNextStage(true);
+        stateChangeValidator.validate(stateChangeDTO, mappingResult);
+	    Assert.assertEquals(2, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("useCustomReferenceQuestions").getCode());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("useCustomQuestions").getCode());
+        stateChangeDTO.setNextStatus(ApplicationFormStatus.INTERVIEW);
+        mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
+        stateChangeValidator.validate(stateChangeDTO, mappingResult);
+        Assert.assertEquals(2, mappingResult.getErrorCount());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("useCustomReferenceQuestions").getCode());
+        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("useCustomQuestions").getCode());
+	}
+	
+	@Test
+	public void shouldNotRejectOnAccountOfMissingScoresIfThereAreNoCustomQuestions() {
+	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
+        Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
+        Program program = new ProgramBuilder().scoringDefinitions(scoringDefinitions).build();
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).program(program).build();
+        stateChangeDTO.setApplicationForm(application);
+        stateChangeDTO.setNextStatus(ApplicationFormStatus.REVIEW);
+        stateChangeDTO.setConfirmNextStage(true);
+        stateChangeDTO.setUseCustomReferenceQuestions(false);
+        stateChangeDTO.setUseCustomQuestions(false);
+        stateChangeValidator.validate(stateChangeDTO, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+        stateChangeDTO.setNextStatus(ApplicationFormStatus.INTERVIEW);
+        mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
+        stateChangeValidator.validate(stateChangeDTO, mappingResult);
+        Assert.assertEquals(0, mappingResult.getErrorCount());
+	}
 	
 	@Before
 	public void setup() {
@@ -151,9 +211,8 @@ public class StateChangeValidatorTest {
 		stateChangeDTO.setQualifiedForPhd(ValidationQuestionOptions.NO);
 		stateChangeDTO.setHomeOrOverseas(HomeOrOverseas.HOME);
 		stateChangeDTO.setRegisteredUser(new RegisteredUserBuilder().build());
-		
-		        
 		stateChangeValidator = new StateChangeValidator();
 		stateChangeValidator.setValidator((javax.validation.Validator) validator);
 	}
+	
 }

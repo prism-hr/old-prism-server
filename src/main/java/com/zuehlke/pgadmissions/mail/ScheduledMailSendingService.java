@@ -75,20 +75,20 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         Date baselineDate = new Date();
 
         log.trace("Sending task reminder to users");
-        for (Integer user : thisProxy.getUsersForTaskReminder(baselineDate)) {
-            thisProxy.sendDigestEmail(userDAO.get(user), DigestNotificationType.TASK_REMINDER);
+        for (Integer userId : thisProxy.getUsersForTaskReminder(baselineDate)) {
+            thisProxy.sendDigestEmail(userId, DigestNotificationType.TASK_REMINDER);
         }
         log.trace("Finished sending task reminder to users");
 
         log.trace("Sending task notification to users");
-        for (Integer user : thisProxy.getUsersForTaskNotification(baselineDate)) {
-            thisProxy.sendDigestEmail(userDAO.get(user), DigestNotificationType.TASK_NOTIFICATION);
+        for (Integer userId : thisProxy.getUsersForTaskNotification(baselineDate)) {
+            thisProxy.sendDigestEmail(userId, DigestNotificationType.TASK_NOTIFICATION);
         }
         log.trace("Finished sending task notification to users");
 
         log.trace("Sending update notification to users");
-        for (Integer user : thisProxy.getUsersForUpdateNotification(baselineDate)) {
-            thisProxy.sendDigestEmail(userDAO.get(user), DigestNotificationType.UPDATE_NOTIFICATION);
+        for (Integer userId : thisProxy.getUsersForUpdateNotification(baselineDate)) {
+            thisProxy.sendDigestEmail(userId, DigestNotificationType.UPDATE_NOTIFICATION);
         }
         log.trace("Finished sending update notification to users");
     }
@@ -112,7 +112,8 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendDigestEmail(RegisteredUser user, DigestNotificationType digestNotificationType) {
+    public boolean sendDigestEmail(Integer userId, DigestNotificationType digestNotificationType) {
+        final RegisteredUser user = userDAO.get(userId);
         return sendDigest(user, digestNotificationType);
     }
 
@@ -169,9 +170,10 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendReferenceReminder() {
         log.trace("Sending reference reminder to users");
-        List<Integer> referees = refereeDAO.getRefereesDueReminder();
-        for (Integer referee : referees) {
-            applicationContext.getBean(this.getClass()).sendReferenceReminder(refereeDAO.getRefereeById(referee));
+        List<Integer> refereeIds = refereeDAO.getRefereesDueReminder();
+        for (Integer refereeId : refereeIds) {
+            final Referee referee = refereeDAO.getRefereeById(refereeId);
+            applicationContext.getBean(this.getClass()).sendReferenceReminder(referee);
         }
         log.trace("Finished sending reference reminder to users");
     }
@@ -200,9 +202,10 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendInterviewParticipantVoteReminder() {
         log.trace("Sending interview scheduling reminder to users");
-        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        for (Integer participant : participants) {
-            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(interviewParticipantDAO.getParticipantById(participant));
+        List<Integer> participantIds = interviewParticipantDAO.getInterviewParticipantsDueReminder();
+        for (Integer participantId : participantIds) {
+            final InterviewParticipant participant = interviewParticipantDAO.getParticipantById(participantId);
+            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participant);
         }
         log.trace("Sending interview scheduling reminder to users");
     }

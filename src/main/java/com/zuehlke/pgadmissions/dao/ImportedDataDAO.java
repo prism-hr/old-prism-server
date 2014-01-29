@@ -26,14 +26,14 @@ public class ImportedDataDAO {
 
     @SuppressWarnings("unchecked")
     public List<ImportedObject> getDisabledImportedObjectsWithoutActiveReference(Class<? extends ImportedObject> importedType) {
-        return sessionFactory.getCurrentSession().createCriteria(importedType) //
-                .add(Restrictions.eq("enabled", false)) //
+        return sessionFactory.getCurrentSession().createCriteria(importedType)
+                .add(Restrictions.eq("enabled", false))
                 .add(Restrictions.isNull("enabledObject")).list();
     }
 
     public ImportedObject getEnabledVersion(ImportedObject disabledObject) {
-        return (ImportedObject) sessionFactory.getCurrentSession().createCriteria(disabledObject.getClass()) //
-                .add(Restrictions.eq("code", disabledObject.getCode())) //
+        return (ImportedObject) sessionFactory.getCurrentSession().createCriteria(disabledObject.getClass())
+                .add(Restrictions.eq("code", disabledObject.getCode()))
                 .add(Restrictions.eq("enabled", true)).uniqueResult();
     }
 

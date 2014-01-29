@@ -32,20 +32,9 @@ public class ActionDAO {
                 .add(Restrictions.eq("id", actionId)).uniqueResult();
     }
     
-    public List<Action> getActionsWithSyndicateNotification() {
+    public List<Action> getActionsByNotificationMethod(NotificationMethod method) {
         return (List<Action>) sessionFactory.getCurrentSession().createCriteria(Action.class)
-                .add(Restrictions.eq("notificaiton", NotificationMethod.SYNDICATED)).list();
-    }
-    
-    public List<Action> getActionsWithIndividualNotification() {
-        return (List<Action>) sessionFactory.getCurrentSession().createCriteria(Action.class)
-                .add(Restrictions.eq("notificaiton", NotificationMethod.INDIVIDUAL)).list();
-    }
-    
-    public void save(Action action) {
-        if (getActionById(action.getId()) == null) {
-            sessionFactory.getCurrentSession().save(action);
-        }
+                .add(Restrictions.eq("notificaiton", method)).list();
     }
 	
 }

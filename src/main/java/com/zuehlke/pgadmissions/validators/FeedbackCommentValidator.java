@@ -8,11 +8,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Score;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Component
 public class FeedbackCommentValidator extends AbstractValidator {
@@ -78,8 +80,16 @@ public class FeedbackCommentValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicantRating", EMPTY_FIELD_ERROR_MESSAGE);
         
         Comment comment = (Comment) target;
+        CommentType commentType = comment.getType();
         List<Score> scores = comment.getScores();
-        if (scores != null) {
+        ApplicationForm application = comment.getApplication();
+        
+        if ((commentType == CommentType.REVIEW
+                && BooleanUtils.isTrue(application.getLatestReviewRound().getUseCustomQuestions())) 
+                || (commentType == CommentType.INTERVIEW
+                        && BooleanUtils.isTrue(application.getLatestInterview().getUseCustomQuestions()))
+                || (commentType == CommentType.REFERENCE
+                        && BooleanUtils.isTrue(application.getUseCustomReferenceQuestions()))) {
             for (int i = 0; i < scores.size(); i++) {
                 try {
                     errors.pushNestedPath("scores[" + i + "]");

@@ -98,7 +98,7 @@ public class Interview implements Serializable {
     private BigDecimal averageRating;
     
     @Column(name = "use_custom_questions")
-    private Boolean useCustomQuestions = null;
+    private Boolean useCustomQuestions = false;
 
     @Transient
     private String timeHours;

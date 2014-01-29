@@ -256,6 +256,10 @@ public class Program extends Authorisable implements Serializable {
         }
         return false;
     }
+    
+    public List<ScoringStage> getCustomQuestionCoverage() {
+        return new ArrayList<ScoringStage>(getScoringDefinitions().keySet());
+    }
 
     private ProgramClosingDate getClosingDate(final Integer id) {
         checkNotNull(id);

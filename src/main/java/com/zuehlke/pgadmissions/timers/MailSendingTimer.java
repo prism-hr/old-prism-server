@@ -23,19 +23,11 @@ public class MailSendingTimer {
     @Scheduled(cron = "${email.digest.cron}")
     public void run() {
         mailService.sendDigestsToUsers();
-    }
-
-    @Scheduled(cron = "${email.schedule.period.chron}")
-    public void sendReferenceReminder() {
         mailService.sendReferenceReminder();
-    }
-
-    @Scheduled(cron = "${email.schedule.period.chron}")
-    public void sendInterviewParticipantVoteReminder() {
         mailService.sendInterviewParticipantVoteReminder();
     }
 
-    @Scheduled(cron = "${email.schedule.period.chron}")
+    @Scheduled(cron = "${email.schedule.period.cron}")
     public void sendNewUserInvitation() {
         mailService.sendNewUserInvitation();
     }

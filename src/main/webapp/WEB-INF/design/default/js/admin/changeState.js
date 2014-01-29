@@ -14,14 +14,28 @@ $(document).ready(function() {
     // Update the check-box confirmation label nextStatus value.
     // ------------------------------------------------------------------------------
     $('#nextStatus').change(function() {
-    	refreshControls();
+    	refreshControls(); 
         if ($('#confirmNextStageLabel').length > 0) {
-            var state = $('#nextStatus option:selected').text().toLowerCase().capitalize();
-            if (state.length == 0 || state == 'Select...') {
-                state = 'next';
+        	var state = $('#nextStatus option:selected').text();
+            var stateDisplay = state.toLowerCase().capitalize();
+            if (stateDisplay.length == 0 || stateDisplay == 'Select...') {
+                stateDisplay = 'next';
             }
             var message = 'Confirm that you want to move this application to the ' + state + ' stage.';
             $('#confirmNextStageLabel').html(message);
+            var customQuestionCoverage = new Array();
+            $('input:hidden[name=customQuestionCoverage]').each(function() {
+            	customQuestionCoverage.push($(this).val());
+            });
+            if(jQuery.inArray(state.toUpperCase(), customQuestionCoverage) >= 0) {
+            	$('#customQuestionSection').show();
+            } else {
+            	$('input:radio[name=useCustomQuestions]').each(function() {
+                	$(this).prop('checked', false);
+                });
+            	$('#customQuestionSection').hide();
+            }
+            
         }
     });
 

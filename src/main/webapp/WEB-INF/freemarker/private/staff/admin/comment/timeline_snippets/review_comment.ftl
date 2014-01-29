@@ -28,4 +28,6 @@
   
 </#if>
 
-<#include "comment_scores.ftl"/>
+<#if applicationForm.latestReviewRound.useCustomQuestions>
+	<#include "comment_scores.ftl"/>
+</#if>

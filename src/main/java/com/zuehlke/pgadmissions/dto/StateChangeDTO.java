@@ -13,218 +13,219 @@ import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class StateChangeDTO {
-	
-	private String action;
-	
-	private RegisteredUser registeredUser;
-	
-	private ApplicationForm applicationForm;
-	
-	private String comment;
-	
-	private List<Document> documents;
-	
-	private ValidationQuestionOptions qualifiedForPhd;
-	
-	private ValidationQuestionOptions englishCompentencyOk;
-	
-	private HomeOrOverseas homeOrOverseas;
-	
-	private ApplicationFormStatus nextStatus;
-	
-	private Boolean fastTrackApplication;
-	
-	private Boolean delegate;
-	
-	private String delegateFirstName;
-	
-	private String delegateLastName;
-	
+
+    private String action;
+
+    private RegisteredUser registeredUser;
+
+    private ApplicationForm applicationForm;
+
+    private String comment;
+
+    private List<Document> documents;
+
+    private ValidationQuestionOptions qualifiedForPhd;
+
+    private ValidationQuestionOptions englishCompentencyOk;
+
+    private HomeOrOverseas homeOrOverseas;
+
+    private ApplicationFormStatus status;
+
+    private ApplicationFormStatus nextStatus;
+
+    private Boolean fastTrackApplication;
+
+    private Boolean delegate;
+
+    private String delegateFirstName;
+
+    private String delegateLastName;
+
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
-	private String delegateEmail;
-	
-	private Boolean confirmNextStage;
-	
-	private ValidationQuestionOptions[] validationQuestionOptions;
-	
-	private HomeOrOverseas[] homeOrOverseasOptions;
-	
-	private List<ApplicationFormStatus> stati;
-	
-	private List<ScoringStage> customQuestionCoverage;
-	
-	private Boolean useCustomReferenceQuestions;
-	
-	private Boolean useCustomQuestions;
-    
+    private String delegateEmail;
+
+    private Boolean confirmNextStage;
+
+    private ValidationQuestionOptions[] validationQuestionOptions;
+
+    private HomeOrOverseas[] homeOrOverseasOptions;
+
+    private List<ApplicationFormStatus> stati;
+
+    private List<ScoringStage> customQuestionCoverage;
+
+    private Boolean useCustomReferenceQuestions;
+
+    private Boolean useCustomQuestions;
+
     public StateChangeDTO() {
     }
 
-	public String getAction() {
-		return action;
-	}
+    public String getAction() {
+        return action;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	public RegisteredUser getRegisteredUser() {
-		return registeredUser;
-	}
+    public RegisteredUser getRegisteredUser() {
+        return registeredUser;
+    }
 
-	public void setRegisteredUser(RegisteredUser registeredUser) {
-		this.registeredUser = registeredUser;
-	}
+    public void setRegisteredUser(RegisteredUser registeredUser) {
+        this.registeredUser = registeredUser;
+    }
 
-	public ApplicationForm getApplicationForm() {
-		return applicationForm;
-	}
+    public ApplicationForm getApplicationForm() {
+        return applicationForm;
+    }
 
-	public void setApplicationForm(ApplicationForm applicationForm) {
-		this.applicationForm = applicationForm;
-	}
-	
-	public String getApplicationNumber() {
-		return applicationForm.getApplicationNumber();
-	}
-	
-	public Boolean hasGlobalAdministrationRights() {
-		return registeredUser.isInRole(Authority.SUPERADMINISTRATOR) ||
-				registeredUser.isAdminInProgramme(applicationForm.getProgram()) ||
-				registeredUser.isProjectAdministrator(applicationForm, registeredUser) ||
-				registeredUser.isApproverInProgram(applicationForm.getProgram());
-	}
-	
-	public Boolean hasFastTrackOption() {
-		if (applicationForm.getBatchDeadline() == null) {
-			return false;
-		}
-		return true;
-	}
-	
-	public Boolean isInState(String applicationFormStatus) {
-		return applicationForm.isInState(applicationFormStatus);
-	}
+    public void setApplicationForm(ApplicationForm applicationForm) {
+        this.applicationForm = applicationForm;
+        this.status = applicationForm.getStatus();
+    }
 
-	public String getComment() {
-		return comment;
-	}
+    public String getApplicationNumber() {
+        return applicationForm.getApplicationNumber();
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public Boolean hasGlobalAdministrationRights() {
+        return registeredUser.isInRole(Authority.SUPERADMINISTRATOR) || registeredUser.isAdminInProgramme(applicationForm.getProgram())
+                || registeredUser.isProjectAdministrator(applicationForm, registeredUser) || registeredUser.isApproverInProgram(applicationForm.getProgram());
+    }
 
-	public List<Document> getDocuments() {
-		return documents;
-	}
+    public Boolean hasFastTrackOption() {
+        if (applicationForm.getBatchDeadline() == null) {
+            return false;
+        }
+        return true;
+    }
 
-	public void setDocuments(List<Document> documents) {
-		this.documents = documents;
-	}
+    public Boolean isInState(String applicationFormStatus) {
+        return applicationForm.isInState(applicationFormStatus);
+    }
 
-	public ValidationQuestionOptions getQualifiedForPhd() {
-		return qualifiedForPhd;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public void setQualifiedForPhd(ValidationQuestionOptions qualifiedForPhD) {
-		this.qualifiedForPhd = qualifiedForPhD;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-	public ValidationQuestionOptions getEnglishCompentencyOk() {
-		return englishCompentencyOk;
-	}
+    public List<Document> getDocuments() {
+        return documents;
+    }
 
-	public void setEnglishCompentencyOk(ValidationQuestionOptions englishCompentencyOk) {
-		this.englishCompentencyOk = englishCompentencyOk;
-	}
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }
 
-	public HomeOrOverseas getHomeOrOverseas() {
-		return homeOrOverseas;
-	}
+    public ValidationQuestionOptions getQualifiedForPhd() {
+        return qualifiedForPhd;
+    }
 
-	public void setHomeOrOverseas(HomeOrOverseas homeOrOverseas) {
-		this.homeOrOverseas = homeOrOverseas;
-	}
+    public void setQualifiedForPhd(ValidationQuestionOptions qualifiedForPhD) {
+        this.qualifiedForPhd = qualifiedForPhD;
+    }
 
-	public ApplicationFormStatus getNextStatus() {
-		return nextStatus;
-	}
+    public ValidationQuestionOptions getEnglishCompentencyOk() {
+        return englishCompentencyOk;
+    }
 
-	public void setNextStatus(ApplicationFormStatus nextStatus) {
-		this.nextStatus = nextStatus;
-	}
+    public void setEnglishCompentencyOk(ValidationQuestionOptions englishCompentencyOk) {
+        this.englishCompentencyOk = englishCompentencyOk;
+    }
 
-	public Boolean getFastTrackApplication() {
-		return fastTrackApplication;
-	}
+    public HomeOrOverseas getHomeOrOverseas() {
+        return homeOrOverseas;
+    }
 
-	public void setFastTrackApplication(Boolean fastTrackApplication) {
-		this.fastTrackApplication = fastTrackApplication;
-	}
+    public void setHomeOrOverseas(HomeOrOverseas homeOrOverseas) {
+        this.homeOrOverseas = homeOrOverseas;
+    }
 
-	public Boolean getDelegate() {
-		return delegate;
-	}
+    public ApplicationFormStatus getNextStatus() {
+        return nextStatus;
+    }
 
-	public void setDelegate(Boolean delegate) {
-		this.delegate = delegate;
-	}
+    public void setNextStatus(ApplicationFormStatus nextStatus) {
+        this.nextStatus = nextStatus;
+    }
 
-	public String getDelegateFirstName() {
-		return delegateFirstName;
-	}
+    public Boolean getFastTrackApplication() {
+        return fastTrackApplication;
+    }
 
-	public void setDelegateFirstName(String delegateFirstName) {
-		this.delegateFirstName = delegateFirstName;
-	}
+    public void setFastTrackApplication(Boolean fastTrackApplication) {
+        this.fastTrackApplication = fastTrackApplication;
+    }
 
-	public String getDelegateLastName() {
-		return delegateLastName;
-	}
+    public Boolean getDelegate() {
+        return delegate;
+    }
 
-	public void setDelegateLastName(String delegateLastName) {
-		this.delegateLastName = delegateLastName;
-	}
+    public void setDelegate(Boolean delegate) {
+        this.delegate = delegate;
+    }
 
-	public String getDelegateEmail() {
-		return delegateEmail;
-	}
+    public String getDelegateFirstName() {
+        return delegateFirstName;
+    }
 
-	public void setDelegateEmail(String delegateEmail) {
-		this.delegateEmail = delegateEmail;
-	}
+    public void setDelegateFirstName(String delegateFirstName) {
+        this.delegateFirstName = delegateFirstName;
+    }
 
-	public Boolean getConfirmNextStage() {
-		return confirmNextStage;
-	}
+    public String getDelegateLastName() {
+        return delegateLastName;
+    }
 
-	public void setConfirmNextStage(Boolean confirmNextStage) {
-		this.confirmNextStage = confirmNextStage;
-	}
+    public void setDelegateLastName(String delegateLastName) {
+        this.delegateLastName = delegateLastName;
+    }
 
-	public ValidationQuestionOptions[] getValidationQuestionOptions() {
-		return validationQuestionOptions;
-	}
+    public String getDelegateEmail() {
+        return delegateEmail;
+    }
 
-	public void setValidationQuestionOptions(ValidationQuestionOptions[] validationQuestionOptions) {
-		this.validationQuestionOptions = validationQuestionOptions;
-	}
+    public void setDelegateEmail(String delegateEmail) {
+        this.delegateEmail = delegateEmail;
+    }
 
-	public HomeOrOverseas[] getHomeOrOverseasOptions() {
-		return homeOrOverseasOptions;
-	}
+    public Boolean getConfirmNextStage() {
+        return confirmNextStage;
+    }
 
-	public void setHomeOrOverseasOptions(HomeOrOverseas[] homeOrOverseasOptions) {
-		this.homeOrOverseasOptions = homeOrOverseasOptions;
-	}
+    public void setConfirmNextStage(Boolean confirmNextStage) {
+        this.confirmNextStage = confirmNextStage;
+    }
 
-	public List<ApplicationFormStatus> getStati() {
-		return stati;
-	}
+    public ValidationQuestionOptions[] getValidationQuestionOptions() {
+        return validationQuestionOptions;
+    }
 
-	public void setStati(List<ApplicationFormStatus> stati) {
-		this.stati = stati;
-	}
+    public void setValidationQuestionOptions(ValidationQuestionOptions[] validationQuestionOptions) {
+        this.validationQuestionOptions = validationQuestionOptions;
+    }
+
+    public HomeOrOverseas[] getHomeOrOverseasOptions() {
+        return homeOrOverseasOptions;
+    }
+
+    public void setHomeOrOverseasOptions(HomeOrOverseas[] homeOrOverseasOptions) {
+        this.homeOrOverseasOptions = homeOrOverseasOptions;
+    }
+
+    public List<ApplicationFormStatus> getStati() {
+        return stati;
+    }
+
+    public void setStati(List<ApplicationFormStatus> stati) {
+        this.stati = stati;
+    }
 
     public Boolean getUseCustomReferenceQuestions() {
         return useCustomReferenceQuestions;
@@ -248,6 +249,15 @@ public class StateChangeDTO {
 
     public void setCustomQuestionCoverage(List<ScoringStage> customQuestionCoverage) {
         this.customQuestionCoverage = customQuestionCoverage;
+    }
+
+    public boolean displayCustomQuestionsOption() {
+        return (this.nextStatus == ApplicationFormStatus.REVIEW && this.customQuestionCoverage.contains(ScoringStage.REVIEW))
+                || (this.nextStatus == ApplicationFormStatus.INTERVIEW && this.customQuestionCoverage.contains(ScoringStage.INTERVIEW));
+    }
+
+    public boolean displayCustomReferenceQuestionsOption() {
+        return this.status == ApplicationFormStatus.VALIDATION && this.customQuestionCoverage.contains(ScoringStage.REFERENCE);
     }
 
 }

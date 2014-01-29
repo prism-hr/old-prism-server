@@ -222,7 +222,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     private BigDecimal averageRating;
 
     @Column(name = "use_custom_reference_questions")
-    private Boolean useCustomReferenceQuestions = null;
+    private Boolean useCustomReferenceQuestions = false;
 
     @OneToOne(mappedBy = "applicationForm", fetch = FetchType.LAZY)
     private ApplicationFormTransfer applicationFormTransfer;

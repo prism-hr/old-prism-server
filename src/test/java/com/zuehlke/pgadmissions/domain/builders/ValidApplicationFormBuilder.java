@@ -190,6 +190,16 @@ public class ValidApplicationFormBuilder {
                 .qualification(qualification1, qualification2).status(ApplicationFormStatus.APPROVED).submittedDate(new Date()).cv(cvDocument)
                 .personalStatement(personalStatement).referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");
         applicationForm = getApplicationFormBuilder().build();
+        
+        personalDetails.setApplication(applicationForm);
+        qualification1.setApplication(applicationForm);
+        qualification2.setApplication(applicationForm);
+        employmentPosition.setApplication(applicationForm);
+        funding.setApplication(applicationForm);
+        refereeOne.setApplication(applicationForm);
+        refereeTwo.setApplication(applicationForm);
+        additionalInformation.setApplication(applicationForm);
+        
         return applicationForm;
     }
 

@@ -119,4 +119,9 @@ public class CreateNewOpportunityController {
         return programInstanceService.getDistinctStudyOptions();
     }
 
+    @ModelAttribute("advertisingDeadlines")
+    public List<Integer> getAdvertisingDeadlines() {
+        return opportunitiesService.getPossibleAdvertisingDeadlines();
+    }
+
 }

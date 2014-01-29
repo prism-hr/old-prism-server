@@ -86,18 +86,18 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     @Test
     public void shouldSendDigestToUsers() {
         
-        List<Integer> potentialUsersForTaskReminder = new ArrayList<Integer>(2);
-        List<Integer> potentialUsersForTaskNotification = new ArrayList<Integer>(2);
-        List<Integer> usersForUpdateNotification = new ArrayList<Integer>(2);
+        List<RegisteredUser> potentialUsersForTaskReminder = new ArrayList<RegisteredUser>(2);
+        List<RegisteredUser> potentialUsersForTaskNotification = new ArrayList<RegisteredUser>(2);
+        List<RegisteredUser> usersForUpdateNotification = new ArrayList<RegisteredUser>(2);
    
-        for (Integer i = 1; i < 7; i++) {
-            RegisteredUser user = new RegisteredUserBuilder().id(i).username("user" + i.toString()).build();
-            if (i < 3) {    
-                potentialUsersForTaskReminder.add(user.getId());
-            } else if (i < 5) {
-                potentialUsersForTaskNotification.add(user.getId());
-            } else if (i < 7) {
-                usersForUpdateNotification.add(user.getId());
+        for (int i = 0; i < 6; i++) {
+            Integer userId = i + 1;
+            if (userId < 3) {
+                potentialUsersForTaskReminder.add(new RegisteredUserBuilder().id(userId).username("user" + userId.toString()).build());
+            } else if (userId < 5) {
+                potentialUsersForTaskNotification.add(new RegisteredUserBuilder().id(userId).username("user" + userId.toString()).build());
+            } else if (userId < 7) {
+                usersForUpdateNotification.add(new RegisteredUserBuilder().id(userId).username("user" + userId.toString()).build());
             }
         }
        
@@ -109,12 +109,12 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         expect(thisServiceMock.getUsersForTaskNotification(EasyMock.isA(Date.class))).andReturn(potentialUsersForTaskNotification);
         expect(thisServiceMock.getUsersForUpdateNotification(EasyMock.isA(Date.class))).andReturn(usersForUpdateNotification);
         
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(potentialUsersForTaskReminder.get(0)), DigestNotificationType.TASK_REMINDER)).andReturn(true);
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(potentialUsersForTaskReminder.get(1)), DigestNotificationType.TASK_REMINDER)).andReturn(true);
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(potentialUsersForTaskNotification.get(0)), DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(potentialUsersForTaskNotification.get(1)), DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(usersForUpdateNotification.get(0)), DigestNotificationType.UPDATE_NOTIFICATION)).andReturn(true);
-        expect(thisServiceMock.sendDigestEmail(userDAOMock.get(usersForUpdateNotification.get(1)), DigestNotificationType.UPDATE_NOTIFICATION)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskReminder.get(0), DigestNotificationType.TASK_REMINDER)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskReminder.get(1), DigestNotificationType.TASK_REMINDER)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskNotification.get(0), DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskNotification.get(1), DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(usersForUpdateNotification.get(0), DigestNotificationType.UPDATE_NOTIFICATION)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(usersForUpdateNotification.get(1), DigestNotificationType.UPDATE_NOTIFICATION)).andReturn(true);
 
         replay(userDAOMock, applicationContextMock, thisServiceMock);
         service.sendDigestsToUsers();
@@ -125,6 +125,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     public void shouldSendUpdateEmail() {
         RegisteredUser user = new RegisteredUserBuilder().id(8).username("bebok").build();
         expect(mockMailSender.resolveSubject(EmailTemplateName.DIGEST_UPDATE_NOTIFICATION, (Object) null)).andReturn("Ahoj!");
+        expect(userDAOMock.initialise(user)).andReturn(user);
         Capture<PrismEmailMessage> messageCapture = new Capture<PrismEmailMessage>();
         mockMailSender.sendEmail(capture(messageCapture));
 
@@ -165,7 +166,9 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         String subjectToReturn = "REMINDER: " + SAMPLE_APPLICANT_NAME + " " + SAMPLE_APPLICANT_SURNAME + " " + "Application " + SAMPLE_APPLICATION_NUMBER
                 + " for UCL " + SAMPLE_PROGRAM_TITLE + " - Reference Request";
 
-        expect(refereeDAOMock.getRefereesDueReminder()).andReturn(asList(referee.getId()));
+        expect(refereeDAOMock.getRefereesDueReminder()).andReturn(asList(referee));
+
+        expect(refereeDAOMock.initialise(referee)).andReturn(referee);
 
         expect(
                 mockMailSender.resolveSubject(REFEREE_REMINDER, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE, SAMPLE_APPLICANT_NAME,
@@ -210,8 +213,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         String subjectToReturn = "REMINDER: " + SAMPLE_APPLICANT_NAME + " " + SAMPLE_APPLICANT_SURNAME + " " + "Application " + SAMPLE_APPLICATION_NUMBER
                 + " for UCL " + SAMPLE_PROGRAM_TITLE + " - Reference Request";
 
-        expect(interviewParticipantDAOMock.getInterviewParticipantsDueReminder()).andReturn(Arrays.asList(participant.getId()));
-
+        expect(interviewParticipantDAOMock.getInterviewParticipantsDueReminder()).andReturn(Arrays.asList(participant));
+        expect(interviewParticipantDAOMock.initialise(participant)).andReturn(participant);
 
         expect(
                 mockMailSender.resolveSubject(EmailTemplateName.INTERVIEW_VOTE_REMINDER, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE,

@@ -16,13 +16,14 @@ import com.zuehlke.pgadmissions.domain.PassportInformation;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.SelfReferringImportedObject;
 
 @Component
 public class ApplicationFormCopyHelper {
 
     @Autowired
     private DocumentDAO documentDAO;
-    
+
     @Transactional
     public void copyApplicationFormData(ApplicationForm to, ApplicationForm from) {
         if (from.getPersonalDetails() != null) {
@@ -109,11 +110,11 @@ public class ApplicationFormCopyHelper {
     }
 
     private void copyQualification(Qualification to, Qualification from) {
-        to.setInstitutionCountry(from.getInstitutionCountry());
+        to.setInstitutionCountry(getEnabledImportedObject(from.getInstitutionCountry()));
         to.setQualificationInstitution(from.getQualificationInstitution());
         to.setQualificationInstitutionCode(from.getQualificationInstitutionCode());
         to.setOtherQualificationInstitution(from.getOtherQualificationInstitution());
-        to.setQualificationType(from.getQualificationType());
+        to.setQualificationType(getEnabledImportedObject(from.getQualificationType()));
         to.setQualificationTitle(from.getQualificationTitle());
         to.setQualificationSubject(from.getQualificationSubject());
         to.setQualificationLanguage(from.getQualificationLanguage());
@@ -130,9 +131,9 @@ public class ApplicationFormCopyHelper {
         to.setTitle(from.getTitle());
         to.setGender(from.getGender());
         to.setDateOfBirth(from.getDateOfBirth());
-        to.setCountry(from.getCountry());
-        to.setFirstNationality(from.getFirstNationality());
-        to.setSecondNationality(from.getSecondNationality());
+        to.setCountry(getEnabledImportedObject(from.getCountry()));
+        to.setFirstNationality(getEnabledImportedObject(from.getFirstNationality()));
+        to.setSecondNationality(getEnabledImportedObject(from.getSecondNationality()));
         to.setEnglishFirstLanguage(from.getEnglishFirstLanguage());
         to.setLanguageQualificationAvailable(from.getLanguageQualificationAvailable());
 
@@ -145,7 +146,7 @@ public class ApplicationFormCopyHelper {
             languageQualification.setPersonalDetails(to);
         }
 
-        to.setResidenceCountry(from.getResidenceCountry());
+        to.setResidenceCountry(getEnabledImportedObject(from.getResidenceCountry()));
         to.setRequiresVisa(from.getRequiresVisa());
         to.setPassportAvailable(from.getPassportAvailable());
 
@@ -159,8 +160,8 @@ public class ApplicationFormCopyHelper {
 
         to.setPhoneNumber(from.getPhoneNumber());
         to.setMessenger(from.getMessenger());
-        to.setEthnicity(from.getEthnicity());
-        to.setDisability(from.getDisability());
+        to.setEthnicity(getEnabledImportedObject(from.getEthnicity()));
+        to.setDisability(getEnabledImportedObject(from.getDisability()));
     }
 
     private void copyPassportInformation(PassportInformation to, PassportInformation from) {
@@ -193,8 +194,8 @@ public class ApplicationFormCopyHelper {
         to.setAddress3(from.getAddress3());
         to.setAddress4(from.getAddress4());
         to.setAddress5(from.getAddress5());
-        to.setDomicile(from.getDomicile());
-        
+        to.setDomicile(getEnabledImportedObject(from.getDomicile()));
+
         return to;
     }
 
@@ -208,10 +209,22 @@ public class ApplicationFormCopyHelper {
         to.setContentType(from.getContentType());
         to.setFileName(from.getFileName());
         to.setContent(from.getContent());
-        
+
         documentDAO.save(to);
-        
+
         return to;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends SelfReferringImportedObject> T getEnabledImportedObject(T object) {
+        if (object == null || object.getEnabled() || object.getEnabledObject() == null) {
+            return object;
+        }
+        return (T) object.getEnabledObject();
+    }
+
+    void setDocumentDAO(DocumentDAO documentDAO) {
+        this.documentDAO = documentDAO;
     }
 
 }

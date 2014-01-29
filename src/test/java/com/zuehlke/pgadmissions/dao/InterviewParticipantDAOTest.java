@@ -55,9 +55,9 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         save(interview);
         flushAndClearSession();
 
-        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
+        List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertNotNull(participants);
-        assertTrue(participants.get(0).equals(participant.getId()));
+        assertTrue(participants.get(0).getId().equals(participant.getId()));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         save(interview);
         flushAndClearSession();
         
-        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
+        List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertTrue(participants.size() == 0);
     }
 
@@ -96,7 +96,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         save(interview);
         flushAndClearSession();
 
-        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
+        List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertTrue(participants.size() == 0);
     }
 
@@ -116,7 +116,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         save(interview);
         flushAndClearSession();
 
-        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
+        List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertTrue(participants.size() == 0);
     }
 
@@ -136,7 +136,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         save(interview);
         flushAndClearSession();
 
-        List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
+        List<InterviewParticipant> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertTrue(participants.size() == 0);
     }
 

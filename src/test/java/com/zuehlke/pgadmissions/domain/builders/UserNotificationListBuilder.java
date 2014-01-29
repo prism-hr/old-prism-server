@@ -54,8 +54,8 @@ public class UserNotificationListBuilder {
         this.roleWithoutUpdateNotification = getDummyRole(Authority.ADMINISTRATOR, false);
     }
 
-    public HashMap<Integer, RegisteredUserTestHarness> builtTestInstances() {
-        HashMap<Integer, RegisteredUserTestHarness> testHarnesses = new HashMap<Integer, RegisteredUserTestHarness>();
+    public HashMap<RegisteredUser, RegisteredUserTestHarness> builtTestInstances() {
+        HashMap<RegisteredUser, RegisteredUserTestHarness> testHarnesses = new HashMap<RegisteredUser, RegisteredUserTestHarness>();
         for (int i = 0; i < testIterations; i++) {
             int testInstance = 0;
             for (NotificationListTestScenario testScenario : NotificationListTestScenario.values()) {
@@ -63,7 +63,7 @@ public class UserNotificationListBuilder {
                 case TASKREMINDERSUCCESS:
                     for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
                         RegisteredUserTestHarness userHarness = buildInstanceThatRequiresTaskReminder(allocateTestUser(i, testInstance), testScenario, testCase);
-                        testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
+                        testHarnesses.put(userHarness.getRegisteredUser(), userHarness);
                         taskReminderSuccessCount++;
                         testInstance++;
                     }
@@ -71,14 +71,14 @@ public class UserNotificationListBuilder {
                 case TASKREMINDERFAILURE:
                     for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
                         RegisteredUserTestHarness userHarness = buildInstanceThatDoesNotRequireTaskReminder(allocateTestUser(i, testInstance), testScenario, testCase);
-                        testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
+                        testHarnesses.put(userHarness.getRegisteredUser(), userHarness);
                         testInstance++;
                     }
                     break;
                 case TASKNOTIFICATIONSUCCESS:
                     for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
                         RegisteredUserTestHarness userHarness = buildInstanceThatRequiresTaskNotification(allocateTestUser(i, testInstance), testScenario, testCase);
-                        testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
+                        testHarnesses.put(userHarness.getRegisteredUser(), userHarness);
                         taskNotificationSuccessCount++;
                         testInstance++;
                     }
@@ -86,14 +86,14 @@ public class UserNotificationListBuilder {
                 case TASKNOTIFICATIONFAILURE:
                     for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
                         RegisteredUserTestHarness userHarness = buildInstanceThatDoesNotRequireTaskNotification(allocateTestUser(i, testInstance), testScenario, testCase);
-                        testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
+                        testHarnesses.put(userHarness.getRegisteredUser(), userHarness);
                         testInstance++;
                     }
                     break;
                 case UPDATENOTIFICATIONSUCCESS:
                     for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
                         RegisteredUserTestHarness userHarness = buildInstanceThatRequiresUpdateNotification(allocateTestUser(i, testInstance), testScenario, testCase);
-                        testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
+                        testHarnesses.put(userHarness.getRegisteredUser(), userHarness);
                         updateNotificationSuccessCount++;
                         testInstance++;
                     }
@@ -101,7 +101,7 @@ public class UserNotificationListBuilder {
                 case UPDATENOTIFICATIONFAILURE:
                     for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
                         RegisteredUserTestHarness userHarness = buildInstanceThatDoesNotRequireUpdateNotification(allocateTestUser(i, testInstance), testScenario, testCase);
-                        testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
+                        testHarnesses.put(userHarness.getRegisteredUser(), userHarness);
                         testInstance++;
                     }
                     break;

@@ -24,6 +24,7 @@ public class ImportedDataDAOTest extends AutomaticRollbackTestCase {
         Disability disability4 = new DisabilityBuilder().code("idTest1").name("name4").enabled(false).enabledObject(disability1).build();
 
         save(disability1, disability2, disability3, disability4);
+        flushAndClearSession();
 
         List<ImportedObject> returned = importedDataDAO.getDisabledImportedObjectsWithoutActiveReference(Disability.class);
         assertEquals(1, returned.size());

@@ -70,8 +70,8 @@ public class OpportunityRequest {
     @Temporal(value = TemporalType.DATE)
     private Date applicationStartDate;
 
-    @Column(name = "advertising_duration")
-    private Integer advertisingDuration;
+    @Column(name = "advertising_dealine_year")
+    private Integer advertisingDeadlineYear;
 
     @Transient
     private Integer studyDurationNumber;
@@ -183,12 +183,12 @@ public class OpportunityRequest {
         this.applicationStartDate = applicationStartDate;
     }
 
-    public Integer getAdvertisingDuration() {
-        return advertisingDuration;
+    public Integer getAdvertisingDeadlineYear() {
+        return advertisingDeadlineYear;
     }
 
-    public void setAdvertisingDuration(Integer advertisingDuration) {
-        this.advertisingDuration = advertisingDuration;
+    public void setAdvertisingDeadlineYear(Integer advertisingDeadlineYear) {
+        this.advertisingDeadlineYear = advertisingDeadlineYear;
     }
 
     public Integer getStudyDurationNumber() {

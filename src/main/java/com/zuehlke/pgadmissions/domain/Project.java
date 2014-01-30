@@ -58,7 +58,7 @@ public class Project implements Serializable {
     @JoinColumn(name = "administrator_id")
     private RegisteredUser administrator;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
     private List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
 
     public Integer getId() {

@@ -29,6 +29,10 @@ public class AdvertService {
     public List<Advert> getActiveAdverts() {
         return advertDAO.getActiveAdverts();
     }
+    
+    public List<Advert> getRecommendedAdverts(String applicationNumber) {
+        return advertDAO.getRecommendedAdverts(applicationNumber);
+    }
 
     public Program getProgram(Advert advert) {
         return advertDAO.getProgram(advert);

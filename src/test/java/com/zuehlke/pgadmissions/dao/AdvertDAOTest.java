@@ -24,7 +24,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void setUp() {
-        advertDAO = new AdvertDAO(sessionFactory, new RoleDAO());
+        advertDAO = new AdvertDAO(sessionFactory);
     }
 
     @Test

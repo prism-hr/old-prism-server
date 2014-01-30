@@ -144,6 +144,15 @@ public class AdvertsController {
         map.put("adverts", activeAdverts);
         return new Gson().toJson(map);
     }
+    
+    @RequestMapping(value = "/recommendedOpportunities", method = RequestMethod.GET)
+    @ResponseBody
+    public String recommendedAdverts(@RequestParam("applicationNumber") String applicationNumber) {
+        Map<String, Object> map = Maps.newHashMap();
+        List<AdvertDTO> recommendedAdverts = convertAdverts(advertService.getRecommendedAdverts(applicationNumber));
+        map.put("adverts", recommendedAdverts);
+        return new Gson().toJson(map);
+    }
 
     @SuppressWarnings("rawtypes")
     @RequestMapping(value = "/feeds", method = RequestMethod.GET, produces = "application/json")

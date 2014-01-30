@@ -1,12 +1,18 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -35,6 +41,11 @@ public class Advert implements Serializable {
 
     @Column(name = "active")
     private Boolean active = true;
+    
+    @Column(name = "last_edited_timestamp", insertable = false)
+    @Generated(GenerationTime.ALWAYS)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastEditedTimestamp;
     
     public Integer getId() {
         return id;
@@ -103,6 +114,10 @@ public class Advert implements Serializable {
     	}
     	
     	return studyDurationToRead.toString() + " " + timeIntervalToRead;
+    }
+
+    public Date getLastEditedTimestamp() {
+        return lastEditedTimestamp;
     }
     
 }

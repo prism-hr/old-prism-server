@@ -24,7 +24,7 @@ public class OpportunityRequestBuilder {
     private Boolean atasRequired;
     private String studyOptions;
     private Date applicationStartDate;
-    private Integer advertisingDuration;
+    private Integer advertisingDeadlineYear;
     private Integer studyDurationNumber;
     private String studyDurationUnit;
 
@@ -93,8 +93,8 @@ public class OpportunityRequestBuilder {
         return this;
     }
 
-    public OpportunityRequestBuilder advertisingDuration(Integer advertisingDuration) {
-        this.advertisingDuration = advertisingDuration;
+    public OpportunityRequestBuilder advertisingDeadlineYear(Integer advertisingDeadlineYear) {
+        this.advertisingDeadlineYear = advertisingDeadlineYear;
         return this;
     }
 
@@ -123,19 +123,20 @@ public class OpportunityRequestBuilder {
         request.setAtasRequired(atasRequired);
         request.setStudyOptions(studyOptions);
         request.setApplicationStartDate(applicationStartDate);
-        request.setAdvertisingDuration(advertisingDuration);
+        request.setAdvertisingDeadlineYear(advertisingDeadlineYear);
         request.setStudyDurationNumber(studyDurationNumber);
         request.setStudyDurationUnit(studyDurationUnit);
         return request;
     }
 
     public static OpportunityRequestBuilder aOpportunityRequest(RegisteredUser author, Domicile institutionCountry) {
-        Date yesterday = new DateTime().minusDays(1).toDate();
-        Date inAWeek = new DateTime().plusWeeks(1).toDate();
+        DateTime date = new DateTime(2014, 3, 14, 0, 0);
+        DateTime inAWeek = date.plusWeeks(1);
 
-        return new OpportunityRequestBuilder().author(author).createdDate(yesterday).institutionCode("AGH").institutionCountry(institutionCountry)
-                .programDescription("This is really amazing Opportunity!").programTitle("Amazing Opportunity").advertisingDuration(2)
-                .applicationStartDate(inAWeek).atasRequired(true).studyDuration(24).studyDurationNumber(2).studyDurationUnit("YEARS").studyOptions("B+++++,F+++++");
+        return new OpportunityRequestBuilder().author(author).createdDate(date.toDate()).institutionCode("AGH").institutionCountry(institutionCountry)
+                .programDescription("This is really amazing Opportunity!").programTitle("Amazing Opportunity").advertisingDeadlineYear(2014)
+                .applicationStartDate(inAWeek.toDate()).atasRequired(true).studyDuration(24).studyDurationNumber(2).studyDurationUnit("YEARS")
+                .studyOptions("B+++++,F+++++");
     }
 
 }

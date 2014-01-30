@@ -240,7 +240,8 @@ public class ProgramInstanceServiceTest {
     public void shouldCreateNewCustomProgramInstances() {
         ProgramInstanceService thisBean = EasyMockUnitils.createMock(ProgramInstanceService.class);
         Date applicationStartDate = new DateTime(2014, 3, 14, 0, 0).toDate();
-        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().applicationStartDate(applicationStartDate).advertisingDuration(2).build();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().applicationStartDate(applicationStartDate).advertisingDeadlineYear(2016)
+                .build();
         Program program = new Program();
         DateTime monday2013 = new DateTime(2013, 9, 23, 0, 0);
         DateTime monday2014 = new DateTime(2014, 9, 22, 0, 0);
@@ -250,8 +251,7 @@ public class ProgramInstanceServiceTest {
         StudyOption partTimeOption = new StudyOption("P", "Part-time");
 
         expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
-        expect(thisBean.getStudyOptions(opportunityRequest))
-                .andReturn(Lists.newArrayList(fullTimeOption, partTimeOption));
+        expect(thisBean.getStudyOptions(opportunityRequest)).andReturn(Lists.newArrayList(fullTimeOption, partTimeOption));
         expect(thisBean.getCustomProgramInstanceStartYear(isA(DateTime.class), isA(DateTime.class))).andReturn(2013);
         expect(thisBean.findPenultimateSeptemberMonday(2013)).andReturn(monday2013);
         expect(thisBean.findPenultimateSeptemberMonday(2014)).andReturn(monday2014).times(2);
@@ -271,9 +271,9 @@ public class ProgramInstanceServiceTest {
         assertProgramInstance(instances.get(4), program, opportunityRequest, monday2015, monday2016, fullTimeOption);
         assertProgramInstance(instances.get(5), program, opportunityRequest, monday2015, monday2016, partTimeOption);
     }
-    
+
     @Test
-    public void shouldGetCustomProgramInstanceStartYearWhenBeforeSeptemberMonday(){
+    public void shouldGetCustomProgramInstanceStartYearWhenBeforeSeptemberMonday() {
         DateTime intendedStartDate = new DateTime(2014, 1, 22, 0, 0);
         DateTime now = new DateTime(2013, 1, 22, 0, 0);
         int startYear = service.getCustomProgramInstanceStartYear(intendedStartDate, now);
@@ -281,52 +281,52 @@ public class ProgramInstanceServiceTest {
     }
 
     @Test
-    public void shouldGetCustomProgramInstanceStartYearWhenAfterSeptemberMonday(){
+    public void shouldGetCustomProgramInstanceStartYearWhenAfterSeptemberMonday() {
         DateTime intendedStartDate = new DateTime(2014, 1, 22, 0, 0);
         DateTime now = new DateTime(2014, 9, 22, 0, 0);
         int startYear = service.getCustomProgramInstanceStartYear(intendedStartDate, now);
         assertEquals(2014, startYear);
     }
-    
+
     @Test
-    public void shouldFindPenultimateSeptemberMonday(){
+    public void shouldFindPenultimateSeptemberMonday() {
         assertEquals(new DateTime(2013, 9, 23, 0, 0), service.findPenultimateSeptemberMonday(2013));
         assertEquals(new DateTime(2014, 9, 22, 0, 0), service.findPenultimateSeptemberMonday(2014));
         assertEquals(new DateTime(2015, 9, 21, 0, 0), service.findPenultimateSeptemberMonday(2015));
     }
-    
+
     @Test
-    public void shouldGetStudyOptions(){
+    public void shouldGetStudyOptions() {
         ProgramInstanceService thisBean = EasyMockUnitils.createMock(ProgramInstanceService.class);
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyOptions("P+++,F+++").build();
-        
+
         expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
-        StudyOption partOption = new StudyOption("P+++",  "Part-time");
-        StudyOption fullOption = new StudyOption("F+++",  "Fart-time");
-        StudyOption modularOption = new StudyOption("B+++",  "Modular");
+        StudyOption partOption = new StudyOption("P+++", "Part-time");
+        StudyOption fullOption = new StudyOption("F+++", "Fart-time");
+        StudyOption modularOption = new StudyOption("B+++", "Modular");
         expect(thisBean.getDistinctStudyOptions()).andReturn(Lists.newArrayList(partOption, fullOption, modularOption));
-        
+
         replay();
-        List<StudyOption> studyOptions = service.getStudyOptions(opportunityRequest );
+        List<StudyOption> studyOptions = service.getStudyOptions(opportunityRequest);
         verify();
-        
+
         assertThat(studyOptions, containsInAnyOrder(partOption, fullOption));
     }
-    
+
     @Test
-    public void souldDisableLapsedInstances(){
+    public void souldDisableLapsedInstances() {
         ProgramInstance instance1 = new ProgramInstanceBuilder().enabled(true).build();
         ProgramInstance instance2 = new ProgramInstanceBuilder().enabled(true).build();
         expect(programInstanceDAO.getLapsedInstances()).andReturn(Lists.newArrayList(instance1, instance2));
-        
+
         replay();
         service.disableLapsedInstances();
         verify();
-        
+
         assertFalse(instance1.getEnabled());
         assertFalse(instance2.getEnabled());
     }
-    
+
     private void assertProgramInstance(ProgramInstance programInstance, Program program, OpportunityRequest opportunityRequest, DateTime startDate,
             DateTime deadline, StudyOption studyOption) {
         assertEquals(startDate.toDate(), programInstance.getApplicationStartDate());

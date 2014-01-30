@@ -106,7 +106,7 @@ public class AdvertDAO {
                 .add(Restrictions.neProperty("user", "applicationFormUserRole2.user"))
                 .add(Restrictions.in("applicationFormUserRole2.role", Arrays.asList(Authority.APPLICANT, Authority.INTERVIEWER, Authority.REVIEWER,
                         Authority.SUGGESTEDSUPERVISOR, Authority.STATEADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR, Authority.SUPERVISOR)))
-                .add(Restrictions.eq("project.disabled", false)) 
+                .add(Restrictions.eq("project.disabled", false))
                 .add(Restrictions.eq("advert.active", true)).list());
         adverts.addAll((List<Advert>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .setProjection(Projections.groupProperty("project2.advert"))
@@ -115,14 +115,15 @@ public class AdvertDAO {
                 .createAlias("project.applications", "application2", JoinType.INNER_JOIN)
                 .createAlias("application2.applicationFormUserRoles", "applicationFormUserRole2", JoinType.INNER_JOIN)
                 .createAlias("applicationFormUserRole2.applicationForm", "application3", JoinType.INNER_JOIN)
-                .createAlias("application3.project", "project2", JoinType.INNER_JOIN)
+                .createAlias("application3.program", "program2", JoinType.INNER_JOIN)
+                .createAlias("program.projects", "project2")
                 .createAlias("project2.advert", "advert", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("role", roleDAO.getRoleByAuthority(Authority.APPLICANT)))
                 .add(Restrictions.neProperty("user", "applicationFormUserRole2.user"))
                 .add(Restrictions.in("applicationFormUserRole2.role", Arrays.asList(Authority.APPLICANT, Authority.INTERVIEWER, Authority.REVIEWER,
                         Authority.SUGGESTEDSUPERVISOR, Authority.STATEADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR, Authority.SUPERVISOR)))
-                .add(Restrictions.eq("project.disabled", false)) 
+                .add(Restrictions.eq("project2.disabled", false)) 
                 .add(Restrictions.eq("advert.active", true)).list());
         List<Advert> deduplicatedAdverts = new ArrayList<Advert>(adverts);
         Collections.shuffle(deduplicatedAdverts);

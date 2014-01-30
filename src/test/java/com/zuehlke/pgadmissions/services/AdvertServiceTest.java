@@ -28,7 +28,7 @@ public class AdvertServiceTest {
 	@Test
 	public void shouldGetAdvertsFromDAO(){
 		List<Advert> result = Collections.<Advert>emptyList();
-		expect(dao.getActiveProgramAdverts()).andReturn(result);
+		expect(dao.getActiveAdverts()).andReturn(result);
 		replay(dao);
 		List<Advert> activeAdverts = advertService.getActiveAdverts();
 		assertThat(activeAdverts, Matchers.is(result));

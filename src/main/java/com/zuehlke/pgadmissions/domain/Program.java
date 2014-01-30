@@ -23,7 +23,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -76,7 +75,6 @@ public class Program extends Authorisable implements Serializable {
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
-    @OrderBy("")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "program")
@@ -91,6 +89,9 @@ public class Program extends Authorisable implements Serializable {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id")
     private Advert advert;
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
+    private List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
 
     public Program() {
     }
@@ -270,6 +271,10 @@ public class Program extends Authorisable implements Serializable {
             }
         };
         return Iterables.find(getClosingDates(), findById, null);
+    }
+
+    public List<ApplicationForm> getApplications() {
+        return applications;
     }
 
 }

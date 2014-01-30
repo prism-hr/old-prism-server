@@ -40,7 +40,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
         save(inactiveProgramAdvert, programAdvert);
         flushAndClearSession();
 
-        List<Advert> activeAdverts = advertDAO.getActiveProgramAdverts();
+        List<Advert> activeAdverts = advertDAO.getActiveAdverts();
         assertThat(activeAdverts.size(), greaterThanOrEqualTo(1));
         assertTrue(advertInList(programAdvert, activeAdverts));
     }

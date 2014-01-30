@@ -27,7 +27,7 @@ public class AdvertService {
     }
 
     public List<Advert> getActiveAdverts() {
-        return advertDAO.getActiveProgramAdverts();
+        return advertDAO.getActiveAdverts();
     }
 
     public Program getProgram(Advert advert) {

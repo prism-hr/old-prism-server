@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -54,6 +57,9 @@ public class Project implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "administrator_id")
     private RegisteredUser administrator;
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
+    private List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
 
     public Integer getId() {
         return id;
@@ -129,6 +135,10 @@ public class Project implements Serializable {
 
     public boolean isAcceptingApplications() {
         return !disabled && advert != null && advert.getActive();
+    }
+
+    public List<ApplicationForm> getApplications() {
+        return applications;
     }
 
 }

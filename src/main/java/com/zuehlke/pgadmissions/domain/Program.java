@@ -91,6 +91,9 @@ public class Program extends Authorisable implements Serializable {
     private Advert advert;
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
+    private List<Project> projects = new ArrayList<Project>();
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     private List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
 
     public Program() {
@@ -271,6 +274,10 @@ public class Program extends Authorisable implements Serializable {
             }
         };
         return Iterables.find(getClosingDates(), findById, null);
+    }
+
+    public List<Project> getProjects() {
+        return projects;
     }
 
     public List<ApplicationForm> getApplications() {

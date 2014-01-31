@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -172,6 +173,11 @@ public class ProgramsService {
         
         programDAO.save(program);
         return program;
+    }
+    
+    public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {
+        program.getClosingDates().add(programClosingDate);
+        programDAO.save(program);
     }
 
     protected String generateNextProgramCode(QualificationInstitution institution) {

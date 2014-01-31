@@ -1,0 +1,2 @@
+UPDATE APPLICATION_FORM_REFEREE SET last_notified =(select APPLICATION_FORM.submitted_on_timestamp from APPLICATION_FORM where  APPLICATION_FORM_REFEREE.application_form_id = APPLICATION_FORM.id) where last_notified is null
+;

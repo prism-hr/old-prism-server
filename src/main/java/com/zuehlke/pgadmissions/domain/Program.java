@@ -1,15 +1,10 @@
 package com.zuehlke.pgadmissions.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,17 +18,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Entity(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -77,9 +67,10 @@ public class Program extends Authorisable implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "program")
-    @Sort(type = SortType.COMPARATOR, comparator = ProgramClosingDate.class)
-    private SortedSet<ProgramClosingDate> closingDates = new TreeSet<ProgramClosingDate>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_id", nullable = false)
+    @OrderBy("closingDate DESC")
+    private List<ProgramClosingDate> closingDates = new ArrayList<ProgramClosingDate>();
 
     @MapKey(name = "stage")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -194,11 +185,11 @@ public class Program extends Authorisable implements Serializable {
         this.advert = advert;
     }
 
-    public SortedSet<ProgramClosingDate> getClosingDates() {
+    public List<ProgramClosingDate> getClosingDates() {
         return closingDates;
     }
 
-    public void setClosingDates(SortedSet<ProgramClosingDate> closingDates) {
+    public void setClosingDates(List<ProgramClosingDate> closingDates) {
         this.closingDates = closingDates;
     }
 
@@ -217,63 +208,9 @@ public class Program extends Authorisable implements Serializable {
     public void setProgramFeed(ProgramFeed programFeed) {
         this.programFeed = programFeed;
     }
-
-    public boolean addClosingDate(ProgramClosingDate closingDate) {
-        checkNotNull(closingDate);
-        if (containsClosingDate(closingDate.getClosingDate())) {
-            throw new IllegalArgumentException("Already Exists");
-        }
-        closingDate.setProgram(this);
-        return closingDates.add(closingDate);
-    }
-
-    public ProgramClosingDate getClosingDate(final Date date) {
-        checkNotNull(date);
-        Predicate<ProgramClosingDate> findByDate = new Predicate<ProgramClosingDate>() {
-            @Override
-            public boolean apply(ProgramClosingDate closingDate) {
-                return DateUtils.truncateToDay(date).equals(closingDate.getClosingDate());
-            }
-        };
-        return Iterables.find(getClosingDates(), findByDate, null);
-    }
-
-    public void removeClosingDate(Integer closingDateId) {
-        checkNotNull(closingDateId);
-        closingDates.remove(getClosingDate(closingDateId));
-    }
-
-    public boolean containsClosingDate(Date date) {
-        return getClosingDate(date) != null;
-    }
-
-    public boolean updateClosingDate(ProgramClosingDate closingDate) {
-        checkNotNull(closingDate);
-        ProgramClosingDate storedDate = getClosingDate(closingDate.getId());
-        if (closingDate.compareTo(storedDate) != 0 && containsClosingDate(closingDate.getClosingDate())) {
-            throw new IllegalArgumentException("Already Exists");
-        }
-        if (storedDate != null) {
-            storedDate.setClosingDate(closingDate.getClosingDate());
-            storedDate.setStudyPlaces(closingDate.getStudyPlaces());
-            return true;
-        }
-        return false;
-    }
     
     public List<ScoringStage> getCustomQuestionCoverage() {
         return new ArrayList<ScoringStage>(getScoringDefinitions().keySet());
-    }
-
-    private ProgramClosingDate getClosingDate(final Integer id) {
-        checkNotNull(id);
-        Predicate<ProgramClosingDate> findById = new Predicate<ProgramClosingDate>() {
-            @Override
-            public boolean apply(ProgramClosingDate closingDate) {
-                return id.equals(closingDate.getId());
-            }
-        };
-        return Iterables.find(getClosingDates(), findById, null);
     }
 
     public List<Project> getProjects() {

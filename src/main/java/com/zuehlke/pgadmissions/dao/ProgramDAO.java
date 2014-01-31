@@ -41,7 +41,8 @@ public class ProgramDAO {
     }
 
     public List<Program> getAllPrograms() {
-        return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+        return sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .addOrder(Order.asc("title")).list();
     }
 
@@ -54,7 +55,8 @@ public class ProgramDAO {
     }
 
     public Program getProgramByCode(String code) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code)).uniqueResult();
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .add(Restrictions.eq("code", code)).uniqueResult();
     }
     
 	public void merge(Program program) {
@@ -81,7 +83,8 @@ public class ProgramDAO {
     
     
     public Date getNextClosingDateForProgram(Program program, Date today) {
-        List<Date> result = (List<Date>) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class).setProjection(Projections.property("closingDate"))
+        List<Date> result = (List<Date>) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
+                .setProjection(Projections.property("closingDate"))
                 .add(Restrictions.eq("program", program))
                 .add(Restrictions.gt("closingDate", today))
                 .addOrder(Order.asc("closingDate"))

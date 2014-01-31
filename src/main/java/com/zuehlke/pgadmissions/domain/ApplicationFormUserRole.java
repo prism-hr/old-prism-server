@@ -58,8 +58,8 @@ public class ApplicationFormUserRole implements Serializable {
     @Column(name = "assigned_timestamp")
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date assignedTimestamp = new Date();
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_user_role_id", nullable = false)
     private List<ApplicationFormActionRequired> actions = new ArrayList<ApplicationFormActionRequired>();
 

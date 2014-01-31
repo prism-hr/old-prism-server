@@ -42,7 +42,7 @@ public class Advert implements Serializable {
     @Column(name = "active")
     private Boolean active = true;
     
-    @Column(name = "last_edited_timestamp", insertable = false)
+    @Column(name = "last_edited_timestamp", insertable = true)
     @Generated(GenerationTime.ALWAYS)
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastEditedTimestamp;
@@ -118,6 +118,10 @@ public class Advert implements Serializable {
 
     public Date getLastEditedTimestamp() {
         return lastEditedTimestamp;
+    }
+
+    public void setLastEditedTimestamp(Date lastEditedTimestamp) {
+        this.lastEditedTimestamp = lastEditedTimestamp;
     }
     
 }

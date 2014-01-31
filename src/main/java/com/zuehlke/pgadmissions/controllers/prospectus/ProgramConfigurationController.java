@@ -149,7 +149,7 @@ public class ProgramConfigurationController {
             dataMap.put("advertId", advert.getId());
         }
         result.put("isCustomProgram", program.getProgramFeed() == null);
-        result.put("possibleAdvertisingDeadlines", programInstanceService.getPossibleAdvertisingDeadlines(program));
+        result.put("possibleAdvertisingDeadlines", programInstanceService.getPossibleAdvertisingDeadlineYears());
         result.put("advertisingDeadline", programInstanceService.getAdvertisingDeadlineYear(program));
         result.put("studyOptions", programInstanceService.getStudyOptions(program));
         result.put("buttonToApply", templateRenderer.renderButton(dataMap));

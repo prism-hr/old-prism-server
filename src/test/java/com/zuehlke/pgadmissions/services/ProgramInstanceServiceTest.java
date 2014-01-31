@@ -238,26 +238,18 @@ public class ProgramInstanceServiceTest {
     public void shouldCreateNewCustomProgramInstances() {
         ProgramInstanceService thisBean = EasyMockUnitils.createMock(ProgramInstanceService.class);
         Program program = new Program();
-        DateTime monday2013 = new DateTime(2013, 9, 23, 0, 0);
-        DateTime monday2014 = new DateTime(2014, 9, 22, 0, 0);
-        DateTime monday2015 = new DateTime(2015, 9, 21, 0, 0);
-        DateTime monday2016 = new DateTime(2016, 9, 19, 0, 0);
         StudyOption fullTimeOption = new StudyOption("F", "Full-time");
         StudyOption partTimeOption = new StudyOption("P", "Part-time");
 
         expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
         expect(thisBean.getStudyOptions(Lists.newArrayList("F", "P"))).andReturn(Lists.newArrayList(fullTimeOption, partTimeOption));
         expect(thisBean.getFirstProgramInstanceStartYear(isA(DateTime.class))).andReturn(2013);
-        expect(thisBean.findPenultimateSeptemberMonday(2013)).andReturn(monday2013);
-        expect(thisBean.findPenultimateSeptemberMonday(2014)).andReturn(monday2014).times(2);
-        expect(thisBean.findPenultimateSeptemberMonday(2015)).andReturn(monday2015).times(2);
-        expect(thisBean.findPenultimateSeptemberMonday(2016)).andReturn(monday2016);
-        expect(thisBean.createOrUpdateProgramInstance(program, 2013, monday2013, monday2014, fullTimeOption)).andReturn(new ProgramInstance());
-        expect(thisBean.createOrUpdateProgramInstance(program, 2013, monday2013, monday2014, partTimeOption)).andReturn(new ProgramInstance());
-        expect(thisBean.createOrUpdateProgramInstance(program, 2014, monday2014, monday2015, fullTimeOption)).andReturn(new ProgramInstance());
-        expect(thisBean.createOrUpdateProgramInstance(program, 2014, monday2014, monday2015, partTimeOption)).andReturn(new ProgramInstance());
-        expect(thisBean.createOrUpdateProgramInstance(program, 2015, monday2015, monday2016, fullTimeOption)).andReturn(new ProgramInstance());
-        expect(thisBean.createOrUpdateProgramInstance(program, 2015, monday2015, monday2016, partTimeOption)).andReturn(new ProgramInstance());
+        expect(thisBean.createOrUpdateProgramInstance(program, 2013, fullTimeOption)).andReturn(new ProgramInstance());
+        expect(thisBean.createOrUpdateProgramInstance(program, 2013, partTimeOption)).andReturn(new ProgramInstance());
+        expect(thisBean.createOrUpdateProgramInstance(program, 2014, fullTimeOption)).andReturn(new ProgramInstance());
+        expect(thisBean.createOrUpdateProgramInstance(program, 2014, partTimeOption)).andReturn(new ProgramInstance());
+        expect(thisBean.createOrUpdateProgramInstance(program, 2015, fullTimeOption)).andReturn(new ProgramInstance());
+        expect(thisBean.createOrUpdateProgramInstance(program, 2015, partTimeOption)).andReturn(new ProgramInstance());
 
         replay();
         List<ProgramInstance> instances = service.createRemoveProgramInstances(program, Lists.newArrayList("F", "P"), 2016);
@@ -320,38 +312,46 @@ public class ProgramInstanceServiceTest {
 
     @Test
     public void shouldUpdateProgramInstance() {
+        ProgramInstanceService thisBean = EasyMockUnitils.createMock(ProgramInstanceService.class);
         Program program = new Program();
-        DateTime startDate = new DateTime(2013, 3, 4, 0, 0);
-        DateTime deadline = new DateTime(2014, 3, 4, 0, 0);
+        DateTime monday2013 = new DateTime(2013, 9, 23, 0, 0);
+        DateTime monday2014 = new DateTime(2014, 9, 22, 0, 0);
         StudyOption fullTimeOption = new StudyOption("F", "Full-time");
         ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).build();
 
-        expect(programInstanceDAO.getProgramInstance(program, fullTimeOption, startDate.toDate())).andReturn(programInstance);
+        expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
+        expect(thisBean.findPenultimateSeptemberMonday(2013)).andReturn(monday2013);
+        expect(thisBean.findPenultimateSeptemberMonday(2014)).andReturn(monday2014);
+        expect(programInstanceDAO.getProgramInstance(program, fullTimeOption, monday2013.toDate())).andReturn(programInstance);
         programInstanceDAO.save(programInstance);
 
         replay();
-        ProgramInstance returned = service.createOrUpdateProgramInstance(program, 2013, startDate, deadline, fullTimeOption);
+        ProgramInstance returned = service.createOrUpdateProgramInstance(program, 2013, fullTimeOption);
         verify();
 
         assertSame(programInstance, returned);
-        assertProgramInstance(programInstance, program, startDate, "2013", deadline, fullTimeOption);
+        assertProgramInstance(programInstance, program, monday2013, "2013", monday2014, fullTimeOption);
     }
 
     @Test
     public void shouldCreateProgramInstance() {
+        ProgramInstanceService thisBean = EasyMockUnitils.createMock(ProgramInstanceService.class);
         Program program = new Program();
-        DateTime startDate = new DateTime(2013, 3, 4, 0, 0);
-        DateTime deadline = new DateTime(2014, 3, 4, 0, 0);
+        DateTime monday2013 = new DateTime(2013, 9, 23, 0, 0);
+        DateTime monday2014 = new DateTime(2014, 9, 22, 0, 0);
         StudyOption fullTimeOption = new StudyOption("F", "Full-time");
 
-        expect(programInstanceDAO.getProgramInstance(program, fullTimeOption, startDate.toDate())).andReturn(null);
+        expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
+        expect(thisBean.findPenultimateSeptemberMonday(2013)).andReturn(monday2013);
+        expect(thisBean.findPenultimateSeptemberMonday(2014)).andReturn(monday2014);
+        expect(programInstanceDAO.getProgramInstance(program, fullTimeOption, monday2013.toDate())).andReturn(null);
         programInstanceDAO.save(isA(ProgramInstance.class));
 
         replay();
-        ProgramInstance returned = service.createOrUpdateProgramInstance(program, 2013, startDate, deadline, fullTimeOption);
+        ProgramInstance returned = service.createOrUpdateProgramInstance(program, 2013, fullTimeOption);
         verify();
 
-        assertProgramInstance(returned, program, startDate, "2013", deadline, fullTimeOption);
+        assertProgramInstance(returned, program, monday2013, "2013", monday2014, fullTimeOption);
         assertThat(program.getInstances(), contains(returned));
     }
 

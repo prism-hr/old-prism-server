@@ -136,39 +136,40 @@ public class ProgramInstanceService {
     }
 
     @Transactional
-    public List<ProgramInstance> createRemoveProgramInstances(Program program, List<String> studyOptionCodes, 
-            int advertisingDeadlineYear) {
+    public List<ProgramInstance> createRemoveProgramInstances(Program program, List<String> studyOptionCodes, int advertisingDeadlineYear) {
         ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
-        
+
         // disable all existing instances
-        for(ProgramInstance existingInstance : program.getInstances()){
+        for (ProgramInstance existingInstance : program.getInstances()) {
             existingInstance.setEnabled(false);
         }
-        
+
         List<ProgramInstance> instances = Lists.newLinkedList();
 
         List<StudyOption> studyOptions = thisBean.getStudyOptions(studyOptionCodes);
         int startYear = thisBean.getFirstProgramInstanceStartYear(new DateTime());
 
         for (; startYear < advertisingDeadlineYear; startYear++) {
-            DateTime startDate = thisBean.findPenultimateSeptemberMonday(startYear);
-            DateTime deadline = thisBean.findPenultimateSeptemberMonday(startYear + 1);
-
             for (StudyOption studyOption : studyOptions) {
-                ProgramInstance programInstance = thisBean.createOrUpdateProgramInstance(program, startYear, startDate, deadline, studyOption);
+                ProgramInstance programInstance = thisBean.createOrUpdateProgramInstance(program, startYear, studyOption);
                 instances.add(programInstance);
             }
         }
         return instances;
     }
 
-    protected ProgramInstance createOrUpdateProgramInstance(Program program, int startYear, DateTime startDate, DateTime deadline, StudyOption studyOption) {
+    protected ProgramInstance createOrUpdateProgramInstance(Program program, int startYear, StudyOption studyOption) {
+        ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
+        DateTime startDate = thisBean.findPenultimateSeptemberMonday(startYear);
+        DateTime deadline = thisBean.findPenultimateSeptemberMonday(startYear + 1);
+
         ProgramInstance programInstance = programInstanceDAO.getProgramInstance(program, studyOption, startDate.toDate());
-        if(programInstance == null){
+        if (programInstance == null) {
             programInstance = new ProgramInstance();
             programInstance.setProgram(program);
             program.getInstances().add(programInstance);
         }
+
         programInstance.setApplicationStartDate(startDate.toDate());
         programInstance.setAcademicYear(Integer.toString(startYear));
         programInstance.setApplicationDeadline(deadline.toDate());
@@ -225,21 +226,15 @@ public class ProgramInstanceService {
         }
     }
 
-    public List<Integer> getPossibleAdvertisingDeadlines(Program program) {
-        int startYear;
-        if (program != null && !program.getInstances().isEmpty()) {
-            // application start date of the first instance
-            startYear = new DateTime(program.getInstances().get(0).getApplicationStartDate()).getYear();
-        } else {
-            startYear = new DateTime().getYear();
+    public List<Integer> getPossibleAdvertisingDeadlineYears() {
+        int deadlineYear = new DateTime().getYear();
+        if (new DateTime().getMonthOfYear() >= DateTimeConstants.SEPTEMBER) {
+            deadlineYear++;
         }
 
-        if (new DateTime().getMonthOfYear() >= DateTimeConstants.SEPTEMBER) {
-            startYear++;
-        }
         List<Integer> advertisingDeadlines = Lists.newArrayListWithCapacity(10);
         for (int i = 0; i < 10; i++) {
-            advertisingDeadlines.add(startYear + i);
+            advertisingDeadlines.add(deadlineYear + i);
         }
         return advertisingDeadlines;
     }

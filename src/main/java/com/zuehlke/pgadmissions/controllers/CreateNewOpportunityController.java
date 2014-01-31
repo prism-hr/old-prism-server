@@ -121,7 +121,7 @@ public class CreateNewOpportunityController {
 
     @ModelAttribute("advertisingDeadlines")
     public List<Integer> getAdvertisingDeadlines() {
-        return programInstanceService.getPossibleAdvertisingDeadlines(null);
+        return programInstanceService.getPossibleAdvertisingDeadlineYears();
     }
 
 }

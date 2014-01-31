@@ -68,7 +68,7 @@
                   </div>
                 </div>
                 
-                <div class="row">
+                <div class="row" id="programAdvertStudyOptionsDiv">
                   <label class="plain-label" for="programAdvertStudyOptionsSelect">Study Options<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.studyOptions'/>"></span>
                   <div class="field">
@@ -82,7 +82,7 @@
                   </div>
                 </div>
                 
-                <div class="row">
+                <div class="row" id="programAdvertAdvertisingDeadlineYearDiv">
                   <label class="plain-label" for="advertisingDeadlineYear">Advertise deadline<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.advertisingDeadlineYear'/>"></span>
                   <div class="field">

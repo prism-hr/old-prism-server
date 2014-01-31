@@ -462,6 +462,12 @@ function saveAdvert() {
                 if (map['active']) {
                     $("#programAdvertIsActiveDiv").append(getErrorMessageHTML(map['active']));
                 }
+                if (map['studyOptions']) {
+                    $("#programAdvertStudyOptionsDiv").append(getErrorMessageHTML(map['studyOptions']));
+                }
+                if (map['advertiseDeadlineYear']) {
+                    $("#programAdvertAdvertisingDeadlineYearDiv").append(getErrorMessageHTML(map['advertiseDeadlineYear']));
+                }
                 checkIfErrors();
             } else {
                 var programme_name = $("#programAdvertProgramSelect option:selected").text();

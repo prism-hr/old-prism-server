@@ -172,14 +172,14 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         log.trace("Sending reference reminder to users");
         List<Integer> refereeIds = refereeDAO.getRefereesDueReminder();
         for (Integer refereeId : refereeIds) {
-            final Referee referee = refereeDAO.getRefereeById(refereeId);
-            applicationContext.getBean(this.getClass()).sendReferenceReminder(referee);
+            applicationContext.getBean(this.getClass()).sendReferenceReminder(refereeId);
         }
         log.trace("Finished sending reference reminder to users");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendReferenceReminder(Referee referee) {
+    public boolean sendReferenceReminder(Integer refereeId) {
+        final Referee referee = refereeDAO.getRefereeById(refereeId);
         PrismEmailMessage message;
         try {
             String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
@@ -204,14 +204,14 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         log.trace("Sending interview scheduling reminder to users");
         List<Integer> participantIds = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         for (Integer participantId : participantIds) {
-            final InterviewParticipant participant = interviewParticipantDAO.getParticipantById(participantId);
-            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participant);
+            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participantId);
         }
         log.trace("Sending interview scheduling reminder to users");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendInterviewParticipantVoteReminder(InterviewParticipant participant) {
+    public boolean sendInterviewParticipantVoteReminder(Integer participantId) {
+        final InterviewParticipant participant = interviewParticipantDAO.getParticipantById(participantId);
         try {
             PrismEmailMessage message;
             ApplicationForm application = participant.getInterview().getApplication();

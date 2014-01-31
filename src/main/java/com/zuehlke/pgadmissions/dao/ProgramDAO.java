@@ -79,23 +79,7 @@ public class ProgramDAO {
                .add(eq("u.user", user))
                .setProjection(distinct(property("a.program")))
                .list();
-    }
-    
-    
-    public Date getNextClosingDateForProgram(Program program, Date today) {
-        List<Date> result = (List<Date>) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
-                .setProjection(Projections.property("closingDate"))
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.gt("closingDate", today))
-                .addOrder(Order.asc("closingDate"))
-                .setMaxResults(1)
-                .list();
-        if (result.isEmpty()) {
-            return null;
-        }
-        return result.get(0);
-    }
-    
+	}
     
 	public List<Program> getProgramsOfWhichPreviousSupervisor(RegisteredUser user){
 	    return sessionFactory.getCurrentSession().createCriteria(Supervisor.class, "s")
@@ -119,17 +103,44 @@ public class ProgramDAO {
             .add(Restrictions.eq("id", id)).uniqueResult();
     }
     
-    public ProgramClosingDate getClosingDateByDate(final Date date) {
+    public ProgramClosingDate getClosingDateByDate(final Program program, final Date date) {
         return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
-                .add(Restrictions.eq("closingDate", date)).uniqueResult();
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("closingDate", date))
+                .addOrder(Order.desc("id"))
+                .setMaxResults(1).uniqueResult();
+    }
+    
+    public ProgramClosingDate getNextClosingDate(Program program) {
+        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.ge("closingDate", new Date()))
+                .addOrder(Order.desc("id"))
+                .setMaxResults(1).uniqueResult();
     }
 
     public void updateClosingDate(ProgramClosingDate closingDate) {
-        sessionFactory.getCurrentSession().update(closingDate);
+        if (closingDate != null) {
+            Program program = closingDate.getProgram();
+            if (program != null) {
+                sessionFactory.getCurrentSession().update(closingDate);
+                save(program);
+            }
+        }
     }
     
     public void deleteClosingDate(ProgramClosingDate closingDate) {
-        sessionFactory.getCurrentSession().delete(closingDate);
+        if (closingDate != null) {
+            Program program = closingDate.getProgram();
+            if (program != null) {
+                sessionFactory.getCurrentSession().delete(closingDate);
+                save(program);
+            }
+        }
+    }
+    
+    public RegisteredUser getFirstAdministratorForProgram(Program program) {
+        return program.getAdministrators().get(0);
     }
     
 }

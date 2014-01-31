@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -8,12 +9,16 @@ import org.springframework.validation.ValidationUtils;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 
 @Component
 public class OpportunityRequestValidator extends AbstractValidator {
 
     @Autowired
     private RegisterFormValidator registerFormValidator;
+
+    @Autowired
+    private ProgramInstanceService programInstanceService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -51,13 +56,16 @@ public class OpportunityRequestValidator extends AbstractValidator {
             errors.rejectValue("studyDurationUnit", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
 
-        // validate advertising duration
-        if (opportunityRequest.getAdvertisingDuration() == null) {
-            errors.rejectValue("advertisingDuration", EMPTY_DROPDOWN_ERROR_MESSAGE);
-        } else if (opportunityRequest.getAdvertisingDuration() < 1) {
-            errors.rejectValue("advertisingDuration", "Min", new Object[] { null, "0" }, null);
-        } else if (opportunityRequest.getAdvertisingDuration() > 5) {
-            errors.rejectValue("advertisingDuration", "Max", new Object[] { null, "6" }, null);
+        // validate advertising deadline
+        if (opportunityRequest.getAdvertisingDeadlineYear() == null) {
+            errors.rejectValue("advertisingDeadlineYear", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        } else if (opportunityRequest.getApplicationStartDate() != null) {
+            int startYear = programInstanceService.getCustomProgramInstanceStartYear(new DateTime(opportunityRequest.getApplicationStartDate()), new DateTime());
+            if (opportunityRequest.getAdvertisingDeadlineYear() <= startYear) {
+                errors.rejectValue("advertisingDeadlineYear", "Min", new Object[] { null, startYear }, null);
+            } else if (opportunityRequest.getAdvertisingDeadlineYear() > startYear + 10) {
+                errors.rejectValue("advertisingDeadlineYear", "Max", new Object[] { null, startYear + 10 }, null);
+            }
         }
 
         // validate an author
@@ -70,5 +78,9 @@ public class OpportunityRequestValidator extends AbstractValidator {
 
     void setRegisterFormValidator(RegisterFormValidator registerFormValidator) {
         this.registerFormValidator = registerFormValidator;
+    }
+    
+    void setProgramInstanceService(ProgramInstanceService programInstanceService) {
+        this.programInstanceService = programInstanceService;
     }
 }

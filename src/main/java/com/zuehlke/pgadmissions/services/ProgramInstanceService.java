@@ -139,12 +139,12 @@ public class ProgramInstanceService {
     @Transactional
     public List<ProgramInstance> createNewCustomProgramInstances(OpportunityRequest opportunityRequest, Program program) {
         ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
-        List<ProgramInstance> instances = Lists.newArrayListWithCapacity(opportunityRequest.getAdvertisingDuration() + 1);
+        List<ProgramInstance> instances = Lists.newLinkedList();
 
         List<StudyOption> studyOptions = thisBean.getStudyOptions(opportunityRequest);
         int startYear = thisBean.getCustomProgramInstanceStartYear(new DateTime(opportunityRequest.getApplicationStartDate()), new DateTime());
 
-        for (int i = 0; i <= opportunityRequest.getAdvertisingDuration(); i++, startYear++) {
+        for (; startYear < opportunityRequest.getAdvertisingDeadlineYear(); startYear++) {
             DateTime startDate = thisBean.findPenultimateSeptemberMonday(startYear);
             DateTime deadline = thisBean.findPenultimateSeptemberMonday(startYear + 1);
 
@@ -168,7 +168,7 @@ public class ProgramInstanceService {
         return instances;
     }
 
-    protected int getCustomProgramInstanceStartYear(DateTime intendedStartDate, DateTime now) {
+    public int getCustomProgramInstanceStartYear(DateTime intendedStartDate, DateTime now) {
         DateTime startDate = now;
 
         if (intendedStartDate.isAfter(startDate)) {

@@ -6,59 +6,96 @@
           	  <input type="hidden" id="programAdvertId" value=""/>
               
               <div class="row-group">
-              	<div class="row" id="programAdvertProgramDiv">
+              	<div class="row" id="programAdvertSelectProgramDiv">
                   <label for="programAdvertProgramSelect" class="plain-label">Select Programme<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
                   <div class="field forLabel">
                       <select id="programAdvertProgramSelect" class="max selectpicker" data-live-search="true" data-size="6" >
-                          <option value="">Select...</option> <#list programmes as programme>
-                          <option value="${programme.code}"<#if program?? && programme.code == program.code>selected</#if> > ${programme.title?html}</option> </#list>
+                          <option value="">Select...</option>
+                          <option value="NEW_PROGRAM">Create New Program...</option>
+                          <#list programmes as programme>
+                            <option value="${programme.code}"<#if program?? && programme.code == program.code>selected</#if> > ${programme.title?html}</option>
+                          </#list>
                       </select>
+                  </div>
+                </div>
+              	<div class="row" id="programAdvertNewProgramNameDiv" style="display:none">
+                  <label for="programAdvertNewProgramName" class="plain-label">New programme name<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
+                  <div class="field forLabel">
+                    <input id="programAdvertNewProgramName" name="title" class="input-xxlarge" type="text">
+                    <a id="programAdvertCancelNewProgramBtn" role="button" class="btn btn-danger">Cancel</a>
                   </div>
                 </div>
               </div>  
               <div class="row-group" id="advertGroup">
-                  <h3>Advert</h3>
-                    <div class="infoBar alert alert-info" id="infoBarProgram">
-                      <i class="icon-info-sign"></i> Manage the advert for your programme here.
+                <h3>Advert</h3>
+                <div class="infoBar alert alert-info" id="infoBarProgram">
+                  <i class="icon-info-sign"></i> Manage the advert for your programme here.
+                </div>
+                <div class="row" id="programAdvertDescriptionDiv">
+                  <label for="programAdvertDescriptionText" class="plain-label">Description<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.description'/>"></span>
+                  <div class="field">
+                    <textarea id="programAdvertDescriptionText" class="max" rows="6" cols="150"></textarea>
                   </div>
-                    <div class="row" id="programAdvertDescriptionDiv">
-                      <label for="programAdvertDescriptionText" class="plain-label">Description<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.description'/>"></span>
-                      <div class="field">
-                          <textarea id="programAdvertDescriptionText" class="max" rows="6" cols="150"></textarea>
-                      </div>
-                    </div>
-                    <div class="row" id="programAdvertStudyDurationDiv">
-                      <label for="programAdvertStudyDurationInput" class="plain-label">Duration of Study<em>*</em>
-                      </label> <span class="hint" data-desc="<@spring.message 'prospectus.durationOfStudy'/>"></span>
-                      <div class="field">
-                          <input class="numeric input-small" type="text" size="4" id="programAdvertStudyDurationInput" />
-                          <select id="programAdvertStudyDurationUnitSelect" class="input-small">
-                              <option value="">Select...</option>
-                              <option value="Months">Months</option>
-                              <option value="Years">Years</option>
-                          </select>
-                      </div>
-                    </div>
-                    <div class="row" id="programAdvertFundingDiv">
-                      <label for="programAdvertFundingText" class="plain-label">Funding Information</label> <span class="hint" data-desc="<@spring.message 'prospectus.fundingInformation'/>"></span>
-                      <div class="field">
-                          <textarea id="programAdvertFundingText" class="max" rows="6" cols="150"></textarea>
-                      </div>
-                    </div>
-                    <div class="row" id="programAdvertIsActiveDiv">
-                  <label class="plain-label">Are you currently accepting applications?<em>*</em>
-                  </label> <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
+                </div>
+                <div class="row" id="programAdvertStudyDurationDiv">
+                  <label for="programAdvertStudyDurationInput" class="plain-label">Duration of Study<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'prospectus.durationOfStudy'/>"></span>
+                  <div class="field">
+                    <input class="numeric input-small" type="text" size="4" id="programAdvertStudyDurationInput" />
+                    <select id="programAdvertStudyDurationUnitSelect" class="input-small">
+                      <option value="">Select...</option>
+                      <option value="Months">Months</option>
+                      <option value="Years">Years</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row" id="programAdvertFundingDiv">
+                  <label for="programAdvertFundingText" class="plain-label">Funding Information</label> <span class="hint" data-desc="<@spring.message 'prospectus.fundingInformation'/>"></span>
+                  <div class="field">
+                    <textarea id="programAdvertFundingText" class="max" rows="6" cols="150"></textarea>
+                  </div>
+                </div>
+                <div class="row" id="programAdvertIsActiveDiv">
+                  <label class="plain-label">Are you currently accepting applications?<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>
                   <div class="field">
                     <input id="programAdvertIsActiveRadioYes" type="radio" name="switch" value="true">
-                    Yes
+                      Yes
                     </input>
                     <input id="programAdvertIsActiveRadioNo" type="radio" name="switch" value="false">
-                    No
+                      No
                     </input>
                   </div>
                 </div>
+                
                 <div class="row">
-                	<div class="field"><button class="btn btn-primary" type="button" id="programAdvertSave">Save</button></div>
+                  <label class="plain-label" for="programAdvertStudyOptionsSelect">Study Options<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.studyOptions'/>"></span>
+                  <div class="field">
+                    <select multiple size="3" class="full" id="programAdvertStudyOptionsSelect">
+                      <#list studyOptions as studyOption>
+                        <option value="${studyOption.id}">
+                          ${studyOption.name?html}
+                        </option>
+                      </#list>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <label class="plain-label" for="advertisingDeadlineYear">Advertise deadline<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.advertisingDeadlineYear'/>"></span>
+                  <div class="field">
+                    <select class="full" id="programAdvertAdvertisingDeadlineYear">
+                      <option value="">Select...</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="row">
+                	<div class="field">
+                	  <button class="btn btn-primary" type="button" id="programAdvertSave">Save</button>
+                	</div>
                 </div>
               </div>
               <div class="row-group">

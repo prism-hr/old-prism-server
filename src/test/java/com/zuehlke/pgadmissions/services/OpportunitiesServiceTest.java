@@ -103,7 +103,8 @@ public class OpportunitiesServiceTest {
 
         expect(opportunityRequestDAO.findById(8)).andReturn(request);
         expect(programsService.createNewCustomProgram(request)).andReturn(program);
-        expect(programInstanceService.createNewCustomProgramInstances(request, program)).andReturn(Lists.newArrayList(programInstance1, programInstance2));
+        expect(programInstanceService.createRemoveProgramInstances(program, Lists.newArrayList("B+++++", "F+++++"), 2014)).andReturn(
+                Lists.newArrayList(programInstance1, programInstance2));
 
         replay();
         service.approveOpportunityRequest(8, newOpportunityRequest);
@@ -118,7 +119,6 @@ public class OpportunitiesServiceTest {
         assertEquals(newOpportunityRequest.getProgramDescription(), request.getProgramDescription());
         assertEquals(newOpportunityRequest.getStudyDuration(), request.getStudyDuration());
         assertEquals(newOpportunityRequest.getAtasRequired(), request.getAtasRequired());
-        assertEquals(newOpportunityRequest.getApplicationStartDate(), request.getApplicationStartDate());
         assertEquals(newOpportunityRequest.getAdvertisingDeadlineYear(), request.getAdvertisingDeadlineYear());
         assertEquals(newOpportunityRequest.getStudyOptions(), request.getStudyOptions());
     }

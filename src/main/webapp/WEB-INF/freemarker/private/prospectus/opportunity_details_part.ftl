@@ -156,20 +156,6 @@
 </div>
 
 <div class="row">
-  <label class="plain-label" for="applicationStartDate">Application Start Date<em>*</em></label>
-  <span class="hint" data-desc="<@spring.message 'opportunityRequest.applicationStartDate'/>"></span>
-  <div class="field">
-    <input class="half date" type="text" value="${(opportunityRequest.applicationStartDate?string('dd MMM yyyy'))!}" name="applicationStartDate" id="applicationStartDate" />                      
-    <@spring.bind "opportunityRequest.applicationStartDate" />
-    <#list spring.status.errorMessages as error>
-      <div class="alert alert-error">
-       <i class="icon-warning-sign"></i>${error}
-      </div>
-    </#list>
-  </div>
-</div>
-
-<div class="row">
   <label class="plain-label" for="advertisingDeadlineYear">Advertise deadline<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.advertisingDeadlineYear'/>"></span>
   <div class="field">

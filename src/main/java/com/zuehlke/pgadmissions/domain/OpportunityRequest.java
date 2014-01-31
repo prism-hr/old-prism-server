@@ -66,10 +66,6 @@ public class OpportunityRequest {
     @Column(name = "study_options")
     private String studyOptions;
 
-    @Column(name = "application_start_date")
-    @Temporal(value = TemporalType.DATE)
-    private Date applicationStartDate;
-
     @Column(name = "advertising_dealine_year")
     private Integer advertisingDeadlineYear;
 
@@ -173,14 +169,6 @@ public class OpportunityRequest {
 
     public void setStudyOptions(String studyOptions) {
         this.studyOptions = studyOptions;
-    }
-
-    public Date getApplicationStartDate() {
-        return applicationStartDate;
-    }
-
-    public void setApplicationStartDate(Date applicationStartDate) {
-        this.applicationStartDate = applicationStartDate;
     }
 
     public Integer getAdvertisingDeadlineYear() {

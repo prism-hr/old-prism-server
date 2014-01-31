@@ -168,26 +168,6 @@ public class ProgramsServiceTest {
     }
 
     @Test
-    public void shouldReturnClosingDatesMap() {
-        Program program1 = new ProgramBuilder().code("p1").id(1).build();
-        Program program2 = new ProgramBuilder().code("p2").id(2).build();
-        expect(programDAOMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
-
-        Capture<Date> dateCaptor = new Capture<Date>();
-        expect(programDAOMock.getNextClosingDateForProgram(eq(program1), EasyMock.capture(dateCaptor))).andReturn(new DateTime(2013, 2, 15, 00, 15).toDate());
-        expect(programDAOMock.getNextClosingDateForProgram(eq(program2), EasyMock.capture(dateCaptor))).andReturn(new DateTime(2013, 2, 13, 13, 15).toDate());
-
-        replay();
-        Map<String, String> result = programsService.getDefaultClosingDates();
-        verify();
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("15 Feb 2013", result.get("p1"));
-        Assert.assertEquals("13 Feb 2013", result.get("p2"));
-    }
-
-    @Test
     public void shouldGetProjectById() {
         Project project = EasyMock.createMock(Project.class);
         expect(projectDAOMock.getProjectById(1)).andReturn(project);

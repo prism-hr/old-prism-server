@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static junit.framework.Assert.assertSame;
 import static org.easymock.EasyMock.capture;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,15 +12,10 @@ import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-
-import junit.framework.Assert;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationContext;

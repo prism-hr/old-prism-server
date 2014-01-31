@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -193,7 +192,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         ProgramClosingDate badge1 = new ProgramClosingDateBuilder().closingDate(closingDates.minusMonths(1).toDate()).build();
         ProgramClosingDate badge2 = new ProgramClosingDateBuilder().closingDate(closingDates.plusMonths(1).toDate()).build();
         ProgramClosingDate badge3 = new ProgramClosingDateBuilder().closingDate(closingDates.plusMonths(2).toDate()).build();
-        Program program = new ProgramBuilder().code("code2").institution(institution).build();
+        Program program = new ProgramBuilder().code("code2").institution(institution).closingDates(badge1, badge2, badge3).build();
         badge1.setProgram(program);
         badge2.setProgram(program);
         badge3.setProgram(program);
@@ -202,46 +201,11 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        Date result = programDAO.getNextClosingDateForProgram(program, closingDates.toDate());
+        Date result = programDAO.getNextClosingDate(program).getClosingDate();
 
         Assert.assertNotNull(result);
 
         Assert.assertEquals(0, result.compareTo(badge2.getClosingDate()));
-    }
-
-    @Test
-    public void shouldReturnNullIfThereIsNoClosingDateAvailableForProgram() {
-        DateTime closingDates = new DateTime(2013, 05, 20, 00, 00);
-        ProgramClosingDate badge1 = new ProgramClosingDateBuilder().closingDate(closingDates.minusMonths(1).toDate()).build();
-        ProgramClosingDate badge2 = new ProgramClosingDateBuilder().closingDate(closingDates.plusMonths(1).toDate()).build();
-        ProgramClosingDate badge3 = new ProgramClosingDateBuilder().closingDate(closingDates.plusMonths(2).toDate()).build();
-        Program program = new ProgramBuilder().code("code3").institution(institution).build();
-        badge1.setProgram(program);
-        badge2.setProgram(program);
-        badge3.setProgram(program);
-
-        save(program, badge1, badge2, badge3);
-        flushAndClearSession();
-
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        Date result = programDAO.getNextClosingDateForProgram(program, closingDates.plusMonths(3).toDate());
-
-        Assert.assertNull(result);
-    }
-
-    @Test
-    public void shouldReturnNullIfProgramHasNoClosingDates() {
-        DateTime closingDates = new DateTime(2013, 05, 20, 00, 00);
-        Program program = new ProgramBuilder().code("code4").institution(institution).build();
-
-        save(program);
-        flushAndClearSession();
-
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        Date result = programDAO.getNextClosingDateForProgram(program, closingDates.toDate());
-
-        Assert.assertNull(result);
-
     }
     
     @Test
@@ -259,6 +223,64 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         Program returned = programDAO.getLastCustomProgram(institution);
 
         assertEquals(program2.getCode(), returned.getCode());
+    }
+    
+    @Test
+    public void shouldGetClosingDateById() {
+        ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
+        Program program = new ProgramBuilder().code("code").institution(institution).closingDates(putClosingDate).build();
+        sessionFactory.getCurrentSession().save(program);
+        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+        ProgramClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDate.getId());
+        assertEquals(putClosingDate, gotClosingDate);
+    }
+    
+    @Test
+    public void shouldGetClosingDateByDate() {
+        Date closingDate = new Date();
+        ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(closingDate).build();
+        Program program = new ProgramBuilder().code("code").institution(institution).closingDates(putClosingDate).build();
+        sessionFactory.getCurrentSession().save(program);
+        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+        ProgramClosingDate gotClosingDate = programDAO.getClosingDateByDate(program, closingDate);
+        assertEquals(putClosingDate, gotClosingDate);
+    }
+    
+    @Test
+    public void shouldUpdateClosingDate() {
+        DateTime dateToday = new DateTime(new Date());
+        DateTime truncatedDateToday = new DateTime(dateToday.getYear(), dateToday.getMonthOfYear(), dateToday.getDayOfMonth(), 0, 0, 0);
+        DateTime truncatedDateTomorrow = truncatedDateToday.plusDays(1);
+        Date testDateOne = truncatedDateToday.toDate();
+        Date testDateTwo= truncatedDateTomorrow.toDate();
+        ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(testDateOne).build();
+        Program program = new ProgramBuilder().code("code").institution(institution).closingDates(putClosingDate).build();
+        sessionFactory.getCurrentSession().save(program);
+        sessionFactory.getCurrentSession().flush();
+        sessionFactory.getCurrentSession().clear();
+        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+        ProgramClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDate.getId());
+        gotClosingDate.setClosingDate(testDateTwo);
+        programDAO.updateClosingDate(gotClosingDate);
+        sessionFactory.getCurrentSession().flush();
+        sessionFactory.getCurrentSession().clear();
+        assertEquals(gotClosingDate.getClosingDate(), testDateTwo);
+    }
+ 
+    @Test
+    public void shouldDeleteClosingDate() {
+        ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
+        Integer putClosingDateId = putClosingDate.getId();
+        Program program = new ProgramBuilder().code("code").institution(institution).closingDates(putClosingDate).build();
+        sessionFactory.getCurrentSession().save(program);
+        sessionFactory.getCurrentSession().flush();
+        sessionFactory.getCurrentSession().clear();
+        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+        programDAO.deleteClosingDate(putClosingDate);
+        sessionFactory.getCurrentSession().flush();
+        sessionFactory.getCurrentSession().clear();
+        ProgramClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDateId);
+        assertEquals(gotClosingDate, null);
     }
 
 }

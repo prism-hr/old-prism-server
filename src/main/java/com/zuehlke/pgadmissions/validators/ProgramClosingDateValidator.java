@@ -39,7 +39,7 @@ public class ProgramClosingDateValidator extends AbstractValidator {
         		errors.rejectValue("closingDate", MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE);
         	}
             if(program!=null){
-            	ProgramClosingDate existingDate = programDAO.getClosingDateByDate(date);
+            	ProgramClosingDate existingDate = programDAO.getClosingDateByDate(program, date);
             	if(existingDate!=null && (newClosingDate.getId()==null||newClosingDate.getId()!=existingDate.getId())){
             			errors.rejectValue("closingDate", PROSPECTUS_CLOSING_DATE_ALREADY_EXISTS);
             	}

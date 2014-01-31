@@ -30,6 +30,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.zuehlke.pgadmissions.controllers.prospectus.AdvertsController;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
@@ -53,6 +54,7 @@ public class AdvertsControllerTest {
     private AdvertsController controller;
     private AdvertService advertServiceMock;
     private ResearchOpportunitiesFeedService feedServiceMock;
+    private ProgramDAO programDAOMock;
     private ProgramsService programsServiceMock;
     private final static Integer NO_SELECTED_ADVERT = Integer.MIN_VALUE;
 
@@ -60,8 +62,9 @@ public class AdvertsControllerTest {
     public void setUp() {
         advertServiceMock = EasyMock.createMock(AdvertService.class);
         feedServiceMock = EasyMock.createMock(ResearchOpportunitiesFeedService.class);
+        programDAOMock = EasyMock.createMock(ProgramDAO.class);
         programsServiceMock = EasyMock.createMock(ProgramsService.class);
-        controller = new AdvertsController(advertServiceMock, feedServiceMock, programsServiceMock);
+        controller = new AdvertsController(advertServiceMock, feedServiceMock, programDAOMock, programsServiceMock);
     }
 
     @Test
@@ -137,7 +140,7 @@ public class AdvertsControllerTest {
         RegisteredUser credentialsExpiredAdmin = new RegisteredUserBuilder().email("invalidAccountEmail").credentialsNonExpired(false).build();
         RegisteredUser notEnabledAdmin = new RegisteredUserBuilder().email("invalidAccountEmail").enabled(false).build();
         RegisteredUser validAdmin = new RegisteredUserBuilder().email("accountEmail").build();
-        ;
+        
         Program program = new ProgramBuilder().code("code1").title("another title")
                 .closingDates(programClosingDateOld, programClosingDateSecond, programClosingDateFirst)
                 .administrators(expiredAdmin, lockedAdmin, credentialsExpiredAdmin, notEnabledAdmin, validAdmin).build();
@@ -174,15 +177,17 @@ public class AdvertsControllerTest {
 
     @Test
     public void shouldHaveSelectedAdvertAsFirstElement() {
-        Program program = new ProgramBuilder().code("code1").title("another title").build();
         Advert selectedAdvert = new AdvertBuilder().id(new Integer(1)).description("Advert").funding("Funding").studyDuration(1).build();
         Advert notSelectedAdvert = new AdvertBuilder().id(new Integer(2)).description("Advert").funding("Funding").studyDuration(1).build();
+        Program program = new ProgramBuilder().code("code1").title("another title").build();
+
         List<Advert> advertList = Arrays.asList(notSelectedAdvert, selectedAdvert);
 
         EasyMock.expect(advertServiceMock.getProgram(selectedAdvert)).andReturn(program);
         EasyMock.expect(advertServiceMock.getProgram(notSelectedAdvert)).andReturn(program);
         EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertServiceMock);
+        EasyMock.expect(programDAOMock.getNextClosingDate(program).getClosingDate()).andReturn(new Date());
+        EasyMock.replay(advertServiceMock, programDAOMock);
 
         String resultJson = controller.activeAdverts(new Integer(1));
 

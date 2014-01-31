@@ -116,4 +116,5 @@ public final class DateUtils {
         }
         return (int) duration;
     }
+    
 }

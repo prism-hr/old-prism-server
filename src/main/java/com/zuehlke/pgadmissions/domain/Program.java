@@ -70,7 +70,6 @@ public class Program extends Authorisable implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id", nullable = false)
-    @OrderBy("closingDate DESC")
     private List<ProgramClosingDate> closingDates = new ArrayList<ProgramClosingDate>();
 
     @MapKey(name = "stage")

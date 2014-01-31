@@ -4,19 +4,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.dto.ProgramOpportunityDTO;
 
 @Component
-public class ProgramAdvertValidator extends AbstractValidator {
+public class ProgramOpportunityDTOValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return Advert.class.equals(clazz);
+        return ProgramOpportunityDTO.class.equals(clazz);
     }
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        Advert programAdvert = (Advert) target;
+        ProgramOpportunityDTO programAdvert = (ProgramOpportunityDTO) target;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", EMPTY_FIELD_ERROR_MESSAGE);
         validateStudyDuration(errors, programAdvert.getStudyDuration());
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "active", EMPTY_DROPDOWN_ERROR_MESSAGE);

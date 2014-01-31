@@ -24,7 +24,7 @@ public class ProgramAdvertValidatorTest {
     @Autowired
     private Validator validator;
 
-    private ProgramAdvertValidator programAdvertValidator;
+    private ProgramOpportunityDTOValidator programAdvertValidator;
     private Advert programAdvert;
 
     @Before
@@ -34,7 +34,7 @@ public class ProgramAdvertValidatorTest {
         programAdvert.setStudyDuration(11);
         programAdvert.setFunding(null);
         programAdvert.setActive(true);
-        programAdvertValidator = new ProgramAdvertValidator();
+        programAdvertValidator = new ProgramOpportunityDTOValidator();
         programAdvertValidator.setValidator(validator);
     }
 

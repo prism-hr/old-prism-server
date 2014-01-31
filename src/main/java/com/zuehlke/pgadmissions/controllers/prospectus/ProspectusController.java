@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -20,19 +22,14 @@ public class ProspectusController {
 
     private static final String PROSPECTUS_PAGE = "/private/prospectus/prospectus";
 
-    private final UserService userService;
-
-    private final ProgramsService programsService;
-
-    public ProspectusController() {
-        this(null, null);
-    }
+    @Autowired
+    private UserService userService;
 
     @Autowired
-    public ProspectusController(UserService userService, ProgramsService programsService) {
-        this.userService = userService;
-        this.programsService = programsService;
-    }
+    private ProgramsService programsService;
+
+    @Autowired
+    private ProgramInstanceService programInstanceService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showProspectus() {
@@ -51,10 +48,15 @@ public class ProspectusController {
         }
         return userService.getCurrentUser().getProgramsOfWhichAdministrator();
     }
-    
+
     @ModelAttribute("projectProgrammes")
     public List<Program> getProjectProgrammes() {
         return programsService.getProgramsForWhichCanManageProjects(getUser());
+    }
+
+    @ModelAttribute("studyOptions")
+    public List<StudyOption> getDistinctStudyOptions() {
+        return programInstanceService.getDistinctStudyOptions();
     }
 
 }

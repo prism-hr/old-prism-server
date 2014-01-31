@@ -112,6 +112,24 @@ public class ProgramDAO {
                 .add(Restrictions.like("code", matcher));
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
                 .add(Property.forName("code").eq(maxCustomCode)).uniqueResult();
-    }	
+    }
+    
+    public ProgramClosingDate getClosingDateById(final Integer id) {
+        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
+            .add(Restrictions.eq("id", id)).uniqueResult();
+    }
+    
+    public ProgramClosingDate getClosingDateByDate(final Date date) {
+        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
+                .add(Restrictions.eq("closingDate", date)).uniqueResult();
+    }
 
+    public void updateClosingDate(ProgramClosingDate closingDate) {
+        sessionFactory.getCurrentSession().update(closingDate);
+    }
+    
+    public void deleteClosingDate(ProgramClosingDate closingDate) {
+        sessionFactory.getCurrentSession().delete(closingDate);
+    }
+    
 }

@@ -36,7 +36,6 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ProgramClosingDateService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
@@ -57,9 +56,6 @@ public class ProgramConfigurationController {
 
     @Autowired
     private ProgramsService programsService;
-
-    @Autowired
-    private ProgramClosingDateService programClosingDateService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -211,7 +207,7 @@ public class ProgramConfigurationController {
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
         } else {
-            programClosingDateService.updateClosingDate(programClosingDate);
+            programsService.updateClosingDate(programClosingDate);
             map = Collections.singletonMap("programClosingDate", (Object) programClosingDate);
         }
 
@@ -247,7 +243,7 @@ public class ProgramConfigurationController {
         }
 
         if (map.isEmpty()) {
-            programClosingDateService.deleteClosingDateById(closingDateId);
+            programsService.deleteClosingDateById(closingDateId);
             map.put("removedDate", closingDateId);
         }
         return gson.toJson(map);

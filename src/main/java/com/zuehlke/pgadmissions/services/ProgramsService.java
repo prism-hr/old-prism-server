@@ -175,8 +175,20 @@ public class ProgramsService {
         return program;
     }
     
+    public void updateClosingDate(ProgramClosingDate closingDate) {
+        Program program = closingDate.getProgram();
+        program.getAdvert().setLastEditedTimestamp(new Date());
+        programDAO.updateClosingDate(closingDate);
+    }
+    
+    public void deleteClosingDateById(Integer programClosingDateId) {
+        ProgramClosingDate programClosingDate = programDAO.getClosingDateById(programClosingDateId);
+        programDAO.deleteClosingDate(programClosingDate);
+    }
+    
     public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {
         program.getClosingDates().add(programClosingDate);
+        program.getAdvert().setLastEditedTimestamp(new Date());
         programDAO.save(program);
     }
 

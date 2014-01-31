@@ -13,7 +13,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -41,7 +41,6 @@ import com.zuehlke.pgadmissions.dto.ProjectAdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.ResearchOpportunitiesFeedService;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Controller
 @RequestMapping("/opportunities")
@@ -53,16 +52,20 @@ public class AdvertsController {
 
     private final ResearchOpportunitiesFeedService feedService;
 
+    private final ProgramDAO programDAO;
+
     private final ProgramsService programsService;
 
     public AdvertsController() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
-    public AdvertsController(final AdvertService advertService, final ResearchOpportunitiesFeedService feedService, final ProgramsService programsService) {
+    public AdvertsController(final AdvertService advertService, final ResearchOpportunitiesFeedService feedService, final ProgramDAO programDAO,
+            final ProgramsService programsService) {
         this.advertService = advertService;
         this.feedService = feedService;
+        this.programDAO = programDAO;
         this.programsService = programsService;
     }
 
@@ -144,7 +147,7 @@ public class AdvertsController {
         map.put("adverts", activeAdverts);
         return new Gson().toJson(map);
     }
-    
+
     @RequestMapping(value = "/recommendedOpportunities", method = RequestMethod.GET)
     @ResponseBody
     public String recommendedAdverts(@RequestParam("applicationNumber") String applicationNumber) {
@@ -214,8 +217,8 @@ public class AdvertsController {
                 dto = new AdvertDTO(input.getId());
                 dto.setProgramCode(program.getCode());
                 dto.setTitle(program.getTitle());
-                dto.setClosingDate(getFirstClosingDate(program));
-                Person primarySupervisor = getFirstValidAdministrator(program);
+                dto.setClosingDate(getNextClosingDate(program));
+                Person primarySupervisor = toPerson(programDAO.getFirstAdministratorForProgram(program));
                 dto.setPrimarySupervisor(primarySupervisor);
                 if (primarySupervisor != null) {
                     dto.setSupervisorEmail(primarySupervisor.getEmail());
@@ -230,7 +233,7 @@ public class AdvertsController {
                 projectDto.setProgramCode(program.getCode());
                 projectDto.setStudyDuration(project.getAdvert().getStudyDuration());
                 projectDto.setTitle(input.getTitle());
-                projectDto.setClosingDate(getFirstClosingDate(program));
+                projectDto.setClosingDate(getNextClosingDate(program));
                 RegisteredUser supervisor = project.getPrimarySupervisor();
                 projectDto.setPrimarySupervisor(toPerson(supervisor));
                 projectDto.setSupervisorEmail(supervisor.getEmail());
@@ -243,29 +246,6 @@ public class AdvertsController {
             return dto;
         }
 
-        private Date getFirstClosingDate(Program program) {
-            if (CollectionUtils.isEmpty(program.getClosingDates())) {
-                return null;
-            }
-            Date now = DateUtils.truncateToDay(new Date());
-            for (ProgramClosingDate closingDate : program.getClosingDates()) {
-                if (now.compareTo(closingDate.getClosingDate()) <= 0) {
-                    return closingDate.getClosingDate();
-                }
-            }
-            return null;
-        }
-
-        private Person getFirstValidAdministrator(Program program) {
-            List<RegisteredUser> administrators = program.getAdministrators();
-            for (RegisteredUser administrator : administrators) {
-                if (isValid(administrator)) {
-                    return toPerson(administrator);
-                }
-            }
-            return null;
-        }
-
         private Person toPerson(RegisteredUser user) {
             if (user == null) {
                 return null;
@@ -276,10 +256,15 @@ public class AdvertsController {
             person.setEmail(user.getEmail());
             return person;
         }
-
-        private boolean isValid(RegisteredUser admin) {
-            return admin != null && admin.isAccountNonExpired() && admin.isAccountNonLocked() && admin.isCredentialsNonExpired() && admin.isEnabled();
+        
+        private Date getNextClosingDate(Program program) {
+            ProgramClosingDate nextClosingDate = programDAO.getNextClosingDate(program);
+            if (nextClosingDate != null) {
+                return nextClosingDate.getClosingDate();
+            }
+            return null;
         }
+        
     }
-    
+
 }

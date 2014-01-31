@@ -120,5 +120,10 @@ public class EditOpportunityRequestController {
     public List<StudyOption> getDistinctStudyOptions() {
         return programInstanceService.getDistinctStudyOptions();
     }
+    
+    @ModelAttribute("advertisingDeadlines")
+    public List<Integer> getAdvertisingDeadlines() {
+        return opportunitiesService.getPossibleAdvertisingDeadlines();
+    }
 
 }

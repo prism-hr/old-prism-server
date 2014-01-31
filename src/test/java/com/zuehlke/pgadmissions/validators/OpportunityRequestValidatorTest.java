@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.validators;
 
 import static com.zuehlke.pgadmissions.validators.AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertTrue;
@@ -11,6 +12,7 @@ import javax.validation.Validator;
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -34,6 +37,8 @@ public class OpportunityRequestValidatorTest {
     private Validator validator;
 
     private RegisterFormValidator registerFormValidatorMock;
+    
+    private ProgramInstanceService programInstanceServiceMock;
 
     private OpportunityRequestValidator opportunityRequestValidator;
 
@@ -48,10 +53,15 @@ public class OpportunityRequestValidatorTest {
         opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(author, institutionCountry).build();
 
         registerFormValidatorMock = EasyMock.createMock(RegisterFormValidator.class);
-
+        programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
+        
+        expect(programInstanceServiceMock.getCustomProgramInstanceStartYear(isA(DateTime.class), isA(DateTime.class))).andReturn(2013);
+        replay(programInstanceServiceMock);
+        
         opportunityRequestValidator = new OpportunityRequestValidator();
         opportunityRequestValidator.setValidator(validator);
         opportunityRequestValidator.setRegisterFormValidator(registerFormValidatorMock);
+        opportunityRequestValidator.setProgramInstanceService(programInstanceServiceMock);
     }
 
     @Test
@@ -193,39 +203,39 @@ public class OpportunityRequestValidatorTest {
     }
 
     @Test
-    public void shouldRejectIfAdvertisingDurationIsEmpty() {
-        opportunityRequest.setAdvertisingDuration(null);
+    public void shouldRejectIfAdvertisingDeadlineYearIsEmpty() {
+        opportunityRequest.setAdvertisingDeadlineYear(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 
         configureAndReplayRegisterFormValidator(mappingResult);
         opportunityRequestValidator.validate(opportunityRequest, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, mappingResult.getFieldError("advertisingDuration").getCode());
+        Assert.assertEquals(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, mappingResult.getFieldError("advertisingDeadlineYear").getCode());
     }
 
     @Test
-    public void shouldRejectIfAdvertisingDurationIsLessThan1() {
-        opportunityRequest.setAdvertisingDuration(0);
+    public void shouldRejectIfAdvertisingDeadlineYearIsInThePast() {
+        opportunityRequest.setAdvertisingDeadlineYear(new DateTime().minusYears(1).getYear());
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 
         configureAndReplayRegisterFormValidator(mappingResult);
         opportunityRequestValidator.validate(opportunityRequest, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("Min", mappingResult.getFieldError("advertisingDuration").getCode());
+        Assert.assertEquals("Min", mappingResult.getFieldError("advertisingDeadlineYear").getCode());
     }
 
     @Test
     public void shouldRejectIfAdvertisingDurationIsLessThan5() {
-        opportunityRequest.setAdvertisingDuration(6);
+        opportunityRequest.setAdvertisingDeadlineYear(new DateTime().plusYears(11).getYear());
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
         
         configureAndReplayRegisterFormValidator(mappingResult);
         opportunityRequestValidator.validate(opportunityRequest, mappingResult);
         
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("Max", mappingResult.getFieldError("advertisingDuration").getCode());
+        Assert.assertEquals("Max", mappingResult.getFieldError("advertisingDeadlineYear").getCode());
     }
 
     @Test

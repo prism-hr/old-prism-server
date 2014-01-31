@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,7 +16,7 @@ import javax.persistence.TemporalType;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Entity(name = "PROGRAM_CLOSING_DATES")
-public class ProgramClosingDate implements Serializable, Comparable<ProgramClosingDate>, Comparator<ProgramClosingDate> {
+public class ProgramClosingDate implements Serializable {
 
     private static final long serialVersionUID = -1883742652445622591L;
 
@@ -26,7 +25,7 @@ public class ProgramClosingDate implements Serializable, Comparable<ProgramClosi
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "program_id")
+    @JoinColumn(name = "program_id", nullable = false, updatable = false, insertable = false)
     private Program program;
 
     @Column(name = "closing_date")
@@ -66,25 +65,6 @@ public class ProgramClosingDate implements Serializable, Comparable<ProgramClosi
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Override
-    public int compareTo(ProgramClosingDate other) {
-        if (getClosingDate() == null) {
-            return -1;
-        }
-        if (other == null || other.getClosingDate() == null) {
-            return 1;
-        }
-        return getClosingDate().compareTo(other.getClosingDate());
-    }
-
-    @Override
-    public int compare(ProgramClosingDate left, ProgramClosingDate right) {
-        if (left == null) {
-            return -1;
-        }
-        return left.compareTo(right);
     }
 
 }

@@ -116,8 +116,7 @@ public class ReviewServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).comments(stateChangeComment).status(ApplicationFormStatus.VALIDATION).id(1).build();
         EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
-
-        reviewRoundDAOMock.save(reviewRound);
+        
         applicationFormDAOMock.save(applicationForm);
 
         StateChangeEvent event = new ReviewStateChangeEventBuilder().id(1).build();
@@ -145,11 +144,13 @@ public class ReviewServiceTest {
 
     @Test
     public void shouldMoveToReviewIfInReview() throws ParseException {
+        StateChangeComment changeComment = new StateChangeComment();
         ReviewRound reviewRound = new ReviewRoundBuilder().id(1).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).comments(changeComment).build();
         EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         reviewRoundDAOMock.save(reviewRound);
+        
         applicationFormDAOMock.save(applicationForm);
         applicationFormUserRoleServiceMock.movedToReviewStage(reviewRound);
         applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);

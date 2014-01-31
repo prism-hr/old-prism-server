@@ -4,7 +4,6 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,7 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
 
     @Test
     public void shouldPersistAResearchOpportunitiesFeed() {
-        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ1@fooBarZ.com").username("fooBarZ1@fooBarZ.com").build();
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").institution(institution).build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed").user(user)
@@ -61,7 +60,7 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
 
     @Test
     public void shouldReturnWhetherATitleIsUniqueForAUser() {
-        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ2@fooBarZ.com").username("fooBarZ2@fooBarZ.com").build();
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").institution(institution).build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed").user(user)
@@ -80,7 +79,7 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
 
     @Test
     public void shouldReturnAllFeedsForAUser() {
-        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ2@fooBarZ.com").username("fooBarZ2@fooBarZ.com").build();
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").institution(institution).build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed").user(user)

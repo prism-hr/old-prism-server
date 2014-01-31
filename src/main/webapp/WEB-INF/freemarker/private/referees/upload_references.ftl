@@ -143,17 +143,18 @@
                   </div>
                   
                 </div>
-                
-                <#assign scores = comment.scores>
-                <#if (scores)?has_content>
-                  <div id="scoring-questions" class="row-group">
-                    <#if comment.alert??>
-                      <#assign alertForScoringQuestions=comment.alert>
-                    </#if>
-                    <#assign errorsContainerName = "comment">
-                    <h3>Programme Specific Questions</h3>
-                    <#include "/private/staff/scores.ftl"/>
-                  </div>
+                <#if applicationForm.useCustomReferenceQuestions>
+	                <#assign scores = comment.scores>
+	                <#if (scores)?has_content>
+	                  <div id="scoring-questions" class="row-group">
+	                    <#if comment.alert??>
+	                      <#assign alertForScoringQuestions=comment.alert>
+	                    </#if>
+	                    <#assign errorsContainerName = "comment">
+	                    <h3>Programme Specific Questions</h3>
+	                    <#include "/private/staff/scores.ftl"/>
+	                  </div>
+	                </#if>
                 </#if>
                 
 				<@spring.bind "comment.confirmNextStage" />

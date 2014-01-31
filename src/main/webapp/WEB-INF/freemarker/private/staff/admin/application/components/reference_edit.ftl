@@ -107,7 +107,7 @@
 
 </div>
 
-<#if (scores)?has_content>
+<#if (scores)?has_content && applicationForm.useCustomReferenceQuestions>
 	<div class="row-group">
 	    <div id="scoring-questions_${encRefereeId}">
 	      <#assign errorsContainerName = "refereesAdminEditDTO">

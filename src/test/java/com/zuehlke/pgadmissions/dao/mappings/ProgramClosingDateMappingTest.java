@@ -22,16 +22,14 @@ import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 
 public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
 
-	private Program program;
-
 	@Override
 	public void setup(){
 	    super.setup();
-		program = storeAndLoadProgram("123CD", "titleCD");
 	}
 	
     @Test
     public void shouldSaveClosingDateWithProgram() throws Exception {
+        Program program = storeAndLoadProgram("123CD1", "titleCD1");
         ProgramClosingDate closingDate = createClosingDate(getDate("01-Jul-2013"), 10);
         Assert.assertNull(closingDate.getId());
         
@@ -42,10 +40,12 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
         
         ProgramClosingDate closingDateDetails = load(ProgramClosingDate.class, closingDateId);
         assertSameClosingDates(closingDateDetails, closingDate);
+        flushAndClearSession();
     }
 
     @Test
     public void shouldLoadClosingDateWithProgram() throws Exception {
+        Program program = storeAndLoadProgram("123CD2", "titleCD2");
     	ProgramClosingDate closingDate = createClosingDate(getDate("02-Jul-2013"), 10);
     	
     	addClosingDateToProgram(closingDate, program);
@@ -55,10 +55,12 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
     	assertEquals(1, program.getClosingDates().size());
     	ProgramClosingDate closingDateDetails = program.getClosingDate(closingDate.getClosingDate());
     	assertSameClosingDates(closingDateDetails, closingDate);
+        flushAndClearSession();
     }
 
     @Test
     public void shouldDeleteClosingDateWithProgram() throws Exception {
+        Program program = storeAndLoadProgram("123CD3", "titleCD3");
     	ProgramClosingDate closingDate = createClosingDate(getDate("03-Jul-2013"), 10);
     	Integer closingDateId = addClosingDateToProgram(closingDate, program);
 
@@ -70,10 +72,12 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
 
     	ProgramClosingDate closingDateDetails = load(ProgramClosingDate.class, closingDateId);
     	assertNull(closingDateDetails);
+        flushAndClearSession();
     }
 
     @Test
     public void shouldRemoveClosingDateFromProgram() throws Exception {
+        Program program = storeAndLoadProgram("123CD4", "titleCD4");
     	ProgramClosingDate closingDate = createClosingDate(getDate("04-Jul-2013"), 10);
     	Integer closingDateId = addClosingDateToProgram(closingDate, program);
     	
@@ -84,11 +88,13 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
     	
     	ProgramClosingDate closingDateDetails = load(ProgramClosingDate.class, closingDateId);
     	assertNull(closingDateDetails);
+        flushAndClearSession();
     }
 
     
     @Test
     public void shouldUpdateClosingDateOfProgram() throws Exception {
+        Program program = storeAndLoadProgram("123CD5", "titleCD5");
     	Date day = getDate("05-Jul-2013");
 		ProgramClosingDate closingDate = createClosingDate(day, 10);
 		addClosingDateToProgram(closingDate, program);
@@ -106,6 +112,7 @@ public class ProgramClosingDateMappingTest extends AutomaticRollbackTestCase {
     	program = load(Program.class, program.getId());
     	ProgramClosingDate closingDateDetails = program.getClosingDate(updatedDay);
     	assertSameClosingDates(closingDateDetails, closingDate);
+        flushAndClearSession();
     }
 	
 

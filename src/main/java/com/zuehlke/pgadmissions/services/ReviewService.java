@@ -60,19 +60,18 @@ public class ReviewService {
 	    
 		application.setLatestReviewRound(reviewRound);
 		reviewRound.setApplication(application);
-		reviewRoundDAO.save(reviewRound);
 		StageDuration reviewStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.REVIEW);
 		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, reviewStageDuration.getDurationInMinutes());
         application.setDueDate(dueDate.toDate());
         boolean sendReferenceRequest = application.getStatus() == ApplicationFormStatus.VALIDATION;
         application.setStatus(ApplicationFormStatus.REVIEW);
 		application.getEvents().add(eventFactory.createEvent(reviewRound));
+        StateChangeComment latestStateChangeComment = application.getLatestStateChangeComment();
+        reviewRound.setUseCustomQuestions(latestStateChangeComment.getUseCustomQuestions());
+        reviewRoundDAO.save(reviewRound);
 		
         if (sendReferenceRequest) {
             mailService.sendReferenceRequest(application.getReferees(), application);
-            StateChangeComment latestStateChangeComment = application.getLatestStateChangeComment();
-            reviewRound.setUseCustomQuestions(latestStateChangeComment.getUseCustomQuestions());
-            reviewRoundDAO.save(reviewRound);
             application.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
             applicationDAO.save(application);
             applicationFormUserRoleService.validationStageCompleted(application);

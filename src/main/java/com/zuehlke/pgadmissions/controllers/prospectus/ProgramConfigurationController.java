@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ProgramClosingDateService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
@@ -56,6 +57,9 @@ public class ProgramConfigurationController {
 
     @Autowired
     private ProgramsService programsService;
+
+    @Autowired
+    private ProgramClosingDateService programClosingDateService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -85,8 +89,8 @@ public class ProgramConfigurationController {
 
     @PostConstruct
     public void customizeGsonBuilder() throws IOException {
-        gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY).
-                setExclusionStrategies(GsonExclusionStrategies.excludeClass(Program.class)).create();
+        gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
+                .setExclusionStrategies(GsonExclusionStrategies.excludeClass(Program.class)).create();
     }
 
     @InitBinder("advert")
@@ -188,14 +192,12 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String addClosingDate(@Valid ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
+    public String addClosingDate(@Valid ProgramClosingDate programClosingDate, BindingResult result, @ModelAttribute Program program, HttpServletRequest request) {
         Map<String, Object> map;
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
         } else {
-            Program program = programClosingDate.getProgram();
-            program.addClosingDate(programClosingDate);
-            programsService.save(program);
+            programsService.addClosingDateToProgram(program, programClosingDate);
             map = Collections.singletonMap("programClosingDate", (Object) programClosingDate);
         }
 
@@ -209,9 +211,7 @@ public class ProgramConfigurationController {
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
         } else {
-            Program program = programClosingDate.getProgram();
-            program.updateClosingDate(programClosingDate);
-            programsService.save(program);
+            programClosingDateService.updateClosingDate(programClosingDate);
             map = Collections.singletonMap("programClosingDate", (Object) programClosingDate);
         }
 
@@ -238,18 +238,16 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/removeClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String removeClosingDate(@RequestParam String programCode, @RequestParam Integer closingDateId, HttpServletRequest request)
+    public String removeClosingDate(@ModelAttribute Program program, @RequestParam Integer closingDateId, HttpServletRequest request)
             throws TemplateException, IOException {
         Map<String, Object> map = Maps.newHashMap();
-        Program program = programsService.getProgramByCode(programCode);
 
         if (program == null) {
             map.put("program", applicationContext.getMessage(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, null, request.getLocale()));
         }
 
         if (map.isEmpty()) {
-            program.removeClosingDate(closingDateId);
-            programsService.save(program);
+            programClosingDateService.deleteClosingDateById(closingDateId);
             map.put("removedDate", closingDateId);
         }
         return gson.toJson(map);

@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Shell template</title>
+
+<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+<link type="text/css" rel="stylesheet" href="css/private/global_private.css" />
+<link type="text/css" rel="stylesheet" href="css/private/staff/superadmin.css" />
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+
+<body>
+
+<div id="wrapper">
+
+  <!-- Header. -->
+  <div id="header">
+    <p>Postgraduate Research Admissions Tool</p>
+  </div>
+  
+  <!-- Middle. -->
+  <div id="middle">
+  
+    <header>
+
+      <!-- App logo and tagline -->
+      <div class="logo"><img src="images/ph_logo_app.png" alt="" /></div>
+
+      <div class="tagline">Your Gateway to Research Opportunities</div>
+
+      <!-- Main tabbed menu -->
+      <nav>
+        <ul>
+          <li><a href="#">My account</a></li>    
+          <li class="current"><a href="#">My applications</a></li>    
+          <li><a href="#">Messages</a></li>    
+          <li><a href="#">Help</a></li>    
+        </ul>
+        
+        <div class="user">
+          Jonathan Smith
+          <a class="button user-logout">Logout</a>
+        </div>
+      </nav>
+      
+    </header>
+    
+    
+    <!-- Main content area. -->
+    <article id="content" role="main">
+      
+      <div class="content-box">
+      	<div class="content-box-inner">
+        
+          <form>
+          
+          	<h1>Add Existing programme users and assign roles</h1>
+            <p>Please add users to the programme, using their email addresses.<br>You can select one or more roles for the user.</p>
+            
+            <br>
+            
+            <div class="row programme">
+              <label>Select programme</label>
+              <select>
+                <option>LoLo EngD</option>
+              </select>
+            </div>
+            
+						<!-- // NEW USERS -->
+
+            <hr>
+            
+          	<!-- Left side -->
+          	<div class="left-column">
+            
+              <div class="row">
+                <label>First name</label>
+                <input type="text" name="firstname" />
+              </div>
+              
+              <div class="row">
+                <label>Surname</label>
+                <input type="text" name="surname" />
+              </div>
+              
+              <div class="row">
+                <label>Email address</label>
+                <input type="text" name="email" />
+              </div>
+              
+            </div>
+
+						<!-- Right side -->
+						<div class="right-column">
+            
+              <div class="row">
+                <label>Role(s) in application process</label>
+                <select multiple size="4">
+                  <option>Administrator</option>
+                  <option>Approver</option>
+                  <option>Interviewer</option>
+                  <option>Reviewer</option>
+                </select>
+              </div>
+            
+              <div class="buttons">
+	              <button class="red">Remove user</button>
+	              <button>Create user</button>
+              </div>
+              
+            </div>
+
+
+						<!-- // EXISTING USERS -->
+							
+            <hr>
+            
+          	<!-- Left side -->
+          	<div class="left-column">
+            
+              <div class="row">
+                <label>Please choose a user</label>
+                <select>
+                	<option>Please choose a user</option>
+                </select>
+              </div>
+              
+              <div class="row">
+                or <a href="#">add a new user</a>
+              </div>
+              
+            </div>
+
+						<!-- Right side -->
+						<div class="right-column">
+            
+              <div class="row">
+                <label>Role(s) in application process</label>
+                <select multiple size="4">
+                  <option>Administrator</option>
+                  <option>Approver</option>
+                  <option>Interviewer</option>
+                  <option>Reviewer</option>
+                </select>
+              </div>
+            
+              <div class="buttons">
+              	<button>Add user</button>
+              </div>
+              
+            </div>
+          </form>
+          
+          <hr>
+          
+          <table class="data" border="0">
+            <colgroup>
+              <col style="width: 220px;" />
+              <col style="width: auto;" />
+              <col style="width: 200px;" />
+              <col style="width: 100px;" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Email address</th>
+                <th scope="col">Name</th>
+                <th scope="col">Role(s)</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td scope="col">crispy@quentin.com</td>
+                <td scope="col">Quentin Crisp</td>
+                <td scope="col">Interviewer, Reviewer</td>
+                <td scope="col"><a href="#">Edit</a> / <a href="#">Remove</a></td>
+              </tr>
+              <tr>
+                <td scope="col">rich@kipling.com</td>
+                <td scope="col">-</td>
+                <td scope="col">Administrator</td>
+                <td scope="col"><a href="#">Edit</a> / <a href="#">Remove</a></td>
+              </tr>
+              <tr>
+                <td scope="col">erol@erik.com</td>
+                <td scope="col">Errol Erickson</td>
+                <td scope="col">Approver, Interviewer</td>
+                <td scope="col"><a href="#">Edit</a> / <a href="#">Remove</a></td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div><!-- .content-box-inner -->
+      </div><!-- .content-box -->
+      
+    </article>
+    
+  </div>
+  
+  <!-- Footer. -->
+  <div id="footer">
+    <ul>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms &amp; conditions</a></li>
+      <li><a href="#">Contact us</a></li>
+      <li><a href="#">Glossary</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/libraries.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+<script type="text/javascript" src="js/help.js"></script>
+</body>
+</html>

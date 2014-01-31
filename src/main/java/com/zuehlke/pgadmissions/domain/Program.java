@@ -65,6 +65,7 @@ public class Program extends Authorisable implements Serializable {
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
+    @OrderBy("applicationStartDate")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

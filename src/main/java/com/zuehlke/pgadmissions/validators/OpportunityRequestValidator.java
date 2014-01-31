@@ -32,7 +32,6 @@ public class OpportunityRequestValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programTitle", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programDescription", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "atasRequired", EMPTY_DROPDOWN_ERROR_MESSAGE);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicationStartDate", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOptions", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
         OpportunityRequest opportunityRequest = (OpportunityRequest) target;
@@ -59,8 +58,8 @@ public class OpportunityRequestValidator extends AbstractValidator {
         // validate advertising deadline
         if (opportunityRequest.getAdvertisingDeadlineYear() == null) {
             errors.rejectValue("advertisingDeadlineYear", EMPTY_DROPDOWN_ERROR_MESSAGE);
-        } else if (opportunityRequest.getApplicationStartDate() != null) {
-            int startYear = programInstanceService.getCustomProgramInstanceStartYear(new DateTime(opportunityRequest.getApplicationStartDate()), new DateTime());
+        } else  {
+            int startYear = programInstanceService.getFirstProgramInstanceStartYear(new DateTime());
             if (opportunityRequest.getAdvertisingDeadlineYear() <= startYear) {
                 errors.rejectValue("advertisingDeadlineYear", "Min", new Object[] { null, startYear }, null);
             } else if (opportunityRequest.getAdvertisingDeadlineYear() > startYear + 10) {

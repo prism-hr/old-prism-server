@@ -55,7 +55,7 @@ public class OpportunityRequestValidatorTest {
         registerFormValidatorMock = EasyMock.createMock(RegisterFormValidator.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         
-        expect(programInstanceServiceMock.getCustomProgramInstanceStartYear(isA(DateTime.class), isA(DateTime.class))).andReturn(2013);
+        expect(programInstanceServiceMock.getFirstProgramInstanceStartYear(isA(DateTime.class))).andReturn(2013);
         replay(programInstanceServiceMock);
         
         opportunityRequestValidator = new OpportunityRequestValidator();
@@ -129,18 +129,6 @@ public class OpportunityRequestValidatorTest {
         Assert.assertEquals(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, mappingResult.getFieldError("atasRequired").getCode());
     }
 
-    @Test
-    public void shouldRejectIfApplicationStartDateIsEmpty() {
-        opportunityRequest.setApplicationStartDate(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
-
-        configureAndReplayRegisterFormValidator(mappingResult);
-        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
-
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("applicationStartDate").getCode());
-    }
-    
     @Test
     public void shouldRejectIfStudyOptionsAreEmpty() {
         opportunityRequest.setStudyOptions(null);

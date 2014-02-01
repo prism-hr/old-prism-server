@@ -70,7 +70,7 @@ public class AdvertDAO {
      */
     @SuppressWarnings("unchecked")
     public List<Advert> getRecommendedAdverts(RegisteredUser applicant) {
-        Authority[] authoritiesToConsider = {Authority.APPLICANT, Authority.INTERVIEWER, Authority.REVIEWER,
+        Authority[] peerAuthorities = {Authority.APPLICANT, Authority.INTERVIEWER, Authority.REVIEWER,
                 Authority.SUGGESTEDSUPERVISOR, Authority.STATEADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR, Authority.SUPERVISOR};
         
         HashSet<Advert> adverts = new HashSet<Advert>((List<Advert>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
@@ -83,7 +83,7 @@ public class AdvertDAO {
                 .createAlias("application3.program", "program2", JoinType.INNER_JOIN)
                 .createAlias("program2.advert", "advert", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("application.applicant", applicant))
-                .add(Restrictions.in("applicationFormUserRole2.role.id", authoritiesToConsider))
+                .add(Restrictions.in("applicationFormUserRole2.role.id", peerAuthorities))
                 .add(Restrictions.neProperty("application.applicant", "application3.applicant"))
                 .add(Restrictions.eq("program2.enabled", true)) 
                 .add(Restrictions.eq("advert.active", true)).list());
@@ -100,7 +100,7 @@ public class AdvertDAO {
                 .createAlias("project.advert", "advert", JoinType.INNER_JOIN)
                 .createAlias("project.applications", "application4", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("application.applicant", applicant))
-                .add(Restrictions.in("applicationFormUserRole2.role.id", authoritiesToConsider))
+                .add(Restrictions.in("applicationFormUserRole2.role.id", peerAuthorities))
                 .add(Restrictions.neProperty("application.applicant", "application4.applicant"))
                 .add(Restrictions.eq("project.disabled", false)) 
                 .add(Restrictions.eq("advert.active", true)).list());
@@ -115,7 +115,7 @@ public class AdvertDAO {
                 .createAlias("application3.project", "project2", JoinType.INNER_JOIN)
                 .createAlias("project2.advert", "advert", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("application.applicant", applicant))
-                .add(Restrictions.in("applicationFormUserRole2.role.id", authoritiesToConsider))
+                .add(Restrictions.in("applicationFormUserRole2.role.id", peerAuthorities))
                 .add(Restrictions.neProperty("application.applicant", "application3.applicant"))
                 .add(Restrictions.eq("project2.disabled", false)) 
                 .add(Restrictions.eq("advert.active", true)).list());

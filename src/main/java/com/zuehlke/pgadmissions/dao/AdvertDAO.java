@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
@@ -63,12 +64,12 @@ public class AdvertDAO {
      * - Query 1: programs related to the seed application through associations between users, applications and programs.
      * - Query 2: projects related to the seed application through associations between users, applications and programs.
      * - Query 3: projects related to the seed application through associations between users, applications and projects.
-     * @param user
+     * @param applicant
      * @return List<Advert>
      * @author Alastair Knowles
      */
     @SuppressWarnings("unchecked")
-    public List<Advert> getRecommendedAdverts(String applicationNumber) {
+    public List<Advert> getRecommendedAdverts(RegisteredUser applicant) {
         Authority[] authoritiesToConsider = {Authority.APPLICANT, Authority.INTERVIEWER, Authority.REVIEWER,
                 Authority.SUGGESTEDSUPERVISOR, Authority.STATEADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR, Authority.SUPERVISOR};
         
@@ -81,7 +82,7 @@ public class AdvertDAO {
                 .createAlias("applicationFormUserRole2.applicationForm", "application3", JoinType.INNER_JOIN)
                 .createAlias("application3.program", "program2", JoinType.INNER_JOIN)
                 .createAlias("program2.advert", "advert", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("application.applicationNumber", applicationNumber))
+                .add(Restrictions.eq("application.applicant", applicant))
                 .add(Restrictions.in("applicationFormUserRole2.role.id", authoritiesToConsider))
                 .add(Restrictions.neProperty("application.applicant", "application3.applicant"))
                 .add(Restrictions.eq("program2.enabled", true)) 
@@ -98,7 +99,7 @@ public class AdvertDAO {
                 .createAlias("program2.projects", "project", JoinType.INNER_JOIN)
                 .createAlias("project.advert", "advert", JoinType.INNER_JOIN)
                 .createAlias("project.applications", "application4", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("application.applicationNumber", applicationNumber))
+                .add(Restrictions.eq("application.applicant", applicant))
                 .add(Restrictions.in("applicationFormUserRole2.role.id", authoritiesToConsider))
                 .add(Restrictions.neProperty("application.applicant", "application4.applicant"))
                 .add(Restrictions.eq("project.disabled", false)) 
@@ -113,7 +114,7 @@ public class AdvertDAO {
                 .createAlias("applicationFormUserRole2.applicationForm", "application3", JoinType.INNER_JOIN)
                 .createAlias("application3.project", "project2", JoinType.INNER_JOIN)
                 .createAlias("project2.advert", "advert", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("application.applicationNumber", applicationNumber))
+                .add(Restrictions.eq("application.applicant", applicant))
                 .add(Restrictions.in("applicationFormUserRole2.role.id", authoritiesToConsider))
                 .add(Restrictions.neProperty("application.applicant", "application3.applicant"))
                 .add(Restrictions.eq("project2.disabled", false)) 

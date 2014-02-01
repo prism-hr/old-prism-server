@@ -10,6 +10,7 @@ import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 @Service
 @Transactional
@@ -30,8 +31,8 @@ public class AdvertService {
         return advertDAO.getActiveAdverts();
     }
     
-    public List<Advert> getRecommendedAdverts(String applicationNumber) {
-        return advertDAO.getRecommendedAdverts(applicationNumber);
+    public List<Advert> getRecommendedAdverts(RegisteredUser user) {
+        return advertDAO.getRecommendedAdverts(user);
     }
 
     public Program getProgram(Advert advert) {

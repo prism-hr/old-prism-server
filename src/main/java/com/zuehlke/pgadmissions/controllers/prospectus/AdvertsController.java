@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Person;
@@ -49,20 +50,23 @@ public class AdvertsController {
     private static final AdvertDTO NULL_ADVERT = new AdvertDTO(Integer.MIN_VALUE);
 
     private final ResearchOpportunitiesFeedService feedService;
+    
+    private final ApplicationFormDAO applicationFormDAO;
 
     private final ProgramDAO programDAO;
 
     private final ProgramsService programsService;
 
     public AdvertsController() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
     @Autowired
-    public AdvertsController(final AdvertService advertService, final ResearchOpportunitiesFeedService feedService, final ProgramDAO programDAO,
+    public AdvertsController(final AdvertService advertService, final ResearchOpportunitiesFeedService feedService, final ApplicationFormDAO applicationFormDAO, final ProgramDAO programDAO,
             final ProgramsService programsService) {
         this.advertService = advertService;
         this.feedService = feedService;
+        this.applicationFormDAO = applicationFormDAO;
         this.programDAO = programDAO;
         this.programsService = programsService;
     }
@@ -150,7 +154,8 @@ public class AdvertsController {
     @ResponseBody
     public String recommendedAdverts(@RequestParam("applicationNumber") String applicationNumber) {
         Map<String, Object> map = Maps.newHashMap();
-        List<AdvertDTO> recommendedAdverts = convertAdverts(advertService.getRecommendedAdverts(applicationNumber));
+        RegisteredUser applicant = applicationFormDAO.getApplicationByApplicationNumber(applicationNumber).getApplicant();
+        List<AdvertDTO> recommendedAdverts = convertAdverts(advertService.getRecommendedAdverts(applicant));
         map.put("adverts", recommendedAdverts);
         return new Gson().toJson(map);
     }

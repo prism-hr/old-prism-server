@@ -12,6 +12,7 @@ import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.easymock.Capture;
@@ -31,6 +32,7 @@ import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -38,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -285,6 +288,38 @@ public class ProgramsServiceTest {
         verify();
 
         assertEquals("AAA_00019", nextCode);
+    }
+    
+    @Test
+    public void shouldUpdateClosingDate() {
+        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
+        Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
+        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
+        programDAOMock.updateClosingDate(closingDate);
+        replay();
+        programsService.updateClosingDate(closingDate);
+        verify();
+    }
+    
+    @Test
+    public void shouldAddClosingDateToProgram() {
+        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
+        Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
+        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
+        programDAOMock.save(program);
+        replay();
+        programsService.addClosingDateToProgram(program, closingDate);
+        verify();
+    }
+    
+    @Test
+    public void shouldDeleteClosingDateById() {
+        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
+        expect(programDAOMock.getClosingDateById(closingDate.getId())).andReturn(closingDate);
+        programDAOMock.deleteClosingDate(closingDate);
+        replay();
+        programsService.deleteClosingDateById(closingDate.getId());
+        verify();
     }
 
     @Test

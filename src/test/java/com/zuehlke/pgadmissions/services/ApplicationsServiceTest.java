@@ -1,13 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.util.Date;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.junit.Assert;
@@ -29,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
@@ -39,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -121,9 +117,7 @@ public class ApplicationsServiceTest {
         ApplicationForm form = new ApplicationFormBuilder().program(program).build();
         DateTime deadline = new DateTime(new Date());
         Date deadlineTruncated = new DateTime(deadline.getYear(), deadline.getMonthOfYear(), deadline.getDayOfMonth(), 0, 0, 0).toDate();
-
-        ProgramClosingDate programClosingDate = new ProgramClosingDateBuilder().closingDate(deadlineTruncated).build();
-        EasyMock.expect(programDAOMock.getNextClosingDate(EasyMock.eq(program))).andReturn(programClosingDate);
+        EasyMock.expect(programDAOMock.getNextClosingDate(EasyMock.eq(program))).andReturn(deadlineTruncated);
 
         replay();
         Date returnedDeadline = applicationsService.getBatchDeadlineForApplication(form);

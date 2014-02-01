@@ -30,6 +30,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.zuehlke.pgadmissions.controllers.prospectus.AdvertsController;
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -56,15 +57,17 @@ public class AdvertsControllerTest {
     private ResearchOpportunitiesFeedService feedServiceMock;
     private ProgramDAO programDAOMock;
     private ProgramsService programsServiceMock;
+    private ApplicationFormDAO applicationFormDAOMock;
     private final static Integer NO_SELECTED_ADVERT = Integer.MIN_VALUE;
 
     @Before
     public void setUp() {
         advertServiceMock = EasyMock.createMock(AdvertService.class);
         feedServiceMock = EasyMock.createMock(ResearchOpportunitiesFeedService.class);
+        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
         programsServiceMock = EasyMock.createMock(ProgramsService.class);
-        controller = new AdvertsController(advertServiceMock, feedServiceMock, programDAOMock, programsServiceMock);
+        controller = new AdvertsController(advertServiceMock, feedServiceMock, applicationFormDAOMock, programDAOMock, programsServiceMock);
     }
 
     @Test

@@ -4,7 +4,6 @@ import static java.util.Collections.singletonMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
@@ -208,7 +206,7 @@ public class AdvertsController {
         return newList;
     }
 
-    class AdvertConverter {
+    private class AdvertConverter {
 
         public AdvertDTO convert(Advert input) {
             Program program = advertService.getProgram(input);
@@ -217,7 +215,7 @@ public class AdvertsController {
                 dto = new AdvertDTO(input.getId());
                 dto.setProgramCode(program.getCode());
                 dto.setTitle(program.getTitle());
-                dto.setClosingDate(getNextClosingDate(program));
+                dto.setClosingDate(programDAO.getNextClosingDate(program));
                 Person primarySupervisor = toPerson(programDAO.getFirstAdministratorForProgram(program));
                 dto.setPrimarySupervisor(primarySupervisor);
                 if (primarySupervisor != null) {
@@ -233,7 +231,7 @@ public class AdvertsController {
                 projectDto.setProgramCode(program.getCode());
                 projectDto.setStudyDuration(project.getAdvert().getStudyDuration());
                 projectDto.setTitle(input.getTitle());
-                projectDto.setClosingDate(getNextClosingDate(program));
+                projectDto.setClosingDate(programDAO.getNextClosingDate(program));
                 RegisteredUser supervisor = project.getPrimarySupervisor();
                 projectDto.setPrimarySupervisor(toPerson(supervisor));
                 projectDto.setSupervisorEmail(supervisor.getEmail());
@@ -255,14 +253,6 @@ public class AdvertsController {
             person.setLastname(user.getLastName());
             person.setEmail(user.getEmail());
             return person;
-        }
-        
-        private Date getNextClosingDate(Program program) {
-            ProgramClosingDate nextClosingDate = programDAO.getNextClosingDate(program);
-            if (nextClosingDate != null) {
-                return nextClosingDate.getClosingDate();
-            }
-            return null;
         }
         
     }

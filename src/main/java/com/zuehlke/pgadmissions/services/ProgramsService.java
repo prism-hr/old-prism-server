@@ -127,7 +127,7 @@ public class ProgramsService {
     }
 
     public String getDefaultClosingDate(Program program) {
-        Date closingDate = programDAO.getNextClosingDate(program).getClosingDate();
+        Date closingDate = programDAO.getNextClosingDate(program);
         String formattedDate = "null";
         if (closingDate != null) {
             formattedDate = new SimpleDateFormat("dd MMM yyyy").format(closingDate);

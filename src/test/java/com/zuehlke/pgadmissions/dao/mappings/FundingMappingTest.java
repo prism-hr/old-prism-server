@@ -41,8 +41,8 @@ public class FundingMappingTest extends AutomaticRollbackTestCase {
         sessionFactory.getCurrentSession().save(document);
         flushAndClearSession();
         Date awardDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/12/2011");
-
-        Funding funding = new FundingBuilder().application(applicationForm).awardDate(awardDate).description("hello").type(FundingType.EMPLOYER).value("alot")
+        
+        Funding funding = new FundingBuilder().application(applicationForm).awardDate(awardDate).description("hello").type(FundingType.EMPLOYER).value("1000")
                 .document(document).build();
         save(funding);
         Integer id = funding.getId();
@@ -58,7 +58,7 @@ public class FundingMappingTest extends AutomaticRollbackTestCase {
         assertEquals(awardDate, funding.getAwardDate());
         assertEquals("hello", funding.getDescription());
         assertEquals(FundingType.EMPLOYER, funding.getType());
-        assertEquals("alot", funding.getValue());
+        assertEquals("1000", funding.getValue());
         assertEquals(document, funding.getDocument());
     }
 

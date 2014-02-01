@@ -111,10 +111,12 @@ public class ProgramDAO {
                 .setMaxResults(1).uniqueResult();
     }
     
-    public ProgramClosingDate getNextClosingDate(Program program) {
-        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
+    public Date getNextClosingDate(Program program) {
+        return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
+                .setProjection(Projections.property("closingDate"))
                 .add(Restrictions.eq("program", program))
                 .add(Restrictions.ge("closingDate", new Date()))
+                .addOrder(Order.asc("closingDate"))
                 .addOrder(Order.desc("id"))
                 .setMaxResults(1).uniqueResult();
     }
@@ -140,7 +142,15 @@ public class ProgramDAO {
     }
     
     public RegisteredUser getFirstAdministratorForProgram(Program program) {
-        return program.getAdministrators().get(0);
+        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+                .createAlias("programsOfWhichAdministrator", "program")
+                .add(Restrictions.eq("program.id", program.getId()))
+                .add(Restrictions.eq("accountNonExpired", true))
+                .add(Restrictions.eq("accountNonLocked", true))
+                .add(Restrictions.eq("credentialsNonExpired", true))
+                .add(Restrictions.eq("enabled", true))
+                .addOrder(Order.asc("id"))
+                .setMaxResults(1).uniqueResult();
     }
     
 }

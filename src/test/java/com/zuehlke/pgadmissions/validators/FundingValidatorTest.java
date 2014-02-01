@@ -85,14 +85,6 @@ public class FundingValidatorTest {
 		assertEquals(1, mappingResult.getErrorCount());
 	}
 	
-	@Test 
-    public void shouldRejectIfFundingValueIsNotNumbers() {
-        funding.setValue("abc123");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-        fundingValidator.validate(funding, mappingResult);
-        assertEquals(1, mappingResult.getErrorCount());
-    }
-	
 	@Test
 	public void shouldRejectIfAwardFateIsFutureDate(){
 		Date tomorrow;

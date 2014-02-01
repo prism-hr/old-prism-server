@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -188,7 +189,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnNextClosingDateForProgram() {
-        DateTime closingDates = new DateTime(2013, 05, 20, 00, 00);
+        DateTime closingDates = new DateTime();
         ProgramClosingDate badge1 = new ProgramClosingDateBuilder().closingDate(closingDates.minusMonths(1).toDate()).build();
         ProgramClosingDate badge2 = new ProgramClosingDateBuilder().closingDate(closingDates.plusMonths(1).toDate()).build();
         ProgramClosingDate badge3 = new ProgramClosingDateBuilder().closingDate(closingDates.plusMonths(2).toDate()).build();
@@ -201,13 +202,13 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        Date result = programDAO.getNextClosingDate(program).getClosingDate();
+        Date result = programDAO.getNextClosingDate(program);
 
         Assert.assertNotNull(result);
 
         Assert.assertEquals(0, result.compareTo(badge2.getClosingDate()));
     }
-    
+
     @Test
     public void shouldGetLastCustomProgram() {
         Program program1 = ProgramBuilder.aProgram(institution).code(institution.getCode() + "_00006").build();
@@ -224,7 +225,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
         assertEquals(program2.getCode(), returned.getCode());
     }
-    
+
     @Test
     public void shouldGetClosingDateById() {
         ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
@@ -234,7 +235,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         ProgramClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDate.getId());
         assertEquals(putClosingDate, gotClosingDate);
     }
-    
+
     @Test
     public void shouldGetClosingDateByDate() {
         Date closingDate = new Date();
@@ -245,14 +246,14 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         ProgramClosingDate gotClosingDate = programDAO.getClosingDateByDate(program, closingDate);
         assertEquals(putClosingDate, gotClosingDate);
     }
-    
+
     @Test
     public void shouldUpdateClosingDate() {
         DateTime dateToday = new DateTime(new Date());
         DateTime truncatedDateToday = new DateTime(dateToday.getYear(), dateToday.getMonthOfYear(), dateToday.getDayOfMonth(), 0, 0, 0);
         DateTime truncatedDateTomorrow = truncatedDateToday.plusDays(1);
         Date testDateOne = truncatedDateToday.toDate();
-        Date testDateTwo= truncatedDateTomorrow.toDate();
+        Date testDateTwo = truncatedDateTomorrow.toDate();
         ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(testDateOne).build();
         Program program = new ProgramBuilder().code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
@@ -266,7 +267,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         sessionFactory.getCurrentSession().clear();
         assertEquals(gotClosingDate.getClosingDate(), testDateTwo);
     }
- 
+
     @Test
     public void shouldDeleteClosingDate() {
         ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
@@ -281,6 +282,26 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         sessionFactory.getCurrentSession().clear();
         ProgramClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDateId);
         assertEquals(gotClosingDate, null);
+    }
+
+    @Test
+    public void shouldGetFirstEnabledAdministrator() {
+        Program program = new ProgramBuilder().code("code").institution(institution).build();
+        sessionFactory.getCurrentSession().save(program);
+        RegisteredUser user1 = new RegisteredUserBuilder().username("testuser1").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
+                .enabled(false).programsOfWhichAdministrator(program).build();
+        sessionFactory.getCurrentSession().save(user1);
+        RegisteredUser user2 = new RegisteredUserBuilder().username("testuser2").accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true)
+                .enabled(true).programsOfWhichAdministrator(program).build();
+        sessionFactory.getCurrentSession().save(user2);
+        RegisteredUser user3 = new RegisteredUserBuilder().username("testuser3").accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true)
+                .enabled(true).programsOfWhichAdministrator(program).build();
+        sessionFactory.getCurrentSession().save(user3);
+        program.setAdministrators(Arrays.asList(user1, user2, user3));
+        sessionFactory.getCurrentSession().update(program);
+        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+        RegisteredUser gotUser = programDAO.getFirstAdministratorForProgram(program);
+        assertEquals(gotUser, user2);
     }
 
 }

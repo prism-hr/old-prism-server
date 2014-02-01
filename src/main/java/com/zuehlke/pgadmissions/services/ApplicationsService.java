@@ -59,7 +59,7 @@ public class ApplicationsService {
     private DomicileDAO domicileDAO;
 
     public Date getBatchDeadlineForApplication(ApplicationForm form) {
-        return programDAO.getNextClosingDate(form.getProgram()).getClosingDate();
+        return programDAO.getNextClosingDate(form.getProgram());
     }
 
     public ApplicationForm getApplicationById(Integer id) {

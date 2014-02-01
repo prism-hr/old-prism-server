@@ -83,7 +83,9 @@ public class AdvertsControllerTest {
 
         EasyMock.expect(advertServiceMock.getProgram(advert)).andReturn(program);
         EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertServiceMock);
+        EasyMock.expect(programDAOMock.getNextClosingDate(program)).andReturn(null);
+        EasyMock.expect(programDAOMock.getFirstAdministratorForProgram(program)).andReturn(null);
+        EasyMock.replay(advertServiceMock, programDAOMock);
         int expectedAdvertsSize = 1;
         String activeAdvertsJson = controller.activeAdverts(NO_SELECTED_ADVERT);
         assertAdvertsElementPresentWithExpectedLenght(expectedAdvertsSize, activeAdvertsJson);
@@ -101,7 +103,11 @@ public class AdvertsControllerTest {
         EasyMock.expect(advertServiceMock.getProgram(advertOne)).andReturn(programOne);
         EasyMock.expect(advertServiceMock.getProgram(advertTwo)).andReturn(programTwo);
         EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertServiceMock);
+        EasyMock.expect(programDAOMock.getNextClosingDate(programOne)).andReturn(null);
+        EasyMock.expect(programDAOMock.getFirstAdministratorForProgram(programOne)).andReturn(null);
+        EasyMock.expect(programDAOMock.getNextClosingDate(programTwo)).andReturn(null);
+        EasyMock.expect(programDAOMock.getFirstAdministratorForProgram(programTwo)).andReturn(null);
+        EasyMock.replay(advertServiceMock, programDAOMock);
         int expectedAdvertsSize = 2;
         String activeAdvertsJson = controller.activeAdverts(NO_SELECTED_ADVERT);
         assertAdvertsElementPresentWithExpectedLenght(expectedAdvertsSize, activeAdvertsJson);
@@ -117,7 +123,9 @@ public class AdvertsControllerTest {
 
         EasyMock.expect(advertServiceMock.getProgram(advert)).andReturn(program);
         EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertServiceMock);
+        EasyMock.expect(programDAOMock.getNextClosingDate(program)).andReturn(null);
+        EasyMock.expect(programDAOMock.getFirstAdministratorForProgram(program)).andReturn(null);
+        EasyMock.replay(advertServiceMock, programDAOMock);
         String activeAdvertsJson = controller.activeAdverts(NO_SELECTED_ADVERT);
         assertThat(activeAdvertsJson, containsString(jsonProperty("id", advert.getId())));
         assertThat(activeAdvertsJson, containsString(jsonProperty("title", program.getTitle())));
@@ -149,7 +157,9 @@ public class AdvertsControllerTest {
 
         EasyMock.expect(advertServiceMock.getProgram(advert)).andReturn(program);
         EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertServiceMock);
+        EasyMock.expect(programDAOMock.getNextClosingDate(program)).andReturn(programClosingDateFirst.getClosingDate());
+        EasyMock.expect(programDAOMock.getFirstAdministratorForProgram(program)).andReturn(validAdmin);
+        EasyMock.replay(advertServiceMock, programDAOMock);
         String activeAdvertsJson = controller.activeAdverts(NO_SELECTED_ADVERT);
         assertThat(activeAdvertsJson, not(containsString(jsonProperty("selected", true))));
         assertThat(activeAdvertsJson, containsString(jsonProperty("id", advert.getId())));
@@ -169,7 +179,9 @@ public class AdvertsControllerTest {
 
         EasyMock.expect(advertServiceMock.getProgram(advert)).andReturn(program);
         EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
-        EasyMock.replay(advertServiceMock);
+        EasyMock.expect(programDAOMock.getNextClosingDate(program)).andReturn(null);
+        EasyMock.expect(programDAOMock.getFirstAdministratorForProgram(program)).andReturn(null);
+        EasyMock.replay(advertServiceMock, programDAOMock);
         String activeAdvertsJson = controller.activeAdverts(advert.getId());
         assertThat(activeAdvertsJson, containsString(jsonProperty("id", advert.getId())));
         assertThat(activeAdvertsJson, containsString(jsonProperty("selected", true)));
@@ -186,7 +198,8 @@ public class AdvertsControllerTest {
         EasyMock.expect(advertServiceMock.getProgram(selectedAdvert)).andReturn(program);
         EasyMock.expect(advertServiceMock.getProgram(notSelectedAdvert)).andReturn(program);
         EasyMock.expect(advertServiceMock.getActiveAdverts()).andReturn(advertList);
-        EasyMock.expect(programDAOMock.getNextClosingDate(program).getClosingDate()).andReturn(new Date());
+        EasyMock.expect(programDAOMock.getNextClosingDate(program)).andReturn(null).times(2);
+        EasyMock.expect(programDAOMock.getFirstAdministratorForProgram(program)).andReturn(null).times(2);
         EasyMock.replay(advertServiceMock, programDAOMock);
 
         String resultJson = controller.activeAdverts(new Integer(1));
@@ -207,8 +220,10 @@ public class AdvertsControllerTest {
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().title("foobar").feedFormat(FeedFormat.LARGE).id(1).programs(program).build();
         EasyMock.expect(feedServiceMock.getById(1)).andReturn(feed);
         EasyMock.expect(advertServiceMock.getProgram(advert)).andReturn(program);
-
-        EasyMock.replay(feedServiceMock, advertServiceMock);
+        EasyMock.expect(programDAOMock.getNextClosingDate(program)).andReturn(null);
+        EasyMock.expect(programDAOMock.getFirstAdministratorForProgram(program)).andReturn(null);
+        
+        EasyMock.replay(feedServiceMock, advertServiceMock, programDAOMock);
         Map feeds = controller.getFeeds(1, null, null);
         EasyMock.verify(feedServiceMock, advertServiceMock);
 
@@ -229,8 +244,11 @@ public class AdvertsControllerTest {
         EasyMock.expect(feedServiceMock.getDefaultOpportunitiesFeedsByUsername("feeder", null)).andReturn(Lists.newArrayList(feed1, feed2));
         EasyMock.expect(advertServiceMock.getProgram(advert1)).andReturn(program1);
         EasyMock.expect(advertServiceMock.getProgram(advert2)).andReturn(program2);
-
-        EasyMock.replay(feedServiceMock, advertServiceMock);
+        EasyMock.expect(programDAOMock.getNextClosingDate(program1)).andReturn(null);
+        EasyMock.expect(programDAOMock.getFirstAdministratorForProgram(program1)).andReturn(null);
+        EasyMock.expect(programDAOMock.getNextClosingDate(program2)).andReturn(null);
+        EasyMock.expect(programDAOMock.getFirstAdministratorForProgram(program2)).andReturn(null);
+        EasyMock.replay(feedServiceMock, advertServiceMock, programDAOMock);
         Map feeds = controller.getFeeds(null, "feeder", null);
         EasyMock.verify(feedServiceMock, advertServiceMock);
 

@@ -100,7 +100,7 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("academicYear", ValueType.TEXT, "Academic Year"));
         cd.add(new ColumnDescription("submittedDate", ValueType.DATE, "Submitted"));
         cd.add(new ColumnDescription("lastEditedDate", ValueType.DATE, "Last Edited"));
-        // cd.add(new ColumnDescription("totalFunding", ValueType.TEXT, "Total Funding"));
+        cd.add(new ColumnDescription("totalFunding", ValueType.TEXT, "Total Funding"));
         
         // overall rating
         cd.add(new ColumnDescription("averageOverallRating", ValueType.TEXT, "Average Overall Rating"));
@@ -192,7 +192,7 @@ public class ApplicationsReportService {
                 row.addCell(getAcademicYear(app));
                 row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
                 row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
-                // row.addCell(app.getFundings());
+                row.addCell(getFundingTotal(app));
                 
                 // overall rating
                 row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
@@ -501,28 +501,15 @@ public class ApplicationsReportService {
         }
         return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue() / interviews.size()));
     }
-    /*
-     *     Shit code written by Chris starts here
-     *    
-     *     
-     *     
-     *     
-     *     
-     *     
-     *     
-     *     
         
-	private String getFunding(ApplicationForm app) {
-        List<Funding> fundingtotal = app.getFundings();
-        if (fundingtotal.isEmpty()) {
-            return null;
-        }
-
+	private String getFundingTotal(ApplicationForm app) {
+        List<Funding> funding = app.getFundings();
+        Integer totalFunding = 0;
+	    for (Funding temp : funding){
+	        totalFunding = totalFunding + temp.getValueAsInteger();
+		}
+        return totalFunding.toString();
     }
-  
-  
-	*/
-     
 
     private String getAverageReferenceRating(ApplicationForm app) {
         BigDecimal referenceRating = applicantRatingService.getAverageReferenceRating(app);

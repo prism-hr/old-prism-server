@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:regBasic_v1="http://ucl.ac.uk/isd/registry/basictypes_v1" 
+	elementFormDefault="qualified"
+	xmlns:uclBasic_v1_0="http://ucl.ac.uk/isd/uclbasic_v1_0/"  
+	targetNamespace="http://ucl.ac.uk/isd/registry/basictypes_v1" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<!--    
+      v1.0: Common types moved from registryData_v1_0 to a separate XSD
+ -->
+    
+	<xs:import namespace="http://ucl.ac.uk/isd/uclbasic_v1_0/" schemaLocation="uclbasic_v1_0.xsd" />
+
+<!-- *********************************************
+              SIMPLE TYPES SECTION START
+       ********************************************* 
+-->         
+  <!-- 
+  	Graduate Level flag that indicates the level associated with the course.
+  	U = Under graduate course
+  	P = Post graduate course
+   -->  
+   <xs:simpleType name="graduateFlagTp">
+        <xs:restriction base="xs:string">
+		      <xs:enumeration value="U"/>
+              <xs:enumeration value="P"/>            
+	    </xs:restriction>
+  </xs:simpleType>  
+      
+  <!--Entry method type
+   U = UCAS applicants
+   D = Direct applicants
+  -->
+  <xs:simpleType name="entryMethodTp">
+        <xs:restriction base="xs:string">           
+		      <xs:enumeration value="U"/>		      
+              <xs:enumeration value="D"/>            
+	    </xs:restriction>
+  </xs:simpleType>  
+    
+  <!-- Intercalater
+   E = External intercalaters. 
+   Note:-  These are students who come to UCL only for the intercalated course
+   U = UCL intercalaters
+   Note:-  These are students who are study in UCL for the main degree as well the intercalated course
+  --> 
+   <xs:simpleType name="intercalatedTp">
+        <xs:restriction base="xs:string">           
+		      <xs:enumeration value="E"/>		      
+              <xs:enumeration value="U"/>            
+	    </xs:restriction>
+  </xs:simpleType>  
+    
+  <!--     
+    Fee Status   
+    H = Home
+    O = Overseas
+  --> 
+   <xs:simpleType name="feeStatusTp">
+        <xs:restriction base="xs:string">           
+		      <xs:enumeration value="H"/>		                    
+              <xs:enumeration value="O"/>
+	    </xs:restriction>
+  </xs:simpleType>   
+    
+ <!-- UCL decision codes against a course application 
+    U => Unconditional
+    R => Rejected
+    C => Conditional
+ -->   
+ <xs:simpleType name="decisionCodesTp">
+        <xs:restriction base="xs:string">           
+		      <xs:enumeration value="U"/>		      
+              <xs:enumeration value="R"/> 
+              <xs:enumeration value="C"/>              
+	    </xs:restriction>
+ </xs:simpleType>   
+    
+ <!-- Student response codes against a course application 
+    I => Insurance 
+    D => Declined
+    F => Firmly accepted
+ -->   
+ <xs:simpleType name="responseCodesTp">
+        <xs:restriction base="xs:string">           
+		      <xs:enumeration value="I"/>		      
+              <xs:enumeration value="D"/> 
+              <xs:enumeration value="F"/>              
+	    </xs:restriction>
+ </xs:simpleType>    
+      
+<!-- *********************************************
+              SIMPLE TYPES SECTION END
+       ********************************************* 
+-->     
+  
+<!-- *********************************************
+              COMPLEX TYPES SECTION START
+       ********************************************* 
+-->     
+  
+ <!-- Student Email ids -->   
+ <xs:complexType name="studentEmailTp">
+    <xs:sequence>
+        <!--MS:Changed type name from homeEmailID to personalEmailID-->
+        <xs:element name="personalEmailID"  	type="uclBasic_v1_0:emailTp" minOccurs="0" maxOccurs="1" />
+        <xs:element name="institutionEmailID"   type="uclBasic_v1_0:emailTp" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+ </xs:complexType>
+     
+  <!-- 
+  	Contact Details that encapsulates Address and telephone numbers.
+   -->   
+ <xs:complexType name="contactDtlsTp">  
+ 	<xs:sequence>       
+       	<xs:element name="addressDtls"   type="uclBasic_v1_0:addressTp" minOccurs="0" maxOccurs="1"/>
+       	<!-- Can be used if a system does not distinguish between different types of telephone numbers. They are stored just as contact numbers-->                
+       	<xs:element name="telephoneNo"  type="xs:string" minOccurs="0" maxOccurs="unbounded"/>      
+       	<xs:element name="email"   		type="uclBasic_v1_0:emailTp" minOccurs="0" maxOccurs="1" />
+       	<!--Systems most time need to store the telephone details in exact fields and having a list of values of type string does not help in determining accurately where they need to be stored
+       		If we implement an order logic as 1st element is Home, 2nd is Work that may always work.
+       		Given that we cannot conclusively enumerate all the telephone types having individual elements is better
+       	  -->       	
+       	<xs:element name="landline" type="xs:string" minOccurs="0" maxOccurs="1" />
+       	<xs:element name="work" type="xs:string" minOccurs="0" maxOccurs="1" />
+       	<xs:element name="mobile" type="xs:string" minOccurs="0" maxOccurs="1" />
+        <xs:element name="fax" type="xs:string" minOccurs="0" maxOccurs="1" />        
+     </xs:sequence>   
+ </xs:complexType>   
+    
+ <!--Next of Kin Information -->   
+ <xs:complexType name="nextofKinTp">
+    <xs:sequence>
+        <xs:element name="relationship"  		type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="name"   				type="uclBasic_v1_0:nameTp" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="address"   			type="regBasic_v1:contactDtlsTp" minOccurs="0" maxOccurs="1"/> 
+        <xs:element name="email"   				type="uclBasic_v1_0:emailTp" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+ </xs:complexType>   
+  
+    
+</xs:schema>

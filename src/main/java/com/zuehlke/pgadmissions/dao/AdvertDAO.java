@@ -57,7 +57,7 @@ public class AdvertDAO {
                 .createSQLQuery("CALL SELECT_RECOMMENDED_ADVERT(?, ?);")
                 .addEntity(Advert.class)
                 .setInteger(0, applicant.getId())
-                .setBigDecimal(1, new BigDecimal(0.05)).list();
+                .setBigDecimal(1, new BigDecimal(0.01)).list();
     }
 
     public void delete(Advert advert) {

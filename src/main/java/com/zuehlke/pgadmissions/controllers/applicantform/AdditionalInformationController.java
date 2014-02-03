@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import static com.google.common.base.Objects.firstNonNull;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -49,7 +48,7 @@ public class AdditionalInformationController {
     @Autowired
     public AdditionalInformationController(ApplicationsService applicationService, UserService userService,
             ApplicationFormPropertyEditor applicationFormPropertyEditor, BooleanPropertyEditor booleanEditor, AdditionalInfoService addInfoServiceMock,
-            AdditionalInformationValidator infoValidator, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            AdditionalInformationValidator infoValidator, final ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -60,33 +59,36 @@ public class AdditionalInformationController {
     }
 
     @RequestMapping(value = "/editAdditionalInformation", method = RequestMethod.POST)
-    public String editAdditionalInformation(@Valid AdditionalInformation info, BindingResult result) {
-        ApplicationForm applicationForm = info.getApplication();
-
-        if (applicationForm.isDecided()) {
+    public String editAdditionalInformation(@Valid AdditionalInformation info, BindingResult result,
+            @ModelAttribute("applicationForm") ApplicationForm application) {
+        if (application.isDecided()) {
             throw new CannotUpdateApplicationException(info.getApplication().getApplicationNumber());
         }
 
         if (result.hasErrors()) {
             return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
         }
-
+        
+        application.setAdditionalInformation(info);
         additionalService.save(info);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.registerApplicationUpdate(application, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
         return "redirect:/update/getAdditionalInformation?applicationId=" + info.getApplication().getApplicationNumber();
 
     }
 
     @RequestMapping(value = "/getAdditionalInformation", method = RequestMethod.GET)
-    public String getAdditionalInformationView() {
-        return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
-    }
+    public String getAdditionalInformationView(@ModelAttribute("applicationForm") ApplicationForm application, Model model) {
+        
+        AdditionalInformation information = application.getAdditionalInformation();
+        if(information == null){
+            information = new AdditionalInformation();
+            application.setAdditionalInformation(information);
+        }
 
-    @ModelAttribute("additionalInformation")
-    public AdditionalInformation getAdditionalInformation(@RequestParam String applicationId) {
-        ApplicationForm application = getApplicationForm(applicationId);
-        return firstNonNull(application.getAdditionalInformation(), new AdditionalInformation());
+        model.addAttribute("additionalInformation", information);
+        model.addAttribute("applicationForm", application);
+        return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
     }
 
     @ModelAttribute("message")

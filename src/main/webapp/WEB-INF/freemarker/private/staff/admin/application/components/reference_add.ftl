@@ -127,7 +127,7 @@
 			</#if>
 		</#if> -->
         
-        <#if !(scores)?has_content && applicationForm.useCustomReferenceQuestions>
+        <#if !(scores)?has_content>
 	        <!-- Add reference add button -->
 	        <div class="row">
 	            <div class="field">

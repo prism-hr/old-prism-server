@@ -151,6 +151,9 @@ table.appliList input[type="checkbox"] { margin-top: 0px;}
 #applicationListSection .application-details, #applicationListSection .placeholder {
 	display:none;
 }
+#applicationListSection .btn-group.bootstrap-select.actionType {
+  margin-bottom: 0px;
+}
 .appliList td.rating {
     text-align:center;
 }

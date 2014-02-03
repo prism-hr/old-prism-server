@@ -46,7 +46,7 @@ public class Funding implements FormSectionObject, Serializable {
 	
 	@Column(name="award_value")
 	@ESAPIConstraint(rule = "NumbersOnly", maxLength = 100)
-	private Integer value;
+	private String value;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="award_date")
@@ -80,12 +80,16 @@ public class Funding implements FormSectionObject, Serializable {
 		this.description = description;
 	}
 	
-	public Integer getValue() {
+	public String getValue() {
 		return value;
 	}
 	
-	public void setValue(Integer value) {
+	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	public Integer getValueAsInteger() {
+	    return Integer.parseInt(getValue());
 	}
 	
 	public Date getAwardDate() {

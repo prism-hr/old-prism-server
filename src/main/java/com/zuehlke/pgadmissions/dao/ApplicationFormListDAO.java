@@ -155,8 +155,12 @@ public class ApplicationFormListDAO {
                             break;
                         case PROJECT_TITLE:
                         	criterion = Restrictions.disjunction()
-                        			.add(Restrictions.ilike("applicationForm.projectTitle", searchTerm, MatchMode.ANYWHERE))
-                        			.add(Restrictions.ilike("advert.title", searchTerm, MatchMode.ANYWHERE));
+                        			.add(Restrictions.conjunction()
+                        			        .add(Restrictions.isNull("advert.title"))
+                        			        .add(Restrictions.like("applicationForm.projectTitle", searchTerm, MatchMode.ANYWHERE)))
+                        			.add(Restrictions.conjunction()
+                        			        .add(Restrictions.isNull("applicationForm.projectTitle"))
+                        			        .add(Restrictions.like("advert.title", searchTerm, MatchMode.ANYWHERE)));
                             break;
                         case SUPERVISOR:
                             criteria.createAlias("applicationForm.programmeDetails", "programmeDetails", JoinType.LEFT_OUTER_JOIN)

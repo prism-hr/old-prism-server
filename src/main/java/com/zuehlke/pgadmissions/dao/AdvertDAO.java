@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.ArrayList;
@@ -15,9 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
@@ -57,71 +60,71 @@ public class AdvertDAO {
         return sessionFactory.getCurrentSession().createCriteria(Advert.class)
                 .add(Restrictions.eq("active", true)).list();
     }
-    
-    /**
-     * Returns a list of other recommended opportunities for a given applicant as follows:
-     * - Query 1: programs related to the seed application through associations between users, applications and programs.
-     * - Query 2: projects related to the seed application through associations between users, applications and programs.
-     * - Query 3: projects related to the seed application through associations between users, applications and projects.
-     * @param user
-     * @return List<Advert>
-     * @author Alastair Knowles
-     */
+
     @SuppressWarnings("unchecked")
-    public List<Advert> getRecommendedAdverts(String applicationNumber) {
-        Authority[] authoritiesToConsider = {Authority.APPLICANT, Authority.INTERVIEWER, Authority.REVIEWER,
-                Authority.SUGGESTEDSUPERVISOR, Authority.STATEADMINISTRATOR, Authority.SUGGESTEDSUPERVISOR, Authority.SUPERVISOR};
+    public List<Advert> getRecommendedAdverts(RegisteredUser applicant) {
+        List<Integer> applicantPrograms = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .setProjection(Projections.groupProperty("program.id"))
+                .createAlias("program", "program", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("applicant", applicant)).list();
+        applicantPrograms.add(0);
         
-        HashSet<Advert> adverts = new HashSet<Advert>((List<Advert>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("program2.advert"))
-                .createAlias("applicationForm", "application", JoinType.INNER_JOIN)
-                .createAlias("application.program", "program", JoinType.INNER_JOIN)
-                .createAlias("program.applications", "application2", JoinType.INNER_JOIN)
-                .createAlias("application2.applicationFormUserRoles", "applicationFormUserRole2", JoinType.INNER_JOIN)
-                .createAlias("applicationFormUserRole2.applicationForm", "application3", JoinType.INNER_JOIN)
-                .createAlias("application3.program", "program2", JoinType.INNER_JOIN)
-                .createAlias("program2.advert", "advert", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("application.applicationNumber", applicationNumber))
-                .add(Restrictions.in("applicationFormUserRole2.role.id", authoritiesToConsider))
-                .add(Restrictions.neProperty("application.applicant", "application3.applicant"))
-                .add(Restrictions.eq("program2.enabled", true)) 
+        List<Integer> applicantProjects = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .setProjection(Projections.groupProperty("project.id"))
+                .createAlias("project", "project", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("applicant", applicant)).list();
+        applicantProjects.add(0);
+
+        List<Integer> applicantPeers = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .setProjection(Projections.groupProperty("registeredUser.id"))
+                .createAlias("applicant", "registeredUser", JoinType.INNER_JOIN)
+                .createAlias("program", "program", JoinType.INNER_JOIN)
+                .add(Restrictions.in("program.id", applicantPrograms))
+                .add(Restrictions.ne("applicant", applicant)).list();
+        applicantPeers.add(0);
+        
+        List<Integer> applicantRecruiters = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .setProjection(Projections.groupProperty("registeredUser.id"))
+                .createAlias("applicationFormUserRoles", "applicationFormUserRole", JoinType.INNER_JOIN)
+                .createAlias("applicationFormUserRole.user", "registeredUser", JoinType.INNER_JOIN)
+                .createAlias("applicationFormUserRole.role", "role", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("applicant", applicant))
+                .add(Restrictions.ne("applicationFormUserRole.user", applicant))
+                .add(Restrictions.in("role.id", Arrays.asList(Authority.APPROVER, Authority.INTERVIEWER, Authority.PROJECTADMINISTRATOR, 
+                        Authority.REVIEWER, Authority.SUGGESTEDSUPERVISOR, Authority.STATEADMINISTRATOR, Authority.SUPERVISOR))).list();
+        applicantRecruiters.add(0);
+        
+        List<Integer> recommendedPrograms = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("program.id"))
+                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+                .createAlias("applicationForm.applicant", "applicant", JoinType.INNER_JOIN)
+                .createAlias("user", "recruiter", JoinType.INNER_JOIN)
+                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+                .createAlias("program.advert", "advert", JoinType.INNER_JOIN)
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.in("applicant.id", applicantPeers))
+                        .add(Restrictions.in("recruiter.id", applicantRecruiters)))
+                .add(Restrictions.not(
+                        Restrictions.in("program.id", applicantPrograms)))
+                .add(Restrictions.eq("program.enabled", true)).list();
+                
+        HashSet<Advert> deduplicateRecommendedAdverts = new HashSet<Advert>((List<Advert>)sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .setProjection(Projections.property("advert"))
+                .createAlias("advert", "advert", JoinType.INNER_JOIN)
+                .add(Restrictions.in("id", recommendedPrograms))
+                .add(Restrictions.eq("advert.active", true)).list());
+                
+        deduplicateRecommendedAdverts.addAll((List<Advert>)sessionFactory.getCurrentSession().createCriteria(Project.class)
+                .setProjection(Projections.property("advert"))
+                .createAlias("program", "program", JoinType.INNER_JOIN)
+                .createAlias("advert", "advert", JoinType.INNER_JOIN)
+                .add(Restrictions.in("program.id", recommendedPrograms))
+                .add(Restrictions.eq("disabled", false))
                 .add(Restrictions.eq("advert.active", true)).list());
         
-        adverts.addAll((List<Advert>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("project.advert"))
-                .createAlias("applicationForm", "application", JoinType.INNER_JOIN)
-                .createAlias("application.program", "program", JoinType.INNER_JOIN)
-                .createAlias("program.applications", "application2", JoinType.INNER_JOIN)
-                .createAlias("application2.applicationFormUserRoles", "applicationFormUserRole2", JoinType.INNER_JOIN)
-                .createAlias("applicationFormUserRole2.applicationForm", "application3", JoinType.INNER_JOIN)
-                .createAlias("application3.program", "program2", JoinType.INNER_JOIN)
-                .createAlias("program2.projects", "project", JoinType.INNER_JOIN)
-                .createAlias("project.advert", "advert", JoinType.INNER_JOIN)
-                .createAlias("project.applications", "application4", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("application.applicationNumber", applicationNumber))
-                .add(Restrictions.in("applicationFormUserRole2.role.id", authoritiesToConsider))
-                .add(Restrictions.neProperty("application.applicant", "application4.applicant"))
-                .add(Restrictions.eq("project.disabled", false)) 
-                .add(Restrictions.eq("advert.active", true)).list());
+        List<Advert> recommendedAdverts = new ArrayList<Advert>(deduplicateRecommendedAdverts);
         
-        adverts.addAll((List<Advert>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("project2.advert"))
-                .createAlias("applicationForm", "application", JoinType.INNER_JOIN)
-                .createAlias("application.project", "project", JoinType.INNER_JOIN)
-                .createAlias("project.applications", "application2", JoinType.INNER_JOIN)
-                .createAlias("application2.applicationFormUserRoles", "applicationFormUserRole2", JoinType.INNER_JOIN)
-                .createAlias("applicationFormUserRole2.applicationForm", "application3", JoinType.INNER_JOIN)
-                .createAlias("application3.project", "project2", JoinType.INNER_JOIN)
-                .createAlias("project2.advert", "advert", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("application.applicationNumber", applicationNumber))
-                .add(Restrictions.in("applicationFormUserRole2.role.id", authoritiesToConsider))
-                .add(Restrictions.neProperty("application.applicant", "application3.applicant"))
-                .add(Restrictions.eq("project2.disabled", false)) 
-                .add(Restrictions.eq("advert.active", true)).list());
-        
-        List<Advert> deduplicatedAdverts = new ArrayList<Advert>(adverts);
-        
-        Collections.sort(deduplicatedAdverts, new Comparator<Advert>() {
+        Collections.sort(recommendedAdverts, new Comparator<Advert>() {
             @Override
             public int compare(Advert advert1, Advert advert2) {
                 Date date1 = advert1.getLastEditedTimestamp();
@@ -134,7 +137,7 @@ public class AdvertDAO {
             }
         });
         
-        return deduplicatedAdverts;
+        return recommendedAdverts;
     }
 
     public void delete(Advert advert) {

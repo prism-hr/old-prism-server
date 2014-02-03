@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
+import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/testMailSendingContext.xml")
@@ -51,7 +52,7 @@ public class ScheduledMailSendingServiceIT {
 
     @Autowired
     private PlatformTransactionManager transactionManager;
-
+    
     private Referee referee1;
     private Referee referee2;
     private Referee referee3;

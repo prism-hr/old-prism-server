@@ -104,6 +104,10 @@
     <bean id="userService" class="com.zuehlke.pgadmissions.services.UserService" />
 
     <bean id="programService" class="com.zuehlke.pgadmissions.services.ProgramsService" />
+    
+    <bean id="throttleService" class="com.zuehlke.pgadmissions.services.ThrottleService" />
+    
+    <bean id="programInstanceService" class="com.zuehlke.pgadmissions.services.ProgramInstanceService" />
 
     <bean id="programmeDetailsService" class="com.zuehlke.pgadmissions.services.ProgrammeDetailsService" />
 

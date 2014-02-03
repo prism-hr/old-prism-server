@@ -23,7 +23,6 @@ public class OpportunityRequestBuilder {
     private Integer studyDuration;
     private Boolean atasRequired;
     private String studyOptions;
-    private Date applicationStartDate;
     private Integer advertisingDeadlineYear;
     private Integer studyDurationNumber;
     private String studyDurationUnit;
@@ -88,11 +87,6 @@ public class OpportunityRequestBuilder {
         return this;
     }
 
-    public OpportunityRequestBuilder applicationStartDate(Date applicationStartDate) {
-        this.applicationStartDate = applicationStartDate;
-        return this;
-    }
-
     public OpportunityRequestBuilder advertisingDeadlineYear(Integer advertisingDeadlineYear) {
         this.advertisingDeadlineYear = advertisingDeadlineYear;
         return this;
@@ -122,7 +116,6 @@ public class OpportunityRequestBuilder {
         request.setStudyDuration(studyDuration);
         request.setAtasRequired(atasRequired);
         request.setStudyOptions(studyOptions);
-        request.setApplicationStartDate(applicationStartDate);
         request.setAdvertisingDeadlineYear(advertisingDeadlineYear);
         request.setStudyDurationNumber(studyDurationNumber);
         request.setStudyDurationUnit(studyDurationUnit);
@@ -131,12 +124,10 @@ public class OpportunityRequestBuilder {
 
     public static OpportunityRequestBuilder aOpportunityRequest(RegisteredUser author, Domicile institutionCountry) {
         DateTime date = new DateTime(2014, 3, 14, 0, 0);
-        DateTime inAWeek = date.plusWeeks(1);
 
         return new OpportunityRequestBuilder().author(author).createdDate(date.toDate()).institutionCode("AGH").institutionCountry(institutionCountry)
-                .programDescription("This is really amazing Opportunity!").programTitle("Amazing Opportunity").advertisingDeadlineYear(2014)
-                .applicationStartDate(inAWeek.toDate()).atasRequired(true).studyDuration(24).studyDurationNumber(2).studyDurationUnit("YEARS")
-                .studyOptions("B+++++,F+++++");
+                .programDescription("This is really amazing Opportunity!").programTitle("Amazing Opportunity").advertisingDeadlineYear(2014).atasRequired(true)
+                .studyDuration(24).studyDurationNumber(2).studyDurationUnit("YEARS").studyOptions("B+++++,F+++++");
     }
 
 }

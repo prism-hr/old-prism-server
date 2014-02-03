@@ -18,6 +18,8 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.google.common.io.Closer;
+import com.google.common.io.Flushables;
 import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -111,23 +113,16 @@ public class PrintController {
 		response.setContentType("application/pdf");
 		response.setContentLength(pdf.length);
 		ServletOutputStream out = null;
+		
+		Closer closer = Closer.create();
 		try {
-			out = response.getOutputStream();
+			out = closer.register(response.getOutputStream());
 			out.write(pdf);
-		} catch (Exception e) {
-            log.warn(e.getMessage(), e);		    
+		} catch (IOException e) {
+            log.warn("Problem with sending PDF, " + e.getClass().getSimpleName() + " thrown.");		    
 		} finally {
-			try {
-				out.flush();
-			} catch (Exception e) {
-			    log.warn(e.getMessage(), e);
-			}
-			
-			try {
-			    out.close();
-			} catch (Exception e) {
-			    log.warn(e.getMessage(), e);
-			}
+		    Flushables.flushQuietly(out);
+		    closer.close();
 		}
 	}
 	

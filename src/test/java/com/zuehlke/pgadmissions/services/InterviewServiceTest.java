@@ -100,7 +100,6 @@ public class InterviewServiceTest {
 
         expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
 
-        interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
         InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(interview)).andReturn(interviewStateChangeEvent);
@@ -141,7 +140,6 @@ public class InterviewServiceTest {
 
         EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
 
-        interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
         InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).build();
         EasyMock.expect(eventFactoryMock.createEvent(interview)).andReturn(interviewStateChangeEvent);
@@ -172,7 +170,8 @@ public class InterviewServiceTest {
         RegisteredUser user = new RegisteredUser();
         Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).furtherDetails("applicant!")
                 .furtherInterviewerDetails("interviewer!").locationURL("loc").build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
+        StateChangeComment changeComment = new StateChangeComment();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).comments(changeComment).build();
         StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
         InterviewScheduleComment interviewScheduleComment = new InterviewScheduleComment();
 
@@ -198,7 +197,8 @@ public class InterviewServiceTest {
         RegisteredUser user = new RegisteredUser();
         Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).furtherDetails("applicant!")
                 .furtherInterviewerDetails("interviewer!").locationURL("loc").build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).build();
+        StateChangeComment changeComment = new StateChangeComment();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).comments(changeComment).build();
         StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
         InterviewScheduleComment interviewScheduleComment = new InterviewScheduleComment();
 

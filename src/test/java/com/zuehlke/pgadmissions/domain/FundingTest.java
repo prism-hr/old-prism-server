@@ -13,7 +13,7 @@ public class FundingTest {
 	@Test
 	public void shouldCreateFunding(){
 		Funding funding = new FundingBuilder().id(1).application(new ApplicationForm()).awardDate(new Date())
-				.description("description").type(FundingType.EMPLOYER).value("value").build();
+				.description("description").type(FundingType.EMPLOYER).value("1000").build();
 		Assert.assertNotNull(funding.getDescription());
 		Assert.assertNotNull(funding.getValue());
 		Assert.assertNotNull(funding.getApplication());

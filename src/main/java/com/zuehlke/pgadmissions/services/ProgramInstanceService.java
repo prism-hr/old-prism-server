@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -137,48 +136,67 @@ public class ProgramInstanceService {
     }
 
     @Transactional
-    public List<ProgramInstance> createNewCustomProgramInstances(OpportunityRequest opportunityRequest, Program program) {
+    public List<ProgramInstance> createRemoveProgramInstances(Program program, List<String> studyOptionCodes, int advertisingDeadlineYear) {
         ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
+
+        // disable all existing instances
+        for (ProgramInstance existingInstance : program.getInstances()) {
+            existingInstance.setEnabled(false);
+        }
+
         List<ProgramInstance> instances = Lists.newLinkedList();
 
-        List<StudyOption> studyOptions = thisBean.getStudyOptions(opportunityRequest);
-        int startYear = thisBean.getCustomProgramInstanceStartYear(new DateTime(opportunityRequest.getApplicationStartDate()), new DateTime());
+        List<StudyOption> studyOptions = thisBean.getStudyOptions(studyOptionCodes);
+        int startYear = thisBean.getFirstProgramInstanceStartYear(new DateTime());
 
-        for (; startYear < opportunityRequest.getAdvertisingDeadlineYear(); startYear++) {
-            DateTime startDate = thisBean.findPenultimateSeptemberMonday(startYear);
-            DateTime deadline = thisBean.findPenultimateSeptemberMonday(startYear + 1);
-
+        for (; startYear < advertisingDeadlineYear; startYear++) {
             for (StudyOption studyOption : studyOptions) {
-                ProgramInstance programInstance = new ProgramInstance();
-                programInstance.setApplicationStartDate(startDate.toDate());
-                programInstance.setAcademicYear(Integer.toString(startYear));
-                programInstance.setApplicationDeadline(deadline.toDate());
-                programInstance.setDisabledDate(deadline.minusMonths(1).toDate());
-                programInstance.setEnabled(true);
-                programInstance.setIdentifier("CUSTOM");
-                programInstance.setProgram(program);
-                programInstance.setStudyOption(studyOption.getName());
-                programInstance.setStudyOptionCode(studyOption.getId());
-
-                programInstanceDAO.save(programInstance);
-
+                ProgramInstance programInstance = thisBean.createOrUpdateProgramInstance(program, startYear, studyOption);
                 instances.add(programInstance);
             }
         }
         return instances;
     }
 
-    public int getCustomProgramInstanceStartYear(DateTime intendedStartDate, DateTime now) {
-        DateTime startDate = now;
+    protected ProgramInstance createOrUpdateProgramInstance(Program program, int startYear, StudyOption studyOption) {
+        ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
+        DateTime startDate = thisBean.findPenultimateSeptemberMonday(startYear);
+        DateTime deadline = thisBean.findPenultimateSeptemberMonday(startYear + 1);
 
-        if (intendedStartDate.isAfter(startDate)) {
-            startDate = intendedStartDate;
+        ProgramInstance programInstance = programInstanceDAO.getProgramInstance(program, studyOption, startDate.toDate());
+        if (programInstance == null) {
+            programInstance = new ProgramInstance();
+            programInstance.setProgram(program);
+            program.getInstances().add(programInstance);
         }
 
-        return getFirstProgramInstanceStartYear(startDate);
+        programInstance.setApplicationStartDate(startDate.toDate());
+        programInstance.setAcademicYear(Integer.toString(startYear));
+        programInstance.setApplicationDeadline(deadline.toDate());
+        programInstance.setDisabledDate(deadline.minusMonths(1).toDate());
+        programInstance.setEnabled(true);
+        programInstance.setIdentifier("CUSTOM");
+        programInstance.setStudyOption(studyOption.getName());
+        programInstance.setStudyOptionCode(studyOption.getId());
+
+        programInstanceDAO.save(programInstance);
+        return programInstance;
     }
 
-    private int getFirstProgramInstanceStartYear(DateTime startDate) {
+    protected List<StudyOption> getStudyOptions(List<String> studyOptionCodes) {
+        ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
+        List<StudyOption> distinctStudyOptions = thisBean.getDistinctStudyOptions();
+
+        List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(studyOptionCodes.size());
+        for (StudyOption o : distinctStudyOptions) {
+            if (studyOptionCodes.contains(o.getId())) {
+                studyOptions.add(o);
+            }
+        }
+        return studyOptions;
+    }
+
+    public int getFirstProgramInstanceStartYear(DateTime startDate) {
         int year = startDate.getYear();
         DateTime actualStartDate = findPenultimateSeptemberMonday(year);
 
@@ -200,26 +218,33 @@ public class ProgramInstanceService {
         return penultimateSeptemberMonday;
     }
 
-    protected List<StudyOption> getStudyOptions(OpportunityRequest opportunityRequest) {
-        ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
-        List<StudyOption> distinctStudyOptions = thisBean.getDistinctStudyOptions();
-        List<String> options = Arrays.asList(opportunityRequest.getStudyOptions().split(","));
-
-        List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(options.size());
-        for (StudyOption o : distinctStudyOptions) {
-            if (options.contains(o.getId())) {
-                studyOptions.add(o);
-            }
-        }
-        return studyOptions;
-    }
-
     @Transactional
     public void disableLapsedInstances() {
         List<ProgramInstance> lapsedInstances = programInstanceDAO.getLapsedInstances();
         for (ProgramInstance lapsedInstance : lapsedInstances) {
             lapsedInstance.setEnabled(false);
         }
+    }
+
+    public List<Integer> getPossibleAdvertisingDeadlineYears() {
+        int deadlineYear = new DateTime().getYear();
+        if (new DateTime().getMonthOfYear() >= DateTimeConstants.SEPTEMBER) {
+            deadlineYear++;
+        }
+
+        List<Integer> advertisingDeadlines = Lists.newArrayListWithCapacity(10);
+        for (int i = 0; i < 10; i++) {
+            advertisingDeadlines.add(deadlineYear + i);
+        }
+        return advertisingDeadlines;
+    }
+
+    public int getAdvertisingDeadlineYear(Program program) {
+        return new DateTime(programInstanceDAO.getLatestActiveInstanceDeadline(program)).getYear();
+    }
+
+    public List<String> getStudyOptions(Program program) {
+        return programInstanceDAO.getStudyOptions(program);
     }
 
 }

@@ -84,7 +84,6 @@ public class InterviewService {
     public void moveApplicationToInterview(RegisteredUser user, final Interview interview, ApplicationForm applicationForm) {
         interview.setApplication(applicationForm);
         assignInterviewDueDate(interview, applicationForm);
-        interviewDAO.save(interview);
 
         for (Interviewer interviewer : interview.getInterviewers()) {
             interviewer.setInterview(interview);
@@ -113,11 +112,12 @@ public class InterviewService {
             mailService.sendInterviewVoteNotificationToInterviewerParticipants(interview);
         }
 
+        StateChangeComment latestStateChangeComment = applicationForm.getLatestStateChangeComment();
+        interview.setUseCustomQuestions(latestStateChangeComment.getUseCustomQuestions());
+        interviewDAO.save(interview);
+        
         if (previousStatus == ApplicationFormStatus.VALIDATION) {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
-            StateChangeComment latestStateChangeComment = applicationForm.getLatestStateChangeComment();
-            interview.setUseCustomQuestions(latestStateChangeComment.getUseCustomQuestions());
-            interviewDAO.save(interview);
             applicationForm.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
             applicationFormDAO.save(applicationForm);
             applicationFormUserRoleService.validationStageCompleted(applicationForm);

@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static junit.framework.Assert.assertSame;
 import static org.easymock.EasyMock.capture;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,13 +14,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-
-import junit.framework.Assert;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationContext;
@@ -37,6 +32,7 @@ import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -44,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -165,26 +162,6 @@ public class ProgramsServiceTest {
         ScoringDefinition definition = program.getScoringDefinitions().get(ScoringStage.REFERENCE);
         assertNotNull(definition);
         assertEquals("Siala baba mak", definition.getContent());
-    }
-
-    @Test
-    public void shouldReturnClosingDatesMap() {
-        Program program1 = new ProgramBuilder().code("p1").id(1).build();
-        Program program2 = new ProgramBuilder().code("p2").id(2).build();
-        expect(programDAOMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
-
-        Capture<Date> dateCaptor = new Capture<Date>();
-        expect(programDAOMock.getNextClosingDateForProgram(eq(program1), EasyMock.capture(dateCaptor))).andReturn(new DateTime(2013, 2, 15, 00, 15).toDate());
-        expect(programDAOMock.getNextClosingDateForProgram(eq(program2), EasyMock.capture(dateCaptor))).andReturn(new DateTime(2013, 2, 13, 13, 15).toDate());
-
-        replay();
-        Map<String, String> result = programsService.getDefaultClosingDates();
-        verify();
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("15 Feb 2013", result.get("p1"));
-        Assert.assertEquals("13 Feb 2013", result.get("p2"));
     }
 
     @Test
@@ -311,6 +288,38 @@ public class ProgramsServiceTest {
         verify();
 
         assertEquals("AAA_00019", nextCode);
+    }
+    
+    @Test
+    public void shouldUpdateClosingDate() {
+        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
+        Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
+        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
+        programDAOMock.updateClosingDate(closingDate);
+        replay();
+        programsService.updateClosingDate(closingDate);
+        verify();
+    }
+    
+    @Test
+    public void shouldAddClosingDateToProgram() {
+        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
+        Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
+        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
+        programDAOMock.save(program);
+        replay();
+        programsService.addClosingDateToProgram(program, closingDate);
+        verify();
+    }
+    
+    @Test
+    public void shouldDeleteClosingDateById() {
+        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
+        expect(programDAOMock.getClosingDateById(closingDate.getId())).andReturn(closingDate);
+        programDAOMock.deleteClosingDate(closingDate);
+        replay();
+        programsService.deleteClosingDateById(closingDate.getId());
+        verify();
     }
 
     @Test

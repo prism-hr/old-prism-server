@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -190,31 +191,6 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldFindProgramInstanceForToday() {
-        Program program = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
-        save(program);
-        Date now = Calendar.getInstance().getTime();
-        Date eightMonthsAgo = DateUtils.addMonths(now, -8);
-        Date fourMonthsFromNow = DateUtils.addMonths(now, 4);
-        Date oneYearAndfourMonthsFromNow = DateUtils.addMonths(now, 16);
-        ProgramInstance programInstanceOne = new ProgramInstanceBuilder().program(program).applicationDeadline(eightMonthsAgo)
-                .studyOption("31", "Modular/flexible study").applicationStartDate(now).academicYear("2013").enabled(true).build();
-
-        ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow)
-                .studyOption("31", "Modular/flexible study").applicationStartDate(now).academicYear("2013").enabled(true).build();
-        ProgramInstance programInstanceThree = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAndfourMonthsFromNow)
-                .studyOption("31", "Modular/flexible study").applicationStartDate(now).academicYear("2013").enabled(true).build();
-        ProgramInstance programInstanceFour = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow)
-                .studyOption("31", "Part-time").applicationStartDate(now).academicYear("2013").enabled(true).build();
-        save(programInstanceOne, programInstanceThree, programInstanceFour, programInstanceTwo);
-        flushAndClearSession();
-
-        ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
-        ProgramInstance programInstance = dao.getCurrentProgramInstanceForStudyOption(program, "Modular/flexible study");
-        assertEquals(programInstanceTwo.getId(), programInstance.getId());
-    }
-
-    @Test
     public void shouldFindProgrameInstancesWithAStartDateInTheFuture() {
         Program program = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
         save(program);
@@ -288,12 +264,10 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         ProgramInstance instance1 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(true).disabledDate(yesterday.toDate())
                 .build();
         ProgramInstance instance2 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(true).disabledDate(today.toDate()).build();
-        ProgramInstance instance3 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(true).disabledDate(tomorrow.toDate())
-                .build();
+        ProgramInstance instance3 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(true).disabledDate(tomorrow.toDate()).build();
         ProgramInstance instance4 = ProgramInstanceBuilder.aProgramInstance(program).identifier("CUSTOM").enabled(false).disabledDate(yesterday.toDate())
                 .build();
-        ProgramInstance instance5 = ProgramInstanceBuilder.aProgramInstance(program).identifier("000").enabled(true).disabledDate(yesterday.toDate())
-                .build();
+        ProgramInstance instance5 = ProgramInstanceBuilder.aProgramInstance(program).identifier("000").enabled(true).disabledDate(yesterday.toDate()).build();
 
         save(program, instance1, instance2, instance3, instance4, instance5);
         flushAndClearSession();
@@ -306,6 +280,46 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         assertThat(lapsedInstances, not(hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance3.getId())))));
         assertThat(lapsedInstances, not(hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance4.getId())))));
         assertThat(lapsedInstances, not(hasItem(Matchers.<ProgramInstance> hasProperty("id", equalTo(instance5.getId())))));
+    }
+
+    @Test
+    public void shouldGetLatestActiveInstanceDeadlineForProgram() {
+        Program program1 = new ProgramBuilder().code("AAA").institution(institution).build();
+        Program program2 = new ProgramBuilder().code("BBB").institution(institution).build();
+
+        DateTime today = new DateTime().withTimeAtStartOfDay();
+        DateTime yesterday = today.minusDays(1);
+        DateTime tomorrow = today.plusDays(1);
+
+        ProgramInstance instance1 = ProgramInstanceBuilder.aProgramInstance(program1).enabled(true).applicationDeadline(yesterday.toDate()).build();
+        ProgramInstance instance2 = ProgramInstanceBuilder.aProgramInstance(program1).enabled(true).applicationDeadline(today.toDate()).build();
+        ProgramInstance instance3 = ProgramInstanceBuilder.aProgramInstance(program2).enabled(true).applicationDeadline(tomorrow.toDate()).build();
+        ProgramInstance instance4 = ProgramInstanceBuilder.aProgramInstance(program1).enabled(false).applicationDeadline(tomorrow.toDate()).build();
+
+        save(program1, program2, instance1, instance2, instance3, instance4);
+
+        ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
+        Date deadline = dao.getLatestActiveInstanceDeadline(program1);
+
+        assertEquals(today.toDate(), deadline);
+    }
+
+    @Test
+    public void shouldGetStudyOptionsForProgram() {
+        Program program1 = new ProgramBuilder().code("AAA").institution(institution).build();
+        Program program2 = new ProgramBuilder().code("BBB").institution(institution).build();
+
+        ProgramInstance instance1 = ProgramInstanceBuilder.aProgramInstance(program1).enabled(true).studyOption("o1", "o1").build();
+        ProgramInstance instance2 = ProgramInstanceBuilder.aProgramInstance(program1).enabled(false).studyOption("o2", "o2").build();
+        ProgramInstance instance3 = ProgramInstanceBuilder.aProgramInstance(program2).enabled(true).studyOption("o3", "o3").build();
+        ProgramInstance instance4 = ProgramInstanceBuilder.aProgramInstance(program1).enabled(true).studyOption("o4", "o4").build();
+
+        save(program1, program2, instance1, instance2, instance3, instance4);
+
+        ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
+        List<String> studyOptions = dao.getStudyOptions(program1);
+
+        assertThat(studyOptions, contains("o1", "o4"));
     }
 
     private boolean listContainsId(ProgramInstance instance, List<ProgramInstance> instances) {

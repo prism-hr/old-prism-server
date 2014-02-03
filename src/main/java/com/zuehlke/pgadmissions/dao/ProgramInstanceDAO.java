@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -61,13 +62,11 @@ public class ProgramInstanceDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).addOrder(Order.asc("applicationDeadline")).list();
     }
 
-    public ProgramInstance getCurrentProgramInstanceForStudyOption(Program program, String studyOption) {
-        Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
-        List<ProgramInstance> futureInstances = sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-                .add(Restrictions.eq("program", program)).add(Restrictions.eq("enabled", true)).add(Restrictions.eq("studyOption", studyOption))
-                .add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .addOrder(Order.asc("applicationDeadline")).list();
-        return futureInstances.get(0);
+    public ProgramInstance getProgramInstance(Program program, StudyOption studyOption, Date applicationStartDate) {
+        return (ProgramInstance) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
+                .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("studyOptionCode", studyOption.getId())) //
+                .add(Restrictions.eq("applicationStartDate", applicationStartDate)).uniqueResult();
     }
 
     public ProgramInstance getById(Integer id) {
@@ -94,8 +93,24 @@ public class ProgramInstanceDAO {
 
     public List<ProgramInstance> getLapsedInstances() {
         Date today = new DateTime().withTimeAtStartOfDay().toDate();
-        return sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).add(Restrictions.lt("disabledDate", today))
-                .add(Restrictions.eq("enabled", true)).add(Restrictions.eq("identifier", "CUSTOM")).list();
+        return sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
+                .add(Restrictions.lt("disabledDate", today)) //
+                .add(Restrictions.eq("enabled", true)) //
+                .add(Restrictions.eq("identifier", "CUSTOM")).list();
+    }
+
+    public Date getLatestActiveInstanceDeadline(Program program) {
+        return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
+                .setProjection(Projections.max("applicationDeadline")) //
+                .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("enabled", true)).uniqueResult();
+    }
+
+    public List<String> getStudyOptions(Program program) {
+        return sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
+                .setProjection(Projections.distinct(Projections.property("studyOptionCode"))) //
+                .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("enabled", true)).list();
     }
 
 }

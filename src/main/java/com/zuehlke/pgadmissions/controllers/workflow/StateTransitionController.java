@@ -280,23 +280,25 @@ public class StateTransitionController {
 	    		validationComment.setEnglishCompentencyOk(stateChangeDTO.getEnglishCompentencyOk());
 	    		validationComment.setHomeOrOverseas(stateChangeDTO.getHomeOrOverseas());
 	    		stateChangeComment = (StateChangeComment) validationComment;
-	    		applicationForm.setUseCustomReferenceQuestions(stateChangeDTO.getUseCustomReferenceQuestions());
-	    		stateChangeComment.setUseCustomReferenceQuestions(stateChangeDTO.getUseCustomReferenceQuestions());
+	    		boolean useCustomReferenceQuestions = convertNullOrBooleanToBoolean(stateChangeDTO.getUseCustomReferenceQuestions());
+                stateChangeComment.setUseCustomReferenceQuestions(useCustomReferenceQuestions);
+                setUseCustomQuestions(stateChangeComment, stateChangeDTO);
 	    		stateChangeComment.setType(CommentType.VALIDATION);
 	    		break;
 	    	case REVIEW:
-	    		stateChangeComment = new ReviewEvaluationComment();    		
+	    		stateChangeComment = new ReviewEvaluationComment();
 	    		stateChangeComment.setType(CommentType.REVIEW_EVALUATION);
-	    		stateChangeComment.setUseCustomQuestions(stateChangeDTO.getUseCustomQuestions());
+                setUseCustomQuestions(stateChangeComment, stateChangeDTO);
 	    		break;
 	    	case INTERVIEW:
 	    		stateChangeComment = new InterviewEvaluationComment();
 	    		stateChangeComment.setType(CommentType.INTERVIEW_EVALUATION);
-	            stateChangeComment.setUseCustomQuestions(stateChangeDTO.getUseCustomQuestions());
+	    		setUseCustomQuestions(stateChangeComment, stateChangeDTO);
 	    		break;
 	    	case APPROVAL:
 	    		stateChangeComment = new ApprovalEvaluationComment();
 	    		stateChangeComment.setType(CommentType.APPROVAL_EVALUATION);
+	            setUseCustomQuestions(stateChangeComment, stateChangeDTO);
 	    		break;
 	    	default:
 	    		throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
@@ -335,4 +337,16 @@ public class StateTransitionController {
         applicationFormUserRoleService.stateChanged(stateChangeComment);
         applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);	
     }
+    
+    private void setUseCustomQuestions(StateChangeComment comment, StateChangeDTO dto) {
+        comment.setUseCustomQuestions(convertNullOrBooleanToBoolean(dto.getUseCustomQuestions()));
+    }
+    
+    private Boolean convertNullOrBooleanToBoolean(Boolean input) {
+        if (BooleanUtils.isFalse(input) || input == null) {
+            return false;
+        }
+        return true;
+    }
+    
 }

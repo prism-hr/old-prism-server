@@ -43,9 +43,7 @@
 						</h3>
 						
 				</#if>  
-	        <#if applicationForm.useCustomReferenceQuestions>
-				<#include "comment_scores.ftl"/>
-			</#if>
+			<#include "comment_scores.ftl"/>
 		</div>
 	</li>                
 </ul>

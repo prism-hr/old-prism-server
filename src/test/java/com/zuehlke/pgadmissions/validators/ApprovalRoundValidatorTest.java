@@ -3,11 +3,9 @@ package com.zuehlke.pgadmissions.validators;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
-import java.util.Collections;
 
 import junit.framework.Assert;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

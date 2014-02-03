@@ -108,8 +108,8 @@
               <col style="width: 25%" />
               <col />
               <col style="width: 100px;" />
-              <col style="width: 130px;" />
-              <col style="width: 80px" />
+              <col style="width: 90px;" />
+              <col style="width: 90px" />
             </colgroup>
             <thead>
               <tr>

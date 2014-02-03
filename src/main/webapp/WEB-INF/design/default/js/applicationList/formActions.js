@@ -284,6 +284,63 @@ $(document).ready(function() {
 		}, 800);
 	});
 });
+/* Check if user submit the application to reveal the share pannel */
+function shareApplicationPannel() {
+    if( $("#content div.alert-info:contains('Thank you for your application')").length > 0) {
+       var application = getURLParameter('application').split('-')[0];
+       getAdvertData(application);
+    }
+}
+function getURLParameter(name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+}
+function getAdvertData(programme_code) {
+    $.ajax({
+        type : 'GET',
+        statusCode : {
+            401 : function() {
+                window.location.reload();
+            },
+            500 : function() {
+                window.location.href = "/pgadmissions/error";
+            },
+            404 : function() {
+                window.location.href = "/pgadmissions/404";
+            },
+            400 : function() {
+                window.location.href = "/pgadmissions/400";
+            },
+            403 : function() {
+                window.location.href = "/pgadmissions/404";
+            }
+        },
+        url : "/pgadmissions/prospectus/programme/getAdvertData",
+        data : {
+            programCode : programme_code,
+        },
+        success : function(data) {
+            var map = JSON.parse(data);
+            updateAdvertSection(map, programme_code);
+        },
+        complete : function() {
+        }
+    });
+}
+function updateAdvertSection(map, application) {
+    var linkToApply = map['linkToApply'];
+    var titleSeleted = $('.applicant-name :contains('+application+')').parent().parent().find('td.program-title').text();
+    var sharethisvar = 'http://api.addthis.com/oexchange/0.8/offer?url=' + linkToApply + '&title=' + titleSeleted;
+
+    $("#programAdvertLinkToApply").val(linkToApply);
+    $("#modalLinkToApply").val(linkToApply);
+
+    $('#sharethis').prop("href", sharethisvar);
+    $('#resourcesModal').modal('show')
+
+    $('.alert.alert-info').clone().prependTo('#resourcesModal .modal-body').find('a').remove();
+
+}
+
 function checkSwitch() {
 	if ($('.filter').length > 1) {
 		$('#prefilterBox').show();
@@ -413,6 +470,7 @@ function populateApplicationList() {
 		},
 		complete : function() {
 			$('#ajaxloader').fadeOut('fast');
+			shareApplicationPannel();
 			addToolTips();
 			loading = false;
 		}

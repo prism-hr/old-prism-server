@@ -57,7 +57,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
 
         List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
         assertNotNull(participants);
-        assertTrue(participants.get(0).equals(participant.getId()));
+        assertTrue(participants.contains(participant.getId()));
     }
 
     @Test

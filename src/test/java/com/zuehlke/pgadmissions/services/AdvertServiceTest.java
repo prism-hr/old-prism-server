@@ -35,4 +35,13 @@ public class AdvertServiceTest {
 		
 	}
 	
+	@Test
+	public void shouldGetRecommendedAdverts() {
+        List<Advert> result = Collections.<Advert>emptyList();
+        expect(dao.getRecommendedAdverts(null)).andReturn(result);
+        replay(dao);
+        List<Advert> activeAdverts = advertService.getRecommendedAdverts(null);
+        assertThat(activeAdverts, Matchers.is(result));
+	}
+	
 }

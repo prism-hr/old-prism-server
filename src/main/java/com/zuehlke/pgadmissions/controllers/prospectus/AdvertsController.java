@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.prospectus;
 import static java.util.Collections.singletonMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -157,6 +159,20 @@ public class AdvertsController {
         RegisteredUser applicant = applicationFormDAO.getApplicationByApplicationNumber(applicationNumber).getApplicant();
         List<AdvertDTO> recommendedAdverts = convertAdverts(advertService.getRecommendedAdverts(applicant));
         map.put("adverts", recommendedAdverts);
+        return new Gson().toJson(map);
+    }
+    
+    @RequestMapping(value = "/currentOpportunity", method = RequestMethod.GET)
+    @ResponseBody
+    public String currentAdvert(@RequestParam("applicationNumber") String applicationNumber) {
+        Map<String, Object> map = Maps.newHashMap();
+        ApplicationForm application = applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
+        Advert advert = application.getProgram().getAdvert();
+        if (application.getProject() != null) {
+            advert = application.getProject().getAdvert();
+        }
+        List<AdvertDTO> currentAdvert = convertAdverts(Arrays.asList(advert));
+        map.put("adverts", currentAdvert);
         return new Gson().toJson(map);
     }
 

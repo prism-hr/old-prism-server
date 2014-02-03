@@ -7,28 +7,40 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class AdvertDAOTest extends AutomaticRollbackTestCase {
 
     private AdvertDAO advertDAO;
+    private ReminderIntervalDAO reminderIntervalDAO;
+    private NotificationsDurationDAO notificationsDurationDAO;
+    private UserDAO userDAO;
     private QualificationInstitution institution;
-
-    @Before
-    public void setUp() {
+    
+    @Override
+    public void setup() {
+        super.setup();
         advertDAO = new AdvertDAO(sessionFactory);
+        reminderIntervalDAO = new ReminderIntervalDAO(sessionFactory);
+        notificationsDurationDAO = new NotificationsDurationDAO(sessionFactory);
+        userDAO = new UserDAO(sessionFactory, reminderIntervalDAO, notificationsDurationDAO);
         institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
         save(institution);
-
+    }
+    
+    @Override
+    public void tearDown() {
+        super.tearDown();
     }
 
     @Test
@@ -46,6 +58,20 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
         List<Advert> activeAdverts = advertDAO.getActiveAdverts();
         assertThat(activeAdverts.size(), greaterThanOrEqualTo(1));
         assertTrue(advertInList(programAdvert, activeAdverts));
+    }
+
+    /**
+     * Test uses a real user with real applications as the test seed for the recommender algorithm
+     * The test will fail
+     */
+    @Test
+    public void shouldGetRecommendedAdverts() {
+        RegisteredUser testUser = userDAO.get(4157);
+        List<Advert> gotAdverts = advertDAO.getRecommendedAdverts(testUser);
+        assertTrue(gotAdverts.size() > 0);
+        RegisteredUser testUserWithNoApplications = userDAO.get(15);
+        gotAdverts = advertDAO.getRecommendedAdverts(testUserWithNoApplications);
+        assertTrue(gotAdverts.size() == 0);
     }
 
     private boolean advertInList(Advert programAdvert, List<Advert> activeAdverts) {

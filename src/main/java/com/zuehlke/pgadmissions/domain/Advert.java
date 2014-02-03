@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Generated;
@@ -46,6 +47,9 @@ public class Advert implements Serializable {
     @Generated(GenerationTime.ALWAYS)
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastEditedTimestamp;
+    
+    @Transient
+    private Integer ranking;
     
     public Integer getId() {
         return id;

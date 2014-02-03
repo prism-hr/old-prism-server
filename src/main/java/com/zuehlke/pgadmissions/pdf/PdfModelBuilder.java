@@ -810,7 +810,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(newTableCell(funding.getDescription(), SMALL_FONT));
 
                 table.addCell(newTableCell("Value of Award (GBP)", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(funding.getValue(), SMALL_FONT));
+                table.addCell(newTableCell(funding.getValue().toString(), SMALL_FONT));
 
                 table.addCell(newTableCell("Award Date", SMALL_BOLD_FONT));
                 table.addCell(newTableCell(dateFormat.format(funding.getAwardDate()), SMALL_FONT));

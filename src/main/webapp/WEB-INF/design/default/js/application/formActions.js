@@ -191,6 +191,7 @@ $(document).ready(function()
 	
 });
 
+
 function closeSections()
 {
 	if ($("input#form-display-state").val() == "close")

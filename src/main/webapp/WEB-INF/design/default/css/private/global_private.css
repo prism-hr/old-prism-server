@@ -1148,6 +1148,9 @@ span.count {
     padding: 6px;
     padding-left: 26px !important;
 }
+form>div.alert-error.last{
+	padding-left: 14px !important;
+}
 #termscond {
 	padding-left: 10px !important;
 }

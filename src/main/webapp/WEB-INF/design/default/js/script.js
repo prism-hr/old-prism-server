@@ -195,8 +195,7 @@ $(document).ready(function() {
             $.ui.selectable.prototype._setOption.apply(this, arguments);
         }
     });
-
-
+    
 });
 
 // Tooltip settings used across the board.

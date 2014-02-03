@@ -333,6 +333,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public List<Funding> getFundings() {
         return fundings;
     }
+    
 
     public void setFundings(List<Funding> fundings) {
         this.fundings = fundings;

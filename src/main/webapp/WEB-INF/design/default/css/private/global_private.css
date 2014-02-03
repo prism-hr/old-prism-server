@@ -1995,6 +1995,13 @@ background: #909194;
 .requestbox table.appliList thead th {
 	padding: 12px 6px;
 }
+#resourcesModal #modalLinkToApply.input-xxlarge{
+	width: 518px !important;
+	margin-bottom: 0px;
+}
+#resourcesModal .alert-info {
+	margin-bottom: 10px;
+}
 @media (min-width:768px) and (max-width:979px) {
 
 }

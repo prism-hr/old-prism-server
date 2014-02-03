@@ -140,14 +140,10 @@
                     <span data-desc="Validated" class="icon-status validation">Validated</span>-->
                   </td>
                   <td class="centre">
-                    <select class="opportunityRequestActionType selectpicker actionType" data-request-id="${opportunityRequest.id?string}">
-                      <option class="title">Actions</option>
-                      <#if opportunityRequest.status == "NEW">
-                        <option value="approve">Approve</option>
-                      </#if>
-                    </select>
+                    <#if opportunityRequest.status == "NEW">
+                      <button class="opportunityRequestActionType btn btn-success" data-request-id="${opportunityRequest.id?string}" data-value="approve">Review</button>
+                    </#if>
                   </td>
-                   
                   <td class="centre">
                     ${opportunityRequest.createdDate?string("dd MMM yyyy")}
                   </td>

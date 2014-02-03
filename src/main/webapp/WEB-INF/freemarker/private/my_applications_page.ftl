@@ -42,7 +42,23 @@
 <!--[if (gte IE 9)|!(IE)]><!-->
 <body class="applist">
 <!--<![endif]--> 
-
+ <!-- Modal Start-->
+  <div id="resourcesModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <h3 id="myModalLabel">Application Submitted!</h3>
+    </div>
+    <div class="modal-body">
+      <p><strong>Now share it with your friends in social networks</strong> 
+       <a href="#" target="_blank" id="sharethis" title="View more services" style="margin-left: 6px;"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>
+      </p>
+      <p><strong>Or just add this link</strong> in emails and on websites.</p>
+      <input type="text" readonly="" aria-haspopup="true" role="textbox" class="input-xxlarge" id="modalLinkToApply">
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+  </div>
+  <!-- Modal End-->
 <!-- Wrapper Starts -->
 <div id="wrapper"> <#include "/private/common/global_header.ftl"/> 
   
@@ -57,7 +73,6 @@
       <input type="hidden" id="appList" name="appList" />
       <div class="content-box">
         <div class="content-box-inner"> <#if alertDefinition??>
-          
           <#if alertDefinition.type??>
             <#if alertDefinition.type.name() == "INFO"> 
             <div class="alert alert-info"> 

@@ -1012,4 +1012,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.useCustomReferenceQuestions = useCustomReferenceQuestions;
     }
 
+    public List<ApplicationFormUserRole> getApplicationFormUserRoles() {
+        return applicationFormUserRoles;
+    }
+
+    public void setApplicationFormUserRoles(List<ApplicationFormUserRole> applicationFormUserRoles) {
+        this.applicationFormUserRoles = applicationFormUserRoles;
+    }
+
 }

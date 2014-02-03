@@ -217,6 +217,10 @@ public class Program extends Authorisable implements Serializable {
         return projects;
     }
 
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
+    }
+
     public List<ApplicationForm> getApplications() {
         return applications;
     }

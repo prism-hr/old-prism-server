@@ -4,7 +4,6 @@ import static java.util.Collections.singletonMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +27,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
@@ -41,7 +40,6 @@ import com.zuehlke.pgadmissions.dto.ProjectAdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.ResearchOpportunitiesFeedService;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Controller
 @RequestMapping("/opportunities")
@@ -52,17 +50,24 @@ public class AdvertsController {
     private static final AdvertDTO NULL_ADVERT = new AdvertDTO(Integer.MIN_VALUE);
 
     private final ResearchOpportunitiesFeedService feedService;
+    
+    private final ApplicationFormDAO applicationFormDAO;
+
+    private final ProgramDAO programDAO;
 
     private final ProgramsService programsService;
 
     public AdvertsController() {
-        this(null, null, null);
+        this(null, null, null, null, null);
     }
 
     @Autowired
-    public AdvertsController(final AdvertService advertService, final ResearchOpportunitiesFeedService feedService, final ProgramsService programsService) {
+    public AdvertsController(final AdvertService advertService, final ResearchOpportunitiesFeedService feedService, final ApplicationFormDAO applicationFormDAO, final ProgramDAO programDAO,
+            final ProgramsService programsService) {
         this.advertService = advertService;
         this.feedService = feedService;
+        this.applicationFormDAO = applicationFormDAO;
+        this.programDAO = programDAO;
         this.programsService = programsService;
     }
 
@@ -144,12 +149,13 @@ public class AdvertsController {
         map.put("adverts", activeAdverts);
         return new Gson().toJson(map);
     }
-    
+
     @RequestMapping(value = "/recommendedOpportunities", method = RequestMethod.GET)
     @ResponseBody
     public String recommendedAdverts(@RequestParam("applicationNumber") String applicationNumber) {
         Map<String, Object> map = Maps.newHashMap();
-        List<AdvertDTO> recommendedAdverts = convertAdverts(advertService.getRecommendedAdverts(applicationNumber));
+        RegisteredUser applicant = applicationFormDAO.getApplicationByApplicationNumber(applicationNumber).getApplicant();
+        List<AdvertDTO> recommendedAdverts = convertAdverts(advertService.getRecommendedAdverts(applicant));
         map.put("adverts", recommendedAdverts);
         return new Gson().toJson(map);
     }
@@ -205,7 +211,7 @@ public class AdvertsController {
         return newList;
     }
 
-    class AdvertConverter {
+    private class AdvertConverter {
 
         public AdvertDTO convert(Advert input) {
             Program program = advertService.getProgram(input);
@@ -214,8 +220,8 @@ public class AdvertsController {
                 dto = new AdvertDTO(input.getId());
                 dto.setProgramCode(program.getCode());
                 dto.setTitle(program.getTitle());
-                dto.setClosingDate(getFirstClosingDate(program));
-                Person primarySupervisor = getFirstValidAdministrator(program);
+                dto.setClosingDate(programDAO.getNextClosingDate(program));
+                Person primarySupervisor = toPerson(programDAO.getFirstAdministratorForProgram(program));
                 dto.setPrimarySupervisor(primarySupervisor);
                 if (primarySupervisor != null) {
                     dto.setSupervisorEmail(primarySupervisor.getEmail());
@@ -230,7 +236,7 @@ public class AdvertsController {
                 projectDto.setProgramCode(program.getCode());
                 projectDto.setStudyDuration(project.getAdvert().getStudyDuration());
                 projectDto.setTitle(input.getTitle());
-                projectDto.setClosingDate(getFirstClosingDate(program));
+                projectDto.setClosingDate(programDAO.getNextClosingDate(program));
                 RegisteredUser supervisor = project.getPrimarySupervisor();
                 projectDto.setPrimarySupervisor(toPerson(supervisor));
                 projectDto.setSupervisorEmail(supervisor.getEmail());
@@ -243,29 +249,6 @@ public class AdvertsController {
             return dto;
         }
 
-        private Date getFirstClosingDate(Program program) {
-            if (CollectionUtils.isEmpty(program.getClosingDates())) {
-                return null;
-            }
-            Date now = DateUtils.truncateToDay(new Date());
-            for (ProgramClosingDate closingDate : program.getClosingDates()) {
-                if (now.compareTo(closingDate.getClosingDate()) <= 0) {
-                    return closingDate.getClosingDate();
-                }
-            }
-            return null;
-        }
-
-        private Person getFirstValidAdministrator(Program program) {
-            List<RegisteredUser> administrators = program.getAdministrators();
-            for (RegisteredUser administrator : administrators) {
-                if (isValid(administrator)) {
-                    return toPerson(administrator);
-                }
-            }
-            return null;
-        }
-
         private Person toPerson(RegisteredUser user) {
             if (user == null) {
                 return null;
@@ -276,10 +259,7 @@ public class AdvertsController {
             person.setEmail(user.getEmail());
             return person;
         }
-
-        private boolean isValid(RegisteredUser admin) {
-            return admin != null && admin.isAccountNonExpired() && admin.isAccountNonLocked() && admin.isCredentialsNonExpired() && admin.isEnabled();
-        }
+        
     }
-    
+
 }

@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.util.Date;
 
 import org.easymock.EasyMock;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -115,15 +115,15 @@ public class ApplicationsServiceTest {
     public void shouldGetBatchDeadlineForApplication() {
         Program program = new ProgramBuilder().code("KLOP").id(1).build();
         ApplicationForm form = new ApplicationFormBuilder().program(program).build();
-        Date deadline = new Date();
-
-        EasyMock.expect(programDAOMock.getNextClosingDateForProgram(EasyMock.eq(program), EasyMock.isA(Date.class))).andReturn(deadline);
+        DateTime deadline = new DateTime(new Date());
+        Date deadlineTruncated = new DateTime(deadline.getYear(), deadline.getMonthOfYear(), deadline.getDayOfMonth(), 0, 0, 0).toDate();
+        EasyMock.expect(programDAOMock.getNextClosingDate(EasyMock.eq(program))).andReturn(deadlineTruncated);
 
         replay();
         Date returnedDeadline = applicationsService.getBatchDeadlineForApplication(form);
         verify();
 
-        assertSame(deadline, returnedDeadline);
+        assertEquals(deadlineTruncated, returnedDeadline);
     }
     
     @Test

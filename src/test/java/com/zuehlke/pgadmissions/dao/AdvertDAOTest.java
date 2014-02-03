@@ -21,15 +21,18 @@ import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 public class AdvertDAOTest extends AutomaticRollbackTestCase {
 
     private AdvertDAO advertDAO;
+    private QualificationInstitution institution;
 
     @Before
     public void setUp() {
         advertDAO = new AdvertDAO(sessionFactory);
+        institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        save(institution);
+
     }
 
     @Test
     public void shouldGetActiveAdverts() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
         Program programWithInactiveProgramAdvert = new ProgramBuilder().code("inactive").title("another title").institution(institution).build();
         Advert inactiveProgramAdvert = new AdvertBuilder().description("inactive program").studyDuration(9).active(false).build();
 

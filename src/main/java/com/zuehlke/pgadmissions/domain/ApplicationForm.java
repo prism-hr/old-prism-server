@@ -1003,9 +1003,21 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public Boolean getUseCustomReferenceQuestions() {
         return useCustomReferenceQuestions;
     }
+    
+    public boolean isUseCustomReferenceQuestions() {
+        return useCustomReferenceQuestions;
+    }
 
     public void setUseCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
         this.useCustomReferenceQuestions = useCustomReferenceQuestions;
+    }
+
+    public List<ApplicationFormUserRole> getApplicationFormUserRoles() {
+        return applicationFormUserRoles;
+    }
+
+    public void setApplicationFormUserRoles(List<ApplicationFormUserRole> applicationFormUserRoles) {
+        this.applicationFormUserRoles = applicationFormUserRoles;
     }
 
 }

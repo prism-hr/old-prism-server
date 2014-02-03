@@ -19,9 +19,9 @@ $(document).ready(function() {
         	var state = $('#nextStatus option:selected').text();
             var stateDisplay = state.toLowerCase().capitalize();
             if (stateDisplay.length == 0 || stateDisplay == 'Select...') {
-                stateDisplay = 'next';
+                stateDisplay = 'Next';
             }
-            var message = 'Confirm that you want to move this application to the ' + state + ' stage.';
+            var message = 'Confirm that you want to move this application to the ' + stateDisplay + ' stage.';
             $('#confirmNextStageLabel').html(message);
             var customQuestionCoverage = new Array();
             $('input:hidden[name=customQuestionCoverage]').each(function() {

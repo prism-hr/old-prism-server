@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.ExtendedModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -20,9 +21,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
@@ -32,151 +31,121 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 
 public class AdditionalInformationControllerTest {
-	private RegisteredUser currentUser;
+    private RegisteredUser currentUser;
+    private AdditionalInfoService addInfoServiceMock;
+    private ApplicationsService applicationServiceMock;
+    private AdditionalInformationValidator validatorMock;
+    private ApplicationFormPropertyEditor applFormPropertyEditorMock;
+    private BooleanPropertyEditor booleanPropertyEditorMock;
+    private AdditionalInformationController controller;
+    private UserService userServiceMock;
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
-	private AdditionalInfoService addInfoServiceMock;
-	private ApplicationsService applicationServiceMock;
-	private AdditionalInformationValidator validatorMock;
-	private ApplicationFormPropertyEditor applFormPropertyEditorMock;
-	private BooleanPropertyEditor booleanPropertyEditorMock;
+    @Before
+    public void setUp() {
+        addInfoServiceMock = EasyMock.createMock(AdditionalInfoService.class);
+        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
+        booleanPropertyEditorMock = EasyMock.createMock(BooleanPropertyEditor.class);
+        userServiceMock = EasyMock.createMock(UserService.class);
+        validatorMock = EasyMock.createMock(AdditionalInformationValidator.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        controller = new AdditionalInformationController(applicationServiceMock, userServiceMock, applFormPropertyEditorMock,//
+                booleanPropertyEditorMock, addInfoServiceMock, validatorMock, applicationFormUserRoleServiceMock);
 
-	private AdditionalInformationController controller;
+        currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        EasyMock.replay(userServiceMock);
+    }
 
-	private UserService userServiceMock;
-	
-	private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    @After
+    public void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
 
+    @Test(expected = CannotUpdateApplicationException.class)
+    public void throwExceptionWhenApplicationFormAlreadySubmitted() {
+        ApplicationForm applForm = new ApplicationFormBuilder().id(1)//
+                .status(ApplicationFormStatus.APPROVED)//
+                .build();
+        AdditionalInformation info = new AdditionalInformationBuilder().id(1)//
+                .applicationForm(applForm).build();
+        controller.editAdditionalInformation(info, null, applForm);
+    }
 
-	@Before
-	public void setUp() {
-		addInfoServiceMock = EasyMock.createMock(AdditionalInfoService.class);
-		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
-		applFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
-		booleanPropertyEditorMock = EasyMock.createMock(BooleanPropertyEditor.class);
-		userServiceMock = EasyMock.createMock(UserService.class);
-		validatorMock = EasyMock.createMock(AdditionalInformationValidator.class);
-		applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
-		controller = new AdditionalInformationController(applicationServiceMock, userServiceMock, applFormPropertyEditorMock,// 
-				booleanPropertyEditorMock, addInfoServiceMock, validatorMock, applicationFormUserRoleServiceMock);		
+    @Test
+    public void shouldReturnApplicationFormViewWhenErrors() {
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+        AdditionalInformation info = new AdditionalInformationBuilder().id(1).applicationForm(applicationForm).build();
 
-		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-		EasyMock.replay(userServiceMock);
-	}
+        BindingResult errors = EasyMock.createMock(BindingResult.class);
+        EasyMock.expect(errors.hasErrors()).andReturn(true);
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
+        EasyMock.replay(errors, applicationServiceMock, addInfoServiceMock);
+        String viewID = controller.editAdditionalInformation(info, errors, applicationForm);
+        EasyMock.verify(errors, applicationServiceMock, addInfoServiceMock);
+        Assert.assertEquals("/private/pgStudents/form/components/additional_information", viewID);
+    }
 
-	@Test(expected = CannotUpdateApplicationException.class)
-	public void throwExceptionWhenApplicationFormAlreadySubmitted() {
-		ApplicationForm applForm = new ApplicationFormBuilder().id(1)//
-				.status(ApplicationFormStatus.APPROVED)//
-				.build();
-		AdditionalInformation info = new AdditionalInformationBuilder().id(1)//
-				.applicationForm(applForm).build();
-		controller.editAdditionalInformation(info, null);
-	}
+    @Test
+    public void shouldReturnApplicationFormView() {
+        Assert.assertEquals("/private/pgStudents/form/components/additional_information",
+                controller.getAdditionalInformationView(new ApplicationForm(), new ExtendedModelMap()));
+    }
 
-	@Test
-	public void shouldReturnApplicationFormViewWhenErrors() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-		AdditionalInformation info = new AdditionalInformationBuilder().id(1).applicationForm(applicationForm).build();
+    @Test
+    public void shouldReturnMessage() {
+        Assert.assertEquals("bob", controller.getMessage("bob"));
+    }
 
-		BindingResult errors = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errors.hasErrors()).andReturn(true);
+    @Test
+    public void shouldReturnErrorCode() {
+        Assert.assertEquals("bob", controller.getErrorCode("bob"));
+    }
 
-		EasyMock.replay(errors, applicationServiceMock, addInfoServiceMock);
-		String viewID = controller.editAdditionalInformation(info, errors);
-		EasyMock.verify(errors, applicationServiceMock, addInfoServiceMock);
-		Assert.assertEquals("/private/pgStudents/form/components/additional_information", viewID);
-	}
+    @Test
+    public void shouldSaveAdditionalInfoAndRedirect() {
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
+        AdditionalInformation info = new AdditionalInformationBuilder().id(1).applicationForm(applicationForm).build();
 
-	@Test
-	public void shouldReturnApplicationFormView() {
-		Assert.assertEquals("/private/pgStudents/form/components/additional_information", controller.getAdditionalInformationView());
-	}
+        BindingResult errors = EasyMock.createMock(BindingResult.class);
+        EasyMock.expect(errors.hasErrors()).andReturn(false);
 
-	@Test
-	public void shouldReturnMessage() {
-		Assert.assertEquals("bob", controller.getMessage("bob"));
-	}
+        addInfoServiceMock.save(info);
 
-	@Test
-	public void shouldReturnErrorCode() {
-		Assert.assertEquals("bob", controller.getErrorCode("bob"));
-	}
+        EasyMock.replay(errors, applicationServiceMock, addInfoServiceMock);
+        String viewID = controller.editAdditionalInformation(info, errors, applicationForm);
+        EasyMock.verify(errors, applicationServiceMock, addInfoServiceMock);
+        Assert.assertEquals("redirect:/update/getAdditionalInformation?applicationId=ABC", viewID);
+    }
 
-	@Test
-	public void shouldSaveAdditionalInfoAndRedirect() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
-		AdditionalInformation info = new AdditionalInformationBuilder().id(1).applicationForm(applicationForm).build();
+    @Test
+    public void shouldBindPropertyEditors() {
+        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+        binderMock.setValidator(validatorMock);
+        binderMock.registerCustomEditor(ApplicationForm.class, applFormPropertyEditorMock);
+        binderMock.registerCustomEditor(Boolean.class, booleanPropertyEditorMock);
+        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 
-		BindingResult errors = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errors.hasErrors()).andReturn(false);
+        EasyMock.replay(binderMock);
+        controller.registerValidatorsEditors(binderMock);
+        EasyMock.verify(binderMock);
+    }
 
-		addInfoServiceMock.save(info);
-		
-		EasyMock.replay(errors, applicationServiceMock, addInfoServiceMock);
-		String viewID = controller.editAdditionalInformation(info, errors);
-		EasyMock.verify(errors, applicationServiceMock, addInfoServiceMock);
-		Assert.assertEquals("redirect:/update/getAdditionalInformation?applicationId=ABC", viewID);
-	}
+    @Test
+    public void shouldReturnApplicationForm() {
+        currentUser = EasyMock.createMock(RegisteredUser.class);
 
-	@Test
-	public void returnAdditionalInfo() {
-		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
-		EasyMock.replay(userServiceMock);
-		AdditionalInformation additionalInfo = new AdditionalInformationBuilder().id(200).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(100).build();
-		applicationForm.setAdditionalInformation(additionalInfo);
-
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
-
-		EasyMock.replay(userMock, applicationServiceMock, addInfoServiceMock);
-		AdditionalInformation returnedAddInfo = controller.getAdditionalInformation("100");
-		Assert.assertEquals(additionalInfo, returnedAddInfo);
-		EasyMock.verify(userMock, applicationServiceMock, addInfoServiceMock);
-	}
-
-	@Test(expected = MissingApplicationFormException.class)
-	public void shouldThrowExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
-		EasyMock.replay(applicationServiceMock, addInfoServiceMock);
-		controller.getAdditionalInformation("1");
-	}
-
-	@Test
-	public void shouldBindPropertyEditors() {
-		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-		binderMock.setValidator(validatorMock);
-		binderMock.registerCustomEditor(ApplicationForm.class, applFormPropertyEditorMock);
-		binderMock.registerCustomEditor(Boolean.class, booleanPropertyEditorMock);
-		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
-		
-		EasyMock.replay(binderMock);
-		controller.registerValidatorsEditors(binderMock);
-		EasyMock.verify(binderMock);
-	}
-
-	@Test
-	public void shouldReturnApplicationForm() {
-		currentUser = EasyMock.createMock(RegisteredUser.class);
-
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-		EasyMock.replay(userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
-		EasyMock.replay(applicationServiceMock, currentUser);
-		ApplicationForm returnedApplicationForm = controller.getApplicationForm("100");
-		Assert.assertEquals(applicationForm, returnedApplicationForm);
-		EasyMock.verify(applicationServiceMock);
-	}
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        EasyMock.replay(userServiceMock);
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
+        EasyMock.replay(applicationServiceMock, currentUser);
+        ApplicationForm returnedApplicationForm = controller.getApplicationForm("100");
+        Assert.assertEquals(applicationForm, returnedApplicationForm);
+        EasyMock.verify(applicationServiceMock);
+    }
 
 }

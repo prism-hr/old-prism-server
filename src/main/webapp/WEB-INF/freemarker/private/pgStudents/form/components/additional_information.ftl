@@ -32,7 +32,7 @@
 				<div class="field">
 					<label><input type="radio" name="convictionRadio" value="TRUE" id="convictionRadio_true" <#if additionalInformation.convictions?? && additionalInformation.convictions> checked="checked" </#if>  
 					<#if applicationForm.isDecided()>disabled="disabled"</#if> /> Yes</label>
-					<label><input type="radio" name="convictionRadio" value="FALSE" id="convictionRadio_false" <#if  additionalInformation.convictions?? && !additionalInformation.convictions> checked="checked" </#if> 
+					<label><input type="radio" name="convictionRadio" value="FALSE" id="convictionRadio_false" <#if additionalInformation.convictions?? && !additionalInformation.convictions> checked="checked" </#if> 
 					<#if applicationForm.isDecided()>disabled="disabled"</#if> /> No</label>
 				</div>
 			</div>

@@ -19,18 +19,19 @@ public class FundingValidator extends FormSectionObjectValidator implements Vali
 
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
-		super.addExtraValidation(target, errors);
+		super.addExtraValidation(target, errors);	
+		Funding funding = (Funding) target;
 		
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "type", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", EMPTY_FIELD_ERROR_MESSAGE);
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "value", EMPTY_FIELD_ERROR_MESSAGE);
+	    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "value", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "awardDate", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "document", "file.upload.empty");
-		Funding fund = (Funding) target;
 		
-		if (fund.getAwardDate() != null && fund.getAwardDate().after(today)) {
+		if (funding.getAwardDate() != null && funding.getAwardDate().after(today)) {
 			errors.rejectValue("awardDate", "date.field.notpast");
 		}
+		
 	}
 }

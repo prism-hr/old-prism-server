@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import static com.google.common.base.Objects.firstNonNull;
-
 import java.util.Date;
 import java.util.List;
 
@@ -55,7 +53,6 @@ import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EthnicityService;
 import com.zuehlke.pgadmissions.services.LanguageService;
-import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsUserValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
@@ -80,7 +77,6 @@ public class PersonalDetailsController {
     private final DisabilityPropertyEditor disabilityPropertyEditor;
     private final EthnicityPropertyEditor ethnicityPropertyEditor;
     private final PersonalDetailsValidator personalDetailsValidator;
-    private final PersonalDetailsService personalDetailsService;
     private final UserService userService;
     private final DomicileService domicileService;
     private final DomicilePropertyEditor domicilePropertyEditor;
@@ -91,7 +87,7 @@ public class PersonalDetailsController {
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public PersonalDetailsController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -99,7 +95,7 @@ public class PersonalDetailsController {
             ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor, CountryService countryService,
             EthnicityService ethnicityService, DisabilityService disabilityService, LanguageService languageService,
             LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, DisabilityPropertyEditor disabilityPropertyEditor,
-            EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator, PersonalDetailsService personalDetailsService,
+            EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator,
             DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor, DocumentPropertyEditor documentPropertyEditor,
             DocumentService documentService, EncryptionHelper encryptionHelper, PersonalDetailsUserValidator personalDetailsUserValidator,
             final ApplicationFormUserRoleService applicationFormUserRoleService) {
@@ -116,7 +112,6 @@ public class PersonalDetailsController {
         this.ethnicityPropertyEditor = ethnicityPropertyEditor;
         this.disabilityPropertyEditor = disabilityPropertyEditor;
         this.personalDetailsValidator = personalDetailsValidator;
-        this.personalDetailsService = personalDetailsService;
         this.domicileService = domicileService;
         this.domicilePropertyEditor = domicilePropertyEditor;
         this.documentPropertyEditor = documentPropertyEditor;
@@ -170,21 +165,20 @@ public class PersonalDetailsController {
 
     @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
     public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult,
-            @ModelAttribute("updatedUser") @Valid RegisteredUser updatedUser, BindingResult userResult, Model model, SessionStatus sessionStatus) {
-        if (personalDetails.getApplication().isDecided()) {
-            throw new CannotUpdateApplicationException(personalDetails.getApplication().getApplicationNumber());
+            @ModelAttribute("updatedUser") @Valid RegisteredUser updatedUser, BindingResult userResult, Model model, SessionStatus sessionStatus,
+            @ModelAttribute("applicationForm") ApplicationForm application) {
+        if (application.isDecided()) {
+            throw new CannotUpdateApplicationException(application.getApplicationNumber());
         }
 
         if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {
             return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
         }
 
-        ApplicationForm applicationForm = personalDetails.getApplication();
-
         userService.updateCurrentUser(updatedUser);
-        personalDetailsService.save(personalDetails);
-        applicationsService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getUser(), ApplicationUpdateScope.ALL_USERS);
+        application.setPersonalDetails(personalDetails);
+        applicationsService.save(application);
+        applicationFormUserRoleService.registerApplicationUpdate(application, getUser(), ApplicationUpdateScope.ALL_USERS);
 
         sessionStatus.setComplete();
 
@@ -256,12 +250,7 @@ public class PersonalDetailsController {
         return new StringTrimmerEditor(false);
     }
 
-    public PersonalDetails getPersonalDetails(String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        return firstNonNull(applicationForm.getPersonalDetails(), new PersonalDetails());
-    }
-
-    @ModelAttribute
+    @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(String applicationId) {
         ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
         if (application == null) {

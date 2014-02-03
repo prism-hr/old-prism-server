@@ -64,10 +64,10 @@ public class StateChangeValidator extends AbstractValidator {
             errors.rejectValue("useCustomReferenceQuestions", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
         
-        if ((nextStatus == ApplicationFormStatus.REVIEW
+        if (((nextStatus == ApplicationFormStatus.REVIEW
                 && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.REVIEW))
                 || (nextStatus == ApplicationFormStatus.INTERVIEW
-                        && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.INTERVIEW))
+                        && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.INTERVIEW)))
                 && stateChangeDTO.getUseCustomQuestions() == null) {
             errors.rejectValue("useCustomQuestions", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }

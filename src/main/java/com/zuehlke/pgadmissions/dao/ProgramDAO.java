@@ -41,7 +41,8 @@ public class ProgramDAO {
     }
 
     public List<Program> getAllPrograms() {
-        return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+        return sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .addOrder(Order.asc("title")).list();
     }
 
@@ -54,7 +55,8 @@ public class ProgramDAO {
     }
 
     public Program getProgramByCode(String code) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code)).uniqueResult();
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .add(Restrictions.eq("code", code)).uniqueResult();
     }
     
 	public void merge(Program program) {
@@ -77,22 +79,7 @@ public class ProgramDAO {
                .add(eq("u.user", user))
                .setProjection(distinct(property("a.program")))
                .list();
-    }
-    
-    
-    public Date getNextClosingDateForProgram(Program program, Date today) {
-        List<Date> result = (List<Date>) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class).setProjection(Projections.property("closingDate"))
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.gt("closingDate", today))
-                .addOrder(Order.asc("closingDate"))
-                .setMaxResults(1)
-                .list();
-        if (result.isEmpty()) {
-            return null;
-        }
-        return result.get(0);
-    }
-    
+	}
     
 	public List<Program> getProgramsOfWhichPreviousSupervisor(RegisteredUser user){
 	    return sessionFactory.getCurrentSession().createCriteria(Supervisor.class, "s")
@@ -109,6 +96,61 @@ public class ProgramDAO {
                 .add(Restrictions.like("code", matcher));
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
                 .add(Property.forName("code").eq(maxCustomCode)).uniqueResult();
-    }	
+    }
+    
+    public ProgramClosingDate getClosingDateById(final Integer id) {
+        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
+            .add(Restrictions.eq("id", id)).uniqueResult();
+    }
+    
+    public ProgramClosingDate getClosingDateByDate(final Program program, final Date date) {
+        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("closingDate", date))
+                .addOrder(Order.desc("id"))
+                .setMaxResults(1).uniqueResult();
+    }
+    
+    public Date getNextClosingDate(Program program) {
+        return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
+                .setProjection(Projections.property("closingDate"))
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.ge("closingDate", new Date()))
+                .addOrder(Order.asc("closingDate"))
+                .addOrder(Order.desc("id"))
+                .setMaxResults(1).uniqueResult();
+    }
 
+    public void updateClosingDate(ProgramClosingDate closingDate) {
+        if (closingDate != null) {
+            Program program = closingDate.getProgram();
+            if (program != null) {
+                sessionFactory.getCurrentSession().update(closingDate);
+                save(program);
+            }
+        }
+    }
+    
+    public void deleteClosingDate(ProgramClosingDate closingDate) {
+        if (closingDate != null) {
+            Program program = closingDate.getProgram();
+            if (program != null) {
+                sessionFactory.getCurrentSession().delete(closingDate);
+                save(program);
+            }
+        }
+    }
+    
+    public RegisteredUser getFirstAdministratorForProgram(Program program) {
+        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+                .createAlias("programsOfWhichAdministrator", "program")
+                .add(Restrictions.eq("program.id", program.getId()))
+                .add(Restrictions.eq("accountNonExpired", true))
+                .add(Restrictions.eq("accountNonLocked", true))
+                .add(Restrictions.eq("credentialsNonExpired", true))
+                .add(Restrictions.eq("enabled", true))
+                .addOrder(Order.asc("id"))
+                .setMaxResults(1).uniqueResult();
+    }
+    
 }

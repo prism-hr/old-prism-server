@@ -3,9 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -21,12 +19,14 @@ import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.dto.ProgramOpportunityDTO;
 
 @Service
 @Transactional
@@ -43,6 +43,9 @@ public class ProgramsService {
 
     @Autowired
     private QualificationInstitutionService qualificationInstitutionService;
+
+    @Autowired
+    private ProgramInstanceService programInstanceService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -97,10 +100,6 @@ public class ProgramsService {
         program.getScoringDefinitions().put(scoringStage, null);
     }
 
-    public Advert getAdvert(int advertId) {
-        return advertDAO.getAdvertById(advertId);
-    }
-
     public Project getProject(int projectId) {
         return projectDAO.getProjectById(projectId);
     }
@@ -127,24 +126,8 @@ public class ProgramsService {
         }
     }
 
-    public void addProgramAdvert(String programCode, Advert advert) {
-        Program program = getProgramByCode(programCode);
-        advertDAO.delete(program.getAdvert());
-        program.setAdvert(advert);
-        programDAO.save(program);
-    }
-
-    public Map<String, String> getDefaultClosingDates() {
-        Map<String, String> result = new HashMap<String, String>();
-        List<Program> programs = getAllPrograms();
-        for (Program program : programs) {
-            result.put(program.getCode(), getDefaultClosingDate(program));
-        }
-        return result;
-    }
-
     public String getDefaultClosingDate(Program program) {
-        Date closingDate = programDAO.getNextClosingDateForProgram(program, new Date());
+        Date closingDate = programDAO.getNextClosingDate(program);
         String formattedDate = "null";
         if (closingDate != null) {
             formattedDate = new SimpleDateFormat("dd MMM yyyy").format(closingDate);
@@ -154,7 +137,7 @@ public class ProgramsService {
 
     public Program createNewCustomProgram(OpportunityRequest opportunityRequest) {
         ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
-        
+
         Advert advert = new Advert();
         advert.setActive(true);
         advert.setDescription(opportunityRequest.getProgramDescription());
@@ -169,9 +152,26 @@ public class ProgramsService {
         program.setTitle(opportunityRequest.getProgramTitle());
         program.setAtasRequired(opportunityRequest.getAtasRequired());
         program.setCode(thisBean.generateNextProgramCode(institution));
-        
+
         programDAO.save(program);
         return program;
+    }
+    
+    public void updateClosingDate(ProgramClosingDate closingDate) {
+        Program program = closingDate.getProgram();
+        program.getAdvert().setLastEditedTimestamp(new Date());
+        programDAO.updateClosingDate(closingDate);
+    }
+    
+    public void deleteClosingDateById(Integer programClosingDateId) {
+        ProgramClosingDate programClosingDate = programDAO.getClosingDateById(programClosingDateId);
+        programDAO.deleteClosingDate(programClosingDate);
+    }
+    
+    public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {
+        program.getClosingDates().add(programClosingDate);
+        program.getAdvert().setLastEditedTimestamp(new Date());
+        programDAO.save(program);
     }
 
     protected String generateNextProgramCode(QualificationInstitution institution) {
@@ -184,6 +184,21 @@ public class ProgramsService {
             codeNumber = 0;
         }
         return String.format("%s_%05d", institution.getCode(), codeNumber);
+    }
+
+    public void saveProgramOpportunity(ProgramOpportunityDTO programOpportunityDTO) {
+        Program program = getProgramByCode(programOpportunityDTO.getProgramCode());
+        Advert advert = program.getAdvert();
+        if (advert == null) {
+            advert = new Advert();
+            program.setAdvert(advert);
+        }
+        advert.setDescription(programOpportunityDTO.getDescription());
+        advert.setStudyDuration(programOpportunityDTO.getStudyDuration());
+        advert.setFunding(programOpportunityDTO.getFunding());
+        advert.setActive(programOpportunityDTO.getActive());
+        programInstanceService.createRemoveProgramInstances(program, programOpportunityDTO.getStudyOptions(), 
+                programOpportunityDTO.getAdvertiseDeadlineYear());
     }
 
 }

@@ -318,7 +318,7 @@
 										<@spring.bind "stateChangeDTO.confirmNextStage" />
 										<div class=
 											<#if spring.status.errorMessages?size &gt; 0>
-												"alert alert-error">
+												"alert alert-error last">
 											<#else>
 												"alert">
 											</#if>

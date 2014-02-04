@@ -386,7 +386,7 @@ public class ApplicationSumaryServiceTest {
         Document personalStatement = new DocumentBuilder().id(369).fileName(PERSONAL_STATEMENT_FILE_NAME).build();
         Document cv = new DocumentBuilder().id(379).fileName(CV_FILE_NAME).build();
 
-        Funding funding = new FundingBuilder().description(FUNDING_DESCRIPTION).build();
+        Funding funding = new FundingBuilder().description(FUNDING_DESCRIPTION).value(null).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).personalStatement(personalStatement).referees(referee, refereeWhoResponded)
                 .personalDetails(details).fundings(funding).qualifications(qualification, mostRecentQualification)

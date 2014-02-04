@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -145,9 +144,9 @@ public class ApplicationSummaryService {
     }
 
     private void addFundings(final ApplicationForm form, Map<String, String> result, final Gson gson) {
-        Long fundingSum = 0L;
+        Integer fundingSum = 0;
         for (Funding funding : form.getFundings()) {
-                fundingSum = fundingSum + Long.valueOf(funding.getValue());
+                fundingSum = fundingSum + funding.getValueAsInteger();
         }
         result.put("fundingRequirements", fundingSum.toString());
     }

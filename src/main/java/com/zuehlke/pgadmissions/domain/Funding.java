@@ -89,7 +89,10 @@ public class Funding implements FormSectionObject, Serializable {
 	}
 	
 	public Integer getValueAsInteger() {
-	    return Integer.parseInt(getValue());
+	    if (value != null) {
+	        return Integer.parseInt(getValue());
+	    }
+	    return 0;
 	}
 	
 	public Date getAwardDate() {

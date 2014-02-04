@@ -6,10 +6,18 @@ $(document).ready(function()
 		$(this).parent('li').addClass('current');
 		$('#applicationTab').show();
 		$('#timeline').hide();
+		$('#opportunities').hide();
 		window.scrollTo(0, $('#applicationTab').offset().top - 30);
-		
 	});
-	
+	$('#opportunitiesBtn').click(function(){
+		// Set the current tab.
+		$('#timelineview ul.tabs li').removeClass('current');
+		$(this).parent('li').addClass('current');
+		$('#applicationTab').hide();
+		$('#timeline').hide();
+		$('#opportunities').show();
+		window.scrollTo(0, $('#opportunities').offset().top - 30);
+	});
 	
 	var jumpToTimeline = false; // prevent jumping to the timeline on page load.
 	
@@ -20,6 +28,7 @@ $(document).ready(function()
 		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		$('#applicationTab').hide();
+		$('#opportunities').hide();
 		if ( $('#timeline').children().length == 0 ) {
 			$('#ajaxloader').show();
 		}

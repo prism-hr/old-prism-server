@@ -79,14 +79,14 @@ public class QualificationInstitutionServiceTest {
 
     @Test
     public void shouldGetExistingInstitution() {
+        Domicile domicile = new Domicile();
         QualificationInstitution institution = new QualificationInstitution();
-        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCode("BBB").build();
 
         expect(applicationContext.getBean(QualificationInstitutionService.class)).andReturn(null);
         expect(qualificationInstitutionDAO.getInstitutionByCode("BBB")).andReturn(institution);
 
         replay();
-        QualificationInstitution returned = service.getOrCreateCustomInstitution(opportunityRequest);
+        QualificationInstitution returned = service.getOrCreateCustomInstitution("BBB", domicile, "other");
         verify();
 
         assertSame(returned, institution);
@@ -104,7 +104,7 @@ public class QualificationInstitutionServiceTest {
         qualificationInstitutionDAO.save(capture(institutionCapture));
 
         replay();
-        QualificationInstitution returned = service.getOrCreateCustomInstitution(opportunityRequest);
+        QualificationInstitution returned = service.getOrCreateCustomInstitution("OTHER", country, null);
         verify();
 
         assertSame(returned, institutionCapture.getValue());

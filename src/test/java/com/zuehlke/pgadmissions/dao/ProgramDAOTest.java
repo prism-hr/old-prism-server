@@ -45,7 +45,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     @Override
     public void setup() {
         super.setup();
-        institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         save(institution);
     }
 

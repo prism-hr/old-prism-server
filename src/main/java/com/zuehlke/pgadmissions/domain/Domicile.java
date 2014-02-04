@@ -65,10 +65,6 @@ public class Domicile implements SelfReferringImportedObject, Serializable {
         return code;
     }
 
-    public String getStringCode() {
-        return code;
-    }
-
     public void setCode(String code) {
         this.code = code;
     }

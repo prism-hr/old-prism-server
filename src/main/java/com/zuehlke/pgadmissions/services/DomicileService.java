@@ -10,6 +10,7 @@ import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 
 @Service
+@Transactional
 public class DomicileService {
 
     private final DomicileDAO domicileDAO;
@@ -23,18 +24,19 @@ public class DomicileService {
         this.domicileDAO = dao;
     }
 
-    @Transactional
     public List<Domicile> getAllEnabledDomiciles() {
         return domicileDAO.getAllEnabledDomiciles();
     }
 
-    @Transactional
     public List<Domicile> getAllEnabledDomicilesExceptAlternateValues() {
     	return domicileDAO.getAllEnabledDomicilesExceptAlternateValues();
     }
 
-    @Transactional
     public Domicile getDomicileById(Integer id) {
         return domicileDAO.getDomicileById(id);
+    }
+    
+    public Domicile getEnabledDomicileByCode(String code) {
+        return domicileDAO.getEnabledDomicileByCode(code);
     }
 }

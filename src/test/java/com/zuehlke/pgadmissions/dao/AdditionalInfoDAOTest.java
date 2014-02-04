@@ -23,7 +23,7 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 
 	@Before
 	public void prepare() {
-	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("newproject").title("another title").institution(institution).build();
         save(institution, program);
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")

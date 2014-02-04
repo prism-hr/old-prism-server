@@ -188,7 +188,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
         nationality3 = new LanguageBuilder().name("ccccc").code("cc").enabled(true).build();
         save(nationality1, nationality2, nationality3);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 

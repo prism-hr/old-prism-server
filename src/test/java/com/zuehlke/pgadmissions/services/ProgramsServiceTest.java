@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
@@ -247,13 +248,15 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldCreateNewCustomProgram() {
+        Domicile domicile = new Domicile();
         ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
+        
 
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, null).build();
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, domicile).otherInstitution("other_name").build();
         QualificationInstitution institution = new QualificationInstitutionBuilder().build();
 
         expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
-        expect(qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest)).andReturn(institution);
+        expect(qualificationInstitutionService.getOrCreateCustomInstitution("AGH", domicile, "other_name")).andReturn(institution);
         Capture<Program> programCapture = new Capture<Program>();
         programDAOMock.save(capture(programCapture));
         expect(thisBean.generateNextProgramCode(institution)).andReturn("AAA_00000");

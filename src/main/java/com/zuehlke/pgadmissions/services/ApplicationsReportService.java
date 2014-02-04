@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ import com.google.common.collect.Ordering;
 import com.google.visualization.datasource.base.TypeMismatchException;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
+import com.google.visualization.datasource.datatable.TableCell;
 import com.google.visualization.datasource.datatable.TableRow;
 import com.google.visualization.datasource.datatable.value.DateValue;
 import com.google.visualization.datasource.datatable.value.NumberValue;
@@ -67,15 +69,18 @@ public class ApplicationsReportService {
     private final ApplicationsService applicationsService;
 
     private final ApplicantRatingService applicantRatingService;
+    
+    private final String host;
 
     public ApplicationsReportService() {
-        this(null, null);
+        this(null, null, null);
     }
 
     @Autowired
-    public ApplicationsReportService(ApplicationsService applicationsService, ApplicantRatingService applicantRatingService) {
+    public ApplicationsReportService(@Value("${application.host}") String host, ApplicationsService applicationsService, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
         this.applicantRatingService = applicantRatingService;
+        this.host = host;
     }
 
     public DataTable getApplicationsReport(RegisteredUser user, ApplicationsFiltering filtering) {
@@ -143,6 +148,9 @@ public class ApplicationsReportService {
         cd.add(new ColumnDescription("outcomedate", ValueType.DATE, "Outcome Date"));
         cd.add(new ColumnDescription("outcomeType", ValueType.TEXT, "Outcome Type"));
         cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT, "Outcome Note"));
+        
+        // link to application
+        cd.add(new ColumnDescription("applicationLink", ValueType.TEXT, "Link To Application"));
 
         data.addColumns(cd);
 
@@ -235,6 +243,9 @@ public class ApplicationsReportService {
                 row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
                 row.addCell(approveDate != null ? getConditionalType(app) : StringUtils.EMPTY);
                 row.addCell(approveDate != null ? getOfferConditions(app) : StringUtils.EMPTY);
+                
+                // link to application
+                row.addCell(getApplicationLink(app));
 
                 try {
                     data.addRow(row);
@@ -251,7 +262,12 @@ public class ApplicationsReportService {
         return data;
     }
 
-    private long getTimeSpentIn(ApplicationForm app, ApplicationFormStatus applicationStatus) {
+    private String getApplicationLink(ApplicationForm app) {
+    	String applicationLink = host +"/pgadmissions/application?view=view&applicationId="+ app.getApplicationNumber();
+		return applicationLink;
+	}
+
+	private long getTimeSpentIn(ApplicationForm app, ApplicationFormStatus applicationStatus) {
         List<Event> events = app.getEvents();
         List<StateChangeEvent> stateEvents = Lists.newArrayList(Iterables.filter(events, StateChangeEvent.class));
         Collections.sort(stateEvents);

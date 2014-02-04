@@ -49,7 +49,7 @@ public class Advert implements Serializable {
     private Date lastEditedTimestamp;
     
     @Transient
-    private Integer ranking;
+    private Integer ranking = 0;
     
     public Integer getId() {
         return id;
@@ -126,6 +126,14 @@ public class Advert implements Serializable {
 
     public void setLastEditedTimestamp(Date lastEditedTimestamp) {
         this.lastEditedTimestamp = lastEditedTimestamp;
+    }
+    
+    public Integer getRanking() {
+        return ranking;
+    }
+
+    public void setRanking(Integer ranking) {
+        this.ranking = ranking;
     }
     
 }

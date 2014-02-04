@@ -34,7 +34,19 @@ public class AdvertService {
     public List<Advert> getRecommendedAdverts(RegisteredUser user) {
         return advertDAO.getRecommendedAdverts(user);
     }
+    
+    public List<Advert> getAdvertsByUserUPI(String userUPI) {
+        return advertDAO.getAdvertsByUserUPI(userUPI);
+    }
+    
+    public List<Advert> getAdvertsByUserUsername(String username) {
+        return advertDAO.getAdvertsByUserUsername(username);
+    }
 
+    public List<Advert> getAdvertsByFeedId(Integer feedId) {
+        return advertDAO.getAdvertsByFeedId(feedId);
+    }
+    
     public Program getProgram(Advert advert) {
         return advertDAO.getProgram(advert);
     }
@@ -49,6 +61,17 @@ public class AdvertService {
 
 	public Advert getAdvertById(int advertId) {
 		return advertDAO.getAdvertById(advertId);
+	}
+	
+	public Advert getAdvertFromSession(String advertId, String programCode, String projectId) {
+	    if (advertId != null) {
+	        return advertDAO.getAdvertById(Integer.parseInt(advertId));
+	    } else if (programCode != null) {
+	        return advertDAO.getProgramAdvertByProgramCode(programCode);
+	    } else if (projectId != null) {
+	        return advertDAO.getProjectAdvertByProjectId(Integer.parseInt(projectId));
+	    }
+	    return null;
 	}
 
 }

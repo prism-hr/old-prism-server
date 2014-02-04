@@ -32,6 +32,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 import com.zuehlke.pgadmissions.controllers.prospectus.AdvertsController;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
@@ -54,20 +55,16 @@ public class AdvertsControllerTest {
 
     private AdvertsController controller;
     private AdvertService advertServiceMock;
-    private ResearchOpportunitiesFeedService feedServiceMock;
     private ProgramDAO programDAOMock;
-    private ProgramsService programsServiceMock;
-    private ApplicationFormDAO applicationFormDAOMock;
+    private UserDAO userDAOMock;
     private final static Integer NO_SELECTED_ADVERT = Integer.MIN_VALUE;
 
     @Before
     public void setUp() {
         advertServiceMock = EasyMock.createMock(AdvertService.class);
-        feedServiceMock = EasyMock.createMock(ResearchOpportunitiesFeedService.class);
-        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
-        programsServiceMock = EasyMock.createMock(ProgramsService.class);
-        controller = new AdvertsController(advertServiceMock, feedServiceMock, applicationFormDAOMock, programDAOMock, programsServiceMock);
+        userDAOMock = EasyMock.createMock(UserDAO.class);
+        controller = new AdvertsController(advertServiceMock, programDAOMock, userDAOMock);
     }
 
     @Test

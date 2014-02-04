@@ -34,53 +34,32 @@ function setClass() {
 
 function getAdverts(){
 	var selectedAdvertId= getUrlParam("advert");
-	if(selectedAdvertId !== undefined && selectedAdvertId != "undefined"){
+	if(selectedAdvertId !== undefined && selectedAdvertId != "undefined") {
 		selectedAdvertId = decodeURIComponent(selectedAdvertId);
 	}
-	var feedId = $('#feedId').val();
-	var user = $('#user').val();
-	var upi = $('#upi').val();
-	if (feedId != undefined || user != undefined || upi != undefined) {
-		var data = {
-			feedId : feedId,
-			user : user,
-			upi : upi
-		};
-		$.ajax({
-			type: 'GET',
-			data: data,
-			url: "/pgadmissions/opportunities/feeds",
-			success: function(data) {
-				processAdverts(data.adverts);
-				highlightSelectedAdvert();
-				bindAddThisShareOverFix();
-			}
-		});
-	} else {
-		$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() { window.location.reload(); },
-				500: function() { window.location.href = "/pgadmissions/error"; },
-				404: function() { window.location.href = "/pgadmissions/404"; },
-				400: function() { window.location.href = "/pgadmissions/400"; },                  
-				403: function() { window.location.href = "/pgadmissions/404"; }
-			},
-			data: {
-				advert: selectedAdvertId,
-	        }, 
-			url: "/pgadmissions/opportunities/activeOpportunities",
-			success: function(data) {
-				var map = JSON.parse(data);
-				processAdverts(map.adverts);
-				highlightSelectedAdvert();
-				bindAddThisShareOverFix();
-			},
-			complete: function() {
-			}
-		});
-		
+	var key = $('#key').val();
+	if (key == undefined) {
+		key = getUrlParam("key");
 	}
+	var value = $('#value').val();
+	if (value == undefined) {
+		value = getUrlParam("value");
+	}
+	var data = {
+		key: key,
+		value: value, 
+		advert: selectedAdvertId
+	};
+	$.ajax({
+		type: 'GET',
+		data: data,
+		url: "/pgadmissions/opportunities/embedded",
+		success: function(data) {
+			processAdverts(data.adverts);
+			highlightSelectedAdvert();
+			bindAddThisShareOverFix();
+		}
+	});
 }
 
 function processAdverts(adverts){
@@ -224,7 +203,7 @@ function getAdvertUrl(advert){
 	return url;
 }
 
-function getUrlParam(name){
+function getUrlParam(name) {
     var results = new RegExp('[\\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
     if(results!=null && results.length>0){
     	return results[1];	

@@ -118,7 +118,7 @@ public class ApplicationListController {
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public void getApplicationsReport(@ModelAttribute("filtering") ApplicationsFiltering filtering, HttpServletRequest req, HttpServletResponse resp)
+    public void getApplicationsReport(@ModelAttribute("filtering") ApplicationsFiltering filtering, @RequestParam String format, HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
         DataTable reportTable = applicationsReportService.getApplicationsReport(getUser(), filtering);
         DataSourceRequest dsRequest;

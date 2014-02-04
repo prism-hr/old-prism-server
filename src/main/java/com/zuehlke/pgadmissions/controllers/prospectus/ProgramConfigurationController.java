@@ -16,6 +16,7 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -117,17 +118,8 @@ public class ProgramConfigurationController {
 
     @InitBinder("programClosingDate")
     public void registerEditorsAndValidatorsForClosingDate(WebDataBinder binder) {
-        binder.setValidator(closingDateValidator);
         binder.registerCustomEditor(Program.class, "program", programPropertyEditor);
         binder.registerCustomEditor(Date.class, "closingDate", datePropertyEditor);
-    }
-
-    @ModelAttribute("program")
-    public Program getProgram(@RequestParam(required = false) String programCode) {
-        if (programCode == null) {
-            return null;
-        }
-        return programsService.getProgramByCode(programCode);
     }
 
     private Advert getProgrameAdvert(Program program) {
@@ -153,7 +145,7 @@ public class ProgramConfigurationController {
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
     public String getOpportunityData(@RequestParam String programCode) {
-        Program program = getProgram(programCode);
+        Program program = programsService.getProgramByCode(programCode);
         Advert advert = getProgrameAdvert(program);
 
         Map<String, Object> result = Maps.newHashMap();
@@ -196,7 +188,13 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String addClosingDate(@Valid ProgramClosingDate programClosingDate, BindingResult result, @ModelAttribute Program program, HttpServletRequest request) {
+    public String addClosingDate(@RequestParam String programCode, ProgramClosingDate programClosingDate, BindingResult result,
+            HttpServletRequest request) {
+        Program program = programsService.getProgramByCode(programCode);
+        programClosingDate.setProgram(program);
+        
+        ValidationUtils.invokeValidator(closingDateValidator, programClosingDate, result);
+        
         Map<String, Object> map;
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
@@ -210,7 +208,12 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/updateClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String updateClosingDate(@Valid ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
+    public String updateClosingDate(@RequestParam String programCode, ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
+        Program program = programsService.getProgramByCode(programCode);
+        programClosingDate.setProgram(program);
+        
+        ValidationUtils.invokeValidator(closingDateValidator, programClosingDate, result);
+        
         Map<String, Object> map;
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
@@ -242,8 +245,9 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/removeClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String removeClosingDate(@ModelAttribute Program program, @RequestParam Integer closingDateId, HttpServletRequest request) throws TemplateException,
-            IOException {
+    public String removeClosingDate(@RequestParam String programCode, @RequestParam Integer closingDateId, HttpServletRequest request)
+            throws TemplateException, IOException {
+        Program program = programsService.getProgramByCode(programCode);
         Map<String, Object> map = Maps.newHashMap();
 
         if (program == null) {

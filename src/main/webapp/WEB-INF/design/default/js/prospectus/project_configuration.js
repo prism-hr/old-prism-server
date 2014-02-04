@@ -16,16 +16,18 @@ $(document).ready(function() {
 	$('#projectsClear').hide();
 });
 
-function initEditorsProjects() {
-	tinyMCE.get('projectAdvertDescriptionText').setContent('');
-	tinyMCE.get('projectAdvertFundingText').setContent('');
-	tinyMCE.execCommand("mceRepaint");
+function cleanEditorsProjects() {
+	if (tinymce.editors.length > 0) {
+		tinyMCE.get('projectAdvertDescriptionText').setContent('');
+		tinyMCE.get('projectAdvertFundingText').setContent('');
+		tinyMCE.execCommand("mceRepaint");
+	}
 }
 
 function registerDefaultClosingDateSelector() {
 	$("#projectAdvertProgramSelect").change(function() {
 		selectDefaultClosingDate();
-		initEditorsProjects();
+		cleanEditorsProjects();
 	});
 }
 
@@ -208,7 +210,7 @@ function clearAll() {
 	$('html, body').animate({
 		scrollTop : $('body').offset().top
 	}, 300);
-	initEditors();
+	cleanEditorsProjects();
 	addCounter();
 }
 

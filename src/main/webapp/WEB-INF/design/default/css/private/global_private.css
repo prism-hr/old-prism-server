@@ -1420,8 +1420,12 @@ i {
 #commentsection input[type="radio"],
 #commentsection input[type="checkbox"],
 #documentUploadForm input[type="radio"],
-#documentUploadForm input[type="checkbox"]{
+#documentUploadForm input[type="checkbox"],
+.field input[type="radio"]{
    margin-top: -3px;
+}
+#newProgamme, #programAdvertCancelNewProgramBtn {
+	margin-bottom: 10px;
 }
 #commentsection .field>label, #documentUploadForm .field>label {
   margin-top: 4px;

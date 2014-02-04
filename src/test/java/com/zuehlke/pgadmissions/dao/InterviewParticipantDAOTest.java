@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
@@ -75,9 +78,9 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
 
         save(interview);
         flushAndClearSession();
-        
+
         List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        assertTrue(participants.size() == 0);
+        assertThat(participants, not(hasItem(participant.getId())));
     }
 
     @Test
@@ -97,7 +100,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        assertTrue(participants.size() == 0);
+        assertThat(participants, not(hasItem(participant.getId())));
     }
 
     @Test
@@ -117,7 +120,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        assertTrue(participants.size() == 0);
+        assertThat(participants, not(hasItem(participant.getId())));
     }
 
     @Test
@@ -137,7 +140,7 @@ public class InterviewParticipantDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         List<Integer> participants = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        assertTrue(participants.size() == 0);
+        assertThat(participants, not(hasItem(participant.getId())));
     }
 
     @Before

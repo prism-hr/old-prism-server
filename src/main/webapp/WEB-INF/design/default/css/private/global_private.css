@@ -2013,8 +2013,14 @@ background: #909194;
 #resourcesModal .alert-info {
 	margin-bottom: 10px;
 }
+#opportunities h1 {
+	float: none;
+}
 #opportunities #opportunitiList {
 	height: 512px;
+}
+#opportunities #opportunitiList .newOportunity{
+	display: none;
 }
 @media (min-width:768px) and (max-width:979px) {
 

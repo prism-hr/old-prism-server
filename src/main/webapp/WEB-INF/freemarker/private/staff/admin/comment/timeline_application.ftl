@@ -17,5 +17,7 @@
 	</ul>
 	<div class="tab-page" id="timeline"></div>
 	<div class="tab-page" id="application"></div>
-	<div class="tab-page" id="opportunities"></div>
+	<div class="tab-page" id="opportunities" style="display:none">
+		<#include "/private/prospectus/opportunities.ftl"/>
+	</div>
 </div>

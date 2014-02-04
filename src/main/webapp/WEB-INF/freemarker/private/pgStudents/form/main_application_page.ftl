@@ -266,7 +266,7 @@
 	         	</div>
 				<div class="tab-page" id="timeline">
 				</div><!-- timleline -->
-				<div class="tab-page" id="opportunities">
+				<div class="tab-page" id="opportunities" style="display:none">
 					<#include "/private/prospectus/opportunities.ftl"/>
         		</div>
 			</div>

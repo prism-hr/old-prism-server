@@ -17,6 +17,7 @@
                           </#list>
                       </select>
                   </div>
+                  
                 </div>
               	<div class="row" id="programAdvertNewProgramNameDiv" style="display:none">
                   <label for="programAdvertNewProgramName" class="plain-label">New programme name<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
@@ -25,7 +26,56 @@
                     <a id="programAdvertCancelNewProgramBtn" role="button" class="btn btn-danger">Cancel</a>
                   </div>
                 </div>
-              </div>  
+                
+                <div class="row" id="programAdvertAtasRequiredDiv">
+                  <label class="plain-label" for="atasRequired">Does the program require ATAS?<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.atasRequired'/>"></span>
+                  <div class="field">
+                    <label><input type="radio" name="programAdvertAtasRequired" value="true" id="programAdvertAtasRequired_true" />Yes</label>
+                    <label><input type="radio" name="programAdvertAtasRequired" value="false" id="programAdvertAtasRequired_false" />No</label>
+                  </div>
+                </div>
+              </div>
+              <div class="row-group" id="institutionGroup">
+                <h3>Institution</h3>
+                <div class="infoBar alert alert-info" id="infoBarInstitution">
+                  <i class="icon-info-sign"></i> Select institution for your programme here.
+                </div>
+
+                <div class="row" id="programAdvertInstitutionCountryDiv">
+                  <label class="plain-label" for="programAdvertInstitutionCountry">Institution Country<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionCountry'/>"></span>
+                  <div class="field">
+                    <select class="full" data-live-search="true" data-size="6" id="programAdvertInstitutionCountry">
+                      <option value="">Select...</option>
+                      <#list countries as country>
+                        <option value="${encrypter.encrypt(country.id)}">
+                          ${country.name?html}
+                        </option>
+                      </#list>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="row" id="programAdvertInstitutionDiv">
+                  <label class="plain-label" for="programAdvertInstitution">Institution Name<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionName'/>"></span>
+                  <div class="field">
+                    <select class="full" data-live-search="true" data-size="6"  id="programAdvertInstitution">
+                      <option value="">Select...</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="row" id="programAdvertInstitutionOtherNameDiv">
+                  <label class="plain-label" for="programAdvertInstitutionOtherName">Please Specify<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
+                  <div class="field">
+                    <input id="programAdvertInstitutionOtherName" class="full" type="text"/>
+                  </div>
+                </div>
+
+              </div>
               <div class="row-group" id="advertGroup">
                 <h3>Advert</h3>
                 <div class="infoBar alert alert-info" id="infoBarProgram">
@@ -88,6 +138,11 @@
                   <div class="field">
                     <select class="full" id="programAdvertAdvertisingDeadlineYear">
                       <option value="">Select...</option>
+                      <#list advertisingDeadlines as advertisingDeadline>
+                        <option value="${advertisingDeadline?c}">
+                          30 September ${advertisingDeadline?c}
+                        </option>
+                      </#list>                
                     </select>
                   </div>
                 </div>

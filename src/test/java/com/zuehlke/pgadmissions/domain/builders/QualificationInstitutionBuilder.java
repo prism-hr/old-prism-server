@@ -6,7 +6,7 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitutionReference;
 public class QualificationInstitutionBuilder {
     
     private Integer id;
-    private String countryCode;
+    private String domicileCode;
     private String name;
     private Boolean enabled;
     private String code;
@@ -21,8 +21,8 @@ public class QualificationInstitutionBuilder {
         return this;
     }
     
-    public QualificationInstitutionBuilder countryCode(String code) {
-        this.countryCode = code;
+    public QualificationInstitutionBuilder domicileCode(String code) {
+        this.domicileCode = code;
         return this;
     }
 
@@ -39,7 +39,7 @@ public class QualificationInstitutionBuilder {
     public QualificationInstitution build() {
         QualificationInstitution institution = new QualificationInstitution();
         institution.setId(id);
-        institution.setDomicileCode(countryCode);
+        institution.setDomicileCode(domicileCode);
         institution.setCode(code);
         institution.setName(name);
         institution.setEnabled(enabled);
@@ -47,13 +47,13 @@ public class QualificationInstitutionBuilder {
     }
     
     public static QualificationInstitutionBuilder aQualificationInstitution(){
-        return new QualificationInstitutionBuilder().code("AGH").name("Akademia Gorniczo-Hutnicza").countryCode("PL").enabled(true);
+        return new QualificationInstitutionBuilder().code("AGH").name("Akademia Gorniczo-Hutnicza").domicileCode("PL").enabled(true);
     }
     
     public QualificationInstitutionReference buildAsReference() {
         QualificationInstitutionReference institution = new QualificationInstitutionReference();
         institution.setId(id);
-        institution.setDomicileCode(countryCode);
+        institution.setDomicileCode(domicileCode);
         institution.setCode(code);
         institution.setName(name);
         institution.setEnabled(enabled);

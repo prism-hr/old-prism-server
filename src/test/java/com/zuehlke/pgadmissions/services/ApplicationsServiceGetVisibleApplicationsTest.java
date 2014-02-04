@@ -113,7 +113,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         sessionFactory.getCurrentSession().flush();
 
-        institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 
         save(applicant, superUser, institution, program);

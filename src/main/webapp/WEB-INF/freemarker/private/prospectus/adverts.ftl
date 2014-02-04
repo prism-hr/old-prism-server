@@ -12,7 +12,13 @@
   	</#if>
     <header>
       <a href="/pgadmissions/createOpportunity" class="btn btn-success newOportunity">Advertise Opportunity</a>
-      <h1>Research Study Opportunities</h1>
+      <h1>
+        <#if feedTitle??>
+          ${feedTitle}
+        <#else>
+          Research Study Opportunities
+        </#if>
+      </h1>
     </header>
     
     <section id="plist">

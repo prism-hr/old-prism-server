@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -143,6 +145,7 @@ public class ProgramInstanceService {
         for (ProgramInstance existingInstance : program.getInstances()) {
             existingInstance.setEnabled(false);
         }
+        program.setEnabled(false);
 
         List<ProgramInstance> instances = Lists.newLinkedList();
 
@@ -153,6 +156,7 @@ public class ProgramInstanceService {
             for (StudyOption studyOption : studyOptions) {
                 ProgramInstance programInstance = thisBean.createOrUpdateProgramInstance(program, startYear, studyOption);
                 instances.add(programInstance);
+                program.setEnabled(true);
             }
         }
         return instances;
@@ -220,10 +224,24 @@ public class ProgramInstanceService {
 
     @Transactional
     public void disableLapsedInstances() {
+        Set<Program> modifiedPrograms = Sets.newHashSet();
+
         List<ProgramInstance> lapsedInstances = programInstanceDAO.getLapsedInstances();
         for (ProgramInstance lapsedInstance : lapsedInstances) {
             lapsedInstance.setEnabled(false);
+            modifiedPrograms.add(lapsedInstance.getProgram());
         }
+
+        // disable programs without active instances
+        for (Program program : modifiedPrograms) {
+            if (program.getProgramFeed() != null) {
+                throw new RuntimeException("Only custom programs can be disabled during data maintenance. Something went wrong. " + program.getId());
+            }
+            if (programInstanceDAO.getActiveProgramInstances(program).isEmpty()) {
+                program.setEnabled(false);
+            }
+        }
+
     }
 
     public List<Integer> getPossibleAdvertisingDeadlineYears() {

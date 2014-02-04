@@ -177,7 +177,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetUsersByProgramme() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program programOne = new ProgramBuilder().code("111111").title("hello").institution(institution).build();
         Program programTwo = new ProgramBuilder().code("222222").title("hello").institution(institution).build();
 
@@ -351,7 +351,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 
@@ -376,7 +376,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 
@@ -400,7 +400,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 
@@ -425,7 +425,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 

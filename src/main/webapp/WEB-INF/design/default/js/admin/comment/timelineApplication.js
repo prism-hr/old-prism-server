@@ -130,22 +130,16 @@ $(document).ready(function()
 						 $('#ajaxloader').fadeOut('fast');
 					 }		
 				});
-				
-			
-			
 			}
 			else
 			{
 				window.scrollTo(0, $('#timeline').offset().top);		
 			}
-	
 			return false;
 		});
-		
-	
-
 		$('#application').html("");
 	}
+
 	if($('#isReferee').val() == 'true'){
 		$('#applicationBtn').trigger('click');
 	}else{
@@ -153,4 +147,13 @@ $(document).ready(function()
 		$('#timelineBtn').trigger('click');
 	}
 	
+	$('#opportunitiesBtn').click(function(){
+		// Set the current tab.
+		$('#timelineview ul.tabs li').removeClass('current');
+		$(this).parent('li').addClass('current');
+		$('#application').hide();
+		$('#timeline').hide();
+		$('#opportunities').show();
+		window.scrollTo(0, $('#opportunities').offset().top - 30);
+	});
 });

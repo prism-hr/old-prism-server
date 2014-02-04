@@ -25,7 +25,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadProgram() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("abcD").title("Program's title").institution(institution).build();
         assertNull(program.getId());
 
@@ -47,7 +47,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadProgramWithInstances() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("abcD").title("Program's title").institution(institution).build();
 
         save(institution, program);
@@ -69,7 +69,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldLoadProgramsWithApprovers() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("abcD").title("Program's title").institution(institution).build();
 
         save(institution, program);
@@ -94,7 +94,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldLoadProgramsWithAdministrators() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("abcD").title("Program's title").institution(institution).build();
 
         save(institution, program);

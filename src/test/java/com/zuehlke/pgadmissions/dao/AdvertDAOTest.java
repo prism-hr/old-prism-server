@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class AdvertDAOTest extends AutomaticRollbackTestCase {
 
@@ -34,7 +33,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
         reminderIntervalDAO = new ReminderIntervalDAO(sessionFactory);
         notificationsDurationDAO = new NotificationsDurationDAO(sessionFactory);
         userDAO = new UserDAO(sessionFactory, reminderIntervalDAO, notificationsDurationDAO);
-        institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         save(institution);
     }
     

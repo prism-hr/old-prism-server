@@ -298,9 +298,15 @@ public class ProgramInstanceServiceTest {
 
     @Test
     public void souldDisableLapsedInstances() {
-        ProgramInstance instance1 = new ProgramInstanceBuilder().enabled(true).build();
-        ProgramInstance instance2 = new ProgramInstanceBuilder().enabled(true).build();
+        Program program1 = new ProgramBuilder().id(1).enabled(true).build();
+        Program program2 = new ProgramBuilder().id(2).enabled(true).build();
+        
+        ProgramInstance instance1 = new ProgramInstanceBuilder().enabled(true).program(program1).build();
+        ProgramInstance instance2 = new ProgramInstanceBuilder().enabled(true).program(program2).build();
+        
         expect(programInstanceDAO.getLapsedInstances()).andReturn(Lists.newArrayList(instance1, instance2));
+        expect(programInstanceDAO.getActiveProgramInstances(program1)).andReturn(Lists.newArrayList(new ProgramInstance()));
+        expect(programInstanceDAO.getActiveProgramInstances(program2)).andReturn(Lists.<ProgramInstance>newArrayList());
 
         replay();
         service.disableLapsedInstances();
@@ -308,6 +314,9 @@ public class ProgramInstanceServiceTest {
 
         assertFalse(instance1.getEnabled());
         assertFalse(instance2.getEnabled());
+        
+        assertTrue(program1.isEnabled());
+        assertFalse(program2.isEnabled());
     }
 
     @Test

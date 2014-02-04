@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -31,16 +32,33 @@ public class ProgramOpportunityDTOValidator extends AbstractValidator {
     public void addExtraValidation(Object target, Errors errors) {
         ProgramOpportunityDTO dto = (ProgramOpportunityDTO) target;
 
-        Program program = programsService.getProgramByCode(dto.getProgramCode());
-        if (program == null) {
-            errors.rejectValue("programCode", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        Program program = null;
+        String programCode = dto.getProgramCode();
+        if (programCode == null) {
+            // trying to create new program
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programName", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "atasRequired", EMPTY_DROPDOWN_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCountry", EMPTY_DROPDOWN_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCode", EMPTY_FIELD_ERROR_MESSAGE);
+
+            // validate institution code / name
+            String institutionCode = dto.getInstitutionCode();
+            if (StringUtils.equalsIgnoreCase("OTHER", institutionCode)) {
+                if (StringUtils.isBlank(dto.getOtherInstitution())) {
+                    errors.rejectValue("otherInstitution", EMPTY_FIELD_ERROR_MESSAGE);
+                }
+            }
+
+        } else {
+            program = programsService.getProgramByCode(dto.getProgramCode());
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", EMPTY_FIELD_ERROR_MESSAGE);
         validateStudyDuration(errors, dto.getStudyDuration());
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "active", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
-        if (program.getProgramFeed() == null) { // custom program
+        if (program == null || program.getProgramFeed() == null) {
+            // new or custom program
             if (dto.getStudyOptions().isEmpty()) {
                 errors.rejectValue("studyOptions", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 
@@ -23,19 +24,19 @@ public class QualificationInstitutionService {
         return qualificationInstitutionDAO.getInstitutionByCode(institutionCode);
     }
 
-    public QualificationInstitution getOrCreateCustomInstitution(OpportunityRequest opportunityRequest) {
+    public QualificationInstitution getOrCreateCustomInstitution(String institutionCode, Domicile institutionCountry, String otherInstitutionName) {
         QualificationInstitutionService thisBean = applicationContext.getBean(QualificationInstitutionService.class);
 
         QualificationInstitution institution;
-        if ("OTHER".equals(opportunityRequest.getInstitutionCode())) {
+        if ("OTHER".equals(institutionCode)) {
             institution = new QualificationInstitution();
-            institution.setDomicileCode(opportunityRequest.getInstitutionCountry().getCode());
+            institution.setDomicileCode(institutionCountry.getCode());
             institution.setEnabled(true);
-            institution.setName(opportunityRequest.getOtherInstitution());
+            institution.setName(otherInstitutionName);
             institution.setCode(thisBean.generateNextInstitutionCode());
             qualificationInstitutionDAO.save(institution);
         } else {
-            institution = getInstitutionByCode(opportunityRequest.getInstitutionCode());
+            institution = getInstitutionByCode(institutionCode);
         }
         return institution;
     }

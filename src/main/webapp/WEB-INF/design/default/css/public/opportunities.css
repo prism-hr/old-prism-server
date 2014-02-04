@@ -17,7 +17,7 @@ body {
   border-radius:4px;
   border: 1px solid #DDD;
 }
-#pholder h1{
+#pholder h1, #yourApplication h1{
   font-size: 16px;
   color: #58585A;
   line-height: 29px;

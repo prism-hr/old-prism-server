@@ -1999,8 +1999,18 @@ background: #909194;
 	width: 518px !important;
 	margin-bottom: 0px;
 }
+.newOportunity, .go-back {
+    float:right;
+    font-weight: bold;
+}
+#yourApplication {
+	padding: 7px;
+}
 #resourcesModal .alert-info {
 	margin-bottom: 10px;
+}
+#opportunities #opportunitiList {
+	height: 512px;
 }
 @media (min-width:768px) and (max-width:979px) {
 

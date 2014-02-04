@@ -168,7 +168,7 @@ public class ProgramsService {
         programDAO.deleteClosingDate(programClosingDate);
     }
     
-    public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {
+    public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {        
         program.getClosingDates().add(programClosingDate);
         program.getAdvert().setLastEditedTimestamp(new Date());
         programDAO.save(program);

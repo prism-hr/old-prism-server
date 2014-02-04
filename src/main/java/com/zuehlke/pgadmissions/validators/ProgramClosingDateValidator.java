@@ -25,20 +25,18 @@ public class ProgramClosingDateValidator extends AbstractValidator {
     public void addExtraValidation(Object target, Errors errors) {
         ProgramClosingDate newClosingDate = (ProgramClosingDate) target;
         Program program = newClosingDate.getProgram();
-		if(program==null){
+		if(program == null) {
             errors.rejectValue("program", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
-		
-		
-        
+		      
         Date date = newClosingDate.getClosingDate();
-        if(date==null){
+        if(date == null) {
             errors.rejectValue("closingDate", MUST_SELECT_DATE_AND_TIME);
         }else{
         	if(!date.after(new Date())){
         		errors.rejectValue("closingDate", MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE);
         	}
-            if(program!=null){
+            if(program!=null) {
             	ProgramClosingDate existingDate = programDAO.getClosingDateByDate(program, date);
             	if(existingDate!=null && (newClosingDate.getId()==null||newClosingDate.getId()!=existingDate.getId())){
             			errors.rejectValue("closingDate", PROSPECTUS_CLOSING_DATE_ALREADY_EXISTS);

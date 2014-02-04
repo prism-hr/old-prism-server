@@ -64,7 +64,7 @@ public class ReviewStateChangeEventMappingTest extends AutomaticRollbackTestCase
                 .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
                 .credentialsNonExpired(false).enabled(false).build();
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 
         ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();

@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -30,6 +32,9 @@ public class ProspectusController {
 
     @Autowired
     private ProgramInstanceService programInstanceService;
+    
+    @Autowired
+    private DomicileService domicileService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showProspectus() {
@@ -57,6 +62,16 @@ public class ProspectusController {
     @ModelAttribute("studyOptions")
     public List<StudyOption> getDistinctStudyOptions() {
         return programInstanceService.getDistinctStudyOptions();
+    }
+    
+    @ModelAttribute("countries")
+    public List<Domicile> getAllEnabledDomiciles() {
+        return domicileService.getAllEnabledDomicilesExceptAlternateValues();
+    }
+    
+    @ModelAttribute("advertisingDeadlines")
+    public List<Integer> getAdvertisingDeadlines() {
+        return programInstanceService.getPossibleAdvertisingDeadlineYears();
     }
 
 }

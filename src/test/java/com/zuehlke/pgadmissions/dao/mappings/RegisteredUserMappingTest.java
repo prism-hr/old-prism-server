@@ -194,7 +194,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadProgramsOfWhichAdministrator() throws Exception {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("111111").title("hello").institution(institution).build();
         save(institution, program);
         flushAndClearSession();
@@ -214,7 +214,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldLoadProgramsOfWhichApprover() throws Exception {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("111111").title("hello").institution(institution).build();
         save(institution, program);
         flushAndClearSession();
@@ -276,7 +276,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 

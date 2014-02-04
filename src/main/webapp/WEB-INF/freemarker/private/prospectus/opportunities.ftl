@@ -16,8 +16,8 @@
 		    </div>
 		</div>
 	</div>
-		<div class="span6" id="opportunitiList recommended">
-		<#assign feedTitle="RelatedOpp">
+		<div class="span6" id="opportunitiList" class="recommended">
+		<#assign feedTitle="Related Opportunities">
  	    <#include "/private/prospectus/adverts.ftl"/>
 	</div>
 </div>

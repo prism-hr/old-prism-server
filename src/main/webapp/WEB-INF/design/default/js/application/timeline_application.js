@@ -1,5 +1,8 @@
 $(document).ready(function()
 {
+	$('#timeline').hide();
+	$('#opportunities').hide();
+	
 	$('#applicationBtn').click(function(){
 		// Set the current tab.
 		$('#timelineview ul.tabs li').removeClass('current');

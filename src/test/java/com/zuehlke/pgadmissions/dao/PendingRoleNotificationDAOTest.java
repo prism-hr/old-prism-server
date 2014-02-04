@@ -70,7 +70,7 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(user);
 
-		QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+		QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
 		program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 		save(institution, program);
 		flushAndClearSession();

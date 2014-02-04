@@ -77,7 +77,7 @@ public class RejectServiceIntegrationTest {
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         userDAO.save(approver);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         qualificationInstitutionDAO.save(institution);
         
         Program program = new ProgramBuilder().title("alelele").code("blabjk").institution(institution).build();

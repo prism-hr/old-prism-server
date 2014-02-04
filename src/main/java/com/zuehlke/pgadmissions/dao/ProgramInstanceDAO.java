@@ -112,5 +112,5 @@ public class ProgramInstanceDAO {
                 .add(Restrictions.eq("program", program)) //
                 .add(Restrictions.eq("enabled", true)).list();
     }
-
+    
 }

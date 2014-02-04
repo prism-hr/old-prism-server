@@ -2,9 +2,21 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.Domicile;
+
 public class ProgramOpportunityDTO {
 
     private String programCode;
+
+    private String programName;
+
+    private Boolean atasRequired;
+
+    private Domicile institutionCountry;
+
+    private String institutionCode;
+
+    private String otherInstitution;
 
     private String description;
 
@@ -24,6 +36,46 @@ public class ProgramOpportunityDTO {
 
     public void setProgramCode(String programCode) {
         this.programCode = programCode;
+    }
+
+    public String getProgramName() {
+        return programName;
+    }
+
+    public void setProgramName(String programName) {
+        this.programName = programName;
+    }
+
+    public Boolean getAtasRequired() {
+        return atasRequired;
+    }
+
+    public void setAtasRequired(Boolean atasRequired) {
+        this.atasRequired = atasRequired;
+    }
+
+    public Domicile getInstitutionCountry() {
+        return institutionCountry;
+    }
+
+    public void setInstitutionCountry(Domicile institutionCountry) {
+        this.institutionCountry = institutionCountry;
+    }
+
+    public String getInstitutionCode() {
+        return institutionCode;
+    }
+
+    public void setInstitutionCode(String institutionCode) {
+        this.institutionCode = institutionCode;
+    }
+
+    public String getOtherInstitution() {
+        return otherInstitution;
+    }
+
+    public void setOtherInstitution(String otherInstitution) {
+        this.otherInstitution = otherInstitution;
     }
 
     public String getDescription() {

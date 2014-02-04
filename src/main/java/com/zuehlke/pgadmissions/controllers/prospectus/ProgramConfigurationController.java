@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -27,15 +28,19 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ProgramOpportunityDTO;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -43,8 +48,8 @@ import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 import com.zuehlke.pgadmissions.utils.GsonExclusionStrategies;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
 import com.zuehlke.pgadmissions.validators.AbstractValidator;
-import com.zuehlke.pgadmissions.validators.ProgramOpportunityDTOValidator;
 import com.zuehlke.pgadmissions.validators.ProgramClosingDateValidator;
+import com.zuehlke.pgadmissions.validators.ProgramOpportunityDTOValidator;
 
 import freemarker.template.TemplateException;
 
@@ -63,6 +68,9 @@ public class ProgramConfigurationController {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private DomicilePropertyEditor domicilePropertyEditor;
 
     @Autowired
     private DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
@@ -85,6 +93,12 @@ public class ProgramConfigurationController {
     @Autowired
     private AdvertService advertsService;
 
+    @Autowired
+    private EncryptionHelper encryptionHelper;
+
+    @Autowired
+    private DomicileService domicileService;
+
     private Gson gson;
 
     @PostConstruct
@@ -96,7 +110,9 @@ public class ProgramConfigurationController {
     @InitBinder("programOpportunityDTO")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(programOpportunityDTOValidator);
+        binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
+        binder.registerCustomEditor(String.class, null, new StringTrimmerEditor(true));
     }
 
     @InitBinder("programClosingDate")
@@ -136,7 +152,7 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
-    public String getAdvertData(@RequestParam String programCode) throws TemplateException, IOException {
+    public String getOpportunityData(@RequestParam String programCode) {
         Program program = getProgram(programCode);
         Advert advert = getProgrameAdvert(program);
 
@@ -148,8 +164,13 @@ public class ProgramConfigurationController {
         if (advert != null) {
             dataMap.put("advertId", advert.getId());
         }
+
+        Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
+
         result.put("isCustomProgram", program.getProgramFeed() == null);
-        result.put("possibleAdvertisingDeadlines", programInstanceService.getPossibleAdvertisingDeadlineYears());
+        result.put("atasRequired", program.getAtasRequired());
+        result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
+        result.put("institutionName", program.getInstitution().getName());
         result.put("advertisingDeadline", programInstanceService.getAdvertisingDeadlineYear(program));
         result.put("studyOptions", programInstanceService.getStudyOptions(program));
         result.put("buttonToApply", templateRenderer.renderButton(dataMap));
@@ -160,13 +181,15 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
     @ResponseBody
-    public String saveProgramAdvert(@Valid ProgramOpportunityDTO programOpportunityDTO, BindingResult result, HttpServletRequest request) {
+    public String saveOpportunity(@Valid ProgramOpportunityDTO programOpportunityDTO, BindingResult result) {
         Map<String, Object> map;
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
         } else {
-            programsService.saveProgramOpportunity(programOpportunityDTO);
-            map = Collections.singletonMap("success", (Object) true);
+            Program program = programsService.saveProgramOpportunity(programOpportunityDTO);
+            map = Maps.newHashMap();
+            map.put("success", (Object) true);
+            map.put("programCode", program.getCode());
         }
         return gson.toJson(map);
     }

@@ -197,6 +197,7 @@
 						<ul class="tabs">				
 							<li class="current"><a href="#application" id="applicationBtn">Application</a></li>
 							<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
+							<li><a href="#opportunities" id="opportunitiesBtn">Opportunities</a></li>
 						</ul>
 				
 						<div class="tab-page" id="applicationTab">
@@ -263,10 +264,11 @@
 		          </div>
 		          		          
 	         	</div>
-						<div class="tab-page" id="timeline">
-		
-						</div>
-					</div><!-- timleline -->
+				<div class="tab-page" id="timeline">
+				</div><!-- timleline -->
+				<div class="tab-page" id="opportunities">
+        		</div>
+			</div>
 			
         </div><!-- .content-box-inner -->
 

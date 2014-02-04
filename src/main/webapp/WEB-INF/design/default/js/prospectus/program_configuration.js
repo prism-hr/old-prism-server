@@ -5,11 +5,58 @@ $(document).ready(function() {
     bindProgramSelectChangeAction();
     bindClosingDatesActions();
     bindCancelNewProgramAction();
+    bindChangeInstitutionCountryAction();
     initEditors();
     checkDates();
     $('.selectpicker').selectpicker();
     checkToDisable();
 });
+
+function bindChangeInstitutionCountryAction() {
+    $('#programAdvertInstitutionCountry').change(function() {
+        $("#programAdvertInstitution").val("");
+        $("#programAdvertInstitutionOtherName").val("");
+
+        $.ajax({
+            type : 'GET',
+            statusCode : {
+                401 : function() {
+                    window.location.reload();
+                },
+                500 : function() {
+                    window.location.href = "/pgadmissions/error";
+                },
+                404 : function() {
+                    window.location.href = "/pgadmissions/404";
+                },
+                400 : function() {
+                    window.location.href = "/pgadmissions/400";
+                },
+                403 : function() {
+                    window.location.href = "/pgadmissions/404";
+                }
+            },
+            url : "/pgadmissions/update/getInstitutionInformation",
+            data : {
+                country_id : $("#programAdvertInstitutionCountry").val(),
+                cacheBreaker : new Date().getTime()
+            },
+            success : function(data) {
+                institutions = data;
+                var options = $("#programAdvertInstitution");
+                options.empty();
+
+                options.append($("<option />").val("").text("Select..."));
+                for ( var i = 0; i < institutions.length; i++) {
+                    options.append($("<option />").val(institutions[i][1]).text(institutions[i][2]));
+                }
+                options.append($("<option />").val("OTHER").text("Other"));
+            },
+            complete : function() {
+            }
+        });
+    });
+}
 
 function bindCancelNewProgramAction() {
     $("#programAdvertCancelNewProgramBtn").bind('click', function() {
@@ -21,7 +68,21 @@ function bindCancelNewProgramAction() {
 
 function bindProgramSelectChangeAction() {
     $("#programAdvertProgramSelect").bind('change', function() {
-        getProgramData();
+        clearProgramAdvertErrors();
+        var programme_code = $("#programAdvertProgramSelect").val();
+        checkToDisable();
+        changeHeaderInfoBars();
+        if (programme_code == "NEW_PROGRAM") {
+            clearProgramSection();
+            $("#programAdvertSelectProgramDiv").hide();
+            $("#programAdvertNewProgramNameDiv").show();
+        } else if (programme_code == "") {
+            clearProgramSection();
+        } else {
+            getAdvertData(programme_code);
+            getClosingDatesData(programme_code);
+
+        }
     });
 }
 
@@ -41,34 +102,17 @@ function checkToDisable() {
     }
 }
 
-function getProgramData() {
-    clearProgramAdvertErrors();
+function changeHeaderInfoBars() {
     var programme_code = $("#programAdvertProgramSelect").val();
-    var programme_name = $("#programAdvertProgramSelect option:selected").text();
-    checkToDisable();
-    changeHeaderInfoBars(programme_name);
-    if (programme_code == "NEW_PROGRAM") {
-        clearProgramSection();
-        $("#programAdvertSelectProgramDiv").hide();
-        $("#programAdvertNewProgramNameDiv").show();
-    } else if (programme_code == "") {
-        clearProgramSection();
-    } else {
-        getAdvertData(programme_code);
-        getClosingDatesData(programme_code);
-
-    }
-}
-
-function changeHeaderInfoBars(text) {
-    if (text == "Select..." || text == "") {
+    if (programme_code == "" || programme_code == "NEW_PROGRAM") {
         infohtml = "<i class='icon-info-sign'></i> Manage the advert for your programme here.";
         infodate = "<i class='icon-info-sign'></i> Manage closing dates for your programme here.";
         inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for your programme.";
     } else {
-        infohtml = "<i class='icon-info-sign'></i> Manage the advert for: <b>" + text + "</b>.";
-        infodate = "<i class='icon-info-sign'></i> Manage closing dates for: <b>" + text + "</b>.";
-        inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for: <b>" + text + "</b>.";
+        var programmeName = $("#programAdvertProgramSelect option:selected").text();
+        infohtml = "<i class='icon-info-sign'></i> Manage the advert for: <b>" + programmeName + "</b>.";
+        infodate = "<i class='icon-info-sign'></i> Manage closing dates for: <b>" + programmeName + "</b>.";
+        inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for: <b>" + programmeName + "</b>.";
     }
     $('#infodates').html(infodate);
     $('#infoResources').html(inforesource);
@@ -133,73 +177,69 @@ function checkDates() {
 
 function bindAddClosingDateButtonAction() {
     $("#addProgramAdvertClosingDate").bind('click', function() {
-        saveClosingDate();
-    });
-}
-
-function saveClosingDate() {
-    clearProgramAdvertClosingDateErrors();
-    $('#ajaxloader').show();
-    var btnAction = $("#addProgramAdvertClosingDate").text();
-    var update = btnAction.indexOf("Edit") !== -1;
-    var url = "/pgadmissions/prospectus/programme/addClosingDate";
-    if (update) {
-        url = "/pgadmissions/prospectus/programme/updateClosingDate";
-    }
-
-    $.ajax({
-        type : 'POST',
-        statusCode : {
-            401 : function() {
-                window.location.reload();
-            },
-            500 : function() {
-                window.location.href = "/pgadmissions/error";
-            },
-            404 : function() {
-                window.location.href = "/pgadmissions/404";
-            },
-            400 : function() {
-                window.location.href = "/pgadmissions/400";
-            },
-            403 : function() {
-                window.location.href = "/pgadmissions/404";
-            }
-        },
-        url : url,
-        data : {
-            program : $("#programAdvertProgramSelect").val(),
-            id : $('#programAdvertClosingDateId').val(),
-            closingDate : $('#programAdvertClosingDateInput').val(),
-            studyPlaces : $('#programAdvertStudyPlacesInput').val()
-        },
-        success : function(data) {
-            var map = JSON.parse(data);
-            if (!map['programClosingDate']) {
-                if (map['program']) {
-                    $("#programAdvertSelectProgramDiv").append(getErrorMessageHTML(map['program']));
-                }
-                if (map['closingDate']) {
-                    $("#programAdvertClosingDateDiv").append(getErrorMessageHTML(map['closingDate']));
-                }
-                if (map['studyPlaces']) {
-                    $("#programAdvertStudyPlacesDiv").append(getErrorMessageHTML(map['studyPlaces']));
-                }
-            } else {
-                if (update) {
-                    replaceClosingDateRow(map['programClosingDate']);
-                } else {
-                    appendClosingDateRow(map['programClosingDate']);
-                }
-                clearClosingDate();
-                sortClosingDates();
-                checkDates();
-            }
-            checkIfErrors();
-        },
-        complete : function() {
-            $('#ajaxloader').fadeOut('fast');
+        clearProgramAdvertClosingDateErrors();
+        $('#ajaxloader').show();
+        var btnAction = $("#addProgramAdvertClosingDate").text();
+        var update = btnAction.indexOf("Edit") !== -1;
+        var url = "/pgadmissions/prospectus/programme/addClosingDate";
+        if (update) {
+            url = "/pgadmissions/prospectus/programme/updateClosingDate";
         }
+
+        $.ajax({
+            type : 'POST',
+            statusCode : {
+                401 : function() {
+                    window.location.reload();
+                },
+                500 : function() {
+                    window.location.href = "/pgadmissions/error";
+                },
+                404 : function() {
+                    window.location.href = "/pgadmissions/404";
+                },
+                400 : function() {
+                    window.location.href = "/pgadmissions/400";
+                },
+                403 : function() {
+                    window.location.href = "/pgadmissions/404";
+                }
+            },
+            url : url,
+            data : {
+                program : $("#programAdvertProgramSelect").val(),
+                id : $('#programAdvertClosingDateId').val(),
+                closingDate : $('#programAdvertClosingDateInput').val(),
+                studyPlaces : $('#programAdvertStudyPlacesInput').val()
+            },
+            success : function(data) {
+                var map = JSON.parse(data);
+                if (!map['programClosingDate']) {
+                    if (map['program']) {
+                        $("#programAdvertSelectProgramDiv").append(getErrorMessageHTML(map['program']));
+                    }
+                    if (map['closingDate']) {
+                        $("#programAdvertClosingDateDiv").append(getErrorMessageHTML(map['closingDate']));
+                    }
+                    if (map['studyPlaces']) {
+                        $("#programAdvertStudyPlacesDiv").append(getErrorMessageHTML(map['studyPlaces']));
+                    }
+                } else {
+                    if (update) {
+                        replaceClosingDateRow(map['programClosingDate']);
+                    } else {
+                        appendClosingDateRow(map['programClosingDate']);
+                    }
+                    clearClosingDate();
+                    sortClosingDates();
+                    checkDates();
+                }
+                checkIfErrors();
+            },
+            complete : function() {
+                $('#ajaxloader').fadeOut('fast');
+            }
+        });
     });
 }
 
@@ -348,6 +388,11 @@ function updateAdvertSection(map) {
 }
 
 function updateProgramSection(map) {
+    $("[name=programAdvertAtasRequired][value=" + map["atasRequired"] + "]").prop("checked", true);
+    $("#programAdvertInstitutionCountry").val(map["institutionCountryCode"]);
+    $("#programAdvertInstitution").empty().append($("<option />").val("dummy").text(map["institutionName"]));
+    $("#programAdvertInstitutionOtherName").val("");
+    
     var advert = map['advert'];
     if (advert) {
         setTextAreaValue($("#programAdvertDescriptionText"), advert['description']);
@@ -377,15 +422,9 @@ function updateProgramSection(map) {
             $("#programAdvertStudyOptionsSelect option[value='" + option + "']").attr("selected", true);
         });
     }
-    
-    $('#programAdvertAdvertisingDeadlineYear').find('option').remove().end();
-    if (map['possibleAdvertisingDeadlines']) {
-        var advertisingDeadline = map['advertisingDeadline'];
-        map['possibleAdvertisingDeadlines'].forEach(function(deadline) {
-            var selected = deadline == advertisingDeadline ? "selected" : "";
-            $('#programAdvertAdvertisingDeadlineYear').append('<option value="' + deadline + '" ' + selected + '>30 September ' + deadline + '</option>');
-        });
-    }
+
+    var advertisingDeadline = map['advertisingDeadline'];
+    $('#programAdvertAdvertisingDeadlineYear').val(advertisingDeadline);
 
     if (map['isCustomProgram']) {
         $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
@@ -402,6 +441,13 @@ function bindSaveButtonAction() {
 
 function saveAdvert() {
     clearProgramAdvertErrors();
+    
+    var programCode = $("#programAdvertProgramSelect").val();
+    if(programCode === "NEW_PROGRAM") {
+        programCode = "";
+    }
+    var programName = $("#programAdvertNewProgramName").val();
+    
     var duration = {
         value : $("#programAdvertStudyDurationInput").val(),
         unit : $("#programAdvertStudyDurationUnitSelect").val()
@@ -412,7 +458,9 @@ function saveAdvert() {
     } else if ($("#programAdvertIsActiveRadioNo").prop("checked")) {
         acceptApplications = "false";
     }
-    var studyOptions = $("#programAdvertStudyOptionsSelect option:selected").map(function(){ return this.value; }).get().join(",");
+    var studyOptions = $("#programAdvertStudyOptionsSelect option:selected").map(function() {
+        return this.value;
+    }).get().join(",");
 
     $('#ajaxloader').show();
     $.ajax({
@@ -436,7 +484,12 @@ function saveAdvert() {
         },
         url : "/pgadmissions/prospectus/programme/saveProgramAdvert",
         data : {
-            programCode : $("#programAdvertProgramSelect").val(),
+            programCode : programCode,
+            programName : programName,
+            atasRequired : $("[name=programAdvertAtasRequired]:checked").val(),
+            institutionCountry : $("#programAdvertInstitutionCountry").val(),
+            institutionCode : $("#programAdvertInstitution").val(),
+            otherInstitution : $("#programAdvertInstitutionOtherName").val(),
             description : addBlankLinks(tinymce.get('programAdvertDescriptionText').getContent()),
             studyDuration : JSON.stringify(duration),
             funding : tinymce.get('programAdvertFundingText').getContent(),
@@ -449,6 +502,21 @@ function saveAdvert() {
             if (!map['success']) {
                 if (map['program']) {
                     $("#programAdvertSelectProgramDiv").append(getErrorMessageHTML(map['program']));
+                }
+                if (map['programName']) {
+                    $("#programAdvertNewProgramNameDiv").append(getErrorMessageHTML(map['programName']));
+                }
+                if (map['atasRequired']) {
+                    $("#programAdvertAtasRequiredDiv").append(getErrorMessageHTML(map['atasRequired']));
+                }
+                if (map['institutionCountry']) {
+                    $("#programAdvertInstitutionCountryDiv").append(getErrorMessageHTML(map['institutionCountry']));
+                }
+                if (map['institutionCode']) {
+                    $("#programAdvertInstitutionDiv").append(getErrorMessageHTML(map['institutionCode']));
+                }
+                if (map['otherInstitution']) {
+                    $("#programAdvertInstitutionOtherNameDiv").append(getErrorMessageHTML(map['otherInstitution']));
                 }
                 if (map['description']) {
                     $("#programAdvertDescriptionDiv").append(getErrorMessageHTML(map['description']));
@@ -470,10 +538,20 @@ function saveAdvert() {
                 }
                 checkIfErrors();
             } else {
+                if(programCode === "") {
+                    // new program created
+                    var newProgramCode = map["programCode"];
+                    $("#programAdvertProgramSelect").append($("<option />").val(newProgramCode).text(programName));
+                    $("#programAdvertProgramSelect").val(newProgramCode);
+                    $("#programAdvertSelectProgramDiv").show();
+                    $("#programAdvertNewProgramNameDiv").hide();
+                    checkToDisable();
+                    getAdvertData(newProgramCode);
+                }
                 var programme_name = $("#programAdvertProgramSelect option:selected").text();
                 infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>" + programme_name + "</b> has been saved.";
                 $('#infoBarProgram').addClass('alert-success').removeClass('alert-info').html(infohtml);
-                
+
                 $('#resourcesModal').modal('show');
             }
 
@@ -485,7 +563,8 @@ function saveAdvert() {
 }
 
 function clearAdvert() {
-    $("#advertGroup input, #advertGroup textarea, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply, #programAdvertStudyOptionsSelect, #programAdvertAdvertisingDeadlineYear").val('');
+    $("[name=programAdvertAtasRequired]").prop("checked", false);
+    $("#institutionGroup select, #institutionGroup input, #advertGroup input, #advertGroup textarea, #advertGroup select, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply").val('');
     $("#programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo").prop('checked', false);
     tinyMCE.execCommand("mceRepaint");
 }

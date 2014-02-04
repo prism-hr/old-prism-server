@@ -1,20 +1,20 @@
 $(document).ready(function() {
     bindDatePicker($('#applicationStartDate'));
     $('.selectpicker').selectpicker();
-    
-    $(window).bind('resize', function() { 
-        setHsize(); 
+
+    $(window).bind('resize', function() {
+        setHsize();
     });
-    setHsize(); 
-	refreshControls();
+    setHsize();
+    refreshControls();
 
     $('#institution').change(function() {
-    	$("#otherInstitution").val("");
-    	refreshControls();
+        $("#otherInstitution").val("");
+        refreshControls();
     });
 
     $('#institutionCountry').change(function() {
-    	$("#institution").val("");
+        $("#institution").val("");
         $("#otherInstitution").val("");
 
         $.ajax({
@@ -44,7 +44,7 @@ $(document).ready(function() {
             success : function(data) {
                 institutions = data;
                 var options = $("#institution");
-                $("#institution").empty();
+                options.empty();
 
                 options.append($("<option />").val("").text("Select..."));
                 for ( var i = 0; i < institutions.length; i++) {
@@ -59,29 +59,31 @@ $(document).ready(function() {
     });
     initEditors();
 });
+
 function setHsize() {
- var container;
- var paddings = 32;
- var header = $('#pholder header').height();
- var footer = $('#pholder footer').height();
- var isEmbed = window != window.parent;
- if (isEmbed) {
-    container =  $(window).height();
- } else {
-    container =  $('#pholder').parent().parent().height();
- }
- var sum = container - header - footer - paddings;
- $('#plist').height(sum);
+    var container;
+    var paddings = 32;
+    var header = $('#pholder header').height();
+    var footer = $('#pholder footer').height();
+    var isEmbed = window != window.parent;
+    if (isEmbed) {
+        container = $(window).height();
+    } else {
+        container = $('#pholder').parent().parent().height();
+    }
+    var sum = container - header - footer - paddings;
+    $('#plist').height(sum);
 }
-function refreshControls(){
-	if ($('#institutionCountry').val() === "") {
-		$("#institution").attr("readonly", "readonly");
+
+function refreshControls() {
+    if ($('#institutionCountry').val() === "") {
+        $("#institution").attr("readonly", "readonly");
         $("#institution").attr("disabled", "disabled");
-	} else {
-		$("#institution").removeAttr("readonly", "readonly");
+    } else {
+        $("#institution").removeAttr("readonly", "readonly");
         $("#institution").removeAttr("disabled", "disabled");
-	}
-	
+    }
+
     if ($('#institution').val() === "OTHER") {
         $("#otherInstitution").removeAttr("readonly", "readonly");
         $("#otherInstitution").removeAttr("disabled", "disabled");
@@ -91,13 +93,14 @@ function refreshControls(){
     }
     $("#institution").selectpicker('refresh');
 }
+
 function initEditors() {
     tinymce.init({
-        selector: "#programDescription",
-        width: 480,
+        selector : "#programDescription",
+        width : 480,
         height : 180,
-        menubar: false,
-        content: "",
-        toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+        menubar : false,
+        content : "",
+        toolbar : "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
     });
 }

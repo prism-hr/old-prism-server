@@ -447,7 +447,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         approver = new RegisteredUserBuilder().firstName("het").lastName("get").email("het@test.com").username("hed").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").countryCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         
         program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 

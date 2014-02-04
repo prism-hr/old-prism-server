@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static java.util.Objects.requireNonNull;
+
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -143,7 +145,8 @@ public class ProgramsService {
         advert.setDescription(opportunityRequest.getProgramDescription());
         advert.setStudyDuration(opportunityRequest.getStudyDuration());
 
-        QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest);
+        QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
+                opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
 
         Program program = new Program();
         program.setAdvert(advert);
@@ -156,18 +159,18 @@ public class ProgramsService {
         programDAO.save(program);
         return program;
     }
-    
+
     public void updateClosingDate(ProgramClosingDate closingDate) {
         Program program = closingDate.getProgram();
         program.getAdvert().setLastEditedTimestamp(new Date());
         programDAO.updateClosingDate(closingDate);
     }
-    
+
     public void deleteClosingDateById(Integer programClosingDateId) {
         ProgramClosingDate programClosingDate = programDAO.getClosingDateById(programClosingDateId);
         programDAO.deleteClosingDate(programClosingDate);
     }
-    
+
     public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {        
         program.getClosingDates().add(programClosingDate);
         program.getAdvert().setLastEditedTimestamp(new Date());
@@ -186,8 +189,23 @@ public class ProgramsService {
         return String.format("%s_%05d", institution.getCode(), codeNumber);
     }
 
-    public void saveProgramOpportunity(ProgramOpportunityDTO programOpportunityDTO) {
-        Program program = getProgramByCode(programOpportunityDTO.getProgramCode());
+    public Program saveProgramOpportunity(ProgramOpportunityDTO programOpportunityDTO) {
+        ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
+        
+        Program program;
+        if (programOpportunityDTO.getProgramCode() != null) {
+            program = requireNonNull(getProgramByCode(programOpportunityDTO.getProgramCode()));
+        } else {
+            QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(programOpportunityDTO.getInstitutionCode(),
+                    programOpportunityDTO.getInstitutionCountry(), programOpportunityDTO.getOtherInstitution());
+            program = new Program();
+            program.setTitle(programOpportunityDTO.getProgramName());
+            program.setInstitution(institution);
+            program.setAtasRequired(programOpportunityDTO.getAtasRequired());
+            program.setCode(thisBean.generateNextProgramCode(institution));
+            save(program);
+        }
+
         Advert advert = program.getAdvert();
         if (advert == null) {
             advert = new Advert();
@@ -197,8 +215,11 @@ public class ProgramsService {
         advert.setStudyDuration(programOpportunityDTO.getStudyDuration());
         advert.setFunding(programOpportunityDTO.getFunding());
         advert.setActive(programOpportunityDTO.getActive());
-        programInstanceService.createRemoveProgramInstances(program, programOpportunityDTO.getStudyOptions(), 
-                programOpportunityDTO.getAdvertiseDeadlineYear());
+        if (program.getProgramFeed() == null) { // custom program
+            programInstanceService.createRemoveProgramInstances(program, programOpportunityDTO.getStudyOptions(),
+                    programOpportunityDTO.getAdvertiseDeadlineYear());
+        }
+        return program;
     }
 
 }

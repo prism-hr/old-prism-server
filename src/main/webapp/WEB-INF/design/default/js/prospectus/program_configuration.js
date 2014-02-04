@@ -207,7 +207,7 @@ function bindAddClosingDateButtonAction() {
             },
             url : url,
             data : {
-                program : $("#programAdvertProgramSelect").val(),
+                programCode : $("#programAdvertProgramSelect").val(),
                 id : $('#programAdvertClosingDateId').val(),
                 closingDate : $('#programAdvertClosingDateInput').val(),
                 studyPlaces : $('#programAdvertStudyPlacesInput').val()

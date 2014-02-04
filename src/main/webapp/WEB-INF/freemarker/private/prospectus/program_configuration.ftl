@@ -11,11 +11,11 @@
                   <div class="field forLabel">
                       <select id="programAdvertProgramSelect" class="max selectpicker" data-live-search="true" data-size="6" >
                           <option value="">Select...</option>
-                          <option value="NEW_PROGRAM">Create New Program...</option>
                           <#list programmes as programme>
                             <option value="${programme.code}"<#if program?? && programme.code == program.code>selected</#if> > ${programme.title?html}</option>
                           </#list>
                       </select>
+                      <a class="btn btn-success" id="newProgamme">New Programme</a>
                   </div>
                   
                 </div>
@@ -31,8 +31,8 @@
                   <label class="plain-label" for="atasRequired">Does the program require ATAS?<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.atasRequired'/>"></span>
                   <div class="field">
-                    <label><input type="radio" name="programAdvertAtasRequired" value="true" id="programAdvertAtasRequired_true" />Yes</label>
-                    <label><input type="radio" name="programAdvertAtasRequired" value="false" id="programAdvertAtasRequired_false" />No</label>
+                    <label><input type="radio" name="programAdvertAtasRequired" value="true" id="programAdvertAtasRequired_true" /> Yes</label>
+                    <label><input type="radio" name="programAdvertAtasRequired" value="false" id="programAdvertAtasRequired_false" /> No</label>
                   </div>
                 </div>
               </div>
@@ -46,7 +46,7 @@
                   <label class="plain-label" for="programAdvertInstitutionCountry">Institution Country<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionCountry'/>"></span>
                   <div class="field">
-                    <select class="full" data-live-search="true" data-size="6" id="programAdvertInstitutionCountry">
+                    <select class="full selectpicker" data-live-search="true" data-size="6" id="programAdvertInstitutionCountry">
                       <option value="">Select...</option>
                       <#list countries as country>
                         <option value="${encrypter.encrypt(country.id)}">
@@ -61,7 +61,7 @@
                   <label class="plain-label" for="programAdvertInstitution">Institution Name<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionName'/>"></span>
                   <div class="field">
-                    <select class="full" data-live-search="true" data-size="6"  id="programAdvertInstitution">
+                    <select class="full selectpicker" data-live-search="true" data-size="6"  id="programAdvertInstitution">
                       <option value="">Select...</option>
                     </select>
                   </div>

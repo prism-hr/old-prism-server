@@ -166,4 +166,5 @@ function initEditors() {
 	    content: "",
 	    toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
 	});
+	isRunning = true;
 }

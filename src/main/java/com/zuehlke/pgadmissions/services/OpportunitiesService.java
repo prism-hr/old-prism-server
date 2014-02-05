@@ -77,8 +77,9 @@ public class OpportunitiesService {
         program.getInstances().addAll(programInstances);
     }
 
-    public void rejectOpportunityRequest(Integer requestId) {
+    public void rejectOpportunityRequest(Integer requestId, String rejectionReason) {
         OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
+        opportunityRequest.setRejectionReason(rejectionReason);
         opportunityRequest.setStatus(OpportunityRequestStatus.REJECTED);
     }
 

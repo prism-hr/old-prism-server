@@ -129,10 +129,11 @@ public class OpportunitiesServiceTest {
         expect(opportunityRequestDAO.findById(8)).andReturn(request);
 
         replay();
-        service.rejectOpportunityRequest(8);
+        service.rejectOpportunityRequest(8, "because");
         verify();
 
         assertEquals(OpportunityRequestStatus.REJECTED, request.getStatus());
+        assertEquals("because", request.getRejectionReason());
     }
 
 }

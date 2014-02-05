@@ -57,6 +57,23 @@
   <body>
   <!--<![endif]-->
   
+    <div id="rejectOpportunityRequestModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <h3 id="myModalLabel">Reject opportunity request</h3>
+      </div>
+        <div id="rejectOpportunityRequestReasonDiv" class="modal-body">
+          <p>Specify why you want to reject the opportunity request</p>
+            <textarea cols="150" rows="6" class="input-xxlarge" id="rejectOpportunityRequestReasonText"></textarea>
+          </p>
+          
+        </div>
+        <div class="modal-footer">
+          <input id="rejectOpportunityRequestUrl" type="hidden" value="${requestContext.requestUri}" />
+          <button id="do-reject-opportunity-button" class="btn btn-danger" aria-hidden="true">Reject</button>
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        </div>
+    </div>
+  
     <!-- Wrapper Starts -->
     <div id="wrapper">
 
@@ -78,8 +95,7 @@
                     <h2 class="no-arrow">Opportunity Request</h2>
                     <div>
                       <form id="opportunityRequestEditForm" method="POST">
-                        <input type="hidden" name="editAction" id="editAction" value=""/>
-                        
+                        <input type="hidden" name="action" value="approve">
                         <div class="row-group">
                           <h3 class="no-arrow">Opportunity Details</h2>
 

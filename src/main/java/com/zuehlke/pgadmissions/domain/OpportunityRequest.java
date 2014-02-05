@@ -69,6 +69,9 @@ public class OpportunityRequest {
     @Column(name = "advertising_dealine_year")
     private Integer advertisingDeadlineYear;
 
+    @Column(name = "rejection_reason")
+    private String rejectionReason;
+
     @Transient
     private Integer studyDurationNumber;
 
@@ -177,6 +180,14 @@ public class OpportunityRequest {
 
     public void setAdvertisingDeadlineYear(Integer advertisingDeadlineYear) {
         this.advertisingDeadlineYear = advertisingDeadlineYear;
+    }
+
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
     }
 
     public Integer getStudyDurationNumber() {

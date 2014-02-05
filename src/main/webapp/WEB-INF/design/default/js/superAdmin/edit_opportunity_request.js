@@ -10,61 +10,68 @@ $(document).ready(function() {
     });
 
     $('#institutionCountry').change(function() {
-        $("#institution").val("");
-        $("#otherInstitution").val("");
-
-        $.ajax({
-            type : 'GET',
-            statusCode : {
-                401 : function() {
-                    window.location.reload();
-                },
-                500 : function() {
-                    window.location.href = "/pgadmissions/error";
-                },
-                404 : function() {
-                    window.location.href = "/pgadmissions/404";
-                },
-                400 : function() {
-                    window.location.href = "/pgadmissions/400";
-                },
-                403 : function() {
-                    window.location.href = "/pgadmissions/404";
-                }
-            },
-            url : "/pgadmissions/update/getInstitutionInformation",
-            data : {
-                country_id : $("#institutionCountry").val(),
-                cacheBreaker : new Date().getTime()
-            },
-            success : function(data) {
-                institutions = data;
-                var options = $("#institution");
-                $("#institution").empty();
-
-                options.append($("<option />").val("").text("Select..."));
-                for ( var i = 0; i < institutions.length; i++) {
-                    options.append($("<option />").val(institutions[i][1]).text(institutions[i][2]));
-                }
-                options.append($("<option />").val("OTHER").text("Other"));
-            },
-            complete : function() {
-                refreshControls();
-            }
-        });
+        institutionCountryChanged();
     });
     
     $('#approve-button').click(function(e) {
-        $('#editAction').val('approve');
         $('#opportunityRequestEditForm').submit();
     });
 
     $('#reject-button').click(function(e) {
-        $('#editAction').val('reject');
-        $('#opportunityRequestEditForm').submit();
+        $('#rejectOpportunityRequestModal').modal('show');
     });
+    
+    $('#do-reject-opportunity-button').click(function(e) {
+        rejectOpportunity();
+    });
+
     initEditors();
 });
+
+function institutionCountryChanged() {
+    $("#institution").val("");
+    $("#otherInstitution").val("");
+
+    $.ajax({
+        type : 'GET',
+        statusCode : {
+            401 : function() {
+                window.location.reload();
+            },
+            500 : function() {
+                window.location.href = "/pgadmissions/error";
+            },
+            404 : function() {
+                window.location.href = "/pgadmissions/404";
+            },
+            400 : function() {
+                window.location.href = "/pgadmissions/400";
+            },
+            403 : function() {
+                window.location.href = "/pgadmissions/404";
+            }
+        },
+        url : "/pgadmissions/update/getInstitutionInformation",
+        data : {
+            country_id : $("#institutionCountry").val(),
+            cacheBreaker : new Date().getTime()
+        },
+        success : function(data) {
+            institutions = data;
+            var options = $("#institution");
+            $("#institution").empty();
+
+            options.append($("<option />").val("").text("Select..."));
+            for ( var i = 0; i < institutions.length; i++) {
+                options.append($("<option />").val(institutions[i][1]).text(institutions[i][2]));
+            }
+            options.append($("<option />").val("OTHER").text("Other"));
+        },
+        complete : function() {
+            refreshControls();
+        }
+    });
+}
 
 function refreshControls(){
     if ($('#institutionCountry').val() === "") {
@@ -94,3 +101,44 @@ function initEditors() {
         toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
     });
 }
+
+function rejectOpportunity() {
+    var url = window.location;
+    $.ajax({
+        type : 'POST',
+        statusCode : {
+            401 : function() {
+                window.location.reload();
+            },
+            500 : function() {
+                window.location.href = "/pgadmissions/error";
+            },
+            404 : function() {
+                window.location.href = "/pgadmissions/404";
+            },
+            400 : function() {
+                window.location.href = "/pgadmissions/400";
+            },
+            403 : function() {
+                window.location.href = "/pgadmissions/404";
+            }
+        },
+        url : url,
+        data : {
+            action : "reject",
+            rejectionReason : $("#rejectOpportunityRequestReasonText").val()
+        },
+        success : function(data) {
+            if(!data["success"]) {
+                if (data['rejectionReason']) {
+                    $("#rejectOpportunityRequestReasonDiv").append(getErrorMessageHTML(data['rejectionReason']));
+                }
+            } else {
+                window.location.href = "/pgadmissions/requests";
+            }
+        },
+        complete : function() {
+        }
+    });
+}
+

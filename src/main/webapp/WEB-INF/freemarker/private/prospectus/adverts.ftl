@@ -11,7 +11,9 @@
   		<input type="hidden" id="prospectusSelectedAdvert" name="prospectusSelectedAdvert" value="${Request['prospectus.selectedAdvert']}"/>
   	</#if>
     <header>
-      <a href="/pgadmissions/createOpportunity" class="btn btn-success newOportunity">Advertise Opportunity</a>
+	    <#if !RequestParameters.feedKey??>
+	      <a href="/pgadmissions/createOpportunity" class="btn btn-success newOportunity">Advertise Opportunity</a>
+	    </#if>
       <h1>
         <#if feedTitle??>
           ${feedTitle}

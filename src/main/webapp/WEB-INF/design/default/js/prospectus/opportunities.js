@@ -33,21 +33,21 @@ function setClass() {
 }
 
 function getAdverts(){
-	var selectedAdvertId= getUrlParam("advert");
-	if(selectedAdvertId !== undefined && selectedAdvertId != "undefined") {
+	var selectedAdvertId = getUrlParam("advert");
+	if (selectedAdvertId !== undefined && selectedAdvertId != "undefined") {
 		selectedAdvertId = decodeURIComponent(selectedAdvertId);
 	}
-	var key = $('#key').val();
+	var key = getUrlParam("feedKey");
 	if (key == undefined) {
-		key = getUrlParam("key");
+		key = $('#feedKey').val();
 	}
-	var value = $('#value').val();
+	var value = getUrlParam("feedKeyValue");
 	if (value == undefined) {
-		value = getUrlParam("value");
+		value = $('#feedKeyValue').val();
 	}
 	var data = {
-		key: key,
-		value: value, 
+		feedKey: key,
+		feedKeyValue: value, 
 		advert: selectedAdvertId
 	};
 	$.ajax({
@@ -55,7 +55,8 @@ function getAdverts(){
 		data: data,
 		url: "/pgadmissions/opportunities/embedded",
 		success: function(data) {
-			processAdverts(data.adverts);
+			var map = JSON.parse(data);
+			processAdverts(map.adverts);
 			highlightSelectedAdvert();
 			bindAddThisShareOverFix();
 		}
@@ -195,7 +196,7 @@ function durationOfStudyString(studyDuration){
 	return normalizedDuration+" "+ normalizedUnit+ pluralSuffix;
 }
 
-function getAdvertUrl(advert){
+function getAdvertUrl (advert) {
 	url = window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advert=" + advert.id + "&program=" + advert.programCode;
 	if(advert.type == 'project') {
 		url = url + '&project=' + advert.projectId; 
@@ -204,7 +205,7 @@ function getAdvertUrl(advert){
 }
 
 function getUrlParam(name) {
-    var results = new RegExp('[\\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
+    var results = new RegExp('[\\?&;]' + name + '=([^&;#]*)').exec(window.location.href);
     if(results!=null && results.length>0){
     	return results[1];	
     }

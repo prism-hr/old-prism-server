@@ -1420,8 +1420,12 @@ i {
 #commentsection input[type="radio"],
 #commentsection input[type="checkbox"],
 #documentUploadForm input[type="radio"],
-#documentUploadForm input[type="checkbox"]{
+#documentUploadForm input[type="checkbox"],
+.field input[type="radio"]{
    margin-top: -3px;
+}
+#newProgamme, #programAdvertCancelNewProgramBtn {
+	margin-bottom: 10px;
 }
 #commentsection .field>label, #documentUploadForm .field>label {
   margin-top: 4px;
@@ -2009,8 +2013,14 @@ background: #909194;
 #resourcesModal .alert-info {
 	margin-bottom: 10px;
 }
+#opportunities h1 {
+	float: none;
+}
 #opportunities #opportunitiList {
 	height: 512px;
+}
+#opportunities #opportunitiList .newOportunity{
+	display: none;
 }
 @media (min-width:768px) and (max-width:979px) {
 

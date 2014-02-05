@@ -1,6 +1,9 @@
 $(document).ready(function()
 {
 
+	$('#timeline').hide();
+	$('#opportunities').hide();
+
 	var jumpToTimeline = false; // prevent jumping to the timeline on page load.
 	
 	// Timeline tab.	
@@ -15,6 +18,7 @@ $(document).ready(function()
 			$('#ajaxloader').show();
 		}
 		$('#timeline').show();
+		$('#opportunities').hide();
 		
 		$.ajax({
 			 type: 'GET',
@@ -138,6 +142,7 @@ $(document).ready(function()
 			return false;
 		});
 		$('#application').html("");
+		$('#opportunities').hide();
 	}
 
 	if($('#isReferee').val() == 'true'){

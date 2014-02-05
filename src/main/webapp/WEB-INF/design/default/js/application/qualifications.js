@@ -14,7 +14,7 @@ $(document).ready(function() {
     // Show or hide the qualificationInstitution text field.
     // -------------------------------------------------------------------------------
     function showOrHideQualificationInstitution() {
-        $("#qualificationInstitution").attr("disabled", "disabled");
+        $("#qualificationInstitution").prop("disabled", "disabled");
         $("#lbl-providerName").addClass("grey-label").parent().find('.hint').addClass("grey");
         if ($("#institutionCountry").val() != "") {
             $("#qualificationInstitution").removeAttr("disabled", "disabled");
@@ -30,8 +30,8 @@ $(document).ready(function() {
         } else {
             $("#otherInstitutionProviderName").val("");
             $("#lbl-otherInstitutionProviderName").addClass("grey-label").parent().find('.hint').addClass("grey");
-            $("#otherInstitutionProviderName").attr("readonly", "readonly");
-            $("#otherInstitutionProviderName").attr("disabled", "disabled");
+            $("#otherInstitutionProviderName").prop("readonly", "readonly");
+            $("#otherInstitutionProviderName").prop("disabled", "disabled");
         }
     });
 
@@ -43,14 +43,14 @@ $(document).ready(function() {
         showOrHideQualificationInstitution();
 		$("#otherInstitutionProviderName").val("");
 		$("#lbl-otherInstitutionProviderName").addClass("grey-label").parent().find('.hint').addClass("grey");
-		$("#otherInstitutionProviderName").attr("readonly", "readonly");
-		$("#otherInstitutionProviderName").attr("disabled", "disabled");
+		$("#otherInstitutionProviderName").prop("readonly", "readonly");
+		$("#otherInstitutionProviderName").prop("disabled", "disabled");
         if ($('#institutionCountry').val() == "") {
             $("#qualificationInstitution").empty();
             $("#otherInstitutionProviderName").val("");
             $("#lbl-otherInstitutionProviderName").addClass("grey-label").parent().find('.hint').addClass("grey");
-            $("#otherInstitutionProviderName").attr("readonly", "readonly");
-            $("#otherInstitutionProviderName").attr("disabled", "disabled");
+            $("#otherInstitutionProviderName").prop("readonly", "readonly");
+            $("#otherInstitutionProviderName").prop("disabled", "disabled");
             return;
         }
 

@@ -67,21 +67,21 @@ public class ProjectConfigurationController {
     private final ProjectDTOValidator projectDTOValidator;
 
     private final DatePropertyEditor datePropertyEditor;
-    
+
     private final ProgramPropertyEditor programPropertyEditor;
-    
+
     private final PersonPropertyEditor personPropertyEditor;
-    
+
     private final ProjectConverter projectConverter;
-    
+
     private final ApplyTemplateRenderer templateRenderer;
-    
+
     private final String host;
-    
+
     private final DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
 
     private Gson gson;
-    
+
     public ProjectConfigurationController() {
         this(null, null, null, null, null, null, null, null, null, null, null);
     }
@@ -89,7 +89,7 @@ public class ProjectConfigurationController {
     @Autowired
     public ProjectConfigurationController(UserService userService, ProgramsService programsService, ApplicationContext applicationContext,
             ProjectDTOValidator projectDTOValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
-            PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer, 
+            PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer,
             @Value("${application.host}") final String host, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor) {
         this.userService = userService;
         this.programsService = programsService;
@@ -99,9 +99,9 @@ public class ProjectConfigurationController {
         this.programPropertyEditor = programPropertyEditor;
         this.personPropertyEditor = personPropertyEditor;
         this.projectConverter = projectConverter;
-		this.templateRenderer = templateRenderer;
-		this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
-		this.host = host;
+        this.templateRenderer = templateRenderer;
+        this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
+        this.host = host;
     }
 
     @PostConstruct
@@ -143,7 +143,7 @@ public class ProjectConfigurationController {
         }
         return programsService.getProgramByCode(programCode);
     }
-	
+
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();
@@ -176,7 +176,9 @@ public class ProjectConfigurationController {
             projects = programsService.listProjects(getUser(), program);
             json.put("projects", gson.toJson(projects));
             json.put("closingDate", programsService.getDefaultClosingDate(program));
-            json.put("studyDuration", program.getAdvert().getStudyDuration());
+            if (program.getAdvert() != null) {
+                json.put("studyDuration", program.getAdvert().getStudyDuration());
+            }
         }
         return json;
     }
@@ -195,18 +197,18 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
     @ResponseBody
     public String getProject(@PathVariable("projectId") int projectId) throws TemplateException, IOException {
-    	Map<String, Object> map = Maps.newHashMap();
+        Map<String, Object> map = Maps.newHashMap();
         Project project = programsService.getProject(projectId);
-        if(project==null || project.isDisabled()){
-        	throw new ResourceNotFoundException();
+        if (project == null || project.isDisabled()) {
+            throw new ResourceNotFoundException();
         }
         map.put("project", project);
         map.putAll(createApplyTemplates(project));
         return gson.toJson(map);
     }
 
-	private Map<String,Object> createApplyTemplates(Project project) throws TemplateException, IOException{
-		Map<String, Object> dataMap = Maps.newHashMapWithExpectedSize(3);
+    private Map<String, Object> createApplyTemplates(Project project) throws TemplateException, IOException {
+        Map<String, Object> dataMap = Maps.newHashMapWithExpectedSize(3);
         dataMap.put("programCode", project.getProgram().getCode());
         dataMap.put("projectId", project.getId());
         dataMap.put("advertId", project.getAdvert().getId());
@@ -215,7 +217,7 @@ public class ProjectConfigurationController {
         templateMap.put("buttonToApply", templateRenderer.renderButton(dataMap));
         templateMap.put("linkToApply", templateRenderer.renderLink(dataMap));
         return templateMap;
-	}
+    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     @ResponseBody
@@ -223,8 +225,8 @@ public class ProjectConfigurationController {
         Map<String, Object> map = getErrorValues(result, request);
         if (!result.hasErrors()) {
             Project project = projectConverter.toDomainObject(projectDTO);
-            if(project==null){
-            	throw new ResourceNotFoundException();
+            if (project == null) {
+                throw new ResourceNotFoundException();
             }
             addSupervisorsRoles(project);
             programsService.saveProject(project);
@@ -234,13 +236,13 @@ public class ProjectConfigurationController {
     }
 
     private void addSupervisorsRoles(Project project) {
-    	userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
-    	if(project.getSecondarySupervisor()!=null){
-    		userService.updateUserWithNewRoles(project.getSecondarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
-    	}
-	}
+        userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
+        if (project.getSecondarySupervisor() != null) {
+            userService.updateUserWithNewRoles(project.getSecondarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
+        }
+    }
 
-	private Map<String, Object> getErrorValues(BindingResult result, HttpServletRequest request) {
+    private Map<String, Object> getErrorValues(BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(result.getErrorCount());
         if (result.hasErrors()) {
             for (FieldError error : result.getFieldErrors()) {

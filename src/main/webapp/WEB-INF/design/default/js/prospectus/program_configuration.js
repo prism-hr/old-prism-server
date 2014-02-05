@@ -10,8 +10,15 @@ $(document).ready(function() {
     checkDates();
     $('.selectpicker').selectpicker();
     checkToDisable();
+    var newProgramme = false;
+    var programCode = '';
+    otherInstitutionCheck();
 });
-
+function cleanEditorsPrograms() {
+    tinyMCE.get('programAdvertDescriptionText').setContent('');
+    tinyMCE.get('programAdvertFundingText').setContent('');
+    tinyMCE.execCommand("mceRepaint");
+}
 function bindChangeInstitutionCountryAction() {
     $('#programAdvertInstitutionCountry').change(function() {
         $("#programAdvertInstitution").val("");
@@ -51,6 +58,7 @@ function bindChangeInstitutionCountryAction() {
                     options.append($("<option />").val(institutions[i][1]).text(institutions[i][2]));
                 }
                 options.append($("<option />").val("OTHER").text("Other"));
+                $('#programAdvertInstitution').selectpicker('refresh');
             },
             complete : function() {
             }
@@ -63,6 +71,7 @@ function bindCancelNewProgramAction() {
         $("#programAdvertSelectProgramDiv").show();
         $("#programAdvertNewProgramNameDiv").hide();
         $("#programAdvertProgramSelect").selectpicker('val', '');
+        newProgramme = false;
     });
 }
 
@@ -72,11 +81,7 @@ function bindProgramSelectChangeAction() {
         var programme_code = $("#programAdvertProgramSelect").val();
         checkToDisable();
         changeHeaderInfoBars();
-        if (programme_code == "NEW_PROGRAM") {
-            clearProgramSection();
-            $("#programAdvertSelectProgramDiv").hide();
-            $("#programAdvertNewProgramNameDiv").show();
-        } else if (programme_code == "") {
+        if (programme_code == "") {
             clearProgramSection();
         } else {
             getAdvertData(programme_code);
@@ -85,15 +90,43 @@ function bindProgramSelectChangeAction() {
         }
     });
 }
-
+$(document).on('click', '#newProgamme', function() {
+    $("#programAdvertSelectProgramDiv").hide();
+    $("#programAdvertNewProgramNameDiv").show();
+    clearProgramSection();
+    enableForNew();
+    changeHeaderInfoBars('NEW_PROGRAM');
+    programCode = "NEW_PROGRAM";
+    newProgramme = true;
+});
+function otherInstitutionCheck() {
+    if ($('#programAdvertInstitution').val() == 'OTHER') {
+        $("#programAdvertInstitutionOtherNameDiv label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+        $("#programAdvertInstitutionOtherNameDiv input").prop("readonly", false).prop("disabled", false);
+    } else {
+        $("#programAdvertInstitutionOtherNameDiv label").addClass("grey-label").parent().find('.hint').addClass("grey");
+        $("#programAdvertInstitutionOtherNameDiv input").prop("readonly", true).prop("disabled", true).val('');
+    }
+};
+$(document).on('change', '#programAdvertInstitution', function() {
+    otherInstitutionCheck();
+});
+function enableForNew(){
+$("#advertGroup label, #programAdvertClosingDateGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+    $("#advertGroup input, #advertGroup textarea, #advertGroup select, #programAdvertClosingDateGroup input").removeAttr("readonly", "readonly");
+    $("#advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, #programAdvertClosingDateGroup input").removeAttr("disabled", "disabled");
+    $("#programAdvertClosingDateGroup a").removeClass("disabled");
+    $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
+}
 function checkToDisable() {
     var selectedProgram = $("#programAdvertProgramSelect").val();
-    if (selectedProgram == "") {
+    if (selectedProgram == '') {
         $("#advertGroup label, #programAdvertClosingDateGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
         $("#advertGroup input, #advertGroup textarea, #advertGroup select, #programAdvertClosingDateGroup input").attr("readonly", "readonly");
         $("#advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, #programAdvertClosingDateGroup input").attr("disabled", "disabled");
         $("#programAdvertClosingDateGroup a").addClass("disabled");
         $("#programAdvertClosingDates").css("display", "none");
+        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').attr("readonly", "readonly").attr("disabled", "disabled");
     } else {
         $("#advertGroup label, #programAdvertClosingDateGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
         $("#advertGroup input, #advertGroup textarea, #advertGroup select, #programAdvertClosingDateGroup input").removeAttr("readonly", "readonly");
@@ -102,9 +135,9 @@ function checkToDisable() {
     }
 }
 
-function changeHeaderInfoBars() {
+function changeHeaderInfoBars(programval) {
     var programme_code = $("#programAdvertProgramSelect").val();
-    if (programme_code == "" || programme_code == "NEW_PROGRAM") {
+    if (programme_code == "" || programme_code == "NEW_PROGRAM" || programval == "NEW_PROGRAM") {
         infohtml = "<i class='icon-info-sign'></i> Manage the advert for your programme here.";
         infodate = "<i class='icon-info-sign'></i> Manage closing dates for your programme here.";
         inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for your programme.";
@@ -207,7 +240,7 @@ function bindAddClosingDateButtonAction() {
             },
             url : url,
             data : {
-                program : $("#programAdvertProgramSelect").val(),
+                programCode : $("#programAdvertProgramSelect").val(),
                 id : $('#programAdvertClosingDateId').val(),
                 closingDate : $('#programAdvertClosingDateInput').val(),
                 studyPlaces : $('#programAdvertStudyPlacesInput').val()
@@ -384,13 +417,13 @@ function updateAdvertSection(map) {
     $("#modalLinkToApply").val(linkToApply);
 
     $('#sharethis').prop("href", sharethisvar);
-
 }
 
 function updateProgramSection(map) {
     $("[name=programAdvertAtasRequired][value=" + map["atasRequired"] + "]").prop("checked", true);
     $("#programAdvertInstitutionCountry").val(map["institutionCountryCode"]);
-    $("#programAdvertInstitution").empty().append($("<option />").val("dummy").text(map["institutionName"]));
+    $("#programAdvertInstitution").append($("<option />").val(map[1]).text(map["institutionName"])).prop('selected', true);
+    $('#programAdvertInstitution').selectpicker('refresh');
     $("#programAdvertInstitutionOtherName").val("");
     
     var advert = map['advert'];
@@ -419,7 +452,7 @@ function updateProgramSection(map) {
     if (map['studyOptions']) {
         var studyOptions = map['studyOptions'];
         studyOptions.forEach(function(option) {
-            $("#programAdvertStudyOptionsSelect option[value='" + option + "']").attr("selected", true);
+            $("#programAdvertStudyOptionsSelect option[value='" + option + "']").prop("selected", true);
         });
     }
 
@@ -429,8 +462,9 @@ function updateProgramSection(map) {
     if (map['isCustomProgram']) {
         $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
     } else {
-        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').attr("readonly", "readonly").attr("disabled", "disabled");
+        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').prop("readonly", true).attr("disabled", "disabled");
     }
+    $('.selectpicker').selectpicker('refresh');
 }
 
 function bindSaveButtonAction() {
@@ -442,12 +476,13 @@ function bindSaveButtonAction() {
 function saveAdvert() {
     clearProgramAdvertErrors();
     
-    var programCode = $("#programAdvertProgramSelect").val();
-    if(programCode === "NEW_PROGRAM") {
+    if(programCode == "NEW_PROGRAM") {
         programCode = "";
+    } else {
+        programCode = $("#programAdvertProgramSelect").val();
     }
-    var programName = $("#programAdvertNewProgramName").val();
-    
+
+    var programName = $("#programAdvertNewProgramName").val(); 
     var duration = {
         value : $("#programAdvertStudyDurationInput").val(),
         unit : $("#programAdvertStudyDurationUnitSelect").val()
@@ -538,7 +573,8 @@ function saveAdvert() {
                 }
                 checkIfErrors();
             } else {
-                if(programCode === "") {
+
+                if(newProgramme) {
                     // new program created
                     var newProgramCode = map["programCode"];
                     $("#programAdvertProgramSelect").append($("<option />").val(newProgramCode).text(programName));
@@ -547,6 +583,7 @@ function saveAdvert() {
                     $("#programAdvertNewProgramNameDiv").hide();
                     checkToDisable();
                     getAdvertData(newProgramCode);
+                    newProgramme = false;
                 }
                 var programme_name = $("#programAdvertProgramSelect option:selected").text();
                 infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>" + programme_name + "</b> has been saved.";
@@ -567,6 +604,7 @@ function clearAdvert() {
     $("#institutionGroup select, #institutionGroup input, #advertGroup input, #advertGroup textarea, #advertGroup select, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply").val('');
     $("#programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo").prop('checked', false);
     tinyMCE.execCommand("mceRepaint");
+    $('.selectpicker').selectpicker('refresh');
 }
 
 function setTextAreaValue(textArea, value) {
@@ -586,13 +624,13 @@ function triggerKeyUp(element) {
 
 function clearProgramSection() {
     clearProgramAdvertErrors();
+    cleanEditorsPrograms();
     clearAdvert();
     $("#programAdvertButtonToApply").val("");
     $("#programAdvertLinkToApply").val("");
     clearClosingDate();
     $('#programAdvertClosingDates tr').remove();
     checkDates();
-    initEditors();
 }
 
 function clearClosingDate() {

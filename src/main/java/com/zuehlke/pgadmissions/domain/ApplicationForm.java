@@ -498,7 +498,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public String getProjectTitle() {
         if (getProject() != null) {
-            return getProject().getAdvert().getTitle();
+            return getProject().getTitle();
         } else {
             return projectTitle;
         }

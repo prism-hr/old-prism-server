@@ -165,8 +165,8 @@ public class ApprovalService {
                 addUserAsSupervisorInApprovalRound(project.getSecondarySupervisor(), approvalRound, false);
             }
             approvalRound.setProjectDescriptionAvailable(true);
-            approvalRound.setProjectTitle(project.getAdvert().getTitle());
-            approvalRound.setProjectAcceptingApplications(project.getAdvert().getActive());
+            approvalRound.setProjectTitle(project.getTitle());
+            approvalRound.setProjectAcceptingApplications(project.isActive());
         }
 
         if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {

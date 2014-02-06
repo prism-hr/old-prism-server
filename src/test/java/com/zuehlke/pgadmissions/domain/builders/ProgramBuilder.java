@@ -29,7 +29,6 @@ public class ProgramBuilder {
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
     private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
-    private Advert advert;
     private QualificationInstitution institution;
     private ProgramFeed programFeed;
 
@@ -97,11 +96,6 @@ public class ProgramBuilder {
         }
         return this;
     }
-
-    public ProgramBuilder advert(Advert advert) {
-        this.advert = advert;
-        return this;
-    }
     
     public ProgramBuilder institution(QualificationInstitution institution) {
         this.institution = institution;
@@ -127,7 +121,6 @@ public class ProgramBuilder {
         program.getScoringDefinitions().putAll(scoringDefinitions);
         program.setAtasRequired(atasRequired);
         program.getClosingDates().addAll(programClosingDates);
-        program.setAdvert(advert);
         program.setInstitution(institution);
         program.setProgramFeed(programFeed);
         return program;

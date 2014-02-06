@@ -5,6 +5,12 @@
       <input type="hidden" id="program" name="program" value=""/>
       <input type="hidden" id="advert" name="advert" value=""/>
       <input type="hidden" id="project" name="project" value=""/>
+      <#if feedKey??>
+      	<input type="hidden" id="feedKey" name="feedKey" value="${(feedKey)!}"/>
+      </#if>
+      <#if feedKeyValue??>
+      	<input type="hidden" id="feedKeyValue" name="feedKeyValue" value="${(feedKeyValue)!}"/>
+      </#if>
     </form>
 	
   	<#if Request['prospectus.selectedAdvert']?has_content>

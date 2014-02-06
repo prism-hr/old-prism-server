@@ -20,10 +20,12 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -113,12 +115,9 @@ public class ProgramDAO {
     
     public Date getNextClosingDate(Program program) {
         return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
-                .setProjection(Projections.property("closingDate"))
+                .setProjection(Projections.min("closingDate"))
                 .add(Restrictions.eq("program", program))
-                .add(Restrictions.ge("closingDate", new Date()))
-                .addOrder(Order.asc("closingDate"))
-                .addOrder(Order.desc("id"))
-                .setMaxResults(1).uniqueResult();
+                .add(Restrictions.ge("closingDate", new Date())).uniqueResult();
     }
 
     public void updateClosingDate(ProgramClosingDate closingDate) {
@@ -141,16 +140,14 @@ public class ProgramDAO {
         }
     }
     
-    public RegisteredUser getFirstAdministratorForProgram(Program program) {
-        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-                .createAlias("programsOfWhichAdministrator", "program")
-                .add(Restrictions.eq("program.id", program.getId()))
-                .add(Restrictions.eq("accountNonExpired", true))
-                .add(Restrictions.eq("accountNonLocked", true))
-                .add(Restrictions.eq("credentialsNonExpired", true))
-                .add(Restrictions.eq("enabled", true))
-                .addOrder(Order.asc("id"))
-                .setMaxResults(1).uniqueResult();
+    public List<ProgramType> getProgamTypes() {
+        return (List<ProgramType>) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).list();
+    }
+    
+    public Integer getDefaultStudyDurationForProgramType(ProgramTypeId programTypeId) {
+        return (Integer) sessionFactory.getCurrentSession().createCriteria(ProgramType.class)
+                .setProjection(Projections.property("defaultStudyDuration"))
+                .add(Restrictions.eq("id", programTypeId)).uniqueResult();
     }
     
 }

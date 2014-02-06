@@ -3,10 +3,16 @@ package com.zuehlke.pgadmissions.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -18,6 +24,7 @@ import org.hibernate.annotations.GenerationTime;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "ADVERT")
+@Inheritance(strategy = InheritanceType.JOINED) 
 public class Advert implements Serializable {
     private static final long serialVersionUID = 5963260213501162814L;
 
@@ -31,7 +38,7 @@ public class Advert implements Serializable {
     
     @Size(max = 3000, message = "A maximum of 2000 characters are allowed.")
     @Column(name = "description", nullable = false)
-    private String description;
+    private String description = "Programme advert coming soon!";
 
     @Column(name = "study_duration")
     private Integer studyDuration;
@@ -43,10 +50,17 @@ public class Advert implements Serializable {
     @Column(name = "active")
     private Boolean active = true;
     
+    @Column(name = "enabled")
+    private Boolean enabled = true;
+    
     @Column(name = "last_edited_timestamp", insertable = true)
     @Generated(GenerationTime.ALWAYS)
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastEditedTimestamp;
+    
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "registered_user_id")
+    private RegisteredUser contactUser;
     
     @Transient
     private Integer ranking = 0;
@@ -54,14 +68,6 @@ public class Advert implements Serializable {
     @Transient
     private Boolean selected = false;
     
-    public Boolean getSelected() {
-        return selected;
-    }
-
-    public void setSelected(Boolean selected) {
-        this.selected = selected;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -102,7 +108,7 @@ public class Advert implements Serializable {
         this.funding = funding;
     }
 
-    public Boolean getActive() {
+    public Boolean isActive() {
         return active;
     }
 
@@ -110,6 +116,18 @@ public class Advert implements Serializable {
         this.active = active;
     }
     
+    public Boolean isEnabled() {
+        return enabled;
+    }
+    
+    public Boolean isAcceptingApplications() {
+        return isActive() && isEnabled();
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public String getDescriptionForFacebook() {
     	return getStudyDurationToRead().toLowerCase().replace("s", "") + " research study programme delivered by UCL Engineering at London's global University. " +
     			"Click to find out more about the programme and apply for your place.";
@@ -145,6 +163,22 @@ public class Advert implements Serializable {
 
     public void setRanking(Integer ranking) {
         this.ranking = ranking;
+    }
+    
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
+    }
+
+    public RegisteredUser getContactUser() {
+        return contactUser;
+    }
+
+    public void setContactUser(RegisteredUser contactUser) {
+        this.contactUser = contactUser;
     }
     
 }

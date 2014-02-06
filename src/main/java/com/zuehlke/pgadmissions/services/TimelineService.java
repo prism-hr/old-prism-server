@@ -138,8 +138,8 @@ public class TimelineService {
 		phase.setAuthor(applicationForm.getApplicant());
 
 		if (applicationForm.getProject() != null) {
-			phase.setProjectTitle(applicationForm.getProject().getAdvert().getTitle());
-			phase.setProjectDescription(applicationForm.getProject().getAdvert().getDescription());
+			phase.setProjectTitle(applicationForm.getProject().getTitle());
+			phase.setProjectDescription(applicationForm.getProject().getDescription());
 		}
 		
 		return phase;

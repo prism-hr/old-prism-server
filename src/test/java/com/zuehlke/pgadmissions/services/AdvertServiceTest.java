@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.dto.AdvertDTO;
 
 public class AdvertServiceTest {
 
@@ -27,10 +28,10 @@ public class AdvertServiceTest {
 	}
 	@Test
 	public void shouldGetAdvertsFromDAO(){
-		List<Advert> result = Collections.<Advert>emptyList();
-		expect(dao.getActiveAdverts()).andReturn(result);
+		List<AdvertDTO> result = Collections.<AdvertDTO>emptyList();
+		expect(dao.getActiveAdverts(0)).andReturn(result);
 		replay(dao);
-		List<Advert> activeAdverts = advertService.getActiveAdverts();
+		List<AdvertDTO> activeAdverts = advertService.getActiveAdverts(0);
 		assertThat(activeAdverts, Matchers.is(result));
 		
 	}

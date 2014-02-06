@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -32,10 +31,7 @@ public class ProjectConverter {
         if (project == null) {
             return null;
         }
-        Advert advert = project.getAdvert() == null ? new Advert() : project.getAdvert();
-        project.setAdvert(advert);
         updateProjectFromDTO(project, projectAdvertDTO);
-        updateProjectAdvert(advert, projectAdvertDTO);
         return project;
     }
 
@@ -46,7 +42,7 @@ public class ProjectConverter {
         project.setProgram(projectAdvertDTO.getProgram());
         
         RegisteredUser administrator = loadPerson(projectAdvertDTO.getAdministrator());
-        project.setAdministrator(administrator);
+        project.setContactUser(administrator);
 
         RegisteredUser primarySupervisor = loadPerson(projectAdvertDTO.getPrimarySupervisor());
         project.setPrimarySupervisor(primarySupervisor);
@@ -60,16 +56,6 @@ public class ProjectConverter {
             return null;
         }
         return userService.getUserByEmailIncludingDisabledAccounts(person.getEmail());
-    }
-
-    private void updateProjectAdvert(Advert advert, ProjectDTO projectAdvertDTO) {
-        advert.setTitle(projectAdvertDTO.getTitle());
-        String description = projectAdvertDTO.getDescription();
-        advert.setDescription(description);
-        advert.setStudyDuration(projectAdvertDTO.getStudyDuration());
-        String funding = projectAdvertDTO.getFunding();       
-        advert.setFunding(funding);
-        advert.setActive(projectAdvertDTO.getActive());
     }
 
 }

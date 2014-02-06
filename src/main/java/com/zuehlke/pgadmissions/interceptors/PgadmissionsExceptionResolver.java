@@ -104,7 +104,7 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         	    if (ex.getProject() == null) {
         	        return new AlertDefinition(AlertType.INFO, "The project that you attempted to apply for cannot be found" , null);
         	    }
-        		return new AlertDefinition(AlertType.INFO, ex.getProject().getAdvert().getTitle() + " is no longer accepting applications" , null);
+        		return new AlertDefinition(AlertType.INFO, ex.getProject().getTitle() + " is no longer accepting applications" , null);
         	}
         });
     }

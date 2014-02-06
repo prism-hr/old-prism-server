@@ -403,8 +403,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertNull(application.getId());
 
         sessionFactory.getCurrentSession().save(application);
-        project.setDisabled(true);
-        project.getAdvert().setActive(false);
+        project.setEnabled(false);
+        project.setActive(false);
         sessionFactory.getCurrentSession().update(project);
 
         assertNotNull(application.getId());
@@ -422,7 +422,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
         assertEquals(program.getId(), reloadedApplication.getProgram().getId());
         assertEquals(project.getId(), reloadedApplication.getProject().getId());
-        assertTrue(project.isDisabled());
+        assertTrue(!project.isEnabled());
         assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
         assertEquals("title", reloadedApplication.getProjectTitle());
         assertEquals(lastUpdatedDate, application.getLastUpdated());
@@ -451,8 +451,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         
         program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 
-        Advert advert = new AdvertBuilder().title("title").description("description").funding("funding").studyDuration(6).build();
-        project = new ProjectBuilder().advert(advert).author(applicationAdmin).primarySupervisor(applicationAdmin).program(program).build();
+        project = new ProjectBuilder().title("title").description("description").funding("funding").studyDuration(6).author(applicationAdmin).primarySupervisor(applicationAdmin).program(program).build();
 
         save(user, reviewerUser, institution, program, interviewerUser, applicationAdmin, approver, project);
 

@@ -159,7 +159,7 @@
                       <i class="icon-info-sign"></i> Manage closing dates for your programme here.
                   </div>
                   <div class="tableContainer table table-condensed ">
-                    <table id="programAdvertClosingDates" class="table table-striped table-condensed table-hover table-bordered">
+                    <table id="programAdvertClosingDates" class="table table-striped table-condensed table-hover table-bordered" style="display: none;">
                     <colgroup>
                     <col />
                       <col style="width: 30px;" />

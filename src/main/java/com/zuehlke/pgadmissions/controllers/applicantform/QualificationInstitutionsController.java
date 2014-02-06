@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
@@ -28,21 +27,14 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 @Controller
 public class QualificationInstitutionsController {
 
+    @Autowired
     private EncryptionHelper encryptionHelper;
-    private DomicileDAO domicileDAO;
-    private QualificationInstitutionDAO qualificationInstitutionDAO;
-
-    QualificationInstitutionsController(){
-        this(null, null, null);
-    }
     
     @Autowired
-    public QualificationInstitutionsController(EncryptionHelper encryptionHelper, 
-            DomicileDAO domicileDAO, QualificationInstitutionDAO qualificationInstitutionDAO) {
-        this.encryptionHelper = encryptionHelper;
-        this.domicileDAO = domicileDAO;
-        this.qualificationInstitutionDAO = qualificationInstitutionDAO;
-    }
+    private DomicileDAO domicileDAO;
+    
+    @Autowired
+    private QualificationInstitutionDAO qualificationInstitutionDAO;
     
     @RequestMapping(value = "/getInstitutionInformation", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -59,12 +51,10 @@ public class QualificationInstitutionsController {
         gson.registerTypeAdapter(QualificationInstitution.class, new JsonSerializer<QualificationInstitution>() {
             @Override
             public JsonElement serialize(QualificationInstitution src, Type typeOfSrc, JsonSerializationContext context) {
-                JsonArray jsonArray = new JsonArray();
-                jsonArray.add(new JsonPrimitive(encryptionHelper.encrypt(src.getId())));
-                jsonArray.add(new JsonPrimitive(src.getCode()));
-                jsonArray.add(new JsonPrimitive(src.getName()));
-                jsonArray.add(new JsonPrimitive(src.getDomicileCode()));
-                return jsonArray;
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("code", src.getCode());
+                jsonObject.addProperty("name", src.getName());
+                return jsonObject;
             }
         });
         return gson.create().toJson(institutions);

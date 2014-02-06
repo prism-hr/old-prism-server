@@ -48,7 +48,7 @@ function bindChangeInstitutionCountryAction() {
 
                 options.append($("<option />").val("").text("Select..."));
                 for ( var i = 0; i < institutions.length; i++) {
-                    options.append($("<option />").val(institutions[i][1]).text(institutions[i][2]));
+                    options.append($("<option />").val(institutions[i]["code"]).text(institutions[i]["name"]));
                 }
                 options.append($("<option />").val("OTHER").text("Other"));
                 $('#programAdvertInstitution').selectpicker('refresh');

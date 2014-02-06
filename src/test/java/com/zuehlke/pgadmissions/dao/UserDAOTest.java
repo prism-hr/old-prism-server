@@ -536,37 +536,47 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         List<Integer> usersDueTaskReminder = userDAO.getUsersDueTaskReminder(notificationBaselineDate);
         List<Integer> usersDueTaskNotification = userDAO.getUsersDueTaskNotification(notificationBaselineDate);
         List<Integer> usersDueUpdateNotification = userDAO.getUsersDueUpdateNotification(notificationBaselineDate);
+        List<Integer> usersDueOpportunityRequestNotification = userDAO.getUsersDueOpportunityRequestNotification(notificationBaselineDate);
 
         EasyMock.verify(reminderIntervalDAOMock, notificationsDurationDAOMock);
         
         int actualTaskReminderCount = 0;
         int actualTaskNotificationCount = 0;
         int actualUpdateNotificationCount = 0;
+        int actualOpportunityRequestNotificationCount = 0;
 
         for (Integer user : usersDueTaskReminder) {
             if (testInstances.containsKey(user)) {         
-                assertEquals(NotificationListTestScenario.TASKREMINDERSUCCESS, testInstances.get(user).getNotificationListTestScenario());
+                assertEquals(NotificationListTestScenario.TASK_REMINDER_SUCCESS, testInstances.get(user).getNotificationListTestScenario());
                 actualTaskReminderCount++;
             }
         }
 
         for (Integer user : usersDueTaskNotification) {
             if (testInstances.containsKey(user)) {
-                assertEquals(NotificationListTestScenario.TASKNOTIFICATIONSUCCESS, testInstances.get(user).getNotificationListTestScenario());
+                assertEquals(NotificationListTestScenario.TASK_NOTIFICATION_SUCCESS, testInstances.get(user).getNotificationListTestScenario());
                 actualTaskNotificationCount++;
             }
         }
 
         for (Integer user : usersDueUpdateNotification) {
             if (testInstances.containsKey(user)) {
-                assertEquals(NotificationListTestScenario.UPDATENOTIFICATIONSUCCESS, testInstances.get(user).getNotificationListTestScenario());
+                assertEquals(NotificationListTestScenario.UPDATE_NOTIFICATION_SUCCESS, testInstances.get(user).getNotificationListTestScenario());
                 actualUpdateNotificationCount++;
             }
         }
+
+        for (Integer user : usersDueOpportunityRequestNotification) {
+            if (testInstances.containsKey(user)) {
+                assertEquals(NotificationListTestScenario.OPPORTUNITY_REQUEST_NOTIFICATION_SUCCESS, testInstances.get(user).getNotificationListTestScenario());
+                actualOpportunityRequestNotificationCount++;
+            }
+        }
         
-        assertEquals(userNotificationListBuilder.getTaskReminderSuccessCount() / NOTIFICATION_TEST_ITERATIONS, actualTaskReminderCount);
-        assertEquals(userNotificationListBuilder.getTaskNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS, actualTaskNotificationCount);
-        assertEquals(userNotificationListBuilder.getUpdateNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS, actualUpdateNotificationCount);
+        assertEquals(userNotificationListBuilder.getTaskReminderSuccessCount() / NOTIFICATION_TEST_ITERATIONS * 5, actualTaskReminderCount);
+        assertEquals(userNotificationListBuilder.getTaskNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS * 5, actualTaskNotificationCount);
+        assertEquals(userNotificationListBuilder.getUpdateNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS * 5, actualUpdateNotificationCount);
+        assertEquals(userNotificationListBuilder.getOpportunityRequestNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS * 5, actualOpportunityRequestNotificationCount);
     }
 
     @Before

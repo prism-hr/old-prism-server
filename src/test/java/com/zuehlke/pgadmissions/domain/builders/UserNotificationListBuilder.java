@@ -26,16 +26,19 @@ public class UserNotificationListBuilder {
     private int taskReminderSuccessCount = 0;
     private int taskNotificationSuccessCount = 0;
     private int updateNotificationSuccessCount = 0;
+    private int opportunityRequestNotificationSuccessCount = 0;
     private final HashMap<Integer, RegisteredUser> testUsers = new HashMap<Integer, RegisteredUser>();
     private final Action actionWithSyndicatedNotification;
     private final Action actionWithIndividualNotification;
     private final Role roleWithUpdateNotification;
     private final Role roleWithoutUpdateNotification;
+    private final Role superadministratorRole;
     private final EncryptionUtils encryptionUtils;
     private final SessionFactory sessionFactory;
     private final Date baselineDate;
     private final int testIterations;
     private final Date updateBaselineDate;
+    private final Date opportunityRequestBaselineDate;
     private final Date reminderBaselineDate;
     private final Date expiryBaselineDate;
 
@@ -46,12 +49,14 @@ public class UserNotificationListBuilder {
         this.baselineDate = baselineDate;
         this.testIterations = testIterations;
         this.updateBaselineDate = DateUtils.addDays((Date) baselineDate.clone(), -1);
+        this.opportunityRequestBaselineDate = DateUtils.addDays((Date) baselineDate.clone(), -1);
         this.reminderBaselineDate = DateUtils.addDays((Date) baselineDate.clone(), -reminderIntervalInDays);
         this.expiryBaselineDate = DateUtils.addDays((Date) baselineDate.clone(), -expiryIntervalInDays);
         this.actionWithSyndicatedNotification = getDummyAction(ApplicationFormAction.COMPLETE_VALIDATION_STAGE, NotificationMethod.SYNDICATED);
         this.actionWithIndividualNotification = getDummyAction(ApplicationFormAction.PROVIDE_REFERENCE, NotificationMethod.INDIVIDUAL);
         this.roleWithUpdateNotification = getDummyRole(Authority.APPLICANT, true);
         this.roleWithoutUpdateNotification = getDummyRole(Authority.ADMINISTRATOR, false);
+        this.superadministratorRole = getDummyRole(Authority.SUPERADMINISTRATOR, false);
     }
 
     public HashMap<Integer, RegisteredUserTestHarness> builtTestInstances() {
@@ -60,50 +65,74 @@ public class UserNotificationListBuilder {
             int testInstance = 0;
             for (NotificationListTestScenario testScenario : NotificationListTestScenario.values()) {
                 switch (testScenario) {
-                case TASKREMINDERSUCCESS:
-                    for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
+                case TASK_REMINDER_SUCCESS:
+                    for (NotificationListTestCase testCase : testScenario.getTestCases()) {
                         RegisteredUserTestHarness userHarness = buildInstanceThatRequiresTaskReminder(allocateTestUser(i, testInstance), testScenario, testCase);
                         testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
                         taskReminderSuccessCount++;
                         testInstance++;
                     }
                     break;
-                case TASKREMINDERFAILURE:
-                    for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
-                        RegisteredUserTestHarness userHarness = buildInstanceThatDoesNotRequireTaskReminder(allocateTestUser(i, testInstance), testScenario, testCase);
+                case TASK_REMINDER_FAILURE:
+                    for (NotificationListTestCase testCase : testScenario.getTestCases()) {
+                        RegisteredUserTestHarness userHarness = buildInstanceThatDoesNotRequireTaskReminder(allocateTestUser(i, testInstance), testScenario,
+                                testCase);
                         testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
                         testInstance++;
                     }
                     break;
-                case TASKNOTIFICATIONSUCCESS:
-                    for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
-                        RegisteredUserTestHarness userHarness = buildInstanceThatRequiresTaskNotification(allocateTestUser(i, testInstance), testScenario, testCase);
+                case TASK_NOTIFICATION_SUCCESS:
+                    for (NotificationListTestCase testCase : testScenario.getTestCases()) {
+                        RegisteredUserTestHarness userHarness = buildInstanceThatRequiresTaskNotification(allocateTestUser(i, testInstance), testScenario,
+                                testCase);
                         testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
                         taskNotificationSuccessCount++;
                         testInstance++;
                     }
                     break;
-                case TASKNOTIFICATIONFAILURE:
-                    for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
-                        RegisteredUserTestHarness userHarness = buildInstanceThatDoesNotRequireTaskNotification(allocateTestUser(i, testInstance), testScenario, testCase);
+                case TASK_NOTIFICATION_FAILURE:
+                    for (NotificationListTestCase testCase : testScenario.getTestCases()) {
+                        RegisteredUserTestHarness userHarness = buildInstanceThatDoesNotRequireTaskNotification(allocateTestUser(i, testInstance),
+                                testScenario, testCase);
                         testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
                         testInstance++;
                     }
                     break;
-                case UPDATENOTIFICATIONSUCCESS:
-                    for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
-                        RegisteredUserTestHarness userHarness = buildInstanceThatRequiresUpdateNotification(allocateTestUser(i, testInstance), testScenario, testCase);
+                case UPDATE_NOTIFICATION_SUCCESS:
+                    for (NotificationListTestCase testCase : testScenario.getTestCases()) {
+                        RegisteredUserTestHarness userHarness = buildInstanceThatRequiresUpdateNotification(allocateTestUser(i, testInstance), testScenario,
+                                testCase);
                         testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
                         updateNotificationSuccessCount++;
                         testInstance++;
                     }
                     break;
-                case UPDATENOTIFICATIONFAILURE:
-                    for (NotificationListTestCase testCase : testScenario.getDisplayValue()) {
-                        RegisteredUserTestHarness userHarness = buildInstanceThatDoesNotRequireUpdateNotification(allocateTestUser(i, testInstance), testScenario, testCase);
+                case UPDATE_NOTIFICATION_FAILURE:
+                    for (NotificationListTestCase testCase : testScenario.getTestCases()) {
+                        RegisteredUserTestHarness userHarness = buildInstanceThatDoesNotRequireUpdateNotification(allocateTestUser(i, testInstance),
+                                testScenario, testCase);
                         testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
                         testInstance++;
                     }
+                    break;
+                case OPPORTUNITY_REQUEST_NOTIFICATION_SUCCESS:
+                    for (NotificationListTestCase testCase : testScenario.getTestCases()) {
+                        RegisteredUserTestHarness userHarness = buildInstanceThatRequiresOpportunityRequestNotification(allocateTestUser(i, testInstance),
+                                testScenario, testCase);
+                        testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
+                        opportunityRequestNotificationSuccessCount++;
+                        testInstance++;
+                    }
+                    break;
+                case OPPORTUNITY_REQUEST_NOTIFICATION_FAILURE:
+                    for (NotificationListTestCase testCase : testScenario.getTestCases()) {
+                        RegisteredUserTestHarness userHarness = buildInstanceThatDoesNotRequireOpportunityRequestNotification(
+                                allocateTestUser(i, testInstance), testScenario, testCase);
+                        testHarnesses.put(userHarness.getRegisteredUser().getId(), userHarness);
+                        testInstance++;
+                    }
+                    break;
+                default:
                     break;
                 }
             }
@@ -122,13 +151,17 @@ public class UserNotificationListBuilder {
     public int getUpdateNotificationSuccessCount() {
         return updateNotificationSuccessCount;
     }
+    
+    public int getOpportunityRequestNotificationSuccessCount() {
+        return opportunityRequestNotificationSuccessCount;
+    }
 
     private RegisteredUserTestHarness buildInstanceThatRequiresTaskReminder(RegisteredUser user, NotificationListTestScenario testScenario,
             NotificationListTestCase testCase) {
         user.setLatestTaskNotificationDate(reminderBaselineDate);
         ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithoutUpdateNotification, true,
                 false, getDummyApplicationFormActionRequired(actionWithSyndicatedNotification));
-        return new RegisteredUserTestHarness(user, testScenario, testCase, applicationFormUserRole);
+        return new RegisteredUserTestHarness(user, testScenario, applicationFormUserRole);
     }
 
     private RegisteredUserTestHarness buildInstanceThatDoesNotRequireTaskReminder(RegisteredUser user, NotificationListTestScenario testScenario,
@@ -139,20 +172,19 @@ public class UserNotificationListBuilder {
     private RegisteredUserTestHarness buildInstanceThatRequiresTaskNotification(RegisteredUser user, NotificationListTestScenario testScenario,
             NotificationListTestCase testCase) {
         switch (testCase) {
-        case DUETASKNOTIFICATIONNEVERRECEIVED:
+        case DUE_TASK_NOTIFICATION_NEVER_RECEIVED:
             user.setLatestTaskNotificationDate(null);
             break;
-        case DUETASKNOTIFICATIONRECEIVEDAGESAGO:
+        case DUE_TASK_NOTIFICATION_RECEIVED_AGES_AGO:
             user.setLatestTaskNotificationDate(DateUtils.addDays((Date) expiryBaselineDate.clone(), 1));
             break;
         default:
             break;
         }
-        ;
         saveDummyObject(user);
         ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithoutUpdateNotification, true,
                 false, getDummyApplicationFormActionRequired(actionWithSyndicatedNotification));
-        return new RegisteredUserTestHarness(user, testScenario, testCase, applicationFormUserRole);
+        return new RegisteredUserTestHarness(user, testScenario, applicationFormUserRole);
     }
 
     private RegisteredUserTestHarness buildInstanceThatDoesNotRequireTaskNotification(RegisteredUser user, NotificationListTestScenario testScenario,
@@ -164,20 +196,19 @@ public class UserNotificationListBuilder {
     private RegisteredUserTestHarness buildInstanceThatRequiresUpdateNotification(RegisteredUser user, NotificationListTestScenario testScenario,
             NotificationListTestCase testCase) {
         switch (testCase) {
-        case DUEUPDATENOTIFICATIONNEVERRECEIVED:
+        case DUE_UPDATE_NOTIFICATION_NEVER_RECEIVED:
             user.setLatestUpdateNotificationDate(null);
             break;
-        case DUEUPDATENOTIFICATIONRECEIVEDAGESAGO:
+        case DUE_UPDATE_NOTIFICATION_RECEIVED_AGES_AGO:
             user.setLatestUpdateNotificationDate(DateUtils.addDays((Date) baselineDate.clone(), -1));
             break;
         default:
             break;
         }
-        ;
         updateDummyObject(user);
         ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithUpdateNotification, false, true);
         applicationFormUserRole.setUpdateTimestamp(baselineDate);
-        return new RegisteredUserTestHarness(user, testScenario, testCase, applicationFormUserRole);
+        return new RegisteredUserTestHarness(user, testScenario, applicationFormUserRole);
     }
 
     private RegisteredUserTestHarness buildInstanceThatDoesNotRequireUpdateNotification(RegisteredUser user, NotificationListTestScenario testScenario,
@@ -185,42 +216,42 @@ public class UserNotificationListBuilder {
         user.setLatestUpdateNotificationDate(updateBaselineDate);
         ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithUpdateNotification, true, false);
         switch (testCase) {
-        case RECIEVEDRECENTUPDATENOTIFICATION:
+        case RECEIVED_RECENT_UPDATE_NOTIFICATION:
             user.setLatestUpdateNotificationDate(baselineDate);
             updateDummyObject(user);
             break;
-        case ROLENOTSUBSCRIBEDTOUPDATES:
+        case ROLE_NOT_SUBSCRIBED_TO_UPDATES:
             applicationFormUserRole.setRole(roleWithoutUpdateNotification);
             updateDummyObject(applicationFormUserRole);
             break;
-        case NOUPDATES:
+        case NO_UPDATES:
             applicationFormUserRole.setRaisesUpdateFlag(false);
             updateDummyObject(applicationFormUserRole);
             break;
-        case OLDUPDATES:
+        case OLD_UPDATES:
             applicationFormUserRole.setUpdateTimestamp(reminderBaselineDate);
             updateDummyObject(applicationFormUserRole);
             break;
-        case USERACCOUNTDISABLED:
+        case USER_ACCOUNT_DISABLED:
             user.setEnabled(false);
             updateDummyObject(user);
             break;
-        case USERACCOUNTEXPIRED:
+        case USER_ACCOUNT_EXPIRED:
             user.setAccountNonExpired(false);
             updateDummyObject(user);
             break;
-        case USERACCOUNTLOCKED:
+        case USER_ACCOUNT_LOCKED:
             user.setAccountNonLocked(false);
             updateDummyObject(user);
             break;
-        case USERCREDENTIALSEXPIRED:
+        case USER_CREDENTIALS_EXPIRED:
             user.setCredentialsNonExpired(false);
             updateDummyObject(user);
             break;
         default:
             break;
         }
-        return new RegisteredUserTestHarness(user, testScenario, testCase, applicationFormUserRole);
+        return new RegisteredUserTestHarness(user, testScenario, applicationFormUserRole);
     }
 
     private RegisteredUserTestHarness buildInstanceThatDoesNotRequiredTaskNotificationOrReminder(RegisteredUser user,
@@ -230,42 +261,77 @@ public class UserNotificationListBuilder {
         ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithoutUpdateNotification, true,
                 false, applicationFormActionRequired);
         switch (testCase) {
-        case RECEIVEDRECENTTASKNOTIFICATION:
+        case RECEIVED_RECENT_TASK_NOTIFICATION:
             user.setLatestTaskNotificationDate(DateUtils.addDays(instanceBaselineDate, 1));
             updateDummyObject(user);
             break;
-        case NOTIFICATIONWINDOWEXPIRED:
+        case NOTIFICATION_WINDOW_EXPIRED:
             applicationFormActionRequired.setDeadlineTimestamp(expiryBaselineDate);
             updateDummyObject(applicationFormActionRequired);
             break;
-        case NOURGENTACTIONS:
+        case NO_URGENT_ACTIONS:
             applicationFormUserRole.setRaisesUrgentFlag(false);
             updateDummyObject(applicationFormUserRole);
             break;
-        case ACTIONNOTSYNDICATED:
+        case ACTION_NOT_SYNDICATED:
             applicationFormActionRequired.setAction(actionWithIndividualNotification);
             updateDummyObject(applicationFormActionRequired);
             break;
-        case USERACCOUNTDISABLED:
+        case USER_ACCOUNT_DISABLED:
             user.setEnabled(false);
             updateDummyObject(user);
             break;
-        case USERACCOUNTEXPIRED:
+        case USER_ACCOUNT_EXPIRED:
             user.setAccountNonExpired(false);
             updateDummyObject(user);
             break;
-        case USERACCOUNTLOCKED:
+        case USER_ACCOUNT_LOCKED:
             user.setAccountNonLocked(false);
             updateDummyObject(user);
             break;
-        case USERCREDENTIALSEXPIRED:
+        case USER_CREDENTIALS_EXPIRED:
             user.setCredentialsNonExpired(false);
             updateDummyObject(user);
             break;
         default:
             break;
         }
-        return new RegisteredUserTestHarness(user, testScenario, testCase, applicationFormUserRole);
+        return new RegisteredUserTestHarness(user, testScenario, applicationFormUserRole);
+    }
+
+    private RegisteredUserTestHarness buildInstanceThatDoesNotRequireOpportunityRequestNotification(RegisteredUser user,
+            NotificationListTestScenario testScenario, NotificationListTestCase testCase) {
+        switch (testCase) {
+        case RECEIVED_RECENT_OPPORTUNITY_REQUEST_NOTIFICATION:
+            user.getRoles().add(superadministratorRole);
+            user.setLatestOpportunityRequestNotificationDate(baselineDate);
+            break;
+        case ROLE_NOT_SUPERADMINISTRATOR:
+            user.getRoles().clear();
+            break;
+        default:
+            break;
+        }
+        updateDummyObject(user);
+        return new RegisteredUserTestHarness(user, testScenario);
+    }
+
+    private RegisteredUserTestHarness buildInstanceThatRequiresOpportunityRequestNotification(RegisteredUser user, NotificationListTestScenario testScenario,
+            NotificationListTestCase testCase) {
+        switch (testCase) {
+        case OPPORTUNITY_REQUEST_NOTIFICATION_NEVER_RECEIVED:
+            user.getRoles().add(superadministratorRole);
+            user.setLatestOpportunityRequestNotificationDate(null);
+            break;
+        case OPPORTUNITY_REQUEST_NOTIFICATION_RECEIVED_AGES_AGO:
+            user.getRoles().add(superadministratorRole);
+            user.setLatestOpportunityRequestNotificationDate(DateUtils.addDays(opportunityRequestBaselineDate, -1));
+            break;
+        default:
+            break;
+        }
+        updateDummyObject(user);
+        return new RegisteredUserTestHarness(user, testScenario);
     }
 
     private ApplicationFormUserRole getDummyApplicationFormUserRole(ApplicationForm application, RegisteredUser user, Role role, Boolean raisesUrgentFlag,
@@ -282,10 +348,10 @@ public class UserNotificationListBuilder {
         saveDummyObject(application);
         return application;
     }
-    
+
     private RegisteredUser allocateTestUser(int testIteration, int testInstance) {
         RegisteredUser testUser = null;
-        if (testIteration == 0) {
+        if (testIteration == 0 || (testIteration % 2) == 0) {
             testUser = getDummyUser();
             testUsers.put(testInstance, testUser);
         } else {

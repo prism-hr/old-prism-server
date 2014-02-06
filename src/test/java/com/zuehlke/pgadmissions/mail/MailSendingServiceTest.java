@@ -22,6 +22,8 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.hamcrest.Matchers.contains;
+import static org.junit.Assert.assertThat;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -51,6 +54,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
@@ -131,7 +135,7 @@ public class MailSendingServiceTest {
         model2.putAll(model1);
         model2.put("user", user2);
 
-        expect(mockMailSender.resolveSubject(EXPORT_ERROR, (Object[]) null)).andReturn("UCL Prism to Portico Export Error");
+        expect(mockMailSender.resolveSubject(EXPORT_ERROR)).andReturn("UCL Prism to Portico Export Error");
 
         Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
         mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
@@ -171,7 +175,7 @@ public class MailSendingServiceTest {
         model2.putAll(model1);
         model2.put("user", user2);
 
-        expect(mockMailSender.resolveSubject(IMPORT_ERROR, (Object[]) null)).andReturn("UCL Prism to Portico Import Error");
+        expect(mockMailSender.resolveSubject(IMPORT_ERROR)).andReturn("UCL Prism to Portico Import Error");
 
         Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
         mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
@@ -295,7 +299,7 @@ public class MailSendingServiceTest {
         Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
         mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 
-        expect(mockMailSender.resolveSubject(NEW_PASSWORD_CONFIRMATION, (Object[]) null)).andReturn("New Password for UCL Prism");
+        expect(mockMailSender.resolveSubject(NEW_PASSWORD_CONFIRMATION)).andReturn("New Password for UCL Prism");
 
         replay(mockMailSender);
         service.sendResetPasswordMessage(user, newPassword);
@@ -319,7 +323,7 @@ public class MailSendingServiceTest {
         Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>();
         mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 
-        expect(mockMailSender.resolveSubject(REGISTRATION_CONFIRMATION, (Object[]) null)).andReturn("Your Registration for UCL Prism");
+        expect(mockMailSender.resolveSubject(REGISTRATION_CONFIRMATION)).andReturn("Your Registration for UCL Prism");
 
         replay(mockMailSender);
         service.sendRegistrationConfirmation(user);
@@ -930,6 +934,31 @@ public class MailSendingServiceTest {
         assertEquals(1, message.getTo().size());
         assertEquals((Integer) 3, message.getTo().get(0).getId());
         assertEquals(subjectToReturn, message.getSubjectCode());
+        assertModelEquals(model1, message.getModel());
+    }
+
+    @Test
+    public void shouldSendOpportunityRequestRejectionConfirmation() {
+        RegisteredUser author = new RegisteredUserBuilder().firstName("Franek").build();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(author).build();
+
+        Map<String, Object> model1 = new HashMap<String, Object>();
+        model1.put("opportunityRequest", opportunityRequest);
+        model1.put("host", HOST);
+
+        expect(mockMailSender.resolveSubject(EmailTemplateName.OPPORTUNITY_REQUEST_OUTCOME)).andReturn("ss1");
+
+        Capture<PrismEmailMessage> messageCaptor = new Capture<PrismEmailMessage>(CaptureType.ALL);
+        mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
+
+        replay(mockMailSender);
+        service.sendOpportunityRequestRejectionConfirmation(opportunityRequest);
+        verify(mockMailSender);
+
+        PrismEmailMessage message = messageCaptor.getValues().get(0);
+        assertThat(message.getTo(), contains(author));
+        assertEquals(1, message.getTo().size());
+        assertEquals("ss1", message.getSubjectCode());
         assertModelEquals(model1, message.getModel());
     }
 

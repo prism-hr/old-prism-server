@@ -166,7 +166,7 @@ public abstract class AbstractMailSendingService {
         }
     }
 
-    protected String resolveMessage(EmailTemplateName templateName, Object[] args) {
+    protected String resolveMessage(EmailTemplateName templateName, Object... args) {
         return mailSender.resolveSubject(templateName, args);
     }
 

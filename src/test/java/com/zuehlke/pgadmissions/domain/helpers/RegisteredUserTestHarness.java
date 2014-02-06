@@ -10,14 +10,12 @@ public class RegisteredUserTestHarness {
 
     private RegisteredUser registeredUser;
     private NotificationListTestScenario notificationListTestScenario;
-    private NotificationListTestCase notificationListTestCase;
     private List<ApplicationFormUserRole> applicationFormUserRoles;
 
     public RegisteredUserTestHarness(RegisteredUser registeredUser, NotificationListTestScenario notificationListTestScenario,
-            NotificationListTestCase notificationListTestCase, ApplicationFormUserRole... applicationFormUserRole) {
+            ApplicationFormUserRole... applicationFormUserRole) {
         this.setRegisteredUser(registeredUser);
         this.setNotificationListTestScenario(notificationListTestScenario);
-        this.setNotificationListTestCase(notificationListTestCase);
         this.setApplicationFormUserRoles(Arrays.asList(applicationFormUserRole));
 
     }
@@ -40,14 +38,6 @@ public class RegisteredUserTestHarness {
 
     public void setNotificationListTestScenario(NotificationListTestScenario notificationListTestScenario) {
         this.notificationListTestScenario = notificationListTestScenario;
-    }
-
-    public NotificationListTestCase getNotificationListTestCase() {
-        return notificationListTestCase;
-    }
-
-    public void setNotificationListTestCase(NotificationListTestCase notificationListTestCase) {
-        this.notificationListTestCase = notificationListTestCase;
     }
 
     public List<ApplicationFormUserRole> getApplicationFormUserRoles() {

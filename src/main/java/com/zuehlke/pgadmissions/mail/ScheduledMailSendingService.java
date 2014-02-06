@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
+import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
@@ -52,22 +54,25 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
+    private final OpportunityRequestDAO opportunityRequestDAO;
+
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ScheduledMailSendingService(final MailSender mailSender, final ApplicationFormDAO applicationFormDAO,
-            final ConfigurationService configurationService, final RefereeDAO refereeDAO, final UserDAO userDAO,
-            final RoleDAO roleDAO, final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host,
-            final ApplicationContext applicationContext, InterviewParticipantDAO interviewParticipantDAO,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            final ConfigurationService configurationService, final RefereeDAO refereeDAO, final UserDAO userDAO, final RoleDAO roleDAO,
+            final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host, final ApplicationContext applicationContext,
+            InterviewParticipantDAO interviewParticipantDAO, final ApplicationFormUserRoleService applicationFormUserRoleService,
+            final OpportunityRequestDAO opportunityRequestDAO) {
         super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.refereeDAO = refereeDAO;
         this.userDAO = userDAO;
         this.applicationContext = applicationContext;
         this.interviewParticipantDAO = interviewParticipantDAO;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
+        this.opportunityRequestDAO = opportunityRequestDAO;
     }
 
     public void sendDigestsToUsers() {
@@ -91,6 +96,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             thisProxy.sendDigestEmail(userId, DigestNotificationType.UPDATE_NOTIFICATION);
         }
         log.trace("Finished sending update notification to users");
+
+        log.trace("Sending opportunity request notification to users");
+        for (Integer userId : thisProxy.getUsersForOpportunityRequestNotification(baselineDate)) {
+            thisProxy.sendDigestEmail(userId, DigestNotificationType.OPPORTUNITY_REQUEST_NOTIFICATION);
+        }
+        log.trace("Finished sending opportunity request notification to users");
     }
 
     @Transactional
@@ -111,6 +122,14 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         return userDAO.getUsersDueUpdateNotification(baselineDate);
     }
 
+    @Transactional
+    public List<Integer> getUsersForOpportunityRequestNotification(Date baselineDate) {
+        if (opportunityRequestDAO.getOpportunityRequests().isEmpty()) {
+            return Collections.emptyList();
+        }
+        return userDAO.getUsersDueOpportunityRequestNotification(baselineDate);
+    }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendDigestEmail(Integer userId, DigestNotificationType digestNotificationType) {
         final RegisteredUser user = userDAO.get(userId);
@@ -120,7 +139,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     private boolean sendDigest(final RegisteredUser user, DigestNotificationType digestNotificationType) {
         try {
             EmailModelBuilder modelBuilder = new EmailModelBuilder() {
-                
+
                 @Override
                 public Map<String, Object> build() {
                     Map<String, Object> model = new HashMap<String, Object>();
@@ -145,6 +164,9 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             case UPDATE_NOTIFICATION:
                 templateName = DIGEST_UPDATE_NOTIFICATION;
                 break;
+            case OPPORTUNITY_REQUEST_NOTIFICATION:
+                templateName = EmailTemplateName.OPPORTUNITY_REQUEST_NOTIFICATION;
+                break;
             default:
                 throw new RuntimeException();
             }
@@ -154,10 +176,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             PrismEmailMessage message = messageBuilder.build();
             sendEmail(message);
 
-            if (digestNotificationType == DigestNotificationType.UPDATE_NOTIFICATION) {
+            if (digestNotificationType == DigestNotificationType.TASK_NOTIFICATION || digestNotificationType == DigestNotificationType.TASK_REMINDER) {
+                user.setLatestTaskNotificationDate(new Date());
+            } else if (digestNotificationType == DigestNotificationType.UPDATE_NOTIFICATION) {
                 user.setLatestUpdateNotificationDate(new Date());
             } else {
-                user.setLatestTaskNotificationDate(new Date());
+                user.setLatestOpportunityRequestNotificationDate(new Date());
             }
 
             return true;

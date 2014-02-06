@@ -27,8 +27,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
+import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
@@ -68,6 +70,8 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
     private ApplicationFormUserRoleService applicationFormUserRoleService;
 
+    private OpportunityRequestDAO opportunityRequestDAOMock;
+
     private static final String HOST = "http://localhost:8080";
 
     @Before
@@ -79,46 +83,58 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         encryptionUtilsMock = createMock(EncryptionUtils.class);
         interviewParticipantDAOMock = createMock(InterviewParticipantDAO.class);
         applicationFormListDAOMock = createMock(ApplicationFormListDAO.class);
+        opportunityRequestDAOMock = createMock(OpportunityRequestDAO.class);
+        applicationFormUserRoleService = createMock(ApplicationFormUserRoleService.class);
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, configurationServiceMock, refereeDAOMock, userDAOMock, roleDAOMock,
-                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleService);
+                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleService, opportunityRequestDAOMock);
     }
 
     @Test
     public void shouldSendDigestToUsers() {
-        
-        List<Integer> potentialUsersForTaskReminder = new ArrayList<Integer>(2);
-        List<Integer> potentialUsersForTaskNotification = new ArrayList<Integer>(2);
-        List<Integer> usersForUpdateNotification = new ArrayList<Integer>(2);
-   
-        for (Integer i = 1; i < 7; i++) {
-            RegisteredUser user = new RegisteredUserBuilder().id(i).username("user" + i.toString()).build();
-            if (i < 3) {    
-                potentialUsersForTaskReminder.add(user.getId());
-            } else if (i < 5) {
-                potentialUsersForTaskNotification.add(user.getId());
-            } else if (i < 7) {
-                usersForUpdateNotification.add(user.getId());
-            }
-        }
-       
+
+        List<Integer> potentialUsersForTaskReminder = Arrays.asList(1, 2);
+        List<Integer> potentialUsersForTaskNotification = Arrays.asList(3, 4);
+        List<Integer> usersForUpdateNotification = Arrays.asList(5, 6);
+        List<Integer> usersForOpportunityRequestNotification = Arrays.asList(7, 8);
+
         ScheduledMailSendingService thisServiceMock = createMock(ScheduledMailSendingService.class);
 
         expect(applicationContextMock.getBean(ScheduledMailSendingService.class)).andReturn(thisServiceMock);
-        
+
         expect(thisServiceMock.getUsersForTaskReminder(EasyMock.isA(Date.class))).andReturn(potentialUsersForTaskReminder);
         expect(thisServiceMock.getUsersForTaskNotification(EasyMock.isA(Date.class))).andReturn(potentialUsersForTaskNotification);
         expect(thisServiceMock.getUsersForUpdateNotification(EasyMock.isA(Date.class))).andReturn(usersForUpdateNotification);
-        
+        expect(thisServiceMock.getUsersForOpportunityRequestNotification(EasyMock.isA(Date.class))).andReturn(usersForOpportunityRequestNotification);
+
         expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskReminder.get(0), DigestNotificationType.TASK_REMINDER)).andReturn(true);
         expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskReminder.get(1), DigestNotificationType.TASK_REMINDER)).andReturn(true);
         expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskNotification.get(0), DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
         expect(thisServiceMock.sendDigestEmail(potentialUsersForTaskNotification.get(1), DigestNotificationType.TASK_NOTIFICATION)).andReturn(true);
         expect(thisServiceMock.sendDigestEmail(usersForUpdateNotification.get(0), DigestNotificationType.UPDATE_NOTIFICATION)).andReturn(true);
         expect(thisServiceMock.sendDigestEmail(usersForUpdateNotification.get(1), DigestNotificationType.UPDATE_NOTIFICATION)).andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(usersForOpportunityRequestNotification.get(0), DigestNotificationType.OPPORTUNITY_REQUEST_NOTIFICATION))
+                .andReturn(true);
+        expect(thisServiceMock.sendDigestEmail(usersForOpportunityRequestNotification.get(1), DigestNotificationType.OPPORTUNITY_REQUEST_NOTIFICATION))
+                .andReturn(true);
 
         replay(userDAOMock, applicationContextMock, thisServiceMock);
         service.sendDigestsToUsers();
         verify(userDAOMock, applicationContextMock, thisServiceMock);
+    }
+
+    @Test
+    public void shouldGetUsersForUpdateNotification() {
+        Date baselineDate = new Date();
+        ArrayList<Integer> users = Lists.newArrayList();
+
+        applicationFormUserRoleService.updateRaisesUrgentFlag();
+        expect(userDAOMock.getUsersDueUpdateNotification(baselineDate)).andReturn(users);
+
+        replay(applicationFormUserRoleService, userDAOMock);
+        List<Integer> returned = service.getUsersForUpdateNotification(baselineDate);
+        verify(applicationFormUserRoleService, userDAOMock);
+
+        assertSame(users, returned);
     }
 
     @Test
@@ -145,7 +161,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     @Test
     public void shouldSendReferenceReminder() throws Exception {
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, configurationServiceMock, refereeDAOMock, userDAOMock, roleDAOMock,
-                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleService) {
+                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleService, opportunityRequestDAOMock) {
             @Override
             protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
                 return null;
@@ -213,7 +229,6 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
                 + " for UCL " + SAMPLE_PROGRAM_TITLE + " - Reference Request";
 
         expect(interviewParticipantDAOMock.getInterviewParticipantsDueReminder()).andReturn(Arrays.asList(participant.getId()));
-
 
         expect(
                 mockMailSender.resolveSubject(EmailTemplateName.INTERVIEW_VOTE_REMINDER, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE,

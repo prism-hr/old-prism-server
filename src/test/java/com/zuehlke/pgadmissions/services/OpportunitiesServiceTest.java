@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
+import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class OpportunitiesServiceTest {
@@ -46,6 +47,10 @@ public class OpportunitiesServiceTest {
     @Mock
     @InjectIntoByType
     private ProgramInstanceService programInstanceService;
+
+    @Mock
+    @InjectIntoByType
+    private MailSendingService mailSendingService;
 
     @TestedObject
     private OpportunitiesService service = new OpportunitiesService();
@@ -127,6 +132,7 @@ public class OpportunitiesServiceTest {
     public void shouldRejectOpportunityRequest() {
         OpportunityRequest request = new OpportunityRequest();
         expect(opportunityRequestDAO.findById(8)).andReturn(request);
+        mailSendingService.sendOpportunityRequestRejectionConfirmation(request);
 
         replay();
         service.rejectOpportunityRequest(8, "because");

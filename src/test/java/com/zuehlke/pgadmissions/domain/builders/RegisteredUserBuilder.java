@@ -219,20 +219,20 @@ public class RegisteredUserBuilder {
         user.setActivationCode(activationCode);
         user.getRoles().addAll(roles);
 
-        user.setProgramsOfWhichAdministrator(programsOfWhichAdministrator);
-        user.setProgramsOfWhichApprover(programsOfWhichApprover);
-        user.setProgramsOfWhichViewer(programsOfWhichViewer);
+        user.getProgramsOfWhichAdministrator().addAll(programsOfWhichAdministrator);
+        user.getProgramsOfWhichApprover().addAll(programsOfWhichApprover);
+        user.getProgramsOfWhichViewer().addAll(programsOfWhichViewer);
         user.setConfirmPassword(confirmPassword);
-        user.setReferees(referees);
-        user.setComments(comments);
-        user.setPendingRoleNotifications(pendingRoleNotifications);
+        user.getReferees().addAll(referees);
+        user.getComments().addAll(comments);
+        user.getPendingRoleNotifications().addAll(pendingRoleNotifications);
         user.setDirectToUrl(directURL);
         user.setOriginalApplicationQueryString(originalApplicationQueryString);
         user.setFiltering(filtering);
 
         user.setUpi(upi);
         user.setApplicationListLastAccessTimestamp(applicationListLastAccessTimestamp);
-        user.setLinkedAccounts(linkedAccounts);
+        user.getLinkedAccounts().addAll(linkedAccounts);
         user.setPrimaryAccount(primaryAccount);
 
         return user;

@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
+import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
 @Transactional
@@ -31,6 +32,9 @@ public class OpportunitiesService {
 
     @Autowired
     private ProgramInstanceService programInstanceService;
+    
+    @Autowired
+    private MailSendingService mailSendingService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -81,6 +85,8 @@ public class OpportunitiesService {
         OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
         opportunityRequest.setRejectionReason(rejectionReason);
         opportunityRequest.setStatus(OpportunityRequestStatus.REJECTED);
+        
+        mailSendingService.sendOpportunityRequestRejectionConfirmation(opportunityRequest);
     }
 
 }

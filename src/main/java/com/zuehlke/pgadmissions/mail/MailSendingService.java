@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.OPPORTUNITY_REQUEST_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REJECTED_NOTIFICATION;
@@ -32,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -41,7 +43,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Service
 public class MailSendingService extends AbstractMailSendingService {
 
-    private final Logger log = LoggerFactory.getLogger(MailSendingService.class);
+    private static final Logger log = LoggerFactory.getLogger(MailSendingService.class);
 
     private final String admissionsOfferServiceLevel;
 
@@ -98,6 +100,7 @@ public class MailSendingService extends AbstractMailSendingService {
                             admissionsOfferServiceLevel, form.getOutcomeOfStage() });
 
             Map<String, Object> model = modelBuilder.build();
+            
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
                 model.put("reason", form.getRejection().getRejectionReason());
                 if (form.getRejection().isIncludeProspectusLink()) {
@@ -259,13 +262,27 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
+    public void sendOpportunityRequestRejectionConfirmation(OpportunityRequest opportunityRequest) {
+        RegisteredUser author = opportunityRequest.getAuthor();
+        PrismEmailMessage message = null;
+        String subject = resolveMessage(OPPORTUNITY_REQUEST_OUTCOME);
+
+        try {
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "opportunityRequest", "host" }, new Object[] { opportunityRequest, getHostName() });
+            message = buildMessage(author, subject, modelBuilder.build(), OPPORTUNITY_REQUEST_OUTCOME);
+            sendEmail(message);
+        } catch (Exception e) {
+            log.error("Error while sending opportunity request rejection confirmation: " + author.getDisplayName(), e.getMessage());
+        }
+    }
+
     public void sendExportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
         if (messageCode == null) {
             log.error("Error while sending export error message: messageCode is null");
             return;
         }
-        String subject = resolveMessage(EXPORT_ERROR, (Object[]) null);
+        String subject = resolveMessage(EXPORT_ERROR);
         for (RegisteredUser user : superadmins) {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageCode,
@@ -284,7 +301,7 @@ public class MailSendingService extends AbstractMailSendingService {
             log.error("Error while sending import error message: messageCode is null");
             return;
         }
-        String subject = resolveMessage(IMPORT_ERROR, (Object[]) null);
+        String subject = resolveMessage(IMPORT_ERROR);
         for (RegisteredUser user : superadmins) {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageCode,
@@ -302,7 +319,7 @@ public class MailSendingService extends AbstractMailSendingService {
 
         try {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "host" }, new Object[] { user, getHostName() });
-            String subject = resolveMessage(REGISTRATION_CONFIRMATION, (Object[]) null);
+            String subject = resolveMessage(REGISTRATION_CONFIRMATION);
             message = buildMessage(user, subject, modelBuilder.build(), REGISTRATION_CONFIRMATION);
             sendEmail(message);
         } catch (Exception e) {
@@ -314,7 +331,7 @@ public class MailSendingService extends AbstractMailSendingService {
         PrismEmailMessage message = null;
         try {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "newPassword", "host" }, new Object[] { user, newPassword, getHostName() });
-            String subject = resolveMessage(NEW_PASSWORD_CONFIRMATION, (Object[]) null);
+            String subject = resolveMessage(NEW_PASSWORD_CONFIRMATION);
             message = buildMessage(user, subject, modelBuilder.build(), NEW_PASSWORD_CONFIRMATION);
             sendEmail(message);
         } catch (Exception e) {

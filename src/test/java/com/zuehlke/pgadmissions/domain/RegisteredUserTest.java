@@ -692,7 +692,7 @@ public class RegisteredUserTest {
         Referee refereeOne = new RefereeBuilder().id(7).user(user).declined(true).application(applicationForm).build();
         Referee refereeTwo = new RefereeBuilder().id(8).user(new RegisteredUserBuilder().id(9).build())
                 .application(new ApplicationFormBuilder().id(78).build()).build();
-        user.setReferees(Arrays.asList(refereeOne, refereeTwo));
+        user.getReferees().addAll(Arrays.asList(refereeOne, refereeTwo));
         assertNull(user.getRefereeForApplicationForm(applicationForm));
     }
 

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,12 +10,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity(name = "PROJECT")
-public class Project implements Serializable {
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class Project extends Advert implements Serializable {
 
     private static final long serialVersionUID = 5963260213501162814L;
 
@@ -32,10 +34,6 @@ public class Project implements Serializable {
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id", nullable = false)
-    private Advert advert;
-
     @Column(name = "closing_date")
     @Temporal(value = TemporalType.DATE)
     private Date closingDate;
@@ -47,13 +45,6 @@ public class Project implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "secondary_supervisor_id")
     private RegisteredUser secondarySupervisor;
-
-    @Column(name = "disabled")
-    private boolean disabled;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "administrator_id")
-    private RegisteredUser administrator;
 
     public Integer getId() {
         return id;
@@ -79,14 +70,6 @@ public class Project implements Serializable {
         this.program = program;
     }
 
-    public Advert getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(Advert advert) {
-        this.advert = advert;
-    }
-
     public Date getClosingDate() {
         return closingDate;
     }
@@ -109,26 +92,6 @@ public class Project implements Serializable {
 
     public void setSecondarySupervisor(RegisteredUser secondarySupervisor) {
         this.secondarySupervisor = secondarySupervisor;
-    }
-
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-    }
-
-    public RegisteredUser getAdministrator() {
-        return administrator;
-    }
-
-    public void setAdministrator(RegisteredUser administrator) {
-        this.administrator = administrator;
-    }
-
-    public boolean isAcceptingApplications() {
-        return !disabled && advert != null && advert.getActive();
     }
 
 }

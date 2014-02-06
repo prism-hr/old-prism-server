@@ -57,7 +57,7 @@ public class AdvertsControllerTest {
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
         userDAOMock = EasyMock.createMock(UserDAO.class);
         request = EasyMock.createMock(HttpServletRequest.class);
-        controller = new AdvertsController(advertServiceMock, programDAOMock, userDAOMock);
+        controller = new AdvertsController(advertServiceMock, userDAOMock);
     }
 
     @Test

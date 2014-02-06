@@ -115,8 +115,8 @@ public class ProgramsService {
         if (project == null) {
             return;
         }
-        project.setDisabled(true);
-        project.getAdvert().setActive(false);
+        project.setEnabled(false);
+        project.setActive(false);
         projectDAO.save(project);
     }
 
@@ -149,7 +149,6 @@ public class ProgramsService {
                 opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
 
         Program program = new Program();
-        program.setAdvert(advert);
         program.setInstitution(institution);
         program.setEnabled(true);
         program.setTitle(opportunityRequest.getProgramTitle());
@@ -162,7 +161,7 @@ public class ProgramsService {
 
     public void updateClosingDate(ProgramClosingDate closingDate) {
         Program program = closingDate.getProgram();
-        program.getAdvert().setLastEditedTimestamp(new Date());
+        program.setLastEditedTimestamp(new Date());
         programDAO.updateClosingDate(closingDate);
     }
 
@@ -173,7 +172,7 @@ public class ProgramsService {
 
     public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {        
         program.getClosingDates().add(programClosingDate);
-        program.getAdvert().setLastEditedTimestamp(new Date());
+        program.setLastEditedTimestamp(new Date());
         programDAO.save(program);
     }
 
@@ -206,15 +205,10 @@ public class ProgramsService {
             save(program);
         }
 
-        Advert advert = program.getAdvert();
-        if (advert == null) {
-            advert = new Advert();
-            program.setAdvert(advert);
-        }
-        advert.setDescription(programOpportunityDTO.getDescription());
-        advert.setStudyDuration(programOpportunityDTO.getStudyDuration());
-        advert.setFunding(programOpportunityDTO.getFunding());
-        advert.setActive(programOpportunityDTO.getActive());
+        program.setDescription(programOpportunityDTO.getDescription());
+        program.setStudyDuration(programOpportunityDTO.getStudyDuration());
+        program.setFunding(programOpportunityDTO.getFunding());
+        program.setActive(programOpportunityDTO.getActive());
         if (program.getProgramFeed() == null) { // custom program
             programInstanceService.createRemoveProgramInstances(program, programOpportunityDTO.getStudyOptions(),
                     programOpportunityDTO.getAdvertiseDeadlineYear());

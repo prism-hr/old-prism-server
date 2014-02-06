@@ -17,7 +17,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 
 import org.hibernate.annotations.Cache;
@@ -27,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 @Entity(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Program extends Authorisable implements Serializable {
+public class Program extends Advert implements Serializable {
 
     private static final long serialVersionUID = -9073611033741317582L;
 
@@ -37,12 +36,6 @@ public class Program extends Authorisable implements Serializable {
 
     @Column(name = "code")
     private String code;
-
-    @Column(name = "title")
-    private String title;
-
-    @Column(name = "enabled")
-    private boolean enabled;
 
     @Column(name = "atas_required")
     private Boolean atasRequired;
@@ -76,10 +69,6 @@ public class Program extends Authorisable implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id")
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "advert_id")
-    private Advert advert;
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     private List<Project> projects = new ArrayList<Project>();
@@ -105,15 +94,7 @@ public class Program extends Authorisable implements Serializable {
     public String getCode() {
         return code;
     }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
+    
     public List<RegisteredUser> getApprovers() {
         return approvers;
     }
@@ -133,27 +114,23 @@ public class Program extends Authorisable implements Serializable {
     }
 
     public boolean isApprover(final RegisteredUser user) {
-        return isApproverInProgramme(this, user);
+        return (getApprovers().contains(user));
     }
 
     public boolean isAdministrator(final RegisteredUser user) {
-        return isAdminInProgramme(this, user);
+        return (getAdministrators().contains(user));
     }
 
+    public boolean isViewer(final RegisteredUser user) {
+        return (getViewers().contains(user));
+    }
+    
     public List<ProgramInstance> getInstances() {
         return instances;
     }
 
     public void setInstances(final List<ProgramInstance> instances) {
         this.instances = instances;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
     }
 
     public Boolean getAtasRequired() {
@@ -175,14 +152,6 @@ public class Program extends Authorisable implements Serializable {
 
     public Map<ScoringStage, ScoringDefinition> getScoringDefinitions() {
         return scoringDefinitions;
-    }
-
-    public Advert getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(Advert advert) {
-        this.advert = advert;
     }
 
     public List<ProgramClosingDate> getClosingDates() {

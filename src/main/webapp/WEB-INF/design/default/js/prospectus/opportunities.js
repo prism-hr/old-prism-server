@@ -63,6 +63,26 @@ function getAdverts(){
 	});
 }
 
+function getRelatedAdverts(){
+	key = $('#feedKey').val();
+	value = $('#feedKeyValue').val();
+	var data = {
+		feedKey: key,
+		feedKeyValue: value,
+	};
+	$.ajax({
+		type: 'GET',
+		data: data,
+		url: "/pgadmissions/opportunities/embedded",
+		success: function(data) {
+			var map = JSON.parse(data);
+			processAdverts(map.adverts);
+			highlightSelectedAdvert();
+			bindAddThisShareOverFix();
+		}
+	});
+}
+
 function processAdverts(adverts){
 	if (adverts.length == 0) {
 		$('#pholder').hide();

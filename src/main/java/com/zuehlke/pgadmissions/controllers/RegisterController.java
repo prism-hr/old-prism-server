@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationFormCreationService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.UserService;

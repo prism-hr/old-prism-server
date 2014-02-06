@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -11,12 +10,11 @@ public class ProjectBuilder {
     private Integer id;
     private RegisteredUser author;
     private Program program;
-    private Advert advert;
     private Date closingDate;
     private RegisteredUser administrator;
     private RegisteredUser primarySupervisor;
     private RegisteredUser secondarySupervisor;
-    private boolean disabled = false;
+    private boolean enabled = true;
 
     public ProjectBuilder id(Integer id) {
         this.id = id;
@@ -33,17 +31,12 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder advert(Advert advert) {
-        this.advert = advert;
-        return this;
-    }
-
     public ProjectBuilder closingDate(Date closingDate) {
         this.closingDate = closingDate;
         return this;
     }
 
-    public ProjectBuilder administrator(RegisteredUser administrator) {
+    public ProjectBuilder contactUser(RegisteredUser administrator) {
         this.administrator = administrator;
         return this;
     }
@@ -58,22 +51,21 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder disabled(boolean disabled) {
-        this.disabled = disabled;
+    public ProjectBuilder enabled(boolean enabled) {
+        this.enabled = enabled;
         return this;
     }
 
     public Project build() {
         Project project = new Project();
         project.setId(id);
-        project.setAdvert(advert);
         project.setAuthor(author);
         project.setProgram(program);
         project.setClosingDate(closingDate);
-        project.setAdministrator(administrator);
+        project.setContactUser(administrator);
         project.setPrimarySupervisor(primarySupervisor);
         project.setSecondarySupervisor(secondarySupervisor);
-        project.setDisabled(disabled);
+        project.setEnabled(enabled);
         return project;
     }
 

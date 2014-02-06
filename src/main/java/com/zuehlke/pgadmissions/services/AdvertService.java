@@ -1,8 +1,16 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,7 +18,8 @@ import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
+import com.zuehlke.pgadmissions.dto.AdvertDTO;
 
 @Service
 @Transactional
@@ -27,24 +36,79 @@ public class AdvertService {
         this.advertDAO = advertDAO;
     }
 
-    public List<Advert> getActiveAdverts() {
-        return advertDAO.getActiveAdverts();
+    public List<AdvertDTO> getAdvertFeed(OpportunityListType feedKey, String feedKeyValue, HttpServletRequest request) {
+        List<AdvertDTO> adverts = null;
+        List<AdvertDTO> selectedAdvert = getAdvertDTOFromSession(request); 
+        
+        Integer selectedAdvertId = 0;
+        if (!selectedAdvert.isEmpty()) {
+            selectedAdvertId = selectedAdvert.get(0).getId();
+        }
+        
+        if (feedKey == null && feedKeyValue == null) {
+            adverts = advertDAO.getActiveAdverts(selectedAdvertId);
+            Collections.shuffle(adverts);
+        } else {
+            switch (feedKey) {
+            case OPPORTUNITIESBYFEEDID:
+                adverts = advertDAO.getAdvertDTOsByFeedId(Integer.parseInt(feedKeyValue), selectedAdvertId);
+                Collections.shuffle(adverts);
+                break;
+            case OPPORTUNITIESBYUSERUPI:
+                adverts = advertDAO.getAdvertDTOsByUserUPI(feedKeyValue, selectedAdvertId);
+                Collections.shuffle(adverts);
+                break;
+            case OPPORTUNITIESBYUSERUSERNAME:
+                adverts = advertDAO.getAdvertDTOsByUserUsername(feedKeyValue, selectedAdvertId);
+                Collections.shuffle(adverts);
+                break;
+            case RECOMMENDEDOPPORTUNTIIES:
+                adverts = advertDAO.getRecommendedAdvertDTOs(Integer.parseInt(feedKeyValue));
+                break;
+            case CURRENTOPPORTUNITY:
+                adverts = Arrays.asList(advertDAO.getAdvertDTOByAdvertId(feedKeyValue));
+                break;
+            }
+        }
+        
+        if (!selectedAdvert.isEmpty()) {
+            adverts.add(0, adverts.get(0));
+        }
+        
+        return adverts;
+        
     }
     
-    public List<Advert> getRecommendedAdverts(RegisteredUser user) {
-        return advertDAO.getRecommendedAdverts(user);
+    public List<AdvertDTO> getAdvertDTOFromSession(HttpServletRequest request) {
+        DefaultSavedRequest defaultSavedRequest = (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+        String advertId = getSavedRequestParam(defaultSavedRequest, "advert");
+        String programCode = getSavedRequestParam(defaultSavedRequest, "program");
+        String projectId = getSavedRequestParam(defaultSavedRequest, "project");
+        
+        List<AdvertDTO> advertDTO = new ArrayList<AdvertDTO>();
+        
+        if (advertId != null) {
+            advertDTO.add(advertDAO.getAdvertDTOByAdvertId(advertId));
+            advertDTO.get(0).setSelected(true);
+        } else if (programCode != null) {
+            advertDTO.add(advertDAO.getAdvertDTOByProgramCode(programCode));
+            advertDTO.get(0).setSelected(true);
+        } else if (projectId != null) {
+            advertDTO.add(advertDAO.getAdvertDTOByProjectId(Integer.parseInt(projectId)));
+            advertDTO.get(0).setSelected(true);
+        }
+        
+        return advertDTO;
     }
     
-    public List<Advert> getAdvertsByUserUPI(String userUPI) {
-        return advertDAO.getAdvertsByUserUPI(userUPI);
-    }
-    
-    public List<Advert> getAdvertsByUserUsername(String username) {
-        return advertDAO.getAdvertsByUserUsername(username);
-    }
-
-    public List<Advert> getAdvertsByFeedId(Integer feedId) {
-        return advertDAO.getAdvertsByFeedId(feedId);
+    private String getSavedRequestParam(DefaultSavedRequest savedRequest, String paramName) {
+        if (savedRequest != null) {
+            String[] values = savedRequest.getParameterValues(paramName);
+            if (!ArrayUtils.isEmpty(values) && !StringUtils.isBlank(values[0])) {
+                return values[0];
+            }
+        }
+        return null;
     }
     
     public Program getProgram(Advert advert) {
@@ -61,17 +125,6 @@ public class AdvertService {
 
 	public Advert getAdvertById(int advertId) {
 		return advertDAO.getAdvertById(advertId);
-	}
-	
-	public Advert getAdvertFromSession(String advertId, String programCode, String projectId) {
-	    if (advertId != null) {
-	        return advertDAO.getAdvertById(Integer.parseInt(advertId));
-	    } else if (programCode != null) {
-	        return advertDAO.getProgramAdvertByProgramCode(programCode);
-	    } else if (projectId != null) {
-	        return advertDAO.getProjectAdvertByProjectId(Integer.parseInt(projectId));
-	    }
-	    return null;
 	}
 
 }

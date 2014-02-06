@@ -195,8 +195,8 @@ public class ProgramsServiceTest {
         programsService.removeProject(1);
         verify();
 
-        assertTrue(project.isDisabled());
-        assertFalse(project.getAdvert().getActive());
+        assertFalse(project.isEnabled());
+        assertFalse(project.isActive());
     }
 
     @Test
@@ -265,14 +265,11 @@ public class ProgramsServiceTest {
         Program program = programsService.createNewCustomProgram(opportunityRequest);
         verify();
 
-        Advert advert = program.getAdvert();
-
-        assertTrue(advert.getActive());
-        assertEquals(opportunityRequest.getProgramDescription(), advert.getDescription());
-        assertEquals(opportunityRequest.getStudyDuration(), advert.getStudyDuration());
+        assertTrue(program.isActive());
+        assertEquals(opportunityRequest.getProgramDescription(), program.getDescription());
+        assertEquals(opportunityRequest.getStudyDuration(), program.getStudyDuration());
 
         assertSame(programCapture.getValue(), program);
-        assertSame(advert, program.getAdvert());
         assertEquals(opportunityRequest.getAtasRequired(), program.getAtasRequired());
         assertSame(institution, program.getInstitution());
         assertEquals(opportunityRequest.getProgramTitle(), program.getTitle());
@@ -295,8 +292,7 @@ public class ProgramsServiceTest {
     
     @Test
     public void shouldUpdateClosingDate() {
-        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
-        Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
+        Program program = new ProgramBuilder().code("AAA_00018").description("program").studyDuration(12).active(true).build();
         ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
         programDAOMock.updateClosingDate(closingDate);
         replay();
@@ -306,8 +302,7 @@ public class ProgramsServiceTest {
     
     @Test
     public void shouldAddClosingDateToProgram() {
-        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
-        Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
+        Program program = new ProgramBuilder().code("AAA_00018").description("program").studyDuration(12).active(true).build();
         ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
         programDAOMock.save(program);
         replay();

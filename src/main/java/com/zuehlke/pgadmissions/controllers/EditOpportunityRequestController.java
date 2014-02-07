@@ -78,7 +78,7 @@ public class EditOpportunityRequestController {
 
         if (opportunityRequest.getInstitutionCountry() != null) {
             modelMap.addAttribute("institutions",
-                    qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(opportunityRequest.getInstitutionCountry().getCode()));
+                    qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
         }
 
         return EDIT_REQUEST_PAGE_VIEW_NAME;
@@ -94,7 +94,7 @@ public class EditOpportunityRequestController {
 
             if (opportunityRequest.getInstitutionCountry() != null) {
                 modelMap.addAttribute("institutions",
-                        qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(opportunityRequest.getInstitutionCountry().getCode()));
+                        qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
             }
 
             return EDIT_REQUEST_PAGE_VIEW_NAME;

@@ -30,7 +30,7 @@ public class QualificationInstitutionDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    public List<QualificationInstitution> getEnabledInstitutionsByCountryCode(String domicileCode) {
+    public List<QualificationInstitution> getEnabledInstitutionsByDomicileCode(String domicileCode) {
         Conjunction conjunction = Restrictions.conjunction();
         conjunction.add(Restrictions.eq("enabled", true));
         conjunction.add(Restrictions.eq("domicileCode", domicileCode));

@@ -96,7 +96,7 @@ public class EditOpportunityRequestControllerTest {
         List<QualificationInstitution> institutions = Lists.newArrayList();
 
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(opportunityRequest);
-        expect(qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode("PL")).andReturn(institutions);
+        expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutions);
 
         replay();
         String result = controller.getEditOpportunityRequestPage(8, modelMap);
@@ -134,7 +134,7 @@ public class EditOpportunityRequestControllerTest {
         bindingResult.reject("error");
         List<QualificationInstitution> institutions = Lists.newArrayList();
 
-        expect(qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode("PL")).andReturn(institutions);
+        expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutions);
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(new OpportunityRequestBuilder().author(author).build());
 
         replay();

@@ -149,10 +149,14 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Program> programsOfWhichApprover = new ArrayList<Program>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "PROGRAM_VIEWER_LINK", joinColumns = { @JoinColumn(name = "viewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Program> programsOfWhichViewer = new ArrayList<Program>();
+
+    @ManyToMany
+    @JoinTable(name = "INSTITUTION_ADMINISTRATOR_LINK", joinColumns = { @JoinColumn(name = "administrator_id"), }, inverseJoinColumns = { @JoinColumn(name = "institution_id") })
+    private List<QualificationInstitution> institutions = new ArrayList<QualificationInstitution>();
 
     @Column(name = "ucl_user_id")
     private String uclUserId;
@@ -348,6 +352,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public List<Program> getProgramsOfWhichViewer() {
         return programsOfWhichViewer;
+    }
+
+    public List<QualificationInstitution> getInstitutions() {
+        return institutions;
     }
 
     public Referee getRefereeForApplicationForm(final ApplicationForm form) {

@@ -170,7 +170,7 @@ public class CreateNewOpportunityControllerTest {
 		HttpServletRequest request = new MockHttpServletRequest();
 
 		ArrayList<QualificationInstitution> institutionsList = Lists.newArrayList();
-		expect(qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode("PL")).andReturn(institutionsList);
+		expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutionsList);
 
 		replay();
 		String result = controller.postOpportunityRequest(opportunityRequest, bindingResult, model, request);

@@ -89,6 +89,7 @@ function refreshControls(){
         $("#otherInstitution").attr("readonly", "readonly");
         $("#otherInstitution").attr("disabled", "disabled");
     }
+    $("#institution").selectpicker('refresh');
 }
    
 function initEditors() {

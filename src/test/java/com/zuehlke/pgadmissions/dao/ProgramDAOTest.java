@@ -283,25 +283,5 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         ProgramClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDateId);
         assertEquals(gotClosingDate, null);
     }
-
-    @Test
-    public void shouldGetFirstEnabledAdministrator() {
-        Program program = new ProgramBuilder().code("code").institution(institution).build();
-        sessionFactory.getCurrentSession().save(program);
-        RegisteredUser user1 = new RegisteredUserBuilder().username("testuser1").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
-                .enabled(false).programsOfWhichAdministrator(program).build();
-        sessionFactory.getCurrentSession().save(user1);
-        RegisteredUser user2 = new RegisteredUserBuilder().username("testuser2").accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true)
-                .enabled(true).programsOfWhichAdministrator(program).build();
-        sessionFactory.getCurrentSession().save(user2);
-        RegisteredUser user3 = new RegisteredUserBuilder().username("testuser3").accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true)
-                .enabled(true).programsOfWhichAdministrator(program).build();
-        sessionFactory.getCurrentSession().save(user3);
-        program.setAdministrators(Arrays.asList(user1, user2, user3));
-        sessionFactory.getCurrentSession().update(program);
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        RegisteredUser gotUser = programDAO.getFirstAdministratorForProgram(program);
-        assertEquals(gotUser, user2);
-    }
-
+    
 }

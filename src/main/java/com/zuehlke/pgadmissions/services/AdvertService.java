@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +35,7 @@ public class AdvertService {
     }
 
     public List<AdvertDTO> getAdvertFeed(OpportunityListType feedKey, String feedKeyValue, HttpServletRequest request) {
-        List<AdvertDTO> adverts = null;
+        List<AdvertDTO> advertDTOs = null;
         List<AdvertDTO> selectedAdvert = getAdvertDTOFromSession(request); 
         
         Integer selectedAdvertId = 0;
@@ -45,37 +43,13 @@ public class AdvertService {
             selectedAdvertId = selectedAdvert.get(0).getId();
         }
         
-        if (feedKey == null && feedKeyValue == null) {
-            adverts = advertDAO.getActiveAdverts(selectedAdvertId);
-            Collections.shuffle(adverts);
-        } else {
-            switch (feedKey) {
-            case OPPORTUNITIESBYFEEDID:
-                adverts = advertDAO.getAdvertDTOsByFeedId(Integer.parseInt(feedKeyValue), selectedAdvertId);
-                Collections.shuffle(adverts);
-                break;
-            case OPPORTUNITIESBYUSERUPI:
-                adverts = advertDAO.getAdvertDTOsByUserUPI(feedKeyValue, selectedAdvertId);
-                Collections.shuffle(adverts);
-                break;
-            case OPPORTUNITIESBYUSERUSERNAME:
-                adverts = advertDAO.getAdvertDTOsByUserUsername(feedKeyValue, selectedAdvertId);
-                Collections.shuffle(adverts);
-                break;
-            case RECOMMENDEDOPPORTUNTIIES:
-                adverts = advertDAO.getRecommendedAdvertDTOs(Integer.parseInt(feedKeyValue));
-                break;
-            case CURRENTOPPORTUNITY:
-                adverts = Arrays.asList(advertDAO.getAdvertDTOByAdvertId(feedKeyValue));
-                break;
-            }
-        }
+        advertDTOs = advertDAO.getAdvertFeed(feedKey, feedKeyValue, selectedAdvertId);
         
         if (!selectedAdvert.isEmpty()) {
-            adverts.add(0, adverts.get(0));
+            advertDTOs.add(0, advertDTOs.get(0));
         }
         
-        return adverts;
+        return advertDTOs;
         
     }
     

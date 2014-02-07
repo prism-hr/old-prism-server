@@ -157,7 +157,7 @@ public class ProjectConfigurationController {
         if (map.isEmpty()) {
             RegisteredUser currentUser = getUser();
             Project project = projectConverter.toDomainObject(projectDTO);
-            project.setAuthor(currentUser);
+            project.setContactUser(currentUser);
             addSupervisorsRoles(project);
             programsService.saveProject(project);
             map.put("success", "true");

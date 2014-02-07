@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -16,7 +15,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity(name = "PROJECT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Project extends Advert implements Serializable {
+public class Project extends Advert {
 
     private static final long serialVersionUID = 5963260213501162814L;
 
@@ -29,7 +28,7 @@ public class Project extends Advert implements Serializable {
     private Date closingDate;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "primary_supervisor_id", nullable = false)
+    @JoinColumn(name = "administrator_id", nullable = false)
     private RegisteredUser administrator;
 
     @ManyToOne(fetch = FetchType.LAZY)

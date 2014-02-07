@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,8 +9,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -26,13 +23,9 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 @Entity(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Program extends Advert implements Serializable {
+public class Program extends Advert {
 
     private static final long serialVersionUID = -9073611033741317582L;
-
-    @Id
-    @GeneratedValue
-    private Integer id;
 
     @Column(name = "code")
     private String code;
@@ -79,17 +72,6 @@ public class Program extends Advert implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_type_id")
     private ProgramType programType;
-
-    public Program() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(final Integer id) {
-        this.id = id;
-    }
 
     public void setCode(final String code) {
         this.code = code;

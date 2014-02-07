@@ -14,48 +14,7 @@ $(document).ready(function() {
 
 function bindChangeInstitutionCountryAction() {
     $('#programAdvertInstitutionCountry').change(function() {
-        $("#programAdvertInstitution").val("");
-        $("#programAdvertInstitutionOtherName").val("");
-
-        $.ajax({
-            type : 'GET',
-            statusCode : {
-                401 : function() {
-                    window.location.reload();
-                },
-                500 : function() {
-                    window.location.href = "/pgadmissions/error";
-                },
-                404 : function() {
-                    window.location.href = "/pgadmissions/404";
-                },
-                400 : function() {
-                    window.location.href = "/pgadmissions/400";
-                },
-                403 : function() {
-                    window.location.href = "/pgadmissions/404";
-                }
-            },
-            url : "/pgadmissions/update/getInstitutionInformation",
-            data : {
-                country_id : $("#programAdvertInstitutionCountry").val(),
-                cacheBreaker : new Date().getTime()
-            },
-            success : function(data) {
-                institutions = data;
-                var options = $("#programAdvertInstitution");
-                options.empty();
-
-                options.append($("<option />").val("").text("Select..."));
-                for ( var i = 0; i < institutions.length; i++) {
-                    options.append($("<option />").val(institutions[i]["code"]).text(institutions[i]["name"]));
-                }
-                options.append($("<option />").val("OTHER").text("Other"));
-                $('#programAdvertInstitution').selectpicker('refresh');
-            },
-            complete : function() {
-            }
-        });
+        getInstitutionData();
     });
 }
 
@@ -91,6 +50,59 @@ $(document).on('click', '#newProgamme', function() {
     clearProgramSection();
 });
 
+function getInstitutionData(successCallback) {
+    $("#programAdvertInstitution").val("");
+    $("#programAdvertInstitutionOtherName").val("");
+
+    $.ajax({
+        type : 'GET',
+        statusCode : {
+            401 : function() {
+                window.location.reload();
+            },
+            500 : function() {
+                window.location.href = "/pgadmissions/error";
+            },
+            404 : function() {
+                window.location.href = "/pgadmissions/404";
+            },
+            400 : function() {
+                window.location.href = "/pgadmissions/400";
+            },
+            403 : function() {
+                window.location.href = "/pgadmissions/404";
+            }
+        },
+        url : "/pgadmissions/update/getUserInstitutionInformation",
+        data : {
+            country_id : $("#programAdvertInstitutionCountry").val(),
+            cacheBreaker : new Date().getTime()
+        },
+        success : function(data) {
+            userInstitutions = data["userInstitutions"];
+            otherInstitutions = data["otherInstitutions"];
+
+            $("#userInstitutions").empty();
+            $("#otherInstitutions").empty();
+
+            for ( var i = 0; i < userInstitutions.length; i++) {
+                $("#userInstitutions").append($("<option />").val(userInstitutions[i]["code"]).text(userInstitutions[i]["name"]));
+            }
+            for ( var i = 0; i < otherInstitutions.length; i++) {
+                $("#otherInstitutions").append($("<option />").val(otherInstitutions[i]["code"]).text(otherInstitutions[i]["name"]));
+            }
+
+            if (successCallback) {
+                successCallback();
+            }
+
+            $('#programAdvertInstitution').selectpicker('refresh');
+        },
+        complete : function() {
+        }
+    });
+}
+
 function otherInstitutionCheck() {
     if ($('#programAdvertInstitution').val() == 'OTHER') {
         $("#programAdvertInstitutionOtherNameDiv label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
@@ -107,7 +119,7 @@ $(document).on('change', '#programAdvertInstitution', function() {
 
 function checkToDisable() {
     var selectedProgram = $("#programAdvertProgramSelect").val();
-    if(selectedProgram != "" || $("#programAdvertNewProgramNameDiv").is(":visible")) {
+    if (selectedProgram != "" || $("#programAdvertNewProgramNameDiv").is(":visible")) {
         // new or existing program
         $("#advertGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
         $("#advertGroup input, #advertGroup textarea, #advertGroup select").removeAttr("readonly", "readonly");
@@ -115,10 +127,10 @@ function checkToDisable() {
     } else {
         $("#advertGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
         $("#advertGroup input, #advertGroup textarea, #advertGroup select").attr("readonly", "readonly");
-        $("#advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").attr("disabled", "disabled");        
+        $("#advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").attr("disabled", "disabled");
     }
-    
-    if(selectedProgram != "" && $("#programAdvertSelectProgramDiv").is(":visible")) {
+
+    if (selectedProgram != "" && $("#programAdvertSelectProgramDiv").is(":visible")) {
         // existing program
         $("#programAdvertClosingDateGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
         $("#programAdvertClosingDateGroup input").removeAttr("readonly", "readonly");
@@ -128,7 +140,7 @@ function checkToDisable() {
         $("#programAdvertClosingDateGroup input").attr("readonly", "readonly");
         $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup a").attr("disabled", "disabled");
     }
-    
+
 }
 
 function changeHeaderInfoBars(programval) {
@@ -411,15 +423,18 @@ function updateAdvertSection(map) {
 
 function updateProgramSection(map) {
     $("[name=programAdvertAtasRequired][value=" + map["atasRequired"] + "]").prop("checked", true);
+
     $("#programAdvertInstitutionCountry").val(map["institutionCountryCode"]);
-    $("#programAdvertInstitution").append($("<option />").val(map[1]).text(map["institutionName"])).prop('selected', true);
-    $('#programAdvertInstitution').selectpicker('refresh');
+    $("#programAdvertInstitutionCountry").selectpicker('refresh');
+    getInstitutionData(function(){
+        $("#programAdvertInstitution").val(map["institutionCode"]);
+    });
     $("#programAdvertInstitutionOtherName").val("");
-    
+
     var advert = map['advert'];
     if (advert) {
         tinyMCE.get('programAdvertDescriptionText').setContent(advert['description']);
-        tinyMCE.get('programAdvertFundingText').setContent(advert['funding']);
+        tinyMCE.get('programAdvertFundingText').setContent(advert['funding'] ? advert['funding'] : "");
         $("#programAdvertId").val(advert.id);
         var durationOfStudyInMonths = advert['studyDuration'];
         if (durationOfStudyInMonths % 12 == 0) {
@@ -465,9 +480,9 @@ function bindSaveButtonAction() {
 
 function saveAdvert() {
     clearProgramAdvertErrors();
-    
+
     var programCode = $("#programAdvertProgramSelect").val();
-    var programName = $("#programAdvertNewProgramName").val(); 
+    var programName = $("#programAdvertNewProgramName").val();
     var duration = {
         value : $("#programAdvertStudyDurationInput").val(),
         unit : $("#programAdvertStudyDurationUnitSelect").val()
@@ -559,7 +574,7 @@ function saveAdvert() {
                 checkIfErrors();
             } else {
 
-                if($("#programAdvertNewProgramNameDiv").is(":visible")) {
+                if ($("#programAdvertNewProgramNameDiv").is(":visible")) {
                     // new program created
                     var newProgramCode = map["programCode"];
                     $("#programAdvertProgramSelect").append($("<option />").val(newProgramCode).text(programName));

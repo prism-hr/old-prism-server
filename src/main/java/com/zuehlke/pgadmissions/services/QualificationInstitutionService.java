@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -7,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 
 @Service
@@ -22,6 +23,10 @@ public class QualificationInstitutionService {
 
     public QualificationInstitution getInstitutionByCode(String institutionCode) {
         return qualificationInstitutionDAO.getInstitutionByCode(institutionCode);
+    }
+
+    public List<QualificationInstitution> getEnabledInstitutionsByDomicileCode(String domicileCode) {
+        return qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(domicileCode);
     }
 
     public QualificationInstitution getOrCreateCustomInstitution(String institutionCode, Domicile institutionCountry, String otherInstitutionName) {
@@ -52,5 +57,6 @@ public class QualificationInstitutionService {
         }
         return String.format("CUST%05d", codeNumber);
     }
+
 
 }

@@ -63,6 +63,9 @@
                   <div class="field">
                     <select class="full selectpicker" data-live-search="true" data-size="6"  id="programAdvertInstitution">
                       <option value="">Select...</option>
+                      <optgroup id="userInstitutions" label="Your Institutions" />
+                      <optgroup id="otherInstitutions" label="Other Institutions"></optgroup>
+                      <option value="OTHER">Other</option>
                     </select>
                   </div>
                 </div>

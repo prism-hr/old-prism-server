@@ -51,7 +51,7 @@ public class QualificationInstitutionsControllerTest {
 
         EasyMock.expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
         EasyMock.expect(domicileDAO.getDomicileById(0)).andReturn(domicile);
-        EasyMock.expect(qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(domicile.getCode())).andReturn(
+        EasyMock.expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(domicile.getCode())).andReturn(
                 Arrays.asList(institution1, institution2));
 
         replay();

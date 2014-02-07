@@ -60,7 +60,9 @@ public class OpportunitiesService {
 
     public void approveOpportunityRequest(Integer requestId, OpportunityRequest newOpportunityRequest) {
         OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
+        RegisteredUser author = opportunityRequest.getAuthor();
 
+        // update opportunity request
         opportunityRequest.setStatus(OpportunityRequestStatus.APPROVED);
         opportunityRequest.setInstitutionCountry(newOpportunityRequest.getInstitutionCountry());
         opportunityRequest.setInstitutionCode(newOpportunityRequest.getInstitutionCode());
@@ -72,13 +74,19 @@ public class OpportunitiesService {
         opportunityRequest.setAdvertisingDeadlineYear(newOpportunityRequest.getAdvertisingDeadlineYear());
         opportunityRequest.setStudyOptions(newOpportunityRequest.getStudyOptions());
 
+        // create program
         Program program = programsService.createNewCustomProgram(opportunityRequest);
-
+        
+        // create program instances
         List<String> studyOptions = Arrays.asList(opportunityRequest.getStudyOptions().split(","));
         Integer advertisingDeadlineYear = opportunityRequest.getAdvertisingDeadlineYear();
 
         List<ProgramInstance> programInstances = programInstanceService.createRemoveProgramInstances(program, studyOptions, advertisingDeadlineYear);
         program.getInstances().addAll(programInstances);
+        
+        // grant permissions to the author 
+        author.getInstitutions().add(program.getInstitution());
+        author.getProgramsOfWhichAdministrator().add(program);
     }
 
     public void rejectOpportunityRequest(Integer requestId, String rejectionReason) {

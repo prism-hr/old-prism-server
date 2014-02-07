@@ -39,7 +39,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
         QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
 
-        List<QualificationInstitution> returnList = qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode("UK");
+        List<QualificationInstitution> returnList = qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("UK");
 
         assertNotNull(returnList);
         assertEquals(1, returnList.size());

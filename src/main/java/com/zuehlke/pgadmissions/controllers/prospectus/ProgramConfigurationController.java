@@ -162,7 +162,7 @@ public class ProgramConfigurationController {
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
-        result.put("institutionName", program.getInstitution().getName());
+        result.put("institutionCode", program.getInstitution().getCode());
         result.put("advertisingDeadline", programInstanceService.getAdvertisingDeadlineYear(program));
         result.put("studyOptions", programInstanceService.getStudyOptions(program));
         result.put("buttonToApply", templateRenderer.renderButton(dataMap));

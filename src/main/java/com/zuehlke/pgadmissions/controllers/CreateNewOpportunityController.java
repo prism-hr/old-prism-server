@@ -84,7 +84,7 @@ public class CreateNewOpportunityController {
         if (result.hasErrors()) {
             if (opportunityRequest.getInstitutionCountry() != null) {
                 model.addAttribute("institutions",
-                        qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(opportunityRequest.getInstitutionCountry().getCode()));
+                        qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
             }
             request.setAttribute(CLICKED_ON_CREATE_OPPORTUNITY, true);
             return LOGIN_PAGE;

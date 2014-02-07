@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.expect;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -24,8 +25,10 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -99,10 +102,12 @@ public class OpportunitiesServiceTest {
 
     @Test
     public void shouldApproveOpportunityRequest() {
-        OpportunityRequest request = new OpportunityRequest();
+        RegisteredUser author = new RegisteredUser();
+        OpportunityRequest request = new OpportunityRequestBuilder().author(author).build();
         Domicile country = new Domicile();
         OpportunityRequest newOpportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).otherInstitution("jakis uniwerek").build();
-        Program program = new Program();
+        QualificationInstitution institution = new QualificationInstitution();
+        Program program = new ProgramBuilder().institution(institution).build();
         ProgramInstance programInstance1 = new ProgramInstance();
         ProgramInstance programInstance2 = new ProgramInstance();
 
@@ -126,6 +131,8 @@ public class OpportunitiesServiceTest {
         assertEquals(newOpportunityRequest.getAtasRequired(), request.getAtasRequired());
         assertEquals(newOpportunityRequest.getAdvertisingDeadlineYear(), request.getAdvertisingDeadlineYear());
         assertEquals(newOpportunityRequest.getStudyOptions(), request.getStudyOptions());
+        assertThat(author.getInstitutions(), contains(institution));
+        assertThat(author.getProgramsOfWhichAdministrator(), contains(program));
     }
 
     @Test

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -81,7 +80,7 @@ public class QualificationInstitutionsController {
 
     @RequestMapping(value = "/getUserInstitutionInformation", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getInstitutionsUserCategorized(@RequestParam String country_id) throws IOException {
+    public String getInstitutionsUserCategorized(@RequestParam String country_id) {
         if (Strings.isNullOrEmpty(country_id)) {
             return "";
         }

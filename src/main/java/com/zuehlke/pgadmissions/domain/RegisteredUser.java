@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -109,8 +110,7 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     private String activationCode;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     @Valid
     private List<Comment> comments = new ArrayList<Comment>();
@@ -118,33 +118,32 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @Column(name = "direct_to_url")
     private String directToUrl;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-    @org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "registered_user_id")
     private List<Referee> referees = new ArrayList<Referee>();
 
-    @OneToMany(mappedBy = "primaryAccount", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "primaryAccount")
     private List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
 
     @ManyToOne
-    @JoinColumn(name = "primary_account_id", nullable = true)
+    @JoinColumn(name = "primary_account_id")
     private RegisteredUser primaryAccount;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Role> roles = new ArrayList<Role>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "PROGRAM_ADMINISTRATOR_LINK", joinColumns = { @JoinColumn(name = "administrator_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "registered_user_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Program> programsOfWhichApprover = new ArrayList<Program>();
@@ -177,11 +176,12 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @Temporal(TemporalType.TIMESTAMP)
     private Date latestOpportunityRequestNotificationDate;
 
+    @OneToMany(mappedBy = "user")
+    private List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds = new ArrayList<ResearchOpportunitiesFeed>();
+
     @Transient
     private boolean canManageProjects;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds = new ArrayList<ResearchOpportunitiesFeed>();
 
     public boolean canSee(ApplicationForm applicationForm) {
         return canSeeApplication(applicationForm, this);

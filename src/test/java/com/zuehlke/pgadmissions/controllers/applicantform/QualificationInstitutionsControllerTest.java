@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.unitils.UnitilsJUnit4TestClassRunner;
@@ -16,12 +16,13 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.QualificationInstitutionService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class QualificationInstitutionsControllerTest {
@@ -36,13 +37,22 @@ public class QualificationInstitutionsControllerTest {
 
     @Mock
     @InjectIntoByType
-    private QualificationInstitutionDAO qualificationInstitutionDAO;
+    private QualificationInstitutionService qualificationInstitutionService;
+    
+    @Mock
+    @InjectIntoByType
+    private UserService userService;
 
     @TestedObject
-    private QualificationInstitutionsController controller;
+    private QualificationInstitutionsController controller = new QualificationInstitutionsController();
 
+    @Before
+    public void setup(){
+        controller.customizeJsonSerializer();
+    }
+    
     @Test
-    public void shouldReturnInstitutionsAsJson() throws IOException {
+    public void shouldReturnInstitutionsAsJson() {
         Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").build();
         QualificationInstitution institution1 = new QualificationInstitutionBuilder().id(2).enabled(true).name("University of London").domicileCode("UK")
                 .code("ABC").build();
@@ -51,7 +61,7 @@ public class QualificationInstitutionsControllerTest {
 
         EasyMock.expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
         EasyMock.expect(domicileDAO.getDomicileById(0)).andReturn(domicile);
-        EasyMock.expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(domicile.getCode())).andReturn(
+        EasyMock.expect(qualificationInstitutionService.getEnabledInstitutionsByDomicileCode(domicile.getCode())).andReturn(
                 Arrays.asList(institution1, institution2));
 
         replay();
@@ -59,7 +69,6 @@ public class QualificationInstitutionsControllerTest {
         verify();
 
         assertEquals("[{\"code\":\"ABC\",\"name\":\"University of London\"},{\"code\":\"ABCD\",\"name\":\"University of Cambridge\"}]", institutions);
-
     }
 
 }

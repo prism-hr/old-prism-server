@@ -52,7 +52,7 @@ public class QualificationInstitutionsController {
     private Gson gson;
 
     @PostConstruct
-    public void customizeJsonSerializer() throws IOException {
+    public void customizeJsonSerializer() {
         gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
                 .registerTypeAdapter(QualificationInstitution.class, new JsonSerializer<QualificationInstitution>() {
                     @Override
@@ -67,7 +67,7 @@ public class QualificationInstitutionsController {
 
     @RequestMapping(value = "/getInstitutionInformation", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getInstitutions(@RequestParam String country_id) throws IOException {
+    public String getInstitutions(@RequestParam String country_id) {
         if (Strings.isNullOrEmpty(country_id)) {
             return "";
         }

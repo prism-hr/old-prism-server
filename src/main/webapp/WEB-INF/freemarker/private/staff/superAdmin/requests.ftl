@@ -108,6 +108,7 @@
               <col style="width: 25%" />
               <col />
               <col style="width: 100px;" />
+              <col style="width: 100px;" />
               <col style="width: 90px;" />
               <col style="width: 90px" />
             </colgroup>
@@ -115,6 +116,7 @@
               <tr>
                 <th class="sortable" scope="col" id="AUTHOR" onclick="sortList(this)">Author</th>
                 <th class="sortable" scope="col" id="PROGRAM_TITLE" onclick="sortList(this)">Programme</th>
+                <th class="sortable" scope="col" id="TYPE" onclick="sortList(this)">Request Type</th>
                 <th class="sortable" scope="col" id="STATUS" onclick="sortList(this)">Status</th>
                 <th scope="col">Actions</th>
                 <th class="sortable" scope="col" id="CREATED_DATE" onclick="sortList(this)">Created</th>
@@ -132,6 +134,9 @@
                     ${opportunityRequest.programTitle} 
                   </td>
                   
+                  <td class="status">
+                    <@spring.message 'opportunityRequestType.${opportunityRequest.type.name()}'/>
+                  </td>
                   <td class="status">
                     <@spring.message 'opportunityRequestStatus.${opportunityRequest.status.name()}'/>
                     <!-- icon states to impement here -->

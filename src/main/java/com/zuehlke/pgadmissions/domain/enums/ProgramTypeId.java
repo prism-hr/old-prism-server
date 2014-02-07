@@ -18,9 +18,18 @@ public enum ProgramTypeId {
     public String getDisplayValue() {
         return displayValue;
     }
+    
+    public static ProgramTypeId findValueFromString(String toSearchIn) {
+        for (ProgramTypeId value : ProgramTypeId.values()) {
+            if (toSearchIn.contains(value.displayValue)) {
+                return value;
+            }
+        }
+        return null;
+    }
 
     public void setDisplayValue(String displayValue) {
         this.displayValue = displayValue;
     }
-
+    
 }

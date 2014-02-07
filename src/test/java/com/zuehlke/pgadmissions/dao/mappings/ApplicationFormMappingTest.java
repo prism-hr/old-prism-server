@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -40,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
-import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
@@ -451,7 +449,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         
         program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 
-        project = new ProjectBuilder().title("title").description("description").funding("funding").studyDuration(6).author(applicationAdmin).primarySupervisor(applicationAdmin).program(program).build();
+        project = new ProjectBuilder().title("title").description("description").funding("funding").studyDuration(6).contactUser(applicationAdmin).primarySupervisor(applicationAdmin).program(program).build();
 
         save(user, reviewerUser, institution, program, interviewerUser, applicationAdmin, approver, project);
 

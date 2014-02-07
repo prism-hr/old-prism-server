@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +19,16 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 public class ProgramBuilder {
 
     private Integer id;
-    private String code;
     private String title;
-    private boolean enabled;
+    private String description;
+    private Integer studyDuration;
+    private String funding;
+    private Boolean active;
+    private Boolean enabled;
+    private Date lastEditedTimestamp;
+    private RegisteredUser contactUser;
+    private String code;
     private boolean atasRequired;
-
     private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
     private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
@@ -31,6 +37,51 @@ public class ProgramBuilder {
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
     private QualificationInstitution institution;
     private ProgramFeed programFeed;
+
+    public ProgramBuilder id(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public ProgramBuilder title(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public ProgramBuilder description(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public ProgramBuilder studyDuration(Integer studyDuration) {
+        this.studyDuration = studyDuration;
+        return this;
+    }
+
+    public ProgramBuilder funding(String funding) {
+        this.funding = funding;
+        return this;
+    }
+
+    public ProgramBuilder active(boolean active) {
+        this.active = active;
+        return this;
+    }
+
+    public ProgramBuilder enabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    public ProgramBuilder lastEditedTimestamp(Date lastEditedTimestamp) {
+        this.lastEditedTimestamp = lastEditedTimestamp;
+        return this;
+    }
+
+    public ProgramBuilder contactUser(RegisteredUser contactUser) {
+        this.contactUser = contactUser;
+        return this;
+    }
 
     public ProgramBuilder atasRequired(boolean flag) {
         atasRequired = flag;
@@ -41,16 +92,6 @@ public class ProgramBuilder {
         for (RegisteredUser approver : users) {
             this.viewers.add(approver);
         }
-        return this;
-    }
-
-    public ProgramBuilder enabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
-    }
-
-    public ProgramBuilder id(Integer id) {
-        this.id = id;
         return this;
     }
 
@@ -85,18 +126,13 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder title(String title) {
-        this.title = title;
-        return this;
-    }
-
     public ProgramBuilder closingDates(ProgramClosingDate... programClosingDates) {
         for (ProgramClosingDate programClosingDate : programClosingDates) {
             this.programClosingDates.add(programClosingDate);
         }
         return this;
     }
-    
+
     public ProgramBuilder institution(QualificationInstitution institution) {
         this.institution = institution;
         return this;
@@ -107,13 +143,24 @@ public class ProgramBuilder {
         return this;
     }
 
+    public ProgramBuilder advert(Advert advert) {
+        return id(advert.getId()).title(advert.getTitle()).description(advert.getDescription()).studyDuration(advert.getStudyDuration())
+                .funding(advert.getFunding()).active(advert.isActive()).enabled(advert.isEnabled()).lastEditedTimestamp(advert.getLastEditedTimestamp())
+                .contactUser(advert.getContactUser());
+    }
 
     public Program build() {
         Program program = new Program();
         program.setId(id);
-        program.setCode(code);
         program.setTitle(title);
+        program.setDescription(description);
+        program.setStudyDuration(studyDuration);
+        program.setFunding(funding);
+        program.setActive(active);
         program.setEnabled(enabled);
+        program.setLastEditedTimestamp(lastEditedTimestamp);
+        program.setContactUser(contactUser);
+        program.setCode(code);
         program.getApprovers().addAll(approvers);
         program.getAdministrators().addAll(administrators);
         program.getInstances().addAll(instances);
@@ -125,7 +172,7 @@ public class ProgramBuilder {
         program.setProgramFeed(programFeed);
         return program;
     }
-    
+
     public static ProgramBuilder aProgram(QualificationInstitution institution) {
         return new ProgramBuilder().code("AAA").title("Amazing program!").enabled(true).atasRequired(false).institution(institution);
     }

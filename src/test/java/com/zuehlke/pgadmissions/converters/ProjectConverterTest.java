@@ -98,13 +98,13 @@ public class ProjectConverterTest {
 	
 	private void assertThatConvertedProjectHasSameFieldsAsDto(Project project, ProjectDTO dto) {
 		assertThat(project.getId(), equalTo(dto.getId()));
-		assertThat(project.getAuthor(), nullValue());
-		assertThat(project.getAdvert(), notNullValue());
-		assertThat(project.getAdvert().getActive(), equalTo(dto.getActive()));
-		assertThat(project.getAdvert().getDescription(), equalTo(dto.getDescription()));
-		assertThat(project.getAdvert().getFunding(), equalTo(dto.getFunding()));
-		assertThat(project.getAdvert().getStudyDuration(), nullValue());
-		assertThat(project.getAdvert().getTitle(), equalTo(dto.getTitle()));
+		assertThat(project.getContactUser(), nullValue());
+		assertThat(project, notNullValue());
+		assertThat(project.isActive(), equalTo(dto.getActive()));
+		assertThat(project.getDescription(), equalTo(dto.getDescription()));
+		assertThat(project.getFunding(), equalTo(dto.getFunding()));
+		assertThat(project.getStudyDuration(), nullValue());
+		assertThat(project.getTitle(), equalTo(dto.getTitle()));
 		assertThat(project.getProgram(), equalTo(dto.getProgram()));
 		assertThat(project.getClosingDate(), equalTo(dto.getClosingDate()));
 		assertThat(project.getAdministrator(), equalTo(administratorUser));

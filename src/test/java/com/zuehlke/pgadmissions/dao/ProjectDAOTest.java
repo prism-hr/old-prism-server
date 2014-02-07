@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -37,7 +36,7 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
     }
 
     private void createDomainObjects() {
-        RegisteredUser author = new RegisteredUserBuilder().username("author").firstName("author").lastName("project").email("author.project@email.test")
+        RegisteredUser contactUser = new RegisteredUserBuilder().username("contactUser").firstName("contactUser").lastName("project").email("contactUser.project@email.test")
                 .build();
         Date closingDate = DateUtils.addDays(new Date(), 10);
         RegisteredUser primarySupervisor = new RegisteredUserBuilder().username("primary").firstName("primary").lastName("supervisor")
@@ -46,9 +45,9 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
                 .email("secondary.supervisor@email.test").build();
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("ProjectProgram").institution(institution).build();
-        save(author, primarySupervisor, secondarySupervisor, institution, program);
+        save(contactUser, primarySupervisor, secondarySupervisor, institution, program);
         Advert advert = new AdvertBuilder().description("desc").funding("fund").studyDuration(1).title("title").build();
-        project = new ProjectBuilder().advert(advert).author(author).closingDate(closingDate).primarySupervisor(primarySupervisor).program(program)
+        project = new ProjectBuilder().advert(advert).contactUser(contactUser).closingDate(closingDate).primarySupervisor(primarySupervisor).program(program)
                 .secondarySupervisor(secondarySupervisor).build();
         flushAndClearSession();
     }
@@ -58,7 +57,7 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
         projectDAO.save(project);
         flushAndClearSession();
         assertNotNull(project.getId());
-        assertNotNull(project.getAdvert().getId());
+        assertNotNull(project.getId());
     }
 
     @Test
@@ -68,16 +67,15 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
 
         Project loadedProject = projectDAO.getProjectById(project.getId());
         assertNotNull(loadedProject);
-        assertNotNull(loadedProject.getAdvert());
         assertEquals(loadedProject.getId(), project.getId());
-        assertEquals(loadedProject.getAdvert().getId(), project.getAdvert().getId());
-        assertEquals(loadedProject.getAuthor().getId(), project.getAuthor().getId());
+        assertEquals(loadedProject.getId(), project.getId());
+        assertEquals(loadedProject.getId(), project.getId());
         assertEquals(loadedProject.getPrimarySupervisor().getId(), project.getPrimarySupervisor().getId());
         assertEquals(loadedProject.getSecondarySupervisor().getId(), project.getSecondarySupervisor().getId());
         assertEquals(loadedProject.getClosingDate(), DateUtils.truncate(loadedProject.getClosingDate(), Calendar.DAY_OF_MONTH));
         assertEquals(loadedProject.getProgram().getId(), project.getProgram().getId());
         assertEquals(loadedProject.isAcceptingApplications(), project.isAcceptingApplications());
-        assertEquals(loadedProject.isDisabled(), project.isDisabled());
+        assertEquals(loadedProject.isEnabled(), project.isEnabled());
     }
 
     @Test
@@ -92,8 +90,8 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotGetDisabledProjectsForProgram() {
-        project.setDisabled(true);
-        project.getAdvert().setActive(false);
+        project.setEnabled(false);
+        project.setActive(false);
         projectDAO.save(project);
         flushAndClearSession();
 
@@ -106,7 +104,7 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
         projectDAO.save(project);
         flushAndClearSession();
 
-        List<Project> projects = projectDAO.getProjectsForProgramOfWhichAuthor(project.getProgram(), project.getAuthor());
+        List<Project> projects = projectDAO.getProjectsForProgramOfWhichAuthor(project.getProgram(), project.getContactUser());
         assertProjectIncluded(true, projects, project);
     }
 
@@ -114,7 +112,7 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
         assertTrue(projects.size() >= (expected ? 1 : 0));
         boolean projectIncluded = false;
         for (Project loadedProject : projects) {
-            assertFalse(loadedProject.isDisabled());
+            assertTrue(loadedProject.isEnabled());
             if (expectedProject.getId().equals(loadedProject.getId())) {
                 projectIncluded = true;
             }

@@ -366,7 +366,7 @@ public class RegisterControllerTest {
         String activationCode = "ul5oaij68186jbcg";
         String queryString = "queryString";
         Program program = new ProgramBuilder().id(1).build();
-        Project project = new ProjectBuilder().id(1).disabled(true).advert(new AdvertBuilder().id(1).active(false).build()).build();
+        Project project = new ProjectBuilder().id(1).enabled(false).advert(new AdvertBuilder().id(1).active(false).build()).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).originalApplicationQueryString(queryString).activationCode(activationCode).enabled(false)
                 .username("email@email.com").email("email@email.com").password("1234").build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);

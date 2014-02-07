@@ -163,7 +163,7 @@ public class ApplicationFormControllerTest {
     	program.setInstances(Arrays.asList(programInstance));
     	RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).firstName("first").lastName("last").email("primary@supervisor.com").build();
     	Advert advert = new AdvertBuilder().id(1).title("title").active(false).build();
-    	Project project = new ProjectBuilder().id(1).primarySupervisor(primarySupervisor).program(program).advert(advert).disabled(true).build();
+    	Project project = new ProjectBuilder().id(1).primarySupervisor(primarySupervisor).program(program).advert(advert).enabled(false).build();
     	Integer projectId = 1;
     	
     	EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);
@@ -183,7 +183,7 @@ public class ApplicationFormControllerTest {
     	program.setInstances(Arrays.asList(programInstance));
     	RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).firstName("first").lastName("last").email("primary@supervisor.com").build();
     	Advert advert = new AdvertBuilder().id(1).title("title").active(false).build();
-    	Project project = new ProjectBuilder().id(1).primarySupervisor(primarySupervisor).program(program).advert(advert).disabled(true).build();
+    	Project project = new ProjectBuilder().id(1).primarySupervisor(primarySupervisor).program(program).advert(advert).enabled(false).build();
     	Integer projectId = 1;
     	
     	EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(program);

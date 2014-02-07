@@ -144,6 +144,11 @@ public class ProgramDAO {
         return (List<ProgramType>) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).list();
     }
     
+    public ProgramType getProgramTypeById(ProgramTypeId programTypeId) {
+        return (ProgramType) sessionFactory.getCurrentSession().createCriteria(ProgramType.class)
+                .add(Restrictions.eq("id", programTypeId)).uniqueResult();
+    }
+    
     public Integer getDefaultStudyDurationForProgramType(ProgramTypeId programTypeId) {
         return (Integer) sessionFactory.getCurrentSession().createCriteria(ProgramType.class)
                 .setProjection(Projections.property("defaultStudyDuration"))

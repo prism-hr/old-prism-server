@@ -75,6 +75,10 @@ public class Program extends Advert implements Serializable {
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     private List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "program_type_id")
+    private ProgramType programType;
 
     public Program() {
     }
@@ -192,6 +196,14 @@ public class Program extends Advert implements Serializable {
 
     public List<ApplicationForm> getApplications() {
         return applications;
+    }
+    
+    public ProgramType getProgramType() {
+        return programType;
+    }
+
+    public void setProgramType(ProgramType programType) {
+        this.programType = programType;
     }
 
 }

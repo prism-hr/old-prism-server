@@ -6,8 +6,6 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
@@ -22,14 +20,6 @@ public class Project extends Advert implements Serializable {
 
     private static final long serialVersionUID = 5963260213501162814L;
 
-    @Id
-    @GeneratedValue
-    private Integer id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    private RegisteredUser author;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
@@ -37,6 +27,10 @@ public class Project extends Advert implements Serializable {
     @Column(name = "closing_date")
     @Temporal(value = TemporalType.DATE)
     private Date closingDate;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "primary_supervisor_id", nullable = false)
+    private RegisteredUser administrator;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "primary_supervisor_id", nullable = false)
@@ -45,22 +39,6 @@ public class Project extends Advert implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "secondary_supervisor_id")
     private RegisteredUser secondarySupervisor;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public RegisteredUser getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(RegisteredUser author) {
-        this.author = author;
-    }
 
     public Program getProgram() {
         return program;
@@ -76,6 +54,14 @@ public class Project extends Advert implements Serializable {
 
     public void setClosingDate(Date closingDate) {
         this.closingDate = closingDate;
+    }
+
+    public RegisteredUser getAdministrator() {
+        return administrator;
+    }
+
+    public void setAdministrator(RegisteredUser administrator) {
+        this.administrator = administrator;
     }
 
     public RegisteredUser getPrimarySupervisor() {

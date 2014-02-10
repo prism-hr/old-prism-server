@@ -1,32 +1,39 @@
 package com.zuehlke.pgadmissions.domain.helpers;
 
 public enum NotificationListTestScenario {
-    
-    TASKREMINDERSUCCESS(new NotificationListTestCase[]{NotificationListTestCase.DUETASKREMINDER}),
-    TASKREMINDERFAILURE(new NotificationListTestCase[]{NotificationListTestCase.RECEIVEDRECENTTASKNOTIFICATION, NotificationListTestCase.NOTIFICATIONWINDOWEXPIRED, 
-            NotificationListTestCase.NOURGENTACTIONS, NotificationListTestCase.ACTIONNOTSYNDICATED, NotificationListTestCase.USERACCOUNTDISABLED, NotificationListTestCase.USERACCOUNTEXPIRED,
-            NotificationListTestCase.USERACCOUNTLOCKED, NotificationListTestCase.USERCREDENTIALSEXPIRED}),
-    TASKNOTIFICATIONSUCCESS(new NotificationListTestCase[]{NotificationListTestCase.DUETASKNOTIFICATIONNEVERRECEIVED, NotificationListTestCase.DUETASKNOTIFICATIONRECEIVEDAGESAGO}),
-    TASKNOTIFICATIONFAILURE(new NotificationListTestCase[]{NotificationListTestCase.RECEIVEDRECENTTASKNOTIFICATION, NotificationListTestCase.NOTIFICATIONWINDOWEXPIRED, 
-            NotificationListTestCase.NOURGENTACTIONS, NotificationListTestCase.ACTIONNOTSYNDICATED, NotificationListTestCase.USERACCOUNTDISABLED, NotificationListTestCase.USERACCOUNTEXPIRED,
-            NotificationListTestCase.USERACCOUNTLOCKED, NotificationListTestCase.USERCREDENTIALSEXPIRED}),
-    UPDATENOTIFICATIONSUCCESS(new NotificationListTestCase[]{NotificationListTestCase.DUEUPDATENOTIFICATIONNEVERRECEIVED, NotificationListTestCase.DUEUPDATENOTIFICATIONRECEIVEDAGESAGO}),
-    UPDATENOTIFICATIONFAILURE(new NotificationListTestCase[]{NotificationListTestCase.RECIEVEDRECENTUPDATENOTIFICATION, NotificationListTestCase.ROLENOTSUBSCRIBEDTOUPDATES, 
-            NotificationListTestCase.NOUPDATES, NotificationListTestCase.OLDUPDATES, NotificationListTestCase.USERACCOUNTDISABLED, NotificationListTestCase.USERACCOUNTEXPIRED, 
-            NotificationListTestCase.USERACCOUNTLOCKED, NotificationListTestCase.USERCREDENTIALSEXPIRED});
-    
-    private NotificationListTestCase[] displayValue;
 
-    private NotificationListTestScenario(NotificationListTestCase[] displayValue) {
-        this.setDisplayValue(displayValue);
+    TASK_REMINDER_SUCCESS(new NotificationListTestCase[] { NotificationListTestCase.DUE_TASK_REMINDER }), //
+    TASK_REMINDER_FAILURE(new NotificationListTestCase[] { NotificationListTestCase.RECEIVED_RECENT_TASK_NOTIFICATION,
+            NotificationListTestCase.NOTIFICATION_WINDOW_EXPIRED, NotificationListTestCase.NO_URGENT_ACTIONS, NotificationListTestCase.ACTION_NOT_SYNDICATED,
+            NotificationListTestCase.USER_ACCOUNT_DISABLED, NotificationListTestCase.USER_ACCOUNT_EXPIRED, NotificationListTestCase.USER_ACCOUNT_LOCKED,
+            NotificationListTestCase.USER_CREDENTIALS_EXPIRED }), //
+    TASK_NOTIFICATION_SUCCESS(new NotificationListTestCase[] { NotificationListTestCase.DUE_TASK_NOTIFICATION_NEVER_RECEIVED,
+            NotificationListTestCase.DUE_TASK_NOTIFICATION_RECEIVED_AGES_AGO }), //
+    TASK_NOTIFICATION_FAILURE(new NotificationListTestCase[] { NotificationListTestCase.RECEIVED_RECENT_TASK_NOTIFICATION,
+            NotificationListTestCase.NOTIFICATION_WINDOW_EXPIRED, NotificationListTestCase.NO_URGENT_ACTIONS, NotificationListTestCase.ACTION_NOT_SYNDICATED,
+            NotificationListTestCase.USER_ACCOUNT_DISABLED, NotificationListTestCase.USER_ACCOUNT_EXPIRED, NotificationListTestCase.USER_ACCOUNT_LOCKED,
+            NotificationListTestCase.USER_CREDENTIALS_EXPIRED }), //
+    UPDATE_NOTIFICATION_SUCCESS(new NotificationListTestCase[] { NotificationListTestCase.DUE_UPDATE_NOTIFICATION_NEVER_RECEIVED,
+            NotificationListTestCase.DUE_UPDATE_NOTIFICATION_RECEIVED_AGES_AGO }), //
+    UPDATE_NOTIFICATION_FAILURE(new NotificationListTestCase[] { NotificationListTestCase.RECEIVED_RECENT_UPDATE_NOTIFICATION,
+            NotificationListTestCase.ROLE_NOT_SUBSCRIBED_TO_UPDATES, NotificationListTestCase.NO_UPDATES, NotificationListTestCase.OLD_UPDATES,
+            NotificationListTestCase.USER_ACCOUNT_DISABLED, NotificationListTestCase.USER_ACCOUNT_EXPIRED, NotificationListTestCase.USER_ACCOUNT_LOCKED,
+            NotificationListTestCase.USER_CREDENTIALS_EXPIRED }), //
+    OPPORTUNITY_REQUEST_NOTIFICATION_SUCCESS(new NotificationListTestCase[] { NotificationListTestCase.OPPORTUNITY_REQUEST_NOTIFICATION_NEVER_RECEIVED,
+            NotificationListTestCase.OPPORTUNITY_REQUEST_NOTIFICATION_RECEIVED_AGES_AGO }), //
+    OPPORTUNITY_REQUEST_NOTIFICATION_FAILURE(new NotificationListTestCase[] { NotificationListTestCase.RECEIVED_RECENT_OPPORTUNITY_REQUEST_NOTIFICATION,
+            NotificationListTestCase.ROLE_NOT_SUPERADMINISTRATOR,
+            NotificationListTestCase.USER_ACCOUNT_DISABLED, NotificationListTestCase.USER_ACCOUNT_EXPIRED, NotificationListTestCase.USER_ACCOUNT_LOCKED,
+            NotificationListTestCase.USER_CREDENTIALS_EXPIRED });
+
+    private NotificationListTestCase[] testCases;
+
+    private NotificationListTestScenario(NotificationListTestCase[] testCases) {
+        this.testCases = testCases;
     }
 
-    public NotificationListTestCase[] getDisplayValue() {
-        return displayValue;
-    }
-
-    public void setDisplayValue(NotificationListTestCase[] displayValue) {
-        this.displayValue = displayValue;
+    public NotificationListTestCase[] getTestCases() {
+        return testCases;
     }
 
 }

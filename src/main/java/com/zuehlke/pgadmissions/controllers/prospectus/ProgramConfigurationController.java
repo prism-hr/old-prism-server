@@ -29,11 +29,11 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.ProgramOpportunityDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
@@ -48,8 +48,8 @@ import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 import com.zuehlke.pgadmissions.utils.GsonExclusionStrategies;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
 import com.zuehlke.pgadmissions.validators.AbstractValidator;
+import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
 import com.zuehlke.pgadmissions.validators.ProgramClosingDateValidator;
-import com.zuehlke.pgadmissions.validators.ProgramOpportunityDTOValidator;
 
 import freemarker.template.TemplateException;
 
@@ -76,7 +76,7 @@ public class ProgramConfigurationController {
     private DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
 
     @Autowired
-    private ProgramOpportunityDTOValidator programOpportunityDTOValidator;
+    private OpportunityRequestValidator opportunityRequestValidator;
 
     @Autowired
     private ProgramClosingDateValidator closingDateValidator;
@@ -107,11 +107,12 @@ public class ProgramConfigurationController {
                 .setExclusionStrategies(GsonExclusionStrategies.excludeClass(Program.class)).create();
     }
 
-    @InitBinder("programOpportunityDTO")
+    @InitBinder("opportunityRequest")
     public void registerPropertyEditors(WebDataBinder binder) {
-        binder.setValidator(programOpportunityDTOValidator);
+        binder.setValidator(opportunityRequestValidator);
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
+        binder.registerCustomEditor(Program.class, programPropertyEditor);
         binder.registerCustomEditor(String.class, null, new StringTrimmerEditor(true));
     }
 
@@ -154,7 +155,7 @@ public class ProgramConfigurationController {
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
-        result.put("institutionName", program.getInstitution().getName());
+        result.put("institutionCode", program.getInstitution().getCode());
         result.put("advertisingDeadline", programInstanceService.getAdvertisingDeadlineYear(program));
         result.put("studyOptions", programInstanceService.getStudyOptions(program));
         result.put("buttonToApply", templateRenderer.renderButton(dataMap));
@@ -165,12 +166,12 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
     @ResponseBody
-    public String saveOpportunity(@Valid ProgramOpportunityDTO programOpportunityDTO, BindingResult result) {
+    public String saveOpportunity(@Valid OpportunityRequest opportunityRequest, BindingResult result) {
         Map<String, Object> map;
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
         } else {
-            Program program = programsService.saveProgramOpportunity(programOpportunityDTO);
+            Program program = programsService.saveProgramOpportunity(opportunityRequest);
             map = Maps.newHashMap();
             map.put("success", (Object) true);
             map.put("programCode", program.getCode());
@@ -180,13 +181,12 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String addClosingDate(@RequestParam String programCode, ProgramClosingDate programClosingDate, BindingResult result,
-            HttpServletRequest request) {
+    public String addClosingDate(@RequestParam String programCode, ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
         Program program = programsService.getProgramByCode(programCode);
         programClosingDate.setProgram(program);
-        
+
         ValidationUtils.invokeValidator(closingDateValidator, programClosingDate, result);
-        
+
         Map<String, Object> map;
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
@@ -203,9 +203,9 @@ public class ProgramConfigurationController {
     public String updateClosingDate(@RequestParam String programCode, ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
         Program program = programsService.getProgramByCode(programCode);
         programClosingDate.setProgram(program);
-        
+
         ValidationUtils.invokeValidator(closingDateValidator, programClosingDate, result);
-        
+
         Map<String, Object> map;
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);

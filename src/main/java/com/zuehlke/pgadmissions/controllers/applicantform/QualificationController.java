@@ -136,7 +136,7 @@ public class QualificationController {
         if (result.hasErrors()) {
             if (qualification.getInstitutionCountry() != null) {
                 model.addAttribute("institutions", qualificationInstitutionDAO
-                        .getEnabledInstitutionsByCountryCode(qualification.getInstitutionCountry().getCode()));
+                        .getEnabledInstitutionsByDomicileCode(qualification.getInstitutionCountry().getCode()));
             }
             return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
         }
@@ -181,7 +181,7 @@ public class QualificationController {
 			throw new ResourceNotFoundException();
 		}
 		
-		model.addAttribute("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(qualification.getInstitutionCountry().getCode()));
+		model.addAttribute("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(qualification.getInstitutionCountry().getCode()));
 		return qualification;
 	}
 

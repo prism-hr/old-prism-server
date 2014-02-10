@@ -55,8 +55,8 @@ public class DeleteApplicationFormEntitiesController {
     }
 
     @RequestMapping(value = "/qualification", method = RequestMethod.POST)
-    public String deleteQualification(@RequestParam("id") String encryptedQualificationId) {
-        Qualification qualification = qualificationService.getQualificationById(encryptionHelper.decryptToInteger(encryptedQualificationId));
+    public String deleteQualification(@RequestParam("id") Integer qualificationId) {
+        Qualification qualification = qualificationService.getQualificationById(qualificationId);
         qualificationService.delete(qualification);
         updateLastAccessAndLastModified(userService.getCurrentUser(), qualification.getApplication());
         return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber() + "&message=deleted";

@@ -5,10 +5,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -40,6 +42,7 @@ public class RegisteredUserBuilder {
     private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
     private List<Program> programsOfWhichApprover = new ArrayList<Program>();
     private List<Program> programsOfWhichViewer = new ArrayList<Program>();
+    private List<QualificationInstitution> institutions = Lists.newArrayList();
 
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
     private ApplicationsFiltering filtering;
@@ -81,6 +84,11 @@ public class RegisteredUserBuilder {
 
     public RegisteredUserBuilder programsOfWhichViewer(Program... programs) {
         this.programsOfWhichViewer.addAll(Arrays.asList(programs));
+        return this;
+    }
+    
+    public RegisteredUserBuilder institutions(QualificationInstitution... institutions) {
+        this.institutions.addAll(Arrays.asList(institutions));
         return this;
     }
 
@@ -219,20 +227,21 @@ public class RegisteredUserBuilder {
         user.setActivationCode(activationCode);
         user.getRoles().addAll(roles);
 
-        user.setProgramsOfWhichAdministrator(programsOfWhichAdministrator);
-        user.setProgramsOfWhichApprover(programsOfWhichApprover);
-        user.setProgramsOfWhichViewer(programsOfWhichViewer);
+        user.getProgramsOfWhichAdministrator().addAll(programsOfWhichAdministrator);
+        user.getProgramsOfWhichApprover().addAll(programsOfWhichApprover);
+        user.getProgramsOfWhichViewer().addAll(programsOfWhichViewer);
+        user.getInstitutions().addAll(institutions);
         user.setConfirmPassword(confirmPassword);
-        user.setReferees(referees);
-        user.setComments(comments);
-        user.setPendingRoleNotifications(pendingRoleNotifications);
+        user.getReferees().addAll(referees);
+        user.getComments().addAll(comments);
+        user.getPendingRoleNotifications().addAll(pendingRoleNotifications);
         user.setDirectToUrl(directURL);
         user.setOriginalApplicationQueryString(originalApplicationQueryString);
         user.setFiltering(filtering);
 
         user.setUpi(upi);
         user.setApplicationListLastAccessTimestamp(applicationListLastAccessTimestamp);
-        user.setLinkedAccounts(linkedAccounts);
+        user.getLinkedAccounts().addAll(linkedAccounts);
         user.setPrimaryAccount(primaryAccount);
 
         return user;

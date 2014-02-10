@@ -34,5 +34,5 @@ public class OpportunityRequestDAO {
 	public OpportunityRequest findById(Integer requestId) {
 		return (OpportunityRequest) sessionFactory.getCurrentSession().get(OpportunityRequest.class, requestId);
 	}
-
+	
 }

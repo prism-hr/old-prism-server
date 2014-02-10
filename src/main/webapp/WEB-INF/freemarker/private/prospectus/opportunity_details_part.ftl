@@ -24,7 +24,7 @@
   <label id="lbl-providerName" class="plain-label" for="institution">Institution Name<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionName'/>"></span>
   <div class="field">
-    <select class="full selectpicker" disabled="disabled" data-live-search="true" data-size="6"  id="institution" name="institutionCode">
+    <select class="full selectpicker" data-live-search="true" data-size="6"  id="institution" name="institutionCode">
       <option value="">Select...</option>
       <#if opportunityRequest.institutionCountry??>
         <#list institutions as inst>

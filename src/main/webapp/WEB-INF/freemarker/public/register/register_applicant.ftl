@@ -85,7 +85,7 @@
                   <#if RequestParameters.activationCode?has_content>
                     <div id="email_tooltip_input" name="email_tooltip_input">
                   </#if>
-                    <input id="email" type="email" placeholder="Email Address" name="email" value='${(pendingUser.email?html)!""}' <#if RequestParameters.activationCode?has_content>readonly="readonly"</#if> />
+                    <input id="email" type="email" placeholder="Email Address" name="email" value='${(pendingUser.email?html)!""}' <#if RequestParameters.activationCode?has_content>readonly="readonly"</#if> autocomplete="off" />
                   <#if RequestParameters.activationCode?has_content>
                     </div>
                   </#if>
@@ -99,7 +99,7 @@
                 <label class="control-label" for="password">Password <em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'myaccount.newPw'/>"></span>
                 <div class="controls">
-                  <input id="password" type="password" name="password" placeholder="Password"/>
+                  <input id="password" type="password" name="password" placeholder="Password" autocomplete="off" />
                   <@spring.bind "pendingUser.password" />
                   <#list spring.status.errorMessages as error>
                     <div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>

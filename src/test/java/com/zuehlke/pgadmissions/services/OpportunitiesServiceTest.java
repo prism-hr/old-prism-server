@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
@@ -24,11 +23,13 @@ import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -42,6 +43,10 @@ public class OpportunitiesServiceTest {
     @Mock
     @InjectIntoByType
     private OpportunityRequestDAO opportunityRequestDAO;
+
+    @Mock
+    @InjectIntoByType
+    private RoleService roleService;
 
     @Mock
     @InjectIntoByType
@@ -102,6 +107,7 @@ public class OpportunitiesServiceTest {
 
     @Test
     public void shouldApproveOpportunityRequest() {
+        Role administratorRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         RegisteredUser author = new RegisteredUser();
         OpportunityRequest request = new OpportunityRequestBuilder().author(author).build();
         Domicile country = new Domicile();
@@ -111,6 +117,7 @@ public class OpportunitiesServiceTest {
 
         expect(opportunityRequestDAO.findById(8)).andReturn(request);
         expect(programsService.saveProgramOpportunity(request)).andReturn(program);
+        expect(roleService.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(administratorRole);
 
         replay();
         service.approveOpportunityRequest(8, newOpportunityRequest);
@@ -126,8 +133,10 @@ public class OpportunitiesServiceTest {
         assertEquals(newOpportunityRequest.getAtasRequired(), request.getAtasRequired());
         assertEquals(newOpportunityRequest.getAdvertisingDeadlineYear(), request.getAdvertisingDeadlineYear());
         assertEquals(newOpportunityRequest.getStudyOptions(), request.getStudyOptions());
+
         assertThat(author.getInstitutions(), contains(institution));
         assertThat(author.getProgramsOfWhichAdministrator(), contains(program));
+        assertThat(author.getRoles(), contains(administratorRole));
     }
 
     @Test

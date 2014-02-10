@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -74,9 +73,6 @@ public class ProgramConfigurationController {
     private DomicilePropertyEditor domicilePropertyEditor;
 
     @Autowired
-    private DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
-
-    @Autowired
     private OpportunityRequestValidator opportunityRequestValidator;
 
     @Autowired
@@ -109,12 +105,11 @@ public class ProgramConfigurationController {
     }
 
     @InitBinder("opportunityRequest")
-    public void registerPropertyEditors(WebDataBinder binder) {
+    public void registerPropertyEditorsForOpportunityRequest(WebDataBinder binder) {
         binder.setValidator(opportunityRequestValidator);
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
-        binder.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
         binder.registerCustomEditor(Program.class, programPropertyEditor);
-        binder.registerCustomEditor(String.class, null, new StringTrimmerEditor(true));
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
     @InitBinder("programClosingDate")

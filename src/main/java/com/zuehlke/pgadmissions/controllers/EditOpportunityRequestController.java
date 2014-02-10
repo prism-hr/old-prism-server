@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
@@ -72,7 +73,6 @@ public class EditOpportunityRequestController {
     @RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
     public String getEditOpportunityRequestPage(@PathVariable("requestId") Integer requestId, ModelMap modelMap) {
         OpportunityRequest opportunityRequest = opportunitiesService.getOpportunityRequest(requestId);
-        opportunityRequest.computeStudyDurationNumberAndUnit();
 
         modelMap.addAttribute("opportunityRequest", opportunityRequest);
 
@@ -85,7 +85,7 @@ public class EditOpportunityRequestController {
     }
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.POST, params = "action=approve")
-    public String approveOpportunityRequest(@PathVariable("requestId") Integer requestId, @Valid OpportunityRequest opportunityRequest,
+    public Object approveOpportunityRequest(@PathVariable("requestId") Integer requestId, @Valid OpportunityRequest opportunityRequest,
             BindingResult bindingResult, ModelMap modelMap) {
         if (bindingResult.hasErrors()) {
             RegisteredUser author = opportunitiesService.getOpportunityRequest(requestId).getAuthor();
@@ -99,9 +99,8 @@ public class EditOpportunityRequestController {
 
             return EDIT_REQUEST_PAGE_VIEW_NAME;
         }
-        opportunityRequest.computeStudyDuration();
         opportunitiesService.approveOpportunityRequest(requestId, opportunityRequest);
-        return "redirect:/requests";
+        return new RedirectView("/requests", true, true, false);
     }
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.POST, params = "action=reject")

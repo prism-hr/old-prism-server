@@ -146,6 +146,7 @@ public class OpportunityRequest {
 
     public void setStudyDuration(Integer studyDuration) {
         this.studyDuration = studyDuration;
+        computeStudyDurationNumberAndUnit();
     }
 
     public RegisteredUser getAuthor() {
@@ -242,6 +243,7 @@ public class OpportunityRequest {
 
     public void setStudyDurationNumber(Integer studyDurationNumber) {
         this.studyDurationNumber = studyDurationNumber;
+        computeStudyDuration();
     }
 
     public String getStudyDurationUnit() {
@@ -250,25 +252,32 @@ public class OpportunityRequest {
 
     public void setStudyDurationUnit(String studyDurationUnit) {
         this.studyDurationUnit = studyDurationUnit;
+        computeStudyDuration();
     }
 
-    public void computeStudyDuration() {
-        int studyDuration = getStudyDurationNumber();
+    private void computeStudyDuration() {
+        Integer studyDuration = getStudyDurationNumber();
         String studyDurationUnit = getStudyDurationUnit();
-        if ("YEARS".equals(studyDurationUnit)) {
-            studyDuration = studyDuration * 12;
+        if (studyDuration == null || studyDurationUnit == null) {
+            this.studyDuration = null;
+        } else if ("MONTHS".equals(studyDurationUnit)) {
+            this.studyDuration = studyDuration;
+        } else if ("YEARS".equals(studyDurationUnit)) {
+            this.studyDuration = studyDuration * 12;
         }
-        this.studyDuration = studyDuration;
     }
 
-    public void computeStudyDurationNumberAndUnit() {
+    private void computeStudyDurationNumberAndUnit() {
         Integer duration = getStudyDuration();
-        if (duration % 12 == 0) {
-            setStudyDurationNumber(duration / 12);
-            setStudyDurationUnit("YEARS");
+        if (duration == null) {
+            this.studyDurationNumber = null;
+            this.studyDurationUnit = null;
+        } else if (duration % 12 == 0) {
+            this.studyDurationNumber = duration / 12;
+            this.studyDurationUnit = "YEARS";
         } else {
-            setStudyDurationNumber(duration);
-            setStudyDurationUnit("MONTHS");
+            this.studyDurationNumber = duration;
+            this.studyDurationUnit = "MONTHS";
         }
     }
 

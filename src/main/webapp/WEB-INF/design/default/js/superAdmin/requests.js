@@ -4,8 +4,10 @@ $(document).ready(function() {
         
         $('#ajaxloader').show();
         switch ($(this).attr('data-value')) {
-        case 'approve':
-            window.location.href = "/pgadmissions/requests/edit/"+ requestId;
+        case 'approve':  window.location.href = "/pgadmissions/requests/edit/"+ requestId;
+            break;
+        case 'view':  window.location.href = "/pgadmissions/requests/edit/"+ requestId;
+            break;
         };
     });
 });

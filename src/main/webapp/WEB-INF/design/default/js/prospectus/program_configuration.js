@@ -53,7 +53,6 @@ $(document).on('click', '#newProgamme', function() {
 function getInstitutionData(successCallback) {
     $("#programAdvertInstitution").selectpicker("val", "");
     $("#programAdvertInstitutionOtherName").val("");
-
     $.ajax({
         type : 'GET',
         statusCode : {
@@ -166,6 +165,7 @@ function changeHeaderInfoBars(programval) {
 
 function getClosingDatesData(program_code) {
     clearClosingDate();
+    $('#ajaxloader').show();
     $.ajax({
         type : 'GET',
         statusCode : {
@@ -195,6 +195,7 @@ function getClosingDatesData(program_code) {
             checkIfErrors();
         },
         complete : function() {
+            $('#ajaxloader').fadeOut('fast');
         }
     });
 }
@@ -369,11 +370,13 @@ function removeClosingDate(row, id) {
             }
         },
         complete : function() {
+            $('#ajaxloader').fadeOut('fast');
         }
     });
 }
 
 function getAdvertData(programme_code) {
+    $('#ajaxloader').show();
     $.ajax({
         type : 'GET',
         statusCode : {
@@ -403,6 +406,7 @@ function getAdvertData(programme_code) {
             updateProgramSection(map);
         },
         complete : function() {
+            $('#ajaxloader').fadeOut('fast');
         }
     });
 }
@@ -492,7 +496,6 @@ function saveAdvert() {
     var studyOptions = $("#programAdvertStudyOptionsSelect option:selected").map(function() {
         return this.value;
     }).get().join(",");
-
     $('#ajaxloader').show();
     $.ajax({
         type : 'POST',

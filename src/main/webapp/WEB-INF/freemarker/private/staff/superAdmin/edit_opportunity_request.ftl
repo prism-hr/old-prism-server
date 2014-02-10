@@ -129,10 +129,21 @@ span.count {
                         <!-- Box start -->
                         <div class="box">
                           <div class="title"> <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Applicant" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
-                          <p class="highlight">Request Rejected. </p>
-                          <div class="textContainer">
-                            <p><em>Admin Comments.</em></p>
-                          </div>
+                          <p class="highlight">Request Rejected.</p> <i class="icon-minus-sign"></i> 
+                        </div>
+                        <div class="excontainer">
+                          <ul class="status-info">
+                            <li class="rejected">
+                              <div class="box">
+                                <div class="title">
+                                  Commented:
+                                </div>
+                                <div class="textContainer">
+                                  <p>This is the comment, if it doesn't exist dont display this block sarting for the div excontainer </p>
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
                         </div>
                         <!-- Box end -->
                       </li>
@@ -140,10 +151,21 @@ span.count {
                         <!-- Box start -->
                         <div class="box">
                           <div class="title"> <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Applicant" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
-                          <p class="highlight">Request Approved. </p>
-                          <div class="textContainer">
-                            <p><em>Admin Commnents.</em></p>
-                          </div>
+                          <p class="highlight">Request Approved. </p> <i class="icon-minus-sign"></i> 
+                        </div>
+                        <div class="excontainer">
+                          <ul class="status-info">
+                            <li class="approval">
+                              <div class="box">
+                                <div class="title">
+                                  Commented:
+                                </div>
+                                <div class="textContainer">
+                                  <p>This is the comment, if it doesn't exist dont display this block sarting for the div excontainer </p>
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
                         </div>
                         <!-- Box end -->
                       </li>

@@ -27,6 +27,7 @@ $(document).ready(function() {
     });
 
     initEditors();
+    exStatus();
 });
 
 function institutionCountryChanged() {

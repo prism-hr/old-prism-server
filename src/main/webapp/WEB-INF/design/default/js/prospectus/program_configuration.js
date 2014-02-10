@@ -426,12 +426,11 @@ function updateProgramSection(map) {
     $('#programAdvertInstitution').selectpicker('refresh');
     $("#programAdvertInstitutionOtherName").val("");
     
-    var advert = map['advert'];
     if (advert) {
-        setTextAreaValue($("#programAdvertDescriptionText"), advert['description']);
-        setTextAreaValue($("#programAdvertFundingText"), advert['funding']);
-        $("#programAdvertId").val(advert.id);
-        var durationOfStudyInMonths = advert['studyDuration'];
+        setTextAreaValue($("#programAdvertDescriptionText"), map['programDescription']);
+        setTextAreaValue($("#programAdvertFundingText"), map['programFunding']);
+        $("#programAdvertId").val(map['id']);
+        var durationOfStudyInMonths = advert['programStudyDuration'];
         if (durationOfStudyInMonths % 12 == 0) {
             $("#programAdvertStudyDurationInput").val((durationOfStudyInMonths / 12).toString());
             $("#programAdvertStudyDurationUnitSelect").val('Years');

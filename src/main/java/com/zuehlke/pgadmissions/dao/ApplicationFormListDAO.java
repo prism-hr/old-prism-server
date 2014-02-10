@@ -75,7 +75,7 @@ public class ApplicationFormListDAO {
     			.add(Projections.property("applicant.email"), "applicantEmail")
     			.add(Projections.property("applicationForm.applicationNumber"), "applicationFormNumber")
     			.add(Projections.property("program.title"), "programTitle")
-    			.add(Projections.property("advert.title"), "projectTitle")
+    			.add(Projections.property("project.title"), "projectTitle")
     			.add(Projections.property("applicationForm.projectTitle"), "oldProjectTitle")
     			.add(Projections.property("applicationForm.averageRating"), "applicantAverageRating")
     			.add(Projections.property("applicationForm.status"), "applicationFormStatus")
@@ -115,8 +115,7 @@ public class ApplicationFormListDAO {
 			.createAlias("applicationForm.applicant", "applicant", JoinType.INNER_JOIN)
 			.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
 			.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
-			.createAlias("applicationForm.project", "project", JoinType.LEFT_OUTER_JOIN)
-			.createAlias("project.advert", "advert", JoinType.LEFT_OUTER_JOIN);
+			.createAlias("applicationForm.project", "project", JoinType.LEFT_OUTER_JOIN);
     }
     
     private void appendWhereStatement(Criteria criteria, RegisteredUser registeredUser, ApplicationsFiltering filtering) {
@@ -156,11 +155,11 @@ public class ApplicationFormListDAO {
                         case PROJECT_TITLE:
                         	criterion = Restrictions.disjunction()
                         			.add(Restrictions.conjunction()
-                        			        .add(Restrictions.isNull("advert.title"))
+                        			        .add(Restrictions.isNull("project.title"))
                         			        .add(Restrictions.like("applicationForm.projectTitle", searchTerm, MatchMode.ANYWHERE)))
                         			.add(Restrictions.conjunction()
                         			        .add(Restrictions.isNull("applicationForm.projectTitle"))
-                        			        .add(Restrictions.like("advert.title", searchTerm, MatchMode.ANYWHERE)));
+                        			        .add(Restrictions.like("project.title", searchTerm, MatchMode.ANYWHERE)));
                             break;
                         case SUPERVISOR:
                             criteria.createAlias("applicationForm.programmeDetails", "programmeDetails", JoinType.LEFT_OUTER_JOIN)

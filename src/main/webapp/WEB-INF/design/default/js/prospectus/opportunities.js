@@ -135,9 +135,9 @@ function renderAdvert(advert){
 		psupervisor = '';
 		ssupervisor = '';
 	} else if (advert.type == 'project') {
-		psupervisor = '<div class="psupervisor"><p>'+advert.primarySupervisor.firstname + ' ' + advert.primarySupervisor.lastname + ' (PI)';
-		if (advert.secondarySupervisorSpecified) {
-			ssupervisor = '<span class="ssupervisor">, '+ advert.secondarySupervisor.firstname + ' ' + advert.secondarySupervisor.lastname+'</span></p></div>'; 
+		psupervisor = '<div class="psupervisor"><p>'+advert.primarySupervisorFirstName + ' ' + advert.primarySupervisorLastName + ' (PI)';
+		if (advert.secondarySupervisorFirstname != "undefined") {
+			ssupervisor = '<span class="ssupervisor">, '+ advert.secondarySupervisorFirstName + ' ' + advert.secondarySupervisorLastName+'</span></p></div>'; 
 		} else {
 			ssupervisor = '</p></div>';
 		}
@@ -178,7 +178,7 @@ function renderAdvert(advert){
 			'<!-- AddThis Button END -->'+
 		'</div>'+
 		'<div class="applyBox">'+
-			'<a href="mailto:'+advert.email+'?subject=Question About:'+advert.title+'" class="question">Ask a question</a>'+
+			'<a href="mailto:'+advert.primarySupervisorEmail+'?subject=Question About:'+advert.title+'" class="question">Ask a question</a>'+
 			'<button id="'+advert.programCode+'" class="btn btn-primary apply">'+buttonText+'</button>'+
 		'</div>'+
 	'</div>'+

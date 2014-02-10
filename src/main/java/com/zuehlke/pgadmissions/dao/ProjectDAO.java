@@ -37,7 +37,7 @@ public class ProjectDAO {
     public List<Project> getProjectsForProgram(Program program) {
         return sessionFactory.getCurrentSession().createCriteria(Project.class).
         		add(Restrictions.eq("program", program)).
-        		add(Restrictions.eq("disabled", false)).list();
+        		add(Restrictions.eq("enabled", true)).list();
     }
 
     public List<Project> getProjectsForProgramOfWhichAuthor(Program program, RegisteredUser author) {
@@ -47,7 +47,7 @@ public class ProjectDAO {
         			add(Restrictions.eq("author", author)).
         			add(Restrictions.eq("administrator", author)).
         			add(Restrictions.eq("primarySupervisor", author))).
-        		add(Restrictions.eq("disabled", false)).list();
+        		add(Restrictions.eq("enabled", true)).list();
     }
 
 }

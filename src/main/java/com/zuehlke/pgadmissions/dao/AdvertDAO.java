@@ -73,9 +73,15 @@ public class AdvertDAO {
             Criterion restriction = null;
             
             Session session = sessionFactory.getCurrentSession();
-
-            switch (feedKey) {
-            case OPPORTUNITIESBYFEEDID:
+            
+            if (feedKey == null || feedKey == OpportunityListType.CURRENTOPPORTUNITY) {
+                programQuery = session.createCriteria(Program.class, "program");
+                projectQuery = session.createCriteria(Program.class, "program");
+                if (feedKey == OpportunityListType.CURRENTOPPORTUNITY) {
+                    programQuery.add(Restrictions.eq("id", Integer.parseInt(feedKeyValue)));
+                    projectQuery.add(Restrictions.eq("project.id", Integer.parseInt(feedKeyValue)));
+                }
+            } else if (feedKey == OpportunityListType.OPPORTUNITIESBYFEEDID) {
                 restriction = Restrictions.eq("id", Integer.parseInt(feedKeyValue));
                 programQuery = session.createCriteria(ResearchOpportunitiesFeed.class)
                         .createAlias("programs", "program", JoinType.INNER_JOIN)
@@ -83,8 +89,7 @@ public class AdvertDAO {
                 projectQuery = session.createCriteria(ResearchOpportunitiesFeed.class)
                         .createAlias("programs", "program", JoinType.INNER_JOIN)
                         .add(restriction);
-                break;
-            case OPPORTUNITIESBYUSERUPI:
+            } else if (feedKey == OpportunityListType.OPPORTUNITIESBYUSERUPI) {
                 restriction = Restrictions.eq("registeredUser.upi", feedKeyValue);
                 programQuery = session.createCriteria(ApplicationFormUserRole.class)
                         .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
@@ -94,8 +99,7 @@ public class AdvertDAO {
                         .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                         .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
                         .add(restriction);
-                break;
-            case OPPORTUNITIESBYUSERUSERNAME:
+            } else if (feedKey == OpportunityListType.OPPORTUNITIESBYUSERUSERNAME) {
                 restriction = Restrictions.eq("registeredUser.username", feedKeyValue);
                 programQuery = session.createCriteria(ApplicationFormUserRole.class)
                         .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
@@ -105,51 +109,60 @@ public class AdvertDAO {
                         .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                         .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
                         .add(restriction);
-                break;
-            case CURRENTOPPORTUNITY:
-                programQuery = session.createCriteria(Program.class);
-                projectQuery = session.createCriteria(Project.class);
-                break;
-            default:
-                break;
             }
             
             DateTime baseline = new DateTime(new Date());
             DateTime cleanBaseline = new DateTime(baseline.getYear(), baseline.getMonthOfYear(), baseline.getDayOfMonth(), 0, 0, 0);
             Date baselineDate = cleanBaseline.toDate();
             
-            programQuery.createAlias("program.advert", "advert", JoinType.INNER_JOIN)
-                    .createAlias("program.closingDates", "closingDate", JoinType.LEFT_OUTER_JOIN)
-                    .add(Restrictions.eq("advert.enabled", true)).add(Restrictions.eq("advert.active", true))
-                    .add(Restrictions.eq("advert.active", true))
-                    .add(Restrictions.ge("programClosingDate.closingDate", baselineDate));
-            
-            projectQuery.createAlias("program.advert", "advert", JoinType.INNER_JOIN)
-                    .createAlias("program.closingDates", "closingDate", JoinType.LEFT_OUTER_JOIN)
-                    .createAlias("program.projects", "project", JoinType.INNER_JOIN)
-                    .add(Restrictions.eq("advert.enabled", true)).add(Restrictions.eq("advert.active", true))
-                    .add(Restrictions.eq("advert.active", true))
-                    .add(Restrictions.ge("programClosingDate.closingDate", baselineDate));
-            
             List<AdvertDTO> advertDTOs = (List<AdvertDTO>) programQuery
-                    .setProjection(Projections.projectionList().add(Projections.groupProperty("advert.id"), "id")
-                            .add(Projections.property("advert.title"), "title").add(Projections.property("advert.description"), "description")
-                            .add(Projections.property("advert.studyDuration"), "studyDuration").add(Projections.property("advert.funding"), "funding")
-                            .add(Projections.property("program.code"), "programCode").add(Projections.min("closingDate.date"), "programClosingDate")
-                            .add(Projections.property("advert.ContactUser"), "primarySupervisor"))
+                    .setProjection(Projections.projectionList().add(Projections.groupProperty("program.id"), "id")
+                            .add(Projections.property("program.title"), "title")
+                            .add(Projections.property("program.description"), "description")
+                            .add(Projections.property("program.studyDuration"), "studyDuration")
+                            .add(Projections.property("program.funding"), "funding")
+                            .add(Projections.property("program.code"), "programCode")
+                            .add(Projections.min("closingDate.closingDate"), "closingDate")
+                            .add(Projections.property("contactUser.firstName"), "primarySupervisorFirstName")
+                            .add(Projections.property("contactUser.lastName"), "primarySupervisorLastName")
+                            .add(Projections.property("contactUser.email"), "primarySupervisorEmail"))
+                            .createAlias("program.contactUser", "contactUser", JoinType.INNER_JOIN)
+                    .createAlias("program.closingDates", "closingDate", JoinType.LEFT_OUTER_JOIN)
+                    .add(Restrictions.eq("program.enabled", true))
+                    .add(Restrictions.eq("program.active", true))
+                    .add(Restrictions.disjunction()
+                            .add(Restrictions.isNull("closingDate.id"))
+                            .add(Restrictions.ge("closingDate.closingDate", baselineDate)))
                     .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list();
                     
             advertDTOs.addAll((List<AdvertDTO>) projectQuery
-                    .setProjection(Projections.projectionList().add(Projections.groupProperty("advert.id"), "id")
-                            .add(Projections.property("advert.title"), "title").add(Projections.property("advert.description"), "description")
-                            .add(Projections.property("advert.studyDuration"), "studyDuration").add(Projections.property("advert.funding"), "funding")
-                            .add(Projections.property("program.code"), "programCode").add(Projections.min("closingDate.date"), "programClosingDate")
-                            .add(Projections.property("project.primarySupervisor"), "primarySupervisor").add(Projections.property("project.id"), "projectId")
-                            .add(Projections.property("project.secondarySupervisor"), "secondarySupervisor"))
+                    .setProjection(Projections.projectionList().add(Projections.groupProperty("project.id"), "id")
+                            .add(Projections.property("project.title"), "title")
+                            .add(Projections.property("project.description"), "description")
+                            .add(Projections.property("project.studyDuration"), "studyDuration")
+                            .add(Projections.property("project.funding"), "funding")
+                            .add(Projections.property("program.code"), "programCode")
+                            .add(Projections.min("closingDate.closingDate"), "closingDate")
+                            .add(Projections.property("primarySupervisor.firstName"), "primarySupervisorFirstName")
+                            .add(Projections.property("primarySupervisor.lastName"), "primarySupervisorLastName")
+                            .add(Projections.property("primarySupervisor.email"), "primarySupervisorEmail")
+                            .add(Projections.property("project.id"), "projectId")
+                            .add(Projections.property("secondarySupervisor.firstName"), "secondarySupervisorFirstName")
+                            .add(Projections.property("secondarySupervisor.lastName"), "secondarySupervisorLastName")
+                            .add(Projections.property("secondarySupervisor.email"), "secondarySupervisorEmail"))
+                    .createAlias("program.projects", "project", JoinType.INNER_JOIN)
+                    .createAlias("project.primarySupervisor", "primarySupervisor", JoinType.INNER_JOIN)
+                    .createAlias("project.secondarySupervisor", "secondarySupervisor", JoinType.INNER_JOIN)
+                    .createAlias("program.closingDates", "closingDate", JoinType.LEFT_OUTER_JOIN)
+                    .add(Restrictions.eq("project.enabled", true))
+                    .add(Restrictions.eq("project.active", true))
+                    .add(Restrictions.disjunction()
+                            .add(Restrictions.isNull("closingDate.id"))
+                            .add(Restrictions.ge("closingDate.closingDate", baselineDate)))
                     .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list());
+            
+            return advertDTOs;
         }
-        
-        return null;
     }
 
     public AdvertDTO getAdvertDTOByAdvertId(String advertId) {

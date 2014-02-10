@@ -80,11 +80,11 @@ span.count {
                 <span class="label label-info">Status</span>
                 <div class="icon">
                     <#if opportunityRequest.status == "NEW">
-                    New Request <span class="icon-status offer-recommended"></span>
+                    New Request <span class="icon-status validation"></span>
                     <#elseif opportunityRequest.status == "REJECTED">
                     Rejected <span class="icon-status rejected"></span>
                     <#elseif opportunityRequest.status == "APPROVED">
-                    Approved <span class="icon-status validation"></span>
+                    Approved <span class="icon-status offer-recommended"></span>
                     </#if>
                 </div>
                 <div class="row authname"><strong>Author:</strong> ${(opportunityRequest.author.firstName)!} ${(opportunityRequest.author.lastName)!}
@@ -128,7 +128,7 @@ span.count {
                       <li class="rejected"> 
                         <!-- Box start -->
                         <div class="box">
-                          <div class="title"> <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Applicant" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
+                          <div class="title"> <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
                           <p class="highlight">Request Rejected.</p> <i class="icon-minus-sign"></i> 
                         </div>
                         <div class="excontainer">
@@ -136,7 +136,8 @@ span.count {
                             <li class="rejected">
                               <div class="box">
                                 <div class="title">
-                                  Commented:
+                                  <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span>
+                                  <em>Commented:</em>
                                 </div>
                                 <div class="textContainer">
                                   <p>This is the comment, if it doesn't exist dont display this block sarting for the div excontainer </p>
@@ -147,18 +148,19 @@ span.count {
                         </div>
                         <!-- Box end -->
                       </li>
-                      <li class="approval"> 
+                      <li class="offer_recommended"> 
                         <!-- Box start -->
                         <div class="box">
-                          <div class="title"> <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Applicant" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
+                          <div class="title"> <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
                           <p class="highlight">Request Approved. </p> <i class="icon-minus-sign"></i> 
                         </div>
                         <div class="excontainer">
                           <ul class="status-info">
-                            <li class="approval">
+                            <li class="offer_recommended">
                               <div class="box">
                                 <div class="title">
-                                  Commented:
+                                  <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span>
+                                  <em>Commented:</em>
                                 </div>
                                 <div class="textContainer">
                                   <p>This is the comment, if it doesn't exist dont display this block sarting for the div excontainer </p>

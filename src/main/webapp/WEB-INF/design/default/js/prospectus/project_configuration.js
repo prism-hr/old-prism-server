@@ -378,20 +378,19 @@ function fillProjectAdvertForm(data) {
 	project = data['project'];
 
 	clearProjectAdvertErrors();
-	var advert = project.advert;
 
 	displayProjectAdministrator(project.administrator);
 
-	$("#projectAdvertTitleInput").val(advert.title);
-	$("#projectAdvertDescriptionText").val(advert.description);
+	$("#projectAdvertTitleInput").val(project.title);
+	$("#projectAdvertDescriptionText").val(project.description);
 
-	tinymce.get('projectAdvertDescriptionText').setContent(advert.description);
+	tinymce.get('projectAdvertDescriptionText').setContent(project.description);
 	
-	setStudyDuration(advert);
+	setStudyDuration(project);
 
-	$("#projectAdvertFundingText").val(advert.funding);
+	$("#projectAdvertFundingText").val(project.funding);
 
-	tinymce.get('projectAdvertFundingText').setContent(advert.funding);
+	tinymce.get('projectAdvertFundingText').setContent(project.funding);
 
 	if (project.closingDate) {
 		$("#projectAdvertHasClosingDateRadioYes").prop("checked", true);
@@ -402,14 +401,14 @@ function fillProjectAdvertForm(data) {
 	}
 	checkProjectClosingDate();
 
-	if (advert.active) {
+	if (project.active) {
 		$("#projectAdvertIsActiveRadioYes").prop("checked", true);
 	} else {
 		$("#projectAdvertIsActiveRadioNo").prop("checked", true);
 	}
 	displayPrimarySupervisor(project.primarySupervisor);
 	displaySecondarySupervisor(project.secondarySupervisor);
-	$('#projectId').val(projectId);
+	$('#projectId').val(project.id);
 	$('#addProjectAdvert').text("Edit Project");
 
 	var linkToApply = data['linkToApply'];
@@ -622,7 +621,7 @@ function setValue(element, value) {
 	element.val(value);
 }
 function appendProjectRow(project) {
-	$('#projectAdvertsTable tbody tbody').append('<tr project-id="' + project.id + '">' + '<td>' + project.advert.title + '</td>' + '<td>' + '<button class="button-show button-hint" type="button" data-desc="Get Advertising Resources">Show</button>' + '</td>' + '<td>' + '<button class="button-edit button-hint" type="button" data-desc="Edit Advert">Edit</button>' + '</td>' + '<td>' + '<button class="button-delete button-hint" type="button" data-desc="Delete Advert">Remove</button>' + '</td>' + '</tr>');
+	$('#projectAdvertsTable tbody tbody').append('<tr project-id="' + project.id + '">' + '<td>' + project.title + '</td>' + '<td>' + '<button class="button-show button-hint" type="button" data-desc="Get Advertising Resources">Show</button>' + '</td>' + '<td>' + '<button class="button-edit button-hint" type="button" data-desc="Edit Advert">Edit</button>' + '</td>' + '<td>' + '<button class="button-delete button-hint" type="button" data-desc="Delete Advert">Remove</button>' + '</td>' + '</tr>');
 }
 function projectAdvertHasClosingDate() {
 	return projectAdvertRadioHasValue('projectAdvertHasClosingDateRadio');
@@ -652,10 +651,10 @@ function hideLoader() {
 	$('#ajaxloader').fadeOut('fast');
 }
 
-function setStudyDuration(advert) {
+function setStudyDuration(project) {
 	var studyDuration = $('#studyDuration').val();
-	if (advert != null && advert.studyDuration != undefined) {
-		studyDuration = advert.studyDuration;
+	if (project != null && project.studyDuration != "undefined") {
+		studyDuration = project.studyDuration;
 	}
 	if (studyDuration == 0) {
 		$("#projectAdvertStudyDurationInput").val('');

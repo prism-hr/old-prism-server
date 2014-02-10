@@ -145,7 +145,12 @@ public class ProgramConfigurationController {
         dataMap.put("programCode", programCode);
         
         Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
-
+        
+        result.put("program.id", program.getId());
+        result.put("programTitle", program.getTitle());
+        result.put("programDescription", program.getDescription());
+        result.put("programStudyDuration", program.getStudyDuration());
+        result.put("programFunding", program.getFunding());
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));

@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-
 public class AdvertDTO {
 
     private Integer id;
@@ -13,16 +11,19 @@ public class AdvertDTO {
     private String funding;
     private String programCode;
 	private Date closingDate;
-	private RegisteredUser primarySupervisor;
+	private String primarySupervisorFirstName;
+	private String primarySupervisorLastName;
+	private String primarySupervisorEmail;
 	private Integer projectId = null;
-    private RegisteredUser secondarySupervisor = null;
+    private String secondarySupervisorFirstName = null;
+    private String secondarySupervisorLastName = null;
     private Boolean selected = false;
     private Integer ranking = 0;
     
-	public Integer getId() {
+    public Integer getId() {
         return id;
     }
-	
+    
     public void setId(Integer id) {
         this.id = id;
     }
@@ -75,12 +76,28 @@ public class AdvertDTO {
         this.closingDate = closingDate;
     }
     
-    public RegisteredUser getPrimarySupervisor() {
-        return primarySupervisor;
+    public String getPrimarySupervisorFirstName() {
+        return primarySupervisorFirstName;
     }
     
-    public void setPrimarySupervisor(RegisteredUser primarySupervisor) {
-        this.primarySupervisor = primarySupervisor;
+    public void setPrimarySupervisorFirstName(String primarySupervisorFirstName) {
+        this.primarySupervisorFirstName = primarySupervisorFirstName;
+    }
+    
+    public String getPrimarySupervisorLastName() {
+        return primarySupervisorLastName;
+    }
+    
+    public void setPrimarySupervisorLastName(String primarySupervisorLastName) {
+        this.primarySupervisorLastName = primarySupervisorLastName;
+    }
+    
+    public String getPrimarySupervisorEmail() {
+        return primarySupervisorEmail;
+    }
+    
+    public void setPrimarySupervisorEmail(String primarySupervisorEmail) {
+        this.primarySupervisorEmail = primarySupervisorEmail;
     }
     
     public Integer getProjectId() {
@@ -91,12 +108,20 @@ public class AdvertDTO {
         this.projectId = projectId;
     }
     
-    public RegisteredUser getSecondarySupervisor() {
-        return secondarySupervisor;
+    public String getSecondarySupervisorFirstName() {
+        return secondarySupervisorFirstName;
     }
     
-    public void setSecondarySupervisor(RegisteredUser secondarySupervisor) {
-        this.secondarySupervisor = secondarySupervisor;
+    public void setSecondarySupervisorFirstName(String secondarySupervisorFirstName) {
+        this.secondarySupervisorFirstName = secondarySupervisorFirstName;
+    }
+    
+    public String getSecondarySupervisorLastName() {
+        return secondarySupervisorLastName;
+    }
+    
+    public void setSecondarySupervisorLastName(String secondarySupervisorLastName) {
+        this.secondarySupervisorLastName = secondarySupervisorLastName;
     }
     
     public Boolean getSelected() {
@@ -114,5 +139,5 @@ public class AdvertDTO {
     public void setRanking(Integer ranking) {
         this.ranking = ranking;
     }
-
+    
 }

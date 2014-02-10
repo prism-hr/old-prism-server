@@ -519,18 +519,19 @@ function saveAdvert() {
         },
         url : "/pgadmissions/prospectus/programme/saveProgramAdvert",
         data : {
-            programCode : programCode,
-            programName : programName,
+            type : "CHANGE",
+            sourceProgram : programCode,
+            programTitle : programName,
             atasRequired : $("[name=programAdvertAtasRequired]:checked").val(),
             institutionCountry : $("#programAdvertInstitutionCountry").val(),
             institutionCode : $("#programAdvertInstitution").val(),
             otherInstitution : $("#programAdvertInstitutionOtherName").val(),
-            description : addBlankLinks(tinymce.get('programAdvertDescriptionText').getContent()),
+            programDescription : addBlankLinks(tinymce.get('programAdvertDescriptionText').getContent()),
             studyDuration : JSON.stringify(duration),
             funding : tinymce.get('programAdvertFundingText').getContent(),
-            active : acceptApplications,
+            acceptingApplications : acceptApplications,
             studyOptions : studyOptions,
-            advertiseDeadlineYear : $("#programAdvertAdvertisingDeadlineYear").val()
+            advertisingDeadlineYear : $("#programAdvertAdvertisingDeadlineYear").val()
         },
         success : function(data) {
             var map = JSON.parse(data);

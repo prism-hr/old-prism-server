@@ -81,6 +81,12 @@ public class OpportunityRequest {
     private Program sourceProgram;
 
     @Transient
+    private String funding;
+
+    @Transient
+    private Boolean acceptingApplications = true;
+
+    @Transient
     private Integer studyDurationNumber;
 
     @Transient
@@ -204,6 +210,30 @@ public class OpportunityRequest {
 
     public void setType(OpportunityRequestType type) {
         this.type = type;
+    }
+
+    public Program getSourceProgram() {
+        return sourceProgram;
+    }
+
+    public void setSourceProgram(Program sourceProgram) {
+        this.sourceProgram = sourceProgram;
+    }
+
+    public String getFunding() {
+        return funding;
+    }
+
+    public void setFunding(String funding) {
+        this.funding = funding;
+    }
+
+    public Boolean getAcceptingApplications() {
+        return acceptingApplications;
+    }
+
+    public void setAcceptingApplications(Boolean acceptingApplications) {
+        this.acceptingApplications = acceptingApplications;
     }
 
     public Integer getStudyDurationNumber() {

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -138,7 +139,7 @@ public class ProgramInstanceService {
     }
 
     @Transactional
-    public List<ProgramInstance> createRemoveProgramInstances(Program program, List<String> studyOptionCodes, int advertisingDeadlineYear) {
+    public List<ProgramInstance> createRemoveProgramInstances(Program program, String studyOptionCodes, int advertisingDeadlineYear) {
         ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
 
         // disable all existing instances
@@ -187,7 +188,8 @@ public class ProgramInstanceService {
         return programInstance;
     }
 
-    protected List<StudyOption> getStudyOptions(List<String> studyOptionCodes) {
+    protected List<StudyOption> getStudyOptions(String studyOptionCodesSplit) {
+        List<String> studyOptionCodes = Arrays.asList(studyOptionCodesSplit.split(","));
         ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
         List<StudyOption> distinctStudyOptions = thisBean.getDistinctStudyOptions();
 

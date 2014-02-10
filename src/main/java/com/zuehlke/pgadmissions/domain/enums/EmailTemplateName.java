@@ -16,10 +16,12 @@ public enum EmailTemplateName {
 	MOVED_TO_APPROVED_NOTIFICATION("Approved Notification"),
 	APPLICATION_SUBMIT_CONFIRMATION("Receipt of Application"),//sent on event
 	MOVED_TO_INTERVIEW_NOTIFICATION("Interview Confirmation - Applicant"),
+	OPPORTUNITY_REQUEST_OUTCOME("Opportunity Request Outcome"),
 	NEW_USER_SUGGESTION("New User Invitation"),
 	DIGEST_UPDATE_NOTIFICATION("Update Notification"), 
 	DIGEST_TASK_NOTIFICATION("Task Notification"),
-	DIGEST_TASK_REMINDER("Task Reminder");
+	DIGEST_TASK_REMINDER("Task Reminder"),
+	OPPORTUNITY_REQUEST_NOTIFICATION("Opportunity Request Notification");
 	
 	private final String displayValue;
 	

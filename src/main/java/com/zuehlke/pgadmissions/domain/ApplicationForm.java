@@ -67,7 +67,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "rejection_id")
     private Rejection rejection;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_id")
     private List<Event> events = new ArrayList<Event>();
 
@@ -143,40 +143,40 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Valid
     private ProgrammeDetails programmeDetails;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "application_form_id")
     private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_id")
     private List<ApprovalRound> approvalRounds = new ArrayList<ApprovalRound>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdDate desc")
     @JoinColumn(name = "application_form_id")
     private List<Interview> interviews = new ArrayList<Interview>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("date")
     @JoinColumn(name = "application_form_id")
     private List<Comment> applicationComments = new ArrayList<Comment>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_id")
     @Valid
     private List<Qualification> qualifications = new ArrayList<Qualification>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_id")
     @Valid
     private List<Funding> fundings = new ArrayList<Funding>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_id")
     @Valid
     private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_id")
     @Valid
     private List<Referee> referees = new ArrayList<Referee>();
@@ -215,7 +215,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @OneToMany(mappedBy = "applicationForm", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "applicationForm")
     private List<ApplicationFormUserRole> applicationFormUserRoles = new ArrayList<ApplicationFormUserRole>();
 
     @Column(name = "avg_rating", precision = 3, scale = 2)
@@ -333,7 +333,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public List<Funding> getFundings() {
         return fundings;
     }
-    
 
     public void setFundings(List<Funding> fundings) {
         this.fundings = fundings;
@@ -1004,7 +1003,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public Boolean getUseCustomReferenceQuestions() {
         return useCustomReferenceQuestions;
     }
-    
+
     public boolean isUseCustomReferenceQuestions() {
         return useCustomReferenceQuestions;
     }

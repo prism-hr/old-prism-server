@@ -189,8 +189,9 @@ public class UserDAO {
     }
     
     public List<Integer> getUsersDueTaskReminder(Date seedDate) {
-        Date reminderBaseline = getReminderBaseline(seedDate, ReminderType.TASK);
-        Date expiryBaseline = getExpiryBaseline(seedDate);
+        Date baselineDate = getBaselineDate(seedDate);
+        Date reminderBaseline = getReminderBaseline(baselineDate, ReminderType.TASK);
+        Date expiryBaseline = getExpiryBaseline(baselineDate);
         
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .setProjection(Projections.groupProperty("registeredUser.id"))
@@ -208,8 +209,9 @@ public class UserDAO {
     }
     
     public List<Integer> getUsersDueTaskNotification(Date seedDate) {
-        Date reminderBaseline = getReminderBaseline(seedDate, ReminderType.TASK);
-        Date expiryBaseline = getExpiryBaseline(seedDate);
+        Date baselineDate = getBaselineDate(seedDate);
+        Date reminderBaseline = getReminderBaseline(baselineDate, ReminderType.TASK);
+        Date expiryBaseline = getExpiryBaseline(baselineDate);
         
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .setProjection(Projections.groupProperty("registeredUser.id"))
@@ -237,14 +239,31 @@ public class UserDAO {
                 .createAlias("role", "role", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("role.doSendUpdateNotification", true))
                 .add(Restrictions.eq("raisesUpdateFlag", true))
-                .add(Restrictions.eq("updateTimestamp", baseline))
                 .add(Restrictions.disjunction()
-                        .add(Restrictions.isNull("registeredUser.latestUpdateNotificationDate"))
+                    .add(Restrictions.isNull("registeredUser.latestUpdateNotificationDate"))
+                    .add(Restrictions.conjunction()
+                        .add(Restrictions.geProperty("updateTimestamp", "registeredUser.latestUpdateNotificationDate")))
                         .add(Restrictions.lt("registeredUser.latestUpdateNotificationDate", baseline)))
                 .add(Restrictions.eq("registeredUser.enabled", true))
                 .add(Restrictions.eq("registeredUser.accountNonExpired", true))
                 .add(Restrictions.eq("registeredUser.accountNonLocked", true))
                 .add(Restrictions.eq("registeredUser.credentialsNonExpired", true)).list();
+    }
+
+    public List<Integer> getUsersDueOpportunityRequestNotification(Date seedDate) {
+        Date baseline = getBaselineDate(seedDate);
+        
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+                .setProjection(Projections.groupProperty("id"))
+                .createAlias("roles", "role")
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.isNull("latestOpportunityRequestNotificationDate"))
+                        .add(Restrictions.lt("latestOpportunityRequestNotificationDate", baseline)))
+                .add(Restrictions.eq("role.id", Authority.SUPERADMINISTRATOR))
+                .add(Restrictions.eq("enabled", true))
+                .add(Restrictions.eq("accountNonExpired", true))
+                .add(Restrictions.eq("accountNonLocked", true))
+                .add(Restrictions.eq("credentialsNonExpired", true)).list();
     }
     
     private Date getBaselineDate(Date seedDate) {
@@ -262,5 +281,6 @@ public class UserDAO {
         int expiryInterval = notificationsDurationDAO.getNotificationsDuration().getDurationInDays();
         return DateUtils.addDays((Date) baseline.clone(), -expiryInterval);
     }
+
 
 }

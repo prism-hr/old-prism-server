@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 
 @RequestMapping("/update")
@@ -170,7 +171,7 @@ public class ProgrammeDetailsController {
     @ModelAttribute
     public ProgrammeDetails getProgrammeDetails(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        return firstNonNull(applicationForm.getProgrammeDetails(), new ProgrammeDetails());
+        return firstNonNull(HibernateUtils.unproxy(applicationForm.getProgrammeDetails()), new ProgrammeDetails());
     }
 
     @ModelAttribute("user")

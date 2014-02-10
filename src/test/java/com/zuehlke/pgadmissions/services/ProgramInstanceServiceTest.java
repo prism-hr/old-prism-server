@@ -242,7 +242,7 @@ public class ProgramInstanceServiceTest {
         StudyOption partTimeOption = new StudyOption("P", "Part-time");
 
         expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
-        expect(thisBean.getStudyOptions(Lists.newArrayList("F", "P"))).andReturn(Lists.newArrayList(fullTimeOption, partTimeOption));
+        expect(thisBean.getStudyOptions("F,P")).andReturn(Lists.newArrayList(fullTimeOption, partTimeOption));
         expect(thisBean.getFirstProgramInstanceStartYear(isA(DateTime.class))).andReturn(2013);
         expect(thisBean.createOrUpdateProgramInstance(program, 2013, fullTimeOption)).andReturn(new ProgramInstance());
         expect(thisBean.createOrUpdateProgramInstance(program, 2013, partTimeOption)).andReturn(new ProgramInstance());
@@ -252,7 +252,7 @@ public class ProgramInstanceServiceTest {
         expect(thisBean.createOrUpdateProgramInstance(program, 2015, partTimeOption)).andReturn(new ProgramInstance());
 
         replay();
-        List<ProgramInstance> instances = service.createRemoveProgramInstances(program, Lists.newArrayList("F", "P"), 2016);
+        List<ProgramInstance> instances = service.createRemoveProgramInstances(program, "F,P", 2016);
         verify();
 
         assertEquals(6, instances.size());
@@ -290,7 +290,7 @@ public class ProgramInstanceServiceTest {
         expect(thisBean.getDistinctStudyOptions()).andReturn(Lists.newArrayList(partOption, fullOption, modularOption));
 
         replay();
-        List<StudyOption> studyOptions = service.getStudyOptions(Lists.newArrayList("P+++", "F+++"));
+        List<StudyOption> studyOptions = service.getStudyOptions("P+++,F+++");
         verify();
 
         assertThat(studyOptions, containsInAnyOrder(partOption, fullOption));

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -12,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
+import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
 @Transactional
@@ -25,12 +24,15 @@ public class OpportunitiesService {
 
     @Autowired
     private OpportunityRequestDAO opportunityRequestDAO;
-
+    
     @Autowired
     private ProgramsService programsService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;
+    
+    @Autowired
+    private MailSendingService mailSendingService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -56,7 +58,9 @@ public class OpportunitiesService {
 
     public void approveOpportunityRequest(Integer requestId, OpportunityRequest newOpportunityRequest) {
         OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
+        RegisteredUser author = opportunityRequest.getAuthor();
 
+        // update opportunity request
         opportunityRequest.setStatus(OpportunityRequestStatus.APPROVED);
         opportunityRequest.setInstitutionCountry(newOpportunityRequest.getInstitutionCountry());
         opportunityRequest.setInstitutionCode(newOpportunityRequest.getInstitutionCode());
@@ -68,18 +72,21 @@ public class OpportunitiesService {
         opportunityRequest.setAdvertisingDeadlineYear(newOpportunityRequest.getAdvertisingDeadlineYear());
         opportunityRequest.setStudyOptions(newOpportunityRequest.getStudyOptions());
 
-        Program program = programsService.createNewCustomProgram(opportunityRequest);
-
-        List<String> studyOptions = Arrays.asList(opportunityRequest.getStudyOptions().split(","));
-        Integer advertisingDeadlineYear = opportunityRequest.getAdvertisingDeadlineYear();
-
-        List<ProgramInstance> programInstances = programInstanceService.createRemoveProgramInstances(program, studyOptions, advertisingDeadlineYear);
-        program.getInstances().addAll(programInstances);
+        // create program
+        Program program = programsService.saveProgramOpportunity(opportunityRequest);
+        
+        // grant permissions to the author 
+        author.getInstitutions().add(program.getInstitution());
+        author.getRoles();
+        author.getProgramsOfWhichAdministrator().add(program);
     }
 
-    public void rejectOpportunityRequest(Integer requestId) {
+    public void rejectOpportunityRequest(Integer requestId, String rejectionReason) {
         OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
+        opportunityRequest.setRejectionReason(rejectionReason);
         opportunityRequest.setStatus(OpportunityRequestStatus.REJECTED);
+        
+        mailSendingService.sendOpportunityRequestRejectionConfirmation(opportunityRequest);
     }
 
 }

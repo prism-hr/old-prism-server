@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.expect;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -24,9 +25,12 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
+import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class OpportunitiesServiceTest {
@@ -46,6 +50,10 @@ public class OpportunitiesServiceTest {
     @Mock
     @InjectIntoByType
     private ProgramInstanceService programInstanceService;
+
+    @Mock
+    @InjectIntoByType
+    private MailSendingService mailSendingService;
 
     @TestedObject
     private OpportunitiesService service = new OpportunitiesService();
@@ -94,23 +102,20 @@ public class OpportunitiesServiceTest {
 
     @Test
     public void shouldApproveOpportunityRequest() {
-        OpportunityRequest request = new OpportunityRequest();
+        RegisteredUser author = new RegisteredUser();
+        OpportunityRequest request = new OpportunityRequestBuilder().author(author).build();
         Domicile country = new Domicile();
         OpportunityRequest newOpportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).otherInstitution("jakis uniwerek").build();
-        Program program = new Program();
-        ProgramInstance programInstance1 = new ProgramInstance();
-        ProgramInstance programInstance2 = new ProgramInstance();
+        QualificationInstitution institution = new QualificationInstitution();
+        Program program = new ProgramBuilder().institution(institution).build();
 
         expect(opportunityRequestDAO.findById(8)).andReturn(request);
-        expect(programsService.createNewCustomProgram(request)).andReturn(program);
-        expect(programInstanceService.createRemoveProgramInstances(program, Lists.newArrayList("B+++++", "F+++++"), 2014)).andReturn(
-                Lists.newArrayList(programInstance1, programInstance2));
+        expect(programsService.saveProgramOpportunity(request)).andReturn(program);
 
         replay();
         service.approveOpportunityRequest(8, newOpportunityRequest);
         verify();
 
-        assertThat(program.getInstances(), containsInAnyOrder(programInstance1, programInstance2));
         assertEquals(OpportunityRequestStatus.APPROVED, request.getStatus());
         assertSame(newOpportunityRequest.getInstitutionCountry(), request.getInstitutionCountry());
         assertEquals(newOpportunityRequest.getInstitutionCode(), request.getInstitutionCode());
@@ -121,18 +126,22 @@ public class OpportunitiesServiceTest {
         assertEquals(newOpportunityRequest.getAtasRequired(), request.getAtasRequired());
         assertEquals(newOpportunityRequest.getAdvertisingDeadlineYear(), request.getAdvertisingDeadlineYear());
         assertEquals(newOpportunityRequest.getStudyOptions(), request.getStudyOptions());
+        assertThat(author.getInstitutions(), contains(institution));
+        assertThat(author.getProgramsOfWhichAdministrator(), contains(program));
     }
 
     @Test
     public void shouldRejectOpportunityRequest() {
         OpportunityRequest request = new OpportunityRequest();
         expect(opportunityRequestDAO.findById(8)).andReturn(request);
+        mailSendingService.sendOpportunityRequestRejectionConfirmation(request);
 
         replay();
-        service.rejectOpportunityRequest(8);
+        service.rejectOpportunityRequest(8, "because");
         verify();
 
         assertEquals(OpportunityRequestStatus.REJECTED, request.getStatus());
+        assertEquals("because", request.getRejectionReason());
     }
 
 }

@@ -6,7 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -16,6 +15,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "OPPORTUNITY_REQUEST")
@@ -25,7 +25,7 @@ public class OpportunityRequest {
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "institution_domicile_id")
     private Domicile institutionCountry;
 
@@ -48,7 +48,7 @@ public class OpportunityRequest {
     @Column(name = "study_duration")
     private Integer studyDuration;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "author_id")
     private RegisteredUser author;
 
@@ -68,6 +68,23 @@ public class OpportunityRequest {
 
     @Column(name = "advertising_dealine_year")
     private Integer advertisingDeadlineYear;
+
+    @Column(name = "rejection_reason")
+    private String rejectionReason;
+
+    @Column(name = "request_type")
+    @Enumerated(EnumType.STRING)
+    private OpportunityRequestType type = OpportunityRequestType.NEW;
+
+    @ManyToOne
+    @JoinColumn(name = "source_program_id")
+    private Program sourceProgram;
+
+    @Transient
+    private String funding;
+
+    @Transient
+    private Boolean acceptingApplications = true;
 
     @Transient
     private Integer studyDurationNumber;
@@ -177,6 +194,46 @@ public class OpportunityRequest {
 
     public void setAdvertisingDeadlineYear(Integer advertisingDeadlineYear) {
         this.advertisingDeadlineYear = advertisingDeadlineYear;
+    }
+
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
+
+    public OpportunityRequestType getType() {
+        return type;
+    }
+
+    public void setType(OpportunityRequestType type) {
+        this.type = type;
+    }
+
+    public Program getSourceProgram() {
+        return sourceProgram;
+    }
+
+    public void setSourceProgram(Program sourceProgram) {
+        this.sourceProgram = sourceProgram;
+    }
+
+    public String getFunding() {
+        return funding;
+    }
+
+    public void setFunding(String funding) {
+        this.funding = funding;
+    }
+
+    public Boolean getAcceptingApplications() {
+        return acceptingApplications;
+    }
+
+    public void setAcceptingApplications(Boolean acceptingApplications) {
+        this.acceptingApplications = acceptingApplications;
     }
 
     public Integer getStudyDurationNumber() {

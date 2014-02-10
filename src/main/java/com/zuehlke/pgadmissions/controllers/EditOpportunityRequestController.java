@@ -1,11 +1,16 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
@@ -60,6 +66,9 @@ public class EditOpportunityRequestController {
     @Autowired
     private DatePropertyEditor datePropertyEditor;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
     public String getEditOpportunityRequestPage(@PathVariable("requestId") Integer requestId, ModelMap modelMap) {
         OpportunityRequest opportunityRequest = opportunitiesService.getOpportunityRequest(requestId);
@@ -69,34 +78,42 @@ public class EditOpportunityRequestController {
 
         if (opportunityRequest.getInstitutionCountry() != null) {
             modelMap.addAttribute("institutions",
-                    qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(opportunityRequest.getInstitutionCountry().getCode()));
+                    qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
         }
 
         return EDIT_REQUEST_PAGE_VIEW_NAME;
     }
 
-    @RequestMapping(value = "/{requestId}", method = RequestMethod.POST)
-    public String approveOrRejectOpportunityRequest(@PathVariable("requestId") Integer requestId, @Valid OpportunityRequest opportunityRequest,
-            BindingResult bindingResult, @RequestParam String editAction, ModelMap modelMap) {
-        if ("approve".equals(editAction)) {
-            if (bindingResult.hasErrors()) {
-                RegisteredUser author = opportunitiesService.getOpportunityRequest(requestId).getAuthor();
-                opportunityRequest.setAuthor(author);
-                modelMap.addAttribute("opportunityRequest", opportunityRequest);
+    @RequestMapping(value = "/{requestId}", method = RequestMethod.POST, params = "action=approve")
+    public String approveOpportunityRequest(@PathVariable("requestId") Integer requestId, @Valid OpportunityRequest opportunityRequest,
+            BindingResult bindingResult, ModelMap modelMap) {
+        if (bindingResult.hasErrors()) {
+            RegisteredUser author = opportunitiesService.getOpportunityRequest(requestId).getAuthor();
+            opportunityRequest.setAuthor(author);
+            modelMap.addAttribute("opportunityRequest", opportunityRequest);
 
-                if (opportunityRequest.getInstitutionCountry() != null) {
-                    modelMap.addAttribute("institutions",
-                            qualificationInstitutionDAO.getEnabledInstitutionsByCountryCode(opportunityRequest.getInstitutionCountry().getCode()));
-                }
-
-                return EDIT_REQUEST_PAGE_VIEW_NAME;
+            if (opportunityRequest.getInstitutionCountry() != null) {
+                modelMap.addAttribute("institutions",
+                        qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
             }
-            opportunityRequest.computeStudyDuration();
-            opportunitiesService.approveOpportunityRequest(requestId, opportunityRequest);
-        } else if ("reject".equals(editAction)) {
-            opportunitiesService.rejectOpportunityRequest(requestId);
+
+            return EDIT_REQUEST_PAGE_VIEW_NAME;
         }
+        opportunityRequest.computeStudyDuration();
+        opportunitiesService.approveOpportunityRequest(requestId, opportunityRequest);
         return "redirect:/requests";
+    }
+
+    @RequestMapping(value = "/{requestId}", method = RequestMethod.POST, params = "action=reject")
+    @ResponseBody
+    public Map<String, Object> rejectOpportunityRequest(@PathVariable("requestId") Integer requestId, @RequestParam(required = false) String rejectionReason) {
+        boolean isValid = ESAPI.validator().isValidInput("rejectionReason", rejectionReason, "ExtendedAscii", 2000, true);
+        if (!isValid) {
+            return Collections.singletonMap("rejectionReason",
+                    (Object) applicationContext.getMessage("text.field.maxcharacters", new Object[] { 2000 }, Locale.getDefault()));
+        }
+        opportunitiesService.rejectOpportunityRequest(requestId, rejectionReason);
+        return Collections.singletonMap("success", (Object) true);
     }
 
     @InitBinder(value = "opportunityRequest")
@@ -120,7 +137,7 @@ public class EditOpportunityRequestController {
     public List<StudyOption> getDistinctStudyOptions() {
         return programInstanceService.getDistinctStudyOptions();
     }
-    
+
     @ModelAttribute("advertisingDeadlines")
     public List<Integer> getAdvertisingDeadlines() {
         return programInstanceService.getPossibleAdvertisingDeadlineYears();

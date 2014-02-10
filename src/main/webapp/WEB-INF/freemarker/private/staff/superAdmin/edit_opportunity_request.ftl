@@ -93,7 +93,7 @@ span.count {
               </div>
             </div>
             <div class="requestinfo">
-            <i class="icon-bell-alt"></i> Code | ${(opportunityRequest.programTitle?html)!}
+            <#if opportunityRequest.status == "NEW"><i class="icon-bell-alt"></i></#if> Code | ${(opportunityRequest.programTitle?html)!}
             </div>
             <div class="row">
             <label>Submitted</label> ${opportunityRequest.createdDate?string("dd MMM yyyy")}

@@ -107,7 +107,7 @@
             <colgroup>
               <col style="width: 25%" />
               <col />
-              <col style="width: 100px;" />
+              <col style="width: 110px;" />
               <col style="width: 100px;" />
               <col style="width: 90px;" />
               <col style="width: 90px" />
@@ -117,9 +117,9 @@
                 <th class="sortable" scope="col" id="AUTHOR" onclick="sortList(this)">Author</th>
                 <th class="sortable" scope="col" id="PROGRAM_TITLE" onclick="sortList(this)">Programme</th>
                 <th class="sortable" scope="col" id="TYPE" onclick="sortList(this)">Request Type</th>
+                <th class="sortable" scope="col" id="CREATED_DATE" onclick="sortList(this)">Created</th>
                 <th class="sortable" scope="col" id="STATUS" onclick="sortList(this)">Status</th>
                 <th scope="col">Actions</th>
-                <th class="sortable" scope="col" id="CREATED_DATE" onclick="sortList(this)">Created</th>
               </tr>
             </thead>
             
@@ -127,30 +127,38 @@
               
               <#list opportunityRequests as opportunityRequest>
                 <tr id="row_${opportunityRequest.id?string}" class="applicationRow" >
-                  <td data-desc="This request requires your attention" class="flagred applicant-name">
-                  <i class="icon-bell-alt"></i> ${opportunityRequest.author.displayName}
+                  <#if opportunityRequest.status == "NEW">
+                    <td data-desc="This request requires your attention" class="flagred applicant-name">
+                    <i class="icon-bell-alt"></i>
+                  <#else>
+                    <td class="applicant-name">
+                  </#if>
+                  ${opportunityRequest.author.displayName}
                   </td>
                   <td class="program-title">
                     ${opportunityRequest.programTitle} 
                   </td>
-                  
                   <td class="status">
                     <@spring.message 'opportunityRequestType.${opportunityRequest.type.name()}'/>
                   </td>
+                  <td class="centre">
+                    ${opportunityRequest.createdDate?string("dd MMM yyyy")}
+                  </td>
                   <td class="status">
-                    <@spring.message 'opportunityRequestStatus.${opportunityRequest.status.name()}'/>
-                    <!-- icon states to impement here -->
-                    <!--<span data-desc="Rejected" class="icon-status rejected">Rejected</span>
+                    <#if opportunityRequest.status == "NEW">
                     <span data-desc="New Request" class="icon-status offer-recommended">New Request</span>
-                    <span data-desc="Validated" class="icon-status validation">Validated</span>-->
+                    <#elseif opportunityRequest.status == "REJECTED">
+                    <span data-desc="Rejected" class="icon-status rejected">Rejected</span>
+                    <#elseif opportunityRequest.status == "APPROVED">
+                    <span data-desc="Approved" class="icon-status validation">Approved</span>
+                    </#if>
                   </td>
                   <td class="centre">
                     <#if opportunityRequest.status == "NEW">
                       <button class="opportunityRequestActionType btn btn-success" data-request-id="${opportunityRequest.id?string}" data-value="approve">Review</button>
+                    <#else>
+                      <button class="opportunityRequestActionType btn btn-info" data-request-id="${opportunityRequest.id?string}" data-value="view">View</button>
                     </#if>
-                  </td>
-                  <td class="centre">
-                    ${opportunityRequest.createdDate?string("dd MMM yyyy")}
                   </td>
                 </tr>
               </#list>

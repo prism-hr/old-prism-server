@@ -27,8 +27,8 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.dto.ProgramOpportunityDTO;
 
 @Service
 @Transactional
@@ -137,28 +137,6 @@ public class ProgramsService {
         return formattedDate;
     }
 
-    public Program createNewCustomProgram(OpportunityRequest opportunityRequest) {
-        ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
-
-        Advert advert = new Advert();
-        advert.setActive(true);
-        advert.setDescription(opportunityRequest.getProgramDescription());
-        advert.setStudyDuration(opportunityRequest.getStudyDuration());
-
-        QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
-                opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
-
-        Program program = new Program();
-        program.setAdvert(advert);
-        program.setInstitution(institution);
-        program.setEnabled(true);
-        program.setTitle(opportunityRequest.getProgramTitle());
-        program.setAtasRequired(opportunityRequest.getAtasRequired());
-        program.setCode(thisBean.generateNextProgramCode(institution));
-
-        programDAO.save(program);
-        return program;
-    }
 
     public void updateClosingDate(ProgramClosingDate closingDate) {
         Program program = closingDate.getProgram();
@@ -189,19 +167,44 @@ public class ProgramsService {
         return String.format("%s_%05d", institution.getCode(), codeNumber);
     }
 
-    public Program saveProgramOpportunity(ProgramOpportunityDTO programOpportunityDTO) {
+    public Program createNewCustomProgram(OpportunityRequest opportunityRequest) {
+        ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
+
+        Advert advert = new Advert();
+        advert.setActive(true);
+        advert.setDescription(opportunityRequest.getProgramDescription());
+        advert.setStudyDuration(opportunityRequest.getStudyDuration());
+
+        QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
+                opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
+
+        Program program = new Program();
+        program.setAdvert(advert);
+        program.setInstitution(institution);
+        program.setEnabled(true);
+        program.setTitle(opportunityRequest.getProgramTitle());
+        program.setAtasRequired(opportunityRequest.getAtasRequired());
+        program.setCode(thisBean.generateNextProgramCode(institution));
+
+        programDAO.save(program);
+        return program;
+    }
+
+    
+    public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
         ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
         
         Program program;
-        if (programOpportunityDTO.getProgramCode() != null) {
-            program = requireNonNull(getProgramByCode(programOpportunityDTO.getProgramCode()));
+        if (opportunityRequest.getType() == OpportunityRequestType.CHANGE) {
+            program = requireNonNull(getProgramById(opportunityRequest.getSourceProgram().getId()));
         } else {
-            QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(programOpportunityDTO.getInstitutionCode(),
-                    programOpportunityDTO.getInstitutionCountry(), programOpportunityDTO.getOtherInstitution());
+            QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
+                    opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
             program = new Program();
-            program.setTitle(programOpportunityDTO.getProgramName());
+            program.setTitle(opportunityRequest.getProgramTitle());
             program.setInstitution(institution);
-            program.setAtasRequired(programOpportunityDTO.getAtasRequired());
+            program.setEnabled(true);
+            program.setAtasRequired(opportunityRequest.getAtasRequired());
             program.setCode(thisBean.generateNextProgramCode(institution));
             save(program);
         }
@@ -211,13 +214,14 @@ public class ProgramsService {
             advert = new Advert();
             program.setAdvert(advert);
         }
-        advert.setDescription(programOpportunityDTO.getDescription());
-        advert.setStudyDuration(programOpportunityDTO.getStudyDuration());
-        advert.setFunding(programOpportunityDTO.getFunding());
-        advert.setActive(programOpportunityDTO.getActive());
+        advert.setDescription(opportunityRequest.getProgramDescription());
+        advert.setStudyDuration(opportunityRequest.getStudyDuration());
+        advert.setFunding(opportunityRequest.getFunding());
+        advert.setActive(opportunityRequest.getAcceptingApplications());
+        
         if (program.getProgramFeed() == null) { // custom program
-            programInstanceService.createRemoveProgramInstances(program, programOpportunityDTO.getStudyOptions(),
-                    programOpportunityDTO.getAdvertiseDeadlineYear());
+            programInstanceService.createRemoveProgramInstances(program, opportunityRequest.getStudyOptions(),
+                    opportunityRequest.getAdvertisingDeadlineYear());
         }
         return program;
     }

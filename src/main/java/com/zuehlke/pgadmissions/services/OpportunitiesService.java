@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -26,7 +24,7 @@ public class OpportunitiesService {
 
     @Autowired
     private OpportunityRequestDAO opportunityRequestDAO;
-
+    
     @Autowired
     private ProgramsService programsService;
 
@@ -75,17 +73,11 @@ public class OpportunitiesService {
         opportunityRequest.setStudyOptions(newOpportunityRequest.getStudyOptions());
 
         // create program
-        Program program = programsService.createNewCustomProgram(opportunityRequest);
-        
-        // create program instances
-        List<String> studyOptions = Arrays.asList(opportunityRequest.getStudyOptions().split(","));
-        Integer advertisingDeadlineYear = opportunityRequest.getAdvertisingDeadlineYear();
-
-        List<ProgramInstance> programInstances = programInstanceService.createRemoveProgramInstances(program, studyOptions, advertisingDeadlineYear);
-        program.getInstances().addAll(programInstances);
+        Program program = programsService.saveProgramOpportunity(opportunityRequest);
         
         // grant permissions to the author 
         author.getInstitutions().add(program.getInstitution());
+        author.getRoles();
         author.getProgramsOfWhichAdministrator().add(program);
     }
 

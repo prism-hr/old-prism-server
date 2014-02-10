@@ -108,19 +108,14 @@ public class OpportunitiesServiceTest {
         OpportunityRequest newOpportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).otherInstitution("jakis uniwerek").build();
         QualificationInstitution institution = new QualificationInstitution();
         Program program = new ProgramBuilder().institution(institution).build();
-        ProgramInstance programInstance1 = new ProgramInstance();
-        ProgramInstance programInstance2 = new ProgramInstance();
 
         expect(opportunityRequestDAO.findById(8)).andReturn(request);
-        expect(programsService.createNewCustomProgram(request)).andReturn(program);
-        expect(programInstanceService.createRemoveProgramInstances(program, Lists.newArrayList("B+++++", "F+++++"), 2014)).andReturn(
-                Lists.newArrayList(programInstance1, programInstance2));
+        expect(programsService.saveProgramOpportunity(request)).andReturn(program);
 
         replay();
         service.approveOpportunityRequest(8, newOpportunityRequest);
         verify();
 
-        assertThat(program.getInstances(), containsInAnyOrder(programInstance1, programInstance2));
         assertEquals(OpportunityRequestStatus.APPROVED, request.getStatus());
         assertSame(newOpportunityRequest.getInstitutionCountry(), request.getInstitutionCountry());
         assertEquals(newOpportunityRequest.getInstitutionCode(), request.getInstitutionCode());

@@ -20,12 +20,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
-import com.zuehlke.pgadmissions.dto.ProgramOpportunityDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -89,14 +89,14 @@ public class ProgramConfigurationControllerTest {
     
     @Test
     public void shouldSaveOpportunity() {
-        ProgramOpportunityDTO programOpportunityDTO = new ProgramOpportunityDTO();
-        BindingResult bindingResult = new DirectFieldBindingResult(programOpportunityDTO, "programOpportunityDTO");
+        OpportunityRequest opportunityRequest = new OpportunityRequest();
+        BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
         Program program = new ProgramBuilder().code("p07").build();
         
-        expect(programsService.saveProgramOpportunity(programOpportunityDTO)).andReturn(program);
+        expect(programsService.saveProgramOpportunity(opportunityRequest)).andReturn(program);
 
         replay();
-        String result = controller.saveOpportunity(programOpportunityDTO, bindingResult);
+        String result = controller.saveOpportunity(opportunityRequest, bindingResult);
         verify();
         
         assertEquals("{\"programCode\":\"p07\",\"success\":true}", result);

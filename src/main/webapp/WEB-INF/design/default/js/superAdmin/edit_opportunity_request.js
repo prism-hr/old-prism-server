@@ -18,6 +18,7 @@ $(document).ready(function() {
     });
 
     $('#reject-button').click(function(e) {
+        e.preventDefault()
         $('#rejectOpportunityRequestModal').modal('show');
     });
     
@@ -26,6 +27,7 @@ $(document).ready(function() {
     });
 
     initEditors();
+    exStatus();
 });
 
 function institutionCountryChanged() {
@@ -102,7 +104,20 @@ function initEditors() {
         toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
     });
 }
-
+$(document).on('click', '#commentsBtn', function(){
+    // Set the current tab.
+    $('.tabsContent ul.tabs li').removeClass('current');
+    $(this).parent('li').addClass('current');
+    $('#requestTab').hide();
+    $('#commentsTab').show();
+});
+$(document).on('click', '#requestBtn', function(){
+    // Set the current tab.
+    $('.tabsContent ul.tabs li').removeClass('current');
+    $(this).parent('li').addClass('current');
+    $('#commentsTab').hide();
+    $('#requestTab').show();
+});
 function rejectOpportunity() {
     var url = window.location;
     $.ajax({

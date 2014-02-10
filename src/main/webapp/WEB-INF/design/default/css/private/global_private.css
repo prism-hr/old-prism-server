@@ -369,10 +369,11 @@ table.data thead th.headerSortUp span.arrow { background-position: 100% -2px; }
 table.data thead th.headerSortDown span.arrow { background-position: 100% -19px; }*/
 
 
-#programme-details { margin-bottom: 10px; overflow: visible; min-height: 125px; position: relative; } 
-#programme-details .row { line-height: 14px; padding: 3px 0; margin-bottom: 4px; }
+#programme-details, .requestDetails { margin-bottom: 10px; overflow: visible; min-height: 125px; position: relative; } 
+.requestDetails {min-height:78px}
+#programme-details .row, .requestDetails .row { line-height: 14px; padding: 3px 0; margin-bottom: 4px; }
 #programme-details .row input { padding: 2px; }
-#programme-details .row label { font-weight: bold; display: inline-block; min-width: 140px; line-height: 14px; margin-bottom: 0px; }
+#programme-details .row label, .requestDetails .row label { font-weight: bold; display: inline-block; min-width: 140px; line-height: 14px; margin-bottom: 0px; }
 #programme-details .row label.checkbox { margin-left: 1em; min-width: 0; }
 #programme-details .half { width: 50%; float: left; }
 #programme-details .icon, #programme-details .actions { float: right; }
@@ -1083,7 +1084,7 @@ span.count {
   margin-top: 3px;
 }
 /* Status box */
-.applicantinfo {
+.applicantinfo, .requestinfo {
   font-size: 18px;
   line-height: 30px;
   padding-right: 235px;
@@ -1113,6 +1114,18 @@ span.count {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
+}
+.authorBox.bs-status {
+	width: 250px;
+}
+.authname.row {
+	padding-top: 10px;
+}
+.authorBox.bs-status h4{
+	margin: 0 0 6px;
+}
+.authorBox.bs-status .icon {
+	float: right;
 }
 .bs-status .icon {
   font-size: 12px;
@@ -1959,7 +1972,10 @@ background: #909194;
     margin-top: 6px;
     width: 198px !important;
 }
-#programme-details .bootstrap-select.actionType i.icon-bell-alt{
+#commentsTab {
+	display: none;
+}
+#programme-details .bootstrap-select.actionType i.icon-bell-alt, .requestDetails i.icon-bell-alt{
  color: #F83929;
 }
 .bootstrap-select.btn-group .dropdown-menu li > a {  

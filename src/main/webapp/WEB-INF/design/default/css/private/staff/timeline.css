@@ -1,13 +1,13 @@
 
 /* Timeline tab ------------------------------------------------------------------------------------------- */
-#timelineview { clear: both; margin-top: 20px; }
-#timelineview ul.tabs { background: url(../../../images/tab_line.gif) repeat-x 0 100%; list-style: none; margin: 0; height: 33px; overflow: hidden; }
-#timelineview ul.tabs li { background: url(../../../images/bg_tools_tabs.png) repeat-x; border-radius: 8px 8px 0 0; box-shadow: 0 0 5px #666; float: left; margin: 5px 5px 0 3px; padding: 0; }
-#timelineview ul.tabs li.current { background-position: 0 -31px; }
-#timelineview ul.tabs li a { color: #000; display: block; height: 100%; line-height: 31px; margin-bottom: -5px; padding: 0 10px; }
-#timelineview ul.tabs li.current a { margin-bottom: 0; }
+#timelineview, .tabsContent { clear: both; margin-top: 20px; }
+#timelineview ul.tabs, .tabsContent ul.tabs{ background: url(../../../images/tab_line.gif) repeat-x 0 100%; list-style: none; margin: 0; height: 33px; overflow: hidden; }
+#timelineview ul.tabs li, .tabsContent ul.tabs li { background: url(../../../images/bg_tools_tabs.png) repeat-x; border-radius: 8px 8px 0 0; box-shadow: 0 0 5px #666; float: left; margin: 5px 5px 0 3px; padding: 0; }
+#timelineview ul.tabs li.current, .tabsContent ul.tabs li.current { background-position: 0 -31px; }
+#timelineview ul.tabs li a, .tabsContent ul.tabs li a { color: #000; display: block; height: 100%; line-height: 31px; margin-bottom: -5px; padding: 0 10px; }
+#timelineview ul.tabs li.current a, .tabsContent ul.tabs li.current a { margin-bottom: 0; }
 
-#timelineview .tab-page { clear: both; padding-top: 10px; position: relative; }
+#timelineview .tab-page, .tabsContent .tab-page{ clear: both; padding-top: 10px; position: relative; }
 
 
 /* Timeline comments -------------------------------------------------------------------------------------- */
@@ -266,7 +266,7 @@ width: 16px;
 margin-left: 4px;
 }
 /* Tabs tineline view */
-#timelineview {
+#timelineview, .tabsContent {
   border: 1px solid #ddd;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
@@ -275,15 +275,15 @@ margin-left: 4px;
   position: relative;
   margin-top: 40px;
 }
-#timelineview section:last-child {
+#timelineview section:last-child, .tabsContent section:last-child {
 	margin-bottom:0px;
 }
-#timelineview ul.tabs {
+#timelineview ul.tabs, .tabsContent ul.tabs {
   margin-top: -43px;
   background: none;
   margin-bottom: 10px;
 }
-#timelineview ul.tabs li {
+#timelineview ul.tabs li, .tabsContent ul.tabs li {
   box-shadow: none;
   font-size: 12px;
   display: block;
@@ -294,17 +294,17 @@ margin-left: 4px;
   -o-transition: 0.6s ease-in-out left;
   transition: 0.6s ease-in-out left;
 }
-#timelineview ul.tabs li.current a {
+#timelineview ul.tabs li.current a, .tabsContent ul.tabs li.current a {
   border: 1px solid #ddd;
   background: white;
   color: black;
   text-shadow: none;
 }
-#timelineview ul.tabs li.current a:hover {
+#timelineview ul.tabs li.current a:hover, .tabsContent ul.tabs li.current a:hover {
   background: white;
   border: 1px solid #ddd;
 }
-#timelineview ul.tabs li a {
+#timelineview ul.tabs li a, .tabsContent ul.tabs li a {
   line-height: 27px;
   display: block;
   background: #B0B1B3;
@@ -314,7 +314,7 @@ margin-left: 4px;
   font-size:13px;
   text-shadow: 0 1px #26538C;
 }
-#timelineview ul.tabs li a:hover {
+#timelineview ul.tabs li a:hover, .tabsContent ul.tabs li a:hover {
   text-decoration: none;
   background: #C6C7C9;
   border-color: transparent;
@@ -324,7 +324,7 @@ margin-left: 4px;
   padding: 4px 14px;
   margin-top: 0px;
 }
-#timelineview .tab-page {
+#timelineview .tab-page, .tabsContent .tab-page  {
   padding-top: 0px;
 }
 #timelineview input[type="radio"],

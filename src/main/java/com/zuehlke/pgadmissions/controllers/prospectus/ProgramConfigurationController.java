@@ -109,12 +109,12 @@ public class ProgramConfigurationController {
     }
 
     @InitBinder("opportunityRequest")
-    public void registerPropertyEditors(WebDataBinder binder) {
+    public void registerPropertyEditorsForOpportunityRequest(WebDataBinder binder) {
         binder.setValidator(opportunityRequestValidator);
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
         binder.registerCustomEditor(Program.class, programPropertyEditor);
-        binder.registerCustomEditor(String.class, null, new StringTrimmerEditor(true));
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
     @InitBinder("programClosingDate")

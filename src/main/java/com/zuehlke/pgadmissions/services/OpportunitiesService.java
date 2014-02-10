@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -24,6 +25,9 @@ public class OpportunitiesService {
 
     @Autowired
     private OpportunityRequestDAO opportunityRequestDAO;
+    
+    @Autowired
+    private RoleService roleService;
     
     @Autowired
     private ProgramsService programsService;
@@ -77,7 +81,7 @@ public class OpportunitiesService {
         
         // grant permissions to the author 
         author.getInstitutions().add(program.getInstitution());
-        author.getRoles();
+        author.getRoles().add(roleService.getRoleByAuthority(Authority.ADMINISTRATOR));
         author.getProgramsOfWhichAdministrator().add(program);
     }
 

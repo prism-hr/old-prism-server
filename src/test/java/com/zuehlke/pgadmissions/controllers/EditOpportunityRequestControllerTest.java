@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
@@ -23,6 +24,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.servlet.view.RedirectView;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.EasyMockUnitils;
 import org.unitils.easymock.annotation.Mock;
@@ -80,7 +82,7 @@ public class EditOpportunityRequestControllerTest {
     @Mock
     @InjectIntoByType
     private DatePropertyEditor datePropertyEditor;
-    
+
     @Mock
     @InjectIntoByType
     private ApplicationContext applicationContext;
@@ -117,11 +119,12 @@ public class EditOpportunityRequestControllerTest {
         opportunitiesService.approveOpportunityRequest(8, opportunityRequest);
 
         replay();
-        String result = controller.approveOpportunityRequest(8, opportunityRequest, bindingResult, null);
+        RedirectView result = (RedirectView) controller.approveOpportunityRequest(8, opportunityRequest, bindingResult, null);
         verify();
 
         assertEquals(3, opportunityRequest.getStudyDuration().intValue());
-        assertEquals("redirect:/requests", result);
+        assertEquals("/requests", result.getUrl());
+        assertFalse(result.isExposePathVariables());
     }
 
     @Test
@@ -138,7 +141,7 @@ public class EditOpportunityRequestControllerTest {
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(new OpportunityRequestBuilder().author(author).build());
 
         replay();
-        String result = controller.approveOpportunityRequest(8, opportunityRequest, bindingResult, modelMap);
+        String result = (String) controller.approveOpportunityRequest(8, opportunityRequest, bindingResult, modelMap);
         verify();
 
         assertSame(opportunityRequest, modelMap.get("opportunityRequest"));
@@ -157,14 +160,15 @@ public class EditOpportunityRequestControllerTest {
 
         assertEquals(Collections.singletonMap("success", true), result);
     }
+
     @Test
     public void shouldNotRejectOpportunityRequestIfValidatioErrors() {
         expect(applicationContext.getMessage(eq("text.field.maxcharacters"), isA(Object[].class), isA(Locale.class))).andReturn("mess");
-        
+
         replay();
         Map<String, Object> result = controller.rejectOpportunityRequest(8, RandomStringUtils.random(2001));
         verify();
-        
+
         assertEquals(Collections.singletonMap("rejectionReason", "mess"), result);
     }
 

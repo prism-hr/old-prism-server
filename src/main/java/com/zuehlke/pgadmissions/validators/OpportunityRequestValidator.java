@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -35,7 +36,6 @@ public class OpportunityRequestValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCode", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programDescription", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "atasRequired", EMPTY_DROPDOWN_ERROR_MESSAGE);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOptions", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
         // validate institution code / name
         String institutionCode = opportunityRequest.getInstitutionCode();
@@ -45,11 +45,9 @@ public class OpportunityRequestValidator extends AbstractValidator {
             }
         }
 
-        if (sourceProgram == null) {
-            // trying to create new request
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programTitle", EMPTY_FIELD_ERROR_MESSAGE);
-
-            // validate study duration
+        // validate study duration
+        if (!errors.hasFieldErrors("studyDurationNumber")) {
+            // no number format error
             if (opportunityRequest.getStudyDurationNumber() == null) {
                 errors.rejectValue("studyDurationNumber", EMPTY_FIELD_ERROR_MESSAGE);
             } else if (opportunityRequest.getStudyDurationNumber() < 1) {
@@ -59,6 +57,12 @@ public class OpportunityRequestValidator extends AbstractValidator {
             } else if (!Lists.newArrayList("YEARS", "MONTHS").contains(opportunityRequest.getStudyDurationUnit())) {
                 errors.rejectValue("studyDurationUnit", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }
+        }
+
+        // trying to create new request
+        if (sourceProgram == null) {
+
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programTitle", EMPTY_FIELD_ERROR_MESSAGE);
 
             // validate an author
             if (opportunityRequest.getAuthor() != null) {
@@ -66,15 +70,15 @@ public class OpportunityRequestValidator extends AbstractValidator {
                 ValidationUtils.invokeValidator(registerFormValidator, opportunityRequest.getAuthor(), errors);
                 errors.popNestedPath();
             }
-        } else if (sourceProgram.getProgramFeed() == null) {
-            // new or custom program
-            if (opportunityRequest.getStudyOptions().isEmpty()) {
-                errors.rejectValue("studyOptions", EMPTY_DROPDOWN_ERROR_MESSAGE);
-            }
         }
 
         // new request or editing custom program
         if (sourceProgram == null || sourceProgram.getProgramFeed() == null) {
+
+            if (Strings.isNullOrEmpty(opportunityRequest.getStudyOptions())) {
+                errors.rejectValue("studyOptions", EMPTY_DROPDOWN_ERROR_MESSAGE);
+            }
+
             // validate advertising deadline
             if (opportunityRequest.getAdvertisingDeadlineYear() == null) {
                 errors.rejectValue("advertisingDeadlineYear", EMPTY_DROPDOWN_ERROR_MESSAGE);

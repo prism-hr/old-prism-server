@@ -51,7 +51,7 @@ $(document).on('click', '#newProgamme', function() {
 });
 
 function getInstitutionData(successCallback) {
-    $("#programAdvertInstitution").val("");
+    $("#programAdvertInstitution").selectpicker("val", "");
     $("#programAdvertInstitutionOtherName").val("");
 
     $.ajax({
@@ -483,10 +483,6 @@ function saveAdvert() {
 
     var programCode = $("#programAdvertProgramSelect").val();
     var programName = $("#programAdvertNewProgramName").val();
-    var duration = {
-        value : $("#programAdvertStudyDurationInput").val(),
-        unit : $("#programAdvertStudyDurationUnitSelect").val()
-    };
     var acceptApplications = "";
     if ($("#programAdvertIsActiveRadioYes").prop("checked")) {
         acceptApplications = "true";
@@ -527,7 +523,8 @@ function saveAdvert() {
             institutionCode : $("#programAdvertInstitution").val(),
             otherInstitution : $("#programAdvertInstitutionOtherName").val(),
             programDescription : addBlankLinks(tinymce.get('programAdvertDescriptionText').getContent()),
-            studyDuration : JSON.stringify(duration),
+            studyDurationNumber : $("#programAdvertStudyDurationInput").val(),
+            studyDurationUnit : $("#programAdvertStudyDurationUnitSelect").val(),
             funding : tinymce.get('programAdvertFundingText').getContent(),
             acceptingApplications : acceptApplications,
             studyOptions : studyOptions,
@@ -554,14 +551,17 @@ function saveAdvert() {
                 if (map['otherInstitution']) {
                     $("#programAdvertInstitutionOtherNameDiv").append(getErrorMessageHTML(map['otherInstitution']));
                 }
-                if (map['description']) {
-                    $("#programAdvertDescriptionDiv").append(getErrorMessageHTML(map['description']));
+                if (map['programDescription']) {
+                    $("#programAdvertDescriptionDiv").append(getErrorMessageHTML(map['programDescription']));
                 }
                 if (map['funding']) {
                     $("#programAdvertFundingDiv").append(getErrorMessageHTML(map['funding']));
                 }
-                if (map['studyDuration']) {
-                    $("#programAdvertStudyDurationDiv").append(getErrorMessageHTML(map['studyDuration']));
+                if (map['studyDurationNumber']) {
+                    $("#programAdvertStudyDurationDiv").append(getErrorMessageHTML(map['studyDurationNumber']));
+                }
+                if (map['studyDurationUnit']) {
+                    $("#programAdvertStudyDurationDiv").append(getErrorMessageHTML(map['studyDurationUnit']));
                 }
                 if (map['active']) {
                     $("#programAdvertIsActiveDiv").append(getErrorMessageHTML(map['active']));
@@ -569,8 +569,8 @@ function saveAdvert() {
                 if (map['studyOptions']) {
                     $("#programAdvertStudyOptionsDiv").append(getErrorMessageHTML(map['studyOptions']));
                 }
-                if (map['advertiseDeadlineYear']) {
-                    $("#programAdvertAdvertisingDeadlineYearDiv").append(getErrorMessageHTML(map['advertiseDeadlineYear']));
+                if (map['advertisingDeadlineYear']) {
+                    $("#programAdvertAdvertisingDeadlineYearDiv").append(getErrorMessageHTML(map['advertisingDeadlineYear']));
                 }
                 checkIfErrors();
             } else {

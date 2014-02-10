@@ -93,11 +93,17 @@ span.count {
               </div>
             </div>
             <div class="requestinfo">
-            <#if opportunityRequest.status == "NEW"><i class="icon-bell-alt"></i></#if> Code | ${(opportunityRequest.programTitle?html)!}
+              <#if opportunityRequest.status == "NEW">
+                <i class="icon-bell-alt"></i>
+              </#if>
+              <#if opportunityRequest.sourceProgram??>
+                ${opportunityRequest.sourceProgram.code?html} |
+              </#if>
+              ${(opportunityRequest.programTitle?html)!}
             </div>
             <div class="row">
-            <label>Submitted</label> ${opportunityRequest.createdDate?string("dd MMM yyyy")}
-          </div>
+              <label>Submitted</label> ${opportunityRequest.createdDate?string("dd MMM yyyy")}
+            </div>
           </div>
           <div class="tabsContent">
             <ul class="tabs">
@@ -114,12 +120,13 @@ span.count {
                       <#include "/private/prospectus/opportunity_details_part.ftl"/> 
                     </div>
                     <div class="buttons">
-                      <button id="reject-button" class="btn btn-primary">Respond</button>
+                      <button id="respond-button" class="btn btn-primary">Respond</button>
                     </div>
                   </form>
                 </div>
               </section>
             </div>
+            
             <div class="tab-page" id="commentsTab"> 
               <section class="form-rows">
                 <div>

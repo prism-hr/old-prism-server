@@ -17,7 +17,7 @@ $(document).ready(function() {
         $('#opportunityRequestEditForm').submit();
     });
 
-    $('#reject-button').click(function(e) {
+    $('#respond-button').click(function(e) {
         e.preventDefault()
         $('#rejectOpportunityRequestModal').modal('show');
     });

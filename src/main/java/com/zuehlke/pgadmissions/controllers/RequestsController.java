@@ -32,7 +32,7 @@ public class RequestsController {
 	
 	@ModelAttribute("opportunityRequests")
 	public List<OpportunityRequest> getOpportunityRequests(){
-		return opportunitiesService.getOpportunityRequests();
+		return opportunitiesService.getInitialOpportunityRequests();
 	}
 	
 	@ModelAttribute("user")

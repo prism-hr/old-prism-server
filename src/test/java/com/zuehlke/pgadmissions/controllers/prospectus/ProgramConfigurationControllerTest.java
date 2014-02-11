@@ -73,10 +73,6 @@ public class ProgramConfigurationControllerTest {
     
     @Mock
     @InjectIntoByType
-    private DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
-    
-    @Mock
-    @InjectIntoByType
     private ProgramPropertyEditor programPropertyEditor;
 
     @InjectIntoByType
@@ -90,7 +86,6 @@ public class ProgramConfigurationControllerTest {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
         binderMock.setValidator(opportunityRequestValidator);
         binderMock.registerCustomEditor(Domicile.class, domicilePropertyEditor);
-        binderMock.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
         binderMock.registerCustomEditor(Program.class, programPropertyEditor);
         binderMock.registerCustomEditor(eq(String.class), isA(StringTrimmerEditor.class));
         

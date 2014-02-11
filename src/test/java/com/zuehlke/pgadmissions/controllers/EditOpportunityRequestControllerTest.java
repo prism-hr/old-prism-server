@@ -93,7 +93,7 @@ public class EditOpportunityRequestControllerTest {
     @Test
     public void shouldGetEditOpportunityRequestPage() {
         Domicile institutionCountry = new DomicileBuilder().code("PL").build();
-        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDuration(24).institutionCountry(institutionCountry).build();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).build();
         ModelMap modelMap = new ModelMap();
         List<QualificationInstitution> institutions = Lists.newArrayList();
 
@@ -106,8 +106,6 @@ public class EditOpportunityRequestControllerTest {
 
         assertSame(opportunityRequest, modelMap.get("opportunityRequest"));
         assertSame(institutions, modelMap.get("institutions"));
-        assertEquals(2, opportunityRequest.getStudyDurationNumber().intValue());
-        assertEquals("YEARS", opportunityRequest.getStudyDurationUnit());
         assertEquals(EditOpportunityRequestController.EDIT_REQUEST_PAGE_VIEW_NAME, result);
     }
 

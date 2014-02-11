@@ -6,6 +6,7 @@ import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.easymock.EasyMock;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -32,12 +34,12 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
-import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -104,18 +106,22 @@ public class EditOpportunityRequestControllerTest {
 
         assertSame(opportunityRequest, modelMap.get("opportunityRequest"));
         assertSame(institutions, modelMap.get("institutions"));
+        assertThat((OpportunityRequestComment) modelMap.get("comment"), Matchers.isA(OpportunityRequestComment.class));
         assertEquals(EditOpportunityRequestController.EDIT_REQUEST_PAGE_VIEW_NAME, result);
     }
 
     @Test
     public void shouldRespondToOpportunityRequest() {
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDurationUnit("MONTHS").studyDurationNumber(3).build();
-        BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+        OpportunityRequestComment comment = new OpportunityRequestComment();
+        BindingResult requestBindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+        BindingResult commentBindingResult = new DirectFieldBindingResult(comment, "comment");
 
-        opportunitiesService.respondToOpportunityRequest(8, opportunityRequest, OpportunityRequestCommentType.APPROVE);
+        opportunitiesService.respondToOpportunityRequest(8, opportunityRequest, comment);
 
         replay();
-        RedirectView result = (RedirectView) controller.respondToOpportunityRequest(8, OpportunityRequestCommentType.APPROVE, opportunityRequest, bindingResult, null);
+        RedirectView result = (RedirectView) controller.respondToOpportunityRequest(8, opportunityRequest, requestBindingResult, comment, commentBindingResult,
+                null);
         verify();
 
         assertEquals(3, opportunityRequest.getStudyDuration().intValue());
@@ -127,17 +133,19 @@ public class EditOpportunityRequestControllerTest {
     public void shouldRespondToOpportunityRequestWhenBindingErrors() {
         Domicile institutionCountry = new DomicileBuilder().code("PL").build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).build();
+        OpportunityRequestComment comment = new OpportunityRequestComment();
         RegisteredUser author = new RegisteredUser();
         ModelMap modelMap = new ModelMap();
-        BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
-        bindingResult.reject("error");
+        BindingResult requestBindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+        requestBindingResult.reject("error");
+        BindingResult commentBindingResult = new DirectFieldBindingResult(comment, "comment");
         List<QualificationInstitution> institutions = Lists.newArrayList();
 
         expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutions);
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(new OpportunityRequestBuilder().author(author).build());
 
         replay();
-        String result = (String) controller.respondToOpportunityRequest(8, OpportunityRequestCommentType.APPROVE, opportunityRequest, bindingResult, modelMap);
+        String result = (String) controller.respondToOpportunityRequest(8, opportunityRequest, requestBindingResult, comment, commentBindingResult, modelMap);
         verify();
 
         assertSame(opportunityRequest, modelMap.get("opportunityRequest"));

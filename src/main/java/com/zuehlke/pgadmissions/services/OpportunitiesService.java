@@ -65,12 +65,12 @@ public class OpportunitiesService {
         return opportunityRequestDAO.findById(requestId);
     }
 
-    public void respondToOpportunityRequest(Integer requestId, OpportunityRequest newOpportunityRequest, OpportunityRequestCommentType action) {
+    public void respondToOpportunityRequest(Integer requestId, OpportunityRequest newOpportunityRequest, OpportunityRequestComment comment) {
         OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
         RegisteredUser author = opportunityRequest.getAuthor();
 
         // update opportunity request
-        opportunityRequest.setStatus(action == OpportunityRequestCommentType.APPROVE ? OpportunityRequestStatus.APPROVED : OpportunityRequestStatus.REJECTED);
+        opportunityRequest.setStatus(comment.getCommentType() == OpportunityRequestCommentType.APPROVE ? OpportunityRequestStatus.APPROVED : OpportunityRequestStatus.REJECTED);
         opportunityRequest.setInstitutionCountry(newOpportunityRequest.getInstitutionCountry());
         opportunityRequest.setInstitutionCode(newOpportunityRequest.getInstitutionCode());
         opportunityRequest.setOtherInstitution(newOpportunityRequest.getOtherInstitution());
@@ -82,13 +82,10 @@ public class OpportunitiesService {
         opportunityRequest.setStudyOptions(newOpportunityRequest.getStudyOptions());
 
         // create comment
-        OpportunityRequestComment comment = new OpportunityRequestComment();
-        comment.setType(action);
         comment.setAuthor(userService.getCurrentUser());
-        comment.setContent(newOpportunityRequest.getRespondComment());
         opportunityRequest.getComments().add(comment);
 
-        if (action == OpportunityRequestCommentType.APPROVE) {
+        if (comment.getCommentType() == OpportunityRequestCommentType.APPROVE) {
             // create program
             Program program = programsService.saveProgramOpportunity(opportunityRequest);
 

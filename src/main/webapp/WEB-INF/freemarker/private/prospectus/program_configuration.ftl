@@ -97,8 +97,8 @@
                     <input class="numeric input-small" type="text" size="4" id="programAdvertStudyDurationInput" />
                     <select id="programAdvertStudyDurationUnitSelect" class="input-small">
                       <option value="">Select...</option>
-                      <option value="Months">Months</option>
-                      <option value="Years">Years</option>
+                      <option value="MONTHS">Months</option>
+                      <option value="YEARS">Years</option>
                     </select>
                   </div>
                 </div>

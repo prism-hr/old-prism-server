@@ -91,10 +91,10 @@ public class OpportunitiesServiceTest {
     public void shouldGetOpportunityRequests() {
         List<OpportunityRequest> requests = Lists.newArrayList();
 
-        expect(opportunityRequestDAO.getOpportunityRequests()).andReturn(requests);
+        expect(opportunityRequestDAO.getInitialOpportunityRequests()).andReturn(requests);
 
         replay();
-        List<OpportunityRequest> returned = service.getOpportunityRequests();
+        List<OpportunityRequest> returned = service.getInitialOpportunityRequests();
         verify();
 
         assertSame(requests, returned);

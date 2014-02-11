@@ -57,8 +57,8 @@ public class OpportunitiesService {
         opportunityRequestDAO.save(opportunityRequest);
     }
 
-    public List<OpportunityRequest> getOpportunityRequests() {
-        return opportunityRequestDAO.getOpportunityRequests();
+    public List<OpportunityRequest> getInitialOpportunityRequests() {
+        return opportunityRequestDAO.getInitialOpportunityRequests();
     }
 
     public OpportunityRequest getOpportunityRequest(Integer requestId) {

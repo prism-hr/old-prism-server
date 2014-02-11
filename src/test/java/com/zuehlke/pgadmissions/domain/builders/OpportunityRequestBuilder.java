@@ -1,13 +1,18 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
+import java.util.List;
 
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
 
 public class OpportunityRequestBuilder {
 
@@ -24,6 +29,11 @@ public class OpportunityRequestBuilder {
     private Boolean atasRequired;
     private String studyOptions;
     private Integer advertisingDeadlineYear;
+    private OpportunityRequestType type = OpportunityRequestType.INITIAL;
+    private Program sourceProgram;
+    private List<OpportunityRequestComment> comments = Lists.newArrayList();
+    private String funding;
+    private Boolean acceptingApplications = true;
     private Integer studyDurationNumber;
     private String studyDurationUnit;
 
@@ -92,6 +102,31 @@ public class OpportunityRequestBuilder {
         return this;
     }
 
+    public OpportunityRequestBuilder type(OpportunityRequestType type) {
+        this.type = type;
+        return this;
+    }
+
+    public OpportunityRequestBuilder sourceProgram(Program sourceProgram) {
+        this.sourceProgram = sourceProgram;
+        return this;
+    }
+
+    public OpportunityRequestBuilder comments(List<OpportunityRequestComment> comments) {
+        this.comments.addAll(comments);
+        return this;
+    }
+
+    public OpportunityRequestBuilder funding(String funding) {
+        this.funding = funding;
+        return this;
+    }
+
+    public OpportunityRequestBuilder acceptingApplications(Boolean acceptingApplications) {
+        this.acceptingApplications = acceptingApplications;
+        return this;
+    }
+
     public OpportunityRequestBuilder studyDurationNumber(Integer studyDurationNumber) {
         this.studyDurationNumber = studyDurationNumber;
         return this;
@@ -117,6 +152,11 @@ public class OpportunityRequestBuilder {
         request.setAtasRequired(atasRequired);
         request.setStudyOptions(studyOptions);
         request.setAdvertisingDeadlineYear(advertisingDeadlineYear);
+        request.setType(type);
+        request.setSourceProgram(sourceProgram);
+        request.getComments().addAll(comments);
+        request.setFunding(funding);
+        request.setAcceptingApplications(acceptingApplications);
         request.setStudyDurationNumber(studyDurationNumber);
         request.setStudyDurationUnit(studyDurationUnit);
         return request;

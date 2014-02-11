@@ -124,7 +124,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public List<Integer> getUsersForOpportunityRequestNotification(Date baselineDate) {
-        if (opportunityRequestDAO.getOpportunityRequests().isEmpty()) {
+        if (opportunityRequestDAO.getInitialOpportunityRequests().isEmpty()) {
             return Collections.emptyList();
         }
         return userDAO.getUsersDueOpportunityRequestNotification(baselineDate);

@@ -147,7 +147,7 @@ public class ProgramConfigurationController {
         
         Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
         
-        result.put("program.id", program.getId());
+        result.put("programId", program.getId());
         result.put("programTitle", program.getTitle());
         result.put("programDescription", program.getDescription());
         result.put("programStudyDuration", program.getStudyDuration());

@@ -61,6 +61,12 @@ public class ProgramDAO {
                 .add(Restrictions.eq("code", code)).uniqueResult();
     }
     
+    public String getProgramIdByCode(String code) {
+        return (String) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .setProjection(Projections.property("id"))
+                .add(Restrictions.eq("code", code)).uniqueResult().toString();
+    }
+    
 	public void merge(Program program) {
 		sessionFactory.getCurrentSession().merge(program);
 	}

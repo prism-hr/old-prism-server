@@ -14,6 +14,7 @@ public class AdvertDTO {
 	private String primarySupervisorFirstName;
 	private String primarySupervisorLastName;
 	private String primarySupervisorEmail;
+    private String type = "program";
 	private Integer projectId = null;
     private String secondarySupervisorFirstName = null;
     private String secondarySupervisorLastName = null;
@@ -100,12 +101,23 @@ public class AdvertDTO {
         this.primarySupervisorEmail = primarySupervisorEmail;
     }
     
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public Integer getProjectId() {
         return projectId;
     }
     
     public void setProjectId(Integer projectId) {
         this.projectId = projectId;
+        if (projectId != null) {
+            setType("project");
+        }
     }
     
     public String getSecondarySupervisorFirstName() {

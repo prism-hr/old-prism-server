@@ -157,7 +157,7 @@ public class RegisterController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getRegisterPage(@RequestParam(required = false) String activationCode, @RequestParam(required = false) String directToUrl, @RequestParam(required = false) String advert, Model modelMap, HttpServletRequest request, HttpSession session) {
+	public String getRegisterPage(@RequestParam(required = false) String activationCode, @RequestParam(required = false) String directToUrl, @RequestParam(required = false) String advertId, Model modelMap, HttpServletRequest request, HttpSession session) {
 		session.removeAttribute("CLICKED_ON_ALREADY_REGISTERED");
 		RegisteredUser pendingUser = getPendingUser(activationCode, directToUrl);
 		if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
@@ -179,16 +179,18 @@ public class RegisterController {
 		if (pendingUser == null) {
 			pendingUser = new RegisteredUser();
 		}
+		
 		pendingUser.setDirectToUrl(directToUrl);
 		modelMap.addAttribute("pendingUser", pendingUser);
-		if (advert != null) {
-			Integer advertId = Integer.valueOf(advert);
-			Advert advertById = advertService.getAdvertById(advertId);
-			Program program = advertService.getProgram(advertById);
-			modelMap.addAttribute("title", program.getTitle());
-			modelMap.addAttribute("description", advertById.getDescriptionForFacebook());
-			modelMap.addAttribute("advertId", advert);
+		
+		if (advertId != null) {
+			Integer requestedAdvertId = Integer.valueOf(advertId);
+			Advert requestedAdvert = advertService.getAdvertById(requestedAdvertId);
+			modelMap.addAttribute("title", requestedAdvert.getTitle());
+			modelMap.addAttribute("description", requestedAdvert.getDescriptionForFacebook());
+			modelMap.addAttribute("advertId", requestedAdvertId);
 		}
+		
 		return REGISTER_USERS_VIEW_NAME;
 	}
 

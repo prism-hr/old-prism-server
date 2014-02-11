@@ -67,6 +67,9 @@ public class OpportunitiesService {
 
     public void respondToOpportunityRequest(Integer requestId, OpportunityRequest newOpportunityRequest, OpportunityRequestComment comment) {
         OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
+        if(opportunityRequest.getStatus() == OpportunityRequestStatus.APPROVED){
+            throw new RuntimeException("Already approved");
+        }
         RegisteredUser author = opportunityRequest.getAuthor();
 
         // update opportunity request
@@ -88,6 +91,7 @@ public class OpportunitiesService {
         if (comment.getCommentType() == OpportunityRequestCommentType.APPROVE) {
             // create program
             Program program = programsService.saveProgramOpportunity(opportunityRequest);
+            opportunityRequest.setSourceProgram(program);
 
             // grant permissions to the author
             author.getInstitutions().add(program.getInstitution());

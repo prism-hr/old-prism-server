@@ -144,6 +144,7 @@ public class OpportunitiesServiceTest {
         assertEquals(newOpportunityRequest.getAtasRequired(), request.getAtasRequired());
         assertEquals(newOpportunityRequest.getAdvertisingDeadlineYear(), request.getAdvertisingDeadlineYear());
         assertEquals(newOpportunityRequest.getStudyOptions(), request.getStudyOptions());
+        assertSame(program, request.getSourceProgram());
 
         OpportunityRequestComment returncomment = Iterables.getOnlyElement(request.getComments());
         assertSame(currentUser, returncomment.getAuthor());
@@ -153,6 +154,16 @@ public class OpportunitiesServiceTest {
         assertThat(author.getInstitutions(), contains(institution));
         assertThat(author.getProgramsOfWhichAdministrator(), contains(program));
         assertThat(author.getRoles(), contains(administratorRole));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldPreventOpportunityRequestFromBeingChangeWhenAlreadyApproved() {
+        OpportunityRequest request = new OpportunityRequestBuilder().status(OpportunityRequestStatus.APPROVED).build();
+
+        expect(opportunityRequestDAO.findById(8)).andReturn(request);
+
+        replay();
+        service.respondToOpportunityRequest(8, request, null);
     }
 
 }

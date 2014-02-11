@@ -99,54 +99,121 @@ span.count {
               <section class="form-rows">
                 <div>
                   <form id="opportunityRequestEditForm" method="POST">
+                    <#assign isRequestEditable = opportunityRequest.status != "APPROVED">
                     <div class="row-group">
                       <h3 class="no-arrow"> Opportunity Details  </h3>
                       
-                      <#include "/private/prospectus/opportunity_details_part.ftl"/>
+                      <#if isRequestEditable>
+                        <#include "/private/prospectus/opportunity_details_part.ftl"/>
+                      <#else>
+                      
+                        <div class="row">
+                          <label class="plain-label">Institution Country</label>
+                          <div class="field">${(opportunityRequest.institutionCountry.name?html)!}</div>
+                        </div>
+                        
+                        <div class="row">
+                          <label class="plain-label">Institution Name</label>
+                          <#if opportunityRequest.institutionCode == "OTHER">
+                            <div class="field">Other</div>
+                          <#else>
+                            <#list institutions as inst>
+                              <#if opportunityRequest.institutionCode == inst.code>
+                                <div class="field">${(inst.name?html)!}</div>
+                              </#if>
+                            </#list>
+                          </#if>
+                        </div>
+                        
+                        <div class="row">
+                          <label class="plain-label">Please Specify</label>
+                          <div class="field">${(opportunityRequest.otherInstitution?html)!}</div>
+                        </div>
+
+                        <div class="row">
+                          <label class="plain-label">Program Title</label>
+                          <div class="field">${(opportunityRequest.programTitle?html)!}</div>
+                        </div>
+
+                        <div class="row">
+                          <label class="plain-label">Program Description</label>
+                          <div class="field">${(opportunityRequest.programDescription)!}</div>
+                        </div>
+
+                        <div class="row">
+                          <#assign selectedOptionsString = opportunityRequest.studyOptions!"">    
+                          <#assign selectedOptions = selectedOptionsString?split(",")>
+                          <label class="plain-label">Study Options</label>
+                          <#list studyOptions as studyOption>
+                            <#if selectedOptions?seq_contains(studyOption.id)>
+                              <div class="field">${(studyOption.id)!}</div>
+                            </#if>
+                          </#list>
+                        </div>
+                        
+                        <div class="row">
+                          <label class="plain-label">Duration of Study</label>
+                          <#assign unit = opportunityRequest.studyDurationUnit!>
+                          <div class="field">${(opportunityRequest.studyDurationNumber?string)!} ${(unit=="MONTHS")?string("Months","Years")}</div>
+                        </div>
+                        
+                        <div class="row">
+                          <label class="plain-label">Does the opportunity require ATAS?</label>
+                          <div class="field">${(opportunityRequest.atasRequired)?string("Yes","No")}</div>
+                        </div>
+                        
+                        <div class="row">
+                          <label class="plain-label">Advertise deadline</label>
+                          <div class="field">30 September ${(opportunityRequest.advertisingDeadlineYear?c)!}</div>
+                        </div>
+                        
+                      </#if>
                       
                     </div>
 
-                    <div class="row-group">
-                      <h3 class="no-arrow">Revision Details</h3>
-
-                      <div class="row">
-                        <label id="commentContentLabel" class="plain-label" for="commentContent">Comment<em>*</em></label>
-                        <span class="hint" data-desc="<@spring.message 'opportunityRequestComment.contentTooltip'/>"></span>
-                        <div class="field">
-                          <textarea id="commentContent" name="content" class="max" cols="70" rows="6">${(comment.content?html)!}</textarea>
-                          <@spring.bind "comment.content" />
-                          <#list spring.status.errorMessages as error>
-                            <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-                              ${error}
-                            </div>
-                          </#list>
+                    <#if isRequestEditable>
+                      <div class="row-group">
+                        <h3 class="no-arrow">Revision Details</h3>
+  
+                        <div class="row">
+                          <label id="commentContentLabel" class="plain-label" for="commentContent">Comment</label>
+                          <span class="hint" data-desc="<@spring.message 'opportunityRequestComment.contentTooltip'/>"></span>
+                          <div class="field">
+                            <textarea id="commentContent" name="content" class="max" cols="70" rows="6">${(comment.content?html)!}</textarea>
+                            <@spring.bind "comment.content" />
+                            <#list spring.status.errorMessages as error>
+                              <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                                ${error}
+                              </div>
+                            </#list>
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div class="row">
-                        <label id="commentTypeLabel" class="plain-label" for="commentType">Review outcome<em>*</em></label>
-                        <span class="hint" data-desc="<@spring.message 'opportunityRequestComment.commentType'/>"></span>
-                        <div class="field">
-                          <select id="commentType" name="commentType">
-                            <option value="">Select...</option>
-                            <option value="APPROVE" <#if comment.commentType?? && comment.commentType == "APPROVE">selected="selected"</#if>>Approve</option>
-                            <option value="REJECT" <#if comment.commentType?? && comment.commentType == "REJECT">selected="selected"</#if>>Reject</option>
-                          </select>
-                          <@spring.bind "comment.commentType" />
-                          <#list spring.status.errorMessages as error>
-                            <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-                              ${error}
+                        
+                          <div class="row">
+                            <label id="commentTypeLabel" class="plain-label" for="commentType">Review outcome<em>*</em></label>
+                            <span class="hint" data-desc="<@spring.message 'opportunityRequestComment.commentType'/>"></span>
+                            <div class="field">
+                              <select id="commentType" name="commentType">
+                                <option value="">Select...</option>
+                                <option value="APPROVE" <#if comment.commentType?? && comment.commentType == "APPROVE">selected="selected"</#if>>Approve</option>
+                                <option value="REJECT" <#if comment.commentType?? && comment.commentType == "REJECT">selected="selected"</#if>>Reject</option>
+                              </select>
+                              <@spring.bind "comment.commentType" />
+                              <#list spring.status.errorMessages as error>
+                                <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                                  ${error}
+                                </div>
+                              </#list>
                             </div>
-                          </#list>
-                        </div>
+                          </div>
+                        
                       </div>
-                      
-                    </div>
-                    <#if opportunityRequest.status != "APPROVED">
+                    
                       <div class="buttons">
                         <button id="submitOpportunityRequestButton" class="btn btn-success">Submit</button>
                       </div>
                     </#if>
+                    
                   </form>
                 </div>
               </section>

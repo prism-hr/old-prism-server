@@ -17,15 +17,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -70,10 +69,12 @@ public class EditOpportunityRequestController {
     @RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
     public String getEditOpportunityRequestPage(@PathVariable("requestId") Integer requestId, ModelMap modelMap) {
         OpportunityRequest opportunityRequest = opportunitiesService.getOpportunityRequest(requestId);
+        OpportunityRequestComment comment = new OpportunityRequestComment();
 
         // force to recompute study duration number and unit
         opportunityRequest.setStudyDuration(opportunityRequest.getStudyDuration());
         modelMap.addAttribute("opportunityRequest", opportunityRequest);
+        modelMap.addAttribute("comment", comment);
 
         if (opportunityRequest.getInstitutionCountry() != null) {
             modelMap.addAttribute("institutions",
@@ -84,13 +85,15 @@ public class EditOpportunityRequestController {
     }
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.POST)
-    public Object respondToOpportunityRequest(@PathVariable("requestId") Integer requestId, @RequestParam OpportunityRequestCommentType action,
-            @Valid OpportunityRequest opportunityRequest, BindingResult bindingResult, ModelMap modelMap) {
-        if (bindingResult.hasErrors()) {
+    public Object respondToOpportunityRequest(@PathVariable("requestId") Integer requestId, @Valid OpportunityRequest opportunityRequest,
+            BindingResult requestBindingResult, @ModelAttribute("comment") @Valid OpportunityRequestComment comment, BindingResult commentBindingResult,
+            ModelMap modelMap) {
+        if (requestBindingResult.hasErrors() || commentBindingResult.hasErrors()) {
             OpportunityRequest existingRequest = opportunitiesService.getOpportunityRequest(requestId);
             opportunityRequest.setAuthor(existingRequest.getAuthor());
             opportunityRequest.setCreatedDate(existingRequest.getCreatedDate());
-            modelMap.addAttribute("opportunityRequest", opportunityRequest);
+            modelMap.put("opportunityRequest", opportunityRequest);
+            modelMap.put("comment", comment);
 
             if (opportunityRequest.getInstitutionCountry() != null) {
                 modelMap.addAttribute("institutions",
@@ -99,7 +102,7 @@ public class EditOpportunityRequestController {
 
             return EDIT_REQUEST_PAGE_VIEW_NAME;
         }
-        opportunitiesService.respondToOpportunityRequest(requestId, opportunityRequest, action);
+        opportunitiesService.respondToOpportunityRequest(requestId, opportunityRequest, comment);
         return new RedirectView("/requests", true, true, false);
     }
 

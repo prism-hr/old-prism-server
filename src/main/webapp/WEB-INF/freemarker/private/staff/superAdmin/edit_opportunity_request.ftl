@@ -99,7 +99,6 @@ span.count {
               <section class="form-rows">
                 <div>
                   <form id="opportunityRequestEditForm" method="POST">
-                    <input type="hidden" id="respondToOpportunityActionInput" name="action" />
                     <div class="row-group">
                       <h3 class="no-arrow"> Opportunity Details  </h3>
                       
@@ -111,11 +110,29 @@ span.count {
                       <h3 class="no-arrow">Revision Details</h3>
 
                       <div class="row">
-                        <label id="respondCommentLabel" class="plain-label" for="respondComment">Comment<em>*</em></label>
-                        <span class="hint" data-desc="<@spring.message 'opportunityRequest.respondCommentTooltip'/>"></span>
+                        <label id="commentContentLabel" class="plain-label" for="commentContent">Comment<em>*</em></label>
+                        <span class="hint" data-desc="<@spring.message 'opportunityRequestComment.contentTooltip'/>"></span>
                         <div class="field">
-                          <textarea id="respondComment" name="respondComment" class="max" cols="70" rows="6">${(opportunityRequest.respondComment?html)!}</textarea>
-                          <@spring.bind "opportunityRequest.respondComment" />
+                          <textarea id="commentContent" name="content" class="max" cols="70" rows="6">${(comment.content?html)!}</textarea>
+                          <@spring.bind "comment.content" />
+                          <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                              ${error}
+                            </div>
+                          </#list>
+                        </div>
+                      </div>
+                      
+                      <div class="row">
+                        <label id="commentTypeLabel" class="plain-label" for="commentType">Review outcome<em>*</em></label>
+                        <span class="hint" data-desc="<@spring.message 'opportunityRequestComment.commentType'/>"></span>
+                        <div class="field">
+                          <select id="commentType" name="commentType">
+                            <option value="">Select...</option>
+                            <option value="APPROVE" <#if comment.commentType?? && comment.commentType == "APPROVE">selected="selected"</#if>>Approve</option>
+                            <option value="REJECT" <#if comment.commentType?? && comment.commentType == "REJECT">selected="selected"</#if>>Reject</option>
+                          </select>
+                          <@spring.bind "comment.commentType" />
                           <#list spring.status.errorMessages as error>
                             <div class="alert alert-error"> <i class="icon-warning-sign"></i>
                               ${error}
@@ -127,8 +144,7 @@ span.count {
                     </div>
                     <#if opportunityRequest.status != "APPROVED">
                       <div class="buttons">
-                        <button id="approveOpportunityButton" class="btn btn-success">Approve</button>
-                        <button id="rejectOpportunityButton" class="btn btn-danger" aria-hidden="true">Reject</button>
+                        <button id="submitOpportunityRequestButton" class="btn btn-success">Submit</button>
                       </div>
                     </#if>
                   </form>
@@ -142,12 +158,12 @@ span.count {
                   <div class="row-group">
                     <ul id="timeline-statuses">
                       <#list opportunityRequest.comments?reverse as comment>                    
-                        <li class="${(comment.type == 'REJECT')?string('rejected','offer_recommended')}"> 
+                        <li class="${(comment.commentType == 'REJECT')?string('rejected','offer_recommended')}"> 
                           <!-- Box start -->
                           <div class="box">
                             <#assign author = comment.author> 
                             <div class="title"> <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
-                            <p class="highlight">Request ${(comment.type == 'REJECT')?string('Rejected','Approved')}.</p>
+                            <p class="highlight">Request ${(comment.commentType == 'REJECT')?string('Rejected','Approved')}.</p>
                             <#if comment.content??>
                               <i class="icon-minus-sign"></i>
                             </#if> 
@@ -155,7 +171,7 @@ span.count {
                           <#if comment.content??>
                             <div class="excontainer">
                               <ul class="status-info">
-                                <li class="${(comment.type == 'REJECT')?string('rejected','offer_recommended')}">
+                                <li class="${(comment.commentType == 'REJECT')?string('rejected','offer_recommended')}">
                                   <div class="box">
                                     <div class="title">
                                       <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span>

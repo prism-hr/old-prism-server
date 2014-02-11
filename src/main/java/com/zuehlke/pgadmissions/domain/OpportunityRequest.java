@@ -99,10 +99,6 @@ public class OpportunityRequest {
     @Transient
     private String studyDurationUnit;
 
-    @Transient
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 10)
-    private String respondComment;
-
     public Integer getId() {
         return id;
     }
@@ -260,14 +256,6 @@ public class OpportunityRequest {
     public void setStudyDurationUnit(String studyDurationUnit) {
         this.studyDurationUnit = studyDurationUnit;
         computeStudyDuration();
-    }
-
-    public String getRespondComment() {
-        return respondComment;
-    }
-
-    public void setRespondComment(String respondComment) {
-        this.respondComment = respondComment;
     }
 
     private void computeStudyDuration() {

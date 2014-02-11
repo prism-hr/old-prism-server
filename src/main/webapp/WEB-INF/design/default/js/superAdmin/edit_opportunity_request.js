@@ -13,13 +13,7 @@ $(document).ready(function() {
         institutionCountryChanged();
     });
     
-    $('#approveOpportunityButton').click(function(e) {
-        $("#respondToOpportunityActionInput").val("APPROVE");
-        $('#opportunityRequestEditForm').submit();
-    });
-    
-    $('#rejectOpportunityButton').click(function(e) {
-        $("#respondToOpportunityActionInput").val("REJECT");
+    $('#submitOpportunityRequestButton').click(function(e) {
         $('#opportunityRequestEditForm').submit();
     });
 

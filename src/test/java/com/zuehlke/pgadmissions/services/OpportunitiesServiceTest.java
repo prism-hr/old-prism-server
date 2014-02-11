@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
+import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -119,10 +120,10 @@ public class OpportunitiesServiceTest {
         RegisteredUser currentUser = new RegisteredUser();
         OpportunityRequest request = new OpportunityRequestBuilder().author(author).build();
         Domicile country = new Domicile();
-        OpportunityRequest newOpportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).otherInstitution("jakis uniwerek")
-                .respondComment("ok").build();
+        OpportunityRequest newOpportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).otherInstitution("jakis uniwerek").build();
         QualificationInstitution institution = new QualificationInstitution();
         Program program = new ProgramBuilder().institution(institution).build();
+        OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().content("ok").commentType(OpportunityRequestCommentType.APPROVE).build();
 
         expect(opportunityRequestDAO.findById(8)).andReturn(request);
         expect(programsService.saveProgramOpportunity(request)).andReturn(program);
@@ -130,7 +131,7 @@ public class OpportunitiesServiceTest {
         expect(userService.getCurrentUser()).andReturn(currentUser);
 
         replay();
-        service.respondToOpportunityRequest(8, newOpportunityRequest, OpportunityRequestCommentType.APPROVE);
+        service.respondToOpportunityRequest(8, newOpportunityRequest, comment);
         verify();
 
         assertEquals(OpportunityRequestStatus.APPROVED, request.getStatus());
@@ -144,10 +145,10 @@ public class OpportunitiesServiceTest {
         assertEquals(newOpportunityRequest.getAdvertisingDeadlineYear(), request.getAdvertisingDeadlineYear());
         assertEquals(newOpportunityRequest.getStudyOptions(), request.getStudyOptions());
 
-        OpportunityRequestComment comment = Iterables.getOnlyElement(request.getComments());
-        assertSame(currentUser, comment.getAuthor());
-        assertEquals("ok", comment.getContent());
-        assertEquals(OpportunityRequestCommentType.APPROVE, comment.getType());
+        OpportunityRequestComment returncomment = Iterables.getOnlyElement(request.getComments());
+        assertSame(currentUser, returncomment.getAuthor());
+        assertEquals("ok", returncomment.getContent());
+        assertEquals(OpportunityRequestCommentType.APPROVE, returncomment.getCommentType());
 
         assertThat(author.getInstitutions(), contains(institution));
         assertThat(author.getProgramsOfWhichAdministrator(), contains(program));

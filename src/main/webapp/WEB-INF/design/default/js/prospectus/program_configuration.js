@@ -443,10 +443,10 @@ function updateProgramSection(map) {
         var durationOfStudyInMonths = advert['studyDuration'];
         if (durationOfStudyInMonths % 12 == 0) {
             $("#programAdvertStudyDurationInput").val((durationOfStudyInMonths / 12).toString());
-            $("#programAdvertStudyDurationUnitSelect").val('Years');
+            $("#programAdvertStudyDurationUnitSelect").val('YEARS');
         } else {
             $("#programAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
-            $("#programAdvertStudyDurationUnitSelect").val('Months');
+            $("#programAdvertStudyDurationUnitSelect").val('MONTHS');
         }
         if (advert['active']) {
             $("#programAdvertIsActiveRadioYes").prop("checked", true);

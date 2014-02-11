@@ -104,13 +104,9 @@ function highlightSelectedAdvert(){
 	}
 }
 
-function bindAdvertApplyButton(button,advert){
+function bindAdvertApplyButton(button, advert){
 	button.click(function() {
-    	$('#program').val(advert.programCode);
     	$('#advert').val(advert.id);
-    	if(advert.projectId){
-    		$('#project').val(advert.projectId);
-    	}
     	$('#applyForm').submit();
    });
 }
@@ -217,7 +213,7 @@ function durationOfStudyString(studyDuration){
 }
 
 function getAdvertUrl (advert) {
-	url = window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advert=" + advert.id + "&program=" + advert.programCode;
+	url = window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advertId=" + advert.id;
 	if(advert.type == 'project') {
 		url = url + '&project=' + advert.projectId; 
 	}

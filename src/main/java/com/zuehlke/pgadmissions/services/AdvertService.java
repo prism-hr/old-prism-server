@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 
@@ -33,48 +32,47 @@ public class AdvertService {
     public AdvertService(AdvertDAO advertDAO) {
         this.advertDAO = advertDAO;
     }
-
-    public List<AdvertDTO> getAdvertFeed(OpportunityListType feedKey, String feedKeyValue, HttpServletRequest request) {
-        List<AdvertDTO> advertDTOs = null;
-        List<AdvertDTO> selectedAdvert = getAdvertDTOFromSession(request); 
-        
-        Integer selectedAdvertId = 0;
-        if (!selectedAdvert.isEmpty()) {
-            selectedAdvertId = selectedAdvert.get(0).getId();
-        }
-        
-        advertDTOs = advertDAO.getAdvertFeed(feedKey, feedKeyValue, selectedAdvertId);
-        
-        if (!selectedAdvert.isEmpty()) {
-            advertDTOs.add(0, advertDTOs.get(0));
-        }
-        
-        return advertDTOs;
-        
+    
+    public Advert getAdvertById(int advertId) {
+        return advertDAO.getAdvertById(advertId);
     }
     
-    public List<AdvertDTO> getAdvertDTOFromSession(HttpServletRequest request) {
+    public List<AdvertDTO> getAdvertFeed(OpportunityListType feedKey, String feedKeyValue, HttpServletRequest request) {
+        List<AdvertDTO> advertDTOs = new ArrayList<AdvertDTO>(); 
         DefaultSavedRequest defaultSavedRequest = (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
-        String advertId = getSavedRequestParam(defaultSavedRequest, "advert");
-        String programCode = getSavedRequestParam(defaultSavedRequest, "program");
-        String projectId = getSavedRequestParam(defaultSavedRequest, "project");
+        int selectedAdvertId = 0;
         
-        List<AdvertDTO> advertDTO = new ArrayList<AdvertDTO>();
+        String advertId = getSavedRequestParam(defaultSavedRequest, "advertId");
+        if (advertId == null) {
+            advertId = getSavedRequestParam(defaultSavedRequest, "programId");
+            if (advertId == null) {
+                advertId = getSavedRequestParam(defaultSavedRequest, "projectId");
+            }
+        }
         
         if (advertId != null) {
-            advertDTO.add(advertDAO.getAdvertDTOByAdvertId(advertId));
-            advertDTO.get(0).setSelected(true);
-        } else if (programCode != null) {
-            advertDTO.add(advertDAO.getAdvertDTOByProgramCode(programCode));
-            advertDTO.get(0).setSelected(true);
-        } else if (projectId != null) {
-            advertDTO.add(advertDAO.getAdvertDTOByProjectId(Integer.parseInt(projectId)));
-            advertDTO.get(0).setSelected(true);
+            advertDTOs.addAll(advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYADVERTID, advertId, selectedAdvertId));
+        } else {
+            String programCode = getSavedRequestParam(defaultSavedRequest, "programCode");
+            if (programCode != null) {
+                advertDTOs.addAll(advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYPROGRAMCODE, advertId, selectedAdvertId));
+            }
+        }  
+        
+        if (!advertDTOs.isEmpty()) {
+            selectedAdvertId = advertDTOs.get(0).getId();
         }
         
-        return advertDTO;
+        advertDTOs.addAll(shuffleAdverts(advertDAO.getAdvertFeed(feedKey, feedKeyValue, selectedAdvertId)));
+        return advertDTOs;
+
     }
     
+    private List<AdvertDTO> shuffleAdverts(List<AdvertDTO> advertDTOs) {
+        Collections.shuffle(advertDTOs);
+        return advertDTOs;
+    }
+
     private String getSavedRequestParam(DefaultSavedRequest savedRequest, String paramName) {
         if (savedRequest != null) {
             String[] values = savedRequest.getParameterValues(paramName);
@@ -84,21 +82,5 @@ public class AdvertService {
         }
         return null;
     }
-    
-    public Program getProgram(Advert advert) {
-        return advertDAO.getProgram(advert);
-    }
-
-    public Project getProject(Advert advert) {
-        return advertDAO.getProject(advert);
-    }
-
-	public void edit(Advert advert) {
-		advertDAO.save(advert);
-	}
-
-	public Advert getAdvertById(int advertId) {
-		return advertDAO.getAdvertById(advertId);
-	}
 
 }

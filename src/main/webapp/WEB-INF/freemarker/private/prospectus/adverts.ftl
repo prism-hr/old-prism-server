@@ -2,9 +2,7 @@
 <div style="overflow:hidden; position:relative">
   <div id="pholder">
     <form id="applyForm" action="/pgadmissions/apply/new" method="POST" style="display:none;" <#if shouldOpenNewTab??>target="_blank"</#if>>
-      <input type="hidden" id="program" name="program" value=""/>
-      <input type="hidden" id="advert" name="advert" value=""/>
-      <input type="hidden" id="project" name="project" value=""/>
+      <input type="hidden" id="programId" name="advertId" value=""/>
       <#if feedKey??>
       	<input type="hidden" id="feedKey" name="feedKey" value="${(feedKey)!}"/>
       </#if>

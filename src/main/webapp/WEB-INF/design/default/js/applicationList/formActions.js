@@ -94,7 +94,7 @@ $(document).ready(function() {
 					}
 				});
 			}
-			if ($(event.target).attr('class') == 'btn dropdown-toggle selectpicker btn-default' || $(event.target).attr('class') == 'filter-option pull-left' || $(event.target).attr('class') == 'text' || $(event.target).attr('class') == 'caret' || $(event.target).attr('class') == '') {
+			if ($(event.target).attr('class') == 'btn dropdown-toggle selectpicker btn-default' || $(event.target).attr('class') == 'filter-option pull-left' || $(event.target).attr('class') == 'text' || $(event.target).attr('class') == 'caret' || $(event.target).attr('class') == '' || $(event.target).attr('type') == 'checkbox') {
 				// do nothing
 			} else {
 				$(element).find('.application-details').not(applicationDetails).hide();

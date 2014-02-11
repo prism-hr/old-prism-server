@@ -61,7 +61,7 @@
               <label class="plain-label" for="email">Email <em>*</em></label>
               <span class="hint" data-desc="<@spring.message 'opportunityRequest.author.email'/>"></span>
               <div class="field">
-                <input id="email" type="email" placeholder="Email Address" name="author.email" value='${(opportunityRequest.author.email?html)!""}' />
+                <input id="email" type="email" placeholder="Email Address" name="author.email" value='${(opportunityRequest.author.email?html)!""}' autocomplete="off" />
                 <@spring.bind "opportunityRequest.author.email" />
                 <#list spring.status.errorMessages as error>
                   <div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>
@@ -72,7 +72,7 @@
               <label class="plain-label" for="password">Password <em>*</em></label>
               <span class="hint" data-desc="<@spring.message 'myaccount.newPw'/>"></span>
               <div class="field">
-                <input id="password" type="password" name="author.password" placeholder="Password"/>
+                <input id="password" type="password" name="author.password" placeholder="Password" autocomplete="off"/>
                 <@spring.bind "opportunityRequest.author.password" />
                 <#list spring.status.errorMessages as error>
                   <div class="alert alert-error"><i class="icon-warning-sign"></i> ${error}</div>

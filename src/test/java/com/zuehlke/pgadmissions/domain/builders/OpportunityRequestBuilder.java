@@ -26,6 +26,7 @@ public class OpportunityRequestBuilder {
     private Integer advertisingDeadlineYear;
     private Integer studyDurationNumber;
     private String studyDurationUnit;
+    private String respondComment;
 
     public OpportunityRequestBuilder id(Integer id) {
         this.id = id;
@@ -102,6 +103,11 @@ public class OpportunityRequestBuilder {
         return this;
     }
 
+    public OpportunityRequestBuilder respondComment(String respondComment) {
+        this.respondComment = respondComment;
+        return this;
+    }
+
     public OpportunityRequest build() {
         OpportunityRequest request = new OpportunityRequest();
         request.setId(id);
@@ -119,6 +125,7 @@ public class OpportunityRequestBuilder {
         request.setAdvertisingDeadlineYear(advertisingDeadlineYear);
         request.setStudyDurationNumber(studyDurationNumber);
         request.setStudyDurationUnit(studyDurationUnit);
+        request.setRespondComment(respondComment);
         return request;
     }
 

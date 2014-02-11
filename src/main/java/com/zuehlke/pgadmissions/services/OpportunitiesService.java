@@ -10,8 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -24,15 +27,21 @@ public class OpportunitiesService {
 
     @Autowired
     private OpportunityRequestDAO opportunityRequestDAO;
-    
+
+    @Autowired
+    private RoleService roleService;
+
     @Autowired
     private ProgramsService programsService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;
-    
+
     @Autowired
     private MailSendingService mailSendingService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -56,12 +65,12 @@ public class OpportunitiesService {
         return opportunityRequestDAO.findById(requestId);
     }
 
-    public void approveOpportunityRequest(Integer requestId, OpportunityRequest newOpportunityRequest) {
+    public void respondToOpportunityRequest(Integer requestId, OpportunityRequest newOpportunityRequest, OpportunityRequestCommentType action) {
         OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
         RegisteredUser author = opportunityRequest.getAuthor();
 
         // update opportunity request
-        opportunityRequest.setStatus(OpportunityRequestStatus.APPROVED);
+        opportunityRequest.setStatus(action == OpportunityRequestCommentType.APPROVE ? OpportunityRequestStatus.APPROVED : OpportunityRequestStatus.REJECTED);
         opportunityRequest.setInstitutionCountry(newOpportunityRequest.getInstitutionCountry());
         opportunityRequest.setInstitutionCode(newOpportunityRequest.getInstitutionCode());
         opportunityRequest.setOtherInstitution(newOpportunityRequest.getOtherInstitution());
@@ -72,21 +81,22 @@ public class OpportunitiesService {
         opportunityRequest.setAdvertisingDeadlineYear(newOpportunityRequest.getAdvertisingDeadlineYear());
         opportunityRequest.setStudyOptions(newOpportunityRequest.getStudyOptions());
 
-        // create program
-        Program program = programsService.saveProgramOpportunity(opportunityRequest);
-        
-        // grant permissions to the author 
-        author.getInstitutions().add(program.getInstitution());
-        author.getRoles();
-        author.getProgramsOfWhichAdministrator().add(program);
-    }
+        // create comment
+        OpportunityRequestComment comment = new OpportunityRequestComment();
+        comment.setType(action);
+        comment.setAuthor(userService.getCurrentUser());
+        comment.setContent(newOpportunityRequest.getRespondComment());
+        opportunityRequest.getComments().add(comment);
 
-    public void rejectOpportunityRequest(Integer requestId, String rejectionReason) {
-        OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
-        opportunityRequest.setRejectionReason(rejectionReason);
-        opportunityRequest.setStatus(OpportunityRequestStatus.REJECTED);
-        
-        mailSendingService.sendOpportunityRequestRejectionConfirmation(opportunityRequest);
+        if (action == OpportunityRequestCommentType.APPROVE) {
+            // create program
+            Program program = programsService.saveProgramOpportunity(opportunityRequest);
+
+            // grant permissions to the author
+            author.getInstitutions().add(program.getInstitution());
+            author.getRoles().add(roleService.getRoleByAuthority(Authority.ADMINISTRATOR));
+            author.getProgramsOfWhichAdministrator().add(program);
+        }
     }
 
 }

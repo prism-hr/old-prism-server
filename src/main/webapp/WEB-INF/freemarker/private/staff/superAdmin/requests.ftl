@@ -146,11 +146,11 @@
                   </td>
                   <td class="status">
                     <#if opportunityRequest.status == "NEW">
-                    <span data-desc="New Request" class="icon-status offer-recommended">New Request</span>
+                    <span data-desc="New Request" class="icon-status validation">New Request</span>
                     <#elseif opportunityRequest.status == "REJECTED">
                     <span data-desc="Rejected" class="icon-status rejected">Rejected</span>
                     <#elseif opportunityRequest.status == "APPROVED">
-                    <span data-desc="Approved" class="icon-status validation">Approved</span>
+                    <span data-desc="Approved" class="icon-status offer-recommended">Approved</span>
                     </#if>
                   </td>
                   <td class="centre">

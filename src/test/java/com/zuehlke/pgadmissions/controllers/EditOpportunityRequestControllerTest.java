@@ -4,25 +4,24 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.servlet.view.RedirectView;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.EasyMockUnitils;
 import org.unitils.easymock.annotation.Mock;
@@ -38,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -80,7 +80,7 @@ public class EditOpportunityRequestControllerTest {
     @Mock
     @InjectIntoByType
     private DatePropertyEditor datePropertyEditor;
-    
+
     @Mock
     @InjectIntoByType
     private ApplicationContext applicationContext;
@@ -91,7 +91,7 @@ public class EditOpportunityRequestControllerTest {
     @Test
     public void shouldGetEditOpportunityRequestPage() {
         Domicile institutionCountry = new DomicileBuilder().code("PL").build();
-        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDuration(24).institutionCountry(institutionCountry).build();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).build();
         ModelMap modelMap = new ModelMap();
         List<QualificationInstitution> institutions = Lists.newArrayList();
 
@@ -104,28 +104,27 @@ public class EditOpportunityRequestControllerTest {
 
         assertSame(opportunityRequest, modelMap.get("opportunityRequest"));
         assertSame(institutions, modelMap.get("institutions"));
-        assertEquals(2, opportunityRequest.getStudyDurationNumber().intValue());
-        assertEquals("YEARS", opportunityRequest.getStudyDurationUnit());
         assertEquals(EditOpportunityRequestController.EDIT_REQUEST_PAGE_VIEW_NAME, result);
     }
 
     @Test
-    public void shouldApproveOpportunityRequest() {
+    public void shouldRespondToOpportunityRequest() {
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDurationUnit("MONTHS").studyDurationNumber(3).build();
         BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 
-        opportunitiesService.approveOpportunityRequest(8, opportunityRequest);
+        opportunitiesService.respondToOpportunityRequest(8, opportunityRequest, OpportunityRequestCommentType.APPROVE);
 
         replay();
-        String result = controller.approveOpportunityRequest(8, opportunityRequest, bindingResult, null);
+        RedirectView result = (RedirectView) controller.respondToOpportunityRequest(8, OpportunityRequestCommentType.APPROVE, opportunityRequest, bindingResult, null);
         verify();
 
         assertEquals(3, opportunityRequest.getStudyDuration().intValue());
-        assertEquals("redirect:/requests", result);
+        assertEquals("/requests", result.getUrl());
+        assertFalse(result.isExposePathVariables());
     }
 
     @Test
-    public void shouldNotApproveOpportunityRequestWhenBindingErrors() {
+    public void shouldRespondToOpportunityRequestWhenBindingErrors() {
         Domicile institutionCountry = new DomicileBuilder().code("PL").build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).build();
         RegisteredUser author = new RegisteredUser();
@@ -138,34 +137,13 @@ public class EditOpportunityRequestControllerTest {
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(new OpportunityRequestBuilder().author(author).build());
 
         replay();
-        String result = controller.approveOpportunityRequest(8, opportunityRequest, bindingResult, modelMap);
+        String result = (String) controller.respondToOpportunityRequest(8, OpportunityRequestCommentType.APPROVE, opportunityRequest, bindingResult, modelMap);
         verify();
 
         assertSame(opportunityRequest, modelMap.get("opportunityRequest"));
         assertSame(institutions, modelMap.get("institutions"));
         assertEquals(EditOpportunityRequestController.EDIT_REQUEST_PAGE_VIEW_NAME, result);
         assertSame(author, opportunityRequest.getAuthor());
-    }
-
-    @Test
-    public void shouldRejectOpportunityRequest() {
-        opportunitiesService.rejectOpportunityRequest(8, "Because I said so");
-
-        replay();
-        Map<String, Object> result = controller.rejectOpportunityRequest(8, "Because I said so");
-        verify();
-
-        assertEquals(Collections.singletonMap("success", true), result);
-    }
-    @Test
-    public void shouldNotRejectOpportunityRequestIfValidatioErrors() {
-        expect(applicationContext.getMessage(eq("text.field.maxcharacters"), isA(Object[].class), isA(Locale.class))).andReturn("mess");
-        
-        replay();
-        Map<String, Object> result = controller.rejectOpportunityRequest(8, RandomStringUtils.random(2001));
-        verify();
-        
-        assertEquals(Collections.singletonMap("rejectionReason", "mess"), result);
     }
 
     @Test
@@ -198,6 +176,7 @@ public class EditOpportunityRequestControllerTest {
         dataBinder.setValidator(opportunityRequestValidator);
         dataBinder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         dataBinder.registerCustomEditor(Date.class, datePropertyEditor);
+        dataBinder.registerCustomEditor(eq(String.class), isA(StringTrimmerEditor.class));
 
         replay();
         controller.registerPropertyEditors(dataBinder);

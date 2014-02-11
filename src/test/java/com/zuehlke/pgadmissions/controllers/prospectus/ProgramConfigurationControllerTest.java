@@ -1,16 +1,21 @@
 package com.zuehlke.pgadmissions.controllers.prospectus;
 
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.util.Map;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
@@ -27,9 +32,12 @@ import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ProgramConfigurationControllerTest {
@@ -53,12 +61,37 @@ public class ProgramConfigurationControllerTest {
     @Mock
     @InjectIntoByType
     private ApplyTemplateRenderer templateRenderer;
+    
+    @Mock
+    @InjectIntoByType
+    private OpportunityRequestValidator opportunityRequestValidator;
+    
+    @Mock
+    @InjectIntoByType
+    private DomicilePropertyEditor domicilePropertyEditor;
+    
+    @Mock
+    @InjectIntoByType
+    private ProgramPropertyEditor programPropertyEditor;
 
     @InjectIntoByType
-    private Gson gson = new Gson();;
+    private Gson gson = new Gson();
 
     @TestedObject
     private ProgramConfigurationController controller;
+    
+    @Test
+    public void shouldRegisterPropertyEditorsForOpportunityRequest() {
+        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+        binderMock.setValidator(opportunityRequestValidator);
+        binderMock.registerCustomEditor(Domicile.class, domicilePropertyEditor);
+        binderMock.registerCustomEditor(Program.class, programPropertyEditor);
+        binderMock.registerCustomEditor(eq(String.class), isA(StringTrimmerEditor.class));
+        
+        replay();
+        controller.registerPropertyEditorsForOpportunityRequest(binderMock);
+        verify();
+    }
 
     @Test
     public void shouldGetOpportunityData() {

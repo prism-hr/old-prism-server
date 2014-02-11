@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
@@ -19,16 +18,21 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -45,6 +49,10 @@ public class OpportunitiesServiceTest {
 
     @Mock
     @InjectIntoByType
+    private RoleService roleService;
+
+    @Mock
+    @InjectIntoByType
     private ProgramsService programsService;
 
     @Mock
@@ -54,6 +62,10 @@ public class OpportunitiesServiceTest {
     @Mock
     @InjectIntoByType
     private MailSendingService mailSendingService;
+
+    @Mock
+    @InjectIntoByType
+    private UserService userService;
 
     @TestedObject
     private OpportunitiesService service = new OpportunitiesService();
@@ -102,18 +114,23 @@ public class OpportunitiesServiceTest {
 
     @Test
     public void shouldApproveOpportunityRequest() {
+        Role administratorRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         RegisteredUser author = new RegisteredUser();
+        RegisteredUser currentUser = new RegisteredUser();
         OpportunityRequest request = new OpportunityRequestBuilder().author(author).build();
         Domicile country = new Domicile();
-        OpportunityRequest newOpportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).otherInstitution("jakis uniwerek").build();
+        OpportunityRequest newOpportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).otherInstitution("jakis uniwerek")
+                .respondComment("ok").build();
         QualificationInstitution institution = new QualificationInstitution();
         Program program = new ProgramBuilder().institution(institution).build();
 
         expect(opportunityRequestDAO.findById(8)).andReturn(request);
         expect(programsService.saveProgramOpportunity(request)).andReturn(program);
+        expect(roleService.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(administratorRole);
+        expect(userService.getCurrentUser()).andReturn(currentUser);
 
         replay();
-        service.approveOpportunityRequest(8, newOpportunityRequest);
+        service.respondToOpportunityRequest(8, newOpportunityRequest, OpportunityRequestCommentType.APPROVE);
         verify();
 
         assertEquals(OpportunityRequestStatus.APPROVED, request.getStatus());
@@ -126,22 +143,15 @@ public class OpportunitiesServiceTest {
         assertEquals(newOpportunityRequest.getAtasRequired(), request.getAtasRequired());
         assertEquals(newOpportunityRequest.getAdvertisingDeadlineYear(), request.getAdvertisingDeadlineYear());
         assertEquals(newOpportunityRequest.getStudyOptions(), request.getStudyOptions());
+
+        OpportunityRequestComment comment = Iterables.getOnlyElement(request.getComments());
+        assertSame(currentUser, comment.getAuthor());
+        assertEquals("ok", comment.getContent());
+        assertEquals(OpportunityRequestCommentType.APPROVE, comment.getType());
+
         assertThat(author.getInstitutions(), contains(institution));
         assertThat(author.getProgramsOfWhichAdministrator(), contains(program));
-    }
-
-    @Test
-    public void shouldRejectOpportunityRequest() {
-        OpportunityRequest request = new OpportunityRequest();
-        expect(opportunityRequestDAO.findById(8)).andReturn(request);
-        mailSendingService.sendOpportunityRequestRejectionConfirmation(request);
-
-        replay();
-        service.rejectOpportunityRequest(8, "because");
-        verify();
-
-        assertEquals(OpportunityRequestStatus.REJECTED, request.getStatus());
-        assertEquals("because", request.getRejectionReason());
+        assertThat(author.getRoles(), contains(administratorRole));
     }
 
 }

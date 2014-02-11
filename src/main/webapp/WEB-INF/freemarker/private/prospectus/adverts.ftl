@@ -2,16 +2,22 @@
 <div style="overflow:hidden; position:relative">
   <div id="pholder">
     <form id="applyForm" action="/pgadmissions/apply/new" method="POST" style="display:none;" <#if shouldOpenNewTab??>target="_blank"</#if>>
-      <input type="hidden" id="program" name="program" value=""/>
-      <input type="hidden" id="advert" name="advert" value=""/>
-      <input type="hidden" id="project" name="project" value=""/>
+      <input type="hidden" id="programId" name="advertId" value=""/>
+      <#if feedKey??>
+      	<input type="hidden" id="feedKey" name="feedKey" value="${(feedKey)!}"/>
+      </#if>
+      <#if feedKeyValue??>
+      	<input type="hidden" id="feedKeyValue" name="feedKeyValue" value="${(feedKeyValue)!}"/>
+      </#if>
     </form>
 	
   	<#if Request['prospectus.selectedAdvert']?has_content>
   		<input type="hidden" id="prospectusSelectedAdvert" name="prospectusSelectedAdvert" value="${Request['prospectus.selectedAdvert']}"/>
   	</#if>
     <header>
-      <a href="/pgadmissions/createOpportunity" class="btn btn-success newOportunity">Advertise Opportunity</a>
+	    <#if !RequestParameters.feedKey??>
+	      <a href="/pgadmissions/createOpportunity" class="btn btn-success newOportunity">Advertise Opportunity</a>
+	    </#if>
       <h1>
         <#if feedTitle??>
           ${feedTitle}

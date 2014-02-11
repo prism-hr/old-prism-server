@@ -435,7 +435,7 @@ public class ApplicationFormUserRoleService {
         if (project != null) {
         	administrators.put(project.getPrimarySupervisor(), Authority.PROJECTADMINISTRATOR);
         	
-        	RegisteredUser projectAdministrator = project.getAdministrator();
+        	RegisteredUser projectAdministrator = project.getContactUser();
             if (projectAdministrator != null) {
                 administrators.put(projectAdministrator, Authority.PROJECTADMINISTRATOR);
             }

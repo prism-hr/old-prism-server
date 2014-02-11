@@ -159,10 +159,10 @@ public class RegisteredUserTest {
 
     @Test
     public void shouldReturnTrueIfUserProjectAdminInApplication() {
-        RegisteredUser administrator = new RegisteredUserBuilder().id(1).build();
+        RegisteredUser contactUser = new RegisteredUserBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION)
-                .project(new ProjectBuilder().administrator(administrator).build()).build();
-        assertTrue(administrator.canSee(applicationForm));
+                .project(new ProjectBuilder().contactUser(contactUser).build()).build();
+        assertTrue(contactUser.canSee(applicationForm));
 
     }
 
@@ -983,7 +983,7 @@ public class RegisteredUserTest {
     @Test
     public void shouldHaveAdminRightsOnAppIfAdministratorInApplicationProject() {
         RegisteredUser user = new RegisteredUserBuilder().id(8).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(new Program()).project(new ProjectBuilder().administrator(user).build())
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(new Program()).project(new ProjectBuilder().contactUser(user).build())
                 .status(ApplicationFormStatus.VALIDATION).build();
         assertTrue(user.hasAdminRightsOnApplication(applicationForm));
     }

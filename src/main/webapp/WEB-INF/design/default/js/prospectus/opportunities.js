@@ -33,54 +33,54 @@ function setClass() {
 }
 
 function getAdverts(){
-	var selectedAdvertId= getUrlParam("advert");
-	if(selectedAdvertId !== undefined && selectedAdvertId != "undefined"){
+	var selectedAdvertId = getUrlParam("advert");
+	if (selectedAdvertId !== undefined && selectedAdvertId != "undefined") {
 		selectedAdvertId = decodeURIComponent(selectedAdvertId);
 	}
-	var feedId = $('#feedId').val();
-	var user = $('#user').val();
-	var upi = $('#upi').val();
-	if (feedId != undefined || user != undefined || upi != undefined) {
-		var data = {
-			feedId : feedId,
-			user : user,
-			upi : upi
-		};
-		$.ajax({
-			type: 'GET',
-			data: data,
-			url: "/pgadmissions/opportunities/feeds",
-			success: function(data) {
-				processAdverts(data.adverts);
-				highlightSelectedAdvert();
-				bindAddThisShareOverFix();
-			}
-		});
-	} else {
-		$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() { window.location.reload(); },
-				500: function() { window.location.href = "/pgadmissions/error"; },
-				404: function() { window.location.href = "/pgadmissions/404"; },
-				400: function() { window.location.href = "/pgadmissions/400"; },                  
-				403: function() { window.location.href = "/pgadmissions/404"; }
-			},
-			data: {
-				advert: selectedAdvertId,
-	        }, 
-			url: "/pgadmissions/opportunities/activeOpportunities",
-			success: function(data) {
-				var map = JSON.parse(data);
-				processAdverts(map.adverts);
-				highlightSelectedAdvert();
-				bindAddThisShareOverFix();
-			},
-			complete: function() {
-			}
-		});
-		
+	var key = getUrlParam("feedKey");
+	if (key == undefined) {
+		key = $('#feedKey').val();
 	}
+	var value = getUrlParam("feedKeyValue");
+	if (value == undefined) {
+		value = $('#feedKeyValue').val();
+	}
+	var data = {
+		feedKey: key,
+		feedKeyValue: value, 
+		advert: selectedAdvertId
+	};
+	$.ajax({
+		type: 'GET',
+		data: data,
+		url: "/pgadmissions/opportunities/embedded",
+		success: function(data) {
+			var map = JSON.parse(data);
+			processAdverts(map.adverts);
+			highlightSelectedAdvert();
+			bindAddThisShareOverFix();
+		}
+	});
+}
+
+function getRelatedAdverts(){
+	key = $('#feedKey').val();
+	value = $('#feedKeyValue').val();
+	var data = {
+		feedKey: key,
+		feedKeyValue: value,
+	};
+	$.ajax({
+		type: 'GET',
+		data: data,
+		url: "/pgadmissions/opportunities/embedded",
+		success: function(data) {
+			var map = JSON.parse(data);
+			processAdverts(map.adverts);
+			highlightSelectedAdvert();
+			bindAddThisShareOverFix();
+		}
+	});
 }
 
 function processAdverts(adverts){
@@ -104,13 +104,9 @@ function highlightSelectedAdvert(){
 	}
 }
 
-function bindAdvertApplyButton(button,advert){
+function bindAdvertApplyButton(button, advert){
 	button.click(function() {
-    	$('#program').val(advert.programCode);
     	$('#advert').val(advert.id);
-    	if(advert.projectId){
-    		$('#project').val(advert.projectId);
-    	}
     	$('#applyForm').submit();
    });
 }
@@ -135,9 +131,9 @@ function renderAdvert(advert){
 		psupervisor = '';
 		ssupervisor = '';
 	} else if (advert.type == 'project') {
-		psupervisor = '<div class="psupervisor"><p>'+advert.primarySupervisor.firstname + ' ' + advert.primarySupervisor.lastname + ' (PI)';
-		if (advert.secondarySupervisorSpecified) {
-			ssupervisor = '<span class="ssupervisor">, '+ advert.secondarySupervisor.firstname + ' ' + advert.secondarySupervisor.lastname+'</span></p></div>'; 
+		psupervisor = '<div class="psupervisor"><p>'+advert.primarySupervisorFirstName + ' ' + advert.primarySupervisorLastName + ' (PI)';
+		if (advert.secondarySupervisorFirstname != "undefined") {
+			ssupervisor = '<span class="ssupervisor">, '+ advert.secondarySupervisorFirstName + ' ' + advert.secondarySupervisorLastName+'</span></p></div>'; 
 		} else {
 			ssupervisor = '</p></div>';
 		}
@@ -178,7 +174,7 @@ function renderAdvert(advert){
 			'<!-- AddThis Button END -->'+
 		'</div>'+
 		'<div class="applyBox">'+
-			'<a href="mailto:'+advert.email+'?subject=Question About:'+advert.title+'" class="question">Ask a question</a>'+
+			'<a href="mailto:'+advert.primarySupervisorEmail+'?subject=Question About:'+advert.title+'" class="question">Ask a question</a>'+
 			'<button id="'+advert.programCode+'" class="btn btn-primary apply">'+buttonText+'</button>'+
 		'</div>'+
 	'</div>'+
@@ -216,16 +212,16 @@ function durationOfStudyString(studyDuration){
 	return normalizedDuration+" "+ normalizedUnit+ pluralSuffix;
 }
 
-function getAdvertUrl(advert){
-	url = window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advert=" + advert.id + "&program=" + advert.programCode;
+function getAdvertUrl (advert) {
+	url = window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advertId=" + advert.id;
 	if(advert.type == 'project') {
 		url = url + '&project=' + advert.projectId; 
 	}
 	return url;
 }
 
-function getUrlParam(name){
-    var results = new RegExp('[\\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
+function getUrlParam(name) {
+    var results = new RegExp('[\\?&;]' + name + '=([^&;#]*)').exec(window.location.href);
     if(results!=null && results.length>0){
     	return results[1];	
     }

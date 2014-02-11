@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -118,13 +117,6 @@ public class ProgramConfigurationController {
         binder.registerCustomEditor(Date.class, "closingDate", datePropertyEditor);
     }
 
-    private Advert getProgrameAdvert(Program program) {
-        if (program == null) {
-            return null;
-        }
-        return program.getAdvert();
-    }
-
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();
@@ -142,19 +134,19 @@ public class ProgramConfigurationController {
     @ResponseBody
     public String getOpportunityData(@RequestParam String programCode) {
         Program program = programsService.getProgramByCode(programCode);
-        Advert advert = getProgrameAdvert(program);
 
         Map<String, Object> result = Maps.newHashMap();
-        result.put("advert", advert);
 
         HashMap<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("programCode", programCode);
-        if (advert != null) {
-            dataMap.put("advertId", advert.getId());
-        }
-
+        
         Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
-
+        
+        result.put("programId", program.getId());
+        result.put("programTitle", program.getTitle());
+        result.put("programDescription", program.getDescription());
+        result.put("programStudyDuration", program.getStudyDuration());
+        result.put("programFunding", program.getFunding());
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));

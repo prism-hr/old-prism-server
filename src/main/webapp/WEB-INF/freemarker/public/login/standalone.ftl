@@ -7,9 +7,8 @@
     </head>
     <body>
 	   <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	   <#if feedId??><input type="hidden" id="feedId" value="${feedId}"/></#if>
-	   <#if user??><input type="hidden" id="user" value="${user}"/></#if>
-	   <#if upi??><input type="hidden" id="upi" value="${upi}"/></#if>
-	   <#include "/private/prospectus/adverts.ftl"/>
+	   <#if feedkey??><input type="hidden" id="feedKey" value="${feedKey}"/></#if>
+	   <#if feedKeyValue??><input type="hidden" id="feedKeyValue" value="${feedKeyValue}"/></#if>
+       <#include "/private/prospectus/adverts.ftl"/>
     </body>
 </html>

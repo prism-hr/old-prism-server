@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -40,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
-import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
@@ -403,8 +401,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertNull(application.getId());
 
         sessionFactory.getCurrentSession().save(application);
-        project.setDisabled(true);
-        project.getAdvert().setActive(false);
+        project.setEnabled(false);
+        project.setActive(false);
         sessionFactory.getCurrentSession().update(project);
 
         assertNotNull(application.getId());
@@ -422,7 +420,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
         assertEquals(program.getId(), reloadedApplication.getProgram().getId());
         assertEquals(project.getId(), reloadedApplication.getProject().getId());
-        assertTrue(project.isDisabled());
+        assertTrue(!project.isEnabled());
         assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
         assertEquals("title", reloadedApplication.getProjectTitle());
         assertEquals(lastUpdatedDate, application.getLastUpdated());
@@ -451,8 +449,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         
         program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 
-        Advert advert = new AdvertBuilder().title("title").description("description").funding("funding").studyDuration(6).build();
-        project = new ProjectBuilder().advert(advert).author(applicationAdmin).primarySupervisor(applicationAdmin).program(program).build();
+        project = new ProjectBuilder().title("title").description("description").funding("funding").studyDuration(6).contactUser(applicationAdmin).primarySupervisor(applicationAdmin).program(program).build();
 
         save(user, reviewerUser, institution, program, interviewerUser, applicationAdmin, approver, project);
 

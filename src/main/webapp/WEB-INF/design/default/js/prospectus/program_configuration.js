@@ -426,37 +426,28 @@ function updateAdvertSection(map) {
 }
 
 function updateProgramSection(map) {
+    clearProgramSection();
     $("[name=programAdvertAtasRequired][value=" + map["atasRequired"] + "]").prop("checked", true);
-
     $("#programAdvertInstitutionCountry").val(map["institutionCountryCode"]);
     $("#programAdvertInstitutionCountry").selectpicker('refresh');
     getInstitutionData(function(){
         $("#programAdvertInstitution").val(map["institutionCode"]);
     });
-    $("#programAdvertInstitutionOtherName").val("");
-
-    var advert = map['advert'];
-    if (advert) {
-        tinyMCE.get('programAdvertDescriptionText').setContent(advert['description']);
-        tinyMCE.get('programAdvertFundingText').setContent(advert['funding'] ? advert['funding'] : "");
-        $("#programAdvertId").val(advert.id);
-        var durationOfStudyInMonths = advert['studyDuration'];
-        if (durationOfStudyInMonths % 12 == 0) {
-            $("#programAdvertStudyDurationInput").val((durationOfStudyInMonths / 12).toString());
-            $("#programAdvertStudyDurationUnitSelect").val('Years');
-        } else {
-            $("#programAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
-            $("#programAdvertStudyDurationUnitSelect").val('Months');
-        }
-        if (advert['active']) {
-            $("#programAdvertIsActiveRadioYes").prop("checked", true);
-        } else {
-            $("#programAdvertIsActiveRadioNo").prop("checked", true);
-        }
+    tinyMCE.get('programAdvertDescriptionText').setContent(map['programDescription']);
+    tinyMCE.get('programAdvertFundingText').setContent(map['programFunding'] ? map['programFunding'] : "");
+    var durationOfStudyInMonths = map['programStudyDuration'];
+    if (durationOfStudyInMonths % 12 == 0) {
+        $("#programAdvertStudyDurationInput").val((durationOfStudyInMonths / 12).toString());
+        $("#programAdvertStudyDurationUnitSelect").val('Years');
     } else {
-        clearAdvert();
+        $("#programAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
+        $("#programAdvertStudyDurationUnitSelect").val('Months');
     }
-
+    if (map['active']) {
+        $("#programAdvertIsActiveRadioYes").prop("checked", true);
+    } else {
+        $("#programAdvertIsActiveRadioNo").prop("checked", true);
+    }
     $("#programAdvertStudyOptionsSelect").find('option:selected').removeAttr("selected").end();
     if (map['studyOptions']) {
         var studyOptions = map['studyOptions'];
@@ -464,7 +455,6 @@ function updateProgramSection(map) {
             $("#programAdvertStudyOptionsSelect option[value='" + option + "']").prop("selected", true);
         });
     }
-
     var advertisingDeadline = map['advertisingDeadline'];
     $('#programAdvertAdvertisingDeadlineYear').val(advertisingDeadline);
 
@@ -602,15 +592,6 @@ function saveAdvert() {
     });
 }
 
-function clearAdvert() {
-    $("[name=programAdvertAtasRequired]").prop("checked", false);
-    $("#institutionGroup select, #institutionGroup input, #advertGroup input, #advertGroup textarea, #advertGroup select, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply").val('');
-    $("#programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo").prop('checked', false);
-    $('.selectpicker').selectpicker('refresh');
-    tinyMCE.get('programAdvertDescriptionText').setContent('');
-    tinyMCE.get('programAdvertFundingText').setContent('');
-}
-
 function setTextAreaValue(textArea, value) {
     if (value == null) {
         value = "";
@@ -627,11 +608,17 @@ function triggerKeyUp(element) {
 }
 
 function clearProgramSection() {
-    clearAdvert();
+    $("[name=programAdvertAtasRequired]").prop("checked", false);
+    $("#institutionGroup select, #institutionGroup input, #advertGroup input, #advertGroup textarea, #advertGroup select, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply").val('');
+    $("#programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo").prop('checked', false);
+    $('.selectpicker').selectpicker('refresh');
+    tinyMCE.get('programAdvertDescriptionText').setContent('');
+    tinyMCE.get('programAdvertFundingText').setContent('');
     $("#programAdvertButtonToApply").val("");
     $("#programAdvertLinkToApply").val("");
     clearClosingDate();
     $('#programAdvertClosingDates tr').remove();
+    $("#programAdvertInstitutionOtherName").val("");
     checkDates();
 }
 

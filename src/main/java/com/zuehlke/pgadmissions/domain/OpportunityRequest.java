@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,10 +12,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -69,9 +74,6 @@ public class OpportunityRequest {
     @Column(name = "advertising_dealine_year")
     private Integer advertisingDeadlineYear;
 
-    @Column(name = "rejection_reason")
-    private String rejectionReason;
-
     @Column(name = "request_type")
     @Enumerated(EnumType.STRING)
     private OpportunityRequestType type = OpportunityRequestType.NEW;
@@ -79,6 +81,11 @@ public class OpportunityRequest {
     @ManyToOne
     @JoinColumn(name = "source_program_id")
     private Program sourceProgram;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "opportunity_request_id", nullable = false)
+    @OrderBy("createdTimestamp")
+    private List<OpportunityRequestComment> comments = Lists.newArrayList();
 
     @Transient
     private String funding;
@@ -91,6 +98,10 @@ public class OpportunityRequest {
 
     @Transient
     private String studyDurationUnit;
+
+    @Transient
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 10)
+    private String respondComment;
 
     public Integer getId() {
         return id;
@@ -197,14 +208,6 @@ public class OpportunityRequest {
         this.advertisingDeadlineYear = advertisingDeadlineYear;
     }
 
-    public String getRejectionReason() {
-        return rejectionReason;
-    }
-
-    public void setRejectionReason(String rejectionReason) {
-        this.rejectionReason = rejectionReason;
-    }
-
     public OpportunityRequestType getType() {
         return type;
     }
@@ -219,6 +222,10 @@ public class OpportunityRequest {
 
     public void setSourceProgram(Program sourceProgram) {
         this.sourceProgram = sourceProgram;
+    }
+
+    public List<OpportunityRequestComment> getComments() {
+        return comments;
     }
 
     public String getFunding() {
@@ -253,6 +260,14 @@ public class OpportunityRequest {
     public void setStudyDurationUnit(String studyDurationUnit) {
         this.studyDurationUnit = studyDurationUnit;
         computeStudyDuration();
+    }
+
+    public String getRespondComment() {
+        return respondComment;
+    }
+
+    public void setRespondComment(String respondComment) {
+        this.respondComment = respondComment;
     }
 
     private void computeStudyDuration() {

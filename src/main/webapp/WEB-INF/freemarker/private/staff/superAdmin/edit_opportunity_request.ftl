@@ -48,22 +48,7 @@ span.count {
 <!--[if (gte IE 9)|!(IE)]><!-->
 <body>
 <!--<![endif]-->
-<div id="rejectOpportunityRequestModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3 id="myModalLabel">Respond to this opportunity request</h3>
-  </div>
-  <div id="rejectOpportunityRequestReasonDiv" class="modal-body">
-    <p>Please provide any comment to approve or reject this opportunity request</p>
-    <textarea cols="150" rows="6" class="input-xxlarge" id="rejectOpportunityRequestReasonText"></textarea>
-    </p>
-  </div>
-  <div class="modal-footer">
-    <input id="rejectOpportunityRequestUrl" type="hidden" value="${requestContext.requestUri}" />
-    <button id="approve-button" class="btn btn-success">Approve</button>
-    <button id="do-reject-opportunity-button" class="btn btn-danger" aria-hidden="true">Reject</button>
-  </div>
-</div>
+
 <!-- Wrapper Starts -->
 <div id="wrapper"> <#include "/private/common/global_header.ftl"/> 
   <!-- Middle Starts -->
@@ -114,14 +99,38 @@ span.count {
               <section class="form-rows">
                 <div>
                   <form id="opportunityRequestEditForm" method="POST">
-                    <input type="hidden" name="action" value="approve">
+                    <input type="hidden" id="respondToOpportunityActionInput" name="action" />
                     <div class="row-group">
                       <h3 class="no-arrow"> Opportunity Details  </h3>
-                      <#include "/private/prospectus/opportunity_details_part.ftl"/> 
+                      
+                      <#include "/private/prospectus/opportunity_details_part.ftl"/>
+                      
                     </div>
-                    <div class="buttons">
-                      <button id="respond-button" class="btn btn-primary">Respond</button>
+
+                    <div class="row-group">
+                      <h3 class="no-arrow">Revision Details</h3>
+
+                      <div class="row">
+                        <label id="respondCommentLabel" class="plain-label" for="respondComment">Comment<em>*</em></label>
+                        <span class="hint" data-desc="<@spring.message 'opportunityRequest.respondCommentTooltip'/>"></span>
+                        <div class="field">
+                          <textarea id="respondComment" name="respondComment" class="max" cols="70" rows="6">${(opportunityRequest.respondComment?html)!}</textarea>
+                          <@spring.bind "opportunityRequest.respondComment" />
+                          <#list spring.status.errorMessages as error>
+                            <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+                              ${error}
+                            </div>
+                          </#list>
+                        </div>
+                      </div>
+                      
                     </div>
+                    <#if opportunityRequest.status != "APPROVED">
+                      <div class="buttons">
+                        <button id="approveOpportunityButton" class="btn btn-success">Approve</button>
+                        <button id="rejectOpportunityButton" class="btn btn-danger" aria-hidden="true">Reject</button>
+                      </div>
+                    </#if>
                   </form>
                 </div>
               </section>
@@ -132,52 +141,37 @@ span.count {
                 <div>
                   <div class="row-group">
                     <ul id="timeline-statuses">
-                      <li class="rejected"> 
-                        <!-- Box start -->
-                        <div class="box">
-                          <div class="title"> <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
-                          <p class="highlight">Request Rejected.</p> <i class="icon-minus-sign"></i> 
-                        </div>
-                        <div class="excontainer">
-                          <ul class="status-info">
-                            <li class="rejected">
-                              <div class="box">
-                                <div class="title">
-                                  <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span>
-                                  <em>Commented:</em>
-                                </div>
-                                <div class="textContainer">
-                                  <p>This is the comment, if it doesn't exist dont display this block sarting for the div excontainer </p>
-                                </div>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                        <!-- Box end -->
-                      </li>
-                      <li class="offer_recommended"> 
-                        <!-- Box start -->
-                        <div class="box">
-                          <div class="title"> <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
-                          <p class="highlight">Request Approved. </p> <i class="icon-minus-sign"></i> 
-                        </div>
-                        <div class="excontainer">
-                          <ul class="status-info">
-                            <li class="offer_recommended">
-                              <div class="box">
-                                <div class="title">
-                                  <span data-desc="Pouyan Khalili (zcemg43@live.ucl.ac.uk) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">Pouyan Khalili</span>
-                                  <em>Commented:</em>
-                                </div>
-                                <div class="textContainer">
-                                  <p>This is the comment, if it doesn't exist dont display this block sarting for the div excontainer </p>
-                                </div>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                        <!-- Box end -->
-                      </li>
+                      <#list opportunityRequest.comments?reverse as comment>                    
+                        <li class="${(comment.type == 'REJECT')?string('rejected','offer_recommended')}"> 
+                          <!-- Box start -->
+                          <div class="box">
+                            <#assign author = comment.author> 
+                            <div class="title"> <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
+                            <p class="highlight">Request ${(comment.type == 'REJECT')?string('Rejected','Approved')}.</p>
+                            <#if comment.content??>
+                              <i class="icon-minus-sign"></i>
+                            </#if> 
+                          </div>
+                          <#if comment.content??>
+                            <div class="excontainer">
+                              <ul class="status-info">
+                                <li class="${(comment.type == 'REJECT')?string('rejected','offer_recommended')}">
+                                  <div class="box">
+                                    <div class="title">
+                                      <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span>
+                                      <em>Commented:</em>
+                                    </div>
+                                    <div class="textContainer">
+                                      <p>${comment.content?html}</p>
+                                    </div>
+                                  </div>
+                                </li>
+                              </ul>
+                            </div>
+                          </#if>
+                          <!-- Box end -->
+                        </li>
+                      </#list>
                       <li class="not_submitted">
                         <!-- Box start -->
                         <div class="box">

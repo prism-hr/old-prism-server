@@ -13,17 +13,14 @@ $(document).ready(function() {
         institutionCountryChanged();
     });
     
-    $('#approve-button').click(function(e) {
+    $('#approveOpportunityButton').click(function(e) {
+        $("#respondToOpportunityActionInput").val("APPROVE");
         $('#opportunityRequestEditForm').submit();
     });
-
-    $('#respond-button').click(function(e) {
-        e.preventDefault()
-        $('#rejectOpportunityRequestModal').modal('show');
-    });
     
-    $('#do-reject-opportunity-button').click(function(e) {
-        rejectOpportunity();
+    $('#rejectOpportunityButton').click(function(e) {
+        $("#respondToOpportunityActionInput").val("REJECT");
+        $('#opportunityRequestEditForm').submit();
     });
 
     initEditors();
@@ -104,6 +101,7 @@ function initEditors() {
         toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
     });
 }
+
 $(document).on('click', '#commentsBtn', function(){
     // Set the current tab.
     $('.tabsContent ul.tabs li').removeClass('current');
@@ -111,6 +109,7 @@ $(document).on('click', '#commentsBtn', function(){
     $('#requestTab').hide();
     $('#commentsTab').show();
 });
+
 $(document).on('click', '#requestBtn', function(){
     // Set the current tab.
     $('.tabsContent ul.tabs li').removeClass('current');
@@ -118,43 +117,4 @@ $(document).on('click', '#requestBtn', function(){
     $('#commentsTab').hide();
     $('#requestTab').show();
 });
-function rejectOpportunity() {
-    var url = window.location;
-    $.ajax({
-        type : 'POST',
-        statusCode : {
-            401 : function() {
-                window.location.reload();
-            },
-            500 : function() {
-                window.location.href = "/pgadmissions/error";
-            },
-            404 : function() {
-                window.location.href = "/pgadmissions/404";
-            },
-            400 : function() {
-                window.location.href = "/pgadmissions/400";
-            },
-            403 : function() {
-                window.location.href = "/pgadmissions/404";
-            }
-        },
-        url : url,
-        data : {
-            action : "reject",
-            rejectionReason : $("#rejectOpportunityRequestReasonText").val()
-        },
-        success : function(data) {
-            if(!data["success"]) {
-                if (data['rejectionReason']) {
-                    $("#rejectOpportunityRequestReasonDiv").append(getErrorMessageHTML(data['rejectionReason']));
-                }
-            } else {
-                window.location.href = "/pgadmissions/requests";
-            }
-        },
-        complete : function() {
-        }
-    });
-}
 

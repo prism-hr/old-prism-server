@@ -1,15 +1,12 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
@@ -29,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -74,6 +71,8 @@ public class EditOpportunityRequestController {
     public String getEditOpportunityRequestPage(@PathVariable("requestId") Integer requestId, ModelMap modelMap) {
         OpportunityRequest opportunityRequest = opportunitiesService.getOpportunityRequest(requestId);
 
+        // force to recompute study duration number and unit
+        opportunityRequest.setStudyDuration(opportunityRequest.getStudyDuration());
         modelMap.addAttribute("opportunityRequest", opportunityRequest);
 
         if (opportunityRequest.getInstitutionCountry() != null) {
@@ -84,12 +83,13 @@ public class EditOpportunityRequestController {
         return EDIT_REQUEST_PAGE_VIEW_NAME;
     }
 
-    @RequestMapping(value = "/{requestId}", method = RequestMethod.POST, params = "action=approve")
-    public Object approveOpportunityRequest(@PathVariable("requestId") Integer requestId, @Valid OpportunityRequest opportunityRequest,
-            BindingResult bindingResult, ModelMap modelMap) {
+    @RequestMapping(value = "/{requestId}", method = RequestMethod.POST)
+    public Object respondToOpportunityRequest(@PathVariable("requestId") Integer requestId, @RequestParam OpportunityRequestCommentType action,
+            @Valid OpportunityRequest opportunityRequest, BindingResult bindingResult, ModelMap modelMap) {
         if (bindingResult.hasErrors()) {
-            RegisteredUser author = opportunitiesService.getOpportunityRequest(requestId).getAuthor();
-            opportunityRequest.setAuthor(author);
+            OpportunityRequest existingRequest = opportunitiesService.getOpportunityRequest(requestId);
+            opportunityRequest.setAuthor(existingRequest.getAuthor());
+            opportunityRequest.setCreatedDate(existingRequest.getCreatedDate());
             modelMap.addAttribute("opportunityRequest", opportunityRequest);
 
             if (opportunityRequest.getInstitutionCountry() != null) {
@@ -99,20 +99,8 @@ public class EditOpportunityRequestController {
 
             return EDIT_REQUEST_PAGE_VIEW_NAME;
         }
-        opportunitiesService.approveOpportunityRequest(requestId, opportunityRequest);
+        opportunitiesService.respondToOpportunityRequest(requestId, opportunityRequest, action);
         return new RedirectView("/requests", true, true, false);
-    }
-
-    @RequestMapping(value = "/{requestId}", method = RequestMethod.POST, params = "action=reject")
-    @ResponseBody
-    public Map<String, Object> rejectOpportunityRequest(@PathVariable("requestId") Integer requestId, @RequestParam(required = false) String rejectionReason) {
-        boolean isValid = ESAPI.validator().isValidInput("rejectionReason", rejectionReason, "ExtendedAscii", 2000, true);
-        if (!isValid) {
-            return Collections.singletonMap("rejectionReason",
-                    (Object) applicationContext.getMessage("text.field.maxcharacters", new Object[] { 2000 }, Locale.getDefault()));
-        }
-        opportunitiesService.rejectOpportunityRequest(requestId, rejectionReason);
-        return Collections.singletonMap("success", (Object) true);
     }
 
     @InitBinder(value = "opportunityRequest")
@@ -120,6 +108,7 @@ public class EditOpportunityRequestController {
         binder.setValidator(opportunityRequestValidator);
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
     @ModelAttribute("user")

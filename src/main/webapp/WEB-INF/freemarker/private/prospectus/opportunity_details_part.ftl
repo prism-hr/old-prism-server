@@ -46,7 +46,7 @@
 </div>
 
 <div class="row">
-  <label id="lbl-otherInstitutionProviderName" class="plain-label" for="otherInstitutionProviderName">Please Specify<em>*</em></label>
+  <label id="lbl-otherInstitutionProviderName" class="plain-label" for="otherInstitutionProviderName">Please Specify</label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
   <div class="field">
     <input readonly disabled="disabled" id="otherInstitution" name="otherInstitution" class="full" type="text" value="${(opportunityRequest.otherInstitution?html)!}" />

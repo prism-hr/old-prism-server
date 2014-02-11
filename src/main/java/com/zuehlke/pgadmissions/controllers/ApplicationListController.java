@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -118,10 +119,11 @@ public class ApplicationListController {
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public void getApplicationsReport(@ModelAttribute("filtering") ApplicationsFiltering filtering, HttpServletRequest req, HttpServletResponse resp)
+    public void getApplicationsReport(@ModelAttribute("filtering") ApplicationsFiltering filtering, @RequestParam(required=false) ReportFormat reportType, HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        DataTable reportTable = applicationsReportService.getApplicationsReport(getUser(), filtering);
+        DataTable reportTable = applicationsReportService.getApplicationsReport(getUser(), filtering, reportType);
         DataSourceRequest dsRequest;
+        String tqx = req.getParameter("tqx");
         try {
             dsRequest = new DataSourceRequest(req);
             DataSourceHelper.setServletResponse(reportTable, dsRequest, resp);
@@ -130,6 +132,11 @@ public class ApplicationListController {
         }
     }
 
+    
+
+    
+    
+    
     @RequestMapping(value = "/saveFilters", method = RequestMethod.POST)
     @ResponseBody
     public String saveFiltersAsDefault(@ModelAttribute("filtering") ApplicationsFiltering filtering, @RequestParam Boolean useDisjunction) {

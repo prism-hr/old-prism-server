@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
-import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
 @RequestMapping("/opportunities")
@@ -26,18 +26,21 @@ public class AdvertsController {
 
     private static final String RELATED_OPPORTUNITIES_VIEW = "private/prospectus/opportunities";
     private final AdvertService advertService;
+    private ApplicationsService applicationsService;
 
     public AdvertsController() {
         this(null, null);
     }
 
     @Autowired
-    public AdvertsController(final AdvertService advertService, final UserDAO userDAO) {
+    public AdvertsController(final AdvertService advertService, final ApplicationsService applicationsService) {
         this.advertService = advertService;
+        this.applicationsService = applicationsService;
     }
 
-    @RequestMapping(value = "relatedOpportunities", method = RequestMethod.GET)
-    public String getRelatedOpportunities() {
+    @RequestMapping(value = "related", method = RequestMethod.GET)
+    public String getRelatedOpportunities(@RequestParam String id, ModelMap modelMap) {
+        modelMap.put("applicationForm", applicationsService.getApplicationByApplicationNumber(id));
         return RELATED_OPPORTUNITIES_VIEW;
     }
 

@@ -73,39 +73,27 @@
      <@header/>
     <!-- Main content area. -->
     <article id="content" role="main">
-    
       
-      <!-- FLOATING TOOLBAR 
-      <ul id="view-toolbar" class="toolbar">
-        <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-        <li class="download"><a target="_blank" title="Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download</a></li>
-      </ul>-->
-      
-      <!-- content box -->
-      <div class="content-box">
-        <div class="content-box-inner">
+    <!-- content box -->
+	<div class="content-box">
+      	<div class="content-box-inner">
         
-          <#include "/private/common/parts/application_info.ftl"/>
-          <div id="timelineview">
-		    	<ul class="tabs">				
+        	<#include "/private/common/parts/application_info.ftl"/>
+          	<div id="timelineview">
+	    		<ul class="tabs">				
 					<li class="current"><a href="#application" id="applicationBtn">Application</a></li>
 					<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
-          <li><a href="#opportunities" id="opportunitiesBtn">Opportunities</a></li>
+      				<li><a href="#opportunity" id="opportunityBtn">Opportunities</a></li>
 				</ul>
-				<div class="tab-page" id="applicationTab">
-		         
+				<div class="tab-page" id="application">
 		        	<#include "/private/staff/application/main_application_view.ftl"/>
-             		          
 	         	</div>
-				<div class="tab-page" id="timeline">
-
-				</div>
-        <div class="tab-page" id="opportunities" style="display:none">
-          <#include "/private/prospectus/opportunities.ftl"/>
-        </div>
+				<div class="tab-page" id="timeline"></div>
+	        	<div class="tab-page" id="opportunity"></div>
 			</div><!-- timlelint -->
-        </div><!-- .content-box-inner -->
-      </div><!-- .content-box -->
+			
+      	</div><!-- .content-box-inner -->
+	</div><!-- .content-box -->
     
     </article>
   

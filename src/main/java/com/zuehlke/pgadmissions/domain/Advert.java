@@ -15,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Generated;
@@ -61,12 +60,6 @@ public class Advert implements Serializable {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "registered_user_id")
     private RegisteredUser contactUser;
-    
-    @Transient
-    private Integer ranking = 0;
-    
-    @Transient
-    private Boolean selected = false;
     
     public Integer getId() {
         return id;
@@ -155,22 +148,6 @@ public class Advert implements Serializable {
 
     public void setLastEditedTimestamp(Date lastEditedTimestamp) {
         this.lastEditedTimestamp = lastEditedTimestamp;
-    }
-    
-    public Integer getRanking() {
-        return ranking;
-    }
-
-    public void setRanking(Integer ranking) {
-        this.ranking = ranking;
-    }
-    
-    public Boolean getSelected() {
-        return selected;
-    }
-
-    public void setSelected(Boolean selected) {
-        this.selected = selected;
     }
 
     public RegisteredUser getContactUser() {

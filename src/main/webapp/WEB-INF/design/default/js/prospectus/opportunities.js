@@ -7,6 +7,7 @@ $(document).ready(function(){
     	setClass(); 
     });
 });
+
 function setHsize() {
 	 var container;
 	 var paddings = 32;
@@ -21,6 +22,7 @@ function setHsize() {
 	 var sum = container - header - footer - paddings;
 	 $('#plist').height(sum);
 }
+
 function setClass() {
 	if ($('#pholder').width() < 390) {
 		$('#pholder').addClass('small');
@@ -34,7 +36,7 @@ function setClass() {
 
 function getAdverts(){
 	var selectedAdvertId = getUrlParam("advert");
-	if (selectedAdvertId !== undefined && selectedAdvertId != "undefined") {
+	if (selectedAdvertId !== undefined) {
 		selectedAdvertId = decodeURIComponent(selectedAdvertId);
 	}
 	var key = getUrlParam("feedKey");
@@ -49,26 +51,6 @@ function getAdverts(){
 		feedKey: key,
 		feedKeyValue: value, 
 		advert: selectedAdvertId
-	};
-	$.ajax({
-		type: 'GET',
-		data: data,
-		url: "/pgadmissions/opportunities/embedded",
-		success: function(data) {
-			var map = JSON.parse(data);
-			processAdverts(map.adverts);
-			highlightSelectedAdvert();
-			bindAddThisShareOverFix();
-		}
-	});
-}
-
-function getRelatedAdverts(){
-	key = $('#feedKey').val();
-	value = $('#feedKeyValue').val();
-	var data = {
-		feedKey: key,
-		feedKeyValue: value,
 	};
 	$.ajax({
 		type: 'GET',
@@ -106,7 +88,7 @@ function highlightSelectedAdvert(){
 
 function bindAdvertApplyButton(button, advert){
 	button.click(function() {
-    	$('#advert').val(advert.id);
+    	$('#advertId').val(advert.id);
     	$('#applyForm').submit();
    });
 }
@@ -119,6 +101,7 @@ function bindAddThisShareOverFix(){
 	    });
 	});
 }
+
 function renderAdvert(advert){
 	var psupervisor = '';
 	var ssupervisor = '';
@@ -127,12 +110,12 @@ function renderAdvert(advert){
 	if(advert.funding){
 		funding = '<div class="fdescription"><p><strong>Funding Information</strong>: '+advert.funding+'</p></div>';
 	}
-	if(advert.type == 'program') {
+	if(advert.advertType == 'PROGRAM') {
 		psupervisor = '';
 		ssupervisor = '';
-	} else if (advert.type == 'project') {
+	} else if (advert.advertType == 'PROJECT') {
 		psupervisor = '<div class="psupervisor"><p>'+advert.primarySupervisorFirstName + ' ' + advert.primarySupervisorLastName + ' (PI)';
-		if (advert.secondarySupervisorFirstname != "undefined") {
+		if (advert.secondarySupervisorFirstname != undefined) {
 			ssupervisor = '<span class="ssupervisor">, '+ advert.secondarySupervisorFirstName + ' ' + advert.secondarySupervisorLastName+'</span></p></div>'; 
 		} else {
 			ssupervisor = '</p></div>';
@@ -155,30 +138,30 @@ function renderAdvert(advert){
 		popupbuttons = '<a href="http://api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>';
 	}
 	
-	return '<li class="'+ advert.type+' item '+ selectedClass +'" id="ad-'+advert.id+'">'+
-	'<div class="pdetails clearfix">'+
-		'<h3>'+advert.title+'</h3>'+
-		psupervisor +
-		ssupervisor +
-		'<div class="pdescription"><p>'+advert.description+'</p></div>'+
-		funding	+	
-		'<div class="cdate">'+closingDateString(advert.closingDate)+'</div>'+
-		'<div class="duration">Study duration: <span>'+ studyDuration +'</span></div>'+
-	'</div>'+
-	'<div class="pactions clearfix">'+
-		'<div class="social">'+
-			'<!-- AddThis Button BEGIN -->'+
-			'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+' addthis:description="'+addThisDescription+'">'+
-			popupbuttons +
+	return '<li class="'+ advert.advertType.toLowerCase() +' item '+ selectedClass +'" id="ad-'+advert.id+'">'+
+		'<div class="pdetails clearfix">'+
+			'<h3>'+advert.title+'</h3>'+
+			psupervisor +
+			ssupervisor +
+			'<div class="pdescription"><p>'+advert.description+'</p></div>'+
+			funding	+	
+			'<div class="cdate">'+closingDateString(advert.closingDate)+'</div>'+
+			'<div class="duration">Study duration: <span>'+ studyDuration +'</span></div>'+
+		'</div>'+
+		'<div class="pactions clearfix">'+
+			'<div class="social">'+
+				'<!-- AddThis Button BEGIN -->'+
+				'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+' addthis:description="'+addThisDescription+'">'+
+				popupbuttons +
+				'</div>'+
+				'<!-- AddThis Button END -->'+
 			'</div>'+
-			'<!-- AddThis Button END -->'+
+			'<div class="applyBox">'+
+				'<a href="mailto:'+advert.primarySupervisorEmail+'?subject=Question About:'+advert.title+'" class="question">Ask a question</a>'+
+				'<button id="'+advert.programCode+'" class="btn btn-primary apply">'+buttonText+'</button>'+
+			'</div>'+
 		'</div>'+
-		'<div class="applyBox">'+
-			'<a href="mailto:'+advert.primarySupervisorEmail+'?subject=Question About:'+advert.title+'" class="question">Ask a question</a>'+
-			'<button id="'+advert.programCode+'" class="btn btn-primary apply">'+buttonText+'</button>'+
-		'</div>'+
-	'</div>'+
-'</li>';
+	'</li>';
 }
 
 function closingDateString(closingDate){
@@ -214,7 +197,7 @@ function durationOfStudyString(studyDuration){
 
 function getAdvertUrl (advert) {
 	url = window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advertId=" + advert.id;
-	if(advert.type == 'project') {
+	if(advert.advertType == 'PROJECT') {
 		url = url + '&project=' + advert.projectId; 
 	}
 	return url;

@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.enums.AdvertType;
+
 public class AdvertDTO {
 
     private Integer id;
@@ -14,12 +16,11 @@ public class AdvertDTO {
 	private String primarySupervisorFirstName;
 	private String primarySupervisorLastName;
 	private String primarySupervisorEmail;
-    private String type = "program";
+    private AdvertType advertType = AdvertType.PROGRAM;
 	private Integer projectId = null;
     private String secondarySupervisorFirstName = null;
     private String secondarySupervisorLastName = null;
     private Boolean selected = false;
-    private Integer ranking = 0;
     
     public Integer getId() {
         return id;
@@ -101,12 +102,12 @@ public class AdvertDTO {
         this.primarySupervisorEmail = primarySupervisorEmail;
     }
     
-    public String getType() {
-        return type;
+    public AdvertType getAdvertType() {
+        return advertType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setType(AdvertType advertType) {
+        this.advertType = advertType;
     }
 
     public Integer getProjectId() {
@@ -116,7 +117,7 @@ public class AdvertDTO {
     public void setProjectId(Integer projectId) {
         this.projectId = projectId;
         if (projectId != null) {
-            setType("project");
+            setType(AdvertType.PROJECT);
         }
     }
     
@@ -142,14 +143,6 @@ public class AdvertDTO {
     
     public void setSelected(Boolean selected) {
         this.selected = selected;
-    }
-    
-    public Integer getRanking() {
-        return ranking;
-    }
-    
-    public void setRanking(Integer ranking) {
-        this.ranking = ranking;
     }
     
 }

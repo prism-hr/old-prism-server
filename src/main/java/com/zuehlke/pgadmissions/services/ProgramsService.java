@@ -165,27 +165,6 @@ public class ProgramsService {
         }
         return String.format("%s_%05d", institution.getCode(), codeNumber);
     }
-
-    public Program createNewCustomProgram(OpportunityRequest opportunityRequest) {
-        ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
-
-        QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
-                opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
-
-        Program program = new Program();
-        program.setDescription(opportunityRequest.getProgramDescription());
-        program.setStudyDuration(opportunityRequest.getStudyDuration());
-        program.setActive(true);
-        program.setInstitution(institution);
-        program.setEnabled(true);
-        program.setTitle(opportunityRequest.getProgramTitle());
-        program.setAtasRequired(opportunityRequest.getAtasRequired());
-        program.setCode(thisBean.generateNextProgramCode(institution));
-
-        programDAO.save(program);
-        return program;
-    }
-
     
     public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
         ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);

@@ -159,24 +159,6 @@
     <!-- Main content area. -->
     <article id="content" role="main">
 
-      <!-- FLOATING TOOLBAR
-      <ul id="view-toolbar" class="toolbar">
-        <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-        <li class="download"><a target="_blank" title="Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download</a></li>
-        
-        <li class="tool-separator"><a href="#"></a></li>
-        
-        <li id="tool-programme" class="tool-button"><a href="#programmeDetailsSection" title="Back to Programme">Back to Programme</a></li>
-        <li id="tool-personal" class="tool-button"><a href="#personalDetailsSection" title="Back to Personal Details">Back to Personal Details</a></li> 
-        <li id="tool-address" class="tool-button"><a href="#addressSection" title="Back to Address">Back to Address</a></li>
-        <li id="tool-qualification" class="tool-button"><a href="#qualificationsSection" title="Back to Qualifications">Back to Qualifications</a></li>
-        <li id="tool-employment" class="tool-button"><a href="#positionSection" title="Back to Employment">Back to Employment</a></li> 
-        <li id="tool-funding" class="tool-button"><a href="#fundingSection" title="Back to Funding">Back to Funding</a></li> 
-        <li id="tool-references" class="tool-button"><a href="#referencesSection" title="Back to References">Back to References</a></li>
-        <li id="tool-documents" class="tool-button"><a href="#documentSection" title="Back to Documents">Back to Documents</a></li> 
-        <li id="tool-information" class="tool-button tool-information"><a href="#additionalInformationSection" title="Back to Additional Information">Back to Additional Information</a></li> 
-      </ul> -->
-
       <!-- content box -->
       <div class="content-box">
         <div class="content-box-inner">
@@ -197,7 +179,7 @@
 						<ul class="tabs">				
 							<li class="current"><a href="#application" id="applicationBtn">Application</a></li>
 							<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
-							<li><a href="#opportunities" id="opportunitiesBtn">Opportunities</a></li>
+							<li><a href="#opportunity" id="opportunityBtn">Opportunities</a></li>
 						</ul>
 				
 						<div class="tab-page" id="applicationTab">
@@ -264,11 +246,8 @@
 		          </div>
 		          		          
 	         	</div>
-				<div class="tab-page" id="timeline">
-				</div><!-- timleline -->
-				<div class="tab-page" id="opportunities" style="display:none">
-					<#include "/private/prospectus/opportunities.ftl"/>
-        		</div>
+				<div class="tab-page" id="timeline"></div>				
+				<div class="tab-page" id="opportunity"></div>
 			</div>
 			
         </div><!-- .content-box-inner -->

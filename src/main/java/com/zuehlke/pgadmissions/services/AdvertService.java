@@ -39,8 +39,8 @@ public class AdvertService {
     
     public List<AdvertDTO> getAdvertFeed(OpportunityListType feedKey, String feedKeyValue, HttpServletRequest request) {
         List<AdvertDTO> advertDTOs = new ArrayList<AdvertDTO>(); 
-        DefaultSavedRequest defaultSavedRequest = (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
-        int selectedAdvertId = 0;
+        DefaultSavedRequest defaultSavedRequest = (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST"); 
+        Integer selectedAdvertId = null;
         
         String advertId = getSavedRequestParam(defaultSavedRequest, "advertId");
         if (advertId == null) {
@@ -59,7 +59,7 @@ public class AdvertService {
             }
         }  
         
-        if (!advertDTOs.isEmpty()) {
+        if (!advertDTOs.isEmpty() && feedKey != OpportunityListType.RECOMMENDEDOPPORTUNTIIES) {
             selectedAdvertId = advertDTOs.get(0).getId();
         }
         

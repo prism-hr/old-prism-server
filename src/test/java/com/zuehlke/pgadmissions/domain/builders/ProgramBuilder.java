@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
@@ -37,6 +38,7 @@ public class ProgramBuilder {
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
     private QualificationInstitution institution;
     private ProgramFeed programFeed;
+    private ProgramType programType;
 
     public ProgramBuilder id(Integer id) {
         this.id = id;
@@ -142,6 +144,12 @@ public class ProgramBuilder {
         this.programFeed = programFeed;
         return this;
     }
+    
+    public ProgramBuilder programType(ProgramType programType) {
+        this.programType = programType;
+        return this;
+    }
+
 
     public ProgramBuilder advert(Advert advert) {
         return id(advert.getId()).title(advert.getTitle()).description(advert.getDescription()).studyDuration(advert.getStudyDuration())
@@ -170,6 +178,7 @@ public class ProgramBuilder {
         program.getClosingDates().addAll(programClosingDates);
         program.setInstitution(institution);
         program.setProgramFeed(programFeed);
+        program.setProgramType(programType);
         return program;
     }
 

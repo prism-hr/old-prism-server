@@ -94,10 +94,12 @@ public class EditOpportunityRequestControllerTest {
     public void shouldGetEditOpportunityRequestPage() {
         Domicile institutionCountry = new DomicileBuilder().code("PL").build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).build();
+        List<OpportunityRequest> requests = Lists.newArrayList();
         ModelMap modelMap = new ModelMap();
         List<QualificationInstitution> institutions = Lists.newArrayList();
 
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(opportunityRequest);
+        expect(opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest)).andReturn(requests);
         expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutions);
 
         replay();
@@ -105,6 +107,7 @@ public class EditOpportunityRequestControllerTest {
         verify();
 
         assertSame(opportunityRequest, modelMap.get("opportunityRequest"));
+        assertSame(requests, modelMap.get("opportunityRequests"));
         assertSame(institutions, modelMap.get("institutions"));
         assertThat((OpportunityRequestComment) modelMap.get("comment"), Matchers.isA(OpportunityRequestComment.class));
         assertEquals(EditOpportunityRequestController.EDIT_REQUEST_PAGE_VIEW_NAME, result);
@@ -179,7 +182,7 @@ public class EditOpportunityRequestControllerTest {
     }
 
     @Test
-    public void shouldRegisterPropertyEditors() {
+    public void shouldRegisterOportunityRequestPropertyEditors() {
         WebDataBinder dataBinder = EasyMockUnitils.createMock(WebDataBinder.class);
         dataBinder.setValidator(opportunityRequestValidator);
         dataBinder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
@@ -187,7 +190,17 @@ public class EditOpportunityRequestControllerTest {
         dataBinder.registerCustomEditor(eq(String.class), isA(StringTrimmerEditor.class));
 
         replay();
-        controller.registerPropertyEditors(dataBinder);
+        controller.registerOpportunityRequestPropertyEditors(dataBinder);
+        verify();
+    }
+
+    @Test
+    public void shouldRegisterCommentPropertyEditors() {
+        WebDataBinder dataBinder = EasyMockUnitils.createMock(WebDataBinder.class);
+        dataBinder.registerCustomEditor(eq(String.class), isA(StringTrimmerEditor.class));
+        
+        replay();
+        controller.registerCommentPropertyEditors(dataBinder);
         verify();
     }
 

@@ -110,10 +110,15 @@ public class EditOpportunityRequestController {
     }
 
     @InitBinder(value = "opportunityRequest")
-    public void registerPropertyEditors(WebDataBinder binder) {
+    public void registerOpportunityRequestPropertyEditors(WebDataBinder binder) {
         binder.setValidator(opportunityRequestValidator);
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+    }
+    
+    @InitBinder(value = "comment")
+    public void registerCommentPropertyEditors(WebDataBinder binder) {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 

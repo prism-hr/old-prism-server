@@ -10,6 +10,7 @@ $(document).ready(function() {
     $('.selectpicker').selectpicker();
     checkToDisable();
     otherInstitutionCheck();
+    lockFormFunction(null);
 });
 
 function bindChangeInstitutionCountryAction() {
@@ -45,6 +46,7 @@ $(document).on('click', '#newProgamme', function() {
     $("#programAdvertSelectProgramDiv").hide();
     $("#programAdvertNewProgramNameDiv").show();
     clearProgramAdvertErrors();
+    lockFormFunction(null);
     checkToDisable();
     changeHeaderInfoBars();
     clearProgramSection();
@@ -404,11 +406,34 @@ function getAdvertData(programme_code) {
             var map = JSON.parse(data);
             updateAdvertSection(map);
             updateProgramSection(map);
+            lockFormFunction(map);
         },
         complete : function() {
             $('#ajaxloader').fadeOut('fast');
         }
     });
+}
+function lockFormFunction(map) {
+    var lock;
+    if (map == null) {
+        lock = false;
+    } else if (map == true){
+        lock = true;
+    } else {
+        lock = map['programLocked'];
+    }
+    if (lock) {
+         $('#programAdvertInstitutionCountry, #programAdvertInstitution').prop('disabled',true);
+         $('#programAdvertInstitutionCountry, #programAdvertInstitution').selectpicker('refresh');
+         $('#programAdvertSave, #programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect, #programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo, #programAdvertStudyDurationInput, #programAdvertStudyDurationUnitSelect, #programAdvertAtasRequired_true, #programAdvertAtasRequired_false').prop('disabled', true);
+         $('#programAdvertAtasRequiredDiv label, #programAdvertInstitutionCountryDiv label, #programAdvertInstitutionDiv label, #programAdvertDescriptionDiv label, #programAdvertStudyDurationDiv label, #programAdvertFundingDiv label, #programAdvertIsActiveDiv label, #programAdvertStudyOptionsDiv label, #programAdvertAdvertisingDeadlineYearDiv label').addClass("grey-label").parent().find('.hint').addClass("grey");
+         $('#infoBarProgram').removeClass('alert-info').addClass('alert-warning').html('<i class="icon-warning-sign"></i> Your program is been moderate by our staff ');
+    } else {
+         $('#programAdvertInstitutionCountry, #programAdvertInstitution').prop('disabled',false);
+         $('#programAdvertInstitutionCountry, #programAdvertInstitution').selectpicker('refresh');
+         $('#programAdvertSave, #programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect, #programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo, #programAdvertStudyDurationInput, #programAdvertStudyDurationUnitSelect, #programAdvertAtasRequired_true, #programAdvertAtasRequired_false').prop('disabled', false);
+         $('#programAdvertAtasRequiredDiv label, #programAdvertInstitutionCountryDiv label, #programAdvertInstitutionDiv label, #programAdvertDescriptionDiv label, #programAdvertStudyDurationDiv label, #programAdvertFundingDiv label, #programAdvertIsActiveDiv label, #programAdvertStudyOptionsDiv label, #programAdvertAdvertisingDeadlineYearDiv label').removeClass("grey-label").parent().find('.hint').removeClass("grey");
+    }
 }
 
 function updateAdvertSection(map) {
@@ -551,9 +576,12 @@ function saveAdvert() {
 
                 $('#resourcesModal').modal('show');
             } else if (map["changeRequestRequired"]) {
-                if(confirm("No tienes derechos suficientes para cambiar la institución. ¿Quieres crear una nueva solicitud de cambio?")){
-                    confirmOpportunityChangeRequest();
-                }
+                $('#dialog-box h3').text('Program Change Request');
+                $('#dialog-box #dialog-message').html('<p>You will be notified after a member of the staff approve your change</p>');
+                $('#dialog-box #popup-cancel-button').hide();
+                $('#dialog-box').modal('show');
+                lockFormFunction(true);
+                confirmOpportunityChangeRequest();
             } else {
                 if (map['program']) {
                     $("#programAdvertSelectProgramDiv").append(getErrorMessageHTML(map['program']));
@@ -605,7 +633,6 @@ function saveAdvert() {
 }
 
 function confirmOpportunityChangeRequest() {
-    $('#ajaxloader').show();
     $.ajax({
         type : 'POST',
         statusCode : {
@@ -630,11 +657,13 @@ function confirmOpportunityChangeRequest() {
         success : function(data) {
             var map = JSON.parse(data);
             if (map['success']) {
-                alert("Nueva solicitud de cambio ha sido creada. Espera una noticia cuando nuestros administradores la aproban.");
+                $('#dialog-box h3').text('Program Change Request');
+                $('#dialog-box #dialog-message').html('<p>You will be notified after a member of the staff approve your change</p>');
+                $('#dialog-box #popup-cancel-button').hide();
+                $('#dialog-box').modal('show');
             }
         },
         complete : function() {
-            $('#ajaxloader').fadeOut('fast');
         }
     });
 }

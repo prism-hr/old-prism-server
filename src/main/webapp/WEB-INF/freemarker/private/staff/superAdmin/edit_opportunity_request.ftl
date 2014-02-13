@@ -83,7 +83,7 @@ span.count {
                 <i class="icon-bell-alt"></i>
               </#if>
               <#if opportunityRequest.sourceProgram??>
-                ${opportunityRequest.sourceProgram.code?html} |
+                ${opportunityRequest.sourceProgram.code?html}
               </#if>
               ${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}
             </div>

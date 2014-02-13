@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -143,9 +144,11 @@ public class EditOpportunityRequestControllerTest {
         requestBindingResult.reject("error");
         BindingResult commentBindingResult = new DirectFieldBindingResult(comment, "comment");
         List<QualificationInstitution> institutions = Lists.newArrayList();
+        Date createdDate = new Date();
 
         expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutions);
-        expect(opportunitiesService.getOpportunityRequest(8)).andReturn(new OpportunityRequestBuilder().author(author).build());
+        expect(opportunitiesService.getOpportunityRequest(8)).andReturn(
+                new OpportunityRequestBuilder().author(author).createdDate(createdDate).status(OpportunityRequestStatus.REJECTED).build());
 
         replay();
         String result = (String) controller.respondToOpportunityRequest(8, opportunityRequest, requestBindingResult, comment, commentBindingResult, modelMap);
@@ -155,6 +158,8 @@ public class EditOpportunityRequestControllerTest {
         assertSame(institutions, modelMap.get("institutions"));
         assertEquals(EditOpportunityRequestController.EDIT_REQUEST_PAGE_VIEW_NAME, result);
         assertSame(author, opportunityRequest.getAuthor());
+        assertSame(createdDate, opportunityRequest.getCreatedDate());
+        assertEquals(OpportunityRequestStatus.REJECTED, opportunityRequest.getStatus());
     }
 
     @Test
@@ -198,7 +203,7 @@ public class EditOpportunityRequestControllerTest {
     public void shouldRegisterCommentPropertyEditors() {
         WebDataBinder dataBinder = EasyMockUnitils.createMock(WebDataBinder.class);
         dataBinder.registerCustomEditor(eq(String.class), isA(StringTrimmerEditor.class));
-        
+
         replay();
         controller.registerCommentPropertyEditors(dataBinder);
         verify();

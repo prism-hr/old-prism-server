@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;

@@ -7,12 +7,20 @@ public enum OpportunityListType {
     OPPORTUNITIESBYFEEDID,
     OPPORTUNITIESBYUSERUPI,
     OPPORTUNITIESBYUSERUSERNAME,
-    RECOMMENDEDOPPORTUNTIIES,
+    RECOMMENDEDOPPORTUNTIIESBYAPPLICANTID,
     CURRENTOPPORTUNITYBYADVERTID,
-    CURRENTOPPORTUNITYBYPROGRAMCODE;
+    CURRENTOPPORTUNITYBYAPPLICATIONFORMID;
     
     public static Boolean isCurrentOpportunityListType(OpportunityListType feedKey) {
-        return Arrays.asList(CURRENTOPPORTUNITYBYADVERTID, CURRENTOPPORTUNITYBYPROGRAMCODE).contains(feedKey);
+        return Arrays.asList(CURRENTOPPORTUNITYBYADVERTID, CURRENTOPPORTUNITYBYAPPLICATIONFORMID).contains(feedKey);
+    }
+    
+    public static Boolean isSingletonOpportunityListType(OpportunityListType feedKey) {
+        return Arrays.asList(CURRENTOPPORTUNITYBYADVERTID).contains(feedKey);
+    }
+    
+    public static Boolean neverHasSelectedAdvertListType(OpportunityListType feedKey) {
+        return Arrays.asList(RECOMMENDEDOPPORTUNTIIESBYAPPLICANTID).contains(feedKey);
     }
     
 }

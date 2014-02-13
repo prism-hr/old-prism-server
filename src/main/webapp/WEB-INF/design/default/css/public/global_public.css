@@ -681,7 +681,7 @@ div#ajaxloader {
     width: 220px;
 }
 /* RSS feed box */
-#pContainer #pholder {
+#pContainer .placeholder {
     border: none;
 }
 

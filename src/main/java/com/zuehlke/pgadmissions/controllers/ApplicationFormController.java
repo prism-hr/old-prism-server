@@ -9,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
+import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -16,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
 import com.zuehlke.pgadmissions.services.ApplicationFormCreationService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -25,45 +25,61 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class ApplicationFormController {
 
     private final ProgramDAO programDAO;
+    private final ProjectDAO projectDAO;
     private final ApplicationFormCreationService applicationFormCreationService;
     private final ProgramInstanceDAO programInstanceDAO;
     private final UserService userService;
-    private final ProgramsService programsService;
 
     ApplicationFormController() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
-    public ApplicationFormController(ProgramDAO programDAO, ApplicationFormCreationService applicationFormCreationService, ProgramInstanceDAO programInstanceDAO,
-            UserService userService, ProgramsService programsService) {
+    public ApplicationFormController(ProgramDAO programDAO, ProjectDAO projectDAO, ApplicationFormCreationService applicationFormCreationService,
+            ProgramInstanceDAO programInstanceDAO, UserService userService, ProgramsService programsService) {
         this.programDAO = programDAO;
+        this.projectDAO = projectDAO;
         this.applicationFormCreationService = applicationFormCreationService;
         this.programInstanceDAO = programInstanceDAO;
         this.userService = userService;
-        this.programsService = programsService;
     }
 
     @RequestMapping(value = "/new", method = { RequestMethod.POST, RequestMethod.GET })
-    public ModelAndView createNewApplicationForm(@RequestParam String program, @RequestParam(value = "project", required = false) Integer projectId) {
-        return processApplyNew(program, projectId);
-    }
-
-    private ModelAndView processApplyNew(String programName, Integer projectId) {
+    public ModelAndView createNewApplicationForm(@RequestParam(required = false) String program, @RequestParam(required = false) Integer project,
+            @RequestParam(required = false) Integer advert) {
         RegisteredUser user = userService.getCurrentUser();
+        Program programObject = null;
+        Project projectObject = null;
+        
+        if (program != null) {
+            programObject = programDAO.getProgramByCode(program);
+        }
+        
+        if (programObject == null && advert != null) {
+            programObject = programDAO.getProgramById(advert);
+        }
+        
+        if (project != null) {
+            projectObject = projectDAO.getProjectById(project);
+        }
+        
+        if (projectObject == null && advert != null) {
+            projectObject = projectDAO.getProjectById(advert);
+        }
+        
+        if (programObject == null && projectObject != null) {
+            programObject = projectObject.getProgram();
+        }
 
-        Program program = programDAO.getProgramByCode(programName);
-        if (program == null || programInstanceDAO.getActiveProgramInstances(program).isEmpty() || !program.isEnabled()) {
-            throw new CannotApplyToProgramException(program);
+        if (programObject == null && projectObject == null) {
+            throw new CannotApplyToProjectException(projectObject);
         }
-        Project project = null;
-        if (projectId != null) {
-            project = programsService.getProject(projectId);
-            if (project == null || !project.isAcceptingApplications()) {
-                throw new CannotApplyToProjectException(project);
-            }
+        
+        if (programObject != null && (programInstanceDAO.getActiveProgramInstances(programObject).isEmpty() || !programObject.isEnabled())) {
+            throw new CannotApplyToProgramException(programObject);
         }
-        ApplicationForm applicationForm = applicationFormCreationService.createOrGetUnsubmittedApplicationForm(user, program, project);
+
+        ApplicationForm applicationForm = applicationFormCreationService.createOrGetUnsubmittedApplicationForm(user, programObject, projectObject);
         return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
     }
 

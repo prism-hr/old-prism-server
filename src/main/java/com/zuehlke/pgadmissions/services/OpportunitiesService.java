@@ -72,10 +72,7 @@ public class OpportunitiesService {
             throw new RuntimeException("No change request needed, user " + author.getEmail() + " has permissions to " + opportunityRequest.getInstitutionCode());
         }
 
-        OpportunityRequest example = new OpportunityRequest();
-        example.setSourceProgram(program);
-        example.setStatus(OpportunityRequestStatus.NEW);
-        if (!opportunityRequestDAO.findByExample(example).isEmpty()) {
+        if (!opportunityRequestDAO.findByProgramAndStatus(program, OpportunityRequestStatus.NEW).isEmpty()) {
             throw new RuntimeException("Cannot create new opprotunity request if there is already a new one. Program: " + program);
         }
 
@@ -175,9 +172,7 @@ public class OpportunitiesService {
     }
 
     public List<OpportunityRequest> getNewOpportunityRequests() {
-        OpportunityRequest example = new OpportunityRequest();
-        example.setStatus(OpportunityRequestStatus.NEW);
-        return opportunityRequestDAO.findByExample(example);
+        return opportunityRequestDAO.findByStatus(OpportunityRequestStatus.NEW);
     }
 
 }

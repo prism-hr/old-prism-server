@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static java.util.Objects.requireNonNull;
-
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -170,50 +168,33 @@ public class ProgramsService {
         return String.format("%s_%05d", institution.getCode(), codeNumber);
     }
 
-    public Program createNewCustomProgram(OpportunityRequest opportunityRequest) {
+    protected Program createOrGetCustomProgram(OpportunityRequest opportunityRequest) {
         ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
 
-        Advert advert = new Advert();
-        advert.setActive(true);
-        advert.setDescription(opportunityRequest.getProgramDescription());
-        advert.setStudyDuration(opportunityRequest.getStudyDuration());
-
-        QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
-                opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
-
-        Program program = new Program();
-        program.setAdvert(advert);
-        program.setInstitution(institution);
-        program.setEnabled(true);
-        program.setTitle(opportunityRequest.getProgramTitle());
-        program.setAtasRequired(opportunityRequest.getAtasRequired());
-        program.setCode(thisBean.generateNextProgramCode(institution));
-
-        programDAO.save(program);
-        return program;
-    }
-
-    public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
-        ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
-
-        Program program;
-        if (opportunityRequest.getSourceProgram() != null) {
-            program = requireNonNull(getProgramById(opportunityRequest.getSourceProgram().getId()));
-        } else {
+        Program program = opportunityRequest.getSourceProgram();
+        if (program == null) {
             program = new Program();
             program.setTitle(opportunityRequest.getProgramTitle());
             program.setEnabled(true);
         }
 
         if (program.getInstitution() == null || !Objects.equal(program.getInstitution().getCode(), opportunityRequest.getInstitutionCode())) {
-            // assigning new institution to the program (also changing program code)
+            // assigning new institution to the program (also changing program
+            // code)
             QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
                     opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
             program.setInstitution(institution);
             program.setCode(thisBean.generateNextProgramCode(institution));
         }
         program.setAtasRequired(opportunityRequest.getAtasRequired());
-        save(program);
+        merge(program);
+        return program;
+    }
+
+    public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
+        ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
+
+        Program program = thisBean.createOrGetCustomProgram(opportunityRequest);
 
         Advert advert = program.getAdvert();
         if (advert == null) {

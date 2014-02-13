@@ -200,7 +200,6 @@ public class ProgramsService {
             program = new Program();
             program.setTitle(opportunityRequest.getProgramTitle());
             program.setEnabled(true);
-            save(program);
         }
 
         if (program.getInstitution() == null || !Objects.equal(program.getInstitution().getCode(), opportunityRequest.getInstitutionCode())) {
@@ -211,6 +210,7 @@ public class ProgramsService {
             program.setCode(thisBean.generateNextProgramCode(institution));
         }
         program.setAtasRequired(opportunityRequest.getAtasRequired());
+        save(program);
 
         Advert advert = program.getAdvert();
         if (advert == null) {

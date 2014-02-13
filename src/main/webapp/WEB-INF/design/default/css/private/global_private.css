@@ -2023,16 +2023,13 @@ background: #909194;
     float:right;
     font-weight: bold;
 }
-#yourApplication {
-	padding: 7px;
-}
 #resourcesModal .alert-info {
 	margin-bottom: 10px;
 }
 #opportunities h1 {
 	float: none;
 }
-#opportunities #opportunitiList {
+.placeholder {
 	height: 512px;
 }
 #opportunities #opportunitiList .newOportunity{

@@ -38,16 +38,16 @@ public class AdvertsController {
         this.applicationsService = applicationsService;
     }
 
-    @RequestMapping(value = "related", method = RequestMethod.GET)
+    @RequestMapping(value = "/related", method = RequestMethod.GET)
     public String getRelatedOpportunities(@RequestParam String id, ModelMap modelMap) {
         modelMap.put("applicationForm", applicationsService.getApplicationByApplicationNumber(id));
         return RELATED_OPPORTUNITIES_VIEW;
     }
 
-    @RequestMapping(value = "embedded", method = RequestMethod.GET)
+    @RequestMapping(value = "/embedded", method = RequestMethod.GET)
     @ResponseBody
     public String getOpportunities(@RequestParam(required = false) OpportunityListType feedKey, @RequestParam(required = false) String feedKeyValue,
-            HttpServletRequest request) {
+            HttpServletRequest request) { 
         List<AdvertDTO> adverts = advertService.getAdvertFeed(feedKey, feedKeyValue, request);
         Map<String, Object> map = Maps.newHashMap();
         map.put("adverts", adverts);

@@ -2,20 +2,18 @@
 
 <div class="row-fluid">
 	<div class="span6" id="yourApplication">
+		<#assign feedId = "current-opportunity-list">
 		<#assign feedTitle = "Your Application">
-		<#assign feedKey = "CURRENTOPPORTUNITYBYADVERTID">
-		<#if applicationForm.project??>
-			<#assign feedKeyValue = applicationForm.project.id?string.computer>
-		<#else>
-			<#assign feedKeyValue = applicationForm.program.id?string.computer>
-		</#if>
- 	    <#include "/private/prospectus/adverts.ftl"/>
+		<#assign feedKey = "CURRENTOPPORTUNITYBYAPPLICATIONFORMID">
+		<#assign feedKeyValue = applicationForm.id?string.computer>
+ 	    <#include "/private/prospectus/adverts_abstract.ftl"/>
 	</div>
 	<div class="span6" id="opportunitiList">
-		<#assign feedTitle="Related Opportunities">
-		<#assign feedKey = "RELATEDOPPORTUNITIES">
+		<#assign feedId = "related-opportunity-list">
+		<#assign feedTitle="Other Recommended Opportunities">
+		<#assign feedKey = "RECOMMENDEDOPPORTUNTIIESBYAPPLICANTID">
 		<#assign feedKeyValue = applicationForm.applicant.id?string.computer>
- 	    <#include "/private/prospectus/adverts.ftl"/>
+ 	    <#include "/private/prospectus/adverts_abstract.ftl"/>
 	</div>
 </div>
- 
+<script type="text/javascript" src="<@spring.url '/design/default/js/prospectus/opportunities.js' />"></script>

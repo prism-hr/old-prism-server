@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
@@ -23,14 +25,16 @@ import com.zuehlke.pgadmissions.dto.AdvertDTO;
 public class AdvertService {
 
     private final AdvertDAO advertDAO;
+    private final ProgramDAO programDAO;
 
     AdvertService() {
-        this(null);
+        this(null, null);
     }
 
     @Autowired
-    public AdvertService(AdvertDAO advertDAO) {
+    public AdvertService(AdvertDAO advertDAO, ProgramDAO programDAO) {
         this.advertDAO = advertDAO;
+        this.programDAO = programDAO;
     }
     
     public Advert getAdvertById(int advertId) {
@@ -38,28 +42,15 @@ public class AdvertService {
     }
     
     public List<AdvertDTO> getAdvertFeed(OpportunityListType feedKey, String feedKeyValue, HttpServletRequest request) {
-        List<AdvertDTO> advertDTOs = new ArrayList<AdvertDTO>(); 
-        DefaultSavedRequest defaultSavedRequest = (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST"); 
-        Integer selectedAdvertId = null;
+        List<AdvertDTO> advertDTOs = new ArrayList<AdvertDTO>();
         
-        String advertId = getSavedRequestParam(defaultSavedRequest, "advertId");
-        if (advertId == null) {
-            advertId = getSavedRequestParam(defaultSavedRequest, "programId");
-            if (advertId == null) {
-                advertId = getSavedRequestParam(defaultSavedRequest, "projectId");
-            }
+        String advertId = getAdvertIdFromRequestOrSavedRequest(request); 
+        if (advertId != null) {
+            advertDTOs.addAll(advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYADVERTID, advertId, null));
         }
         
-        if (advertId != null) {
-            advertDTOs.addAll(advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYADVERTID, advertId, selectedAdvertId));
-        } else {
-            String programCode = getSavedRequestParam(defaultSavedRequest, "programCode");
-            if (programCode != null) {
-                advertDTOs.addAll(advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYPROGRAMCODE, advertId, selectedAdvertId));
-            }
-        }  
-        
-        if (!advertDTOs.isEmpty() && feedKey != OpportunityListType.RECOMMENDEDOPPORTUNTIIES) {
+        Integer selectedAdvertId = null;
+        if (!advertDTOs.isEmpty() && !OpportunityListType.neverHasSelectedAdvertListType(feedKey)) {
             selectedAdvertId = advertDTOs.get(0).getId();
         }
         
@@ -72,15 +63,41 @@ public class AdvertService {
         Collections.shuffle(advertDTOs);
         return advertDTOs;
     }
-
-    private String getSavedRequestParam(DefaultSavedRequest savedRequest, String paramName) {
-        if (savedRequest != null) {
-            String[] values = savedRequest.getParameterValues(paramName);
-            if (!ArrayUtils.isEmpty(values) && !StringUtils.isBlank(values[0])) {
-                return values[0];
+    
+    private String getAdvertIdFromRequestOrSavedRequest(HttpServletRequest request) {
+        List<String> possibleRequestParameters = Arrays.asList("advert", "project", "program");
+        List<String> advertSynonyms = Arrays.asList("advert", "project");
+        
+        String found = null;
+        
+        for (String parameter : possibleRequestParameters) {
+            found = request.getParameter(parameter);
+            if (!StringUtils.isBlank(found)) {
+                if (advertSynonyms.contains(parameter)) {
+                    return found;
+                }
+                return programDAO.getProgramIdByCode(found);
             }
         }
+        
+        DefaultSavedRequest savedRequest = (DefaultSavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+        
+        if (savedRequest != null) {
+            for (String parameter : possibleRequestParameters) {
+                String[] values = savedRequest.getParameterValues(parameter);
+                if (!ArrayUtils.isEmpty(values)) {
+                    found = values[0];
+                    if (!StringUtils.isBlank(found)) {
+                        if (advertSynonyms.contains(parameter)) {
+                            return found;
+                        }
+                        return programDAO.getProgramIdByCode(found);
+                    }
+                }
+            }
+        }
+        
         return null;
     }
-
+    
 }

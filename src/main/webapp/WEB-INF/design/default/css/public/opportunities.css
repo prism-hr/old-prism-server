@@ -10,14 +10,14 @@ body {
   margin: 0;
 }
 /* Current style for the RSS box */
-#pholder {
+.placeholder {
   font-family:Arial,​Helvetica,​sans-serif;
   background: white;
   padding: 6px 7px;
   border-radius:4px;
   border: 1px solid #DDD;
 }
-#pholder h1, #yourApplication h1{
+.placeholder h1, #yourApplication h1{
   font-size: 16px;
   color: #58585A;
   line-height: 29px;
@@ -25,27 +25,27 @@ body {
   margin-top: 0px;
   margin-bottom: 0px;
 }
-#pholder footer {
+.placeholder footer {
   border-top: 1px solid #DDD;
   padding-top: 4px;
   margin-top: 4px;
   padding-bottom: 4px;
   height: 37px;
 }
-#pholder footer .left{
+.placeholder footer .left{
   float: left;
   display: block;
 
 }
-#pholder footer .right{
+.placeholder footer .right{
   float: right;
   display: block;
 }
-#pholder #plist {
+.placeholder .placeholder-list {
   margin: 4px 0 0 0;
   overflow-y: auto;
 }
-#pholder #plist ul{
+.placeholder .placeholder-list ul{
   margin: 0;
 }
 li.item {
@@ -56,7 +56,7 @@ li.item {
   border-radius: 4px;
   margin-right: 4px;
 }
-#pholder #plist ul li:last-child {
+.placeholder .placeholder-list ul li:last-child {
   margin-bottom: 0px;
 }
 .item .pdetails {
@@ -127,7 +127,7 @@ li.item {
   font-weight: bold;
   margin-right: 10px;
 }
-#pholder #plist ul li.selected {
+.placeholder .placeholder-list ul li.selected {
   border-radius: 4px;
 }
 .item.selected,
@@ -207,34 +207,34 @@ li.project.selected {
 }
 
 /* Small variation of the feeder */
-#pholder.small h1 {
+.placeholder.small h1 {
   line-height: 20px;
  padding-bottom: 4px;
 }
-#pholder.small h3 {
+.placeholder.small h3 {
   line-height: 18px;
   margin: 2px 0;
   font-size: 13px;
 }
-#pholder.small .item .pdetails {
+.placeholder.small .item .pdetails {
   padding: 4px 6px;
 }
-#pholder.small .social, #pholder.small .duration, #pholder.small .question, #pholder.small .fdescription, #pholder.small .pdescription {
+.placeholder.small .social, .placeholder.small .duration, .placeholder.small .question, .placeholder.small .fdescription, .placeholder.small .pdescription {
   display: none;
 }
-#pholder.small footer .right a {
+.placeholder.small footer .right a {
   width: 100px;
   display: block;
 }
-#pholder.small footer .left {
+.placeholder.small footer .left {
   display: none;
 }
-#pholder.small .cdate, #pholder.small .duration {
+.placeholder.small .cdate, .placeholder.small .duration {
   margin-left: 0px;
   padding-bottom: 0px;
   float: none;
 }
-#pholder.small footer .right a img {
+.placeholder.small footer .right a img {
   width: 100px;
   margin-top: 4px;
 }

@@ -23,22 +23,26 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Repository
 @SuppressWarnings("unchecked")
 public class ApplicationFormDAO {
 
     private final SessionFactory sessionFactory;
+    
+    private final UserService userService;
 
     private List<ApplicationFormStatus> activeStates = Lists.newArrayList();
 
     public ApplicationFormDAO() {
-        this(null);
+        this(null, null);
     }
 
     @Autowired
-    public ApplicationFormDAO(SessionFactory sessionFactory) {
+    public ApplicationFormDAO(SessionFactory sessionFactory, UserService userService) {
         this.sessionFactory = sessionFactory;
+        this.userService = userService;
         activeStates.add(ApplicationFormStatus.VALIDATION);
         activeStates.add(ApplicationFormStatus.REVIEW);
         activeStates.add(ApplicationFormStatus.INTERVIEW);
@@ -135,7 +139,9 @@ public class ApplicationFormDAO {
     public ApplicationForm getPreviousApplicationForApplicant(ApplicationForm applicationForm) {
         DetachedCriteria previousAppCriteria = DetachedCriteria.forClass(ApplicationForm.class)
                 .setProjection(Projections.max("applicationTimestamp"))
-                .add(Restrictions.eq("applicant", applicationForm.getApplicant()))
+                .add(Restrictions.eq("applicant", userService.getCurrentUser()))
+                .add(Restrictions.ne("status", ApplicationFormStatus.UNSUBMITTED))
+                .add(Restrictions.ne("statusWhenWithdrawn", ApplicationFormStatus.UNSUBMITTED))
                 .add(Restrictions.ne("id", applicationForm.getId()));
 
         int latestApplication = (Integer) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)

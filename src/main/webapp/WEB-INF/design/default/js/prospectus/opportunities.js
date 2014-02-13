@@ -1,51 +1,54 @@
 var buttonText;
 
 $(document).ready(function(){
-	getAdverts();
-	setClass();
-	$(window).bind('resize', function() { 
-    	setClass(); 
-    });
+	$.each($('[id^=placeholder-]'), function() {
+		var feedId = $(this).attr('id').replace("placeholder-", "");
+		getAdverts(feedId);
+		setClass(feedId);
+		$(window).bind('resize', function() { 
+	    	setClass(feedId); 
+	    });
+	});
 });
 
-function setHsize() {
+function setHsize(feedId) {
 	 var container;
 	 var paddings = 32;
-	 var header = $('#pholder header').height();
-	 var footer = $('#pholder footer').height();
+	 var header = $('#placeholder-' + feedId + ' header').height();
+	 var footer = $('#placeholder-' + feedId + ' footer').height();
 	 var isEmbed = window != window.parent;
 	 if (isEmbed) {
 	 	container =  $(window).height();
 	 } else {
-	 	container =  $('#pholder').parent().parent().height();
+	 	container =  $('#placeholder-' + feedId).parent().parent().height();
 	 }
 	 var sum = container - header - footer - paddings;
-	 $('#plist').height(sum);
+	 $('#list-' + feedId).height(sum);
 }
 
-function setClass() {
-	if ($('#pholder').width() < 390) {
-		$('#pholder').addClass('small');
+function setClass(feedId) {
+	if ($('#placeholder-' + feedId).width() < 390) {
+		$('#placeholder-' + feedId).addClass('small');
 		buttonText = 'Read More';
 	} else {
-		$('#pholder').removeClass('small');
+		$('#placeholder-' + feedId).removeClass('small');
 		buttonText = 'Apply Now';
 	}
-	setHsize();
+	setHsize(feedId);
 }
 
-function getAdverts(){
+function getAdverts(feedId){
 	var selectedAdvertId = getUrlParam("advert");
 	if (selectedAdvertId !== undefined) {
 		selectedAdvertId = decodeURIComponent(selectedAdvertId);
 	}
 	var key = getUrlParam("feedKey");
 	if (key == undefined) {
-		key = $('#feedKey').val();
+		key = $('#feedKey-' + feedId).val();
 	}
 	var value = getUrlParam("feedKeyValue");
 	if (value == undefined) {
-		value = $('#feedKeyValue').val();
+		value = $('#feedKeyValue-' + feedId).val();
 	}
 	var data = {
 		feedKey: key,
@@ -58,37 +61,27 @@ function getAdverts(){
 		url: "/pgadmissions/opportunities/embedded",
 		success: function(data) {
 			var map = JSON.parse(data);
-			processAdverts(map.adverts);
-			highlightSelectedAdvert();
+			processAdverts(map.adverts, feedId);
 			bindAddThisShareOverFix();
 		}
 	});
 }
 
-function processAdverts(adverts){
+function processAdverts(adverts, feedId){
 	if (adverts.length == 0) {
-		$('#pholder').hide();
+		$('#placeholder-' + feedId).hide();
 	}
-	$('#plist > li').remove();
+	$('#list-' + feedId + ' > li').remove();
 	$.each(adverts, function(index, advert){
 		var advertElement = renderAdvert(advert);
-		$('#plist ul').append(advertElement);
+		$('#list-' + feedId + ' ul').append(advertElement);
 		bindAdvertApplyButton($('#ad-'+advert.id+' button.apply'), advert);
 	});
 }
 
-function highlightSelectedAdvert(){
-	var selectedAdvertId=$('#prospectusSelectedAdvert');
-	if(selectedAdvertId){
-		var selectedAdvert=$('#ad-'+selectedAdvertId.val());
-		selectedAdvert.addClass('selected');
-		selectedAdvert.parent().prepend(selectedAdvert);
-	}
-}
-
 function bindAdvertApplyButton(button, advert){
 	button.click(function() {
-    	$('#advertId').val(advert.id);
+    	$('#advert').val(advert.id);
     	$('#applyForm').submit();
    });
 }
@@ -151,7 +144,7 @@ function renderAdvert(advert){
 		'<div class="pactions clearfix">'+
 			'<div class="social">'+
 				'<!-- AddThis Button BEGIN -->'+
-				'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+' addthis:description="'+addThisDescription+'">'+
+				'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+addThisDescription+'">'+
 				popupbuttons +
 				'</div>'+
 				'<!-- AddThis Button END -->'+
@@ -196,11 +189,7 @@ function durationOfStudyString(studyDuration){
 }
 
 function getAdvertUrl (advert) {
-	url = window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advertId=" + advert.id;
-	if(advert.advertType == 'PROJECT') {
-		url = url + '&project=' + advert.projectId; 
-	}
-	return url;
+	return window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advert=" + advert.id;
 }
 
 function getUrlParam(name) {

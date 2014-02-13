@@ -11,9 +11,6 @@
       <input type="hidden" id="project" name="project" value=""/>
     </form>
 	
-    <#if Request['prospectus.selectedAdvert']?has_content>
-      <input type="hidden" id="prospectusSelectedAdvert" name="prospectusSelectedAdvert" value="${Request['prospectus.selectedAdvert']}"/>
-    </#if>
     <header>
       <a href="/pgadmissions/login" class="btn btn-danger go-back">Cancel</a>
       <h1>Create New Oppotunity</h1>

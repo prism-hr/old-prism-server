@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -74,52 +75,51 @@ public class AdvertDAO {
             selectedAdvertId = 0;
         }
         
-        if (feedKey == OpportunityListType.RECOMMENDEDOPPORTUNTIIES) {
+        Session session = sessionFactory.getCurrentSession();
+        Criteria programQuery = null;
+        Criteria projectQuery = null;
+        ProjectionList programProjectionList = Projections.projectionList();
+        ProjectionList projectProjectionList = Projections.projectionList();
+        
+        if (feedKey == null) {
+            programQuery = getProgramAdvertCriteria(session);
+            projectQuery = getProjectAdvertCriteria(session);
+        } else if (BooleanUtils.isTrue(OpportunityListType.isCurrentOpportunityListType(feedKey))) {
+            programProjectionList.add(Projections.property("program.active"), "selected");
+            projectProjectionList.add(Projections.property("project.active"), "selected");
+            
+            if (feedKey == OpportunityListType.CURRENTOPPORTUNITYBYADVERTID) {
+                programQuery = getProgramAdvertByAdvertIdCriteria(session, feedKeyValue);
+                projectQuery = getProjectAdvertByAdvertIdCriteria(session, feedKeyValue);
+            } else if (feedKey == OpportunityListType.CURRENTOPPORTUNITYBYAPPLICATIONFORMID) {
+                programQuery = getProgramAdvertByApplicationFormIdCriteria(session, feedKeyValue);
+                projectQuery = getProjectAdvertByApplicationFormIdCriteria(session, feedKeyValue);
+            }
+            
+        } else if (feedKey == OpportunityListType.OPPORTUNITIESBYFEEDID) {
+            programQuery = getProgramAdvertByFeedIdCriteria(session, feedKeyValue);
+            projectQuery = getProjectAdvertByFeedIdCriteria(session, feedKeyValue);
+        } else if (feedKey == OpportunityListType.OPPORTUNITIESBYUSERUPI) {
+            programQuery = getProgramAdvertByUserUpiCriteria(session, feedKeyValue);
+            projectQuery = getProjectAdvertByUserUpiCriteria(session, feedKeyValue);
+        } else if (feedKey == OpportunityListType.OPPORTUNITIESBYUSERUSERNAME) {
+            programQuery = getProgramAdvertByUserUsernameCriteria(session, feedKeyValue);
+            projectQuery = getProjectAdvertByUserUsernameCriteria(session, feedKeyValue);
+        } else if (feedKey == OpportunityListType.RECOMMENDEDOPPORTUNTIIESBYAPPLICANTID) {
             return getRecommendedAdvertFeed(feedKeyValue);
-        } else {
-            Session session = sessionFactory.getCurrentSession();
-            Criteria programQuery = null;
-            Criteria projectQuery = null;
-            ProjectionList programProjectionList = Projections.projectionList();
-            ProjectionList projectProjectionList = Projections.projectionList();
-            
-            if (feedKey == null) {
-                programQuery = getProgramAdvertCriteria(session);
-                projectQuery = getProjectAdvertCriteria(session);
-            } else if (BooleanUtils.isTrue(OpportunityListType.isCurrentOpportunityListType(feedKey))) {
-                programProjectionList.add(Projections.property("active"), "selected");
-                projectProjectionList.add(Projections.property("active"), "selected");
-                
-                if (feedKey == OpportunityListType.CURRENTOPPORTUNITYBYADVERTID) {
-                    programQuery = getProgramAdvertByAdvertIdCriteria(session, feedKeyValue);
-                    projectQuery = getProjectAdvertByAdvertIdCriteria(session, feedKeyValue);
-                } else if (feedKey == OpportunityListType.CURRENTOPPORTUNITYBYPROGRAMCODE) {
-                    programQuery = getProjectAdvertByProgramCodeCriteria(session, programQuery, feedKeyValue);
-                }
-                
-            } else if (feedKey == OpportunityListType.OPPORTUNITIESBYFEEDID) {
-                programQuery = getProgramAdvertByFeedIdCriteria(session, feedKeyValue);
-                projectQuery = getProjectAdvertByFeedIdCriteria(session, feedKeyValue);
-            } else if (feedKey == OpportunityListType.OPPORTUNITIESBYUSERUPI) {
-                programQuery = getProgramAdvertByUserUpiCriteria(session, feedKeyValue);
-                projectQuery = getProjectAdvertByUserUpiCriteria(session, feedKeyValue);
-            } else if (feedKey == OpportunityListType.OPPORTUNITIESBYUSERUSERNAME) {
-                programQuery = getProgramAdvertByUserUsernameCriteria(session, feedKeyValue);
-                projectQuery = getProjectAdvertByUserUsernameCriteria(session, feedKeyValue);
-            }
-            
-            DateTime baseline = new DateTime(new Date());
-            DateTime cleanBaseline = new DateTime(baseline.getYear(), baseline.getMonthOfYear(), baseline.getDayOfMonth(), 0, 0, 0);
-            Date baselineDate = cleanBaseline.toDate();
-            
-            List<AdvertDTO> advertDTOs = getProgramAdvertDTOs(programQuery, programProjectionList, baselineDate, selectedAdvertId);
-            
-            if (!(BooleanUtils.isTrue(OpportunityListType.isCurrentOpportunityListType(feedKey)) && advertDTOs.size() == 1)) {        
-                advertDTOs.addAll(getProjectAdvertDTOs(projectQuery, projectProjectionList, baselineDate, selectedAdvertId));
-            }
-                
-            return advertDTOs;
+        } 
+        
+        DateTime baseline = new DateTime(new Date());
+        DateTime cleanBaseline = new DateTime(baseline.getYear(), baseline.getMonthOfYear(), baseline.getDayOfMonth(), 0, 0, 0);
+        Date baselineDate = cleanBaseline.toDate();
+        
+        List<AdvertDTO> advertDTOs = getProgramAdvertDTOs(programQuery, programProjectionList, baselineDate, selectedAdvertId);
+        
+        if (!(BooleanUtils.isTrue(OpportunityListType.isSingletonOpportunityListType(feedKey)) && advertDTOs.size() == 1)) {        
+            advertDTOs.addAll(getProjectAdvertDTOs(projectQuery, projectProjectionList, baselineDate, selectedAdvertId));
         }
+            
+        return advertDTOs;
     }
     
     private Criteria getProgramAdvertCriteria(Session session) {
@@ -127,7 +127,8 @@ public class AdvertDAO {
     }
     
     private Criteria getProjectAdvertCriteria(Session session) {
-        return getProgramAdvertCriteria(session);
+        return getProgramAdvertCriteria(session)
+                .createAlias("program.projects", "project", JoinType.INNER_JOIN);
     }
     
     private Criteria getProgramAdvertByAdvertIdCriteria(Session session, String feedKeyValue) {
@@ -140,9 +141,15 @@ public class AdvertDAO {
                 .add(Restrictions.eq("project.id", Integer.parseInt(feedKeyValue)));
     }
     
-    private Criteria getProjectAdvertByProgramCodeCriteria(Session session, Criteria programQuery, String feedKeyValue) {
-        return getProgramAdvertCriteria(session)
-                .add(Restrictions.eq("code", feedKeyValue));
+    private Criteria getProgramAdvertByApplicationFormIdCriteria(Session session, String feedKeyValue) {
+        return session.createCriteria(ApplicationForm.class, "applicationForm")
+                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("applicationForm.id", Integer.parseInt(feedKeyValue)));
+    }
+    
+    private Criteria getProjectAdvertByApplicationFormIdCriteria(Session session, String feedKeyValue) {
+        return getProgramAdvertByApplicationFormIdCriteria(session, feedKeyValue)
+                .createAlias("applicationForm.project", "project");
     }
     
     private Criteria getProgramAdvertByFeedIdCriteria(Session session, String feedKeyValue) {
@@ -152,9 +159,8 @@ public class AdvertDAO {
     }
     
     private Criteria getProjectAdvertByFeedIdCriteria(Session session, String feedKeyValue) {
-        return session.createCriteria(ResearchOpportunitiesFeed.class)
-                .createAlias("programs", "program", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("id", Integer.parseInt(feedKeyValue)));
+        return getProgramAdvertByFeedIdCriteria(session, feedKeyValue)
+                .createAlias("program.projects", "project", JoinType.INNER_JOIN);
     }
     
     private Criteria getProgramAdvertByUserUpiCriteria(Session session, String feedKeyValue) {
@@ -163,7 +169,8 @@ public class AdvertDAO {
     }
     
     private Criteria getProjectAdvertByUserUpiCriteria(Session session, String feedKeyValue) {
-        return getProgramAdvertByUserUpiCriteria(session, feedKeyValue);
+        return getProgramAdvertByUserUpiCriteria(session, feedKeyValue)
+                .createAlias("program.projects", "project", JoinType.INNER_JOIN);
     }
     
     private Criteria getProgramAdvertByUserUsernameCriteria(Session session, String feedKeyValue) {
@@ -172,7 +179,8 @@ public class AdvertDAO {
     }
     
     private Criteria getProjectAdvertByUserUsernameCriteria(Session session, String feedKeyValue) {
-        return getProgramAdvertByUserUsernameCriteria(session, feedKeyValue);
+        return getProgramAdvertByUserUsernameCriteria(session, feedKeyValue)
+                .createAlias("program.projects", "project", JoinType.INNER_JOIN);
     }
     
     private Criteria getAdvertByUserAttributeCriteria (Session session) {
@@ -220,7 +228,6 @@ public class AdvertDAO {
                         .add(Projections.property("project.id"), "projectId")
                         .add(Projections.property("secondarySupervisor.firstName"), "secondarySupervisorFirstName")
                         .add(Projections.property("secondarySupervisor.lastName"), "secondarySupervisorLastName"))
-                .createAlias("program.projects", "project", JoinType.INNER_JOIN)
                 .createAlias("project.primarySupervisor", "primarySupervisor", JoinType.INNER_JOIN)
                 .createAlias("project.secondarySupervisor", "secondarySupervisor", JoinType.LEFT_OUTER_JOIN)
                 .createAlias("program.closingDates", "closingDate", JoinType.LEFT_OUTER_JOIN)

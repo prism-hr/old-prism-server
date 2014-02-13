@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 @Service
@@ -63,6 +62,10 @@ public class ProgramsService {
 
     public void save(Program program) {
         programDAO.save(program);
+    }
+
+    public void merge(Program program) {
+        programDAO.merge(program);
     }
 
     public Program getProgramByCode(String code) {

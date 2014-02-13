@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,8 @@ public class OpportunitiesService {
     }
 
     public void createOpportunityChangeRequest(OpportunityRequest opportunityRequest) {
-        Preconditions.checkNotNull(opportunityRequest.getSourceProgram());
+        Program program = opportunityRequest.getSourceProgram();
+        Preconditions.checkNotNull(program);
 
         RegisteredUser author = opportunityRequest.getAuthor();
         if (programsService.canChangeInstitution(author, opportunityRequest)) {
@@ -72,17 +74,21 @@ public class OpportunitiesService {
         }
 
         OpportunityRequest example = new OpportunityRequest();
-        example.setSourceProgram(opportunityRequest.getSourceProgram());
+        example.setSourceProgram(program);
         example.setStatus(OpportunityRequestStatus.NEW);
         if (!opportunityRequestDAO.findByExample(example).isEmpty()) {
-            throw new RuntimeException("Cannot create new opprotunity request if there is already a new one. Program: " + opportunityRequest.getSourceProgram());
+            throw new RuntimeException("Cannot create new opprotunity request if there is already a new one. Program: " + program);
         }
 
         opportunityRequest.setCreatedDate(new Date());
         opportunityRequest.setType(OpportunityRequestType.CHANGE);
         opportunityRequest.setStudyDuration(opportunityRequest.getStudyDuration());
-        opportunityRequest.setProgramTitle(opportunityRequest.getSourceProgram().getTitle());
-        opportunityRequest.setAtasRequired(opportunityRequest.getSourceProgram().getAtasRequired());
+        opportunityRequest.setProgramTitle(program.getTitle());
+        opportunityRequest.setAtasRequired(program.getAtasRequired());
+
+        // lock the program
+        program.setLocked(true);
+        programsService.merge(program);
 
         opportunityRequestDAO.save(opportunityRequest);
     }
@@ -119,6 +125,13 @@ public class OpportunitiesService {
         opportunityRequest.setAtasRequired(newOpportunityRequest.getAtasRequired());
         opportunityRequest.setAdvertisingDeadlineYear(newOpportunityRequest.getAdvertisingDeadlineYear());
         opportunityRequest.setStudyOptions(newOpportunityRequest.getStudyOptions());
+
+        // unlock program if already exists
+        Program program = opportunityRequest.getSourceProgram();
+        if (program != null) {
+            program.setLocked(false);
+            programsService.merge(program);
+        }
 
         // create comment
         comment.setAuthor(userService.getCurrentUser());

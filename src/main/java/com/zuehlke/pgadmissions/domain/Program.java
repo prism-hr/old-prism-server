@@ -80,12 +80,15 @@ public class Program extends Authorisable implements Serializable {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "advert_id")
     private Advert advert;
-    
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     private List<Project> projects = new ArrayList<Project>();
-    
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     private List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
+
+    @Column(name = "locked")
+    private boolean locked;
 
     public Program() {
     }
@@ -208,7 +211,7 @@ public class Program extends Authorisable implements Serializable {
     public void setProgramFeed(ProgramFeed programFeed) {
         this.programFeed = programFeed;
     }
-    
+
     public List<ScoringStage> getCustomQuestionCoverage() {
         return new ArrayList<ScoringStage>(getScoringDefinitions().keySet());
     }
@@ -223,6 +226,14 @@ public class Program extends Authorisable implements Serializable {
 
     public List<ApplicationForm> getApplications() {
         return applications;
+    }
+
+    public boolean getLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
 }

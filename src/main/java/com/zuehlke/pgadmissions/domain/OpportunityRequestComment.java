@@ -39,7 +39,7 @@ public class OpportunityRequestComment {
 
     @Column(name = "content")
     @Lob
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 10)
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500000)
     private String content;
 
     @Column(name = "created_timestamp", insertable = false, nullable = false)

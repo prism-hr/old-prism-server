@@ -80,7 +80,7 @@ public class OpportunitiesServiceTest {
         opportunityRequestDAO.save(opportunityRequest);
 
         replay();
-        service.createOpportunityRequestAndAuthor(opportunityRequest);
+        service.createNewOpportunityRequestAndAuthor(opportunityRequest);
         verify();
 
         assertNotNull(opportunityRequest.getCreatedDate());

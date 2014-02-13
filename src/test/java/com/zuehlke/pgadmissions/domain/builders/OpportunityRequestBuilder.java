@@ -29,7 +29,7 @@ public class OpportunityRequestBuilder {
     private Boolean atasRequired;
     private String studyOptions;
     private Integer advertisingDeadlineYear;
-    private OpportunityRequestType type = OpportunityRequestType.INITIAL;
+    private OpportunityRequestType type = OpportunityRequestType.CREATE;
     private Program sourceProgram;
     private List<OpportunityRequestComment> comments = Lists.newArrayList();
     private String funding;

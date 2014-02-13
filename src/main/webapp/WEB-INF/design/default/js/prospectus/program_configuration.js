@@ -518,7 +518,6 @@ function saveAdvert() {
         },
         url : "/pgadmissions/prospectus/programme/saveProgramAdvert",
         data : {
-            type : "CHANGE",
             sourceProgram : programCode,
             programTitle : programName,
             atasRequired : $("[name=programAdvertAtasRequired]:checked").val(),
@@ -535,7 +534,27 @@ function saveAdvert() {
         },
         success : function(data) {
             var map = JSON.parse(data);
-            if (!map['success']) {
+            if (map['success']) {
+                if ($("#programAdvertNewProgramNameDiv").is(":visible")) {
+                    // new program created
+                    var newProgramCode = map["programCode"];
+                    $("#programAdvertProgramSelect").append($("<option />").val(newProgramCode).text(programName));
+                    $("#programAdvertProgramSelect").val(newProgramCode);
+                    $("#programAdvertSelectProgramDiv").show();
+                    $("#programAdvertNewProgramNameDiv").hide();
+                    checkToDisable();
+                    getAdvertData(newProgramCode);
+                }
+                var programme_name = $("#programAdvertProgramSelect option:selected").text();
+                infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>" + programme_name + "</b> has been saved.";
+                $('#infoBarProgram').addClass('alert-success').removeClass('alert-info').html(infohtml);
+
+                $('#resourcesModal').modal('show');
+            } else if (map["changeRequestRequired"]) {
+                if(confirm("No tienes derechos suficientes para cambiar la institución. ¿Quieres crear una nueva solicitud de cambio?")){
+                    confirmOpportunityChangeRequest();
+                }
+            } else {
                 if (map['program']) {
                     $("#programAdvertSelectProgramDiv").append(getErrorMessageHTML(map['program']));
                 }
@@ -576,25 +595,43 @@ function saveAdvert() {
                     $("#programAdvertAdvertisingDeadlineYearDiv").append(getErrorMessageHTML(map['advertisingDeadlineYear']));
                 }
                 checkIfErrors();
-            } else {
-
-                if ($("#programAdvertNewProgramNameDiv").is(":visible")) {
-                    // new program created
-                    var newProgramCode = map["programCode"];
-                    $("#programAdvertProgramSelect").append($("<option />").val(newProgramCode).text(programName));
-                    $("#programAdvertProgramSelect").val(newProgramCode);
-                    $("#programAdvertSelectProgramDiv").show();
-                    $("#programAdvertNewProgramNameDiv").hide();
-                    checkToDisable();
-                    getAdvertData(newProgramCode);
-                }
-                var programme_name = $("#programAdvertProgramSelect option:selected").text();
-                infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>" + programme_name + "</b> has been saved.";
-                $('#infoBarProgram').addClass('alert-success').removeClass('alert-info').html(infohtml);
-
-                $('#resourcesModal').modal('show');
             }
 
+        },
+        complete : function() {
+            $('#ajaxloader').fadeOut('fast');
+        }
+    });
+}
+
+function confirmOpportunityChangeRequest() {
+    $('#ajaxloader').show();
+    $.ajax({
+        type : 'POST',
+        statusCode : {
+            401 : function() {
+                window.location.reload();
+            },
+            500 : function() {
+                window.location.href = "/pgadmissions/error";
+            },
+            404 : function() {
+                window.location.href = "/pgadmissions/404";
+            },
+            400 : function() {
+                window.location.href = "/pgadmissions/400";
+            },
+            403 : function() {
+                window.location.href = "/pgadmissions/404";
+            }
+        },
+        url : "/pgadmissions/prospectus/programme/confirmOpportunityChangeRequest",
+        data : {},
+        success : function(data) {
+            var map = JSON.parse(data);
+            if (map['success']) {
+                alert("Nueva solicitud de cambio ha sido creada. Espera una noticia cuando nuestros administradores la aproban.");
+            }
         },
         complete : function() {
             $('#ajaxloader').fadeOut('fast');

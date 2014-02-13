@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 
 @SuppressWarnings("unchecked")
 @Repository
@@ -48,8 +48,7 @@ public class OpportunityRequestDAO {
                 .add(Restrictions.disjunction()
                         .add(Subqueries.propertiesIn(new String[] { "sourceProgram", "createdDate", "id" }, initialRequestsWithProgramsCriteria))
                         .add(Restrictions.isNull("sourceProgram"))) //
-                .addOrder(Order.asc("status"))
-                .list();
+                .addOrder(Order.asc("status")).list();
     }
 
     public OpportunityRequest findById(Integer requestId) {
@@ -63,8 +62,19 @@ public class OpportunityRequestDAO {
                 .addOrder(Order.desc("createdDate")).list();
     }
 
-    public List<OpportunityRequest> findByExample(OpportunityRequest opportunityRequest) {
-        return sessionFactory.getCurrentSession().createCriteria(OpportunityRequest.class).add(Example.create(opportunityRequest)).list();
+    public List<OpportunityRequest> findByProgramAndStatus(Program program, OpportunityRequestStatus status) {
+        return sessionFactory.getCurrentSession() //
+                .createCriteria(OpportunityRequest.class) //
+                .add(Restrictions.eq("sourceProgram", program)) //
+                .add(Restrictions.eq("status", status)) //
+                .list();
+    }
+
+    public List<OpportunityRequest> findByStatus(OpportunityRequestStatus status) {
+        return sessionFactory.getCurrentSession() //
+                .createCriteria(OpportunityRequest.class) //
+                .add(Restrictions.eq("status", status)) //
+                .list();
     }
 
 }

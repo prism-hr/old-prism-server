@@ -2041,6 +2041,9 @@ background: #909194;
 #opportunityRequestEditForm .form-rows .alert{
 	clear: left;
 }
+#opportunityRequestEditForm .admin_row_label{
+	width: 200px;
+}
 @media (min-width:768px) and (max-width:979px) {
 
 }

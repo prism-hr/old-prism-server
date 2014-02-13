@@ -72,9 +72,10 @@ span.count {
                     Approved <span class="icon-status offer-recommended"></span>
                     </#if>
                 </div>
-                <div class="row authname"><strong>Author:</strong> ${(opportunityRequest.author.firstName)!} ${(opportunityRequest.author.lastName)!}
+                <div class="row authname"><strong>Author:</strong> 
+                ${(opportunityRequest.author.firstName)!} ${(opportunityRequest.author.lastName)!}
                 </div>
-                <div class="row"><strong>Email:</strong> ${(opportunityRequest.author.email)!}</div>
+                <div class="row"><strong>Email:</strong> <a href="mailto:${(opportunityRequest.author.email)!}?subject=Question Regarding UCL Prism Program request: ${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}"> <i class="icon-envelope-alt"></i> ${(opportunityRequest.author.email)!}</a> </div>
               </div>
             </div>
             <div class="requestinfo">
@@ -107,15 +108,15 @@ span.count {
                         <#include "/private/prospectus/opportunity_details_part.ftl"/>
                       <#else>
                       
-                        <div class="row">
-                          <label class="plain-label">Institution Country</label>
+                        <div class="admin_row">
+                          <label class="admin_row_label">Institution Country</label>
                           <div class="field">${(opportunityRequest.institutionCountry.name?html)!}</div>
                         </div>
                         
-                        <div class="row">
-                          <label class="plain-label">Institution Name</label>
+                        <div class="admin_row">
+                          <label class="admin_row_label">Institution Name</label>
                           <#if opportunityRequest.institutionCode == "OTHER">
-                            <div class="field">Other</div>
+                            <div class="field">${(opportunityRequest.otherInstitution?html)!}</div>
                           <#else>
                             <#list institutions as inst>
                               <#if opportunityRequest.institutionCode == inst.code>
@@ -124,26 +125,21 @@ span.count {
                             </#list>
                           </#if>
                         </div>
-                        
-                        <div class="row">
-                          <label class="plain-label">Please Specify</label>
-                          <div class="field">${(opportunityRequest.otherInstitution?html)!}</div>
-                        </div>
 
-                        <div class="row">
-                          <label class="plain-label">Program Title</label>
+                        <div class="admin_row">
+                          <label class="admin_row_label">Program Title</label>
                           <div class="field">${(opportunityRequest.programTitle?html)!}</div>
                         </div>
 
-                        <div class="row">
-                          <label class="plain-label">Program Description</label>
+                        <div class="admin_row">
+                          <label class="admin_row_label">Program Description</label>
                           <div class="field">${(opportunityRequest.programDescription)!}</div>
                         </div>
 
-                        <div class="row">
+                        <div class="admin_row">
                           <#assign selectedOptionsString = opportunityRequest.studyOptions!"">    
                           <#assign selectedOptions = selectedOptionsString?split(",")>
-                          <label class="plain-label">Study Options</label>
+                          <label class="admin_row_label">Study Options</label>
                           <#list studyOptions as studyOption>
                             <#if selectedOptions?seq_contains(studyOption.id)>
                               <div class="field">${(studyOption.id)!}</div>
@@ -151,19 +147,19 @@ span.count {
                           </#list>
                         </div>
                         
-                        <div class="row">
-                          <label class="plain-label">Duration of Study</label>
+                        <div class="admin_row">
+                          <label class="admin_row_label">Duration of Study</label>
                           <#assign unit = opportunityRequest.studyDurationUnit!>
                           <div class="field">${(opportunityRequest.studyDurationNumber?string)!} ${(unit=="MONTHS")?string("Months","Years")}</div>
                         </div>
                         
-                        <div class="row">
-                          <label class="plain-label">Does the opportunity require ATAS?</label>
+                        <div class="admin_row">
+                          <label class="admin_row_label">Does the opportunity require ATAS?</label>
                           <div class="field">${(opportunityRequest.atasRequired)?string("Yes","No")}</div>
                         </div>
                         
-                        <div class="row">
-                          <label class="plain-label">Advertise deadline</label>
+                        <div class="admin_row">
+                          <label class="admin_row_label">Advertise deadline</label>
                           <div class="field">30 September ${(opportunityRequest.advertisingDeadlineYear?c)!}</div>
                         </div>
                         

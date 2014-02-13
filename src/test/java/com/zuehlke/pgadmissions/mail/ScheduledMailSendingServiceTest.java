@@ -30,7 +30,6 @@ import org.springframework.context.ApplicationContext;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
-import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
@@ -50,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
@@ -70,7 +70,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
     private ApplicationFormUserRoleService applicationFormUserRoleService;
 
-    private OpportunityRequestDAO opportunityRequestDAOMock;
+    private OpportunitiesService opportunitiesServiceMock;
 
     private static final String HOST = "http://localhost:8080";
 
@@ -83,10 +83,10 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         encryptionUtilsMock = createMock(EncryptionUtils.class);
         interviewParticipantDAOMock = createMock(InterviewParticipantDAO.class);
         applicationFormListDAOMock = createMock(ApplicationFormListDAO.class);
-        opportunityRequestDAOMock = createMock(OpportunityRequestDAO.class);
+        opportunitiesServiceMock = createMock(OpportunitiesService.class);
         applicationFormUserRoleService = createMock(ApplicationFormUserRoleService.class);
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, configurationServiceMock, refereeDAOMock, userDAOMock, roleDAOMock,
-                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleService, opportunityRequestDAOMock);
+                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleService, opportunitiesServiceMock);
     }
 
     @Test
@@ -161,7 +161,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
     @Test
     public void shouldSendReferenceReminder() throws Exception {
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, configurationServiceMock, refereeDAOMock, userDAOMock, roleDAOMock,
-                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleService, opportunityRequestDAOMock) {
+                encryptionUtilsMock, HOST, applicationContextMock, interviewParticipantDAOMock, applicationFormUserRoleService, opportunitiesServiceMock) {
             @Override
             protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
                 return null;

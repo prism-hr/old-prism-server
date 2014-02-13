@@ -84,7 +84,7 @@ span.count {
               <#if opportunityRequest.sourceProgram??>
                 ${opportunityRequest.sourceProgram.code?html} |
               </#if>
-              ${(opportunityRequest.programTitle?html)!}
+              ${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}
             </div>
             <div class="row">
               <label>Submitted</label> ${opportunityRequest.createdDate?string("dd MMM yyyy")}
@@ -224,49 +224,51 @@ span.count {
                 <div>
                   <div class="row-group">
                     <ul id="timeline-statuses">
-                      <#list opportunityRequest.comments?reverse as comment>                    
-                        <li class="${(comment.commentType == 'REJECT')?string('rejected','offer_recommended')}"> 
+                      <#list opportunityRequests as opportunityRequest>
+                        <#list opportunityRequest.comments?reverse as comment>                    
+                          <li class="${(comment.commentType == 'REJECT')?string('rejected','offer_recommended')}"> 
+                            <!-- Box start -->
+                            <div class="box">
+                              <#assign author = comment.author> 
+                              <div class="title"> <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
+                              <p class="highlight">Request ${(comment.commentType == 'REJECT')?string('Rejected','Approved')}.</p>
+                              <#if comment.content??>
+                                <i class="icon-minus-sign"></i>
+                              </#if> 
+                            </div>
+                            <#if comment.content??>
+                              <div class="excontainer">
+                                <ul class="status-info">
+                                  <li class="${(comment.commentType == 'REJECT')?string('rejected','offer_recommended')}">
+                                    <div class="box">
+                                      <div class="title">
+                                        <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span>
+                                        <em>Commented:</em>
+                                      </div>
+                                      <div class="textContainer">
+                                        <p>${comment.content?html}</p>
+                                      </div>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </#if>
+                            <!-- Box end -->
+                          </li>
+                        </#list>
+                        <li class="not_submitted">
                           <!-- Box start -->
                           <div class="box">
-                            <#assign author = comment.author> 
-                            <div class="title"> <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
-                            <p class="highlight">Request ${(comment.commentType == 'REJECT')?string('Rejected','Approved')}.</p>
-                            <#if comment.content??>
-                              <i class="icon-minus-sign"></i>
-                            </#if> 
-                          </div>
-                          <#if comment.content??>
-                            <div class="excontainer">
-                              <ul class="status-info">
-                                <li class="${(comment.commentType == 'REJECT')?string('rejected','offer_recommended')}">
-                                  <div class="box">
-                                    <div class="title">
-                                      <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span>
-                                      <em>Commented:</em>
-                                    </div>
-                                    <div class="textContainer">
-                                      <p>${comment.content?html}</p>
-                                    </div>
-                                  </div>
-                                </li>
-                              </ul>
+                            <div class="title">
+                              <span data-desc="${(opportunityRequest.author.firstName)!} ${(opportunityRequest.author.lastName)!} (${(opportunityRequest.author.email)!}) as: Requester" class="icon-role applicant" data-hasqtip="41"></span>
+                              <span class="name">${(opportunityRequest.author.firstName)!} ${(opportunityRequest.author.lastName)!}</span>
+                              <span class="datetime"><span class="datetime">${opportunityRequest.createdDate?string("dd MMM yyyy")} at ${opportunityRequest.createdDate?string('HH:mm')}</span></span>
                             </div>
-                          </#if>
-                          <!-- Box end -->
+                            <p class="highlight">${(opportunityRequest.type=="CHANGE")?string("Opportunity change request","New opportunity request")} created.</p>  
+                         </div>
+                        <!-- Box end -->
                         </li>
                       </#list>
-                      <li class="not_submitted">
-                        <!-- Box start -->
-                        <div class="box">
-                          <div class="title">
-                            <span data-desc="${(opportunityRequest.author.firstName)!} ${(opportunityRequest.author.lastName)!} (${(opportunityRequest.author.email)!}) as: Requester" class="icon-role applicant" data-hasqtip="41"></span>
-                            <span class="name">${(opportunityRequest.author.firstName)!} ${(opportunityRequest.author.lastName)!}</span>
-                            <span class="datetime"><span class="datetime">${opportunityRequest.createdDate?string("dd MMM yyyy")} at ${opportunityRequest.createdDate?string('HH:mm')}</span></span>
-                          </div>
-                          <p class="highlight">Request created.</p>  
-                       </div>
-                      <!-- Box end -->
-                      </li>
                     </ul>
                   </div>
                 </div>

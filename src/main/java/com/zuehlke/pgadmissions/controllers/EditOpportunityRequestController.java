@@ -69,12 +69,14 @@ public class EditOpportunityRequestController {
     @RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
     public String getEditOpportunityRequestPage(@PathVariable("requestId") Integer requestId, ModelMap modelMap) {
         OpportunityRequest opportunityRequest = opportunitiesService.getOpportunityRequest(requestId);
+        List<OpportunityRequest> opportunityRequests = opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest);
         OpportunityRequestComment comment = new OpportunityRequestComment();
 
         // force to recompute study duration number and unit
         opportunityRequest.setStudyDuration(opportunityRequest.getStudyDuration());
         modelMap.addAttribute("opportunityRequest", opportunityRequest);
-        modelMap.addAttribute("comment", comment);
+        modelMap.addAttribute("opportunityRequests", opportunityRequests);
+        modelMap.addAttribute("comment", comment);  
 
         if (opportunityRequest.getInstitutionCountry() != null) {
             modelMap.addAttribute("institutions",
@@ -92,6 +94,7 @@ public class EditOpportunityRequestController {
             OpportunityRequest existingRequest = opportunitiesService.getOpportunityRequest(requestId);
             opportunityRequest.setAuthor(existingRequest.getAuthor());
             opportunityRequest.setCreatedDate(existingRequest.getCreatedDate());
+            opportunityRequest.setStatus(existingRequest.getStatus());
             modelMap.put("opportunityRequest", opportunityRequest);
             modelMap.put("comment", comment);
 

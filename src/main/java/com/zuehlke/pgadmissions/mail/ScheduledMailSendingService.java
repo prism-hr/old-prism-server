@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
+import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -54,7 +55,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
-    private final OpportunityRequestDAO opportunityRequestDAO;
+    private final OpportunitiesService opportunitiesService;
 
     public ScheduledMailSendingService() {
         this(null, null, null, null, null, null, null, null, null, null, null, null);
@@ -65,14 +66,14 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             final ConfigurationService configurationService, final RefereeDAO refereeDAO, final UserDAO userDAO, final RoleDAO roleDAO,
             final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host, final ApplicationContext applicationContext,
             InterviewParticipantDAO interviewParticipantDAO, final ApplicationFormUserRoleService applicationFormUserRoleService,
-            final OpportunityRequestDAO opportunityRequestDAO) {
+            final OpportunitiesService opportunitiesService) {
         super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.refereeDAO = refereeDAO;
         this.userDAO = userDAO;
         this.applicationContext = applicationContext;
         this.interviewParticipantDAO = interviewParticipantDAO;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.opportunityRequestDAO = opportunityRequestDAO;
+        this.opportunitiesService = opportunitiesService;
     }
 
     public void sendDigestsToUsers() {
@@ -124,7 +125,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public List<Integer> getUsersForOpportunityRequestNotification(Date baselineDate) {
-        if (opportunityRequestDAO.getInitialOpportunityRequests().isEmpty()) {
+        if (opportunitiesService.getNewOpportunityRequests().isEmpty()) {
             return Collections.emptyList();
         }
         return userDAO.getUsersDueOpportunityRequestNotification(baselineDate);

@@ -76,7 +76,7 @@ public class OpportunityRequest {
 
     @Column(name = "request_type")
     @Enumerated(EnumType.STRING)
-    private OpportunityRequestType type = OpportunityRequestType.INITIAL;
+    private OpportunityRequestType type;
 
     @ManyToOne
     @JoinColumn(name = "source_program_id")

@@ -3,13 +3,19 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Example;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
-import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
+import com.zuehlke.pgadmissions.domain.Program;
 
+@SuppressWarnings("unchecked")
 @Repository
 public class OpportunityRequestDAO {
 
@@ -28,15 +34,37 @@ public class OpportunityRequestDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(opportunityRequest);
     }
 
-    @SuppressWarnings("unchecked")
     public List<OpportunityRequest> getInitialOpportunityRequests() {
-        return sessionFactory.getCurrentSession().createCriteria(OpportunityRequest.class) //
-                .add(Restrictions.eq("type", OpportunityRequestType.INITIAL)) //
+        DetachedCriteria initialRequestsWithProgramsCriteria = DetachedCriteria.forClass(OpportunityRequest.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("sourceProgram")) //
+                        .add(Projections.max("createdDate")) //
+                        .add(Projections.max("id"))) //
+                .add(Restrictions.isNotNull("sourceProgram"));
+
+        return sessionFactory
+                .getCurrentSession()
+                .createCriteria(OpportunityRequest.class)
+                .add(Restrictions.disjunction()
+                        .add(Subqueries.propertiesIn(new String[] { "sourceProgram", "createdDate", "id" }, initialRequestsWithProgramsCriteria))
+                        .add(Restrictions.isNull("sourceProgram"))) //
+                .addOrder(Order.asc("status"))
                 .list();
     }
 
     public OpportunityRequest findById(Integer requestId) {
         return (OpportunityRequest) sessionFactory.getCurrentSession().get(OpportunityRequest.class, requestId);
+    }
+
+    public List<OpportunityRequest> getOpportunityRequests(Program program) {
+        return sessionFactory.getCurrentSession() //
+                .createCriteria(OpportunityRequest.class) //
+                .add(Restrictions.eq("sourceProgram", program)) //
+                .addOrder(Order.desc("createdDate")).list();
+    }
+
+    public List<OpportunityRequest> findByExample(OpportunityRequest opportunityRequest) {
+        return sessionFactory.getCurrentSession().createCriteria(OpportunityRequest.class).add(Example.create(opportunityRequest)).list();
     }
 
 }

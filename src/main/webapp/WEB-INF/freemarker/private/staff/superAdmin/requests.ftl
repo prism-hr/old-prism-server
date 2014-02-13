@@ -136,7 +136,7 @@
                   ${opportunityRequest.author.displayName}
                   </td>
                   <td class="program-title">
-                    ${opportunityRequest.programTitle} 
+                    ${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title} 
                   </td>
                   <td class="status">
                     <@spring.message 'opportunityRequestType.${opportunityRequest.type.name()}'/>

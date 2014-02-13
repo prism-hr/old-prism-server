@@ -22,6 +22,7 @@ public class ProgramBuilder {
     private String title;
     private boolean enabled;
     private boolean atasRequired;
+    private boolean locked;
 
     private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
     private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
@@ -47,6 +48,11 @@ public class ProgramBuilder {
 
     public ProgramBuilder enabled(boolean enabled) {
         this.enabled = enabled;
+        return this;
+    }
+    
+    public ProgramBuilder locked(boolean locked) {
+        this.locked = locked;
         return this;
     }
 
@@ -120,6 +126,7 @@ public class ProgramBuilder {
         program.setCode(code);
         program.setTitle(title);
         program.setEnabled(enabled);
+        program.setLocked(locked);
         program.getApprovers().addAll(approvers);
         program.getAdministrators().addAll(administrators);
         program.getInstances().addAll(instances);

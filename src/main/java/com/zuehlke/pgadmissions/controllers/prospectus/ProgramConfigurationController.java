@@ -164,6 +164,7 @@ public class ProgramConfigurationController {
 
         Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
 
+        result.put("programLocked", program.getLocked());
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));

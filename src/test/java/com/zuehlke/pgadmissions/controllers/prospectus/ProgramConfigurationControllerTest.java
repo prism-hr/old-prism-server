@@ -86,7 +86,7 @@ public class ProgramConfigurationControllerTest {
     @Mock
     @InjectIntoByType
     private UserService userService;
-    
+
     @Mock
     @InjectIntoByType
     private OpportunitiesService opportunitiesService;
@@ -114,7 +114,7 @@ public class ProgramConfigurationControllerTest {
     public void shouldGetOpportunityData() {
         Domicile domicile = new DomicileBuilder().id(88).build();
         Program program = new ProgramBuilder().code("07").institution(new QualificationInstitutionBuilder().domicileCode("PL").build()) //
-                .advert(new AdvertBuilder().id(999).build()).build();
+                .advert(new AdvertBuilder().id(999).build()).locked(true).build();
 
         Map<String, Object> dataMap = Maps.newHashMap();
         dataMap.put("programCode", "07");
@@ -133,7 +133,7 @@ public class ProgramConfigurationControllerTest {
         verify();
 
         assertEquals(
-                "{\"atasRequired\":false,\"studyOptions\":[\"opt1\",\"opt2\"],\"advert\":{\"id\":999,\"active\":true},\"buttonToApply\":\"button\",\"linkToApply\":\"button\",\"institutionCountryCode\":\"encPL\",\"advertisingDeadline\":2084,\"isCustomProgram\":true}",
+                "{\"atasRequired\":false,\"studyOptions\":[\"opt1\",\"opt2\"],\"advert\":{\"id\":999,\"active\":true},\"buttonToApply\":\"button\",\"linkToApply\":\"button\",\"institutionCountryCode\":\"encPL\",\"programLocked\":true,\"advertisingDeadline\":2084,\"isCustomProgram\":true}",
                 result);
     }
 
@@ -171,21 +171,21 @@ public class ProgramConfigurationControllerTest {
 
         assertEquals("{\"changeRequestRequired\":true}", result);
     }
-    
+
     @Test
     public void shouldConfirmOpportunityChangeRequest() {
         RegisteredUser user = new RegisteredUser();
         OpportunityRequest opportunityRequest = new OpportunityRequest();
         ModelMap modelMap = new ModelMap("opportunityRequest", opportunityRequest);
         SessionStatus sessionStatus = new SimpleSessionStatus();
-        
+
         expect(userService.getCurrentUser()).andReturn(user);
         opportunitiesService.createOpportunityChangeRequest(opportunityRequest);
-        
+
         replay();
         String result = controller.confirmOpportunityChangeRequest(modelMap, sessionStatus);
         verify();
-        
+
         assertTrue(sessionStatus.isComplete());
         assertEquals("{\"success\":true}", result);
         assertSame(user, opportunityRequest.getAuthor());

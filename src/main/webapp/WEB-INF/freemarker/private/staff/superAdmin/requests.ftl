@@ -107,19 +107,17 @@
             <colgroup>
               <col style="width: 25%" />
               <col />
-              <col style="width: 110px;" />
-              <col style="width: 100px;" />
-              <col style="width: 90px;" />
-              <col style="width: 90px" />
+              <col style="width: 80px;" />
+              <col style="width: 130px;" />
+              <col style="width: 80px" />
             </colgroup>
             <thead>
               <tr>
                 <th class="sortable" scope="col" id="AUTHOR" onclick="sortList(this)">Author</th>
                 <th class="sortable" scope="col" id="PROGRAM_TITLE" onclick="sortList(this)">Programme</th>
-                <th class="sortable" scope="col" id="TYPE" onclick="sortList(this)">Request Type</th>
-                <th class="sortable" scope="col" id="CREATED_DATE" onclick="sortList(this)">Created</th>
                 <th class="sortable" scope="col" id="STATUS" onclick="sortList(this)">Status</th>
                 <th scope="col">Actions</th>
+                <th class="sortable" scope="col" id="CREATED_DATE" onclick="sortList(this)">Created</th>
               </tr>
             </thead>
             
@@ -131,22 +129,22 @@
                     <td data-desc="This request requires your attention" class="flagred applicant-name">
                     <i class="icon-bell-alt"></i>
                   <#else>
-                    <td class="applicant-name">
+                    <td class="applicant-name flaggreen">
+                      <i class="icon-coffee"></i>
                   </#if>
                   ${opportunityRequest.author.displayName}
                   </td>
                   <td class="program-title">
-                    ${opportunityRequest.programTitle} 
-                  </td>
-                  <td class="status">
-                    <@spring.message 'opportunityRequestType.${opportunityRequest.type.name()}'/>
-                  </td>
-                  <td class="centre">
-                    ${opportunityRequest.createdDate?string("dd MMM yyyy")}
+                    ${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title} 
                   </td>
                   <td class="status">
                     <#if opportunityRequest.status == "NEW">
-                    <span data-desc="New Request" class="icon-status validation">New Request</span>
+                      <#if opportunityRequest.type == "CHANGE">
+                      <span data-desc="Change Request" class="icon-status withdrawn">Change Request</span>
+                      <#else>
+                      <span data-desc="New Request" class="icon-status validation">New Request</span>
+                      </#if>
+
                     <#elseif opportunityRequest.status == "REJECTED">
                     <span data-desc="Rejected" class="icon-status rejected">Rejected</span>
                     <#elseif opportunityRequest.status == "APPROVED">
@@ -154,11 +152,18 @@
                     </#if>
                   </td>
                   <td class="centre">
-                    <#if opportunityRequest.status == "NEW">
-                      <button class="opportunityRequestActionType btn btn-success" data-request-id="${opportunityRequest.id?string}" data-value="approve">Review</button>
-                    <#else>
-                      <button class="opportunityRequestActionType btn btn-info" data-request-id="${opportunityRequest.id?string}" data-value="view">View</button>
-                    </#if>
+                    <select class="opportunityRequestActionType selectpicker actionType" data-request-id="${opportunityRequest.id?string}" data-email="${opportunityRequest.author.email}" data-program="${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}">
+                      <option class="title">Actions</option>
+                      <#if opportunityRequest.status == "NEW">
+                        <option value="approve">Review</option>
+                      <#else>
+                        <option value="view">View</option>
+                      </#if>
+                        <option value="email">Email Requester</option>
+                    </select>
+                  </td>
+                  <td class="centre">
+                    ${opportunityRequest.createdDate?string("dd MMM yyyy")}
                   </td>
                 </tr>
               </#list>

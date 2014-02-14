@@ -13,20 +13,25 @@ $(document).ready(function() {
         institutionCountryChanged();
     });
     
-    $('#approveOpportunityButton').click(function(e) {
-        $("#respondToOpportunityActionInput").val("APPROVE");
-        $('#opportunityRequestEditForm').submit();
-    });
-    
-    $('#rejectOpportunityButton').click(function(e) {
-        $("#respondToOpportunityActionInput").val("REJECT");
+    $('#submitOpportunityRequestButton').click(function(e) {
         $('#opportunityRequestEditForm').submit();
     });
 
     initEditors();
     exStatus();
+    checkFormErrors();
 });
 
+function checkFormErrors() {
+    var errorCount = $('#opportunityRequestEditForm .alert-error').length;
+    if (errorCount > 0){
+       $('#opportunityRequestEditForm').prepend('<div id="info-section" class="alert alert-error"><i class="icon-warning-sign"></i>You have some errors in the form</div>')
+    } else {
+        if ($('#info-section').length > 0) {
+          $('#info-section').remove();  
+        }
+    }
+}
 function institutionCountryChanged() {
     $("#institution").val("");
     $("#otherInstitution").val("");
@@ -65,6 +70,7 @@ function institutionCountryChanged() {
                 options.append($("<option />").val(institutions[i]["code"]).text(institutions[i]["name"]));
             }
             options.append($("<option />").val("OTHER").text("Other"));
+
         },
         complete : function() {
             refreshControls();

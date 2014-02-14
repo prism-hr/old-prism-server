@@ -44,7 +44,7 @@ public class RequestsControllerTest {
 	@Test
 	public void shouldGetOpportunityRequests() {
 		ArrayList<OpportunityRequest> opportunityRequests = Lists.newArrayList();
-		expect(opportunitiesService.getOpportunityRequests()).andReturn(opportunityRequests);
+		expect(opportunitiesService.getInitialOpportunityRequests()).andReturn(opportunityRequests);
 
 		replay();
 		List<OpportunityRequest> returned = controller.getOpportunityRequests();

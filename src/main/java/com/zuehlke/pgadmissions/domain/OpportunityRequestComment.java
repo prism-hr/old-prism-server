@@ -13,12 +13,13 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "OPPORTUNITY_REQUEST_COMMENT")
 public class OpportunityRequestComment {
@@ -28,19 +29,20 @@ public class OpportunityRequestComment {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", nullable = false)
     private RegisteredUser author;
 
-    @Column(name = "comment_type")
+    @Column(name = "comment_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private OpportunityRequestCommentType type;
+    @NotNull
+    private OpportunityRequestCommentType commentType;
 
     @Column(name = "content")
-    @Size(max = 50000, message = "A maximum of 50000 characters are allowed.")
     @Lob
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500000)
     private String content;
 
-    @Column(name = "created_timestamp", insertable = false)
+    @Column(name = "created_timestamp", insertable = false, nullable = false)
     @Generated(GenerationTime.INSERT)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTimestamp;
@@ -61,12 +63,12 @@ public class OpportunityRequestComment {
         this.author = author;
     }
 
-    public OpportunityRequestCommentType getType() {
-        return type;
+    public OpportunityRequestCommentType getCommentType() {
+        return commentType;
     }
 
-    public void setType(OpportunityRequestCommentType type) {
-        this.type = type;
+    public void setCommentType(OpportunityRequestCommentType commentType) {
+        this.commentType = commentType;
     }
 
     public String getContent() {

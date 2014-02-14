@@ -59,8 +59,8 @@ public class ProgramDAO {
                 .add(Restrictions.eq("code", code)).uniqueResult();
     }
     
-	public void merge(Program program) {
-		sessionFactory.getCurrentSession().merge(program);
+	public Program merge(Program program) {
+		return (Program)sessionFactory.getCurrentSession().merge(program);
 	}
 	
     public List<Program> getProgramsOfWhichPreviousReviewer(RegisteredUser user){

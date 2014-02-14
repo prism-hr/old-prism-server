@@ -8,20 +8,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
-import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service
 @Transactional
@@ -32,9 +28,6 @@ public class OpportunitiesService {
 
     @Autowired
     private OpportunityRequestDAO opportunityRequestDAO;
-
-    @Autowired
-    private RoleService roleService;
 
     @Autowired
     private ProgramsService programsService;
@@ -51,40 +44,35 @@ public class OpportunitiesService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void createNewOpportunityRequestAndAuthor(OpportunityRequest opportunityRequest) {
-        RegisteredUser author = opportunityRequest.getAuthor();
-        registrationService.updateOrSaveUser(author, null);
-
-        opportunityRequest.setCreatedDate(new Date());
-        opportunityRequest.setType(OpportunityRequestType.CREATE);
-        opportunityRequest.setStatus(OpportunityRequestStatus.NEW);
-        opportunityRequest.setStudyDuration(opportunityRequest.getStudyDuration());
-
-        opportunityRequestDAO.save(opportunityRequest);
-    }
-
-    public void createOpportunityChangeRequest(OpportunityRequest opportunityRequest) {
+    public void createOpportunityRequest(OpportunityRequest opportunityRequest, boolean createAuthorUser) {
         Program program = opportunityRequest.getSourceProgram();
-        Preconditions.checkNotNull(program);
-
         RegisteredUser author = opportunityRequest.getAuthor();
-        if (programsService.canChangeInstitution(author, opportunityRequest)) {
-            throw new RuntimeException("No change request needed, user " + author.getEmail() + " has permissions to " + opportunityRequest.getInstitutionCode());
-        }
 
         if (!opportunityRequestDAO.findByProgramAndStatus(program, OpportunityRequestStatus.NEW).isEmpty()) {
             throw new RuntimeException("Cannot create new opprotunity request if there is already a new one. Program: " + program);
         }
 
-        opportunityRequest.setCreatedDate(new Date());
-        opportunityRequest.setType(OpportunityRequestType.CHANGE);
-        opportunityRequest.setStudyDuration(opportunityRequest.getStudyDuration());
-        opportunityRequest.setProgramTitle(program.getTitle());
-        opportunityRequest.setAtasRequired(program.getAtasRequired());
+        if (createAuthorUser) {
+            registrationService.updateOrSaveUser(author, null);
+        }
 
-        // lock the program
-        program.setLocked(true);
-        programsService.merge(program);
+        opportunityRequest.setCreatedDate(new Date());
+        opportunityRequest.setStatus(OpportunityRequestStatus.NEW);
+        if (program != null) {
+            // program exists
+            opportunityRequest.setType(OpportunityRequestType.CHANGE);
+            opportunityRequest.setProgramTitle(program.getTitle());
+            opportunityRequest.setAtasRequired(program.getAtasRequired());
+
+            // lock the program
+            program.setLocked(true);
+            programsService.merge(program);
+        } else {
+            // new program
+            opportunityRequest.setType(OpportunityRequestType.CREATE);
+            opportunityRequest.setProgramTitle(opportunityRequest.getProgramTitle());
+            opportunityRequest.setAtasRequired(false);
+        }
 
         opportunityRequestDAO.save(opportunityRequest);
     }
@@ -126,7 +114,7 @@ public class OpportunitiesService {
         Program program = opportunityRequest.getSourceProgram();
         if (program != null) {
             program.setLocked(false);
-            programsService.merge(program);
+            program = programsService.merge(program);
         }
 
         // create comment
@@ -134,27 +122,8 @@ public class OpportunitiesService {
         opportunityRequest.getComments().add(comment);
 
         if (comment.getCommentType() == OpportunityRequestCommentType.APPROVE) {
-            thisBean.approveApportunityRequest(opportunityRequest);
-        }
-    }
-
-    protected void approveApportunityRequest(OpportunityRequest opportunityRequest) {
-        RegisteredUser author = opportunityRequest.getAuthor();
-
-        // create program
-        Program program = programsService.saveProgramOpportunity(opportunityRequest);
-        opportunityRequest.setSourceProgram(program);
-
-        // grant permissions to the author
-        if (!HibernateUtils.containsEntity(author.getInstitutions(), program.getInstitution())) {
-            author.getInstitutions().add(program.getInstitution());
-        }
-        Role adminRole = roleService.getRoleByAuthority(Authority.ADMINISTRATOR);
-        if (!HibernateUtils.containsEntity(author.getRoles(), adminRole)) {
-            author.getRoles().add(adminRole);
-        }
-        if (!HibernateUtils.containsEntity(author.getProgramsOfWhichAdministrator(), program)) {
-            author.getProgramsOfWhichAdministrator().add(program);
+            Program savedProgram = programsService.saveProgramOpportunity(opportunityRequest);
+            opportunityRequest.setSourceProgram(savedProgram);
         }
     }
 

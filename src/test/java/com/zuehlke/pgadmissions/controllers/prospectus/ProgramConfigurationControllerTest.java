@@ -5,7 +5,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
@@ -15,12 +14,9 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
@@ -156,7 +152,7 @@ public class ProgramConfigurationControllerTest {
     }
 
     @Test
-    public void shouldNotSaveOpportunityIfCantChangeInstitution() {
+    public void shouldNotSaveOpportunityButCreateNewOpportunityChangeRequest() {
         Program program = new ProgramBuilder().code("p07").build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().sourceProgram(program).build();
         BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
@@ -164,31 +160,14 @@ public class ProgramConfigurationControllerTest {
 
         expect(userService.getCurrentUser()).andReturn(user);
         expect(programsService.canChangeInstitution(user, opportunityRequest)).andReturn(false);
+        opportunitiesService.createOpportunityChangeRequest(opportunityRequest);
 
         replay();
         String result = controller.saveOpportunity(opportunityRequest, bindingResult);
         verify();
 
-        assertEquals("{\"changeRequestRequired\":true}", result);
-    }
-
-    @Test
-    public void shouldConfirmOpportunityChangeRequest() {
-        RegisteredUser user = new RegisteredUser();
-        OpportunityRequest opportunityRequest = new OpportunityRequest();
-        ModelMap modelMap = new ModelMap("opportunityRequest", opportunityRequest);
-        SessionStatus sessionStatus = new SimpleSessionStatus();
-
-        expect(userService.getCurrentUser()).andReturn(user);
-        opportunitiesService.createOpportunityChangeRequest(opportunityRequest);
-
-        replay();
-        String result = controller.confirmOpportunityChangeRequest(modelMap, sessionStatus);
-        verify();
-
-        assertTrue(sessionStatus.isComplete());
-        assertEquals("{\"success\":true}", result);
         assertSame(user, opportunityRequest.getAuthor());
+        assertEquals("{\"changeRequestCreated\":true}", result);
     }
 
 }

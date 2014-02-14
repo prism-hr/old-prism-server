@@ -7,10 +7,8 @@ $(document).ready(function() {
     bindCancelNewProgramAction();
     bindChangeInstitutionCountryAction();
     initEditors();
-    $('.selectpicker').selectpicker();
+    $('select.selectpicker').selectpicker();
     checkToDisable();
-    otherInstitutionCheck();
-    lockFormFunction(null);
 });
 
 function bindChangeInstitutionCountryAction() {
@@ -30,11 +28,11 @@ function bindCancelNewProgramAction() {
 function bindProgramSelectChangeAction() {
     $("#programAdvertProgramSelect").bind('change', function() {
         clearProgramAdvertErrors();
-        checkToDisable();
         changeHeaderInfoBars();
         var programme_code = $("#programAdvertProgramSelect").val();
         if (programme_code == "") {
             clearProgramSection();
+            checkToDisable();
         } else {
             getAdvertData(programme_code);
             getClosingDatesData(programme_code);
@@ -46,7 +44,6 @@ $(document).on('click', '#newProgamme', function() {
     $("#programAdvertSelectProgramDiv").hide();
     $("#programAdvertNewProgramNameDiv").show();
     clearProgramAdvertErrors();
-    lockFormFunction(null);
     checkToDisable();
     changeHeaderInfoBars();
     clearProgramSection();
@@ -120,18 +117,21 @@ $(document).on('change', '#programAdvertInstitution', function() {
 
 function checkToDisable() {
     var selectedProgram = $("#programAdvertProgramSelect").val();
-    if (selectedProgram != "" || $("#programAdvertNewProgramNameDiv").is(":visible")) {
+    var existingProgramSelected = selectedProgram != "";
+    var newProgramSelected = $("#programAdvertNewProgramNameDiv").is(":visible");
+    var programLocked = $("#programAdvertProgramLocked").val() == "true";
+    if ((existingProgramSelected && !programLocked)|| newProgramSelected) {
         // new or existing program
-        $("#advertGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("#advertGroup input, #advertGroup textarea, #advertGroup select").removeAttr("readonly", "readonly");
-        $("#advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").removeAttr("disabled", "disabled");
+        $("#institutionGroup label, #advertGroup label #programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").removeAttr("readonly", "readonly");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").removeAttr("disabled", "disabled");
     } else {
-        $("#advertGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("#advertGroup input, #advertGroup textarea, #advertGroup select").attr("readonly", "readonly");
-        $("#advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").attr("disabled", "disabled");
+        $("#institutionGroup label, #advertGroup label #programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").attr("readonly", "readonly");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").attr("disabled", "disabled");
     }
 
-    if (selectedProgram != "" && $("#programAdvertSelectProgramDiv").is(":visible")) {
+    if (existingProgramSelected != "" && !programLocked) {
         // existing program
         $("#programAdvertClosingDateGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
         $("#programAdvertClosingDateGroup input").removeAttr("readonly", "readonly");
@@ -141,7 +141,7 @@ function checkToDisable() {
         $("#programAdvertClosingDateGroup input").attr("readonly", "readonly");
         $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup a").attr("disabled", "disabled");
     }
-
+    $('select.selectpicker').selectpicker('refresh');
 }
 
 function changeHeaderInfoBars(programval) {
@@ -406,34 +406,12 @@ function getAdvertData(programme_code) {
             var map = JSON.parse(data);
             updateAdvertSection(map);
             updateProgramSection(map);
-            lockFormFunction(map);
+            checkToDisable();
         },
         complete : function() {
             $('#ajaxloader').fadeOut('fast');
         }
     });
-}
-function lockFormFunction(map) {
-    var lock;
-    if (map == null) {
-        lock = false;
-    } else if (map == true){
-        lock = true;
-    } else {
-        lock = map['programLocked'];
-    }
-    if (lock) {
-         $('#programAdvertInstitutionCountry, #programAdvertInstitution').prop('disabled',true);
-         $('#programAdvertInstitutionCountry, #programAdvertInstitution').selectpicker('refresh');
-         $('#programAdvertSave, #programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect, #programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo, #programAdvertStudyDurationInput, #programAdvertStudyDurationUnitSelect, #programAdvertAtasRequired_true, #programAdvertAtasRequired_false').prop('disabled', true);
-         $('#programAdvertAtasRequiredDiv label, #programAdvertInstitutionCountryDiv label, #programAdvertInstitutionDiv label, #programAdvertDescriptionDiv label, #programAdvertStudyDurationDiv label, #programAdvertFundingDiv label, #programAdvertIsActiveDiv label, #programAdvertStudyOptionsDiv label, #programAdvertAdvertisingDeadlineYearDiv label').addClass("grey-label").parent().find('.hint').addClass("grey");
-         $('#infoBarProgram').removeClass('alert-info').addClass('alert-warning').html('<i class="icon-warning-sign"></i> Your program is been moderate by our staff ');
-    } else {
-         $('#programAdvertInstitutionCountry, #programAdvertInstitution').prop('disabled',false);
-         $('#programAdvertInstitutionCountry, #programAdvertInstitution').selectpicker('refresh');
-         $('#programAdvertSave, #programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect, #programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo, #programAdvertStudyDurationInput, #programAdvertStudyDurationUnitSelect, #programAdvertAtasRequired_true, #programAdvertAtasRequired_false').prop('disabled', false);
-         $('#programAdvertAtasRequiredDiv label, #programAdvertInstitutionCountryDiv label, #programAdvertInstitutionDiv label, #programAdvertDescriptionDiv label, #programAdvertStudyDurationDiv label, #programAdvertFundingDiv label, #programAdvertIsActiveDiv label, #programAdvertStudyOptionsDiv label, #programAdvertAdvertisingDeadlineYearDiv label').removeClass("grey-label").parent().find('.hint').removeClass("grey");
-    }
 }
 
 function updateAdvertSection(map) {
@@ -451,6 +429,8 @@ function updateAdvertSection(map) {
 }
 
 function updateProgramSection(map) {
+    $("#programAdvertProgramLocked").val(map["programLocked"]);
+    
     $("[name=programAdvertAtasRequired][value=" + map["atasRequired"] + "]").prop("checked", true);
 
     $("#programAdvertInstitutionCountry").val(map["institutionCountryCode"]);
@@ -567,7 +547,6 @@ function saveAdvert() {
                     $("#programAdvertProgramSelect").val(newProgramCode);
                     $("#programAdvertSelectProgramDiv").show();
                     $("#programAdvertNewProgramNameDiv").hide();
-                    checkToDisable();
                     getAdvertData(newProgramCode);
                 }
                 var programme_name = $("#programAdvertProgramSelect option:selected").text();
@@ -575,13 +554,14 @@ function saveAdvert() {
                 $('#infoBarProgram').addClass('alert-success').removeClass('alert-info').html(infohtml);
 
                 $('#resourcesModal').modal('show');
-            } else if (map["changeRequestRequired"]) {
+            } else if (map["changeRequestCreated"]) {
                 $('#dialog-box h3').text('Program Change Request');
                 $('#dialog-box #dialog-message').html('<p>You will be notified after a member of the staff approve your change</p>');
                 $('#dialog-box #popup-cancel-button').hide();
                 $('#dialog-box').modal('show');
-                lockFormFunction(true);
-                confirmOpportunityChangeRequest();
+                
+                $("#programAdvertProgramLocked").val(true);
+                checkToDisable();
             } else {
                 if (map['program']) {
                     $("#programAdvertSelectProgramDiv").append(getErrorMessageHTML(map['program']));
@@ -628,42 +608,6 @@ function saveAdvert() {
         },
         complete : function() {
             $('#ajaxloader').fadeOut('fast');
-        }
-    });
-}
-
-function confirmOpportunityChangeRequest() {
-    $.ajax({
-        type : 'POST',
-        statusCode : {
-            401 : function() {
-                window.location.reload();
-            },
-            500 : function() {
-                window.location.href = "/pgadmissions/error";
-            },
-            404 : function() {
-                window.location.href = "/pgadmissions/404";
-            },
-            400 : function() {
-                window.location.href = "/pgadmissions/400";
-            },
-            403 : function() {
-                window.location.href = "/pgadmissions/404";
-            }
-        },
-        url : "/pgadmissions/prospectus/programme/confirmOpportunityChangeRequest",
-        data : {},
-        success : function(data) {
-            var map = JSON.parse(data);
-            if (map['success']) {
-                $('#dialog-box h3').text('Program Change Request');
-                $('#dialog-box #dialog-message').html('<p>You will be notified after a member of the staff approve your change</p>');
-                $('#dialog-box #popup-cancel-button').hide();
-                $('#dialog-box').modal('show');
-            }
-        },
-        complete : function() {
         }
     });
 }

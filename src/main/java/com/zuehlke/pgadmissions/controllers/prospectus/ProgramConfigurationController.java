@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.WebDataBinder;
@@ -25,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -60,7 +57,6 @@ import freemarker.template.TemplateException;
 
 @Controller
 @RequestMapping("/prospectus/programme")
-@SessionAttributes("opportunityRequest")
 public class ProgramConfigurationController {
 
     @Autowired
@@ -185,27 +181,19 @@ public class ProgramConfigurationController {
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
         } else {
-            if (programsService.canChangeInstitution(getUser(), opportunityRequest)) {
+            map = Maps.newHashMap();
+            RegisteredUser currentUser = getUser();
+            if (programsService.canChangeInstitution(currentUser, opportunityRequest)) {
                 Program program = programsService.saveProgramOpportunity(opportunityRequest);
-                map = Maps.newHashMap();
                 map.put("success", (Object) true);
                 map.put("programCode", program.getCode());
             } else {
-                map = Collections.singletonMap("changeRequestRequired", (Object) true);
+                opportunityRequest.setAuthor(currentUser);
+                opportunitiesService.createOpportunityChangeRequest(opportunityRequest);
+                map.put("changeRequestCreated", (Object) true);
             }
         }
         return gson.toJson(map);
-    }
-
-    @RequestMapping(value = "/confirmOpportunityChangeRequest", method = RequestMethod.POST)
-    @ResponseBody
-    public String confirmOpportunityChangeRequest(ModelMap modelMap, SessionStatus sessionStatus) {
-        OpportunityRequest opportunityRequest = (OpportunityRequest) modelMap.get("opportunityRequest");
-        opportunityRequest.setAuthor(getUser());
-        opportunitiesService.createOpportunityChangeRequest(opportunityRequest);
-
-        sessionStatus.setComplete();
-        return gson.toJson(Collections.singletonMap("success", true));
     }
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)

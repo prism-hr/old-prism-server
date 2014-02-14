@@ -90,7 +90,7 @@ public class CreateNewOpportunityController {
             return LOGIN_PAGE;
         }
 
-        opportunitiesService.createNewOpportunityRequestAndAuthor(opportunityRequest);
+        opportunitiesService.createOpportunityRequest(opportunityRequest, true);
 
         model.addAttribute("pendingUser", opportunityRequest.getAuthor());
         return REGISTER_COMPLETE_VIEW_NAME;

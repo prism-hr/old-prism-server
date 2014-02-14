@@ -161,10 +161,12 @@ function onFeedSaveOrUpdate(url, method, returnFunction) {
                 if (data.feedTitle != null) {
                     $('#feed-title').parent().append('<div class="alert alert-error"> <i class="icon-warning-sign"></i> ' + data.feedTitle + '</div>');
                 }
+				$('#researchOpportunityFeedSection .alert.alert-info').removeClass('alert-info').addClass('alert-success').html('<i class="icon-ok-sign"></i> Your feed is been seved');
 			} else {
 				loadExistingFeeds();
 				$("#feedCode").val(data.iframeCode);
 				returnFunction(data.id);
+				$('#researchOpportunityFeedSection .alert.alert-info').removeClass('alert-info').addClass('alert-success').html('<i class="icon-ok-sign"></i> Your feed is been updated');
 			}
 		}
 	});
@@ -189,7 +191,18 @@ function deleteFeed(feedId) {
 		}
 	});
 }
-
+$(document).on('change', '#feedformat', function() {
+	var content = $('#feedCode').val();
+	if (content) {
+		if ($(this).val() == 'SMALL') {
+			content = content.replace('430','210');
+			$('#feedCode').val(content);
+		} else {
+			content = content.replace('210','430');
+			$('#feedCode').val(content);
+		}
+	}
+});
 function editFeed(feedId) {
 	$("#researchOpportunityFeedSection").find("div.alert-error").remove();
 	$('#new-feed-go').show();

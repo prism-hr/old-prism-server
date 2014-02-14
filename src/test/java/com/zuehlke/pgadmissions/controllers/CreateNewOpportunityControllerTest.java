@@ -149,7 +149,7 @@ public class CreateNewOpportunityControllerTest {
 		Model model = new ExtendedModelMap();
 		HttpServletRequest request = new MockHttpServletRequest();
 
-		opportunitiesService.createOpportunityRequestAndAuthor(opportunityRequest);
+		opportunitiesService.createNewOpportunityRequestAndAuthor(opportunityRequest);
 
 		replay();
 		String result = controller.postOpportunityRequest(opportunityRequest, bindingResult, model, request);

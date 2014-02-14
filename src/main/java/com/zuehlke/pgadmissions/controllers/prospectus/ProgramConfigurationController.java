@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.WebDataBinder;
@@ -24,10 +25,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -40,6 +45,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -54,6 +60,7 @@ import freemarker.template.TemplateException;
 
 @Controller
 @RequestMapping("/prospectus/programme")
+@SessionAttributes("opportunityRequest")
 public class ProgramConfigurationController {
 
     @Autowired
@@ -95,6 +102,9 @@ public class ProgramConfigurationController {
     @Autowired
     private DomicileService domicileService;
 
+    @Autowired
+    private OpportunitiesService opportunitiesService;
+
     private Gson gson;
 
     @PostConstruct
@@ -117,6 +127,13 @@ public class ProgramConfigurationController {
         binder.registerCustomEditor(Date.class, "closingDate", datePropertyEditor);
     }
 
+    private Advert getProgrameAdvert(Program program) {
+        if (program == null) {
+            return null;
+        }
+        return program.getAdvert();
+    }
+
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();
@@ -134,19 +151,20 @@ public class ProgramConfigurationController {
     @ResponseBody
     public String getOpportunityData(@RequestParam String programCode) {
         Program program = programsService.getProgramByCode(programCode);
+        Advert advert = getProgrameAdvert(program);
 
         Map<String, Object> result = Maps.newHashMap();
+        result.put("advert", advert);
 
         HashMap<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("programCode", programCode);
-        
+        if (advert != null) {
+            dataMap.put("advertId", advert.getId());
+        }
+
         Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
-        
-        result.put("programId", program.getId());
-        result.put("programTitle", program.getTitle());
-        result.put("programDescription", program.getDescription());
-        result.put("programStudyDuration", program.getStudyDuration());
-        result.put("programFunding", program.getFunding());
+
+        result.put("programLocked", program.getLocked());
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
@@ -162,16 +180,32 @@ public class ProgramConfigurationController {
     @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
     @ResponseBody
     public String saveOpportunity(@Valid OpportunityRequest opportunityRequest, BindingResult result) {
+        Preconditions.checkNotNull(opportunityRequest.getSourceProgram());
         Map<String, Object> map;
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
         } else {
-            Program program = programsService.saveProgramOpportunity(opportunityRequest);
-            map = Maps.newHashMap();
-            map.put("success", (Object) true);
-            map.put("programCode", program.getCode());
+            if (programsService.canChangeInstitution(getUser(), opportunityRequest)) {
+                Program program = programsService.saveProgramOpportunity(opportunityRequest);
+                map = Maps.newHashMap();
+                map.put("success", (Object) true);
+                map.put("programCode", program.getCode());
+            } else {
+                map = Collections.singletonMap("changeRequestRequired", (Object) true);
+            }
         }
         return gson.toJson(map);
+    }
+
+    @RequestMapping(value = "/confirmOpportunityChangeRequest", method = RequestMethod.POST)
+    @ResponseBody
+    public String confirmOpportunityChangeRequest(ModelMap modelMap, SessionStatus sessionStatus) {
+        OpportunityRequest opportunityRequest = (OpportunityRequest) modelMap.get("opportunityRequest");
+        opportunityRequest.setAuthor(getUser());
+        opportunitiesService.createOpportunityChangeRequest(opportunityRequest);
+
+        sessionStatus.setComplete();
+        return gson.toJson(Collections.singletonMap("success", true));
     }
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)

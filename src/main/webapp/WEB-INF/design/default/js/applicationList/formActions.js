@@ -215,7 +215,7 @@ $(document).ready(function() {
 			$('#appList').val(currentAppList.replace(id + ";", ''));
 		}
 	});
-
+	
 	$('#search-report').click(downloadReport);
 	$('#search-report-html').click({
 		outputType : "html"
@@ -224,7 +224,12 @@ $(document).ready(function() {
 		outputType : "json"
 	}, downloadReport);
 	$('#search-report-csv').click({
-		outputType : "csv"
+		outputType : "csv",
+		reportType : "standard"
+	}, downloadReport);
+	$('#search-report-summary').click({
+		outputType : "csv",
+		reportType : "summary"
 	}, downloadReport);
 
 	// --------------------------------------------------------------------------------
@@ -335,7 +340,7 @@ function updateAdvertSection(map, application) {
     $("#modalLinkToApply").val(linkToApply);
 
     $('#sharethis').prop("href", sharethisvar);
-    $('#resourcesModal').modal('show')
+    $('#resourcesModal').modal('show');
 
     $('.alert.alert-info').clone().prependTo('#resourcesModal .modal-body').find('a').remove();
 
@@ -486,15 +491,24 @@ function downloadReport(event) {
 		order : $('#sort-order').val(),
 		blockCount : $('#block-index').val(),
 		latestConsideredFlagIndex : latestConsideredFlagIndex
-	};
-
+		};
+		
 	var url = "/pgadmissions/applications/report?";
 	url += "filters=" + JSON.stringify(filters);
 	url += "&sortCategory=" + $('#sort-column').val();
 	url += "&order=" + $('#sort-order').val();
 	if (event.data && event.data.outputType) {
 		url += "&tqx=out:" + event.data.outputType;
+	} 
+	if (event.data.reportType == 'summary'){
+		url += "&reportType=SHORT";
+		
 	}
+	else {
+		url += "&reportType=STANDARD";
+		
+	}
+
 
 	var win = window.open(url, '_blank');
 	win.focus();

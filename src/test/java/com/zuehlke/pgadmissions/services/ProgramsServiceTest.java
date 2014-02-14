@@ -70,6 +70,10 @@ public class ProgramsServiceTest {
     @InjectIntoByType
     private ApplicationContext applicationContext;
 
+    @Mock
+    @InjectIntoByType
+    private ProgramInstanceService programInstanceService;
+
     @TestedObject
     private ProgramsService programsService;
 
@@ -195,8 +199,8 @@ public class ProgramsServiceTest {
         programsService.removeProject(1);
         verify();
 
-        assertFalse(project.isEnabled());
-        assertFalse(project.isActive());
+        assertTrue(project.isDisabled());
+        assertFalse(project.getAdvert().getActive());
     }
 
     @Test
@@ -250,7 +254,6 @@ public class ProgramsServiceTest {
     public void shouldCreateNewCustomProgram() {
         Domicile domicile = new Domicile();
         ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
-        
 
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, domicile).otherInstitution("other_name").build();
         QualificationInstitution institution = new QualificationInstitutionBuilder().build();
@@ -258,22 +261,59 @@ public class ProgramsServiceTest {
         expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
         expect(qualificationInstitutionService.getOrCreateCustomInstitution("AGH", domicile, "other_name")).andReturn(institution);
         Capture<Program> programCapture = new Capture<Program>();
-        programDAOMock.save(capture(programCapture));
+        programDAOMock.merge(capture(programCapture));
         expect(thisBean.generateNextProgramCode(institution)).andReturn("AAA_00000");
 
         replay();
-        Program program = programsService.createNewCustomProgram(opportunityRequest);
+        Program program = programsService.createOrGetCustomProgram(opportunityRequest);
         verify();
-
-        assertTrue(program.isActive());
-        assertEquals(opportunityRequest.getProgramDescription(), program.getDescription());
-        assertEquals(opportunityRequest.getStudyDuration(), program.getStudyDuration());
 
         assertSame(programCapture.getValue(), program);
         assertEquals(opportunityRequest.getAtasRequired(), program.getAtasRequired());
         assertSame(institution, program.getInstitution());
         assertEquals(opportunityRequest.getProgramTitle(), program.getTitle());
         assertEquals("AAA_00000", program.getCode());
+    }
+
+    @Test
+    public void shouldGetCustomProgram() {
+        ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
+        Program program = new ProgramBuilder().institution(new QualificationInstitutionBuilder().code("any_inst").build()).build();
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, null).institutionCode("any_inst").atasRequired(true)
+                .sourceProgram(program).build();
+
+        expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
+        programDAOMock.merge(program);
+
+        replay();
+        Program returned = programsService.createOrGetCustomProgram(opportunityRequest);
+        verify();
+
+        assertTrue(returned.getAtasRequired());
+    }
+
+    @Test
+    public void shouldSaveProgramOpportunity() {
+        ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, null).build();
+        Program program = new Program();
+
+        expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
+        expect(thisBean.createOrGetCustomProgram(opportunityRequest)).andReturn(program);
+        expect(programInstanceService.createRemoveProgramInstances(program, "B+++++,F+++++", 2014)).andReturn(null);
+
+        replay();
+        Program returned = programsService.saveProgramOpportunity(opportunityRequest);
+        verify();
+
+        Advert advert = program.getAdvert();
+
+        assertSame(program, returned);
+        assertTrue(advert.getActive());
+        assertEquals(opportunityRequest.getProgramDescription(), advert.getDescription());
+        assertEquals(opportunityRequest.getStudyDuration(), advert.getStudyDuration());
+
+        assertSame(advert, program.getAdvert());
     }
 
     @Test
@@ -289,27 +329,29 @@ public class ProgramsServiceTest {
 
         assertEquals("AAA_00019", nextCode);
     }
-    
+
     @Test
     public void shouldUpdateClosingDate() {
-        Program program = new ProgramBuilder().code("AAA_00018").description("program").studyDuration(12).active(true).build();
+        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
+        Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
         ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
         programDAOMock.updateClosingDate(closingDate);
         replay();
         programsService.updateClosingDate(closingDate);
         verify();
     }
-    
+
     @Test
     public void shouldAddClosingDateToProgram() {
-        Program program = new ProgramBuilder().code("AAA_00018").description("program").studyDuration(12).active(true).build();
+        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
+        Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
         ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
         programDAOMock.save(program);
         replay();
         programsService.addClosingDateToProgram(program, closingDate);
         verify();
     }
-    
+
     @Test
     public void shouldDeleteClosingDateById() {
         ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();

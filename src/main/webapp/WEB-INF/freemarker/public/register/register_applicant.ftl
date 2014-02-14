@@ -55,7 +55,7 @@
               <legend >Register Today</legend>
               <input id="activationCode" type="hidden" name="activationCode" value="${pendingUser.activationCode!}"/>
               <div class="control-group">
-                <label class="control-label" for="firstName">First Name <em>*</em></label>
+                <label class="control-label" for="firstName">First Name<em>*</em></label>
                 <span class="hint" data-desc="Please enter your first name."></span>
                 <div class="controls">
                   <input id="firstName" type="text" name="firstName" value='${(pendingUser.firstName?html)!""}' <#if RequestParameters.activationCode?has_content>readonly="readonly"</#if> />
@@ -68,7 +68,7 @@
                 </div>
               </div>
               <div class="control-group">
-                <label class="control-label" for="lastName">Last Name <em>*</em></label>
+                <label class="control-label" for="lastName">Last Name<em>*</em></label>
                 <span class="hint" data-desc="Please enter your last name."></span>
                 <div class="controls">
                   <input id="lastName" type="text" name="lastName" value='${(pendingUser.lastName?html)!""}' <#if RequestParameters.activationCode?has_content>readonly="readonly"</#if> />

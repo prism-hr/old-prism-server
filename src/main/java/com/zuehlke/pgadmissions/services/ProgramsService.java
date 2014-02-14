@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static java.util.Objects.requireNonNull;
-
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -14,10 +12,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 @Service
@@ -61,6 +60,10 @@ public class ProgramsService {
 
     public void save(Program program) {
         programDAO.save(program);
+    }
+
+    public void merge(Program program) {
+        programDAO.merge(program);
     }
 
     public Program getProgramByCode(String code) {
@@ -114,8 +117,8 @@ public class ProgramsService {
         if (project == null) {
             return;
         }
-        project.setEnabled(false);
-        project.setActive(false);
+        project.setDisabled(true);
+        project.getAdvert().setActive(false);
         projectDAO.save(project);
     }
 
@@ -136,10 +139,9 @@ public class ProgramsService {
         return formattedDate;
     }
 
-
     public void updateClosingDate(ProgramClosingDate closingDate) {
         Program program = closingDate.getProgram();
-        program.setLastEditedTimestamp(new Date());
+        program.getAdvert().setLastEditedTimestamp(new Date());
         programDAO.updateClosingDate(closingDate);
     }
 
@@ -148,9 +150,9 @@ public class ProgramsService {
         programDAO.deleteClosingDate(programClosingDate);
     }
 
-    public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {        
+    public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {
         program.getClosingDates().add(programClosingDate);
-        program.setLastEditedTimestamp(new Date());
+        program.getAdvert().setLastEditedTimestamp(new Date());
         programDAO.save(program);
     }
 
@@ -165,35 +167,69 @@ public class ProgramsService {
         }
         return String.format("%s_%05d", institution.getCode(), codeNumber);
     }
-    
-    public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
+
+    protected Program createOrGetCustomProgram(OpportunityRequest opportunityRequest) {
         ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
-        
-        Program program;
-        if (opportunityRequest.getType() == OpportunityRequestType.CHANGE) {
-            program = requireNonNull(getProgramById(opportunityRequest.getSourceProgram().getId()));
-        } else {
-            QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
-                    opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
+
+        Program program = opportunityRequest.getSourceProgram();
+        if (program == null) {
             program = new Program();
             program.setTitle(opportunityRequest.getProgramTitle());
-            program.setInstitution(institution);
             program.setEnabled(true);
-            program.setAtasRequired(opportunityRequest.getAtasRequired());
-            program.setCode(thisBean.generateNextProgramCode(institution));
-            save(program);
         }
 
-        program.setDescription(opportunityRequest.getProgramDescription());
-        program.setStudyDuration(opportunityRequest.getStudyDuration());
-        program.setFunding(opportunityRequest.getFunding());
-        program.setActive(opportunityRequest.getAcceptingApplications());
-        
+        if (program.getInstitution() == null || !Objects.equal(program.getInstitution().getCode(), opportunityRequest.getInstitutionCode())) {
+            // assigning new institution to the program (also changing program
+            // code)
+            QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
+                    opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
+            program.setInstitution(institution);
+            program.setCode(thisBean.generateNextProgramCode(institution));
+        }
+        program.setAtasRequired(opportunityRequest.getAtasRequired());
+        merge(program);
+        return program;
+    }
+
+    public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
+        ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
+
+        Program program = thisBean.createOrGetCustomProgram(opportunityRequest);
+
+        Advert advert = program.getAdvert();
+        if (advert == null) {
+            advert = new Advert();
+            program.setAdvert(advert);
+        }
+        advert.setDescription(opportunityRequest.getProgramDescription());
+        advert.setStudyDuration(opportunityRequest.getStudyDuration());
+        advert.setFunding(opportunityRequest.getFunding());
+        advert.setActive(opportunityRequest.getAcceptingApplications());
+
         if (program.getProgramFeed() == null) { // custom program
-            programInstanceService.createRemoveProgramInstances(program, opportunityRequest.getStudyOptions(),
-                    opportunityRequest.getAdvertisingDeadlineYear());
+            programInstanceService.createRemoveProgramInstances(program, opportunityRequest.getStudyOptions(), opportunityRequest.getAdvertisingDeadlineYear());
         }
         return program;
+    }
+
+    public boolean canChangeInstitution(RegisteredUser user, OpportunityRequest opportunityRequest) {
+        if (user.isInRole(Authority.SUPERVISOR)) {
+            return true;
+        }
+        QualificationInstitution existingInstitution = opportunityRequest.getSourceProgram().getInstitution();
+        if (existingInstitution.getCode().equals(opportunityRequest.getInstitutionCode())) {
+            // no change
+            return true;
+        }
+
+        for (QualificationInstitution institution : user.getInstitutions()) {
+            if (institution.getCode().equals(opportunityRequest.getInstitutionCode())) {
+                // user has rights to this institution
+                return true;
+            }
+        }
+        return false;
+
     }
 
 }

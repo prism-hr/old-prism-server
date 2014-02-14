@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.expect;
-import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -28,16 +28,13 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -50,10 +47,6 @@ public class OpportunitiesServiceTest {
     @Mock
     @InjectIntoByType
     private OpportunityRequestDAO opportunityRequestDAO;
-
-    @Mock
-    @InjectIntoByType
-    private RoleService roleService;
 
     @Mock
     @InjectIntoByType
@@ -79,20 +72,49 @@ public class OpportunitiesServiceTest {
     private OpportunitiesService service = new OpportunitiesService();
 
     @Test
-    public void shouldCreateNewOpportunityRequestAndAuthor() {
+    public void shouldCreateNewOpportunityRequest() {
         RegisteredUser author = new RegisteredUser();
-        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(author).build();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(author).programTitle("dupa").build();
 
+        expect(opportunityRequestDAO.findByProgramAndStatus(null, OpportunityRequestStatus.NEW)).andReturn(Collections.<OpportunityRequest>emptyList());
         expect(registrationService.updateOrSaveUser(author, null)).andReturn(null);
         opportunityRequestDAO.save(opportunityRequest);
 
         replay();
-        service.createNewOpportunityRequestAndAuthor(opportunityRequest);
+        service.createOpportunityRequest(opportunityRequest, true);
         verify();
 
         assertNotNull(opportunityRequest.getCreatedDate());
         assertEquals(OpportunityRequestStatus.NEW, opportunityRequest.getStatus());
+        assertEquals(OpportunityRequestType.CREATE, opportunityRequest.getType());
+        assertEquals("dupa", opportunityRequest.getProgramTitle());
+        assertFalse(opportunityRequest.getAtasRequired());
     }
+    
+    
+    @Test
+    public void shouldCreateOpportunityChangeRequest() {
+        Program program = new ProgramBuilder().title("tytul").atasRequired(true).build();
+        RegisteredUser author = new RegisteredUser();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(author).sourceProgram(program).build();
+        
+        expect(opportunityRequestDAO.findByProgramAndStatus(null, OpportunityRequestStatus.NEW)).andReturn(Collections.<OpportunityRequest>emptyList());
+        opportunityRequestDAO.save(opportunityRequest);
+        expect(programsService.merge(program)).andReturn(program);
+        
+        replay();
+        service.createOpportunityRequest(opportunityRequest, false);
+        verify();
+        
+        assertNotNull(opportunityRequest.getCreatedDate());
+        assertEquals(OpportunityRequestStatus.NEW, opportunityRequest.getStatus());
+        assertEquals(OpportunityRequestType.CHANGE, opportunityRequest.getType());
+        assertEquals("tytul", opportunityRequest.getProgramTitle());
+        assertTrue(opportunityRequest.getAtasRequired());
+        assertTrue(program.getLocked());
+    }
+    
+    
 
     @Test
     public void shouldGetOpportunityRequests() {
@@ -121,31 +143,11 @@ public class OpportunitiesServiceTest {
     }
 
     @Test
-    public void shouldApproveOpportunityRequest() {
-        Role administratorRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
-        RegisteredUser author = new RegisteredUser();
-        QualificationInstitution institution = new QualificationInstitution();
-        Program program = new ProgramBuilder().institution(institution).build();
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(author, null).build();
-
-        expect(programsService.saveProgramOpportunity(opportunityRequest)).andReturn(program);
-        expect(roleService.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(administratorRole);
-
-        replay();
-        service.approveApportunityRequest(opportunityRequest);
-        verify();
-
-        assertSame(program, opportunityRequest.getSourceProgram());
-        assertThat(author.getInstitutions(), contains(institution));
-        assertThat(author.getProgramsOfWhichAdministrator(), contains(program));
-        assertThat(author.getRoles(), contains(administratorRole));
-    }
-
-    @Test
     public void shouldRespondToOpportunityRequest() {
         RegisteredUser author = new RegisteredUser();
         RegisteredUser currentUser = new RegisteredUser();
         Program program = new ProgramBuilder().locked(true).build();
+        Program savedProgram = new Program();
         OpportunityRequest request = new OpportunityRequestBuilder().id(666).author(author).sourceProgram(program).build();
         Domicile country = new Domicile();
         OpportunityRequest newOpportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).otherInstitution("jakis uniwerek").build();
@@ -156,8 +158,8 @@ public class OpportunitiesServiceTest {
         expect(thisBeanMock.getAllRelatedOpportunityRequests(request)).andReturn(Lists.newArrayList(request, new OpportunityRequest()));
         expect(opportunityRequestDAO.findById(8)).andReturn(request);
         expect(userService.getCurrentUser()).andReturn(currentUser);
-        programsService.merge(program);
-        thisBeanMock.approveApportunityRequest(request);
+        expect(programsService.merge(program)).andReturn(program);
+        expect(programsService.saveProgramOpportunity(request)).andReturn(savedProgram);
 
         replay();
         service.respondToOpportunityRequest(8, newOpportunityRequest, comment);
@@ -174,6 +176,7 @@ public class OpportunitiesServiceTest {
         assertEquals(newOpportunityRequest.getAdvertisingDeadlineYear(), request.getAdvertisingDeadlineYear());
         assertEquals(newOpportunityRequest.getStudyOptions(), request.getStudyOptions());
         assertFalse(program.getLocked());
+        assertSame(savedProgram, request.getSourceProgram());
 
         OpportunityRequestComment returncomment = Iterables.getOnlyElement(request.getComments());
         assertSame(currentUser, returncomment.getAuthor());

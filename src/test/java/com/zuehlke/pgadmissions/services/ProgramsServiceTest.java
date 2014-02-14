@@ -3,9 +3,11 @@ package com.zuehlke.pgadmissions.services;
 import static junit.framework.Assert.assertSame;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.expect;
+import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
@@ -34,9 +36,11 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
@@ -44,6 +48,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
@@ -61,6 +66,10 @@ public class ProgramsServiceTest {
     @Mock
     @InjectIntoByType
     private ProjectDAO projectDAOMock;
+
+    @Mock
+    @InjectIntoByType
+    private RoleService roleService;
 
     @Mock
     @InjectIntoByType
@@ -261,11 +270,11 @@ public class ProgramsServiceTest {
         expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
         expect(qualificationInstitutionService.getOrCreateCustomInstitution("AGH", domicile, "other_name")).andReturn(institution);
         Capture<Program> programCapture = new Capture<Program>();
-        programDAOMock.merge(capture(programCapture));
+        programDAOMock.save(capture(programCapture));
         expect(thisBean.generateNextProgramCode(institution)).andReturn("AAA_00000");
 
         replay();
-        Program program = programsService.createOrGetCustomProgram(opportunityRequest);
+        Program program = programsService.createOrGetProgram(opportunityRequest);
         verify();
 
         assertSame(programCapture.getValue(), program);
@@ -283,24 +292,40 @@ public class ProgramsServiceTest {
                 .sourceProgram(program).build();
 
         expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
-        programDAOMock.merge(program);
+        expect(programDAOMock.merge(program)).andReturn(program);
+        programDAOMock.save(program);
 
         replay();
-        Program returned = programsService.createOrGetCustomProgram(opportunityRequest);
+        Program returned = programsService.createOrGetProgram(opportunityRequest);
         verify();
 
         assertTrue(returned.getAtasRequired());
     }
 
     @Test
+    public void shouldGetBuiltinProgram() {
+        ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
+        Program program = new ProgramBuilder().programFeed(new ProgramFeed()).build();
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, null).sourceProgram(program).build();
+
+        expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
+
+        replay();
+        programsService.createOrGetProgram(opportunityRequest);
+        verify();
+    }
+
+    @Test
     public void shouldSaveProgramOpportunity() {
         ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, null).build();
+        RegisteredUser author = new RegisteredUser();
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(author, null).build();
         Program program = new Program();
 
         expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
-        expect(thisBean.createOrGetCustomProgram(opportunityRequest)).andReturn(program);
+        expect(thisBean.createOrGetProgram(opportunityRequest)).andReturn(program);
         expect(programInstanceService.createRemoveProgramInstances(program, "B+++++,F+++++", 2014)).andReturn(null);
+        thisBean.grantAdminPermissionsForProgram(author, program);
 
         replay();
         Program returned = programsService.saveProgramOpportunity(opportunityRequest);
@@ -373,6 +398,24 @@ public class ProgramsServiceTest {
         verify();
 
         assertEquals("AAA_00000", nextCode);
+    }
+
+    @Test
+    public void shouldGrantAdminPermissionsForProgram() {
+        Role administratorRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
+        RegisteredUser user = new RegisteredUser();
+        QualificationInstitution institution = new QualificationInstitution();
+        Program program = new ProgramBuilder().institution(institution).build();
+
+        expect(roleService.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(administratorRole);
+
+        replay();
+        programsService.grantAdminPermissionsForProgram(user, program);
+        verify();
+
+        assertThat(user.getInstitutions(), contains(institution));
+        assertThat(user.getProgramsOfWhichAdministrator(), contains(program));
+        assertThat(user.getRoles(), contains(administratorRole));
     }
 
 }

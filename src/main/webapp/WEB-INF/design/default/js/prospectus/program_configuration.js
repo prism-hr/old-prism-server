@@ -21,7 +21,6 @@ function bindCancelNewProgramAction() {
     $("#programAdvertCancelNewProgramBtn").bind('click', function() {
         $("#programAdvertSelectProgramDiv").show();
         $("#programAdvertNewProgramNameDiv").hide();
-        $("#programAdvertProgramSelect").selectpicker('val', '');
     });
 }
 
@@ -43,6 +42,7 @@ function bindProgramSelectChangeAction() {
 $(document).on('click', '#newProgamme', function() {
     $("#programAdvertSelectProgramDiv").hide();
     $("#programAdvertNewProgramNameDiv").show();
+    $("#programAdvertProgramSelect").selectpicker('val', '');
     clearProgramAdvertErrors();
     checkToDisable();
     changeHeaderInfoBars();
@@ -540,15 +540,24 @@ function saveAdvert() {
         success : function(data) {
             var map = JSON.parse(data);
             if (map['success']) {
-                if ($("#programAdvertNewProgramNameDiv").is(":visible")) {
-                    // new program created
-                    var newProgramCode = map["programCode"];
+                var newProgramCode = map["programCode"];
+                
+                if(programCode != "") {
+                    // modfy existing program option
+                    $("#programAdvertProgramSelect option").filter("[value='" + programCode + "']").val(newProgramCode);
+                } else {
+                    // add new program option
                     $("#programAdvertProgramSelect").append($("<option />").val(newProgramCode).text(programName));
                     $("#programAdvertProgramSelect").val(newProgramCode);
-                    $("#programAdvertSelectProgramDiv").show();
-                    $("#programAdvertNewProgramNameDiv").hide();
-                    getAdvertData(newProgramCode);
                 }
+                
+                // show select control
+                $("#programAdvertSelectProgramDiv").show();
+                $("#programAdvertNewProgramNameDiv").hide();
+                
+                // reload program data
+                getAdvertData(newProgramCode);
+                
                 var programme_name = $("#programAdvertProgramSelect option:selected").text();
                 infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>" + programme_name + "</b> has been saved.";
                 $('#infoBarProgram').addClass('alert-success').removeClass('alert-info').html(infohtml);

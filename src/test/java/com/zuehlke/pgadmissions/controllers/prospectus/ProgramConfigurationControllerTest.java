@@ -148,6 +148,7 @@ public class ProgramConfigurationControllerTest {
         String result = controller.saveOpportunity(opportunityRequest, bindingResult);
         verify();
 
+        assertSame(user, opportunityRequest.getAuthor());
         assertEquals("{\"programCode\":\"p07\",\"success\":true}", result);
     }
 
@@ -160,7 +161,7 @@ public class ProgramConfigurationControllerTest {
 
         expect(userService.getCurrentUser()).andReturn(user);
         expect(programsService.canChangeInstitution(user, opportunityRequest)).andReturn(false);
-        opportunitiesService.createOpportunityChangeRequest(opportunityRequest);
+        opportunitiesService.createOpportunityRequest(opportunityRequest);
 
         replay();
         String result = controller.saveOpportunity(opportunityRequest, bindingResult);

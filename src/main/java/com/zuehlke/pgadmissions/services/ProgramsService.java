@@ -24,9 +24,11 @@ import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service
 @Transactional
@@ -50,6 +52,9 @@ public class ProgramsService {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private RoleService roleService;
+
     public List<Program> getAllPrograms() {
         return programDAO.getAllPrograms();
     }
@@ -62,8 +67,8 @@ public class ProgramsService {
         programDAO.save(program);
     }
 
-    public void merge(Program program) {
-        programDAO.merge(program);
+    public Program merge(Program program) {
+        return programDAO.merge(program);
     }
 
     public Program getProgramByCode(String code) {
@@ -168,33 +173,52 @@ public class ProgramsService {
         return String.format("%s_%05d", institution.getCode(), codeNumber);
     }
 
-    protected Program createOrGetCustomProgram(OpportunityRequest opportunityRequest) {
+    protected Program createOrGetProgram(OpportunityRequest opportunityRequest) {
         ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
 
         Program program = opportunityRequest.getSourceProgram();
-        if (program == null) {
+
+        if (program != null) {
+            if (program.getProgramFeed() != null) {
+                // built-in program, cannot modify
+                return program;
+            }
+            program = merge(program);
+        } else {
             program = new Program();
             program.setTitle(opportunityRequest.getProgramTitle());
             program.setEnabled(true);
         }
 
         if (program.getInstitution() == null || !Objects.equal(program.getInstitution().getCode(), opportunityRequest.getInstitutionCode())) {
-            // assigning new institution to the program (also changing program
-            // code)
+            // assigning new institution to the program (also changing program code)
             QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
                     opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
             program.setInstitution(institution);
             program.setCode(thisBean.generateNextProgramCode(institution));
         }
         program.setAtasRequired(opportunityRequest.getAtasRequired());
-        merge(program);
+        save(program);
         return program;
+    }
+
+    protected void grantAdminPermissionsForProgram(RegisteredUser user, Program program) {
+        if (!HibernateUtils.containsEntity(user.getInstitutions(), program.getInstitution())) {
+            user.getInstitutions().add(program.getInstitution());
+        }
+        Role adminRole = roleService.getRoleByAuthority(Authority.ADMINISTRATOR);
+        if (!HibernateUtils.containsEntity(user.getRoles(), adminRole)) {
+            user.getRoles().add(adminRole);
+        }
+        if (!HibernateUtils.containsEntity(user.getProgramsOfWhichAdministrator(), program)) {
+            user.getProgramsOfWhichAdministrator().add(program);
+        }
     }
 
     public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
         ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
 
-        Program program = thisBean.createOrGetCustomProgram(opportunityRequest);
+        Program program = thisBean.createOrGetProgram(opportunityRequest);
 
         Advert advert = program.getAdvert();
         if (advert == null) {
@@ -209,6 +233,9 @@ public class ProgramsService {
         if (program.getProgramFeed() == null) { // custom program
             programInstanceService.createRemoveProgramInstances(program, opportunityRequest.getStudyOptions(), opportunityRequest.getAdvertisingDeadlineYear());
         }
+
+        thisBean.grantAdminPermissionsForProgram(opportunityRequest.getAuthor(), program);
+
         return program;
     }
 
@@ -216,8 +243,8 @@ public class ProgramsService {
         if (user.isInRole(Authority.SUPERVISOR)) {
             return true;
         }
-        QualificationInstitution existingInstitution = opportunityRequest.getSourceProgram().getInstitution();
-        if (existingInstitution.getCode().equals(opportunityRequest.getInstitutionCode())) {
+        Program existingProgram = opportunityRequest.getSourceProgram();
+        if (existingProgram != null && existingProgram.getInstitution().getCode().equals(opportunityRequest.getInstitutionCode())) {
             // no change
             return true;
         }

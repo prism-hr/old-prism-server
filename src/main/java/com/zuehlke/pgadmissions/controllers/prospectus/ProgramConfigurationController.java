@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -176,20 +175,19 @@ public class ProgramConfigurationController {
     @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
     @ResponseBody
     public String saveOpportunity(@Valid OpportunityRequest opportunityRequest, BindingResult result) {
-        Preconditions.checkNotNull(opportunityRequest.getSourceProgram());
         Map<String, Object> map;
         if (result.hasErrors()) {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
         } else {
             map = Maps.newHashMap();
             RegisteredUser currentUser = getUser();
+            opportunityRequest.setAuthor(currentUser);
             if (programsService.canChangeInstitution(currentUser, opportunityRequest)) {
                 Program program = programsService.saveProgramOpportunity(opportunityRequest);
                 map.put("success", (Object) true);
                 map.put("programCode", program.getCode());
             } else {
-                opportunityRequest.setAuthor(currentUser);
-                opportunitiesService.createOpportunityChangeRequest(opportunityRequest);
+                opportunitiesService.createOpportunityRequest(opportunityRequest, false);
                 map.put("changeRequestCreated", (Object) true);
             }
         }

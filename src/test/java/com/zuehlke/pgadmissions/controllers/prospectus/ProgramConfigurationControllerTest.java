@@ -161,7 +161,7 @@ public class ProgramConfigurationControllerTest {
 
         expect(userService.getCurrentUser()).andReturn(user);
         expect(programsService.canChangeInstitution(user, opportunityRequest)).andReturn(false);
-        opportunitiesService.createOpportunityRequest(opportunityRequest);
+        opportunitiesService.createOpportunityRequest(opportunityRequest, false);
 
         replay();
         String result = controller.saveOpportunity(opportunityRequest, bindingResult);

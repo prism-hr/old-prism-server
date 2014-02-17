@@ -62,6 +62,7 @@ import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
 public class ApplicationsReportServiceTest {
@@ -74,17 +75,19 @@ public class ApplicationsReportServiceTest {
     
     private ApplicantRatingService applicantRatingServiceMock;
 
+	private ReportFormat reportType;
+
     @Test
     public void testGetEmptyApplicationsReport() {
         // GIVEN
         List<ApplicationForm> applications = Lists.newArrayList();
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType)).andReturn(applications);
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
-        DataTable dataTable = service.getApplicationsReport(user, filtering);
+        DataTable dataTable = service.getApplicationsReport(user, filtering, reportType);
         EasyMock.verify(applicationsServiceMock);
 
         // THEN
@@ -102,11 +105,11 @@ public class ApplicationsReportServiceTest {
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType)).andReturn(applications);
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
-        DataTable table = service.getApplicationsReport(user, filtering);
+        DataTable table = service.getApplicationsReport(user, filtering, reportType);
         EasyMock.verify(applicationsServiceMock);
 
         // THEN
@@ -151,8 +154,106 @@ public class ApplicationsReportServiceTest {
     }
     
     @Test
-    public void testGetSampleApplicationReport() {
+    public void testGetStandardSampleApplicationReport() {
         // GIVEN
+        ApplicationForm app1 = createSampleApplicationForm();
+        
+        List<ApplicationForm> applications = Lists.newArrayList(app1);
+
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType)).andReturn(applications);
+        EasyMock.expect(applicantRatingServiceMock.getAverageReferenceRating(app1)).andReturn(new BigDecimal("3.33"));
+
+        // WHEN
+        EasyMock.replay(applicationsServiceMock, applicantRatingServiceMock);
+        DataTable table = service.getApplicationsReport(user, filtering, reportType);
+        EasyMock.verify(applicationsServiceMock, applicantRatingServiceMock);
+
+        // THEN
+        assertEquals(1, table.getRows().size());
+
+        TableRow row = table.getRow(0);
+        assertEquals("07", getTextValue(table, row, "applicationId"));
+        assertEquals("Genowefa", getTextValue(table, row, "firstNames"));
+        assertEquals("Pigwa", getTextValue(table, row, "lastName"));
+        assertEquals("gienia@pigwa.pl", getTextValue(table, row, "email"));
+        assertEquals("ABC", getTextValue(table, row, "programmeId"));
+        assertEquals("BBC", getTextValue(table, row, "programmeName"));
+        assertEquals("title", getTextValue(table, row, "projectTitle"));
+        assertEquals("Part-time", getTextValue(table, row, "studyOption"));
+        assertEquals("fooBar", getTextValue(table, row, "sourcesOfInterest"));
+        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "sourcesOfInterestText"));
+        assertEquals("suggested supervisor1, suggested supervisor2", getTextValue(table, row, "provisionalSupervisors"));
+        assertEquals("1939", getTextValue(table, row, "academicYear"));
+        assertEquals("1939-08-31", getDateValue(table, row, "submittedDate"));
+        assertEquals("1939-09-01", getDateValue(table, row, "lastEditedDate"));
+        assertEquals("1.56", getTextValue(table, row, "averageOverallRating"));
+        assertEquals("13", getTextValue(table, row, "overallPositiveEndorsements"));
+        assertEquals("Offer Recommended", getTextValue(table, row, "status"));
+        assertEquals(24, getNumberValue(table, row, "validationTime"), 0);
+        assertEquals("Overseas", getTextValue(table, row, "feeStatus"));
+        assertEquals("Unsure", getTextValue(table, row, "academicallyQualified"));
+        assertEquals("Unsure", getTextValue(table, row, "adequateEnglish"));
+        assertEquals(2, getNumberValue(table, row, "receivedReferences"), 0);
+        assertEquals(1, getNumberValue(table, row, "declinedReferences"), 0);
+        assertEquals("3", getTextValue(table, row, "positiveReferenceEndorsements"));
+        assertEquals("1", getTextValue(table, row, "negativeReferenceEndorsements"));
+        assertEquals("3.33", getTextValue(table, row, "averageReferenceRating"));
+        assertEquals("7", getTextValue(table, row, "positiveReviewEndorsements"));
+        assertEquals("1", getTextValue(table, row, "negativeReviewEndorsements"));
+        assertEquals(1, getNumberValue(table, row, "declinedReferences"),0);
+        assertEquals(192, getNumberValue(table, row, "interviewTime"),0);
+        assertEquals(2, getNumberValue(table, row, "interviewReports"),0);
+        assertEquals("3", getTextValue(table, row, "positiveInterviewEndorsements"));
+        assertEquals("1", getTextValue(table, row, "negativeInterviewEndorsements"));
+        assertEquals(0, getNumberValue(table, row, "approvalTime"),0);
+        assertEquals(1, getNumberValue(table, row, "approvalStages"),0);
+        assertEquals("Primary Supervisor", getTextValue(table, row, "primarySupervisor"));
+        assertEquals("Secondary Supervisor", getTextValue(table, row, "secondarySupervisor"));
+        assertEquals("Approved", getTextValue(table, row, "outcome"));
+        assertEquals("1939-09-01", getDateValue(table, row, "outcomedate"));
+        assertEquals("Conditional", getTextValue(table, row, "outcomeType"));
+        assertEquals("Conditions", getTextValue(table, row, "outcomeNote"));
+
+    }
+
+    public void testGetShortSampleApplicationReport() {
+        // GIVEN
+        ApplicationForm app1 = createSampleApplicationForm();
+        
+        List<ApplicationForm> applications = Lists.newArrayList(app1);
+
+        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType)).andReturn(applications);
+        EasyMock.expect(applicantRatingServiceMock.getAverageReferenceRating(app1)).andReturn(new BigDecimal("3.33"));
+
+        // WHEN
+        EasyMock.replay(applicationsServiceMock, applicantRatingServiceMock);
+        DataTable table = service.getApplicationsReport(user, filtering, reportType);
+        EasyMock.verify(applicationsServiceMock, applicantRatingServiceMock);
+
+        // THEN
+        assertEquals(1, table.getRows().size());
+        
+        TableRow row = table.getRow(0);
+        assertEquals("07", getTextValue(table, row, "applicationId"));
+        assertEquals("Genowefa", getTextValue(table, row, "firstNames"));
+        assertEquals("Pigwa", getTextValue(table, row, "lastName"));
+        assertEquals("BBC", getTextValue(table, row, "programmeName"));
+        assertEquals("title", getTextValue(table, row, "projectTitle"));
+        assertEquals("suggested supervisor1, suggested supervisor2", getTextValue(table, row, "provisionalSupervisors"));
+        assertEquals("1939", getTextValue(table, row, "academicYear"));
+        assertEquals("1939-08-31", getDateValue(table, row, "submittedDate"));
+        assertEquals("1.56", getTextValue(table, row, "averageOverallRating"));
+        assertEquals("Offer Recommended", getTextValue(table, row, "status"));
+        assertEquals(2, getNumberValue(table, row, "receivedReferences"), 0);
+        assertEquals("3.33", getTextValue(table, row, "averageReferenceRating"));
+        assertEquals("7", getTextValue(table, row, "positiveReviewEndorsements"));
+        assertEquals("1", getTextValue(table, row, "negativeReviewEndorsements"));
+
+    }
+    
+    private ApplicationForm createSampleApplicationForm() {
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.set(1939, 8, 1);
         Date today = calendar.getTime();
@@ -194,115 +295,23 @@ public class ApplicationsReportServiceTest {
         
         ApplicationForm app1 = new ApplicationFormBuilder().applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1)
                 .approvalRounds(approvalRound).personalDetails(personalDetails).latestApprovalRound(approvalRound).submittedDate(yesterday).lastUpdated(today).status(ApplicationFormStatus.APPROVED).events(validationEvent, reviewEvent, interviewEvent1, interviewEvent2, approveEvent).comments(validationComment).referees(referee1, referee2, referee3).latestInterview(interview).latestReviewRound(reviewRound).averageRating(new BigDecimal("1.56")).build();
-        
-        
-        List<ApplicationForm> applications = Lists.newArrayList(app1);
-
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(applications);
-        EasyMock.expect(applicantRatingServiceMock.getAverageReferenceRating(app1)).andReturn(new BigDecimal("3.33"));
-
-        // WHEN
-        EasyMock.replay(applicationsServiceMock, applicantRatingServiceMock);
-        DataTable table = service.getApplicationsReport(user, filtering);
-        EasyMock.verify(applicationsServiceMock, applicantRatingServiceMock);
-
-        // THEN
-        assertEquals(1, table.getRows().size());
-
-        TableRow row = table.getRow(0);
-        assertEquals("07", getTextValue(table, row, "applicationId"));
-        assertEquals("Genowefa", getTextValue(table, row, "firstNames"));
-        assertEquals("Pigwa", getTextValue(table, row, "lastName"));
-        assertEquals("gienia@pigwa.pl", getTextValue(table, row, "email"));
-        assertEquals("ABC", getTextValue(table, row, "programmeId"));
-        assertEquals("BBC", getTextValue(table, row, "programmeName"));
-        assertEquals("title", getTextValue(table, row, "projectTitle"));
-        assertEquals("Part-time", getTextValue(table, row, "studyOption"));
-        assertEquals("suggested supervisor1, suggested supervisor2", getTextValue(table, row, "provisionalSupervisors"));
-        assertEquals("1939", getTextValue(table, row, "academicYear"));
-        assertEquals("1939-08-31", getDateValue(table, row, "submittedDate"));
-        assertEquals("1939-09-01", getDateValue(table, row, "lastEditedDate"));
-        assertEquals("1.56", getTextValue(table, row, "averageOverallRating"));
-        assertEquals("13", getTextValue(table, row, "overallPositiveEndorsements"));
-        assertEquals("Offer Recommended", getTextValue(table, row, "status"));
-        assertEquals(24, getNumberValue(table, row, "validationTime"), 0);
-        assertEquals("Overseas", getTextValue(table, row, "feeStatus"));
-        assertEquals("Unsure", getTextValue(table, row, "academicallyQualified"));
-        assertEquals("Unsure", getTextValue(table, row, "adequateEnglish"));
-        assertEquals(2, getNumberValue(table, row, "receivedReferences"), 0);
-        assertEquals(1, getNumberValue(table, row, "declinedReferences"), 0);
-        assertEquals("3", getTextValue(table, row, "positiveReferenceEndorsements"));
-        assertEquals("1", getTextValue(table, row, "negativeReferenceEndorsements"));
-        assertEquals("3.33", getTextValue(table, row, "averageReferenceRating"));
-        assertEquals("7", getTextValue(table, row, "positiveReviewEndorsements"));
-        assertEquals("1", getTextValue(table, row, "negativeReviewEndorsements"));
-        assertEquals(1, getNumberValue(table, row, "declinedReferences"),0);
-        assertEquals(192, getNumberValue(table, row, "interviewTime"),0);
-        assertEquals(2, getNumberValue(table, row, "interviewReports"),0);
-        assertEquals("3", getTextValue(table, row, "positiveInterviewEndorsements"));
-        assertEquals("1", getTextValue(table, row, "negativeInterviewEndorsements"));
-        assertEquals(0, getNumberValue(table, row, "approvalTime"),0);
-        assertEquals(1, getNumberValue(table, row, "approvalStages"),0);
-        assertEquals("Primary Supervisor", getTextValue(table, row, "primarySupervisor"));
-        assertEquals("Secondary Supervisor", getTextValue(table, row, "secondarySupervisor"));
-        assertEquals("Approved", getTextValue(table, row, "outcome"));
-        assertEquals("1939-09-01", getDateValue(table, row, "outcomedate"));
-        assertEquals("Conditional", getTextValue(table, row, "outcomeType"));
-        assertEquals("Conditions", getTextValue(table, row, "outcomeNote"));
-        assertEquals("fooBar", getTextValue(table, row, "sourcesOfInterest"));
-        assertEquals(StringUtils.EMPTY, getTextValue(table, row, "sourcesOfInterestText"));
+        return app1;
     }
     
     @Test
     public void shouldIgnoreApplicationIfPersonalDetailsIsEmpty() {
         // GIVEN
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.set(1939, 8, 1);
-        Date today = calendar.getTime();
-        Date yesterday = DateUtils.addDays(today, -1);
-        Date tomorrow = DateUtils.addDays(today, 1);
-        Date dayAfterTomorrow = DateUtils.addDays(today, 2);
+        ApplicationForm app1 = createSampleApplicationForm();
+        app1.setPersonalDetails(null);
         
-        RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("Genowefa").lastName("Pigwa").email("gienia@pigwa.pl").build();
-        ProgramInstance programInstance = new ProgramInstanceBuilder().applicationStartDate(tomorrow).applicationDeadline(dayAfterTomorrow).academicYear("1939").build();
-        Program program1 = new ProgramBuilder().code("ABC").title("BBC").instances(programInstance).build();
-        PersonalDetails personalDetails = null;
-        
-        SuggestedSupervisor suggestedSupervisor1 = new SuggestedSupervisorBuilder().firstname("suggested").lastname("supervisor1").build();
-        SuggestedSupervisor suggestedSupervisor2 = new SuggestedSupervisorBuilder().firstname("suggested").lastname("supervisor2").build();
-        ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(new SourcesOfInterestBuilder().name("fooBar").build()).studyOption("Part-time").suggestedSupervisors(suggestedSupervisor1, suggestedSupervisor2).startDate(tomorrow).build();
-
-        StateChangeEvent validationEvent = new StateChangeEventBuilder().date(DateUtils.addDays(today, -10)).newStatus(ApplicationFormStatus.VALIDATION).build();
-        StateChangeEvent reviewEvent = new StateChangeEventBuilder().date(DateUtils.addDays(today, -9)).newStatus(ApplicationFormStatus.REVIEW).build();
-        StateChangeEvent interviewEvent1 = new StateChangeEventBuilder().date(DateUtils.addDays(today, -8)).newStatus(ApplicationFormStatus.INTERVIEW).build();
-        StateChangeEvent interviewEvent2 = new StateChangeEventBuilder().date(DateUtils.addDays(today, -4)).newStatus(ApplicationFormStatus.INTERVIEW).build();
-        StateChangeEvent approveEvent = new StateChangeEventBuilder().date(today).newStatus(ApplicationFormStatus.APPROVED).build();
-        ValidationComment validationComment = new ValidationCommentBuilder().homeOrOverseas(HomeOrOverseas.OVERSEAS).qualifiedForPhd(ValidationQuestionOptions.UNSURE).englishCompentencyOk(ValidationQuestionOptions.UNSURE).build();
-        
-        Referee referee1 = new RefereeBuilder().reference(new ReferenceCommentBuilder().suitableForProgramme(true).suitableForUcl(true).build()).build();
-        Referee referee2 = new RefereeBuilder().reference(new ReferenceCommentBuilder().suitableForProgramme(true).suitableForUcl(false).build()).build();
-        Referee referee3 = new RefereeBuilder().declined(true).build();
-        
-        Interviewer interviewer1 = new InterviewerBuilder().interviewComment(new InterviewCommentBuilder().suitableCandidateForProgramme(true).suitableCandidateForUcl(true).build()).build();
-        Interviewer interviewer2 = new InterviewerBuilder().interviewComment(new InterviewCommentBuilder().suitableCandidateForProgramme(true).suitableCandidateForUcl(false).build()).build();
-        Interview interview = new InterviewBuilder().interviewers(interviewer1, interviewer2).build();
-        
-        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).user(new RegisteredUserBuilder().firstName("Primary").lastName("Supervisor").build()).build();
-        Supervisor secondarySupervisor = new SupervisorBuilder().isPrimary(false).user(new RegisteredUserBuilder().firstName("Secondary").lastName("Supervisor").build()).build();
-        ApprovalRound approvalRound = new ApprovalRoundBuilder().projectTitle("title").supervisors(primarySupervisor, secondarySupervisor).recommendedConditionsAvailable(true).recommendedConditions("Conditions").build();
-        
-        ApplicationForm app1 = new ApplicationFormBuilder().applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1)
-                .approvalRounds(approvalRound).personalDetails(personalDetails).latestApprovalRound(approvalRound).submittedDate(yesterday).lastUpdated(today).status(ApplicationFormStatus.APPROVED).events(validationEvent, reviewEvent, interviewEvent1, interviewEvent2, approveEvent).comments(validationComment).referees(referee1, referee2, referee3).latestInterview(interview).build();
-
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType)).andReturn(applications);
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
-        DataTable table = service.getApplicationsReport(user, filtering);
+        DataTable table = service.getApplicationsReport(user, filtering, reportType);
         EasyMock.verify(applicationsServiceMock);
 
         // THEN
@@ -314,7 +323,7 @@ public class ApplicationsReportServiceTest {
         user = new RegisteredUser();
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         applicantRatingServiceMock = EasyMock.createMock(ApplicantRatingService.class);
-        service = new ApplicationsReportService(applicationsServiceMock, applicantRatingServiceMock);
+        service = new ApplicationsReportService("http://localhost:8080", applicationsServiceMock, applicantRatingServiceMock);
     }
 
     public String getTextValue(DataTable table, TableRow row, String columnId) {

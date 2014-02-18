@@ -1,6 +1,11 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -21,7 +26,9 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
+import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
@@ -55,23 +62,22 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
         template.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {
-                sessionFactory.getCurrentSession()
-                                .createSQLQuery("" 
-                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('ADMINISTRATOR');"
-                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('APPLICANT');"
-                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('APPROVER');"
-                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('INTERVIEWER');"
-                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('REFEREE');"
-                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('REVIEWER');"
-                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('SUPERADMINISTRATOR');"
-                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('SUPERVISOR');"
-                                                + "INSERT INTO APPLICATION_ROLE (id) VALUES ('VIEWER');").executeUpdate();
+                sessionFactory
+                        .getCurrentSession()
+                        .createSQLQuery(
+                                "" + "INSERT INTO APPLICATION_ROLE (id) VALUES ('ADMINISTRATOR');" + "INSERT INTO APPLICATION_ROLE (id) VALUES ('APPLICANT');"
+                                        + "INSERT INTO APPLICATION_ROLE (id) VALUES ('APPROVER');"
+                                        + "INSERT INTO APPLICATION_ROLE (id) VALUES ('INTERVIEWER');" + "INSERT INTO APPLICATION_ROLE (id) VALUES ('REFEREE');"
+                                        + "INSERT INTO APPLICATION_ROLE (id) VALUES ('REVIEWER');"
+                                        + "INSERT INTO APPLICATION_ROLE (id) VALUES ('SUPERADMINISTRATOR');"
+                                        + "INSERT INTO APPLICATION_ROLE (id) VALUES ('SUPERVISOR');" + "INSERT INTO APPLICATION_ROLE (id) VALUES ('VIEWER');")
+                        .executeUpdate();
 
                 user1 = new RegisteredUserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com").username("tyler@durden.com")
-                                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+                        .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
 
                 similiarToUser1 = new RegisteredUserBuilder().firstName("Taylor").lastName("Dordeen").email("taylor@dordeen.com").username("taylor@durden.com")
-                                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+                        .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
 
                 registeredUserDAO.save(user1);
                 registeredUserDAO.save(similiarToUser1);
@@ -95,7 +101,7 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
                         .getCurrentSession()
                         .createSQLQuery(
                                 "DELETE FROM APPLICATION_FORM;DELETE FROM PROGRAM_APPROVER_LINK;DELETE FROM PROGRAM_ADMINISTRATOR_LINK;DELETE FROM USER_ROLE_LINK;DELETE FROM APPLICATION_ROLE;DELETE FROM REGISTERED_USER")
-                                .executeUpdate();
+                        .executeUpdate();
             }
         });
     }
@@ -163,6 +169,24 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
 
         List<RegisteredUser> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("durden");
         assertEquals(0, matchingUsersWithLastnameLike.size());
+    }
+
+    @Test
+    public void shouldReturnSimilarMatchForInstitutionName() {
+        TransactionTemplate template = new TransactionTemplate(transactionManager);
+
+        final QualificationInstitution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
+
+        template.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            public void doInTransactionWithoutResult(final TransactionStatus status) {
+                sessionFactory.getCurrentSession().save(institution);
+            }
+        });
+
+        List<String> result = fullTextService.getMatchingInstitutions("akademia  gorniczo hutnicza# ", "PL");
+        assertThat(result, is(not(empty())));
+        assertThat(result, hasItem(institution.getName()));
     }
 
     private boolean contains(RegisteredUser user, List<RegisteredUser> users) {

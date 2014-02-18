@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Errors;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -31,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -43,6 +45,8 @@ public class OpportunityRequestValidatorTest {
     private RegisterFormValidator registerFormValidatorMock;
 
     private ProgramInstanceService programInstanceServiceMock;
+
+    private FullTextSearchService fullTextSearchServiceMock;
 
     private OpportunityRequestValidator opportunityRequestValidator;
 
@@ -58,6 +62,7 @@ public class OpportunityRequestValidatorTest {
 
         registerFormValidatorMock = EasyMock.createMock(RegisterFormValidator.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
+        fullTextSearchServiceMock = EasyMock.createMock(FullTextSearchService.class);
 
         expect(programInstanceServiceMock.getFirstProgramInstanceStartYear(isA(DateTime.class))).andReturn(2013);
         replay(programInstanceServiceMock);
@@ -66,6 +71,7 @@ public class OpportunityRequestValidatorTest {
         opportunityRequestValidator.setValidator(validator);
         opportunityRequestValidator.setRegisterFormValidator(registerFormValidatorMock);
         opportunityRequestValidator.setProgramInstanceService(programInstanceServiceMock);
+        opportunityRequestValidator.setFullTextSearchService(fullTextSearchServiceMock);
     }
 
     @Test
@@ -132,6 +138,38 @@ public class OpportunityRequestValidatorTest {
 
         assertEquals(1, mappingResult.getErrorCount());
         assertEquals(AbstractValidator.EMPTY_FIELD_ERROR_MESSAGE, mappingResult.getFieldError("otherInstitution").getCode());
+    }
+
+    @Test
+    public void shouldRejectIfOtherInstitutionIsSpecifiedAndSimilarOneExist() {
+        opportunityRequest.setInstitutionCode("OTHER");
+        opportunityRequest.setOtherInstitution("instytucja");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+
+        configureAndReplayRegisterFormValidator(mappingResult);
+
+        expect(fullTextSearchServiceMock.getMatchingInstitutions("instytucja", "PL")).andReturn(Lists.newArrayList("similar", "similar2"));
+
+        EasyMock.replay(fullTextSearchServiceMock);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+        EasyMock.verify(fullTextSearchServiceMock);
+
+        assertEquals(1, mappingResult.getErrorCount());
+        assertEquals("institution.did.you.mean", mappingResult.getFieldError("otherInstitution").getCode());
+        assertEquals("similar::similar2", mappingResult.getFieldError("otherInstitution").getDefaultMessage());
+    }
+
+    @Test
+    public void shouldNotRejectIfSimilarInstitutionExistButForceFlagIsSetToTrue() {
+        opportunityRequest.setInstitutionCode("OTHER");
+        opportunityRequest.setOtherInstitution("instytucja");
+        opportunityRequest.setForceCreatingNewInstitution(true);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+
+        assertEquals(0, mappingResult.getErrorCount());
     }
 
     @Test

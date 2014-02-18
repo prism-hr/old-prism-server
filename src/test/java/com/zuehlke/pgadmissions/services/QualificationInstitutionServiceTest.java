@@ -96,15 +96,17 @@ public class QualificationInstitutionServiceTest {
     public void shouldCreateNewCustomInstitution() {
         Domicile country = new DomicileBuilder().code("PL").build();
         QualificationInstitutionService thisBean = EasyMockUnitils.createMock(QualificationInstitutionService.class);
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).institutionCode("OTHER").build();
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).institutionCode("OTHER")
+                .otherInstitution("instytucja").build();
 
         expect(applicationContext.getBean(QualificationInstitutionService.class)).andReturn(thisBean);
+        expect(qualificationInstitutionDAO.getInstitutionByDomicileAndName("PL", "instytucja")).andReturn(null);
         expect(thisBean.generateNextInstitutionCode()).andReturn("00008");
         Capture<QualificationInstitution> institutionCapture = new Capture<QualificationInstitution>();
         qualificationInstitutionDAO.save(capture(institutionCapture));
 
         replay();
-        QualificationInstitution returned = service.getOrCreateCustomInstitution("OTHER", country, null);
+        QualificationInstitution returned = service.getOrCreateCustomInstitution("OTHER", country, "instytucja");
         verify();
 
         assertSame(returned, institutionCapture.getValue());

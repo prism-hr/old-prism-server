@@ -26,7 +26,7 @@ public class StateChangeCommentMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadStateChangeComment() {
-	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a13").domicileCode("AE").enabled(true).build();
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 		save(institution, program);
 

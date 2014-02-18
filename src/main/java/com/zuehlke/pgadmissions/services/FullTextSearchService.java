@@ -84,4 +84,9 @@ public class FullTextSearchService {
     public List<String> getMatchingRefereesWithJobTitlesLike(final String searchTerm) {
     	return fullTextSearchDAO.getMatchingRefereesWithJobTitlesLike(searchTerm);
     }
+    
+    @Transactional(readOnly = true)
+    public List<String> getMatchingInstitutions(final String searchTerm, String domicileCode) {
+        return fullTextSearchDAO.getMatchingInsitutions(searchTerm, domicileCode);
+    }
 }

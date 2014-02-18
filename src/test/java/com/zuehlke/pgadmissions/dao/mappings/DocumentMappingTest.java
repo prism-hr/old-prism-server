@@ -83,7 +83,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 
 	@Before
 	public void prepare() {
-	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a34").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 

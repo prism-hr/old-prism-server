@@ -8,12 +8,14 @@ import static org.junit.Assert.assertSame;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -86,6 +88,10 @@ public class ProgramConfigurationControllerTest {
     @Mock
     @InjectIntoByType
     private OpportunitiesService opportunitiesService;
+    
+    @Mock
+    @InjectIntoByType
+    private ApplicationContext applicationContext;
 
     @InjectIntoByType
     private Gson gson = new Gson();
@@ -133,6 +139,21 @@ public class ProgramConfigurationControllerTest {
                 result);
     }
 
+    @Test
+    public void shouldNotSaveOpportunityIfValidationErrors() {
+        OpportunityRequest opportunityRequest = new OpportunityRequest();
+        BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+        bindingResult.rejectValue("otherInstitution", "institution.did.you.mean", null, "dupa");
+        
+        expect(applicationContext.getMessage(eq(bindingResult.getFieldError()), isA(Locale.class))).andReturn("dupa");
+        
+        replay();
+        String result = controller.saveOpportunity(opportunityRequest, bindingResult);
+        verify();
+        
+        assertEquals("{\"otherInstitution\":{\"errorCode\":\"institution.did.you.mean\",\"institutions\":\"dupa\"}}", result);
+    }
+    
     @Test
     public void shouldSaveOpportunity() {
         Program program = new ProgramBuilder().code("p07").build();

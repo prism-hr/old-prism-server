@@ -72,6 +72,8 @@
                   </div>
                 </div>
                 
+                <input type="hidden" id="programAdvertForceCreatingNewInstitution" value="false" />
+                
                 <div class="row" id="programAdvertInstitutionOtherNameDiv">
                   <label class="plain-label" for="programAdvertInstitutionOtherName">Please Specify<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>

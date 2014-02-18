@@ -6,6 +6,8 @@ $(document).ready(function() {
     bindClosingDatesActions();
     bindCancelNewProgramAction();
     bindChangeInstitutionCountryAction();
+    bindChangeOtherInstitutionAction();
+
     initEditors();
     $('select.selectpicker').selectpicker();
 
@@ -19,6 +21,25 @@ $(document).ready(function() {
 
     checkToDisable();
 });
+
+function bindChooseSuggestedInstitutionNameAction() {
+    $("a[name=didYouMeanInstitutionButtonYes]").bind('click', function() {
+        var text = $(this).text();
+        $("#programAdvertInstitutionOtherName").val(text);
+        $("#didYouMeanInstitutionDiv").remove();
+    });
+
+    $("a[name=didYouMeanInstitutionButtonNo]").bind('click', function() {
+        $("#didYouMeanInstitutionDiv").remove();
+        $("#programAdvertForceCreatingNewInstitution").val("true");
+    });
+}
+
+function bindChangeOtherInstitutionAction() {
+    $('#programAdvertInstitutionOtherName').change(function() {
+        $("#programAdvertForceCreatingNewInstitution").val("false");
+    });
+}
 
 function bindChangeInstitutionCountryAction() {
     $('#programAdvertInstitutionCountry').change(function() {
@@ -543,6 +564,7 @@ function saveAdvert() {
             atasRequired : $("[name=programAdvertAtasRequired]:checked").val(),
             institutionCountry : $("#programAdvertInstitutionCountry").val(),
             institutionCode : $("#programAdvertInstitution").val(),
+            forceCreatingNewInstitution : $("#programAdvertForceCreatingNewInstitution").val(),
             otherInstitution : $("#programAdvertInstitutionOtherName").val(),
             programDescription : addBlankLinks(tinymce.get('programAdvertDescriptionText').getContent()),
             studyDurationNumber : $("#programAdvertStudyDurationInput").val(),
@@ -603,7 +625,19 @@ function saveAdvert() {
                     $("#programAdvertInstitutionDiv").append(getErrorMessageHTML(map['institutionCode']));
                 }
                 if (map['otherInstitution']) {
-                    $("#programAdvertInstitutionOtherNameDiv").append(getErrorMessageHTML(map['otherInstitution']));
+                    if (map.otherInstitution.errorCode == "institution.did.you.mean") {
+                        var message = "Did you mean: ";
+                        var institutionNames = map.otherInstitution.institutions.split("::");
+                        for ( var i = 0; i < institutionNames.length; i++) {
+                            message += '<a name="didYouMeanInstitutionButtonYes">' + institutionNames[i] + '</a>';
+                            message += i == institutionNames.length - 1 ? ". " : ", ";
+                        }
+                        message += '<a name="didYouMeanInstitutionButtonNo">Use original</a>.';
+                        $("#programAdvertInstitutionOtherNameDiv").append($(getErrorMessageHTML(message)).attr("id", "didYouMeanInstitutionDiv"));
+                        bindChooseSuggestedInstitutionNameAction();
+                    } else {
+                        $("#programAdvertInstitutionOtherNameDiv").append(getErrorMessageHTML(map['otherInstitution']));
+                    }
                 }
                 if (map['programDescription']) {
                     $("#programAdvertDescriptionDiv").append(getErrorMessageHTML(map['programDescription']));

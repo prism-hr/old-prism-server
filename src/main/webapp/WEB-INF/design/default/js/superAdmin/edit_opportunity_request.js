@@ -1,9 +1,9 @@
 $(document).ready(function() {
     bindDatePicker($("#applicationStartDate"));
     $('.selectpicker').selectpicker();
-    
+
     refreshControls();
-    
+
     $("a[name=didYouMeanInstitutionButtonYes]").bind('click', function() {
         var text = $(this).text();
         $("#otherInstitution").val(text);
@@ -14,10 +14,31 @@ $(document).ready(function() {
         $("#didYouMeanInstitutionDiv").remove();
         $("#forceCreatingNewInstitution").val("true");
     });
-    
+
     $('#otherInstitution').change(function() {
         $("#forceCreatingNewInstitution").val("false");
     });
+
+    $("#otherInstitution").typeaheadmap({
+        source : {},
+        key : "name",
+        displayer : function(that, item, highlighted) {
+            return highlighted;
+        }
+    });
+
+    var availableInstitutions = [];
+    $('#institution option').each(function() {
+        var v = $(this).val();
+        if (v != "OTHER" && v != "") {
+            availableInstitutions.push({
+                name : $(this).text()
+            });
+        }
+    });
+    
+    var typeahead = $("#otherInstitution").data("typeaheadmap");
+    typeahead.source = availableInstitutions;
 
     $('#institution').change(function() {
         $("#otherInstitution").val("");
@@ -27,10 +48,11 @@ $(document).ready(function() {
     $('#institutionCountry').change(function() {
         institutionCountryChanged();
     });
-    
+
     $('#submitOpportunityRequestButton').click(function(e) {
         $('#opportunityRequestEditForm').submit();
     });
+
 
     initEditors();
     exStatus();
@@ -39,11 +61,11 @@ $(document).ready(function() {
 
 function checkFormErrors() {
     var errorCount = $('#opportunityRequestEditForm .alert-error').length;
-    if (errorCount > 0){
-       $('#opportunityRequestEditForm').prepend('<div id="info-section" class="alert alert-error"><i class="icon-warning-sign"></i>You have some errors in the form</div>');
+    if (errorCount > 0) {
+        $('#opportunityRequestEditForm').prepend('<div id="info-section" class="alert alert-error"><i class="icon-warning-sign"></i>You have some errors in the form</div>');
     } else {
         if ($('#info-section').length > 0) {
-          $('#info-section').remove();  
+            $('#info-section').remove();
         }
     }
 }
@@ -86,6 +108,8 @@ function institutionCountryChanged() {
             }
             options.append($("<option />").val("OTHER").text("Other"));
 
+            var typeahead = $("#otherInstitution").data("typeaheadmap");
+            typeahead.source = institutions;
         },
         complete : function() {
             refreshControls();
@@ -93,7 +117,7 @@ function institutionCountryChanged() {
     });
 }
 
-function refreshControls(){
+function refreshControls() {
     if ($('#institutionCountry').val() === "") {
         $("#institution").attr("readonly", "readonly");
         $("#institution").attr("disabled", "disabled");
@@ -101,7 +125,7 @@ function refreshControls(){
         $("#institution").removeAttr("readonly", "readonly");
         $("#institution").removeAttr("disabled", "disabled");
     }
-    
+
     if ($('#institution').val() === "OTHER") {
         $("#otherInstitution").removeAttr("readonly", "readonly");
         $("#otherInstitution").removeAttr("disabled", "disabled");
@@ -111,19 +135,19 @@ function refreshControls(){
     }
     $("#institution").selectpicker('refresh');
 }
-   
+
 function initEditors() {
     tinymce.init({
-        selector: "#programDescription",
-        width: 480,
+        selector : "#programDescription",
+        width : 480,
         height : 180,
-        menubar: false,
-        content: "",
-        toolbar: "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
+        menubar : false,
+        content : "",
+        toolbar : "bold italic  | bullist numlist outdent indent | link unlink | undo redo"
     });
 }
 
-$(document).on('click', '#commentsBtn', function(){
+$(document).on('click', '#commentsBtn', function() {
     // Set the current tab.
     $('.tabsContent ul.tabs li').removeClass('current');
     $(this).parent('li').addClass('current');
@@ -131,11 +155,10 @@ $(document).on('click', '#commentsBtn', function(){
     $('#commentsTab').show();
 });
 
-$(document).on('click', '#requestBtn', function(){
+$(document).on('click', '#requestBtn', function() {
     // Set the current tab.
     $('.tabsContent ul.tabs li').removeClass('current');
     $(this).parent('li').addClass('current');
     $('#commentsTab').hide();
     $('#requestTab').show();
 });
-

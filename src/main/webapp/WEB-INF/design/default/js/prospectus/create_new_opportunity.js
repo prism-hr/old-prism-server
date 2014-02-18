@@ -23,6 +23,27 @@ $(document).ready(function() {
         $("#forceCreatingNewInstitution").val("false");
     });
     
+    $("#otherInstitution").typeaheadmap({
+        source : {},
+        key : "name",
+        displayer : function(that, item, highlighted) {
+            return highlighted;
+        }
+    });
+    
+    var availableInstitutions = [];
+    $('#institution option').each(function() {
+        var v = $(this).val();
+        if (v != "OTHER" && v != "") {
+            availableInstitutions.push({
+                name : $(this).text()
+            });
+        }
+    });
+
+    var typeahead = $("#otherInstitution").data("typeaheadmap");
+    typeahead.source = availableInstitutions;
+
 
     $('#institution').change(function() {
         $("#otherInstitution").val("");
@@ -67,6 +88,9 @@ $(document).ready(function() {
                     options.append($("<option />").val(institutions[i]["code"]).text(institutions[i]["name"]));
                 }
                 options.append($("<option />").val("OTHER").text("Other"));
+                
+                var typeahead = $("#otherInstitution").data("typeaheadmap");
+                typeahead.source = institutions;
             },
             complete : function() {
                 refreshControls();

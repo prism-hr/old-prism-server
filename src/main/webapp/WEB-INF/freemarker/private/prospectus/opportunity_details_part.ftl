@@ -28,9 +28,7 @@
       <option value="">Select...</option>
       <#if opportunityRequest.institutionCountry??>
         <#list institutions as inst>
-          <option value="${inst.code}" <#if opportunityRequest.institutionCode?? && opportunityRequest.institutionCode == inst.code> selected="selected"</#if>>
-            ${inst.name?html}
-          </option>
+          <option value="${inst.code}" <#if opportunityRequest.institutionCode?? && opportunityRequest.institutionCode == inst.code> selected="selected"</#if>>${inst.name?html}</option>
         </#list>
         <option value="OTHER" <#if opportunityRequest.institutionCode?? && opportunityRequest.institutionCode == "OTHER">selected="selected"</#if>>Other
         </option>
@@ -51,7 +49,7 @@
   <label id="lbl-otherInstitutionProviderName" class="plain-label" for="otherInstitutionProviderName">Please Specify</label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
   <div class="field">
-    <input readonly disabled="disabled" id="otherInstitution" name="otherInstitution" class="full" type="text" value="${(opportunityRequest.otherInstitution?html)!}" />
+    <input readonly disabled="disabled" id="otherInstitution" name="otherInstitution" class="full" type="text" autocomplete="off" value="${(opportunityRequest.otherInstitution?html)!}" />
     <@spring.bind "opportunityRequest.otherInstitution" />
     <#list spring.status.errorCodes as error>
       <#if error == "institution.did.you.mean">

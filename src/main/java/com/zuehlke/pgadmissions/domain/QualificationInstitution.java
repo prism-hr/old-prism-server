@@ -7,7 +7,28 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Entity(name="INSTITUTION")
+import org.apache.solr.analysis.ASCIIFoldingFilterFactory;
+import org.apache.solr.analysis.LowerCaseFilterFactory;
+import org.apache.solr.analysis.SnowballPorterFilterFactory;
+import org.apache.solr.analysis.StandardTokenizerFactory;
+import org.apache.solr.analysis.StopFilterFactory;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.AnalyzerDef;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
+
+@AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
+        @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
+        @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
+        @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
+@Entity(name = "INSTITUTION")
+@Indexed
 public class QualificationInstitution implements Serializable {
 
     private static final long serialVersionUID = 2746228908173552617L;
@@ -18,13 +39,14 @@ public class QualificationInstitution implements Serializable {
 
     @Column(name = "domicile_code")
     private String domicileCode;
-    
+
     @Column(name = "name")
+    @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String name;
 
     @Column(name = "enabled")
     private Boolean enabled;
-    
+
     @Column(name = "code")
     private String code;
 
@@ -39,7 +61,7 @@ public class QualificationInstitution implements Serializable {
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -68,4 +90,3 @@ public class QualificationInstitution implements Serializable {
         this.code = code;
     }
 }
-

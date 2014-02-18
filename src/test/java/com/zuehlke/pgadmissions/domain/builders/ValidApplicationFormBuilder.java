@@ -164,7 +164,7 @@ public class ValidApplicationFormBuilder {
         instance = new ProgramInstanceBuilder().academicYear("2013").applicationDeadline(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 1))
                 .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 5)).enabled(true).studyOption("F+++++", "Full-time")
                 .identifier("0009").build();
-        institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        institution = new QualificationInstitutionBuilder().code("code").name("jakas instytucja").domicileCode("AE").enabled(true).build();
         program = new ProgramBuilder().administrators(user).approver(user).code("TMRMBISING99").enabled(true).instances(instance)
                 .title("MRes Medical and Biomedical Imaging").institution(institution).build();
         interest = new SourcesOfInterestBuilder().code("BRIT_COUN").name("British Council").build();

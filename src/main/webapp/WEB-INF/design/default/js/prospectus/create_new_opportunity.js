@@ -8,6 +8,22 @@ $(document).ready(function() {
     setHsize();
     refreshControls();
 
+    $("a[name=didYouMeanInstitutionButtonYes]").bind('click', function() {
+        var text = $(this).text();
+        $("#otherInstitution").val(text);
+        $("#didYouMeanInstitutionDiv").remove();
+    });
+
+    $("a[name=didYouMeanInstitutionButtonNo]").bind('click', function() {
+        $("#didYouMeanInstitutionDiv").remove();
+        $("#forceCreatingNewInstitution").val("true");
+    });
+    
+    $('#otherInstitution').change(function() {
+        $("#forceCreatingNewInstitution").val("false");
+    });
+    
+
     $('#institution').change(function() {
         $("#otherInstitution").val("");
         refreshControls();

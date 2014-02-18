@@ -6,8 +6,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +31,6 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadInterviewer() throws ParseException {
-        Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");
         Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).build();
         save(interviewer);
         assertNotNull(interviewer.getId());
@@ -65,7 +62,7 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a42").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 
         save(institution, program);

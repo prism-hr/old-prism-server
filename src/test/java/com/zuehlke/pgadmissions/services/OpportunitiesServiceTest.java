@@ -76,7 +76,6 @@ public class OpportunitiesServiceTest {
         RegisteredUser author = new RegisteredUser();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(author).programTitle("dupa").build();
 
-        expect(opportunityRequestDAO.findByProgramAndStatus(null, OpportunityRequestStatus.NEW)).andReturn(Collections.<OpportunityRequest>emptyList());
         expect(registrationService.updateOrSaveUser(author, null)).andReturn(null);
         opportunityRequestDAO.save(opportunityRequest);
 
@@ -90,22 +89,21 @@ public class OpportunitiesServiceTest {
         assertEquals("dupa", opportunityRequest.getProgramTitle());
         assertFalse(opportunityRequest.getAtasRequired());
     }
-    
-    
+
     @Test
     public void shouldCreateOpportunityChangeRequest() {
         Program program = new ProgramBuilder().title("tytul").atasRequired(true).build();
         RegisteredUser author = new RegisteredUser();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(author).sourceProgram(program).build();
-        
-        expect(opportunityRequestDAO.findByProgramAndStatus(null, OpportunityRequestStatus.NEW)).andReturn(Collections.<OpportunityRequest>emptyList());
+
+        expect(opportunityRequestDAO.findByProgramAndStatus(null, OpportunityRequestStatus.NEW)).andReturn(Collections.<OpportunityRequest> emptyList());
         opportunityRequestDAO.save(opportunityRequest);
         expect(programsService.merge(program)).andReturn(program);
-        
+
         replay();
         service.createOpportunityRequest(opportunityRequest, false);
         verify();
-        
+
         assertNotNull(opportunityRequest.getCreatedDate());
         assertEquals(OpportunityRequestStatus.NEW, opportunityRequest.getStatus());
         assertEquals(OpportunityRequestType.CHANGE, opportunityRequest.getType());
@@ -113,8 +111,6 @@ public class OpportunitiesServiceTest {
         assertTrue(opportunityRequest.getAtasRequired());
         assertTrue(program.getLocked());
     }
-    
-    
 
     @Test
     public void shouldGetOpportunityRequests() {

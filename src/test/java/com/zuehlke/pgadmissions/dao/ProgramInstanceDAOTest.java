@@ -139,7 +139,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnProgramInstanceWithStudyOptionAndDeadlineNotInThePast() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a57").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
         save(institution, program);
         Date now = Calendar.getInstance().getTime();
@@ -157,7 +157,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnProgramInstanceWithStudyOptionAndDeadlineInThePast() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a63").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
         save(institution, program);
         Date now = Calendar.getInstance().getTime();

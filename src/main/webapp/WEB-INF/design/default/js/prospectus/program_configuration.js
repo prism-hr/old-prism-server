@@ -8,6 +8,15 @@ $(document).ready(function() {
     bindChangeInstitutionCountryAction();
     initEditors();
     $('select.selectpicker').selectpicker();
+
+    $("#programAdvertInstitutionOtherName").typeaheadmap({
+        source : {},
+        key : "name",
+        displayer : function(that, item, highlighted) {
+            return highlighted;
+        }
+    });
+
     checkToDisable();
 });
 
@@ -90,6 +99,9 @@ function getInstitutionData(successCallback) {
                 $("#otherInstitutions").append($("<option />").val(otherInstitutions[i]["code"]).text(otherInstitutions[i]["name"]));
             }
 
+            var typeahead = $("#programAdvertInstitutionOtherName").data("typeaheadmap");
+            typeahead.source = userInstitutions.concat(otherInstitutions);
+
             if (successCallback) {
                 successCallback();
             }
@@ -120,7 +132,7 @@ function checkToDisable() {
     var existingProgramSelected = selectedProgram != "";
     var newProgramSelected = $("#programAdvertNewProgramNameDiv").is(":visible");
     var programLocked = $("#programAdvertProgramLocked").val() == "true";
-    if ((existingProgramSelected && !programLocked)|| newProgramSelected) {
+    if ((existingProgramSelected && !programLocked) || newProgramSelected) {
         // new or existing program
         $("#institutionGroup label, #advertGroup label #programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
         $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").removeAttr("readonly", "readonly");
@@ -141,6 +153,9 @@ function checkToDisable() {
         $("#programAdvertClosingDateGroup input").attr("readonly", "readonly");
         $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup a").attr("disabled", "disabled");
     }
+
+    otherInstitutionCheck();
+
     $('select.selectpicker').selectpicker('refresh');
 }
 
@@ -430,12 +445,12 @@ function updateAdvertSection(map) {
 
 function updateProgramSection(map) {
     $("#programAdvertProgramLocked").val(map["programLocked"]);
-    
+
     $("[name=programAdvertAtasRequired][value=" + map["atasRequired"] + "]").prop("checked", true);
 
     $("#programAdvertInstitutionCountry").val(map["institutionCountryCode"]);
     $("#programAdvertInstitutionCountry").selectpicker('refresh');
-    getInstitutionData(function(){
+    getInstitutionData(function() {
         $("#programAdvertInstitution").val(map["institutionCode"]);
     });
     $("#programAdvertInstitutionOtherName").val("");
@@ -541,8 +556,8 @@ function saveAdvert() {
             var map = JSON.parse(data);
             if (map['success']) {
                 var newProgramCode = map["programCode"];
-                
-                if(programCode != "") {
+
+                if (programCode != "") {
                     // modfy existing program option
                     $("#programAdvertProgramSelect option").filter("[value='" + programCode + "']").val(newProgramCode);
                 } else {
@@ -550,14 +565,14 @@ function saveAdvert() {
                     $("#programAdvertProgramSelect").append($("<option />").val(newProgramCode).text(programName));
                     $("#programAdvertProgramSelect").val(newProgramCode);
                 }
-                
+
                 // show select control
                 $("#programAdvertSelectProgramDiv").show();
                 $("#programAdvertNewProgramNameDiv").hide();
-                
+
                 // reload program data
                 getAdvertData(newProgramCode);
-                
+
                 var programme_name = $("#programAdvertProgramSelect option:selected").text();
                 infohtml = "<i class='icon-ok-sign'></i> Your advert for <b>" + programme_name + "</b> has been saved.";
                 $('#infoBarProgram').addClass('alert-success').removeClass('alert-info').html(infohtml);
@@ -568,7 +583,7 @@ function saveAdvert() {
                 $('#dialog-box #dialog-message').html('<p>You will be notified after a member of the staff approve your change</p>');
                 $('#dialog-box #popup-cancel-button').hide();
                 $('#dialog-box').modal('show');
-                
+
                 $("#programAdvertProgramLocked").val(true);
                 checkToDisable();
             } else {

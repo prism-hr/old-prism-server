@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.domain.helpers.NotificationListTestScenario;
 import com.zuehlke.pgadmissions.domain.helpers.RegisteredUserTestHarness;
 
 public class UserDAOTest extends AutomaticRollbackTestCase {
-    
+
     private static final int NOTIFICATION_TEST_ITERATIONS = 10;
 
     private static final int NOTIFICATION_REMINDER_INTERVAL = 8;
@@ -162,9 +162,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
             if (testUserIds.contains(user.getId())) {
                 roleOneHitCounter++;
             }
-        } 
+        }
         assertEquals(2, roleOneHitCounter);
-   
+
         int roleTwoHitCounter = 0;
         for (RegisteredUser user : userDAO.getUsersInRole(roleTwo)) {
             if (testUserIds.contains(user.getId())) {
@@ -172,12 +172,12 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
             }
         }
         assertEquals(1, roleTwoHitCounter);
-        
+
     }
 
     @Test
     public void shouldGetUsersByProgramme() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a60").domicileCode("AE").enabled(true).build();
         Program programOne = new ProgramBuilder().code("111111").title("hello").institution(institution).build();
         Program programTwo = new ProgramBuilder().code("222222").title("hello").institution(institution).build();
 
@@ -351,7 +351,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a10").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 
@@ -376,7 +376,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a66").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 
@@ -400,9 +400,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-        save(institution, program);
+        Program program = (Program) sessionFactory.getCurrentSession().get(Program.class, 63);
 
         Date now = new Date();
 
@@ -425,9 +423,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-        save(institution, program);
+        Program program = (Program) sessionFactory.getCurrentSession().get(Program.class, 63);
 
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
@@ -539,14 +535,14 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         List<Integer> usersDueOpportunityRequestNotification = userDAO.getUsersDueOpportunityRequestNotification(notificationBaselineDate);
 
         EasyMock.verify(reminderIntervalDAOMock, notificationsDurationDAOMock);
-        
+
         int actualTaskReminderCount = 0;
         int actualTaskNotificationCount = 0;
         int actualUpdateNotificationCount = 0;
         int actualOpportunityRequestNotificationCount = 0;
 
         for (Integer user : usersDueTaskReminder) {
-            if (testInstances.containsKey(user)) {         
+            if (testInstances.containsKey(user)) {
                 assertEquals(NotificationListTestScenario.TASK_REMINDER_SUCCESS, testInstances.get(user).getNotificationListTestScenario());
                 actualTaskReminderCount++;
             }
@@ -572,11 +568,12 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
                 actualOpportunityRequestNotificationCount++;
             }
         }
-        
+
         assertEquals(userNotificationListBuilder.getTaskReminderSuccessCount() / NOTIFICATION_TEST_ITERATIONS * 5, actualTaskReminderCount);
         assertEquals(userNotificationListBuilder.getTaskNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS * 5, actualTaskNotificationCount);
         assertEquals(userNotificationListBuilder.getUpdateNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS * 5, actualUpdateNotificationCount);
-        assertEquals(userNotificationListBuilder.getOpportunityRequestNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS * 5, actualOpportunityRequestNotificationCount);
+        assertEquals(userNotificationListBuilder.getOpportunityRequestNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS * 5,
+                actualOpportunityRequestNotificationCount);
     }
 
     @Before
@@ -590,7 +587,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         DateTime cleanBaseline = new DateTime(baseline.getYear(), baseline.getMonthOfYear(), baseline.getDayOfMonth(), 0, 0, 0);
         notificationBaselineDate = cleanBaseline.toDate();
 
-        userNotificationListBuilder = new UserNotificationListBuilder(sessionFactory, notificationBaselineDate, NOTIFICATION_TEST_ITERATIONS, NOTIFICATION_REMINDER_INTERVAL, NOTIFICATION_EXPIRY_INTERVAL);
+        userNotificationListBuilder = new UserNotificationListBuilder(sessionFactory, notificationBaselineDate, NOTIFICATION_TEST_ITERATIONS,
+                NOTIFICATION_REMINDER_INTERVAL, NOTIFICATION_EXPIRY_INTERVAL);
     }
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {

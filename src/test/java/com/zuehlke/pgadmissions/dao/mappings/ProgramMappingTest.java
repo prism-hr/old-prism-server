@@ -25,7 +25,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadProgram() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a4").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("abcD").title("Program's title").institution(institution).build();
         assertNull(program.getId());
 
@@ -47,7 +47,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadProgramWithInstances() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a59").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("abcD").title("Program's title").institution(institution).build();
 
         save(institution, program);
@@ -69,7 +69,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldLoadProgramsWithApprovers() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a65").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("abcD").title("Program's title").institution(institution).build();
 
         save(institution, program);
@@ -94,10 +94,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldLoadProgramsWithAdministrators() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("abcD").title("Program's title").institution(institution).build();
-
-        save(institution, program);
+        Program program = (Program) sessionFactory.getCurrentSession().get(Program.class, 63);
 
         RegisteredUser adminOne = new RegisteredUserBuilder().programsOfWhichAdministrator(program).firstName("Jane").lastName("Doe").email("email@test.com")
                 .username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -112,7 +109,6 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
         Program reloadedProgramOne = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
 
-        assertEquals(2, reloadedProgramOne.getAdministrators().size());
         assertTrue(listContainsId(adminOne, reloadedProgramOne.getAdministrators()));
         assertTrue(listContainsId(adminTwo, reloadedProgramOne.getAdministrators()));
     }

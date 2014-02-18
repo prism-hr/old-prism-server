@@ -3,6 +3,21 @@ $(document).ready(function() {
     $('.selectpicker').selectpicker();
     
     refreshControls();
+    
+    $("a[name=didYouMeanInstitutionButtonYes]").bind('click', function() {
+        var text = $(this).text();
+        $("#otherInstitution").val(text);
+        $("#didYouMeanInstitutionDiv").remove();
+    });
+
+    $("a[name=didYouMeanInstitutionButtonNo]").bind('click', function() {
+        $("#didYouMeanInstitutionDiv").remove();
+        $("#forceCreatingNewInstitution").val("true");
+    });
+    
+    $('#otherInstitution').change(function() {
+        $("#forceCreatingNewInstitution").val("false");
+    });
 
     $('#institution').change(function() {
         $("#otherInstitution").val("");
@@ -25,7 +40,7 @@ $(document).ready(function() {
 function checkFormErrors() {
     var errorCount = $('#opportunityRequestEditForm .alert-error').length;
     if (errorCount > 0){
-       $('#opportunityRequestEditForm').prepend('<div id="info-section" class="alert alert-error"><i class="icon-warning-sign"></i>You have some errors in the form</div>')
+       $('#opportunityRequestEditForm').prepend('<div id="info-section" class="alert alert-error"><i class="icon-warning-sign"></i>You have some errors in the form</div>');
     } else {
         if ($('#info-section').length > 0) {
           $('#info-section').remove();  

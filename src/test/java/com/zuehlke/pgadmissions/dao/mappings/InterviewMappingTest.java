@@ -62,7 +62,7 @@ public class InterviewMappingTest extends AutomaticRollbackTestCase{
         interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com")
                 .username("brady").password("password").accountNonExpired(false).accountNonLocked(false)
                 .credentialsNonExpired(false).enabled(false).build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a12").domicileCode("AE").enabled(true).build();
         program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
         application = new ApplicationFormBuilder().program(program).applicant(user).build();
         save(user, institution, program, interviewerUser, application);

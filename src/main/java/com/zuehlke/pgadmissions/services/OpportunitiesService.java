@@ -48,8 +48,8 @@ public class OpportunitiesService {
         Program program = opportunityRequest.getSourceProgram();
         RegisteredUser author = opportunityRequest.getAuthor();
 
-        if (!opportunityRequestDAO.findByProgramAndStatus(program, OpportunityRequestStatus.NEW).isEmpty()) {
-            throw new RuntimeException("Cannot create new opprotunity request if there is already a new one. Program: " + program);
+        if (program != null && !opportunityRequestDAO.findByProgramAndStatus(program, OpportunityRequestStatus.NEW).isEmpty()) {
+            throw new RuntimeException("Cannot create new opprotunity request for a program if there is already a new one. Program: " + program);
         }
 
         if (createAuthorUser) {

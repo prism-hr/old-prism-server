@@ -45,16 +45,28 @@
   </div>
 </div>
 
+<input type="hidden" id="forceCreatingNewInstitution" name="forceCreatingNewInstitution" value="${opportunityRequest.forceCreatingNewInstitution?c}" />
+
 <div class="row">
   <label id="lbl-otherInstitutionProviderName" class="plain-label" for="otherInstitutionProviderName">Please Specify</label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
   <div class="field">
     <input readonly disabled="disabled" id="otherInstitution" name="otherInstitution" class="full" type="text" value="${(opportunityRequest.otherInstitution?html)!}" />
     <@spring.bind "opportunityRequest.otherInstitution" />
-    <#list spring.status.errorMessages as error>
-      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-        ${error}
-      </div>
+    <#list spring.status.errorCodes as error>
+      <#if error == "institution.did.you.mean">
+        <div id="didYouMeanInstitutionDiv" class="alert alert-error"> <i class="icon-warning-sign"></i>
+            Did you mean:
+            <#list spring.status.errorMessages[error_index]?split("::") as suggestion>
+                <a name="didYouMeanInstitutionButtonYes">${suggestion?html}</a><#if suggestion_has_next>,<#else>.</#if>
+            </#list>
+            <a name="didYouMeanInstitutionButtonNo">Use original</a>.
+        </div>
+      <#else>
+        <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+          ${spring.status.errorMessages[error_index]}
+        </div>
+      </#if>
     </#list>
   </div>
 </div>

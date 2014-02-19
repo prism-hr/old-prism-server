@@ -176,7 +176,7 @@ function checkToDisable() {
     }
 
     otherInstitutionCheck();
-
+    
     $('select.selectpicker').selectpicker('refresh');
 }
 
@@ -469,8 +469,7 @@ function updateProgramSection(map) {
 
     $("[name=programAdvertAtasRequired][value=" + map["atasRequired"] + "]").prop("checked", true);
 
-    $("#programAdvertInstitutionCountry").val(map["institutionCountryCode"]);
-    $("#programAdvertInstitutionCountry").selectpicker('refresh');
+    $("#programAdvertInstitutionCountry").selectpicker('val', map["institutionCountryCode"]);
     getInstitutionData(function() {
         $("#programAdvertInstitution").val(map["institutionCode"]);
     });
@@ -514,7 +513,6 @@ function updateProgramSection(map) {
     } else {
         $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').prop("readonly", true).attr("disabled", "disabled");
     }
-    $('.selectpicker').selectpicker('refresh');
 }
 
 function bindSaveButtonAction() {
@@ -672,9 +670,9 @@ function saveAdvert() {
 
 function clearAdvert() {
     $("[name=programAdvertAtasRequired]").prop("checked", false);
-    $("#institutionGroup select, #institutionGroup input, #advertGroup input, #advertGroup textarea, #advertGroup select, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply").val('');
+    $("#institutionGroup input, #advertGroup input, #advertGroup textarea, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply").val('');
     $("#programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo").prop('checked', false);
-    $('.selectpicker').selectpicker('refresh');
+    $('#institutionGroup select, #advertGroup select').selectpicker("val", "");
     tinyMCE.get('programAdvertDescriptionText').setContent('');
     tinyMCE.get('programAdvertFundingText').setContent('');
 }

@@ -25,71 +25,71 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping("/download")
 public class FileDownloadController {
 
-	private final DocumentService documentService;
-	private final ReferenceService referenceService;
-	private final UserService userService;
-	private final EncryptionHelper encryptionHelper;
+    private final DocumentService documentService;
+    private final ReferenceService referenceService;
+    private final UserService userService;
+    private final EncryptionHelper encryptionHelper;
 
-	FileDownloadController() {
-		this(null, null, null, null);
-	}
+    FileDownloadController() {
+        this(null, null, null, null);
+    }
 
-	@Autowired
-	public FileDownloadController(DocumentService documentService, ReferenceService referenceService, UserService userService, EncryptionHelper encryptionHelper) {
-		this.documentService = documentService;
-		this.referenceService = referenceService;
-		this.userService = userService;
-		this.encryptionHelper = encryptionHelper;
+    @Autowired
+    public FileDownloadController(DocumentService documentService, ReferenceService referenceService, UserService userService, EncryptionHelper encryptionHelper) {
+        this.documentService = documentService;
+        this.referenceService = referenceService;
+        this.userService = userService;
+        this.encryptionHelper = encryptionHelper;
 
-	}
+    }
 
-	@RequestMapping(method = RequestMethod.GET)
-	public void downloadApplicationDocument(@RequestParam("documentId") String encryptedDocumentId, HttpServletResponse response) throws IOException {
-		Document document = documentService.getDocumentById(encryptionHelper.decryptToInteger(encryptedDocumentId));
-		if (DocumentType.REFERENCE == document.getType()) {
-			throw new ResourceNotFoundException();
-		}
+    @RequestMapping(method = RequestMethod.GET)
+    public void downloadApplicationDocument(@RequestParam("documentId") String encryptedDocumentId, HttpServletResponse response) throws IOException {
+        Document document = documentService.getDocumentById(encryptionHelper.decryptToInteger(encryptedDocumentId));
+        if (document == null || DocumentType.REFERENCE == document.getType()) {
+            throw new ResourceNotFoundException();
+        }
 
-		sendDocument(response, document);
-	}
+        sendDocument(response, document);
+    }
 
-	@RequestMapping(value = "/reference", method = RequestMethod.GET)
-	public void downloadReferenceDocument(@RequestParam("referenceId") String encryptedReferenceId, HttpServletResponse response) throws IOException {
-		ReferenceComment reference = referenceService.getReferenceById(encryptionHelper.decryptToInteger(encryptedReferenceId));
-		RegisteredUser currentUser =userService.getCurrentUser();
-		if (reference == null || reference.getDocuments() == null || !currentUser.canSeeReference(reference)) {
-			throw new ResourceNotFoundException();
-		}
-		Document document = reference.getDocuments().get(0);
+    @RequestMapping(value = "/reference", method = RequestMethod.GET)
+    public void downloadReferenceDocument(@RequestParam("referenceId") String encryptedReferenceId, HttpServletResponse response) throws IOException {
+        ReferenceComment reference = referenceService.getReferenceById(encryptionHelper.decryptToInteger(encryptedReferenceId));
+        RegisteredUser currentUser = userService.getCurrentUser();
+        if (reference == null || reference.getDocuments() == null || !currentUser.canSeeReference(reference)) {
+            throw new ResourceNotFoundException();
+        }
+        Document document = reference.getDocuments().get(0);
 
-		sendDocument(response, document);
+        sendDocument(response, document);
 
-	}
+    }
 
-	private void sendDocument(HttpServletResponse response, Document document) throws IOException {
-		response.setHeader("Expires", "0");
-		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
-		response.setHeader("Pragma", "public");
-		response.setHeader("Content-Disposition", "inline; filename=\"" + document.getFileName() + "\"");
-		response.setContentType("application/pdf");
-		response.setContentLength(document.getContent().length);
-		OutputStream out = response.getOutputStream();
-		try {
-			out.write(document.getContent());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			try {
-				out.flush();
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				out.close();
-			} catch (Exception e) {
-				// ignore
-			}
-		}
-	}
+    private void sendDocument(HttpServletResponse response, Document document) throws IOException {
+        response.setHeader("Expires", "0");
+        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+        response.setHeader("Pragma", "public");
+        response.setHeader("Content-Disposition", "inline; filename=\"" + document.getFileName() + "\"");
+        response.setContentType("application/pdf");
+        response.setContentLength(document.getContent().length);
+        OutputStream out = response.getOutputStream();
+        try {
+            out.write(document.getContent());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                out.flush();
+            } catch (Exception e) {
+                // ignore
+            }
+            try {
+                out.close();
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+    }
 
 }

@@ -171,7 +171,7 @@ public class ApprovalServiceTest {
         approvalService.moveApplicationToApproval(applicationForm, approvalRound, user);
         verify(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, userServiceMock, applicationFormUserRoleService);
 
-        ApprovalComment approvalComment = approvalCommentCapture.getValue();
+        Comment approvalComment = approvalCommentCapture.getValue();
 
         assertTrue(approvalComment.getProjectDescriptionAvailable());
         assertEquals("abstract", approvalComment.getProjectAbstract());

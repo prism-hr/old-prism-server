@@ -7,8 +7,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +38,6 @@ import org.hibernate.annotations.GenerationTime;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Entity(name = "APPLICATION_FORM")
@@ -66,10 +63,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "rejection_id")
     private Rejection rejection;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_form_id")
-    private List<Event> events = new ArrayList<Event>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -189,18 +182,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "reject_notification_date")
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date rejectNotificationDate;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "latest_review_round_id")
-    private ReviewRound latestReviewRound;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "latest_interview_id")
-    private Interview latestInterview;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "latest_approval_round_id")
-    private ApprovalRound latestApprovalRound;
 
     @Column(name = "ip_address")
     private byte[] ipAddress;
@@ -564,15 +545,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return status == enumStatus;
     }
 
-    public List<Event> getEvents() {
-        return events;
-    }
-
-    public void setEvents(List<Event> events) {
-        this.events.clear();
-        this.events.addAll(events);
-    }
-
     @Override
     public int compareTo(ApplicationForm appForm) {
 
@@ -596,45 +568,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.interviews = interviews;
     }
 
-    public Interview getLatestInterview() {
-        return latestInterview;
-    }
-
-    public void setLatestInterview(Interview latestInterview) {
-        this.latestInterview = latestInterview;
-    }
-
     public List<ReviewRound> getReviewRounds() {
         return reviewRounds;
     }
 
     public void setReviewRounds(List<ReviewRound> reviewRound) {
         this.reviewRounds = reviewRound;
-    }
-
-    public ReviewRound getLatestReviewRound() {
-        return latestReviewRound;
-    }
-
-    public void setLatestReviewRound(ReviewRound latestReviewRound) {
-        this.latestReviewRound = latestReviewRound;
-    }
-
-    public List<StateChangeEvent> getStateChangeEventsSortedByDate() {
-        ArrayList<StateChangeEvent> stateChangeEvents = new ArrayList<StateChangeEvent>();
-        Comparator<StateChangeEvent> dateComparator = new Comparator<StateChangeEvent>() {
-            @Override
-            public int compare(StateChangeEvent event1, StateChangeEvent event2) {
-                return event1.getDate().compareTo(event2.getDate());
-            }
-        };
-        for (Event event : events) {
-            if (event instanceof StateChangeEvent) {
-                stateChangeEvents.add((StateChangeEvent) event);
-            }
-        }
-        Collections.sort(stateChangeEvents, dateComparator);
-        return stateChangeEvents;
     }
 
     public Rejection getRejection() {
@@ -651,14 +590,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public void setApprovalRounds(List<ApprovalRound> approvalRounds) {
         this.approvalRounds = approvalRounds;
-    }
-
-    public ApprovalRound getLatestApprovalRound() {
-        return latestApprovalRound;
-    }
-
-    public void setLatestApprovalRound(ApprovalRound latestApprovalRound) {
-        this.latestApprovalRound = latestApprovalRound;
     }
 
     public RegisteredUser getApplicationAdministrator() {

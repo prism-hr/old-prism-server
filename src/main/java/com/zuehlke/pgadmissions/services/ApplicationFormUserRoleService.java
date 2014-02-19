@@ -20,8 +20,8 @@ import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
-import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -232,12 +232,12 @@ public class ApplicationFormUserRoleService {
         assignToAdministrators(application, ApplicationFormAction.COMPLETE_INTERVIEW_STAGE, application.getDueDate(), true);
     }
 
-    public void movedToApprovalStage(ApprovalRound approvalRound) {
-        ApplicationForm applicationForm = approvalRound.getApplication();
+    public void movedToApprovalStage(Comment approvalComment) {
+        ApplicationForm applicationForm = approvalComment.getApplication();
         deassignFromStateBoundedWorkers(applicationForm);
 
-        Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
-        createApplicationFormUserRole(approvalRound.getApplication(), primarySupervisor.getUser(), Authority.SUPERVISOR, false,
+        CommentAssignedUser primarySupervisor = approvalComment.getPrimaryAssignedUser();
+        createApplicationFormUserRole(applicationForm, primarySupervisor.getUser(), Authority.SUPERVISOR, false,
                 new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION), new Date(), false, true));
 
         assignToAdministrators(applicationForm, ApplicationFormAction.COMPLETE_APPROVAL_STAGE, applicationForm.getDueDate(), true);
@@ -348,17 +348,19 @@ public class ApplicationFormUserRoleService {
 
     }
 
-    public void supervisionConfirmed(Supervisor supervisor) {
-        ApprovalRound approval = supervisor.getApprovalRound();
-        ApplicationForm application = approval.getApplication();
+    public void supervisionConfirmed(SupervisionConfirmationComment comment) {
+        // TODO use comment instead of supervisor
 
-        ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, supervisor.getUser(),
-                Authority.SUPERVISOR);
-        setInterestedInApplication(application, supervisor.getUser(), supervisor.getConfirmedSupervision());
-
-        applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
-
-        resetActionDeadline(application, new Date());
+        // ApprovalRound approval = supervisor.getApprovalRound();
+        // ApplicationForm application = approval.getApplication();
+        //
+        // ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, supervisor.getUser(),
+        // Authority.SUPERVISOR);
+        // setInterestedInApplication(application, supervisor.getUser(), supervisor.getConfirmedSupervision());
+        //
+        // applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
+        //
+        // resetActionDeadline(application, new Date());
 
     }
 

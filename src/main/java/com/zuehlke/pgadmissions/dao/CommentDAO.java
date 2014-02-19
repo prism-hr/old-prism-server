@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -88,5 +89,10 @@ public class CommentDAO {
                         .add(Restrictions.ge("r.internal", "afao.internal")))
                 .addOrder(Order.desc("createdTimestamp"))
                 .list();
+    }
+
+    public List<CommentAssignedUser> getNotDecliningSupervisorsFromLatestApprovalStage(ApplicationForm application) {
+        // TODO implement
+        return null;
     }
 }

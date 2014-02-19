@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalComment;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -83,8 +84,8 @@ public class ApprovalCommentBuilder {
         return this;
     }
 
-    public ApprovalComment build() {
-        ApprovalComment approvalComment = new ApprovalComment();
+    public Comment build() {
+        Comment approvalComment = new ApprovalComment();
         approvalComment.setApplication(applicationForm);
         approvalComment.setComment(comment);
         approvalComment.setType(commentType);

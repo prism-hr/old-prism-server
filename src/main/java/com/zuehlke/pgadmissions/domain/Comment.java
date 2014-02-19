@@ -65,7 +65,7 @@ public class Comment implements Serializable {
     @JoinColumn(name = "user_id")
     private RegisteredUser user;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id")
     private Set<CommentAssignedUser> assignedUsers;
 
@@ -131,11 +131,8 @@ public class Comment implements Serializable {
     @Column(name = "rating")
     private Integer rating;
 
-    @Column(name = "instructions_to_interviewee")
-    private String instructionsToInterviewee;
-
-    @Column(name = "instructions_to_interviewer")
-    private String instructionsToInterviewer;
+    @Column(name = "interview_instructions")
+    private String interviewInstructions;
 
     @Column(name = "location_url")
     private String locationUrl;
@@ -163,6 +160,10 @@ public class Comment implements Serializable {
 
     @Column(name = "use_custom_reference_questions")
     private Boolean useCustomReferenceQuestions;
+
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500)
+    @Column(name = "missing_qualification_explanation")
+    private String missingQualificationExplanation;
 
     @Transient
     private Boolean confirmNextStage;
@@ -319,20 +320,12 @@ public class Comment implements Serializable {
         this.rating = rating;
     }
 
-    public String getInstructionsToInterviewee() {
-        return instructionsToInterviewee;
+    public String getInterviewInstructions() {
+        return interviewInstructions;
     }
 
-    public void setInstructionsToInterviewee(String instructionsToInterviewee) {
-        this.instructionsToInterviewee = instructionsToInterviewee;
-    }
-
-    public String getInstructionsToInterviewer() {
-        return instructionsToInterviewer;
-    }
-
-    public void setInstructionsToInterviewer(String instructionsToInterviewer) {
-        this.instructionsToInterviewer = instructionsToInterviewer;
+    public void setInterviewInstructions(String interviewInstructions) {
+        this.interviewInstructions = interviewInstructions;
     }
 
     public String getLocationUrl() {
@@ -407,6 +400,14 @@ public class Comment implements Serializable {
         this.confirmNextStage = confirmNextStage;
     }
 
+    public String getMissingQualificationExplanation() {
+        return missingQualificationExplanation;
+    }
+
+    public void setMissingQualificationExplanation(String missingQualificationExplanation) {
+        this.missingQualificationExplanation = missingQualificationExplanation;
+    }
+
     public List<Document> getDocuments() {
         return documents;
     }
@@ -415,11 +416,20 @@ public class Comment implements Serializable {
         return scores;
     }
 
+    public Set<CommentAssignedUser> getAssignedUsers() {
+        return assignedUsers;
+    }
+
     public void addDocument(Document document) {
         if (document != null) {
             document.setIsReferenced(true);
             this.documents.add(document);
         }
+    }
+    
+    public void setDocument(Document document) {
+        this.documents.clear();
+        addDocument(document);
     }
 
     public boolean isAtLeastOneAnswerUnsure() {
@@ -429,6 +439,24 @@ public class Comment implements Serializable {
 
     public String getTooltipMessage(final String role) {
         return String.format("%s %s (%s) as: %s", user.getFirstName(), user.getLastName(), user.getEmail(), StringUtils.capitalize(role));
+    }
+
+    public CommentAssignedUser getPrimaryAssignedUser() {
+        for (CommentAssignedUser user : getAssignedUsers()) {
+            if (user.isPrimary()) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public CommentAssignedUser getSecondaryAssignedUser() {
+        for (CommentAssignedUser user : getAssignedUsers()) {
+            if (!user.isPrimary()) {
+                return user;
+            }
+        }
+        return null;
     }
 
 }

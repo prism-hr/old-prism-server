@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
@@ -69,5 +70,23 @@ public class CommentDAO {
                 .addOrder(Order.desc("date"))
                 .setMaxResults(1)
                 .uniqueResult();
+    }
+
+    public List<Comment> getVisibleComments(RegisteredUser user, ApplicationForm applicationForm) {
+        // TODO amend and add tests
+        return sessionFactory.getCurrentSession().createCriteria(Comment.class)
+                .createAlias("application", "a")
+                .createAlias("applicationFormUserRoles", "afur")
+                .createAlias("afur.actions", "afar")
+                .createAlias("role", "r")
+                .createAlias("role.actions", "afao")
+                .add(Restrictions.eq("application", applicationForm))
+                .add(Restrictions.eq("afur.user", user))
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.eq("user", user))
+                        .add(Restrictions.ge("r.internal", "afur.internal"))
+                        .add(Restrictions.ge("r.internal", "afao.internal")))
+                .addOrder(Order.desc("createdTimestamp"))
+                .list();
     }
 }

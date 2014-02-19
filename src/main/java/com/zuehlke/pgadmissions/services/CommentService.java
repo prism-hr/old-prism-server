@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,9 +13,13 @@ import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
+import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Service
@@ -34,21 +40,9 @@ public class CommentService {
     public void save(Comment comment) {
         commentDAO.save(comment);
     }
-
-    public Comment getReviewById(int id) {
-        return commentDAO.get(id);
-    }
-
-    public List<ReviewComment> getReviewCommentsDueNotification() {
-        return commentDAO.getReviewCommentsDueNotification();
-    }
-
-    public List<InterviewComment> getInterviewCommentsDueNotification() {
-        return commentDAO.getInterviewCommentsDueNotification();
-    }
-
-    public List<Comment> getAllComments() {
-        return commentDAO.getAllComments();
+    
+    public List<Comment> getVisibleComments(RegisteredUser user, ApplicationForm applicationForm) {
+        return commentDAO.getVisibleComments(user, applicationForm);
     }
 
     public void declineReview(RegisteredUser user, ApplicationForm application) {
@@ -57,7 +51,7 @@ public class CommentService {
             return;
         }
 
-        ReviewComment reviewComment = getNewReviewComment();
+        ReviewComment reviewComment = new ReviewComment();
         reviewComment.setApplication(application);
         reviewComment.setUser(user);
         reviewComment.setDecline(true);
@@ -68,11 +62,4 @@ public class CommentService {
         save(reviewComment);
     }
 
-    public Comment getNewGenericComment() {
-        return new Comment();
-    }
-
-    public ReviewComment getNewReviewComment() {
-        return new ReviewComment();
-    }
 }

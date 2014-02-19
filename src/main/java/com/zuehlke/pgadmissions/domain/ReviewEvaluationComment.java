@@ -1,24 +1,12 @@
 package com.zuehlke.pgadmissions.domain;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
-@Entity(name="REVIEW_EVALUATION_COMMENT")
-public class ReviewEvaluationComment extends StateChangeComment {
+@Entity
+@DiscriminatorValue(value = "COMPLETE_REVIEW_STAGE")
+public class ReviewEvaluationComment extends Comment {
 
-	private static final long serialVersionUID = 2184172372328153404L;
-	
-	@ManyToOne(fetch = FetchType.LAZY) 
-	@JoinColumn(name="review_round_id")
-	private ReviewRound reviewRound = null;
+    private static final long serialVersionUID = 2184172372328153404L;
 
-	public ReviewRound getReviewRound() {
-		return reviewRound;
-	}
-
-	public void setReviewRound(ReviewRound reviewRound) {
-		this.reviewRound = reviewRound;
-	}
 }

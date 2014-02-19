@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
@@ -33,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -47,25 +47,28 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 public class ApplicationFormUserRoleService {
 
     private final ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
-    
+
+    private final ApplicationsService applicationsService;
+
     private final ActionDAO actionDAO;
 
     private final RoleDAO roleDAO;
 
     private final UserDAO userDAO;
-    
+
     private final EncryptionUtils encryptionUtils;
 
     private final Map<ApplicationFormStatus, ApplicationFormAction> initiateStageMap = Maps.newHashMap();
 
     public ApplicationFormUserRoleService() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
-    public ApplicationFormUserRoleService(ApplicationFormUserRoleDAO applicationFormUserRoleDAO, ActionDAO actionDAO, RoleDAO roleDAO, 
-            UserDAO userDAO, EncryptionUtils encryptionUtils) {
+    public ApplicationFormUserRoleService(ApplicationFormUserRoleDAO applicationFormUserRoleDAO, ApplicationsService applicationsService, ActionDAO actionDAO,
+            RoleDAO roleDAO, UserDAO userDAO, EncryptionUtils encryptionUtils) {
         this.applicationFormUserRoleDAO = applicationFormUserRoleDAO;
+        this.applicationsService = applicationsService;
         this.actionDAO = actionDAO;
         this.roleDAO = roleDAO;
         this.userDAO = userDAO;
@@ -76,9 +79,9 @@ public class ApplicationFormUserRoleService {
         initiateStageMap.put(ApplicationFormStatus.APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
         initiateStageMap.put(ApplicationFormStatus.REJECTED, ApplicationFormAction.CONFIRM_REJECTION);
     }
-    
+
     public void applicationCreated(ApplicationForm applicationForm) {
-    	createApplicationFormUserRole(applicationForm, applicationForm.getApplicant(), Authority.APPLICANT, false);
+        createApplicationFormUserRole(applicationForm, applicationForm.getApplicant(), Authority.APPLICANT, false);
     }
 
     public void applicationSubmitted(ApplicationForm applicationForm) {
@@ -106,7 +109,7 @@ public class ApplicationFormUserRoleService {
                 userToSaveAsSuggestedSupervisor.getRoles().add(roleDAO.getRoleByAuthority(Authority.SUGGESTEDSUPERVISOR));
                 userDAO.save(userToSaveAsSuggestedSupervisor);
             }
-            
+
             createApplicationFormUserRole(applicationForm, userToSaveAsSuggestedSupervisor, Authority.SUGGESTEDSUPERVISOR, true);
         }
     }
@@ -115,32 +118,34 @@ public class ApplicationFormUserRoleService {
         deassignFromStateBoundedWorkers(application);
 
         for (Referee referee : application.getReferees()) {
-            createApplicationFormUserRole(application, referee.getUser(), Authority.REFEREE, false, 
-            		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_REFERENCE), new Date(), false, true));
+            createApplicationFormUserRole(application, referee.getUser(), Authority.REFEREE, false,
+                    new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_REFERENCE), new Date(), false, true));
         }
 
         Boolean anyUnsure = application.getValidationComment().isAtLeastOneAnswerUnsure();
         List<RegisteredUser> admitters = userDAO.getAdmitters();
-        List<ApplicationFormUserRole> superadministratorRoles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.SUPERADMINISTRATOR);
-        
+        List<ApplicationFormUserRole> superadministratorRoles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application,
+                Authority.SUPERADMINISTRATOR);
+
         if (BooleanUtils.isTrue(anyUnsure)) {
-        	for (RegisteredUser admitter : admitters) {
-                createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false, 
-                		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_ELIGIBILITY), new Date(), false, true));		
-        	}
-        	for (ApplicationFormUserRole superadministratorRole : superadministratorRoles) {
-        		superadministratorRole.getActions().add(new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_ELIGIBILITY), new Date(), false, true));
-        		superadministratorRole.setRaisesUrgentFlag(true);
-        	}
+            for (RegisteredUser admitter : admitters) {
+                createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false,
+                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_ELIGIBILITY), new Date(), false, true));
+            }
+            for (ApplicationFormUserRole superadministratorRole : superadministratorRoles) {
+                superadministratorRole.getActions().add(
+                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_ELIGIBILITY), new Date(), false, true));
+                superadministratorRole.setRaisesUrgentFlag(true);
+            }
         } else {
-        	for (RegisteredUser admitter : admitters) {
+            for (RegisteredUser admitter : admitters) {
                 createApplicationFormUserRole(application, admitter, Authority.ADMITTER, false);
-        	}
+            }
         }
-        
+
     }
 
-    public void stateChanged(StateChangeComment stateChangeComment) {
+    public void stateChanged(Comment stateChangeComment) {
         ApplicationForm application = stateChangeComment.getApplication();
 
         deassignFromStateBoundedWorkers(application);
@@ -154,23 +159,30 @@ public class ApplicationFormUserRoleService {
 
         if (nextStatus == ApplicationFormStatus.APPROVED) {
             for (RegisteredUser approver : approvers) {
-                createApplicationFormUserRole(application, approver, Authority.APPROVER, false, 
-                		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION), new Date(), false, true), 
-                		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE), new Date(),
-                        false, true));
+                createApplicationFormUserRole(
+                        application,
+                        approver,
+                        Authority.APPROVER,
+                        false,
+                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION), new Date(), false, true),
+                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE), new Date(), false, true));
             }
 
             for (RegisteredUser superAdministrator : userDAO.getSuperadministrators()) {
-                createApplicationFormUserRole(application, superAdministrator, Authority.SUPERADMINISTRATOR, false, 
-                		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION), new Date(), false, true), 
-                		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE), new Date(), false, true));
+                createApplicationFormUserRole(
+                        application,
+                        superAdministrator,
+                        Authority.SUPERADMINISTRATOR,
+                        false,
+                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION), new Date(), false, true),
+                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE), new Date(), false, true));
             }
         }
 
         else if (application.getStatus() == ApplicationFormStatus.APPROVAL && nextStatus != null) {
             for (RegisteredUser approver : approvers) {
                 createApplicationFormUserRole(application, approver, Authority.APPROVER, false,
-                        new ApplicationFormActionRequired(actionDAO.getActionById(initiateStageMap.get(nextStatus)), new Date(), false, true), 
+                        new ApplicationFormActionRequired(actionDAO.getActionById(initiateStageMap.get(nextStatus)), new Date(), false, true),
                         new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE), new Date(), false, true));
             }
         }
@@ -182,8 +194,8 @@ public class ApplicationFormUserRoleService {
         deassignFromStateBoundedWorkers(application);
 
         for (Reviewer reviewer : reviewRound.getReviewers()) {
-            createApplicationFormUserRole(reviewRound.getApplication(), reviewer.getUser(), Authority.REVIEWER, false, 
-            		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_REVIEW), new Date(), false, true));
+            createApplicationFormUserRole(reviewRound.getApplication(), reviewer.getUser(), Authority.REVIEWER, false, new ApplicationFormActionRequired(
+                    actionDAO.getActionById(ApplicationFormAction.PROVIDE_REVIEW), new Date(), false, true));
         }
 
         assignToAdministrators(application, ApplicationFormAction.COMPLETE_REVIEW_STAGE, application.getDueDate(), true);
@@ -200,15 +212,21 @@ public class ApplicationFormUserRoleService {
             for (InterviewParticipant participant : interview.getParticipants()) {
                 Boolean isApplicant = participant.getUser().getId().equals(application.getApplicant().getId());
                 Authority authority = isApplicant ? Authority.APPLICANT : Authority.INTERVIEWER;
-                createApplicationFormUserRole(application, participant.getUser(), authority, false, 
-                		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY), new Date(), false, true));
+                createApplicationFormUserRole(application, participant.getUser(), authority, false,
+                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY), new Date(), false,
+                                true));
             }
         } else {
             for (Interviewer interviewer : interview.getInterviewers()) {
                 Boolean raisesUrgentFlag = interview.getInterviewDueDate().before(new Date());
 
-                createApplicationFormUserRole(application, interviewer.getUser(), Authority.INTERVIEWER, false, 
-                		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK), interview.getInterviewDueDate(), false, raisesUrgentFlag));
+                createApplicationFormUserRole(
+                        application,
+                        interviewer.getUser(),
+                        Authority.INTERVIEWER,
+                        false,
+                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK), interview
+                                .getInterviewDueDate(), false, raisesUrgentFlag));
             }
         }
         assignToAdministrators(application, ApplicationFormAction.COMPLETE_INTERVIEW_STAGE, application.getDueDate(), true);
@@ -226,14 +244,16 @@ public class ApplicationFormUserRoleService {
 
         List<RegisteredUser> approvers = applicationForm.getProgram().getApprovers();
         for (RegisteredUser approver : approvers) {
-            createApplicationFormUserRole(applicationForm, approver, Authority.APPROVER, false, 
-            		new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.COMPLETE_APPROVAL_STAGE), applicationForm.getDueDate(), true, false));
+            createApplicationFormUserRole(applicationForm, approver, Authority.APPROVER, false,
+                    new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.COMPLETE_APPROVAL_STAGE), applicationForm.getDueDate(),
+                            true, false));
         }
     }
 
     public void admitterCommentPosted(AdmitterComment comment) {
         ApplicationForm application = comment.getApplication();
-        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.ADMITTER, Authority.SUPERADMINISTRATOR);
+        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.ADMITTER,
+                Authority.SUPERADMINISTRATOR);
         for (ApplicationFormUserRole role : roles) {
             applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
         }
@@ -241,9 +261,9 @@ public class ApplicationFormUserRoleService {
 
     public void referencePosted(Referee referee) {
         ApplicationForm application = referee.getApplication();
-        ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, referee.getUser(), Authority.REFEREE);     
+        ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, referee.getUser(), Authority.REFEREE);
         if (role != null) {
-        	applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
+            applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
         }
     }
 
@@ -253,7 +273,7 @@ public class ApplicationFormUserRoleService {
         ReviewComment review = reviewer.getReview();
 
         ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, reviewer.getUser(), Authority.REVIEWER);
-        setInterestedInApplication(application, reviewer.getUser(), review.getWillingToInterview() || review.getWillingToWorkWithApplicant());
+        setInterestedInApplication(application, reviewer.getUser(), review.getWillingToInterview() || review.getWillingToSupervise());
 
         applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
 
@@ -303,7 +323,9 @@ public class ApplicationFormUserRoleService {
 
             if (!isApplicant) {
                 Date dateNow = new Date();
-                role.getActions().add(new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK), dateNow, false, interview.getInterviewDueDate().before(dateNow)));
+                role.getActions().add(
+                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK), dateNow, false, interview
+                                .getInterviewDueDate().before(dateNow)));
             }
         }
         assignToAdministrators(application, ApplicationFormAction.COMPLETE_INTERVIEW_STAGE, application.getDueDate(), true);
@@ -378,7 +400,7 @@ public class ApplicationFormUserRoleService {
             applicationFormUserRole.setRaisesUpdateFlag(false);
         }
     }
-    
+
     public void updateRaisesUrgentFlag() {
         applicationFormUserRoleDAO.updateRaisesUrgentFlag();
     }
@@ -401,8 +423,7 @@ public class ApplicationFormUserRoleService {
                 applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
                 applicationFormUserRole.setRaisesUpdateFlag(true);
             }
-            
-            
+
         }
 
         applicationFormUserRole.setInterestedInApplicant(interestedInApplicant);
@@ -430,18 +451,18 @@ public class ApplicationFormUserRoleService {
         for (RegisteredUser administrator : applicationForm.getProgram().getAdministrators()) {
             administrators.put(administrator, Authority.ADMINISTRATOR);
         }
-        
+
         Project project = applicationForm.getProject();
         if (project != null) {
-        	administrators.put(project.getPrimarySupervisor(), Authority.PROJECTADMINISTRATOR);
-        	
-        	RegisteredUser projectAdministrator = project.getAdministrator();
+            administrators.put(project.getPrimarySupervisor(), Authority.PROJECTADMINISTRATOR);
+
+            RegisteredUser projectAdministrator = project.getAdministrator();
             if (projectAdministrator != null) {
                 administrators.put(projectAdministrator, Authority.PROJECTADMINISTRATOR);
             }
         }
 
-        StateChangeComment latestStateChangeComment = applicationForm.getLatestStateChangeComment();    
+        Comment latestStateChangeComment = applicationsService.getLatestStateChangeComment(applicationForm, null);
         if (latestStateChangeComment != null) {
             RegisteredUser stateAdministrator = latestStateChangeComment.getDelegateAdministrator();
             if (stateAdministrator != null) {
@@ -456,7 +477,8 @@ public class ApplicationFormUserRoleService {
             requiredActions.add(new ApplicationFormActionRequired(actionDAO.getActionById(action), dueDate, bindDeadlineToDueDate, raisesUrgentFlag));
 
             if (initiateStageMap.containsValue(action)) {
-                requiredActions.add(new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE), dueDate, bindDeadlineToDueDate, raisesUrgentFlag));
+                requiredActions.add(new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE), dueDate,
+                        bindDeadlineToDueDate, raisesUrgentFlag));
             }
 
             createApplicationFormUserRole(applicationForm, administrator.getKey(), administrator.getValue(), false,
@@ -471,11 +493,11 @@ public class ApplicationFormUserRoleService {
     private void resetActionDeadline(ApplicationForm applicationForm, Date deadlineTimestamp) {
         applicationFormUserRoleDAO.updateApplicationFormActionRequiredDeadline(applicationForm, deadlineTimestamp);
     }
-    
+
     private void setInterestedInApplication(ApplicationForm applicationForm, RegisteredUser registeredUser, Boolean interested) {
-    	for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByApplicationFormAndUser(applicationForm, registeredUser)) {
-    		applicationFormUserRole.setInterestedInApplicant(interested);
-    	}
+        for (ApplicationFormUserRole applicationFormUserRole : applicationFormUserRoleDAO.findByApplicationFormAndUser(applicationForm, registeredUser)) {
+            applicationFormUserRole.setInterestedInApplicant(interested);
+        }
     }
 
 }

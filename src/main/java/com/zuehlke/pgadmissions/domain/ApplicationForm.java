@@ -424,38 +424,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.contactAddress = contactAddress;
     }
 
-    public List<Comment> getVisibleComments(RegisteredUser user) {
-        ArrayList<Comment> returnList = new ArrayList<Comment>();
-        if (user.isInRole(Authority.APPLICANT)) {
-            for (Comment comment : applicationComments) {
-                if (comment instanceof InterviewVoteComment && comment.getUser().getId().equals(user.getId())) {
-                    returnList.add(comment);
-                } else if (comment instanceof InterviewScheduleComment) {
-                    returnList.add(comment);
-                }
-            }
-        }
-
-        if (user.isRefereeOfApplicationForm(this) && !user.hasStaffRightsOnApplicationForm(this)) {
-            for (Comment comment : applicationComments) {
-                if (comment instanceof ReferenceComment && ((ReferenceComment) comment).getReferee().getUser().getId().equals(user.getId())) {
-                    returnList.add(comment);
-                }
-            }
-            Collections.sort(returnList);
-            return returnList;
-        }
-
-        if (user.hasStaffRightsOnApplicationForm(this) || user.isApplicationAdministrator(this) || user.isViewerOfProgramme(this, user)
-                || user.isInRole(Authority.ADMITTER)) {
-            returnList.addAll(applicationComments);
-            Collections.sort(returnList);
-            return returnList;
-        }
-
-        return returnList;
-    }
-
     public boolean shouldOpenFirstSection() {
         return isNull(programmeDetails, personalDetails, currentAddress, contactAddress, personalStatement, cv, additionalInformation)
                 && isEmpty(fundings, referees, employmentPositions, qualifications);
@@ -975,18 +943,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             }
         }
         return validationComment;
-    }
-
-    public StateChangeComment getLatestStateChangeComment() {
-        List<Comment> commentsReversed = Lists.reverse(getApplicationComments());
-        StateChangeComment stateChangeComment = null;
-        for (Comment comment : commentsReversed) {
-            if (comment instanceof StateChangeComment) {
-                stateChangeComment = (StateChangeComment) comment;
-                break;
-            }
-        }
-        return stateChangeComment;
     }
 
     public OfferRecommendedComment getOfferRecommendedComment() {

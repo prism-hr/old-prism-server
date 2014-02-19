@@ -1,26 +1,12 @@
 package com.zuehlke.pgadmissions.domain;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
-@Entity(name="APPROVAL_EVALUATION_COMMENT")
-public class ApprovalEvaluationComment extends StateChangeComment {
+@Entity
+@DiscriminatorValue(value = "COMPLETE_APPROVAL_STAGE")
+public class ApprovalEvaluationComment extends Comment {
 
-	private static final long serialVersionUID = 2184172372328153404L;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="approval_id")
-	private ApprovalRound approvalRound = null;
+    private static final long serialVersionUID = 2184172372328153404L;
 
-	public ApprovalRound getApprovalRound() {
-		return approvalRound;
-	}
-
-	public void setApprovalRound(ApprovalRound approvalRound) {
-		this.approvalRound = approvalRound;
-	}
-
-	
 }

@@ -33,20 +33,14 @@ import com.zuehlke.pgadmissions.dto.TimelineReference;
 @Transactional
 public class TimelineService {
 
-	private final UserService userService;
-
-	public TimelineService() {
-		this(null);
-	}
-
-	@Autowired
-	public TimelineService(UserService userService) {
-		this.userService = userService;
-
-	}
-
+    @Autowired
+	private UserService userService;
+	
+    @Autowired
+	private CommentService commentService;
+	
 	private void addCommentsToCorrectPhaseExcludingEligibility(ApplicationForm applicationForm, List<TimelinePhase> phases, Set<Comment> loadedComments) {
-		List<Comment> visibleComments = applicationForm.getVisibleComments(userService.getCurrentUser());
+		List<Comment> visibleComments = commentService.getVisibleComments(userService.getCurrentUser(), applicationForm);
 		for (Comment comment : visibleComments) {
 			for (TimelinePhase phase : phases) {
 				if (CommentType.REFERENCE != comment.getType() && comment.getDate().compareTo(phase.getEventDate()) >= 0 

@@ -1,26 +1,12 @@
 package com.zuehlke.pgadmissions.domain;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
-@Entity(name="INTERVIEW_EVALUATION_COMMENT")
-public class InterviewEvaluationComment extends StateChangeComment {
+@Entity
+@DiscriminatorValue(value = "COMPLETE_INTERVIEW_STAGE")
+public class InterviewEvaluationComment extends Comment {
 
-	private static final long serialVersionUID = 2184172372328153404L;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="interview_id")
-	private Interview interview = null;
+    private static final long serialVersionUID = 2184172372328153404L;
 
-	public Interview getInterview() {
-		return interview;
-	}
-
-	public void setInterview(Interview interview) {
-		this.interview = interview;
-	}
-
-	
 }

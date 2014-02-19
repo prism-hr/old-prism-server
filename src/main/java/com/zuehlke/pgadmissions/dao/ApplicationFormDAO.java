@@ -17,11 +17,13 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Repository
@@ -133,16 +135,17 @@ public class ApplicationFormDAO {
     }
 
     public ApplicationForm getPreviousApplicationForApplicant(ApplicationForm applicationForm) {
-        DetachedCriteria previousAppCriteria = DetachedCriteria.forClass(ApplicationForm.class)
-                .setProjection(Projections.max("applicationTimestamp"))
-                .add(Restrictions.eq("applicant", applicationForm.getApplicant()))
-                .add(Restrictions.ne("id", applicationForm.getId()));
+        DetachedCriteria previousAppCriteria = DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.max("applicationTimestamp"))
+                .add(Restrictions.eq("applicant", applicationForm.getApplicant())).add(Restrictions.ne("id", applicationForm.getId()));
 
-        int latestApplication = (Integer) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .setProjection(Projections.max("id"))
+        int latestApplication = (Integer) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).setProjection(Projections.max("id"))
                 .add(Property.forName("applicationTimestamp").eq(previousAppCriteria)).uniqueResult();
-        
+
         return get(latestApplication);
+    }
+
+    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ApplicationFormAction completeStageAction) {
+        return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class).uniqueResult();
     }
 
 }

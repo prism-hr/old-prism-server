@@ -21,7 +21,7 @@ public class AdmitterCommentValidator extends AbstractValidator {
             if (comment.getQualifiedForPhd() == null) {
                 errors.rejectValue("qualifiedForPhd", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }
-            if (comment.getEnglishCompentencyOk() == null) {
+            if (comment.getEnglishCompetencyOk() == null) {
                 errors.rejectValue("englishCompentencyOk", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }
             if (comment.getHomeOrOverseas() == null) {

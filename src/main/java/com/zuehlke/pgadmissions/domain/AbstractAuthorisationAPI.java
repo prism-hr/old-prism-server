@@ -183,17 +183,6 @@ public abstract class AbstractAuthorisationAPI {
         return isSupervisorInApprovalRound(form.getLatestApprovalRound(), user);
     }
 
-    public boolean isApplicationAdministrator(final ApplicationForm form, final RegisteredUser user) {
-    	List<Comment> comments = form.getApplicationComments();
-    	for (Comment comment : comments) {
-    		if (comment instanceof StateChangeComment &&
-    				areEqual(((StateChangeComment) comment).getDelegateAdministrator(), user)) {
-    			return true;
-    		}
-    	}
-    	return false;    
-    }
-
     public boolean isApplicant(final ApplicationForm form, final RegisteredUser user) {
         return areEqual(user, form.getApplicant());
     }

@@ -4,10 +4,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -17,6 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -27,11 +34,18 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.IndexColumn;
 
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
+import com.zuehlke.pgadmissions.validators.ATASConstraint;
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "COMMENT")
-@Inheritance(strategy = InheritanceType.JOINED)
-public class Comment implements Comparable<Comment>, Serializable {
+@Entity
+@Table(name = "COMMENT")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "action_id", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue(value = "COMMENT")
+public class Comment implements Serializable {
 
     private static final long serialVersionUID = 2861325991249900547L;
 
@@ -39,52 +53,126 @@ public class Comment implements Comparable<Comment>, Serializable {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "created_timestamp", insertable = false)
-    @Generated(GenerationTime.INSERT)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
-    private List<Document> documents = new ArrayList<Document>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_form_id")
+    private ApplicationForm application;
 
     @Size(max = 50000, message = "A maximum of 50000 characters are allowed.")
     @Lob
-    private String comment;
+    private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private RegisteredUser user;
+
+    @OneToMany
+    @JoinColumn(name = "comment_id")
+    private Set<CommentAssignedUser> assignedUsers;
+
+    @Column(name = "created_timestamp", insertable = false)
+    @Generated(GenerationTime.INSERT)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdTimestamp;
+
+    @OneToMany
+    @JoinColumn(name = "comment_id")
+    private List<Document> documents = new ArrayList<Document>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id")
     @IndexColumn(name = "score_position")
     private List<Score> scores = new ArrayList<Score>();
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id")
-    private List<StateChangeComment> stateChangeComments = new ArrayList<StateChangeComment>();
+
+    @Column(name = "qualified_for_phd")
+    private ValidationQuestionOptions qualifiedForPhd;
+
+    @Column(name = "english_competency_ok")
+    private ValidationQuestionOptions englishCompetencyOk;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "home_or_overseas")
+    private HomeOrOverseas homeOrOverseas;
+
+    @Column(name = "project_description_available")
+    private Boolean projectDescriptionAvailable;
+
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
+    @Column(name = "project_title")
+    private String projectTitle;
+
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 2000)
+    @ATASConstraint
+    @Column(name = "project_abstract")
+    private String projectAbstract;
+
+    @Temporal(value = TemporalType.DATE)
+    @Column(name = "recommended_start_date")
+    private Date recommendedStartDate;
+
+    @Column(name = "recommended_conditions_available")
+    private Boolean recommendedConditionsAvailable;
+
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 1000)
+    @Column(name = "recommended_conditions")
+    private String recommendedConditions;
+
+    @Column(name = "suitable_for_institution")
+    private Boolean suitableForInstitution;
+
+    @Column(name = "suitable_for_programme")
+    private Boolean suitableForProgramme;
+
+    @Column(name = "willing_to_interview")
+    private Boolean willingToInterview;
+
+    @Column(name = "willing_to_supervise")
+    private Boolean willingToSupervise;
+
+    @Column(name = "rating")
+    private Integer rating;
+
+    @Column(name = "instructions_to_interviewee")
+    private String instructionsToInterviewee;
+
+    @Column(name = "instructions_to_interviewer")
+    private String instructionsToInterviewer;
+
+    @Column(name = "location_url")
+    private String locationUrl;
+
+    @Column(name = "declined")
+    private Boolean declined;
+
+    @Column(name = "recommend_alternative_opportunity")
+    private Boolean recommendAlternativeOpportunity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private RegisteredUser user = null;
+    @JoinColumn(name = "next_status")
+    private ApplicationFormStatus nextStatus = null;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_form_id")
-    private ApplicationForm application = null;
+    @JoinColumn(name = "delegate_provider_id")
+    private RegisteredUser delegateProvider;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delegate_administrator_id")
+    private RegisteredUser delegateAdministrator;
+
+    @Column(name = "use_custom_questions")
+    private Boolean useCustomQuestions;
+
+    @Column(name = "use_custom_reference_questions")
+    private Boolean useCustomReferenceQuestions;
 
     @Transient
     private Boolean confirmNextStage;
 
-    public String getComment() {
-        return comment;
+    public Integer getId() {
+        return id;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public RegisteredUser getUser() {
-        return user;
-    }
-
-    public void setUser(RegisteredUser user) {
-        this.user = user;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public ApplicationForm getApplication() {
@@ -95,54 +183,220 @@ public class Comment implements Comparable<Comment>, Serializable {
         this.application = application;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public String getContent() {
+        return content;
     }
 
-    public Integer getId() {
-        return id;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public Date getDate() {
-        return date;
+    public RegisteredUser getUser() {
+        return user;
     }
 
-    public void setDate(Date createdTimestamp) {
-        this.date = createdTimestamp;
+    public void setUser(RegisteredUser user) {
+        this.user = user;
     }
 
-    public CommentType getType() {
-        return CommentType.GENERIC;
+    public Date getCreatedTimestamp() {
+        return createdTimestamp;
     }
 
-    @Override
-    public int compareTo(Comment otherComment) {
-        int dateComparison = otherComment.getDate().compareTo(this.date);
-        if (dateComparison != 0) {
-            return dateComparison;
-        }
-        return otherComment.getId().compareTo(id);
+    public void setCreatedTimestamp(Date createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
     }
 
-    public List<Document> getDocuments() {
-        return documents;
+    public ValidationQuestionOptions getQualifiedForPhd() {
+        return qualifiedForPhd;
     }
 
-    public void setDocuments(List<Document> documents) {
-        if (documents != null) {
-            for (Document document : documents) {
-                document.setIsReferenced(true);
-            }
-        }
-        this.documents = documents;
+    public void setQualifiedForPhd(ValidationQuestionOptions qualifiedForPhd) {
+        this.qualifiedForPhd = qualifiedForPhd;
     }
 
-    public List<Score> getScores() {
-        return scores;
+    public ValidationQuestionOptions getEnglishCompetencyOk() {
+        return englishCompetencyOk;
     }
 
-    public void setScores(List<Score> scores) {
-        this.scores = scores;
+    public void setEnglishCompetencyOk(ValidationQuestionOptions englishCompetencyOk) {
+        this.englishCompetencyOk = englishCompetencyOk;
+    }
+
+    public HomeOrOverseas getHomeOrOverseas() {
+        return homeOrOverseas;
+    }
+
+    public void setHomeOrOverseas(HomeOrOverseas homeOrOverseas) {
+        this.homeOrOverseas = homeOrOverseas;
+    }
+
+    public Boolean getProjectDescriptionAvailable() {
+        return projectDescriptionAvailable;
+    }
+
+    public void setProjectDescriptionAvailable(Boolean projectDescriptionAvailable) {
+        this.projectDescriptionAvailable = projectDescriptionAvailable;
+    }
+
+    public String getProjectTitle() {
+        return projectTitle;
+    }
+
+    public void setProjectTitle(String projectTitle) {
+        this.projectTitle = projectTitle;
+    }
+
+    public String getProjectAbstract() {
+        return projectAbstract;
+    }
+
+    public void setProjectAbstract(String projectAbstract) {
+        this.projectAbstract = projectAbstract;
+    }
+
+    public Date getRecommendedStartDate() {
+        return recommendedStartDate;
+    }
+
+    public void setRecommendedStartDate(Date recommendedStartDate) {
+        this.recommendedStartDate = recommendedStartDate;
+    }
+
+    public Boolean getRecommendedConditionsAvailable() {
+        return recommendedConditionsAvailable;
+    }
+
+    public void setRecommendedConditionsAvailable(Boolean recommendedConditionsAvailable) {
+        this.recommendedConditionsAvailable = recommendedConditionsAvailable;
+    }
+
+    public String getRecommendedConditions() {
+        return recommendedConditions;
+    }
+
+    public void setRecommendedConditions(String recommendedConditions) {
+        this.recommendedConditions = recommendedConditions;
+    }
+
+    public Boolean getSuitableForInstitution() {
+        return suitableForInstitution;
+    }
+
+    public void setSuitableForInstitution(Boolean suitableForInstitution) {
+        this.suitableForInstitution = suitableForInstitution;
+    }
+
+    public Boolean getSuitableForProgramme() {
+        return suitableForProgramme;
+    }
+
+    public void setSuitableForProgramme(Boolean suitableForProgramme) {
+        this.suitableForProgramme = suitableForProgramme;
+    }
+
+    public Boolean getWillingToInterview() {
+        return willingToInterview;
+    }
+
+    public void setWillingToInterview(Boolean willingToInterview) {
+        this.willingToInterview = willingToInterview;
+    }
+
+    public Boolean getWillingToSupervise() {
+        return willingToSupervise;
+    }
+
+    public void setWillingToSupervise(Boolean willingToSupervise) {
+        this.willingToSupervise = willingToSupervise;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public String getInstructionsToInterviewee() {
+        return instructionsToInterviewee;
+    }
+
+    public void setInstructionsToInterviewee(String instructionsToInterviewee) {
+        this.instructionsToInterviewee = instructionsToInterviewee;
+    }
+
+    public String getInstructionsToInterviewer() {
+        return instructionsToInterviewer;
+    }
+
+    public void setInstructionsToInterviewer(String instructionsToInterviewer) {
+        this.instructionsToInterviewer = instructionsToInterviewer;
+    }
+
+    public String getLocationUrl() {
+        return locationUrl;
+    }
+
+    public void setLocationUrl(String locationUrl) {
+        this.locationUrl = locationUrl;
+    }
+
+    public Boolean getDeclined() {
+        return declined;
+    }
+
+    public void setDeclined(Boolean declined) {
+        this.declined = declined;
+    }
+
+    public Boolean getRecommendAlternativeOpportunity() {
+        return recommendAlternativeOpportunity;
+    }
+
+    public void setRecommendAlternativeOpportunity(Boolean recommendAlternativeOpportunity) {
+        this.recommendAlternativeOpportunity = recommendAlternativeOpportunity;
+    }
+
+    public ApplicationFormStatus getNextStatus() {
+        return nextStatus;
+    }
+
+    public void setNextStatus(ApplicationFormStatus nextStatus) {
+        this.nextStatus = nextStatus;
+    }
+
+    public RegisteredUser getDelegateProvider() {
+        return delegateProvider;
+    }
+
+    public void setDelegateProvider(RegisteredUser delegateProvider) {
+        this.delegateProvider = delegateProvider;
+    }
+
+    public RegisteredUser getDelegateAdministrator() {
+        return delegateAdministrator;
+    }
+
+    public void setDelegateAdministrator(RegisteredUser delegateAdministrator) {
+        this.delegateAdministrator = delegateAdministrator;
+    }
+
+    public Boolean getUseCustomQuestions() {
+        return useCustomQuestions;
+    }
+
+    public void setUseCustomQuestions(Boolean useCustomQuestions) {
+        this.useCustomQuestions = useCustomQuestions;
+    }
+
+    public Boolean getUseCustomReferenceQuestions() {
+        return useCustomReferenceQuestions;
+    }
+
+    public void setUseCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
+        this.useCustomReferenceQuestions = useCustomReferenceQuestions;
     }
 
     public Boolean getConfirmNextStage() {
@@ -153,11 +407,28 @@ public class Comment implements Comparable<Comment>, Serializable {
         this.confirmNextStage = confirmNextStage;
     }
 
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public List<Score> getScores() {
+        return scores;
+    }
+
+    public void addDocument(Document document) {
+        if (document != null) {
+            document.setIsReferenced(true);
+            this.documents.add(document);
+        }
+    }
+
+    public boolean isAtLeastOneAnswerUnsure() {
+        return getHomeOrOverseas() == HomeOrOverseas.UNSURE || getQualifiedForPhd() == ValidationQuestionOptions.UNSURE
+                || getEnglishCompetencyOk() == ValidationQuestionOptions.UNSURE;
+    }
+
     public String getTooltipMessage(final String role) {
         return String.format("%s %s (%s) as: %s", user.getFirstName(), user.getLastName(), user.getEmail(), StringUtils.capitalize(role));
     }
-    
-    public List<StateChangeComment> getStateChangeComment() {
-    	return stateChangeComments;
-    }
+
 }

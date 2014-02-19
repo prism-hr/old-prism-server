@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -144,14 +145,14 @@ public class StateTransitionController {
         String action = stateChangeDTO.getAction();
 
         if (action != null) {
-        	StateChangeComment latestStateChangeComment = null;
+        	Comment latestStateChangeComment = null;
         	
         	if (applicationForm.getStatus() == ApplicationFormStatus.VALIDATION) {
         		ValidationComment validationComment = applicationForm.getValidationComment();
         		stateChangeDTO.setQualifiedForPhd(validationComment.getQualifiedForPhd());
-        		stateChangeDTO.setEnglishCompentencyOk(validationComment.getEnglishCompentencyOk());
+        		stateChangeDTO.setEnglishCompentencyOk(validationComment.getEnglishCompetencyOk());
         		stateChangeDTO.setHomeOrOverseas(validationComment.getHomeOrOverseas());
-        		latestStateChangeComment = (StateChangeComment) validationComment;  
+        		latestStateChangeComment = validationComment;  
         	} else {
         		latestStateChangeComment = applicationForm.getLatestStateChangeComment();
         	}
@@ -271,15 +272,15 @@ public class StateTransitionController {
     	ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
     	RegisteredUser registeredUser = stateChangeDTO.getRegisteredUser();
     	ApplicationFormStatus status = applicationForm.getStatus();
-    	StateChangeComment stateChangeComment = null;
+    	Comment stateChangeComment = null;
     	
     	switch (status) {
 	    	case VALIDATION:
 	    		ValidationComment validationComment = new ValidationComment();
 	    		validationComment.setQualifiedForPhd(stateChangeDTO.getQualifiedForPhd());
-	    		validationComment.setEnglishCompentencyOk(stateChangeDTO.getEnglishCompentencyOk());
+	    		validationComment.setEnglishCompetencyOk(stateChangeDTO.getEnglishCompentencyOk());
 	    		validationComment.setHomeOrOverseas(stateChangeDTO.getHomeOrOverseas());
-	    		stateChangeComment = (StateChangeComment) validationComment;
+	    		stateChangeComment = validationComment;
 	    		boolean useCustomReferenceQuestions = convertNullOrBooleanToBoolean(stateChangeDTO.getUseCustomReferenceQuestions());
                 stateChangeComment.setUseCustomReferenceQuestions(useCustomReferenceQuestions);
                 setUseCustomQuestions(stateChangeComment, stateChangeDTO);

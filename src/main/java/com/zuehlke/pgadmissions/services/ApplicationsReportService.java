@@ -21,7 +21,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
 import com.google.visualization.datasource.base.TypeMismatchException;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
@@ -34,7 +33,6 @@ import com.ibm.icu.util.TimeZone;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Interview;
@@ -54,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.utils.MathUtils;
@@ -199,7 +198,7 @@ public class ApplicationsReportService {
                 String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
                 Program program = app.getProgram();
                 ProgrammeDetails programmeDetails = app.getProgrammeDetails();
-                ValidationComment validationComment = getLatestvalidationComment(app);
+                ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(ApplicationFormAction.COMPLETE_VALIDATION_STAGE);
                 int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
                 int[] referenceEndorsements = getNumberOfPositiveAndNegativeReferenceEndorsements(app);
                 int[] reviewEndorsements = getNumberOfPositiveAndNegativeReviewEndorsements(app);
@@ -268,7 +267,7 @@ public class ApplicationsReportService {
                     row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
                     row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
                     row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
-                    row.addCell(validationComment != null ? validationComment.getEnglishCompentencyOk().getDisplayValue() : StringUtils.EMPTY);
+                    row.addCell(validationComment != null ? validationComment.getEnglishCompetencyOk().getDisplayValue() : StringUtils.EMPTY);
 
                     // reference report
                     row.addCell(receivedAndDeclinedReferences[0]);
@@ -358,14 +357,6 @@ public class ApplicationsReportService {
         return millisSum / 3600000; // convert to hours
     }
 
-    private ValidationComment getLatestvalidationComment(ApplicationForm app) {
-        List<Comment> comments = app.getApplicationComments();
-        List<ValidationComment> validationComments = Lists.newArrayList(Iterables.filter(comments, ValidationComment.class));
-        validationComments = Ordering.natural().reverse().sortedCopy(validationComments);
-        return Iterables.getFirst(validationComments, null);
-
-    }
-
     private String getSuggestedSupervisors(ProgrammeDetails programmeDetails) {
         List<SuggestedSupervisor> supervisors = programmeDetails.getSuggestedSupervisors();
         String supervisorsString = Joiner.on(", ").join(Iterables.transform(supervisors, new Function<SuggestedSupervisor, String>() {
@@ -408,9 +399,9 @@ public class ApplicationsReportService {
                     endorsements[1]++;
                 }
 
-                if (BooleanUtils.isTrue(reference.getSuitableForUCL())) {
+                if (BooleanUtils.isTrue(reference.getSuitableForInstitution())) {
                     endorsements[0]++;
-                } else if (BooleanUtils.isFalse(reference.getSuitableForUCL())) {
+                } else if (BooleanUtils.isFalse(reference.getSuitableForInstitution())) {
                     endorsements[1]++;
                 }
             }
@@ -428,10 +419,10 @@ public class ApplicationsReportService {
             if (reviewer.getReview() != null) {
                 ReviewComment comment = reviewer.getReview();
                 Boolean[] answers = new Boolean[4];
-                answers[0] = comment.getSuitableCandidateForProgramme();
-                answers[1] = comment.getSuitableCandidateForUcl();
+                answers[0] = comment.getSuitableForProgramme();
+                answers[1] = comment.getSuitableForInstitution();
                 answers[2] = comment.getWillingToInterview();
-                answers[3] = comment.getWillingToWorkWithApplicant();
+                answers[3] = comment.getWillingToSupervise();
 
                 for (Boolean answer : answers) {
                     if (BooleanUtils.isTrue(answer)) {
@@ -468,15 +459,15 @@ public class ApplicationsReportService {
         for (Interviewer interviewer : interview.getInterviewers()) {
             if (interviewer.getInterviewComment() != null) {
                 InterviewComment comment = interviewer.getInterviewComment();
-                if (BooleanUtils.isTrue(comment.getSuitableCandidateForProgramme())) {
+                if (BooleanUtils.isTrue(comment.getSuitableForProgramme())) {
                     endorsements[0]++;
-                } else if (BooleanUtils.isFalse(comment.getSuitableCandidateForProgramme())) {
+                } else if (BooleanUtils.isFalse(comment.getSuitableForProgramme())) {
                     endorsements[1]++;
                 }
 
-                if (BooleanUtils.isTrue(comment.getSuitableCandidateForUcl())) {
+                if (BooleanUtils.isTrue(comment.getSuitableForInstitution())) {
                     endorsements[0]++;
-                } else if (BooleanUtils.isFalse(comment.getSuitableCandidateForUcl())) {
+                } else if (BooleanUtils.isFalse(comment.getSuitableForInstitution())) {
                     endorsements[1]++;
                 }
             }

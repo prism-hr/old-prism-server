@@ -250,39 +250,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldSaveAndLoadEventsWithApplication() throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-        StateChangeEvent eventOne = new StateChangeEventBuilder().date(simpleDateFormat.parse("01 12 2011 14:09:26")).newStatus(ApplicationFormStatus.REJECTED)
-                .build();
-        StateChangeEvent eventTwo = new StateChangeEventBuilder().date(simpleDateFormat.parse("03 12 2011 14:09:26"))
-                .newStatus(ApplicationFormStatus.UNSUBMITTED).build();
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).events(eventOne, eventTwo).build();
-
-        save(application);
-        Integer eventOneId = eventOne.getId();
-        assertNotNull(eventOneId);
-        assertNotNull(eventTwo.getId());
-        flushAndClearSession();
-
-        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(2, reloadedApplication.getEvents().size());
-
-        assertTrue(listContainsId(eventOne, reloadedApplication.getEvents()));
-        assertTrue(listContainsId(eventTwo, reloadedApplication.getEvents()));
-
-        eventOne = (StateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, eventOneId);
-        reloadedApplication.getEvents().remove(eventOne);
-        save(reloadedApplication);
-        flushAndClearSession();
-
-        reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(1, reloadedApplication.getEvents().size());
-        assertTrue(listContainsId(eventTwo, reloadedApplication.getEvents()));
-
-        assertNull(sessionFactory.getCurrentSession().get(StateChangeEvent.class, eventOneId));
-    }
-
-    @Test
     public void shouldLoadInterviewsForApplicationForm() throws ParseException, InterruptedException {
 
         ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
@@ -304,24 +271,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertTrue(listContainsId(interviewOne, reloadedApplication.getInterviews()));
         assertTrue(listContainsId(interviewTwo, reloadedApplication.getInterviews()));
         assertTrue(listContainsId(interviewTrhee, reloadedApplication.getInterviews()));
-    }
-
-    @Test
-    public void shouldSaveAndLoadLatestInterview() throws ParseException, InterruptedException {
-
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
-        save(application);
-
-        Interview interview = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).build()).application(application).build();
-        save(interview);
-
-        application.setLatestInterview(interview);
-        save(application);
-
-        flushAndClearSession();
-
-        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(interview.getId(), reloadedApplication.getLatestInterview().getId());
     }
 
     @Test
@@ -347,25 +296,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertTrue(listContainsId(reviewRoundOne, reloadedApplication.getReviewRounds()));
         assertTrue(listContainsId(reviewRoundTwo, reloadedApplication.getReviewRounds()));
         assertTrue(listContainsId(reviewRoundTrhee, reloadedApplication.getReviewRounds()));
-    }
-
-    @Test
-    public void shouldSaveAndLoadLatestReviewRound() throws ParseException, InterruptedException {
-
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
-        save(application);
-
-        ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).build()).application(application).build();
-        save(reviewRound);
-
-        application.setLatestReviewRound(reviewRound);
-        save(application);
-
-        flushAndClearSession();
-
-        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-
-        assertEquals(reviewRound.getId(), reloadedApplication.getLatestReviewRound().getId());
     }
 
     @Test
@@ -462,15 +392,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     private boolean listContainsId(Comment comment, List<Comment> comments) {
         for (Comment entry : comments) {
             if (entry.getId().equals(comment.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean listContainsId(StateChangeEvent event, List<Event> events) {
-        for (Event entry : events) {
-            if (entry.getId().equals(event.getId())) {
                 return true;
             }
         }

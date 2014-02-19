@@ -205,9 +205,12 @@ public class EditApplicationFormAsProgrammeAdminController {
 
             
             ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
-            Referee referee = newComment.getReferee();
-            applicationsService.refresh(applicationForm);
-            refereeService.refresh(referee);
+            
+            // TODO obtain referee (can be created new one)
+            Referee referee = null;
+//            Referee referee = newComment.getReferee();
+//            applicationsService.refresh(applicationForm);
+//            refereeService.refresh(referee);
 
             applicationsService.save(applicationForm);
             applicationFormUserRoleService.referencePosted(referee);

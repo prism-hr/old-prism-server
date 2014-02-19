@@ -25,7 +25,9 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.controllers.workflow.EditApplicationFormAsProgrammeAdminController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -66,30 +68,37 @@ import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
 @Controller
 @RequestMapping("/approval")
 public class ApprovalController extends EditApplicationFormAsProgrammeAdminController {
-
+    
+    // TODO change approvalRound to approvalComment
     private static final String PROPOSE_OFFER_RECOMMENDATION_SECTION = "/private/staff/supervisors/propose_offer_recommendation";
     private static final String PORTICO_VALIDATION_SECTION = "/private/staff/supervisors/portico_validation_section";
     private static final String APPROVAL_PAGE = "/private/staff/supervisors/approval_details";
     private static final String QUALIFICATION_SECTION = "/private/staff/supervisors/components/qualification_portico_validation";
     private static final String REFERENCE_SECTION = "/private/staff/supervisors/components/reference_portico_validation";
 
-    private final ApprovalRoundValidator approvalRoundValidator;
+    @Autowired
+    private ApprovalRoundValidator approvalRoundValidator;
 
-    private final SupervisorPropertyEditor supervisorPropertyEditor;
+    @Autowired
+    private SupervisorPropertyEditor supervisorPropertyEditor;
 
-    private final ApprovalService approvalService;
+    @Autowired
+    private ApprovalService approvalService;
 
-    private final GenericCommentValidator commentValidator;
+    @Autowired
+    private GenericCommentValidator commentValidator;
 
-    private final QualificationService qualificationService;
+    @Autowired
+    private QualificationService qualificationService;
 
-    private final SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator;
+    @Autowired
+    private SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator;
 
-    private final DatePropertyEditor datePropertyEditor;
+    @Autowired
+    private DatePropertyEditor datePropertyEditor;
 
-    public ApprovalController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-    }
+    @Autowired
+    private ApplicationsService applicationsService;
 
     @InitBinder(value = "sendToPorticoData")
     public void registerSendToPorticoData(WebDataBinder binder) {
@@ -97,45 +106,25 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         binder.registerCustomEditor(List.class, sendToPorticoDataDTOEditor);
     }
 
-    @Autowired
-    public ApprovalController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
-            ApprovalRoundValidator approvalRoundValidator, SupervisorPropertyEditor supervisorPropertyEditor, DocumentPropertyEditor documentPropertyEditor,
-            GenericCommentValidator commentValidator, RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, QualificationService qualificationService,
-            RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-            SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, DomicileService domicileService,
-            DomicilePropertyEditor domicilePropertyEditor, MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser,
-            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormUserRoleService applicationFormUserRoleService,
-            ActionsProvider actionsProvider) {
-        super(userService, applicationsService, documentPropertyEditor, refereeService, refereesAdminEditDTOValidator, sendToPorticoDataDTOEditor,
-                encryptionHelper, messageSource, scoringDefinitionParser, scoresPropertyEditor, scoreFactory, domicileService, domicilePropertyEditor,
-                applicationFormUserRoleService, actionsProvider);
-        this.approvalService = approvalService;
-        this.approvalRoundValidator = approvalRoundValidator;
-        this.supervisorPropertyEditor = supervisorPropertyEditor;
-        this.commentValidator = commentValidator;
-        this.qualificationService = qualificationService;
-        this.sendToPorticoDataDTOValidator = sendToPorticoDataDTOValidator;
-        this.datePropertyEditor = datePropertyEditor;
-    }
-
     @RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
     public String getMoveToApprovalPage(ModelMap modelMap, @RequestParam(required = false) String action) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser registeredUser = (RegisteredUser) modelMap.get("user");
-        
+
         actionsProvider.validateAction(applicationForm, registeredUser, ApplicationFormAction.ASSIGN_SUPERVISORS);
-        
+
         modelMap.put("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
 
-        if (applicationForm.getLatestApprovalRound() != null) {
+        Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
+        if (latestApprovalComment != null) {
             SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();
             porticoData.setApplicationNumber(applicationForm.getApplicationNumber());
             porticoData.setQualificationsSendToPortico(applicationForm.getQualicationsToSendToPorticoIds());
             porticoData.setRefereesSendToPortico(applicationForm.getRefereesToSendToPorticoIds());
-            porticoData.setEmptyQualificationsExplanation(applicationForm.getLatestApprovalRound().getMissingQualificationExplanation());
+            porticoData.setEmptyQualificationsExplanation(latestApprovalComment.getMissingQualificationExplanation());
             modelMap.put("sendToPorticoData", porticoData);
         }
-        
+
         applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, registeredUser);
         return APPROVAL_PAGE;
     }
@@ -147,21 +136,21 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             throw new MissingApplicationFormException(applicationId);
         }
         return applicationForm;
-    }  
+    }
 
     @ModelAttribute("approvalRound")
     public ApprovalRound getApprovalRound(String applicationId) {
-       return approvalService.initiateApprovalRound(applicationId);
+        return approvalService.initiateApprovalRound(applicationId);
     }
-    
-    @ModelAttribute("usersInterestedInApplication") 
-    public List<RegisteredUser> getUsersInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
+
+    @ModelAttribute("usersInterestedInApplication")
+    public List<RegisteredUser> getUsersInterestedInApplication(@RequestParam String applicationId) {
+        return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
-    
-    @ModelAttribute("usersPotentiallyInterestedInApplication") 
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
+
+    @ModelAttribute("usersPotentiallyInterestedInApplication")
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
+        return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
     }
 
     @ModelAttribute("explanation")
@@ -190,7 +179,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
-    public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound, BindingResult bindingResult,
+    public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalComment") ApprovalComment approvalComment, BindingResult bindingResult,
             SessionStatus sessionStatus) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser initiator = getCurrentUser();
@@ -200,7 +189,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             return PROPOSE_OFFER_RECOMMENDATION_SECTION;
         }
 
-        approvalService.moveApplicationToApproval(applicationForm, approvalRound, initiator);
+        approvalService.moveApplicationToApproval(applicationForm, approvalComment, initiator);
         sessionStatus.setComplete();
         return "/private/common/ajax_OK";
     }
@@ -271,9 +260,13 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             }
 
             ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
-            Referee referee = newComment.getReferee();
-            applicationsService.refresh(applicationForm);
-            refereeService.refresh(referee);
+            // TODO get referee and refresh it, or do sth without refreshing 
+            
+            refereeService.getRefereeById(refereesAdminEditDTO.getEditedRefereeId());
+            
+//            Referee referee = newComment.getReferee();
+//            applicationsService.refresh(applicationForm);
+//            refereeService.refresh(referee);
 
             applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
             applicationsService.save(applicationForm);
@@ -298,5 +291,5 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
         return null;
     }
-    
+
 }

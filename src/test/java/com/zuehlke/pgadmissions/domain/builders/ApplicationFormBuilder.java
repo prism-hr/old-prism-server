@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
-import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -43,7 +42,6 @@ public class ApplicationFormBuilder {
     private Date batchDeadline;
     private Date dueDate;
     private Boolean acceptedTerms;
-    private List<Event> events = new ArrayList<Event>();
     private List<Qualification> qualifications = new ArrayList<Qualification>();
     private List<Referee> referees = new ArrayList<Referee>();
     private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
@@ -57,9 +55,6 @@ public class ApplicationFormBuilder {
     private List<ApprovalRound> approvalRounds = new ArrayList<ApprovalRound>();
     private List<Interview> interviews = new ArrayList<Interview>();
     private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
-    private Interview latestInterview;
-    private ReviewRound latestReviewRound;
-    private ApprovalRound latestApprovalRound;
     private Rejection rejection;
     private RegisteredUser applicationAdministrator;
     private String applicationNumber;
@@ -92,21 +87,6 @@ public class ApplicationFormBuilder {
 
     public ApplicationFormBuilder rejection(Rejection rejection) {
         this.rejection = rejection;
-        return this;
-    }
-
-    public ApplicationFormBuilder latestReviewRound(ReviewRound latestReviewRound) {
-        this.latestReviewRound = latestReviewRound;
-        return this;
-    }
-
-    public ApplicationFormBuilder latestInterview(Interview latestInterview) {
-        this.latestInterview = latestInterview;
-        return this;
-    }
-
-    public ApplicationFormBuilder latestApprovalRound(ApprovalRound latestApprovalRound) {
-        this.latestApprovalRound = latestApprovalRound;
         return this;
     }
 
@@ -199,13 +179,6 @@ public class ApplicationFormBuilder {
     public ApplicationFormBuilder qualification(Qualification... qualifications) {
         for (Qualification qual : qualifications) {
             this.qualifications.add(qual);
-        }
-        return this;
-    }
-
-    public ApplicationFormBuilder events(Event... events) {
-        for (Event event : events) {
-            this.events.add(event);
         }
         return this;
     }
@@ -317,7 +290,6 @@ public class ApplicationFormBuilder {
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
         application.setProgram(program);
-        application.setEvents(events);
         application.setProjectTitle(projectTitle);
         application.setStatus(status);
         application.setAdditionalInformation(info);
@@ -326,10 +298,7 @@ public class ApplicationFormBuilder {
         application.getApplicationComments().addAll(comments);
         application.getInterviews().addAll(interviews);
         application.getApprovalRounds().addAll(approvalRounds);
-        application.setLatestInterview(latestInterview);
         application.setReviewRounds(reviewRounds);
-        application.setLatestApprovalRound(latestApprovalRound);
-        application.setLatestReviewRound(latestReviewRound);
         application.setRejection(rejection);
         application.setApplicationAdministrator(applicationAdministrator);
         application.setApplicationNumber(applicationNumber);

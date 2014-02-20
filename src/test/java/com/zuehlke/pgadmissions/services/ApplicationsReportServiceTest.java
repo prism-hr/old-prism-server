@@ -62,6 +62,7 @@ import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
 public class ApplicationsReportServiceTest {
@@ -84,7 +85,7 @@ public class ApplicationsReportServiceTest {
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
-        DataTable dataTable = service.getApplicationsReport(user, filtering);
+        DataTable dataTable = service.getApplicationsReport(user, filtering, ReportFormat.STANDARD);
         EasyMock.verify(applicationsServiceMock);
 
         // THEN
@@ -106,7 +107,7 @@ public class ApplicationsReportServiceTest {
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
-        DataTable table = service.getApplicationsReport(user, filtering);
+        DataTable table = service.getApplicationsReport(user, filtering, ReportFormat.STANDARD);
         EasyMock.verify(applicationsServiceMock);
 
         // THEN
@@ -204,7 +205,7 @@ public class ApplicationsReportServiceTest {
 
         // WHEN
         EasyMock.replay(applicationsServiceMock, applicantRatingServiceMock);
-        DataTable table = service.getApplicationsReport(user, filtering);
+        DataTable table = service.getApplicationsReport(user, filtering, ReportFormat.STANDARD);
         EasyMock.verify(applicationsServiceMock, applicantRatingServiceMock);
 
         // THEN
@@ -302,7 +303,7 @@ public class ApplicationsReportServiceTest {
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
-        DataTable table = service.getApplicationsReport(user, filtering);
+        DataTable table = service.getApplicationsReport(user, filtering, ReportFormat.STANDARD);
         EasyMock.verify(applicationsServiceMock);
 
         // THEN
@@ -314,7 +315,8 @@ public class ApplicationsReportServiceTest {
         user = new RegisteredUser();
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
         applicantRatingServiceMock = EasyMock.createMock(ApplicantRatingService.class);
-        service = new ApplicationsReportService(applicationsServiceMock, applicantRatingServiceMock);
+        String testHost = "testhost";
+        service = new ApplicationsReportService(testHost, applicationsServiceMock, applicantRatingServiceMock);
     }
 
     public String getTextValue(DataTable table, TableRow row, String columnId) {

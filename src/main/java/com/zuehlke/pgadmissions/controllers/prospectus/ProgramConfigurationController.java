@@ -25,14 +25,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -60,7 +58,6 @@ import freemarker.template.TemplateException;
 
 @Controller
 @RequestMapping("/prospectus/programme")
-@SessionAttributes("opportunityRequest")
 public class ProgramConfigurationController {
 
     @Autowired
@@ -101,7 +98,7 @@ public class ProgramConfigurationController {
 
     @Autowired
     private DomicileService domicileService;
-
+    
     @Autowired
     private OpportunitiesService opportunitiesService;
 
@@ -127,13 +124,6 @@ public class ProgramConfigurationController {
         binder.registerCustomEditor(Date.class, "closingDate", datePropertyEditor);
     }
 
-    private Advert getProgrameAdvert(Program program) {
-        if (program == null) {
-            return null;
-        }
-        return program.getAdvert();
-    }
-
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();
@@ -151,20 +141,19 @@ public class ProgramConfigurationController {
     @ResponseBody
     public String getOpportunityData(@RequestParam String programCode) {
         Program program = programsService.getProgramByCode(programCode);
-        Advert advert = getProgrameAdvert(program);
 
         Map<String, Object> result = Maps.newHashMap();
-        result.put("advert", advert);
 
         HashMap<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("programCode", programCode);
-        if (advert != null) {
-            dataMap.put("advertId", advert.getId());
-        }
-
+        
         Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
-
-        result.put("programLocked", program.getLocked());
+        
+        result.put("programId", program.getId());
+        result.put("programTitle", program.getTitle());
+        result.put("programDescription", program.getDescription());
+        result.put("programStudyDuration", program.getStudyDuration());
+        result.put("programFunding", program.getFunding());
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
@@ -176,7 +165,7 @@ public class ProgramConfigurationController {
 
         return gson.toJson(result);
     }
-
+    
     @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
     @ResponseBody
     public String saveOpportunity(@Valid OpportunityRequest opportunityRequest, BindingResult result) {
@@ -196,7 +185,7 @@ public class ProgramConfigurationController {
         }
         return gson.toJson(map);
     }
-
+    
     @RequestMapping(value = "/confirmOpportunityChangeRequest", method = RequestMethod.POST)
     @ResponseBody
     public String confirmOpportunityChangeRequest(ModelMap modelMap, SessionStatus sessionStatus) {
@@ -245,7 +234,7 @@ public class ProgramConfigurationController {
 
         return gson.toJson(map);
     }
-
+    
     @RequestMapping(value = "/getClosingDates", method = RequestMethod.GET)
     @ResponseBody
     public String getClosingDates(@RequestParam String programCode, HttpServletRequest request) throws TemplateException, IOException {
@@ -263,7 +252,7 @@ public class ProgramConfigurationController {
         }
         return gson.toJson(map);
     }
-
+    
     @RequestMapping(value = "/removeClosingDate", method = RequestMethod.POST)
     @ResponseBody
     public String removeClosingDate(@RequestParam String programCode, @RequestParam Integer closingDateId, HttpServletRequest request)

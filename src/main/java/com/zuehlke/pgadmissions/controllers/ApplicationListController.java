@@ -123,7 +123,6 @@ public class ApplicationListController {
             throws IOException {
         DataTable reportTable = applicationsReportService.getApplicationsReport(getUser(), filtering, reportType);
         DataSourceRequest dsRequest;
-        String tqx = req.getParameter("tqx");
         try {
             dsRequest = new DataSourceRequest(req);
             DataSourceHelper.setServletResponse(reportTable, dsRequest, resp);
@@ -131,11 +130,6 @@ public class ApplicationListController {
             throw new RuntimeException(e);
         }
     }
-
-    
-
-    
-    
     
     @RequestMapping(value = "/saveFilters", method = RequestMethod.POST)
     @ResponseBody

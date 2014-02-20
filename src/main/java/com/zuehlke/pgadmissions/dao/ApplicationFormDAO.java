@@ -149,7 +149,7 @@ public class ApplicationFormDAO {
         if (copyOnDate == null) {
             copySubmittedApplication = false;
             copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                    .setProjection(Projections.max("applicationTimestamp"))
+                    .setProjection(Projections.min("applicationTimestamp"))
                     .add(Restrictions.eq("applicant", applicant))
                     .add(Restrictions.ne("id", applicationFormId)).uniqueResult();
         }

@@ -25,7 +25,6 @@ import com.google.common.collect.Ordering;
 import com.google.visualization.datasource.base.TypeMismatchException;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
-import com.google.visualization.datasource.datatable.TableCell;
 import com.google.visualization.datasource.datatable.TableRow;
 import com.google.visualization.datasource.datatable.value.DateValue;
 import com.google.visualization.datasource.datatable.value.NumberValue;
@@ -312,7 +311,6 @@ public class ApplicationsReportService {
 	                row.addCell(getApplicationLink(app));
                
                 }
-                
                 
                 try {
                     data.addRow(row);

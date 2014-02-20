@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 
 public class AdvertServiceTest {
@@ -29,19 +28,19 @@ public class AdvertServiceTest {
 	@Test
 	public void shouldGetAdvertsFromDAO(){
 		List<AdvertDTO> result = Collections.<AdvertDTO>emptyList();
-		expect(dao.getActiveAdverts(0)).andReturn(result);
+		expect(dao.getAdvertFeed(null, null, null)).andReturn(result);
 		replay(dao);
-		List<AdvertDTO> activeAdverts = advertService.getActiveAdverts(0);
+		List<AdvertDTO> activeAdverts = advertService.getAdvertFeed(null, null, null);
 		assertThat(activeAdverts, Matchers.is(result));
 		
 	}
 	
 	@Test
 	public void shouldGetRecommendedAdverts() {
-        List<Advert> result = Collections.<Advert>emptyList();
-        expect(dao.getRecommendedAdverts(null)).andReturn(result);
+        List<AdvertDTO> result = Collections.<AdvertDTO>emptyList();
+        expect(dao.getAdvertFeed(null, null, null)).andReturn(result);
         replay(dao);
-        List<Advert> activeAdverts = advertService.getRecommendedAdverts(null);
+        List<AdvertDTO> activeAdverts = advertService.getAdvertFeed(null, null, null);
         assertThat(activeAdverts, Matchers.is(result));
 	}
 	

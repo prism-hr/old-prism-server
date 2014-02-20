@@ -1,10 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.hibernate.criterion.Projections.distinct;
-import static org.hibernate.criterion.Projections.property;
-import static org.hibernate.criterion.Restrictions.eq;
-
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -14,17 +12,19 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramType;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Reviewer;
-import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 
 @Repository
@@ -45,6 +45,13 @@ public class ProgramDAO {
     public List<Program> getAllPrograms() {
         return sessionFactory.getCurrentSession().createCriteria(Program.class)
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .addOrder(Order.asc("title")).list();
+    }
+    
+    public List<Program> getAllEnabledPrograms() {
+        return sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .add(Restrictions.eq("enabled", true))
                 .addOrder(Order.asc("title")).list();
     }
 
@@ -69,33 +76,6 @@ public class ProgramDAO {
     
 	public void merge(Program program) {
 		sessionFactory.getCurrentSession().merge(program);
-	}
-	
-    public List<Program> getProgramsOfWhichPreviousReviewer(RegisteredUser user){
-        return sessionFactory.getCurrentSession().createCriteria(Reviewer.class, "r")
-               .createAlias("r.reviewRound", "rr")
-               .createAlias("rr.application", "a")
-               .add(eq("r.user", user))
-               .setProjection(distinct(property("a.program")))
-               .list();
-    }
-	
-	public List<Program> getProgramsOfWhichPreviousInterviewer(RegisteredUser user){
-        return sessionFactory.getCurrentSession().createCriteria(Interviewer.class, "u")
-               .createAlias("u.interview", "i")
-               .createAlias("i.application", "a")
-               .add(eq("u.user", user))
-               .setProjection(distinct(property("a.program")))
-               .list();
-	}
-    
-	public List<Program> getProgramsOfWhichPreviousSupervisor(RegisteredUser user){
-	    return sessionFactory.getCurrentSession().createCriteria(Supervisor.class, "s")
-	            .createAlias("s.approvalRound", "ar")
-	            .createAlias("ar.application", "a")
-	            .add(eq("s.user", user))
-	            .setProjection(distinct(property("a.program")))
-	            .list();
 	}
 	
     public Program getLastCustomProgram(QualificationInstitution institution) {
@@ -159,6 +139,37 @@ public class ProgramDAO {
         return (Integer) sessionFactory.getCurrentSession().createCriteria(ProgramType.class)
                 .setProjection(Projections.property("defaultStudyDuration"))
                 .add(Restrictions.eq("id", programTypeId)).uniqueResult();
+    }
+    
+    public List<Program> getEnabledProgramsForWhichUserHasProgramAuthority(RegisteredUser user) {
+        HashSet<Program> programs = new HashSet<Program>();
+        for (Authority authority : AuthorityGroup.INTERNAL_PROGRAM_AUTHORITIES.getAuthorities()) {
+            String property = authority.toString().toLowerCase();
+            programs.addAll((List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                    .add(Restrictions.eq(property, user)).list()); 
+        }
+        return new ArrayList<Program>(programs);
+    }
+    
+    public List<Program> getEnabledProgramsForWhichUserHasProjectAuthority(RegisteredUser user) {
+        return sessionFactory.getCurrentSession().createCriteria(Project.class)
+                .setProjection(Projections.groupProperty("program"))
+                .createAlias("program", "program", JoinType.INNER_JOIN)
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.eq("primarySupervisor", user))
+                        .add(Restrictions.eq("administrator", user))
+                        .add(Restrictions.eq("secondarySupervisor", user))
+                .add(Restrictions.eq("program.enabled", true))).list();
+    }
+    
+    public List<Program> getEnabledProgramsForWhichUserHasApplicationAuthority(RegisteredUser user) {
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("applicationForm.program"))
+                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+                .createAlias("role", "applicationRole", JoinType.INNER_JOIN)
+                .add(Restrictions.in("applicationRole.id", AuthorityGroup.INTERNAL_APPLICATION_AUTHORITIES.getAuthorities()))
+                .add(Restrictions.eq("program.enabled", true)).list();
     }
     
 }

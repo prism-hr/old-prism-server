@@ -17,7 +17,6 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
@@ -61,7 +60,7 @@ public class ProgramsService {
     public void save(Program program) {
         programDAO.save(program);
     }
-
+    
     public void merge(Program program) {
         programDAO.merge(program);
     }
@@ -72,7 +71,7 @@ public class ProgramsService {
 
     public List<Program> getProgramsForWhichCanManageProjects(RegisteredUser user) {
         if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-            return programDAO.getAllPrograms();
+            return programDAO.getAllEnabledPrograms();
         }
 
         Set<Program> programs = new TreeSet<Program>(new Comparator<Program>() {
@@ -82,15 +81,13 @@ public class ProgramsService {
             }
         });
 
-        programs.addAll(user.getProgramsOfWhichAdministrator());
-        programs.addAll(user.getProgramsOfWhichApprover());
-        programs.addAll(programDAO.getProgramsOfWhichPreviousReviewer(user));
-        programs.addAll(programDAO.getProgramsOfWhichPreviousInterviewer(user));
-        programs.addAll(programDAO.getProgramsOfWhichPreviousSupervisor(user));
+        programs.addAll(programDAO.getEnabledProgramsForWhichUserHasProgramAuthority(user));
+        programs.addAll(programDAO.getEnabledProgramsForWhichUserHasProjectAuthority(user));
+        programs.addAll(programDAO.getEnabledProgramsForWhichUserHasApplicationAuthority(user));
 
         return Lists.newArrayList(programs);
     }
-
+    
     public void applyScoringDefinition(String programCode, ScoringStage scoringStage, String scoringContent) {
         Program program = programDAO.getProgramByCode(programCode);
         ScoringDefinition scoringDefinition = new ScoringDefinition();
@@ -117,8 +114,8 @@ public class ProgramsService {
         if (project == null) {
             return;
         }
-        project.setDisabled(true);
-        project.getAdvert().setActive(false);
+        project.setEnabled(false);
+        project.setActive(false);
         projectDAO.save(project);
     }
 
@@ -141,7 +138,7 @@ public class ProgramsService {
 
     public void updateClosingDate(ProgramClosingDate closingDate) {
         Program program = closingDate.getProgram();
-        program.getAdvert().setLastEditedTimestamp(new Date());
+        program.setLastEditedTimestamp(new Date());
         programDAO.updateClosingDate(closingDate);
     }
 
@@ -150,12 +147,12 @@ public class ProgramsService {
         programDAO.deleteClosingDate(programClosingDate);
     }
 
-    public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {
+    public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {        
         program.getClosingDates().add(programClosingDate);
-        program.getAdvert().setLastEditedTimestamp(new Date());
+        program.setLastEditedTimestamp(new Date());
         programDAO.save(program);
     }
-
+    
     protected String generateNextProgramCode(QualificationInstitution institution) {
         Program lastCustomProgram = programDAO.getLastCustomProgram(institution);
         Integer codeNumber;
@@ -167,7 +164,7 @@ public class ProgramsService {
         }
         return String.format("%s_%05d", institution.getCode(), codeNumber);
     }
-
+    
     protected Program createOrGetCustomProgram(OpportunityRequest opportunityRequest) {
         ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
 
@@ -179,8 +176,7 @@ public class ProgramsService {
         }
 
         if (program.getInstitution() == null || !Objects.equal(program.getInstitution().getCode(), opportunityRequest.getInstitutionCode())) {
-            // assigning new institution to the program (also changing program
-            // code)
+            // assigning new institution to the program (also changing program code)
             QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
                     opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
             program.setInstitution(institution);
@@ -190,28 +186,23 @@ public class ProgramsService {
         merge(program);
         return program;
     }
-
+    
     public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
         ProgramsService thisBean = applicationContext.getBean(ProgramsService.class);
 
         Program program = thisBean.createOrGetCustomProgram(opportunityRequest);
 
-        Advert advert = program.getAdvert();
-        if (advert == null) {
-            advert = new Advert();
-            program.setAdvert(advert);
-        }
-        advert.setDescription(opportunityRequest.getProgramDescription());
-        advert.setStudyDuration(opportunityRequest.getStudyDuration());
-        advert.setFunding(opportunityRequest.getFunding());
-        advert.setActive(opportunityRequest.getAcceptingApplications());
+        program.setDescription(opportunityRequest.getProgramDescription());
+        program.setStudyDuration(opportunityRequest.getStudyDuration());
+        program.setFunding(opportunityRequest.getFunding());
+        program.setActive(opportunityRequest.getAcceptingApplications());
 
         if (program.getProgramFeed() == null) { // custom program
             programInstanceService.createRemoveProgramInstances(program, opportunityRequest.getStudyOptions(), opportunityRequest.getAdvertisingDeadlineYear());
         }
         return program;
     }
-
+    
     public boolean canChangeInstitution(RegisteredUser user, OpportunityRequest opportunityRequest) {
         if (user.isInRole(Authority.SUPERVISOR)) {
             return true;

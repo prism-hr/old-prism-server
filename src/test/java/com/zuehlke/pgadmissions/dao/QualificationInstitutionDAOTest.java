@@ -88,4 +88,25 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
         assertEquals(institution2.getCode(), returned.getCode());
         assertEquals(institution2.getName(), returned.getName());
     }
+    
+    @Test
+    public void shouldGetInstitutionByDomicileAndName() {
+        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK").code("ABC")
+                .build();
+        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("PL")
+                .code("ABCD").build();
+        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("Akademia Gorniczo-Hutnicza").domicileCode("PL")
+                .code("ABCDE").build();
+
+        save(institution1, institution2, institution3);
+
+        flushAndClearSession();
+
+        QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
+
+        QualificationInstitution returned = qualificationInstitutionDAO.getInstitutionByDomicileAndName("PL", "University of London");
+
+        assertEquals(institution2.getId(), returned.getId());
+    }
+
 }

@@ -45,7 +45,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
@@ -55,6 +54,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 
 public class ApplicationListControllerTest {
 
@@ -164,7 +164,7 @@ public class ApplicationListControllerTest {
     @Test
     public void shouldReturnApplicationReport() throws IOException {
 
-        // GIVEN
+        // GIVEN 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
 
         MockHttpServletRequest requestMock = new MockHttpServletRequest();
@@ -172,13 +172,14 @@ public class ApplicationListControllerTest {
         MockHttpServletResponse responseMock = new MockHttpServletResponse();
 
         DataTable dataTable = new DataTable();
-        expect(applicationsReportServiceMock.getApplicationsReport(user, filtering, ReportFormat.STANDARD)).andReturn(dataTable);
+        ReportFormat reportType = null;
+        expect(applicationsReportServiceMock.getApplicationsReport(user, filtering, reportType)).andReturn(dataTable);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
         // WHEN
         EasyMock.replay(userServiceMock, applicationsReportServiceMock);
-        controller.getApplicationsReport(filtering, ReportFormat.STANDARD, requestMock, responseMock);
+        controller.getApplicationsReport(filtering, reportType, requestMock, responseMock);
         EasyMock.verify(userServiceMock, applicationsReportServiceMock);
 
         assertEquals("text/html; charset=UTF-8", responseMock.getContentType());

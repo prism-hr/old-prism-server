@@ -11,13 +11,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalEvaluationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -26,8 +23,7 @@ public class ApprovalEvaluationCommentMappingTest extends AutomaticRollbackTestC
 	
 	@Test
 	public void shouldSaveAndLoadInterviewEvaluationComment() {
-	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
+	    Program program = (Program) sessionFactory.getCurrentSession().get(Program.class, 63);
 
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
@@ -35,7 +31,7 @@ public class ApprovalEvaluationCommentMappingTest extends AutomaticRollbackTestC
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).program(program).build();
 
 		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).build();
-		save(institution, program, user, applicationForm, approvalRound);
+		save(user, applicationForm, approvalRound);
 
 		flushAndClearSession();
 

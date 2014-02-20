@@ -8,6 +8,43 @@ $(document).ready(function() {
     setHsize();
     refreshControls();
 
+    $("a[name=didYouMeanInstitutionButtonYes]").bind('click', function() {
+        var text = $(this).text();
+        $("#otherInstitution").val(text);
+        $("#didYouMeanInstitutionDiv").remove();
+    });
+
+    $("a[name=didYouMeanInstitutionButtonNo]").bind('click', function() {
+        $("#didYouMeanInstitutionDiv").remove();
+        $("#forceCreatingNewInstitution").val("true");
+    });
+    
+    $('#otherInstitution').change(function() {
+        $("#forceCreatingNewInstitution").val("false");
+    });
+    
+    $("#otherInstitution").typeaheadmap({
+        source : {},
+        key : "name",
+        displayer : function(that, item, highlighted) {
+            return highlighted;
+        }
+    });
+    
+    var availableInstitutions = [];
+    $('#institution option').each(function() {
+        var v = $(this).val();
+        if (v != "OTHER" && v != "") {
+            availableInstitutions.push({
+                name : $(this).text()
+            });
+        }
+    });
+
+    var typeahead = $("#otherInstitution").data("typeaheadmap");
+    typeahead.source = availableInstitutions;
+
+
     $('#institution').change(function() {
         $("#otherInstitution").val("");
         refreshControls();
@@ -51,6 +88,9 @@ $(document).ready(function() {
                     options.append($("<option />").val(institutions[i]["code"]).text(institutions[i]["name"]));
                 }
                 options.append($("<option />").val("OTHER").text("Other"));
+                
+                var typeahead = $("#otherInstitution").data("typeaheadmap");
+                typeahead.source = institutions;
             },
             complete : function() {
                 refreshControls();

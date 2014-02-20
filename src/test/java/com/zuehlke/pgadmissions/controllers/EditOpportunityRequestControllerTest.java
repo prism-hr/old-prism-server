@@ -145,21 +145,25 @@ public class EditOpportunityRequestControllerTest {
         BindingResult commentBindingResult = new DirectFieldBindingResult(comment, "comment");
         List<QualificationInstitution> institutions = Lists.newArrayList();
         Date createdDate = new Date();
+        List<OpportunityRequest> requests = Lists.newArrayList();
 
         expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutions);
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(
                 new OpportunityRequestBuilder().author(author).createdDate(createdDate).status(OpportunityRequestStatus.REJECTED).build());
+        expect(opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest)).andReturn(requests);
 
         replay();
         String result = (String) controller.respondToOpportunityRequest(8, opportunityRequest, requestBindingResult, comment, commentBindingResult, modelMap);
         verify();
 
         assertSame(opportunityRequest, modelMap.get("opportunityRequest"));
+        assertSame(requests, modelMap.get("opportunityRequests"));
         assertSame(institutions, modelMap.get("institutions"));
         assertEquals(EditOpportunityRequestController.EDIT_REQUEST_PAGE_VIEW_NAME, result);
         assertSame(author, opportunityRequest.getAuthor());
         assertSame(createdDate, opportunityRequest.getCreatedDate());
         assertEquals(OpportunityRequestStatus.REJECTED, opportunityRequest.getStatus());
+        
     }
 
     @Test

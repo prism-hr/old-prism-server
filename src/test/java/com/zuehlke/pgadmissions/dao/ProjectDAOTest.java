@@ -43,7 +43,7 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
                 .email("primary.supervisor@email.test").build();
         RegisteredUser secondarySupervisor = new RegisteredUserBuilder().username("secondary").firstName("secondary").lastName("supervisor")
                 .email("secondary.supervisor@email.test").build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a53").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("ProjectProgram").institution(institution).build();
         save(contactUser, primarySupervisor, secondarySupervisor, institution, program);
         Advert advert = new AdvertBuilder().description("desc").funding("fund").studyDuration(1).title("title").build();

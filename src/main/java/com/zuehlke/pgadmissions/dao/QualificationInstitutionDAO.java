@@ -44,6 +44,11 @@ public class QualificationInstitutionDAO {
                 .add(Restrictions.eq("code", institutionCode)).uniqueResult();
     }
 
+    public QualificationInstitution getInstitutionByDomicileAndName(String domicileCode, String institutionName) {
+        return (QualificationInstitution) sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class)
+                .add(Restrictions.eq("domicileCode", domicileCode)).add(Restrictions.eq("name", institutionName)).uniqueResult();
+    }
+
     public QualificationInstitution getLastCustomInstitution() {
         DetachedCriteria maxCustomCode = DetachedCriteria.forClass(QualificationInstitution.class).setProjection(Projections.max("code"))
                 .add(Restrictions.like("code", "CUST%"));
@@ -54,5 +59,6 @@ public class QualificationInstitutionDAO {
     public void save(QualificationInstitution institution) {
         sessionFactory.getCurrentSession().saveOrUpdate(institution);
     }
+
 
 }

@@ -80,7 +80,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         role = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        institution = new QualificationInstitutionBuilder().code("code").name("a32").domicileCode("AE").enabled(true).build();
         program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 
         applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
 
 @Repository
@@ -67,8 +68,7 @@ public class ApplicationFormUserRoleDAO {
         return (ApplicationFormUserRole) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("user", user))
-                .add(Restrictions.eq("role.id", authority))
-                .uniqueResult();
+                .add(Restrictions.eq("role.id", authority)).uniqueResult();
     }
 
     public List<ApplicationFormUserRole> findByApplicationFormAndAuthorities(ApplicationForm applicationForm, Authority... authorities) {
@@ -274,8 +274,7 @@ public class ApplicationFormUserRoleDAO {
 				.createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
 				.createAlias("user", "registeredUser", JoinType.INNER_JOIN)
 				.add(Restrictions.eq("program.id", applicationForm.getProgram().getId()))
-				.add(Restrictions.in("role.id", Arrays.asList(Authority.REVIEWER, Authority.INTERVIEWER, Authority.SUPERVISOR, 
-						Authority.SUGGESTEDSUPERVISOR, Authority.APPROVER, Authority.STATEADMINISTRATOR, Authority.PROJECTADMINISTRATOR)))
+				.add(Restrictions.in("role.id", AuthorityGroup.getAllInternalRecruiterAuthorities()))
 				.add(Restrictions.isNull("registeredUser.primaryAccount"))
 				.add(Restrictions.eq("registeredUser.enabled", true))
 				.add(Property.forName("user").notIn(usersInterestedInApplicant))
@@ -284,11 +283,24 @@ public class ApplicationFormUserRoleDAO {
 				.addOrder(Order.asc("registeredUser.id")).list();
 	}
 	
-	public void deleteActionsAndFlushToDB(ApplicationFormUserRole applicationFormUserRole) {
-		applicationFormUserRole.getActions().clear();
-		applicationFormUserRole.setRaisesUrgentFlag(false);
-		sessionFactory.getCurrentSession().flush();
-	}
+    public void deleteRoleAction(ApplicationForm applicationForm, Authority authority, ApplicationFormAction action) {
+        Query query = sessionFactory.getCurrentSession()
+            .createSQLQuery("CALL DELETE_USER_ACTION(?, ?, ?);")
+                .setInteger(0, applicationForm.getId())
+                .setString(1, authority.toString())
+                .setString(2, action.toString());
+        query.executeUpdate();
+    }
+	
+    public void deleteUserAction(ApplicationForm applicationForm, RegisteredUser registeredUser, Authority authority, ApplicationFormAction action) {
+        Query query = sessionFactory.getCurrentSession()
+            .createSQLQuery("CALL DELETE_ROLE_ACTION(?, ?, ?);")
+                .setInteger(0, applicationForm.getId())
+                .setInteger(1, registeredUser.getId())
+                .setString(2, authority.toString())
+                .setString(3, action.toString());
+        query.executeUpdate();
+    }
 	
 	private String javaDateToMySQLDateString(Date date) {
 		SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.validation.BindingResult;
 
+import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -62,6 +63,8 @@ public class RegisterControllerTest {
     private MockHttpSession mockHttpSession;
 
     private AdvertService advertServiceMock;
+    
+    private ProgramInstanceDAO programInstanceDAOMock;
 
     @Before
     public void setUp() {
@@ -73,8 +76,9 @@ public class RegisterControllerTest {
         qureyStringParserMock = EasyMock.createMock(ApplicationQueryStringParser.class);
         encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
         advertServiceMock = EasyMock.createMock(AdvertService.class);
+        programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
         registerController = new RegisterController(regusterFormValidatorMock, userServiceMock, registrationServiceMock, applicationFormCreationServiceMock,
-                programServiceMock, qureyStringParserMock, encryptionHelper, advertServiceMock);
+                programServiceMock, qureyStringParserMock, encryptionHelper, advertServiceMock, programInstanceDAOMock);
         mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED, true);
     }

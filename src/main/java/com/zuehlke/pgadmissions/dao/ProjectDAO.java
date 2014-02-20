@@ -49,5 +49,5 @@ public class ProjectDAO {
         			add(Restrictions.eq("primarySupervisor", author))).
         		add(Restrictions.eq("enabled", true)).list();
     }
-
+    
 }

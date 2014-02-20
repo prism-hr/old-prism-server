@@ -80,6 +80,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     private RoleDAO roleDAO;
     
     private UserDAO userDAO;
+    
+    private UserService userServiceMock;
 
     private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
 
@@ -91,8 +93,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         userDAO = new UserDAO(sessionFactory, null, null);
         
         applicationFormListDAO = new ApplicationFormListDAO(sessionFactory, userDAO);
+        
+        userServiceMock = EasyMock.createMock(UserService.class);
 
-        applicationFormDAO = new ApplicationFormDAO(sessionFactory);
+        applicationFormDAO = new ApplicationFormDAO(sessionFactory, userServiceMock);
 
         applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
         

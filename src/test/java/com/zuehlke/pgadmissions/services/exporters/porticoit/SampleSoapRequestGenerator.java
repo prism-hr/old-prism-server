@@ -10,6 +10,7 @@ import java.util.List;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -29,6 +30,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV2;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
 
@@ -41,6 +43,8 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
     private WebServiceTemplate webServiceTemplate;
     
     private ApplicationFormDAO applicationFormDAO;
+    
+    private UserService userServiceMock;
     
     private SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder;
     
@@ -123,7 +127,8 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
     
     @Before
     public void initialise() {
-        applicationFormDAO = new ApplicationFormDAO(sessionFactory);
+        userServiceMock = EasyMock.createMock(UserService.class);
+        applicationFormDAO = new ApplicationFormDAO(sessionFactory, userServiceMock);
         requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
     }
 }

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.easymock.EasyMock;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -34,9 +35,11 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
+    private UserService userServiceMock;
     private ApplicationFormDAO applicationDAO;
     private RegisteredUser user;
     private Program program;
@@ -45,7 +48,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        applicationDAO = new ApplicationFormDAO(sessionFactory);
+        userServiceMock = EasyMock.createMock(UserService.class);
+        applicationDAO = new ApplicationFormDAO(sessionFactory, userServiceMock);
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 

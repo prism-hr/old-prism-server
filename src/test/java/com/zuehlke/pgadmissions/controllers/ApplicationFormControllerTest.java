@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
+import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -44,6 +45,7 @@ public class ApplicationFormControllerTest {
     private ProgramInstanceDAO programInstanceDAOMock;
     private UserService userServiceMock;
     private ProgramsService programsServiceMock;
+    private ProjectDAO projectDAOMock;
 
     @Test
     public void shouldCreateNewApplicationFormWithProgramProjectAndUserFromSecurityContext() throws ParseException {
@@ -57,7 +59,7 @@ public class ApplicationFormControllerTest {
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 
         EasyMock.replay(programDAOMock, applicationFormCreationServiceMock, programInstanceDAOMock);
-        applicationController.createNewApplicationForm("ABC", null);
+        applicationController.createNewApplicationForm("ABC", null, null);
         EasyMock.verify(programDAOMock, applicationFormCreationServiceMock, programInstanceDAOMock);
     }
 
@@ -79,7 +81,7 @@ public class ApplicationFormControllerTest {
 
         EasyMock.replay(programDAOMock, applicationFormCreationServiceMock, programInstanceDAOMock, programsServiceMock);
 
-        applicationController.createNewApplicationForm("ABC", projectId);
+        applicationController.createNewApplicationForm("ABC", projectId, null);
         EasyMock.verify(applicationFormCreationServiceMock);
 
     }
@@ -96,7 +98,7 @@ public class ApplicationFormControllerTest {
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
         EasyMock.replay(programDAOMock, applicationFormCreationServiceMock, programInstanceDAOMock);
 
-        ModelAndView modelAndView = applicationController.createNewApplicationForm("ABC", null);
+        ModelAndView modelAndView = applicationController.createNewApplicationForm("ABC", null, null);
         assertEquals(applicationForm.getApplicationNumber(), modelAndView.getModel().get("applicationId"));
         assertEquals("redirect:/application", modelAndView.getViewName());
 
@@ -107,7 +109,7 @@ public class ApplicationFormControllerTest {
         EasyMock.expect(programDAOMock.getProgramByCode("ABC")).andReturn(null);
 
         EasyMock.replay(programDAOMock);
-        applicationController.createNewApplicationForm("ABC", null);
+        applicationController.createNewApplicationForm("ABC", null, null);
     }
 
     @Test(expected = CannotApplyToProgramException.class)
@@ -121,7 +123,7 @@ public class ApplicationFormControllerTest {
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program1)).andReturn(null);
 
         EasyMock.replay(programDAOMock, programInstanceDAOMock);
-        applicationController.createNewApplicationForm("ABC", null);
+        applicationController.createNewApplicationForm("ABC", null, null);
     }
 
     @Test(expected = CannotApplyToProgramException.class)
@@ -132,7 +134,7 @@ public class ApplicationFormControllerTest {
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(null);
 
         EasyMock.replay(programDAOMock, programInstanceDAOMock);
-        applicationController.createNewApplicationForm("ABC", null);
+        applicationController.createNewApplicationForm("ABC", null, null);
     }
 
     @Test(expected = CannotApplyToProjectException.class)
@@ -152,7 +154,7 @@ public class ApplicationFormControllerTest {
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 
         EasyMock.replay(programDAOMock, programsServiceMock, applicationFormCreationServiceMock, programInstanceDAOMock);
-        applicationController.createNewApplicationForm("ABC", projectId);
+        applicationController.createNewApplicationForm("ABC", projectId, null);
     }
 
     @Test(expected = CannotApplyToProjectException.class)
@@ -172,7 +174,7 @@ public class ApplicationFormControllerTest {
     	EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
     	
     	EasyMock.replay(programDAOMock, programsServiceMock, applicationFormCreationServiceMock, programInstanceDAOMock);
-    	applicationController.createNewApplicationForm("ABC", projectId);
+    	applicationController.createNewApplicationForm("ABC", projectId, null);
     }
 
     @Test(expected = CannotApplyToProjectException.class)
@@ -192,7 +194,7 @@ public class ApplicationFormControllerTest {
     	EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
     	
     	EasyMock.replay(programDAOMock, programsServiceMock, applicationFormCreationServiceMock, programInstanceDAOMock);
-    	applicationController.createNewApplicationForm("ABC", projectId);
+    	applicationController.createNewApplicationForm("ABC", projectId, null);
     }
 
     @Before
@@ -200,12 +202,13 @@ public class ApplicationFormControllerTest {
         applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("ABC").build();
 
         programDAOMock = EasyMock.createMock(ProgramDAO.class);
+        projectDAOMock = EasyMock.createMock(ProjectDAO.class);
         applicationFormCreationServiceMock = EasyMock.createMock(ApplicationFormCreationService.class);
         programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         programsServiceMock = EasyMock.createMock(ProgramsService.class);
 
-        applicationController = new ApplicationFormController(programDAOMock, applicationFormCreationServiceMock, programInstanceDAOMock, userServiceMock,
+        applicationController = new ApplicationFormController(programDAOMock, projectDAOMock, applicationFormCreationServiceMock, programInstanceDAOMock, userServiceMock,
                 programsServiceMock);
 
         student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

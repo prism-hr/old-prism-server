@@ -143,11 +143,9 @@ public class ProgramsServiceTest {
         RegisteredUser userMock = EasyMockUnitils.createMock(RegisteredUser.class);
 
         EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-        EasyMock.expect(userMock.getProgramsOfWhichAdministrator()).andReturn(Collections.<Program> emptyList());
-        EasyMock.expect(userMock.getProgramsOfWhichApprover()).andReturn(Collections.<Program> emptyList());
-        EasyMock.expect(programDAOMock.getProgramsOfWhichPreviousReviewer(userMock)).andReturn(Collections.<Program> emptyList());
-        EasyMock.expect(programDAOMock.getProgramsOfWhichPreviousInterviewer(userMock)).andReturn(Collections.<Program> emptyList());
-        EasyMock.expect(programDAOMock.getProgramsOfWhichPreviousSupervisor(userMock)).andReturn(Collections.<Program> emptyList());
+        EasyMock.expect(programDAOMock.getEnabledProgramsForWhichUserHasProgramAuthority(userMock)).andReturn(Collections.<Program> emptyList());
+        EasyMock.expect(programDAOMock.getEnabledProgramsForWhichUserHasProjectAuthority(userMock)).andReturn(Collections.<Program> emptyList());
+        EasyMock.expect(programDAOMock.getEnabledProgramsForWhichUserHasApplicationAuthority(userMock)).andReturn(Collections.<Program> emptyList());
 
         replay();
         programsService.getProgramsForWhichCanManageProjects(userMock);
@@ -199,8 +197,8 @@ public class ProgramsServiceTest {
         programsService.removeProject(1);
         verify();
 
-        assertTrue(project.isDisabled());
-        assertFalse(project.getAdvert().getActive());
+        assertFalse(project.isEnabled());
+        assertFalse(project.isActive());
     }
 
     @Test
@@ -290,30 +288,6 @@ public class ProgramsServiceTest {
         verify();
 
         assertTrue(returned.getAtasRequired());
-    }
-
-    @Test
-    public void shouldSaveProgramOpportunity() {
-        ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, null).build();
-        Program program = new Program();
-
-        expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
-        expect(thisBean.createOrGetCustomProgram(opportunityRequest)).andReturn(program);
-        expect(programInstanceService.createRemoveProgramInstances(program, "B+++++,F+++++", 2014)).andReturn(null);
-
-        replay();
-        Program returned = programsService.saveProgramOpportunity(opportunityRequest);
-        verify();
-
-        Advert advert = program.getAdvert();
-
-        assertSame(program, returned);
-        assertTrue(advert.getActive());
-        assertEquals(opportunityRequest.getProgramDescription(), advert.getDescription());
-        assertEquals(opportunityRequest.getStudyDuration(), advert.getStudyDuration());
-
-        assertSame(advert, program.getAdvert());
     }
 
     @Test

@@ -45,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
@@ -171,13 +172,13 @@ public class ApplicationListControllerTest {
         MockHttpServletResponse responseMock = new MockHttpServletResponse();
 
         DataTable dataTable = new DataTable();
-        expect(applicationsReportServiceMock.getApplicationsReport(user, filtering)).andReturn(dataTable);
+        expect(applicationsReportServiceMock.getApplicationsReport(user, filtering, ReportFormat.STANDARD)).andReturn(dataTable);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
         // WHEN
         EasyMock.replay(userServiceMock, applicationsReportServiceMock);
-        controller.getApplicationsReport(filtering, requestMock, responseMock);
+        controller.getApplicationsReport(filtering, ReportFormat.STANDARD, requestMock, responseMock);
         EasyMock.verify(userServiceMock, applicationsReportServiceMock);
 
         assertEquals("text/html; charset=UTF-8", responseMock.getContentType());

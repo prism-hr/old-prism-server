@@ -70,10 +70,10 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetRecommendedAdverts() {
         String testUserId = new Integer(4157).toString();
-        List<AdvertDTO> gotAdverts = advertDAO.getAdvertFeed(OpportunityListType.RECOMMENDEDOPPORTUNTIIES, testUserId, null);
+        List<AdvertDTO> gotAdverts = advertDAO.getAdvertFeed(OpportunityListType.RECOMMENDEDOPPORTUNTIIESBYAPPLICANTID, testUserId, null);
         assertTrue(gotAdverts.size() > 0);
         String testUserWithNoApplicationsId = new Integer(15).toString();
-        gotAdverts = advertDAO.getAdvertFeed(OpportunityListType.RECOMMENDEDOPPORTUNTIIES, testUserWithNoApplicationsId, null);
+        gotAdverts = advertDAO.getAdvertFeed(OpportunityListType.RECOMMENDEDOPPORTUNTIIESBYAPPLICANTID, testUserWithNoApplicationsId, null);
         assertTrue(gotAdverts.size() == 0);
     }
 

@@ -27,7 +27,8 @@ public class ProjectDAO {
     }
 
     public Project getProjectById(Integer projectId) {
-        return (Project) sessionFactory.getCurrentSession().get(Project.class, projectId);
+        return (Project) sessionFactory.getCurrentSession().createCriteria(Project.class)
+                .add(Restrictions.eq("id", projectId)).uniqueResult();
     }
 
     public void save(Project project) {

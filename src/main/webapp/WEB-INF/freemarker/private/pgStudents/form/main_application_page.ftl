@@ -182,7 +182,7 @@
 							<li><a href="#opportunity" id="opportunityBtn">Opportunities</a></li>
 						</ul>
 				
-						<div class="tab-page" id="applicationTab">
+						<div class="tab-page" id="application">
 	
 		          <!-- Programme Details -->
 		          <section id="programmeDetailsSection" class="folding form-rows violet <#if programDetailsError || studyOptionError>error</#if>">                      

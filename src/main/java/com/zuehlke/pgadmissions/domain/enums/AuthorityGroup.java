@@ -1,72 +1,74 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-import org.apache.commons.lang.ArrayUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public enum AuthorityGroup {
 
-    INTERNAL_SYSTEM_AUTHORITIES(new Authority[] { Authority.SUPERADMINISTRATOR, Authority.ADMITTER }), 
-    EXTERNAL_SYSTEM_AUTHORITIES(new Authority[] {}),
+    INTERNAL_SYSTEM_AUTHORITIES(Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER)), 
+    EXTERNAL_SYSTEM_AUTHORITIES(new ArrayList<Authority>(0)),
 
-    INTERNAL_PROGRAM_AUTHORITIES(new Authority[] { Authority.ADMINISTRATOR, Authority.APPROVER, Authority.VIEWER }), 
-    EXTERNAL_PROGRAM_AUTHORITIES(new Authority[] {}),
+    INTERNAL_PROGRAM_AUTHORITIES(Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.VIEWER)),
+    EXTERNAL_PROGRAM_AUTHORITIES(new ArrayList<Authority>(0)),
 
-    INTERNAL_PROJECT_AUTHORITIES(new Authority[] { Authority.PROJECTADMINISTRATOR }), 
-    EXTERNAL_PROJECT_AUTHORITIES(new Authority[] {}),
+    INTERNAL_PROJECT_AUTHORITIES(Arrays.asList(Authority.PROJECTADMINISTRATOR)),
+    EXTERNAL_PROJECT_AUTHORITIES(new ArrayList<Authority>(0)),
 
-    INTERNAL_APPLICATION_AUTHORITIES(new Authority[] { Authority.INTERVIEWER, Authority.REVIEWER, Authority.SUPERVISOR }), 
-    EXTERNAL_APPLICATION_AUTHORITIES(new Authority[] { Authority.APPLICANT, Authority.REFEREE, Authority.SUGGESTEDSUPERVISOR}),
+    INTERNAL_APPLICATION_AUTHORITIES(Arrays.asList(Authority.INTERVIEWER, Authority.REVIEWER, Authority.SUPERVISOR)),
+    EXTERNAL_APPLICATION_AUTHORITIES(new ArrayList<Authority>(0)),
 
-    INTERNAL_STATE_AUTHORITIES(new Authority[] { Authority.STATEADMINISTRATOR }), 
-    EXTERNAL_STATE_AUTHORITIES(new Authority[] {});
+    INTERNAL_STATE_AUTHORITIES(Arrays.asList(Authority.STATEADMINISTRATOR)), 
+    EXTERNAL_STATE_AUTHORITIES(new ArrayList<Authority>(0));
 
-    private Authority[] authorities;
+    private List<Authority> authorities;
 
-    private AuthorityGroup(Authority[] authorities) {
+    private AuthorityGroup(List<Authority> authorities) {
         this.authorities = authorities;
     }
 
-    public Authority[] getAuthorities() {
+    public List<Authority> getAuthorities() {
         return authorities;
     }
 
-    public static Authority[] getAuthoritiesForAuthorityGroups(AuthorityGroup... authorityGroups) {
-        Authority[] authorities = new Authority[] {};
+    public static List<Authority> getAuthoritiesForAuthorityGroups(AuthorityGroup... authorityGroups) {
+        List<Authority> authorities = new ArrayList<Authority>();
 
         for (AuthorityGroup authorityGroup : authorityGroups) {
-            ArrayUtils.addAll(authorities, authorityGroup.getAuthorities());
+            authorities.addAll(authorityGroup.getAuthorities());
         }
 
         return authorities;
     }
 
-    public static Authority[] getAllSystemAuthorities() {
+    public static List<Authority> getAllSystemAuthorities() {
         return getAuthoritiesForAuthorityGroups(INTERNAL_SYSTEM_AUTHORITIES, EXTERNAL_SYSTEM_AUTHORITIES);
     }
 
-    public static Authority[] getAllProgramAuthorities() {
+    public static List<Authority> getAllProgramAuthorities() {
         return getAuthoritiesForAuthorityGroups(INTERNAL_PROGRAM_AUTHORITIES, EXTERNAL_PROGRAM_AUTHORITIES);
     }
 
-    public static Authority[] getAllProjectAuthorities() {
+    public static List<Authority> getAllProjectAuthorities() {
         return getAuthoritiesForAuthorityGroups(INTERNAL_PROJECT_AUTHORITIES, EXTERNAL_PROJECT_AUTHORITIES);
     }
 
-    public static Authority[] getAllApplicationAuthorities() {
+    public static List<Authority> getAllApplicationAuthorities() {
         return getAuthoritiesForAuthorityGroups(INTERNAL_APPLICATION_AUTHORITIES, EXTERNAL_APPLICATION_AUTHORITIES);
     }
 
-    public static Authority[] getAllStateAuthorities() {
+    public static List<Authority> getAllStateAuthorities() {
         return getAuthoritiesForAuthorityGroups(INTERNAL_STATE_AUTHORITIES, EXTERNAL_STATE_AUTHORITIES);
     }
 
-    public static Authority[] getAllInternalRecruiterAuthorities() {
-        Authority[] inclusions = getAllProgramAuthorities();
-        Authority[] exclusions = new Authority[] { Authority.ADMINISTRATOR, Authority.APPLICANT, Authority.REFEREE };
-        ArrayUtils.addAll(inclusions, getAllProjectAuthorities());
-        ArrayUtils.addAll(inclusions, getAllApplicationAuthorities());
-        ArrayUtils.addAll(inclusions, getAllStateAuthorities());
+    public static List<Authority> getAllInternalRecruiterAuthorities() {
+        List<Authority> inclusions = getAllProgramAuthorities();
+        List<Authority> exclusions = Arrays.asList(Authority.ADMINISTRATOR, Authority.APPLICANT, Authority.REFEREE);
+        inclusions.addAll(getAllProjectAuthorities());
+        inclusions.addAll(getAllApplicationAuthorities());
+        inclusions.addAll(getAllStateAuthorities());
         for (Authority exclusion : exclusions) {
-            ArrayUtils.removeElement(inclusions, exclusion);
+            inclusions.remove(exclusion);
         } 
         return inclusions;
     }

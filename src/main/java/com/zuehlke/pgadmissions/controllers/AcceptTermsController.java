@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -49,10 +48,6 @@ public class AcceptTermsController {
 
 	@RequestMapping(value = "/getTermsAndConditions", method = RequestMethod.GET)
 	public String getAcceptedTermsView() {
-
-		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
-			throw new ResourceNotFoundException();
-		}
 		return TERMS_AND_CONDITIONS_VIEW_NAME;
 	}
 

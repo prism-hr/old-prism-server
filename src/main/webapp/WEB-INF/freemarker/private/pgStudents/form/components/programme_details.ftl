@@ -99,7 +99,7 @@
         		<#assign project = false>
         	</#if>
         	
-          <input class="full" id="projectName" name="projectName" type="text" value="<#if project>${(applicationForm.project.advert.title?html)}<#else>Not Required</#if>" disabled="disabled"/>
+          <input class="full" id="projectName" name="projectName" type="text" value="<#if project>${(applicationForm.project.title?html)}<#else>Not Required</#if>" disabled="disabled"/>
         </div>
       </div>
   

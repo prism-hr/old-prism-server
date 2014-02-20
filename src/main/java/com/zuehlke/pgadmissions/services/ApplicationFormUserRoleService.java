@@ -246,9 +246,9 @@ public class ApplicationFormUserRoleService {
         ApplicationForm application = reviewRound.getApplication();
         RegisteredUser user = reviewer.getUser();
         ReviewComment review = reviewer.getReview();
-
-        setInterestedInApplication(application, user, review.getWillingToInterview() || review.getWillingToWorkWithApplicant());
+        
         applicationFormUserRoleDAO.deleteUserAction(application, user, Authority.REVIEWER, ApplicationFormAction.PROVIDE_REVIEW);
+        setInterestedInApplication(application, user, review.getWillingToInterview() || review.getWillingToWorkWithApplicant());
 
         if (reviewRound.hasAllReviewersResponded()) {
             resetActionDeadline(application, new Date());
@@ -296,9 +296,8 @@ public class ApplicationFormUserRoleService {
         RegisteredUser user = interviewer.getUser();
         InterviewComment interviewComment = interviewer.getInterviewComment();
 
-        setInterestedInApplication(application, user, interviewComment.getWillingToSupervise());
-
         applicationFormUserRoleDAO.deleteUserAction(application, user, Authority.INTERVIEWER, ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK);
+        setInterestedInApplication(application, user, interviewComment.getWillingToSupervise());
 
         if (interview.hasAllInterviewersProvidedFeedback()) {
             resetActionDeadline(application, new Date());
@@ -310,9 +309,9 @@ public class ApplicationFormUserRoleService {
         ApprovalRound approval = supervisor.getApprovalRound();
         ApplicationForm application = approval.getApplication();
         RegisteredUser user = supervisor.getUser();
-
-        setInterestedInApplication(application, user, supervisor.getConfirmedSupervision());
+        
         applicationFormUserRoleDAO.deleteUserAction(application, user, Authority.SUPERVISOR, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
+        setInterestedInApplication(application, user, supervisor.getConfirmedSupervision());
 
         resetActionDeadline(application, new Date());
 

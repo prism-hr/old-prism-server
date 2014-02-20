@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -16,6 +19,7 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
@@ -54,9 +58,29 @@ public class ProgramDAO {
                 .add(Restrictions.eq("enabled", true))
                 .addOrder(Order.asc("title")).list();
     }
+    
+    public List<Program> getProgramsForWhichUserCanManageProjects(RegisteredUser user) {
+        if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
+            getAllEnabledPrograms();
+        }
+
+        Set<Program> programs = new TreeSet<Program>(new Comparator<Program>() {
+            @Override
+            public int compare(Program p1, Program p2) {
+                return p1.getTitle().compareTo(p2.getTitle());
+            }
+        });
+
+        programs.addAll(getEnabledProgramsForWhichUserHasProgramAuthority(user));
+        programs.addAll(getEnabledProgramsForWhichUserHasProjectAuthority(user));
+        programs.addAll(getEnabledProgramsForWhichUserHasApplicationAuthority(user));
+
+        return Lists.newArrayList(programs);
+    }
 
     public Program getProgramById(Integer programId) {
-        return (Program) sessionFactory.getCurrentSession().get(Program.class, programId);
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .add(Restrictions.eq("id", programId)).uniqueResult();
     }
 
     public void save(Program program) {
@@ -74,8 +98,8 @@ public class ProgramDAO {
                 .add(Restrictions.eq("code", code)).uniqueResult().toString();
     }
     
-	public void merge(Program program) {
-		sessionFactory.getCurrentSession().merge(program);
+	public Program merge(Program program) {
+		return (Program) sessionFactory.getCurrentSession().merge(program);
 	}
 	
     public Program getLastCustomProgram(QualificationInstitution institution) {
@@ -144,9 +168,10 @@ public class ProgramDAO {
     public List<Program> getEnabledProgramsForWhichUserHasProgramAuthority(RegisteredUser user) {
         HashSet<Program> programs = new HashSet<Program>();
         for (Authority authority : AuthorityGroup.INTERNAL_PROGRAM_AUTHORITIES.getAuthorities()) {
-            String property = authority.toString().toLowerCase();
+            String property = authority.toString().toLowerCase() + "s";
             programs.addAll((List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                    .add(Restrictions.eq(property, user)).list()); 
+                    .createAlias(property, "registeredUser", JoinType.INNER_JOIN)
+                    .add(Restrictions.eq("registeredUser.id", user.getId())).list());
         }
         return new ArrayList<Program>(programs);
     }

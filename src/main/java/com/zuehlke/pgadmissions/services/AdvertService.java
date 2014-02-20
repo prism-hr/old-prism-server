@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,14 +45,15 @@ public class AdvertService {
             selectedAdvertId = advertDTOs.get(0).getId();
         }
         
-        advertDTOs.addAll(shuffleAdverts(advertDAO.getAdvertFeed(feedKey, feedKeyValue, selectedAdvertId)));
+        List<AdvertDTO> feedAdvertDTOs = advertDAO.getAdvertFeed(feedKey, feedKeyValue, selectedAdvertId);
+        
+        if (BooleanUtils.isTrue(OpportunityListType.shouldBeRandomisedForDisplay(feedKey))) {
+            Collections.shuffle(feedAdvertDTOs);
+        }
+        
+        advertDTOs.addAll(feedAdvertDTOs);
         return advertDTOs;
 
-    }
-    
-    private List<AdvertDTO> shuffleAdverts(List<AdvertDTO> advertDTOs) {
-        Collections.shuffle(advertDTOs);
-        return advertDTOs;
     }
     
 }

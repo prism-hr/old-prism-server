@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -30,7 +29,7 @@ public class ApplicationFormDAO {
 
     private final SessionFactory sessionFactory;
     
-    private final UserService userService;
+    private final UserDAO userDAO;
 
     private List<ApplicationFormStatus> activeStates = Lists.newArrayList();
 
@@ -39,9 +38,9 @@ public class ApplicationFormDAO {
     }
 
     @Autowired
-    public ApplicationFormDAO(SessionFactory sessionFactory, UserService userService) {
+    public ApplicationFormDAO(SessionFactory sessionFactory, UserDAO userDAO) {
         this.sessionFactory = sessionFactory;
-        this.userService = userService;
+        this.userDAO = userDAO;
         activeStates.add(ApplicationFormStatus.VALIDATION);
         activeStates.add(ApplicationFormStatus.REVIEW);
         activeStates.add(ApplicationFormStatus.INTERVIEW);
@@ -138,7 +137,7 @@ public class ApplicationFormDAO {
     public ApplicationForm getPreviousApplicationForApplicant(ApplicationForm applicationForm) {
         Boolean copySubmittedApplication = true;
         Integer applicationFormId = applicationForm.getId();
-        RegisteredUser applicant = userService.getCurrentUser();
+        RegisteredUser applicant = userDAO.getCurrentUser();
         
         Date copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
                 .setProjection(Projections.max("submittedDate"))

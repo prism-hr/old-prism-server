@@ -285,7 +285,7 @@ public class ApplicationFormUserRoleDAO {
 	
     public void deleteRoleAction(ApplicationForm applicationForm, Authority authority, ApplicationFormAction action) {
         Query query = sessionFactory.getCurrentSession()
-            .createSQLQuery("CALL DELETE_USER_ACTION(?, ?, ?);")
+            .createSQLQuery("CALL DELETE_ROLE_ACTION(?, ?, ?);")
                 .setInteger(0, applicationForm.getId())
                 .setString(1, authority.toString())
                 .setString(2, action.toString());
@@ -294,7 +294,7 @@ public class ApplicationFormUserRoleDAO {
 	
     public void deleteUserAction(ApplicationForm applicationForm, RegisteredUser registeredUser, Authority authority, ApplicationFormAction action) {
         Query query = sessionFactory.getCurrentSession()
-            .createSQLQuery("CALL DELETE_ROLE_ACTION(?, ?, ?);")
+            .createSQLQuery("CALL DELETE_USER_ACTION(?, ?, ?, ?);")
                 .setInteger(0, applicationForm.getId())
                 .setInteger(1, registeredUser.getId())
                 .setString(2, authority.toString())

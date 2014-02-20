@@ -23,4 +23,8 @@ public enum OpportunityListType {
         return Arrays.asList(RECOMMENDEDOPPORTUNTIIESBYAPPLICANTID).contains(feedKey);
     }
     
+    public static Boolean shouldBeRandomisedForDisplay(OpportunityListType feedKey) {
+        return Arrays.asList(OPPORTUNITIESBYFEEDID, OPPORTUNITIESBYUSERUPI, OPPORTUNITIESBYUSERUSERNAME).contains(feedKey);
+    }
+    
 }

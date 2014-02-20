@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Service("applicationFormCreationService")
 @Transactional
@@ -34,9 +35,12 @@ public class ApplicationFormCreationService {
 
     @Autowired
     private ApplicationFormDAO applicationFormDAO;
-
+    
     @Autowired
     private ProgrammeDetailsService programmeDetailsService;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ApplicationFormUserRoleService applicationFormUserRoleService;
@@ -48,6 +52,8 @@ public class ApplicationFormCreationService {
     private ApplicationFormCopyHelper applicationFormCopyHelper;
 
     public ApplicationForm createOrGetUnsubmittedApplicationForm(final RegisteredUser applicant, final Program program, Project project) {
+        userService.addRoleToUser(applicant, Authority.APPLICANT);
+        
         ApplicationFormCreationService thisBean = applicationContext.getBean(ApplicationFormCreationService.class);
 
         ApplicationForm applicationForm = thisBean.findMostRecentApplication(applicant, program, project);
@@ -60,7 +66,7 @@ public class ApplicationFormCreationService {
         thisBean.fillWithDataFromPreviousApplication(applicationForm);
 
         thisBean.addSuggestedSupervisors(applicationForm, project);
-
+        
         applicationFormUserRoleService.applicationCreated(applicationForm);
 
         log.info("New application form created: " + applicationForm.getApplicationNumber());
@@ -69,11 +75,9 @@ public class ApplicationFormCreationService {
 
     protected void fillWithDataFromPreviousApplication(ApplicationForm applicationForm) {
         ApplicationForm previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(applicationForm);
-        if (previousApplication == null) {
-            return;
+        if (previousApplication != null) {
+            applicationFormCopyHelper.copyApplicationFormData(applicationForm, previousApplication);
         }
-
-        applicationFormCopyHelper.copyApplicationFormData(applicationForm, previousApplication);
     }
 
     protected ApplicationForm createNewApplicationForm(RegisteredUser applicant, Program program, Project project) {

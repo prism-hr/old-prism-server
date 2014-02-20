@@ -263,7 +263,7 @@ public class ProgramsServiceTest {
         expect(thisBean.generateNextProgramCode(institution)).andReturn("AAA_00000");
 
         replay();
-        Program program = programsService.createOrGetCustomProgram(opportunityRequest);
+        Program program = programsService.createOrGetProgram(opportunityRequest);
         verify();
 
         assertSame(programCapture.getValue(), program);
@@ -284,7 +284,7 @@ public class ProgramsServiceTest {
         programDAOMock.merge(program);
 
         replay();
-        Program returned = programsService.createOrGetCustomProgram(opportunityRequest);
+        Program returned = programsService.createOrGetProgram(opportunityRequest);
         verify();
 
         assertTrue(returned.getAtasRequired());

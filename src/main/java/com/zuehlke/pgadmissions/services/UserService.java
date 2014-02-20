@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,23 +39,21 @@ public class UserService {
     private final UserFactory userFactory;
     private final EncryptionUtils encryptionUtils;
     private final MailSendingService mailService;
-    private final ProgramsService programsService;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public UserService() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, UserFactory userFactory, EncryptionUtils encryptionUtils,
-            MailSendingService mailService, ProgramsService programsService, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            MailSendingService mailService, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
         this.filteringDAO = filteringDAO;
         this.userFactory = userFactory;
         this.encryptionUtils = encryptionUtils;
         this.mailService = mailService;
-        this.programsService = programsService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
@@ -101,17 +98,16 @@ public class UserService {
     }
 
     public RegisteredUser getCurrentUser() {
-        RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        RegisteredUser user = userDAO.get(currentUser.getId());
-        boolean canManageProjects = !programsService.getProgramsForWhichCanManageProjects(user).isEmpty();
-        user.setCanManageProjects(canManageProjects);
-        return user;
+        return userDAO.getCurrentUser();
     }
 
     public void addRoleToUser(RegisteredUser user, Authority authority) {
-        user.getRoles().add(roleDAO.getRoleByAuthority(authority));
-        if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
-        	applicationFormUserRoleService.createUserInRole(user, authority);
+        if (!user.getRoles().contains(authority)) {
+            user.getRoles().add(roleDAO.getRoleByAuthority(authority));
+            if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
+                applicationFormUserRoleService.createUserInRole(user, authority);
+            }
+            userDAO.save(user);
         }
     }
 

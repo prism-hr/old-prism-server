@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
@@ -33,13 +32,8 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
         super.setup();
         advertDAO = new AdvertDAO(sessionFactory);
         programDAO = new ProgramDAO(sessionFactory);
-        institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        institution = (QualificationInstitution) sessionFactory.getCurrentSession().get(QualificationInstitution.class, 3800);
         save(institution);
-    }
-    
-    @Override
-    public void tearDown() {
-        super.tearDown();
     }
 
     @Test
@@ -55,7 +49,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
                 .advert(new AdvertBuilder().title("active program").description("active program").studyDuration(66).active(true).enabled(true)
                 .contactUser(advertContact).build()).build();
 
-        save(institution, programWithInactiveProgramAdvert, programWithActiveProgramAdvert);
+        save(programWithInactiveProgramAdvert, programWithActiveProgramAdvert);
         flushAndClearSession();
 
         List<AdvertDTO> activeAdverts = advertDAO.getAdvertFeed(null, null, 0);

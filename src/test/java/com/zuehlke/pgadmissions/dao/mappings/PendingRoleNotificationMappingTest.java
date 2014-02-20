@@ -72,7 +72,7 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 		RoleDAO roleDAO = new RoleDAO(sessionFactory);
 		reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
 
-		QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+		QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a8").domicileCode("AE").enabled(true).build();
 		program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 		save(institution, program);
 		

@@ -99,6 +99,9 @@ public class OpportunityRequest {
     @Transient
     private String studyDurationUnit;
 
+    @Transient
+    private boolean forceCreatingNewInstitution;
+
     public Integer getId() {
         return id;
     }
@@ -256,6 +259,14 @@ public class OpportunityRequest {
     public void setStudyDurationUnit(String studyDurationUnit) {
         this.studyDurationUnit = studyDurationUnit;
         computeStudyDuration();
+    }
+
+    public boolean isForceCreatingNewInstitution() {
+        return forceCreatingNewInstitution;
+    }
+
+    public void setForceCreatingNewInstitution(boolean forceCreatingNewInstitution) {
+        this.forceCreatingNewInstitution = forceCreatingNewInstitution;
     }
 
     private void computeStudyDuration() {

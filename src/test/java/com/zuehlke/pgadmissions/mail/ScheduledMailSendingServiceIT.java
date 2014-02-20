@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
-import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/testMailSendingContext.xml")
@@ -86,7 +85,7 @@ public class ScheduledMailSendingServiceIT {
 
                 lastNotified = new DateTime(2013, 5, 7, 0, 0);
 
-                QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+                QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a18").domicileCode("AE").enabled(true).build();
                 Program program = new ProgramBuilder().administrators(programAdmin).title("ProgramTitle").institution(institution).build();
 
                 ApplicationForm application1 = new ApplicationFormBuilder().applicant(applicant).program(program).applicationNumber("sampelNumber")

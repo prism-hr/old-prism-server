@@ -28,7 +28,7 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
     @Test
     public void shouldPersistAResearchOpportunitiesFeed() {
         RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a64").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").institution(institution).build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed").user(user)
                 .build();
@@ -52,12 +52,12 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
     @Test
     public void shouldReturnWhetherATitleIsUniqueForAUser() {
         RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = (QualificationInstitution) sessionFactory.getCurrentSession().get(QualificationInstitution.class, 3800);
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").institution(institution).build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed2").user(user)
                 .build();
 
-        save(user, institution, program);
+        save(user, program);
         flushAndClearSession();
 
         dao.save(feed);
@@ -71,7 +71,7 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
     @Test
     public void shouldReturnAllFeedsForAUser() {
         RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a58").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").institution(institution).build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed3").user(user)
                 .build();

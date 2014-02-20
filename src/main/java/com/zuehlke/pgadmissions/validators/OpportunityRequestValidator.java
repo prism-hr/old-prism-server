@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,10 +9,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 
 @Component
@@ -21,6 +25,9 @@ public class OpportunityRequestValidator extends AbstractValidator {
 
     @Autowired
     private ProgramInstanceService programInstanceService;
+
+    @Autowired
+    private FullTextSearchService fullTextSearchService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -42,6 +49,14 @@ public class OpportunityRequestValidator extends AbstractValidator {
         if (StringUtils.equalsIgnoreCase("OTHER", institutionCode)) {
             if (StringUtils.isBlank(opportunityRequest.getOtherInstitution())) {
                 errors.rejectValue("otherInstitution", EMPTY_FIELD_ERROR_MESSAGE);
+            } else if (opportunityRequest.getInstitutionCountry() != null && !opportunityRequest.isForceCreatingNewInstitution()) {
+                // check for similar institution names
+                List<String> matchingInstitutions = fullTextSearchService.getMatchingInstitutions(opportunityRequest.getOtherInstitution(), opportunityRequest
+                        .getInstitutionCountry().getCode());
+                matchingInstitutions.remove(opportunityRequest.getOtherInstitution()); // remove the identical one
+                if (!matchingInstitutions.isEmpty()) {
+                    errors.rejectValue("otherInstitution", "institution.did.you.mean", Joiner.on("::").join(matchingInstitutions));
+                }
             }
         }
 
@@ -100,5 +115,9 @@ public class OpportunityRequestValidator extends AbstractValidator {
 
     void setProgramInstanceService(ProgramInstanceService programInstanceService) {
         this.programInstanceService = programInstanceService;
+    }
+    
+    void setFullTextSearchService(FullTextSearchService fullTextSearchService) {
+        this.fullTextSearchService = fullTextSearchService;
     }
 }

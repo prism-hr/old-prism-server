@@ -69,7 +69,7 @@ public class ApplicationsReportService {
     private final ApplicationsService applicationsService;
 
     private final ApplicantRatingService applicantRatingService;
-    
+
     private final String host;
 
     public ApplicationsReportService() {
@@ -85,108 +85,107 @@ public class ApplicationsReportService {
 
     public DataTable getApplicationsReport(RegisteredUser user, ApplicationsFiltering filtering, ReportFormat reportType) {
         DataTable data = new DataTable();
-        
+
         ArrayList<ColumnDescription> cd = Lists.newArrayList();
-        
-        if (reportType == ReportFormat.SHORT){
-        	cd.add(new ColumnDescription("applicationId", ValueType.TEXT, "Application ID"));
-        	cd.add(new ColumnDescription("firstNames", ValueType.TEXT, "First Name(s)"));
- 	        cd.add(new ColumnDescription("lastName", ValueType.TEXT, "Last Name"));
- 	        cd.add(new ColumnDescription("programmeName", ValueType.TEXT, "Programme Name"));
- 	        cd.add(new ColumnDescription("projectTitle", ValueType.TEXT, "Project Title"));
- 	        cd.add(new ColumnDescription("provisionalSupervisors", ValueType.TEXT, "Provisional Supervisors"));
- 	        cd.add(new ColumnDescription("academicYear", ValueType.TEXT, "Academic Year"));
- 	        cd.add(new ColumnDescription("submittedDate", ValueType.DATE, "Submitted"));
- 	        cd.add(new ColumnDescription("totalFunding", ValueType.TEXT, "Total Funding"));
- 	        
- 	        // overall rating
- 	        cd.add(new ColumnDescription("averageOverallRating", ValueType.TEXT, "Average Overall Rating"));
- 	        
- 	        cd.add(new ColumnDescription("status", ValueType.TEXT, "Status"));
- 	
- 	        // reference report
- 	        cd.add(new ColumnDescription("receivedReferences", ValueType.NUMBER, "Received References"));
- 	        cd.add(new ColumnDescription("averageReferenceRating", ValueType.TEXT, "Average Reference Rating"));
- 	
- 	        // review report
- 	        cd.add(new ColumnDescription("reviewStages", ValueType.NUMBER, "Review Stages"));
- 	        cd.add(new ColumnDescription("positiveReviewEndorsements", ValueType.TEXT, "Positive Review Endorsements"));
- 	        cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.TEXT, "Negative Review Endorsements"));
- 	        cd.add(new ColumnDescription("averageReviewRating", ValueType.TEXT, "Average Review Rating"));
- 	        
- 	        // link to application
- 	        cd.add(new ColumnDescription("applicationLink", ValueType.TEXT, "Link To Application"));
+
+        if (reportType == ReportFormat.SHORT) {
+            cd.add(new ColumnDescription("applicationId", ValueType.TEXT, "Application ID"));
+            cd.add(new ColumnDescription("firstNames", ValueType.TEXT, "First Name(s)"));
+            cd.add(new ColumnDescription("lastName", ValueType.TEXT, "Last Name"));
+            cd.add(new ColumnDescription("programmeName", ValueType.TEXT, "Programme Name"));
+            cd.add(new ColumnDescription("projectTitle", ValueType.TEXT, "Project Title"));
+            cd.add(new ColumnDescription("provisionalSupervisors", ValueType.TEXT, "Provisional Supervisors"));
+            cd.add(new ColumnDescription("academicYear", ValueType.TEXT, "Academic Year"));
+            cd.add(new ColumnDescription("submittedDate", ValueType.DATE, "Submitted"));
+            cd.add(new ColumnDescription("totalFunding", ValueType.TEXT, "Total Funding"));
+
+            // overall rating
+            cd.add(new ColumnDescription("averageOverallRating", ValueType.TEXT, "Average Overall Rating"));
+
+            cd.add(new ColumnDescription("status", ValueType.TEXT, "Status"));
+
+            // reference report
+            cd.add(new ColumnDescription("receivedReferences", ValueType.NUMBER, "Received References"));
+            cd.add(new ColumnDescription("averageReferenceRating", ValueType.TEXT, "Average Reference Rating"));
+
+            // review report
+            cd.add(new ColumnDescription("reviewStages", ValueType.NUMBER, "Review Stages"));
+            cd.add(new ColumnDescription("positiveReviewEndorsements", ValueType.TEXT, "Positive Review Endorsements"));
+            cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.TEXT, "Negative Review Endorsements"));
+            cd.add(new ColumnDescription("averageReviewRating", ValueType.TEXT, "Average Review Rating"));
+
+            // link to application
+            cd.add(new ColumnDescription("applicationLink", ValueType.TEXT, "Link To Application"));
+        } else {
+            cd.add(new ColumnDescription("applicationId", ValueType.TEXT, "Application ID"));
+            cd.add(new ColumnDescription("firstNames", ValueType.TEXT, "First Name(s)"));
+            cd.add(new ColumnDescription("lastName", ValueType.TEXT, "Last Name"));
+            cd.add(new ColumnDescription("email", ValueType.TEXT, "E-mail"));
+            cd.add(new ColumnDescription("nationality1", ValueType.TEXT, "Nationality 1"));
+            cd.add(new ColumnDescription("nationality2", ValueType.TEXT, "Nationality 2"));
+            cd.add(new ColumnDescription("dateOfBirth", ValueType.DATE, "Date Of Birth"));
+            cd.add(new ColumnDescription("gender", ValueType.TEXT, "Gender"));
+            cd.add(new ColumnDescription("programmeId", ValueType.TEXT, "Programme ID"));
+            cd.add(new ColumnDescription("programmeName", ValueType.TEXT, "Programme Name"));
+            cd.add(new ColumnDescription("projectTitle", ValueType.TEXT, "Project Title"));
+            cd.add(new ColumnDescription("studyOption", ValueType.TEXT, "Study Option"));
+            cd.add(new ColumnDescription("sourcesOfInterest", ValueType.TEXT, "How did you find us"));
+            cd.add(new ColumnDescription("sourcesOfInterestText", ValueType.TEXT, "Additional Information"));
+            cd.add(new ColumnDescription("provisionalSupervisors", ValueType.TEXT, "Provisional Supervisors"));
+            cd.add(new ColumnDescription("academicYear", ValueType.TEXT, "Academic Year"));
+            cd.add(new ColumnDescription("submittedDate", ValueType.DATE, "Submitted"));
+            cd.add(new ColumnDescription("lastEditedDate", ValueType.DATE, "Last Edited"));
+            cd.add(new ColumnDescription("totalFunding", ValueType.TEXT, "Total Funding"));
+
+            // overall rating
+            cd.add(new ColumnDescription("averageOverallRating", ValueType.TEXT, "Average Overall Rating"));
+            cd.add(new ColumnDescription("overallPositiveEndorsements", ValueType.TEXT, "Overall Positive Endorsements"));
+
+            cd.add(new ColumnDescription("status", ValueType.TEXT, "Status"));
+            cd.add(new ColumnDescription("validationTime", ValueType.NUMBER, "Validation Time (hours)"));
+            cd.add(new ColumnDescription("feeStatus", ValueType.TEXT, "Fee status"));
+            cd.add(new ColumnDescription("academicallyQualified", ValueType.TEXT, "Academically Qualified?"));
+            cd.add(new ColumnDescription("adequateEnglish", ValueType.TEXT, "Adequate English?"));
+
+            // reference report
+            cd.add(new ColumnDescription("receivedReferences", ValueType.NUMBER, "Received References"));
+            cd.add(new ColumnDescription("declinedReferences", ValueType.NUMBER, "Declined References"));
+            cd.add(new ColumnDescription("positiveReferenceEndorsements", ValueType.TEXT, "Positive Reference Endorsements"));
+            cd.add(new ColumnDescription("negativeReferenceEndorsements", ValueType.TEXT, "Negative Reference Endorsements"));
+            cd.add(new ColumnDescription("averageReferenceRating", ValueType.TEXT, "Average Reference Rating"));
+
+            // review report
+            cd.add(new ColumnDescription("reviewStages", ValueType.NUMBER, "Review Stages"));
+            cd.add(new ColumnDescription("reviewTime", ValueType.NUMBER, "Review Time (hours)"));
+            cd.add(new ColumnDescription("positiveReviewEndorsements", ValueType.TEXT, "Positive Review Endorsements"));
+            cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.TEXT, "Negative Review Endorsements"));
+            cd.add(new ColumnDescription("averageReviewRating", ValueType.TEXT, "Average Review Rating"));
+
+            // interview report
+            cd.add(new ColumnDescription("interviewStages", ValueType.NUMBER, "Interview Stages"));
+            cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time (hours)"));
+            cd.add(new ColumnDescription("interviewReports", ValueType.NUMBER, "Interview Reports"));
+            cd.add(new ColumnDescription("positiveInterviewEndorsements", ValueType.TEXT, "Positive Interview Endorsements"));
+            cd.add(new ColumnDescription("negativeInterviewEndorsements", ValueType.TEXT, "Negative Interview Endorsements"));
+            cd.add(new ColumnDescription("averageInterviewRating", ValueType.TEXT, "Average Interview Rating"));
+
+            // approval report
+            cd.add(new ColumnDescription("approvalTime", ValueType.NUMBER, "Approval Time (hours)"));
+            cd.add(new ColumnDescription("approvalStages", ValueType.NUMBER, "Approval Stages"));
+            cd.add(new ColumnDescription("primarySupervisor", ValueType.TEXT, "Primary Supervisor"));
+            cd.add(new ColumnDescription("secondarySupervisor", ValueType.TEXT, "Secondary Supervisor"));
+            cd.add(new ColumnDescription("outcome", ValueType.TEXT, "Outcome"));
+            cd.add(new ColumnDescription("outcomedate", ValueType.DATE, "Outcome Date"));
+            cd.add(new ColumnDescription("outcomeType", ValueType.TEXT, "Outcome Type"));
+            cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT, "Outcome Note"));
+
+            // link to application
+            cd.add(new ColumnDescription("applicationLink", ValueType.TEXT, "Link To Application"));
         }
-        else {
-	        cd.add(new ColumnDescription("applicationId", ValueType.TEXT, "Application ID"));
-	        cd.add(new ColumnDescription("firstNames", ValueType.TEXT, "First Name(s)"));
-	        cd.add(new ColumnDescription("lastName", ValueType.TEXT, "Last Name"));
-	        cd.add(new ColumnDescription("email", ValueType.TEXT, "E-mail"));
-	        cd.add(new ColumnDescription("nationality1", ValueType.TEXT, "Nationality 1"));
-	        cd.add(new ColumnDescription("nationality2", ValueType.TEXT, "Nationality 2"));
-	        cd.add(new ColumnDescription("dateOfBirth", ValueType.DATE, "Date Of Birth"));
-	        cd.add(new ColumnDescription("gender", ValueType.TEXT, "Gender"));
-	        cd.add(new ColumnDescription("programmeId", ValueType.TEXT, "Programme ID"));
-	        cd.add(new ColumnDescription("programmeName", ValueType.TEXT, "Programme Name"));
-	        cd.add(new ColumnDescription("projectTitle", ValueType.TEXT, "Project Title"));
-	        cd.add(new ColumnDescription("studyOption", ValueType.TEXT, "Study Option"));
-	        cd.add(new ColumnDescription("sourcesOfInterest", ValueType.TEXT, "How did you find us"));
-	        cd.add(new ColumnDescription("sourcesOfInterestText", ValueType.TEXT, "Additional Information"));
-	        cd.add(new ColumnDescription("provisionalSupervisors", ValueType.TEXT, "Provisional Supervisors"));
-	        cd.add(new ColumnDescription("academicYear", ValueType.TEXT, "Academic Year"));
-	        cd.add(new ColumnDescription("submittedDate", ValueType.DATE, "Submitted"));
-	        cd.add(new ColumnDescription("lastEditedDate", ValueType.DATE, "Last Edited"));
-	        cd.add(new ColumnDescription("totalFunding", ValueType.TEXT, "Total Funding"));
-	        
-	        // overall rating
-	        cd.add(new ColumnDescription("averageOverallRating", ValueType.TEXT, "Average Overall Rating"));
-	        cd.add(new ColumnDescription("overallPositiveEndorsements", ValueType.TEXT, "Overall Positive Endorsements"));
-	
-	        cd.add(new ColumnDescription("status", ValueType.TEXT, "Status"));
-	        cd.add(new ColumnDescription("validationTime", ValueType.NUMBER, "Validation Time (hours)"));
-	        cd.add(new ColumnDescription("feeStatus", ValueType.TEXT, "Fee status"));
-	        cd.add(new ColumnDescription("academicallyQualified", ValueType.TEXT, "Academically Qualified?"));
-	        cd.add(new ColumnDescription("adequateEnglish", ValueType.TEXT, "Adequate English?"));
-	
-	        // reference report
-	        cd.add(new ColumnDescription("receivedReferences", ValueType.NUMBER, "Received References"));
-	        cd.add(new ColumnDescription("declinedReferences", ValueType.NUMBER, "Declined References"));
-	        cd.add(new ColumnDescription("positiveReferenceEndorsements", ValueType.TEXT, "Positive Reference Endorsements"));
-	        cd.add(new ColumnDescription("negativeReferenceEndorsements", ValueType.TEXT, "Negative Reference Endorsements"));
-	        cd.add(new ColumnDescription("averageReferenceRating", ValueType.TEXT, "Average Reference Rating"));
-	
-	        // review report
-	        cd.add(new ColumnDescription("reviewStages", ValueType.NUMBER, "Review Stages"));
-	        cd.add(new ColumnDescription("reviewTime", ValueType.NUMBER, "Review Time (hours)"));
-	        cd.add(new ColumnDescription("positiveReviewEndorsements", ValueType.TEXT, "Positive Review Endorsements"));
-	        cd.add(new ColumnDescription("negativeReviewEndorsements", ValueType.TEXT, "Negative Review Endorsements"));
-	        cd.add(new ColumnDescription("averageReviewRating", ValueType.TEXT, "Average Review Rating"));
-	
-	        // interview report
-	        cd.add(new ColumnDescription("interviewStages", ValueType.NUMBER, "Interview Stages"));
-	        cd.add(new ColumnDescription("interviewTime", ValueType.NUMBER, "Interview Time (hours)"));
-	        cd.add(new ColumnDescription("interviewReports", ValueType.NUMBER, "Interview Reports"));
-	        cd.add(new ColumnDescription("positiveInterviewEndorsements", ValueType.TEXT, "Positive Interview Endorsements"));
-	        cd.add(new ColumnDescription("negativeInterviewEndorsements", ValueType.TEXT, "Negative Interview Endorsements"));
-	        cd.add(new ColumnDescription("averageInterviewRating", ValueType.TEXT, "Average Interview Rating"));
-	        
- 	        // approval report
- 	        cd.add(new ColumnDescription("approvalTime", ValueType.NUMBER, "Approval Time (hours)"));
- 	        cd.add(new ColumnDescription("approvalStages", ValueType.NUMBER, "Approval Stages"));
- 	        cd.add(new ColumnDescription("primarySupervisor", ValueType.TEXT, "Primary Supervisor"));
- 	        cd.add(new ColumnDescription("secondarySupervisor", ValueType.TEXT, "Secondary Supervisor"));
- 	        cd.add(new ColumnDescription("outcome", ValueType.TEXT, "Outcome"));
- 	        cd.add(new ColumnDescription("outcomedate", ValueType.DATE, "Outcome Date"));
- 	        cd.add(new ColumnDescription("outcomeType", ValueType.TEXT, "Outcome Type"));
- 	        cd.add(new ColumnDescription("outcomeNote", ValueType.TEXT, "Outcome Note"));
-	        
-	        // link to application
-	        cd.add(new ColumnDescription("applicationLink", ValueType.TEXT, "Link To Application"));
-        }
-        
+
         data.addColumns(cd);
 
-        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplicationsForReport(user, filtering);
+        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType);
 
         for (ApplicationForm app : applications) {
 
@@ -211,107 +210,103 @@ public class ApplicationsReportService {
                 Date approveDate = getApproveDate(app);
                 boolean canSeeRating = user.getId() != applicant.getId();
 
-                
                 TableRow row = new TableRow();
 
-               if (reportType == ReportFormat.SHORT){
-                	row.addCell(app.getApplicationNumber());
-	                row.addCell(firstNames);
-	                row.addCell(applicant.getLastName());
-	                row.addCell(program.getTitle());
-	                row.addCell(getProjectTitle(app));
-	                row.addCell(getSuggestedSupervisors(programmeDetails));
-	                row.addCell(getAcademicYear(app));
-	                row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
-	                row.addCell(getFundingTotal(app));
-	                
-	                // overall rating
-	                row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
-	                row.addCell(app.getStatus().displayValue());
+                if (reportType == ReportFormat.SHORT) {
+                    row.addCell(app.getApplicationNumber());
+                    row.addCell(firstNames);
+                    row.addCell(applicant.getLastName());
+                    row.addCell(program.getTitle());
+                    row.addCell(getProjectTitle(app));
+                    row.addCell(getSuggestedSupervisors(programmeDetails));
+                    row.addCell(getAcademicYear(app));
+                    row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
+                    row.addCell(getFundingTotal(app));
 
-	
-	                // reference report
-	                row.addCell(receivedAndDeclinedReferences[0]);
-	                row.addCell(canSeeRating ? printRating(getAverageReferenceRating(app)) : N_R);
-	
-	                // review report
-	                row.addCell(new NumberValue(app.getReviewRounds().size()));
-	                row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[0]) : N_R);
-	                row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[1]) : N_R);
-	                row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app)) : N_R);
-	                
-	                // link to application
-	                row.addCell(getApplicationLink(app));
+                    // overall rating
+                    row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
+                    row.addCell(app.getStatus().displayValue());
+
+                    // reference report
+                    row.addCell(receivedAndDeclinedReferences[0]);
+                    row.addCell(canSeeRating ? printRating(getAverageReferenceRating(app)) : N_R);
+
+                    // review report
+                    row.addCell(new NumberValue(app.getReviewRounds().size()));
+                    row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[0]) : N_R);
+                    row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[1]) : N_R);
+                    row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app)) : N_R);
+
+                    // link to application
+                    row.addCell(getApplicationLink(app));
+                } else {
+                    row.addCell(app.getApplicationNumber());
+                    row.addCell(firstNames);
+                    row.addCell(applicant.getLastName());
+                    row.addCell(applicant.getEmail());
+                    row.addCell(personalDetails.getFirstNationality() != null ? personalDetails.getFirstNationality().getName() : StringUtils.EMPTY);
+                    row.addCell(personalDetails.getSecondNationality() != null ? personalDetails.getSecondNationality().getName() : StringUtils.EMPTY);
+                    row.addCell(getDateValue(personalDetails.getDateOfBirth()));
+                    row.addCell(personalDetails.getGender().getDisplayValue());
+                    row.addCell(program.getCode());
+                    row.addCell(program.getTitle());
+                    row.addCell(getProjectTitle(app));
+                    row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : StringUtils.EMPTY);
+                    row.addCell(programmeDetails.getSourcesOfInterest() != null ? StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterest().getName()) : StringUtils.EMPTY);
+                    row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterestText()));
+                    row.addCell(getSuggestedSupervisors(programmeDetails));
+                    row.addCell(getAcademicYear(app));
+                    row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
+                    row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
+                    row.addCell(getFundingTotal(app));
+
+                    // overall rating
+                    row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
+                    row.addCell(canSeeRating ? String.valueOf(overallPositiveEndorsements) : N_R);
+
+                    row.addCell(app.getStatus().displayValue());
+                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
+                    row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
+                    row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
+                    row.addCell(validationComment != null ? validationComment.getEnglishCompentencyOk().getDisplayValue() : StringUtils.EMPTY);
+
+                    // reference report
+                    row.addCell(receivedAndDeclinedReferences[0]);
+                    row.addCell(receivedAndDeclinedReferences[1]);
+                    row.addCell(canSeeRating ? String.valueOf(referenceEndorsements[0]) : N_R);
+                    row.addCell(canSeeRating ? String.valueOf(referenceEndorsements[1]) : N_R);
+                    row.addCell(canSeeRating ? printRating(getAverageReferenceRating(app)) : N_R);
+
+                    // review report
+                    row.addCell(new NumberValue(app.getReviewRounds().size()));
+                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.REVIEW)));
+                    row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[0]) : N_R);
+                    row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[1]) : N_R);
+                    row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app)) : N_R);
+
+                    // interview report
+                    row.addCell(new NumberValue(app.getInterviews().size()));
+                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
+                    row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
+                    row.addCell(canSeeRating ? String.valueOf(interviewEndorsements[0]) : N_R);
+                    row.addCell(canSeeRating ? String.valueOf(interviewEndorsements[1]) : N_R);
+                    row.addCell(canSeeRating ? printRating(getAverageRatingForAllInterviewRounds(app)) : N_R);
+
+                    // approval report
+                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPROVAL)));
+                    row.addCell(new NumberValue(app.getApprovalRounds().size()));
+                    row.addCell(getPrintablePrimarySupervisor(app));
+                    row.addCell(getPrintableSecondarySupervisor(app));
+                    row.addCell(app.getStatus() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
+                    row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
+                    row.addCell(approveDate != null ? getConditionalType(app) : StringUtils.EMPTY);
+                    row.addCell(approveDate != null ? getOfferConditions(app) : StringUtils.EMPTY);
+
+                    // link to application
+                    row.addCell(getApplicationLink(app));
+
                 }
-                else {
-                	row.addCell(app.getApplicationNumber());
-	                row.addCell(firstNames);
-	                row.addCell(applicant.getLastName());
-	                row.addCell(applicant.getEmail());
-	                row.addCell(personalDetails.getFirstNationality() != null ? personalDetails.getFirstNationality().getName() : StringUtils.EMPTY);
-	                row.addCell(personalDetails.getSecondNationality() != null ? personalDetails.getSecondNationality().getName() : StringUtils.EMPTY);
-	                row.addCell(getDateValue(personalDetails.getDateOfBirth()));
-	                row.addCell(personalDetails.getGender().getDisplayValue());
-	                row.addCell(program.getCode());
-	                row.addCell(program.getTitle());
-	                row.addCell(getProjectTitle(app));
-	                row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : StringUtils.EMPTY);
-	                row.addCell(programmeDetails.getSourcesOfInterest() != null ? StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterest().getName())
-	                        : StringUtils.EMPTY);
-	                row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterestText()));
-	                row.addCell(getSuggestedSupervisors(programmeDetails));
-	                row.addCell(getAcademicYear(app));
-	                row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
-	                row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
-	                row.addCell(getFundingTotal(app));
-	                
-	                // overall rating
-	                row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
-	                row.addCell(canSeeRating ? String.valueOf(overallPositiveEndorsements) : N_R);
-	
-	                row.addCell(app.getStatus().displayValue());
-	                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
-	                row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
-	                row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
-	                row.addCell(validationComment != null ? validationComment.getEnglishCompentencyOk().getDisplayValue() : StringUtils.EMPTY);
-	
-	                // reference report
-	                row.addCell(receivedAndDeclinedReferences[0]);
-	                row.addCell(receivedAndDeclinedReferences[1]);
-	                row.addCell(canSeeRating ? String.valueOf(referenceEndorsements[0]) : N_R);
-	                row.addCell(canSeeRating ? String.valueOf(referenceEndorsements[1]) : N_R);
-	                row.addCell(canSeeRating ? printRating(getAverageReferenceRating(app)) : N_R);
-	
-	                // review report
-	                row.addCell(new NumberValue(app.getReviewRounds().size()));
-	                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.REVIEW)));
-	                row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[0]) : N_R);
-	                row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[1]) : N_R);
-	                row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app)) : N_R);
-	
-	                // interview report
-	                row.addCell(new NumberValue(app.getInterviews().size()));
-	                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
-	                row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
-	                row.addCell(canSeeRating ? String.valueOf(interviewEndorsements[0]) : N_R);
-	                row.addCell(canSeeRating ? String.valueOf(interviewEndorsements[1]) : N_R);
-	                row.addCell(canSeeRating ? printRating(getAverageRatingForAllInterviewRounds(app)) : N_R);
-	
-	                // approval report
-	                row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPROVAL)));
-	                row.addCell(new NumberValue(app.getApprovalRounds().size()));
-	                row.addCell(getPrintablePrimarySupervisor(app));
-	                row.addCell(getPrintableSecondarySupervisor(app));
-	                row.addCell(app.getStatus() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
-	                row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
-	                row.addCell(approveDate != null ? getConditionalType(app) : StringUtils.EMPTY);
-	                row.addCell(approveDate != null ? getOfferConditions(app) : StringUtils.EMPTY);
-	                
-	                // link to application
-	                row.addCell(getApplicationLink(app));
-               
-                }
-                
+
                 try {
                     data.addRow(row);
                 } catch (TypeMismatchException e) {
@@ -328,11 +323,11 @@ public class ApplicationsReportService {
     }
 
     private String getApplicationLink(ApplicationForm app) {
-    	String applicationLink = host +"/pgadmissions/application?view=view&applicationId="+ app.getApplicationNumber();
-		return applicationLink;
-	}
+        String applicationLink = host + "/pgadmissions/application?view=view&applicationId=" + app.getApplicationNumber();
+        return applicationLink;
+    }
 
-	private long getTimeSpentIn(ApplicationForm app, ApplicationFormStatus applicationStatus) {
+    private long getTimeSpentIn(ApplicationForm app, ApplicationFormStatus applicationStatus) {
         List<Event> events = app.getEvents();
         List<StateChangeEvent> stateEvents = Lists.newArrayList(Iterables.filter(events, StateChangeEvent.class));
         Collections.sort(stateEvents);
@@ -582,13 +577,13 @@ public class ApplicationsReportService {
         }
         return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue() / interviews.size()));
     }
-        
-	private String getFundingTotal(ApplicationForm app) {
+
+    private String getFundingTotal(ApplicationForm app) {
         List<Funding> funding = app.getFundings();
         Integer totalFunding = 0;
-	    for (Funding temp : funding){
-	        totalFunding = totalFunding + temp.getValueAsInteger();
-		}
+        for (Funding temp : funding) {
+            totalFunding = totalFunding + temp.getValueAsInteger();
+        }
         return totalFunding.toString();
     }
 

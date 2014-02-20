@@ -69,14 +69,16 @@ public class EditOpportunityRequestController {
     @RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
     public String getEditOpportunityRequestPage(@PathVariable("requestId") Integer requestId, ModelMap modelMap) {
         OpportunityRequest opportunityRequest = opportunitiesService.getOpportunityRequest(requestId);
-        List<OpportunityRequest> opportunityRequests = opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest);
-        OpportunityRequestComment comment = new OpportunityRequestComment();
 
         // force to recompute study duration number and unit
         opportunityRequest.setStudyDuration(opportunityRequest.getStudyDuration());
+
+        List<OpportunityRequest> opportunityRequests = opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest);
+        OpportunityRequestComment comment = new OpportunityRequestComment();
+
         modelMap.addAttribute("opportunityRequest", opportunityRequest);
         modelMap.addAttribute("opportunityRequests", opportunityRequests);
-        modelMap.addAttribute("comment", comment);  
+        modelMap.addAttribute("comment", comment);
 
         if (opportunityRequest.getInstitutionCountry() != null) {
             modelMap.addAttribute("institutions",
@@ -92,10 +94,16 @@ public class EditOpportunityRequestController {
             ModelMap modelMap) {
         if (requestBindingResult.hasErrors() || commentBindingResult.hasErrors()) {
             OpportunityRequest existingRequest = opportunitiesService.getOpportunityRequest(requestId);
+
             opportunityRequest.setAuthor(existingRequest.getAuthor());
             opportunityRequest.setCreatedDate(existingRequest.getCreatedDate());
             opportunityRequest.setStatus(existingRequest.getStatus());
+            opportunityRequest.setType(existingRequest.getType());
+
+            List<OpportunityRequest> opportunityRequests = opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest);
+
             modelMap.put("opportunityRequest", opportunityRequest);
+            modelMap.addAttribute("opportunityRequests", opportunityRequests);
             modelMap.put("comment", comment);
 
             if (opportunityRequest.getInstitutionCountry() != null) {
@@ -116,7 +124,7 @@ public class EditOpportunityRequestController {
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
-    
+
     @InitBinder(value = "comment")
     public void registerCommentPropertyEditors(WebDataBinder binder) {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));

@@ -34,12 +34,15 @@ public class QualificationInstitutionService {
 
         QualificationInstitution institution;
         if ("OTHER".equals(institutionCode)) {
-            institution = new QualificationInstitution();
-            institution.setDomicileCode(institutionCountry.getCode());
-            institution.setEnabled(true);
-            institution.setName(otherInstitutionName);
-            institution.setCode(thisBean.generateNextInstitutionCode());
-            qualificationInstitutionDAO.save(institution);
+            institution = qualificationInstitutionDAO.getInstitutionByDomicileAndName(institutionCountry.getCode(), otherInstitutionName);
+            if (institution == null) {
+                institution = new QualificationInstitution();
+                institution.setDomicileCode(institutionCountry.getCode());
+                institution.setEnabled(true);
+                institution.setName(otherInstitutionName);
+                institution.setCode(thisBean.generateNextInstitutionCode());
+                qualificationInstitutionDAO.save(institution);
+            }
         } else {
             institution = getInstitutionByCode(institutionCode);
         }
@@ -57,6 +60,5 @@ public class QualificationInstitutionService {
         }
         return String.format("CUST%05d", codeNumber);
     }
-
 
 }

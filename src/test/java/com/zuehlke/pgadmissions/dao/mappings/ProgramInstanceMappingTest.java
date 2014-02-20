@@ -22,7 +22,7 @@ public class ProgramInstanceMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadProgramInstance() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a").domicileCode("AE").enabled(true).build();
+        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a11").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().code("xxxxxx").title("hi").institution(institution).build();
         save(institution, program);
         flushAndClearSession();

@@ -30,7 +30,7 @@
                 <input id="programAdvertProgramLocked" value="false" type="hidden">
                 
                 <div class="row" id="programAdvertAtasRequiredDiv">
-                  <label id="programAdvertAtasRequiredLabel" class="plain-label" for="atasRequired">Does the program require ATAS?<em>*</em></label>
+                  <label id="programAdvertAtasRequiredLabel" class="plain-label" for="atasRequired">Does the programme require ATAS?<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.atasRequired'/>"></span>
                   <div class="field">
                     <label><input type="radio" name="programAdvertAtasRequired" value="true" id="programAdvertAtasRequired_true" /> Yes</label>

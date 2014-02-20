@@ -16,7 +16,7 @@
     </#if>
     <header>
       <a href="/pgadmissions/login" class="btn btn-danger go-back">Cancel</a>
-      <h1>Create New Oppotunity</h1>
+      <h1>Create New Opportunity</h1>
     </header>
 
     <section id="plist">

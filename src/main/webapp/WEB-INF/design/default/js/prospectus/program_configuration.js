@@ -72,7 +72,7 @@ function bindProgramSelectChangeAction() {
 $(document).on('click', '#newProgamme', function() {
     $("#programAdvertSelectProgramDiv").hide();
     $("#programAdvertNewProgramNameDiv").show();
-    $("#programAdvertProgramSelect").selectpicker('val', '');
+    $("#programAdvertProgramSelect").val("");
     clearProgramAdvertErrors();
     checkToDisable();
     changeHeaderInfoBars();
@@ -670,9 +670,9 @@ function saveAdvert() {
 
 function clearAdvert() {
     $("[name=programAdvertAtasRequired]").prop("checked", false);
-    $("#institutionGroup input, #advertGroup input, #advertGroup textarea, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply").val('');
+    $("#institutionGroup input, #advertGroup input, #advertGroup textarea, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply, #advertGroup select").val('');
     $("#programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo").prop('checked', false);
-    $('#institutionGroup select, #advertGroup select').selectpicker("val", "");
+    $('#institutionGroup select').selectpicker("val", "");
     tinyMCE.get('programAdvertDescriptionText').setContent('');
     tinyMCE.get('programAdvertFundingText').setContent('');
 }

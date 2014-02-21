@@ -4,6 +4,7 @@
       <div id="programAdvertDiv">
           <form>
           	  <input type="hidden" id="programAdvertId" value=""/>
+              <input type="hidden" id="programAdvertForceCreatingNewInstitution" value="false" />
               
               <div class="row-group">
               	<div class="row" id="programAdvertSelectProgramDiv">
@@ -72,7 +73,6 @@
                   </div>
                 </div>
                 
-                <input type="hidden" id="programAdvertForceCreatingNewInstitution" value="false" />
                 
                 <div class="row" id="programAdvertInstitutionOtherNameDiv">
                   <label class="plain-label" for="programAdvertInstitutionOtherName">Please Specify<em>*</em></label>

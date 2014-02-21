@@ -83,6 +83,10 @@ public class ProgramsService {
         Set<Program> programs = new TreeSet<Program>(new Comparator<Program>() {
             @Override
             public int compare(Program p1, Program p2) {
+                int compareInstitutions = p1.getInstitution().getName().compareTo(p2.getInstitution().getName());
+                if (compareInstitutions != 0) {
+                    return compareInstitutions;
+                }
                 return p1.getTitle().compareTo(p2.getTitle());
             }
         });

@@ -62,17 +62,15 @@
                 		</a>
                 	</li>
                 </#if>
-                <#if loggedInUser.isCanManageProjects()>
-                	<li
-                		<#if activeTab=="prospectus">
-                			class="current"
-                		</#if>>
-                		<a href="<@spring.url '/prospectus'/>">
-                			<i class="icon-tasks"></i>
-                			Prospectus
-                		</a>
-                	</li>
-                </#if>
+              	<li
+              		<#if activeTab=="prospectus">
+              			class="current"
+              		</#if>>
+              		<a href="<@spring.url '/prospectus'/>">
+              			<i class="icon-tasks"></i>
+              			Prospectus
+              		</a>
+              	</li>
             </ul>
         </div>
      

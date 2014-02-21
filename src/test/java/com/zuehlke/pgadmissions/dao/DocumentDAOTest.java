@@ -172,7 +172,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 
 		Comment comment = new Comment();
 		comment.setApplication(application);
-		comment.setComment("Excellent Application!!!");
+		comment.setContent("Excellent Application!!!");
 		comment.setUser(user);
 		comment.getDocuments().add(document);
 		save(comment);

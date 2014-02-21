@@ -24,12 +24,12 @@ import com.zuehlke.pgadmissions.controllers.workflow.EditApplicationFormAsProgra
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -37,8 +37,8 @@ import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
@@ -53,8 +53,9 @@ import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
 @Controller
 @RequestMapping("/approval")
 public class ApprovalController extends EditApplicationFormAsProgrammeAdminController {
-    // TODO change approvalRound to approvalComment, fix tests
-    
+    // TODO change approvalRound to approvalComment, supervisor to assignedUser, removed supervisorPropertyEditor: try creating
+    // CommentAssignedUserPropertyEditor, fix tests
+
     private static final String PROPOSE_OFFER_RECOMMENDATION_SECTION = "/private/staff/supervisors/propose_offer_recommendation";
     private static final String PORTICO_VALIDATION_SECTION = "/private/staff/supervisors/portico_validation_section";
     private static final String APPROVAL_PAGE = "/private/staff/supervisors/approval_details";
@@ -63,10 +64,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
     @Autowired
     private ApprovalCommentValidator approvalRoundValidator;
-
-    @Autowired
-    private SupervisorPropertyEditor supervisorPropertyEditor;
-
+    
     @Autowired
     private ApprovalService approvalService;
 
@@ -84,6 +82,9 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
     @Autowired
     private ApplicationsService applicationsService;
+    
+    @Autowired
+    private CommentAssignedUserPropertyEditor assignedUserPropertyEditor;
 
     @InitBinder(value = "sendToPorticoData")
     public void registerSendToPorticoData(WebDataBinder binder) {
@@ -148,7 +149,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     @InitBinder("approvalRound")
     public void registerValidatorAndPropertyEditorForApprovalRound(WebDataBinder binder) {
         binder.setValidator(approvalRoundValidator);
-        binder.registerCustomEditor(Supervisor.class, supervisorPropertyEditor);
+         binder.registerCustomEditor(CommentAssignedUser.class, assignedUserPropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
     }
@@ -166,8 +167,8 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
-    public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalComment") AssignSupervisorsComment approvalComment, BindingResult bindingResult,
-            SessionStatus sessionStatus) {
+    public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalComment") AssignSupervisorsComment approvalComment,
+            BindingResult bindingResult, SessionStatus sessionStatus) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser initiator = getCurrentUser();
         actionsProvider.validateAction(applicationForm, initiator, ApplicationFormAction.ASSIGN_SUPERVISORS);
@@ -182,7 +183,8 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
-    public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("approvalRound") AssignSupervisorsComment approvalRound,
+    public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm,
+            @ModelAttribute("approvalRound") AssignSupervisorsComment approvalRound,
             @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
         if (sendToPorticoData.getQualificationsSendToPortico() == null || sendToPorticoData.getRefereesSendToPortico() == null) {
             throw new ResourceNotFoundException();
@@ -247,12 +249,12 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             }
 
             ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
-            
-            // TODO get referee and refresh it, or do sth without refreshing 
+
+            // TODO get referee and refresh it, or do sth without refreshing
             Referee referee = null;
-//            Referee referee = newComment.getReferee();
-//            applicationsService.refresh(applicationForm);
-//            refereeService.refresh(referee);
+            // Referee referee = newComment.getReferee();
+            // applicationsService.refresh(applicationForm);
+            // refereeService.refresh(referee);
 
             applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
             applicationsService.save(applicationForm);

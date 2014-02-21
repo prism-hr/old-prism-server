@@ -21,9 +21,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
+import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -185,14 +187,14 @@ public class ApplicationFormUserRoleService {
         }
     }
 
-    public void movedToReviewStage(ReviewRound reviewRound) {
-        ApplicationForm application = reviewRound.getApplication();
+    public void movedToReviewStage(AssignReviewersComment assignReviewersComment) {
+        ApplicationForm application = assignReviewersComment.getApplication();
 
         deassignFromStateBoundedWorkers(application);
 
-        for (Reviewer reviewer : reviewRound.getReviewers()) {
-            createApplicationFormUserRole(reviewRound.getApplication(), reviewer.getUser(), Authority.REVIEWER, false, new ApplicationFormActionRequired(
-                    actionDAO.getActionById(ApplicationFormAction.PROVIDE_REVIEW), new Date(), false, true));
+        for (CommentAssignedUser assignedUser : assignReviewersComment.getAssignedUsers()) {
+            createApplicationFormUserRole(application, assignedUser.getUser(), Authority.REVIEWER, false,
+                    new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_REVIEW), new Date(), false, true));
         }
 
         assignToAdministrators(application, ApplicationFormAction.COMPLETE_REVIEW_STAGE, application.getDueDate(), true);
@@ -204,29 +206,29 @@ public class ApplicationFormUserRoleService {
         deassignFromStateBoundedWorkers(application);
 
         // FIXME uncomment and fix
-//        if (comment.isScheduling()) {
-//            assignToAdministrators(application, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS, application.getDueDate(), true);
-//
-//            for (InterviewParticipant participant : comment.getParticipants()) {
-//                Boolean isApplicant = participant.getUser().getId().equals(application.getApplicant().getId());
-//                Authority authority = isApplicant ? Authority.APPLICANT : Authority.INTERVIEWER;
-//                createApplicationFormUserRole(application, participant.getUser(), authority, false,
-//                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY), new Date(), false,
-//                                true));
-//            }
-//        } else {
-//            for (CommentAssignedUser interviewer : comment.getAssignedUsers()) {
-//                Boolean raisesUrgentFlag = comment.getInterviewDate().before(new Date());
-//
-//                createApplicationFormUserRole(
-//                        application,
-//                        interviewer.getUser(),
-//                        Authority.INTERVIEWER,
-//                        false,
-//                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK), comment
-//                                .getInterviewDate(), false, raisesUrgentFlag));
-//            }
-//        }
+        // if (comment.isScheduling()) {
+        // assignToAdministrators(application, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS, application.getDueDate(), true);
+        //
+        // for (InterviewParticipant participant : comment.getParticipants()) {
+        // Boolean isApplicant = participant.getUser().getId().equals(application.getApplicant().getId());
+        // Authority authority = isApplicant ? Authority.APPLICANT : Authority.INTERVIEWER;
+        // createApplicationFormUserRole(application, participant.getUser(), authority, false,
+        // new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY), new Date(), false,
+        // true));
+        // }
+        // } else {
+        // for (CommentAssignedUser interviewer : comment.getAssignedUsers()) {
+        // Boolean raisesUrgentFlag = comment.getInterviewDate().before(new Date());
+        //
+        // createApplicationFormUserRole(
+        // application,
+        // interviewer.getUser(),
+        // Authority.INTERVIEWER,
+        // false,
+        // new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK), comment
+        // .getInterviewDate(), false, raisesUrgentFlag));
+        // }
+        // }
         assignToAdministrators(application, ApplicationFormAction.COMPLETE_INTERVIEW_STAGE, application.getDueDate(), true);
     }
 
@@ -259,7 +261,8 @@ public class ApplicationFormUserRoleService {
 
     public void referencePosted(ReferenceComment referenceComment) {
         ApplicationForm application = referenceComment.getApplication();
-        ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, referenceComment.getUser(), Authority.REFEREE);
+        ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, referenceComment.getUser(),
+                Authority.REFEREE);
         if (role != null) {
             applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
         }
@@ -268,64 +271,67 @@ public class ApplicationFormUserRoleService {
     public void reviewPosted(ReviewComment reviewComment) {
         ApplicationForm application = reviewComment.getApplication();
 
-        ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, reviewComment.getUser(), Authority.REVIEWER);
+        ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, reviewComment.getUser(),
+                Authority.REVIEWER);
         setInterestedInApplication(application, reviewComment.getUser(), reviewComment.getWillingToInterview() || reviewComment.getWillingToSupervise());
 
         applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
 
         // TODO check if all reviewers provided feedback
-//        if (reviewRound.hasAllReviewersResponded()) {
-//            resetActionDeadline(application, new Date());
+        // if (reviewRound.hasAllReviewersResponded()) {
+        // resetActionDeadline(application, new Date());
+        // }
+
+    }
+
+    public void interviewParticipantResponded(AssignInterviewersComment assignInterviewersComment, RegisteredUser participant) {
+        // TODO fix the method by using new arguments (participant may be assignedUser or applicant)
+        // Interview interview = participant.getInterview();
+        // ApplicationForm application = interview.getApplication();
+        // RegisteredUser user = participant.getUser();
+        // Boolean isApplicant = user.getId() == application.getApplicant().getId();
+        // ApplicationFormUserRole role;
+        // if (BooleanUtils.isTrue(isApplicant)) {
+        // role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.APPLICANT);
+        // } else {
+        // role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.INTERVIEWER);
+        // }
+        //
+        // applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
+        //
+        // if (interview.hasAllParticipantsProvidedAvailability()) {
+        // resetActionDeadline(application, new Date());
+        // }
+
+    }
+
+    public void interviewConfirmed(InterviewScheduleComment interviewScheduleComment) {
+        // TODO change interview to interviewScheduleComment
+//        ApplicationForm application = interviewScheduleComment.getApplication();
+//
+//        deassignFromStateBoundedWorkers(application);
+//
+//        for (InterviewParticipant participant : interview.getParticipants()) {
+//            RegisteredUser user = participant.getUser();
+//            Boolean isApplicant = user.getId() == application.getApplicant().getId();
+//
+//            ApplicationFormUserRole role;
+//            if (BooleanUtils.isTrue(isApplicant)) {
+//                role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.APPLICANT);
+//            } else {
+//                role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.INTERVIEWER);
+//            }
+//
+//            applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
+//
+//            if (!isApplicant) {
+//                Date dateNow = new Date();
+//                role.getActions().add(
+//                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK), dateNow, false, interview
+//                                .getInterviewDueDate().before(dateNow)));
+//            }
 //        }
-
-    }
-
-    public void interviewParticipantResponded(InterviewParticipant participant) {
-        Interview interview = participant.getInterview();
-        ApplicationForm application = interview.getApplication();
-        RegisteredUser user = participant.getUser();
-        Boolean isApplicant = user.getId() == application.getApplicant().getId();
-        ApplicationFormUserRole role;
-        if (BooleanUtils.isTrue(isApplicant)) {
-            role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.APPLICANT);
-        } else {
-            role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.INTERVIEWER);
-        }
-
-        applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
-
-        if (interview.hasAllParticipantsProvidedAvailability()) {
-            resetActionDeadline(application, new Date());
-        }
-
-    }
-
-    public void interviewConfirmed(Interview interview) {
-        ApplicationForm application = interview.getApplication();
-
-        deassignFromStateBoundedWorkers(application);
-
-        for (InterviewParticipant participant : interview.getParticipants()) {
-            RegisteredUser user = participant.getUser();
-            Boolean isApplicant = user.getId() == application.getApplicant().getId();
-
-            ApplicationFormUserRole role;
-            if (BooleanUtils.isTrue(isApplicant)) {
-                role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.APPLICANT);
-            } else {
-                role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.INTERVIEWER);
-            }
-
-            applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
-
-            if (!isApplicant) {
-                Date dateNow = new Date();
-                role.getActions().add(
-                        new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK), dateNow, false, interview
-                                .getInterviewDueDate().before(dateNow)));
-            }
-        }
-        assignToAdministrators(application, ApplicationFormAction.COMPLETE_INTERVIEW_STAGE, application.getDueDate(), true);
+//        assignToAdministrators(application, ApplicationFormAction.COMPLETE_INTERVIEW_STAGE, application.getDueDate(), true);
     }
 
     public void interviewFeedbackPosted(InterviewComment interviewComment) {
@@ -338,9 +344,9 @@ public class ApplicationFormUserRoleService {
         applicationFormUserRoleDAO.deleteActionsAndFlushToDB(role);
 
         // TODO check if all interviewers provided feedback
-//        if (interview.hasAllInterviewersProvidedFeedback()) {
-//            resetActionDeadline(application, new Date());
-//        }
+        // if (interview.hasAllInterviewersProvidedFeedback()) {
+        // resetActionDeadline(application, new Date());
+        // }
 
     }
 

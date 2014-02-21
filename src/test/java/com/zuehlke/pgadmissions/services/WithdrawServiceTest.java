@@ -49,7 +49,7 @@ public class WithdrawServiceTest {
         verify();
 
         assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
-        assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getStatusWhenWithdrawn());
+        assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getPreviousStatus());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class WithdrawServiceTest {
         verify();
 
         assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
-        assertEquals(ApplicationFormStatus.UNSUBMITTED, applicationForm.getStatusWhenWithdrawn());
+        assertEquals(ApplicationFormStatus.UNSUBMITTED, applicationForm.getPreviousStatus());
     }
 
     @Test

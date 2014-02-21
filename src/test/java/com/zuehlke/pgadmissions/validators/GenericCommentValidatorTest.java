@@ -35,7 +35,7 @@ public class GenericCommentValidatorTest {
 	@Test
 	public void shouldRejectIfCommentIsEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "comment");
-		comment.setComment("");
+		comment.setContent("");
 		genericCommentValidator.validate(comment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("comment").getCode());
@@ -44,7 +44,7 @@ public class GenericCommentValidatorTest {
 	@Test
     public void shouldNotRejectIfCommentIsLongerThan2000Characters() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "comment");
-        comment.setComment(Strings.repeat("a", 2100));
+        comment.setContent(Strings.repeat("a", 2100));
         genericCommentValidator.validate(comment, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }
@@ -52,7 +52,7 @@ public class GenericCommentValidatorTest {
 	@Test
     public void shouldNotRejectIfCommentIsShorterThan2000Characters() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "comment");
-        comment.setComment(Strings.repeat("a", 1900));
+        comment.setContent(Strings.repeat("a", 1900));
         genericCommentValidator.validate(comment, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }

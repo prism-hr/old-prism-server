@@ -44,7 +44,7 @@ public class ReferenceValidatorTest {
 	
 	@Test
 	public void shouldRejectIfFileIsMissing(){
-		reference.setDocuments(null);
+		reference.setDocument(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reference, "documents");
 		referenceValidator.validate(reference, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -52,7 +52,7 @@ public class ReferenceValidatorTest {
 	
 	@Test
 	public void shouldRejectIfCommentIsMissing(){
-		reference.setComment(null);
+		reference.setContent(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reference, "comment");
 		referenceValidator.validate(reference, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -61,7 +61,7 @@ public class ReferenceValidatorTest {
 	
 	@Test
 	public void shouldRejectIfSuitableForUCLIsNotSelected(){
-		reference.setSuitableForUCL(null);
+		reference.setSuitableForInstitution(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reference, "suitableForUCL");
 		referenceValidator.validate(reference, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -82,9 +82,9 @@ public class ReferenceValidatorTest {
 	public void setup() throws ParseException{
 		reference = new ReferenceComment();
 		reference.getDocuments().add(new DocumentBuilder().id(1).build());
-		reference.setComment("comment");
+		reference.setContent("comment");
 		reference.setSuitableForProgramme(false);
-		reference.setSuitableForUCL(false);
+		reference.setSuitableForInstitution(false);
 		
 		referenceValidator = new ReferenceValidator();
 		referenceValidator.setValidator((javax.validation.Validator) validator);

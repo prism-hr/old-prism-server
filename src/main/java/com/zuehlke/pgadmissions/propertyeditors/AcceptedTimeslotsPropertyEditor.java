@@ -8,14 +8,14 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.dao.InterviewTimeslotDAO;
+import com.zuehlke.pgadmissions.dao.AppointmentTimeslotDAO;
 import com.zuehlke.pgadmissions.domain.AppointmentTimeslot;
 
 @Component
 public class AcceptedTimeslotsPropertyEditor extends PropertyEditorSupport {
 
     @Autowired
-    private InterviewTimeslotDAO timeslotDAO;
+    private AppointmentTimeslotDAO timeslotDAO;
     
     @Override
     public void setAsText(String text) throws IllegalArgumentException {

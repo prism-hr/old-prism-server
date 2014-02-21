@@ -13,6 +13,10 @@ public class CommentAssignedUser {
     @JoinColumn(name = "user_id")
     private RegisteredUser user;
 
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
+
     @Column(name = "is_primary")
     private boolean primary;
 
@@ -22,6 +26,14 @@ public class CommentAssignedUser {
 
     public void setUser(RegisteredUser user) {
         this.user = user;
+    }
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
     }
 
     public boolean isPrimary() {

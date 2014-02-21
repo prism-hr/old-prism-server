@@ -5,15 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
-import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.StageDuration;
-import com.zuehlke.pgadmissions.domain.StateChangeComment;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -23,88 +20,46 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 @Transactional
 public class ReviewService {
 
-	private final ApplicationFormDAO applicationDAO;
-	private final ReviewRoundDAO reviewRoundDAO;
-	private final StageDurationService stageDurationService;
-	private final EventFactory eventFactory;
-	private final ReviewerDAO reviewerDAO;
-	private final MailSendingService mailService;
-	private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    @Autowired
+	private ApplicationsService applicationsService;
 
-	public ReviewService() {
-		this(null, null, null, null, null, null, null);
-	}
+    @Autowired
+	private StageDurationService stageDurationService;
 
-	@Autowired
-    public ReviewService(ApplicationFormDAO applicationDAO, ReviewRoundDAO reviewRoundDAO,
-            StageDurationService stageDurationService, EventFactory eventFactory, ReviewerDAO reviewerDAO,
-            MailSendingService mailService, ApplicationFormUserRoleService applicationFormUserRoleService) {
-		this.applicationDAO = applicationDAO;
-		this.reviewRoundDAO = reviewRoundDAO;
-		this.stageDurationService = stageDurationService;
-		this.eventFactory = eventFactory;
-		this.reviewerDAO = reviewerDAO;
-        this.mailService = mailService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-	}
+    @Autowired
+	private MailSendingService mailService;
 
-	public void moveApplicationToReview(ApplicationForm application, ReviewRound reviewRound, RegisteredUser initiator) {
-	    DateTime baseDate;
+    @Autowired
+	private ApplicationFormUserRoleService applicationFormUserRoleService;
+
+	public void moveApplicationToReview(ApplicationForm application, AssignReviewersComment assignReviewersComment) {
 	    
-	    if (application.getBatchDeadline() == null || application.getLatestReviewRound() != null) {
+	    Comment latestAssignReviewersComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.ASSIGN_REVIEWERS);
+	    
+	    DateTime baseDate;
+	    if (application.getBatchDeadline() == null || latestAssignReviewersComment != null) {
 	        baseDate = new DateTime();
 	    }
 	    else {
 	        baseDate = new DateTime(application.getBatchDeadline());
 	    }
 	    
-		application.setLatestReviewRound(reviewRound);
-		reviewRound.setApplication(application);
 		StageDuration reviewStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.REVIEW);
 		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, reviewStageDuration.getDurationInMinutes());
         application.setDueDate(dueDate.toDate());
         boolean sendReferenceRequest = application.getStatus() == ApplicationFormStatus.VALIDATION;
         application.setStatus(ApplicationFormStatus.REVIEW);
-		application.getEvents().add(eventFactory.createEvent(reviewRound));
-        StateChangeComment latestStateChangeComment = application.getLatestStateChangeComment();
-        reviewRound.setUseCustomQuestions(latestStateChangeComment.getUseCustomQuestions());
-        reviewRoundDAO.save(reviewRound);
 		
         if (sendReferenceRequest) {
             mailService.sendReferenceRequest(application.getReferees(), application);
+            Comment latestStateChangeComment = applicationsService.getLatestStateChangeComment(application, null);
             application.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
-            applicationDAO.save(application);
             applicationFormUserRoleService.validationStageCompleted(application);
         }
         
-        applicationFormUserRoleService.movedToReviewStage(reviewRound);
-        applicationFormUserRoleService.registerApplicationUpdate(application, initiator, ApplicationUpdateScope.ALL_USERS);
-		applicationDAO.save(application);
+        applicationFormUserRoleService.movedToReviewStage(assignReviewersComment);
+        applicationFormUserRoleService.registerApplicationUpdate(application, assignReviewersComment.getUser(), ApplicationUpdateScope.ALL_USERS);
+		applicationsService.save(application);
 	}
 
-	public void createReviewerInNewReviewRound(ApplicationForm applicationForm, RegisteredUser newUser) {
-		Reviewer reviewer = newReviewer();
-		reviewer.setUser(newUser);
-		reviewerDAO.save(reviewer);
-		ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
-		if (latestReviewRound == null) {
-			ReviewRound reviewRound = newReviewRound();
-			reviewRound.getReviewers().add(reviewer);
-			reviewRound.setApplication(applicationForm);
-			reviewRoundDAO.save(reviewRound);
-			applicationForm.setLatestReviewRound(reviewRound);
-		} else {
-			latestReviewRound.getReviewers().add(reviewer);
-			reviewRoundDAO.save(latestReviewRound);
-		}
-
-	}
-	
-	public Reviewer newReviewer() {
-		return new Reviewer();
-	}
-
-	public ReviewRound newReviewRound() {
-		return new ReviewRound();
-	}
 }

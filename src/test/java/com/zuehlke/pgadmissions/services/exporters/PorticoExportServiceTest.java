@@ -52,7 +52,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -387,7 +386,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSuccessfullyCallWebServiceWithOverseasStudent() throws PorticoExportServiceException {
         OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm)
-                .comment("").commentType(CommentType.OFFER_RECOMMENDED_COMMENT).projectAbstract("abstract")
+                .comment("").projectAbstract("abstract")
                 .recommendedConditionsAvailable(false).recommendedStartDate(new Date()).build();
         applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setAtasRequired(true); 

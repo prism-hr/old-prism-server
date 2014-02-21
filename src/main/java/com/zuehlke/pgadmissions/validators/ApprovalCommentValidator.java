@@ -15,7 +15,7 @@ public class ApprovalCommentValidator extends AbstractValidator {
     // TODO fix test (Supervisor changed to CommentAssignedUser)
     
     @Autowired
-    private SupervisorsValidator supervisorsValidator;
+    private CommentAssignedUserValidator supervisorsValidator;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -54,7 +54,7 @@ public class ApprovalCommentValidator extends AbstractValidator {
 
     }
 
-    void setSupervisorsValidator(SupervisorsValidator supervisorsValidator) {
+    void setSupervisorsValidator(CommentAssignedUserValidator supervisorsValidator) {
         this.supervisorsValidator = supervisorsValidator;
     }
 

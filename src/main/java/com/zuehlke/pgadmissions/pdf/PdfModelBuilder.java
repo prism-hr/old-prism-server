@@ -1031,11 +1031,11 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 table.addCell(newTableCell("Referee", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(reference.getReferee().getFirstname() + " " + reference.getReferee().getLastname(), SMALL_FONT));
+                table.addCell(newTableCell(reference.getUser().getFirstName() + " " + reference.getUser().getLastName(), SMALL_FONT));
                 table.addCell(newTableCell("Comment", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(reference.getComment(), SMALL_FONT));
+                table.addCell(newTableCell(reference.getContent(), SMALL_FONT));
                 table.addCell(newTableCell("Is the applicant suitable for postgraduate study at UCL?", SMALL_BOLD_FONT));
-                if (BooleanUtils.isTrue(reference.getSuitableForUCL())) {
+                if (BooleanUtils.isTrue(reference.getSuitableForInstitution())) {
                     table.addCell(newTableCell("Yes", SMALL_FONT));
                 } else {
                     table.addCell(newTableCell("No", SMALL_FONT));

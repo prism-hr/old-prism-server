@@ -34,20 +34,15 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.NameTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.Supervisor;
-import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OfferRecommendedCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
-import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
 public class SubmitAdmissionsApplicationRequestBuilderTest {
@@ -305,7 +300,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
         applicationForm.getProgrammeDetails().setStartDate(dateInThePast.toDate());
         OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm)
-                .comment("").commentType(CommentType.OFFER_RECOMMENDED_COMMENT).projectAbstract("abstract")
+                .comment("").projectAbstract("abstract")
                 .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(recommendedStartDate)
                 .build();
         applicationForm.getApplicationComments().add(offerComment);
@@ -363,7 +358,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
         applicationForm.getProgrammeDetails().setStartDate(dateInThePast.toDate());
         OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm)
-                .comment("").commentType(CommentType.OFFER_RECOMMENDED_COMMENT).projectAbstract("abstract")
+                .comment("").projectAbstract("abstract")
                 .recommendedConditionsAvailable(false).recommendedStartDate(recommendedStartDate).build();
         applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setAtasRequired(false);
@@ -427,9 +422,6 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
         // agreed supervisor
         RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").build();
-        Supervisor primarySupervisor = new SupervisorBuilder().user(primarySupervisorUser).isPrimary(true).build();
-        ApprovalRound appRound = new ApprovalRoundBuilder().id(15).supervisors(primarySupervisor).recommendedStartDate(recommendedStartDate).build();
-        applicationForm.setLatestApprovalRound(appRound);
 
         SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()) {
             @Override
@@ -465,6 +457,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
             }
         };
         requestBuilder.isOverseasStudent(true);
+        requestBuilder.primarySupervisor(primarySupervisorUser);
 
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
 

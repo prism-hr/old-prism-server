@@ -51,8 +51,7 @@ public class InterviewConfirmDTOValidatorTest {
     @Before
     public void setup() {
         dto = new InterviewConfirmDTO();
-        dto.setFurtherDetails("aa");
-        dto.setFurtherInterviewerDetails("bb");
+        dto.setInterviewInstructions("aa");
         dto.setTimeslotId(2);
         dtoValidator = new InterviewConfirmDTOValidator();
         dtoValidator.setValidator((javax.validation.Validator) validator);

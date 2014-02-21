@@ -31,7 +31,7 @@ public class ApprovalCommentValidatorTest {
 
     private ApprovalCommentValidator approvalCommentValidator;
 
-    private SupervisorsValidator supervisorsValidator;
+    private CommentAssignedUserValidator supervisorsValidator;
     
     @Test
     public void shouldSupportReviewRound() {
@@ -175,7 +175,7 @@ public class ApprovalCommentValidatorTest {
         approvalCommentValidator = new ApprovalCommentValidator();
         approvalCommentValidator.setValidator((javax.validation.Validator) validator);
 
-        supervisorsValidator = new SupervisorsValidator();
+        supervisorsValidator = new CommentAssignedUserValidator();
         approvalCommentValidator.setSupervisorsValidator(supervisorsValidator);
     }
     

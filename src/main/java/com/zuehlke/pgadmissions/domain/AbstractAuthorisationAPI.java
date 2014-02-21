@@ -47,33 +47,6 @@ public abstract class AbstractAuthorisationAPI {
         return false;
     }
 
-    protected boolean containsInterviewer(final RegisteredUser user, final List<Interviewer> interviewers) {
-        for (Interviewer entry : interviewers) {
-            if (areEqual(entry.getUser(), user)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected boolean containsReviewer(final RegisteredUser user, final List<Reviewer> reviewers) {
-        for (Reviewer entry : reviewers) {
-            if (areEqual(entry.getUser(), user)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected boolean containsSupervisor(final RegisteredUser user, final List<Supervisor> supervisors) {
-        for (Supervisor entry : supervisors) {
-            if (areEqual(entry.getUser(), user)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean isInRole(final RegisteredUser user, final String strAuthority) {
         try {
             return isInRole(user, Authority.valueOf(strAuthority));
@@ -158,37 +131,12 @@ public abstract class AbstractAuthorisationAPI {
         return false;
     }
 
-    public boolean isReviewerInReviewRound(final ReviewRound reviewRound, final RegisteredUser user) {
-        if (reviewRound == null) {
-            return false;
-        }
-        return containsReviewer(user, reviewRound.getReviewers());
-    }
-
-    public boolean isInterviewerInInterview(final Interview interview, final RegisteredUser user) {
-        if (interview == null) {
-            return false;
-        }
-        return containsInterviewer(user, interview.getInterviewers());
-    }
-
-    public boolean isSupervisorInApprovalRound(final ApprovalRound approvalRound, final RegisteredUser user) {
-        if (approvalRound == null) {
-            return false;
-        }
-        return containsSupervisor(user, approvalRound.getSupervisors());
-    }
-
-    public boolean isSupervisorOfApplicationForm(final ApplicationForm form, final RegisteredUser user) {
-        return isSupervisorInApprovalRound(form.getLatestApprovalRound(), user);
-    }
-
     public boolean isApplicant(final ApplicationForm form, final RegisteredUser user) {
         return areEqual(user, form.getApplicant());
     }
 
     public boolean isProjectAdministrator(final ApplicationForm form, final RegisteredUser user) {
-    	Project project = form.getProject();
+        Project project = form.getProject();
         return project != null && (areEqual(user, project.getAdministrator()) || areEqual(user, project.getPrimarySupervisor()));
     }
 
@@ -200,49 +148,8 @@ public abstract class AbstractAuthorisationAPI {
         return containsUser(user, form.getProgram().getViewers());
     }
 
-    public boolean isPastOrPresentReviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
-        for (ReviewRound reviewRound : form.getReviewRounds()) {
-            for (Reviewer reviewer : reviewRound.getReviewers()) {
-                if (areEqual(user, reviewer.getUser())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean isPastOrPresentInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
-        for (Interview interview : form.getInterviews()) {
-            for (Interviewer interviewer : interview.getInterviewers()) {
-                if (areEqual(user, interviewer.getUser())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean isPastOrPresentSupervisorOfApplication(final ApplicationForm form, final RegisteredUser user) {
-        for (ApprovalRound approvalRound : form.getApprovalRounds()) {
-            for (Supervisor supervisor : approvalRound.getSupervisors()) {
-                if (areEqual(user, supervisor.getUser())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public boolean isRefereeOfApplication(final ApplicationForm form, final RegisteredUser user) {
         return isInRole(user, Authority.REFEREE) && user.hasRefereesInApplicationForm(form);
-    }
-
-    public boolean isInterviewerOfApplication(final ApplicationForm form, final RegisteredUser user) {
-        return isInterviewerInInterview(form.getLatestInterview(), user);
-    }
-
-    public boolean isReviewerInLatestReviewRoundOfApplication(final ApplicationForm form, final RegisteredUser user) {
-        return isReviewerInReviewRound(form.getLatestReviewRound(), user);
     }
 
     public boolean isAdminInProgramme(final Program programme, final RegisteredUser user) {

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
+import com.zuehlke.pgadmissions.domain.AppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 
 @Component
@@ -64,14 +64,14 @@ public class InterviewValidator extends AbstractValidator {
         
         if (stage == InterviewStage.SCHEDULING) {
             boolean hasRejectedTime = false, hasRejectedPastDates = false;
-            List<InterviewTimeslot> timeslots = interview.getTimeslots();
+            List<AppointmentTimeslot> timeslots = interview.getTimeslots();
             
             if (timeslots.size() == 0) {
                 errors.rejectValue("timeslots", MUST_SELECT_DATE_AND_TIME);
             }
             
             for (int i = 0; i < timeslots.size(); i++) {
-                InterviewTimeslot timeslot = timeslots.get(i);
+                AppointmentTimeslot timeslot = timeslots.get(i);
                 
                 Matcher timePatternMatcher = TIME_PATTERN.matcher(timeslot.getStartTime());
                 

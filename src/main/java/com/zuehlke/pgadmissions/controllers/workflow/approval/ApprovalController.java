@@ -7,7 +7,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -21,12 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.controllers.workflow.EditApplicationFormAsProgrammeAdminController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalComment;
-import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -41,35 +37,24 @@ import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
-import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
-import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.QualificationService;
-import com.zuehlke.pgadmissions.services.RefereeService;
-import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
+import com.zuehlke.pgadmissions.validators.ApprovalCommentValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
-import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
 
 @SessionAttributes("approvalRound")
 @Controller
 @RequestMapping("/approval")
 public class ApprovalController extends EditApplicationFormAsProgrammeAdminController {
+    // TODO change approvalRound to approvalComment, fix tests
     
-    // TODO change approvalRound to approvalComment
     private static final String PROPOSE_OFFER_RECOMMENDATION_SECTION = "/private/staff/supervisors/propose_offer_recommendation";
     private static final String PORTICO_VALIDATION_SECTION = "/private/staff/supervisors/portico_validation_section";
     private static final String APPROVAL_PAGE = "/private/staff/supervisors/approval_details";
@@ -77,7 +62,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     private static final String REFERENCE_SECTION = "/private/staff/supervisors/components/reference_portico_validation";
 
     @Autowired
-    private ApprovalRoundValidator approvalRoundValidator;
+    private ApprovalCommentValidator approvalRoundValidator;
 
     @Autowired
     private SupervisorPropertyEditor supervisorPropertyEditor;
@@ -139,12 +124,14 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @ModelAttribute("approvalRound")
-    public ApprovalRound getApprovalRound(String applicationId) {
-        return approvalService.initiateApprovalRound(applicationId);
+    public AssignSupervisorsComment getApprovalRound(String applicationId) {
+        return approvalService.initiateApprovalComment(applicationId);
     }
 
     @ModelAttribute("usersInterestedInApplication")
     public List<RegisteredUser> getUsersInterestedInApplication(@RequestParam String applicationId) {
+        // FIXME isSupervisorInApprovalRound method has been removed from RegisteredUser class, provide this information in other way (by moving the method into
+        // aservice, or this method can return a map)
         return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
 
@@ -179,7 +166,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @RequestMapping(value = "/assignSupervisors", method = RequestMethod.POST)
-    public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalComment") ApprovalComment approvalComment, BindingResult bindingResult,
+    public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalComment") AssignSupervisorsComment approvalComment, BindingResult bindingResult,
             SessionStatus sessionStatus) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser initiator = getCurrentUser();
@@ -195,7 +182,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @RequestMapping(value = "/applyPorticoData", method = RequestMethod.POST)
-    public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("approvalRound") ApprovalRound approvalRound,
+    public String applySendToPorticoData(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("approvalRound") AssignSupervisorsComment approvalRound,
             @Valid @ModelAttribute("sendToPorticoData") SendToPorticoDataDTO sendToPorticoData, BindingResult result) {
         if (sendToPorticoData.getQualificationsSendToPortico() == null || sendToPorticoData.getRefereesSendToPortico() == null) {
             throw new ResourceNotFoundException();
@@ -260,10 +247,9 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             }
 
             ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
+            
             // TODO get referee and refresh it, or do sth without refreshing 
-            
-            refereeService.getRefereeById(refereesAdminEditDTO.getEditedRefereeId());
-            
+            Referee referee = null;
 //            Referee referee = newComment.getReferee();
 //            applicationsService.refresh(applicationForm);
 //            refereeService.refresh(referee);

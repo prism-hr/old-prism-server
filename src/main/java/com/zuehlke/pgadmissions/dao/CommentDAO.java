@@ -59,11 +59,6 @@ public class CommentDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<ReviewComment> getReviewCommentsForReviewerAndApplication(Reviewer reviewer, ApplicationForm applicationForm) {
-        return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class).add(Restrictions.eq("type", CommentType.REVIEW))
-                .add(Restrictions.eq("reviewer", reviewer)).add(Restrictions.eq("application", applicationForm)).list();
-    }
-
     public ValidationComment getValidationCommentForApplication(ApplicationForm applicationForm) {
         return (ValidationComment) sessionFactory.getCurrentSession().createCriteria(ValidationComment.class) //
                 .add(Restrictions.eq("type", CommentType.VALIDATION)) //

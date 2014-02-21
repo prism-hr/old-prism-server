@@ -18,9 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.dao.ApprovalRoundDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -43,46 +42,32 @@ public class OfferRecommendationController {
 
     private static final String OFFER_RECOMMENDATION_VIEW_NAME = "private/staff/approver/offer_recommendation_page";
 
-    private final UserService userService;
-
-    private final ApplicationsService applicationsService;
-
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    private final ActionsProvider actionsProvider;
-
-    private final OfferRecommendationService offerRecommendedService;
-
-    private final OfferRecommendedCommentValidator offerRecommendedCommentValidator;
-
-    private final DatePropertyEditor datePropertyEditor;
-
-    private final ProgramInstanceService programInstanceService;
-
-    private final SupervisorPropertyEditor supervisorPropertyEditor;
-
-    private final ApprovalRoundDAO approvalRoundDAO;
-
-    public OfferRecommendationController() {
-        this(null, null, null, null, null, null, null, null, null, null);
-    }
+    @Autowired
+    private UserService userService;
 
     @Autowired
-    public OfferRecommendationController(ApplicationsService applicationsService, UserService userService, ActionsProvider actionsProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService, OfferRecommendationService offerRecommendedService,
-            OfferRecommendedCommentValidator offerRecommendedCommentValidator, DatePropertyEditor datePropertyEditor,
-            ProgramInstanceService programInstanceService, SupervisorPropertyEditor supervisorPropertyEditor, ApprovalRoundDAO approvalRoundDAO) {
-        this.applicationsService = applicationsService;
-        this.userService = userService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.actionsProvider = actionsProvider;
-        this.offerRecommendedService = offerRecommendedService;
-        this.offerRecommendedCommentValidator = offerRecommendedCommentValidator;
-        this.datePropertyEditor = datePropertyEditor;
-        this.programInstanceService = programInstanceService;
-        this.supervisorPropertyEditor = supervisorPropertyEditor;
-        this.approvalRoundDAO = approvalRoundDAO;
-    }
+    private ApplicationsService applicationsService;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    @Autowired
+    private ActionsProvider actionsProvider;
+
+    @Autowired
+    private OfferRecommendationService offerRecommendedService;
+
+    @Autowired
+    private OfferRecommendedCommentValidator offerRecommendedCommentValidator;
+
+    @Autowired
+    private DatePropertyEditor datePropertyEditor;
+
+    @Autowired
+    private ProgramInstanceService programInstanceService;
+
+    @Autowired
+    private SupervisorPropertyEditor supervisorPropertyEditor;
 
     @RequestMapping(method = RequestMethod.GET)
     public String getOfferRecommendationPage(ModelMap modelMap) {
@@ -91,26 +76,27 @@ public class OfferRecommendationController {
         actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
 
         OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
-        ApprovalRound approvalRound = application.getLatestApprovalRound();
-        if (approvalRound != null) {
-            offerRecommendedComment.setProjectTitle(approvalRound.getProjectTitle());
-            offerRecommendedComment.setProjectAbstract(approvalRound.getProjectAbstract());
+        AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(application,
+                ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
+        if (approvalComment != null) {
+            offerRecommendedComment.setProjectTitle(approvalComment.getProjectTitle());
+            offerRecommendedComment.setProjectAbstract(approvalComment.getProjectAbstract());
 
-            Date startDate = approvalRound.getRecommendedStartDate();
+            Date startDate = approvalComment.getRecommendedStartDate();
 
             if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {
                 startDate = programInstanceService.getEarliestPossibleStartDate(application);
             }
 
             offerRecommendedComment.setRecommendedStartDate(startDate);
-            offerRecommendedComment.setRecommendedStartDate(approvalRound.getRecommendedStartDate());
-            offerRecommendedComment.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
-            offerRecommendedComment.setRecommendedConditions(approvalRound.getRecommendedConditions());
-            offerRecommendedComment.getSupervisors().addAll(approvalRound.getSupervisors());
+            offerRecommendedComment.setRecommendedConditionsAvailable(approvalComment.getRecommendedConditionsAvailable());
+            offerRecommendedComment.setRecommendedConditions(approvalComment.getRecommendedConditions());
+            offerRecommendedComment.getAssignedUsers().addAll(approvalComment.getAssignedUsers());
         }
 
         modelMap.put("offerRecommendedComment", offerRecommendedComment);
-        modelMap.put("approvalRound", approvalRoundDAO.initialise(approvalRound));
+        // TODO using approvalComment instead of approval round, fix tests and ftl's
+        modelMap.put("approvalComment", approvalComment);
         applicationFormUserRoleService.deregisterApplicationUpdate(application, user);
         return OFFER_RECOMMENDATION_VIEW_NAME;
     }

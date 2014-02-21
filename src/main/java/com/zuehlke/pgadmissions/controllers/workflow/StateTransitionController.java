@@ -20,19 +20,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
+import com.zuehlke.pgadmissions.domain.CompleteInterviewComment;
+import com.zuehlke.pgadmissions.domain.CompleteReviewComment;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.InterviewEvaluationComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
-import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -48,61 +46,47 @@ import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.StateTransitionService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 
 @Controller
 @RequestMapping("/progress")
 public class StateTransitionController {
-
+    // TODO fix tests
+    
     protected static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
 
-    protected final ApplicationsService applicationsService;
-
-    protected final UserService userService;
-
-    protected final CommentService commentService;
-
-    protected final CommentFactory commentFactory;
-
-    protected final EncryptionHelper encryptionHelper;
-
-    protected final DocumentService documentService;
-
-    protected final ApprovalService approvalService;
-
-    protected final StateChangeValidator stateChangeValidator;
-
-    protected final DocumentPropertyEditor documentPropertyEditor;
-
-    protected final StateTransitionService stateTransitionService;
-
-    protected final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    protected final ActionsProvider actionsProvider;
-
-    public StateTransitionController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
-    }
+    @Autowired
+    protected ApplicationsService applicationsService;
 
     @Autowired
-    public StateTransitionController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-            CommentFactory commentFactory, EncryptionHelper encryptionHelper, DocumentService documentService, ApprovalService approvalService,
-            StateChangeValidator stateChangeValidator, DocumentPropertyEditor documentPropertyEditor, StateTransitionService stateTransitionService,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
-        this.applicationsService = applicationsService;
-        this.userService = userService;
-        this.commentService = commentService;
-        this.commentFactory = commentFactory;
-        this.encryptionHelper = encryptionHelper;
-        this.documentService = documentService;
-        this.approvalService = approvalService;
-        this.stateChangeValidator = stateChangeValidator;
-        this.documentPropertyEditor = documentPropertyEditor;
-        this.stateTransitionService = stateTransitionService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.actionsProvider = actionsProvider;
-    }
+    protected UserService userService;
+
+    @Autowired
+    protected CommentService commentService;
+
+    @Autowired
+    protected EncryptionHelper encryptionHelper;
+
+    @Autowired
+    protected DocumentService documentService;
+
+    @Autowired
+    protected ApprovalService approvalService;
+
+    @Autowired
+    protected StateChangeValidator stateChangeValidator;
+
+    @Autowired
+    protected DocumentPropertyEditor documentPropertyEditor;
+
+    @Autowired
+    protected StateTransitionService stateTransitionService;
+
+    @Autowired
+    protected ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    @Autowired
+    protected ActionsProvider actionsProvider;
 
     @InitBinder(value = "stateChangeDTO")
     public void registerBinders(WebDataBinder binder) {
@@ -111,33 +95,33 @@ public class StateTransitionController {
         binder.registerCustomEditor(null, "comment", new StringTrimmerEditor("\r", true));
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
     }
-    
+
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
         return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
-    
-    @ModelAttribute("stateChangeDTO") 
-    public StateChangeDTO getStateChangeDTO(@RequestParam String applicationId, @RequestParam(required = false) String action) {
-    	RegisteredUser registeredUser = getCurrentUser();
-    	ApplicationForm applicationForm = getApplicationForm(applicationId);
-    	
-    	StateChangeDTO stateChangeDTO = new StateChangeDTO();
-    	stateChangeDTO.setAction(action);
-    	stateChangeDTO.setRegisteredUser(registeredUser);
-    	stateChangeDTO.setApplicationForm(applicationForm);
-    	
-    	if (applicationForm.getStatus() == ApplicationFormStatus.VALIDATION) {
-	    	stateChangeDTO.setValidationQuestionOptions(ValidationQuestionOptions.values());
-	    	stateChangeDTO.setHomeOrOverseasOptions(HomeOrOverseas.values());
-    	}
 
-    	stateChangeDTO.setStati(getAvailableNextStati(applicationForm, registeredUser));
-    	return stateChangeDTO;
+    @ModelAttribute("stateChangeDTO")
+    public StateChangeDTO getStateChangeDTO(@RequestParam String applicationId, @RequestParam(required = false) String action) {
+        RegisteredUser registeredUser = getCurrentUser();
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+
+        StateChangeDTO stateChangeDTO = new StateChangeDTO();
+        stateChangeDTO.setAction(action);
+        stateChangeDTO.setRegisteredUser(registeredUser);
+        stateChangeDTO.setApplicationForm(applicationForm);
+
+        if (applicationForm.getStatus() == ApplicationFormStatus.VALIDATION) {
+            stateChangeDTO.setValidationQuestionOptions(ValidationQuestionOptions.values());
+            stateChangeDTO.setHomeOrOverseasOptions(HomeOrOverseas.values());
+        }
+
+        stateChangeDTO.setStati(getAvailableNextStati(applicationForm, registeredUser));
+        return stateChangeDTO;
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
     public String getStateTransitionView(@ModelAttribute("stateChangeDTO") StateChangeDTO stateChangeDTO) {
         RegisteredUser registeredUser = stateChangeDTO.getRegisteredUser();
@@ -145,69 +129,69 @@ public class StateTransitionController {
         String action = stateChangeDTO.getAction();
 
         if (action != null) {
-        	Comment latestStateChangeComment = null;
-        	
-        	if (applicationForm.getStatus() == ApplicationFormStatus.VALIDATION) {
-        		ValidationComment validationComment = applicationForm.getValidationComment();
-        		stateChangeDTO.setQualifiedForPhd(validationComment.getQualifiedForPhd());
-        		stateChangeDTO.setEnglishCompentencyOk(validationComment.getEnglishCompetencyOk());
-        		stateChangeDTO.setHomeOrOverseas(validationComment.getHomeOrOverseas());
-        		latestStateChangeComment = validationComment;  
-        	} else {
-        		latestStateChangeComment = applicationForm.getLatestStateChangeComment();
-        	}
-        	
-        	if (latestStateChangeComment.getUser() == registeredUser) {
-	        	stateChangeDTO.setComment(latestStateChangeComment.getComment());
-	        	stateChangeDTO.setDocuments(latestStateChangeComment.getDocuments());
-	        	
-	        	RegisteredUser delegateAdministrator = latestStateChangeComment.getDelegateAdministrator();
-	        	
-	            if (delegateAdministrator != null) {
-	            	stateChangeDTO.setDelegate(true);
-	            	stateChangeDTO.setDelegateFirstName(delegateAdministrator.getFirstName());
-	            	stateChangeDTO.setDelegateLastName(delegateAdministrator.getLastName());
-	            	stateChangeDTO.setDelegateEmail(delegateAdministrator.getEmail());
-	            } else {
-	            	stateChangeDTO.setDelegate(false);
-	            }
-        	} else {
-        		stateChangeDTO.setQualifiedForPhd(null);
-        		stateChangeDTO.setEnglishCompentencyOk(null);
-        		stateChangeDTO.setHomeOrOverseas(null);
-        	}
-            
+            Comment latestStateChangeComment = null;
+
+            if (applicationForm.getStatus() == ApplicationFormStatus.VALIDATION) {
+                ValidationComment validationComment = applicationForm.getValidationComment();
+                stateChangeDTO.setQualifiedForPhd(validationComment.getQualifiedForPhd());
+                stateChangeDTO.setEnglishCompentencyOk(validationComment.getEnglishCompetencyOk());
+                stateChangeDTO.setHomeOrOverseas(validationComment.getHomeOrOverseas());
+                latestStateChangeComment = validationComment;
+            } else {
+                latestStateChangeComment = applicationsService.getLatestStateChangeComment(applicationForm, null);
+            }
+
+            if (latestStateChangeComment.getUser() == registeredUser) {
+                stateChangeDTO.setComment(latestStateChangeComment.getContent());
+                stateChangeDTO.setDocuments(latestStateChangeComment.getDocuments());
+
+                RegisteredUser delegateAdministrator = latestStateChangeComment.getDelegateAdministrator();
+
+                if (delegateAdministrator != null) {
+                    stateChangeDTO.setDelegate(true);
+                    stateChangeDTO.setDelegateFirstName(delegateAdministrator.getFirstName());
+                    stateChangeDTO.setDelegateLastName(delegateAdministrator.getLastName());
+                    stateChangeDTO.setDelegateEmail(delegateAdministrator.getEmail());
+                } else {
+                    stateChangeDTO.setDelegate(false);
+                }
+            } else {
+                stateChangeDTO.setQualifiedForPhd(null);
+                stateChangeDTO.setEnglishCompentencyOk(null);
+                stateChangeDTO.setHomeOrOverseas(null);
+            }
+
         } else {
-        	stateChangeDTO.setDelegate(false);
+            stateChangeDTO.setDelegate(false);
         }
-        
+
         applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, registeredUser);
         return stateTransitionService.resolveView(applicationForm, action);
     }
-    
-    @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, value = "/submitEvaluationComment")
+
+    @RequestMapping(method = { RequestMethod.POST, RequestMethod.GET }, value = "/submitEvaluationComment")
     public String addComment(@Valid @ModelAttribute("stateChangeDTO") StateChangeDTO stateChangeDTO, BindingResult result) {
-    	ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
-    	ApplicationFormAction invokedAction = null;
-    	
+        ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
+        ApplicationFormAction invokedAction = null;
+
         if (stateChangeDTO.getAction() != null) {
             invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
         } else {
-        	switch (applicationForm.getStatus()) {
-		    	case VALIDATION:
-		    		invokedAction = ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
-		    		break;
-		    	case REVIEW:
-		    		invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
-		    		break;
-		    	case INTERVIEW:
-		    		invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
-		    		break;
-		    	case APPROVAL:
-		    		invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
-		    		break;
-		    	default:
-        	}
+            switch (applicationForm.getStatus()) {
+            case VALIDATION:
+                invokedAction = ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
+                break;
+            case REVIEW:
+                invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
+                break;
+            case INTERVIEW:
+                invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
+                break;
+            case APPROVAL:
+                invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
+                break;
+            default:
+            }
         }
 
         RegisteredUser registeredUser = stateChangeDTO.getRegisteredUser();
@@ -220,20 +204,20 @@ public class StateTransitionController {
         if (BooleanUtils.isTrue(stateChangeDTO.getFastTrackApplication())) {
             applicationsService.fastTrackApplication(applicationForm.getApplicationNumber());
         }
-        
+
         postStateChangeComment(stateChangeDTO);
-        
+
         if (BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights())) {
-	        if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
-	        	return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
-	        }   
+            if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
+                return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
+            }
         } else if (applicationForm.getStatus() != stateChangeDTO.getNextStatus()) {
-            	return "redirect:/applications?messageCode=state.change.suggestion&application=" + applicationForm.getApplicationNumber();
+            return "redirect:/applications?messageCode=state.change.suggestion&application=" + applicationForm.getApplicationNumber();
         }
-        
+
         return stateTransitionService.resolveView(applicationForm);
     }
-    
+
     public RegisteredUser getCurrentUser() {
         return userService.getCurrentUser();
     }
@@ -252,16 +236,17 @@ public class StateTransitionController {
             @Override
             public boolean evaluate(final Object object) {
                 ApplicationFormStatus status = (ApplicationFormStatus) object;
-                
+
                 if (status.equals(ApplicationFormStatus.APPROVED)) {
-                    if (registeredUser.isNotInRole(Authority.SUPERADMINISTRATOR) && registeredUser.isNotInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
+                    if (registeredUser.isNotInRole(Authority.SUPERADMINISTRATOR)
+                            && registeredUser.isNotInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())) {
                         return false;
                     }
                 }
                 if (status.equals(applicationForm.getNextStatus())) {
-                	return false;
+                    return false;
                 }
-                
+
                 return true;
             }
         });
@@ -269,85 +254,74 @@ public class StateTransitionController {
     }
 
     private void postStateChangeComment(StateChangeDTO stateChangeDTO) {
-    	ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
-    	RegisteredUser registeredUser = stateChangeDTO.getRegisteredUser();
-    	ApplicationFormStatus status = applicationForm.getStatus();
-    	Comment stateChangeComment = null;
-    	
-    	switch (status) {
-	    	case VALIDATION:
-	    		ValidationComment validationComment = new ValidationComment();
-	    		validationComment.setQualifiedForPhd(stateChangeDTO.getQualifiedForPhd());
-	    		validationComment.setEnglishCompetencyOk(stateChangeDTO.getEnglishCompentencyOk());
-	    		validationComment.setHomeOrOverseas(stateChangeDTO.getHomeOrOverseas());
-	    		stateChangeComment = validationComment;
-	    		boolean useCustomReferenceQuestions = convertNullOrBooleanToBoolean(stateChangeDTO.getUseCustomReferenceQuestions());
-                stateChangeComment.setUseCustomReferenceQuestions(useCustomReferenceQuestions);
-                setUseCustomQuestions(stateChangeComment, stateChangeDTO);
-	    		stateChangeComment.setType(CommentType.VALIDATION);
-	    		break;
-	    	case REVIEW:
-	    		stateChangeComment = new ReviewEvaluationComment();
-	    		stateChangeComment.setType(CommentType.REVIEW_EVALUATION);
-                setUseCustomQuestions(stateChangeComment, stateChangeDTO);
-	    		break;
-	    	case INTERVIEW:
-	    		stateChangeComment = new InterviewEvaluationComment();
-	    		stateChangeComment.setType(CommentType.INTERVIEW_EVALUATION);
-	    		setUseCustomQuestions(stateChangeComment, stateChangeDTO);
-	    		break;
-	    	case APPROVAL:
-	    		stateChangeComment = new ApprovalEvaluationComment();
-	    		stateChangeComment.setType(CommentType.APPROVAL_EVALUATION);
-	            setUseCustomQuestions(stateChangeComment, stateChangeDTO);
-	    		break;
-	    	default:
-	    		throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
-    	}
-    	
-    	stateChangeComment.setApplication(applicationForm);
-    	stateChangeComment.setUser(registeredUser);
-    	stateChangeComment.setComment(stateChangeDTO.getComment());
-    	stateChangeComment.setDocuments(stateChangeDTO.getDocuments());
-    	
-    	ApplicationFormStatus nextStatus = stateChangeDTO.getNextStatus();
-    	stateChangeComment.setNextStatus(nextStatus);
-    	
-    	if (BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights())) {
-	    	if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
-		    	String delegateAdministratorEmail = stateChangeDTO.getDelegateEmail();
-		    	RegisteredUser userToSaveAsDelegate = userService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);
-		    	
-		    	if (userToSaveAsDelegate == null) {
-		    		userToSaveAsDelegate = userService.createNewUserInRole(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), 
-		    				delegateAdministratorEmail, Authority.STATEADMINISTRATOR);
-		    	}
-		    	
-		    	stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
-	    	}
-    	} else {
-            if (status == nextStatus) {
-            	stateChangeComment.setDelegateAdministrator(registeredUser);
+        ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
+        RegisteredUser registeredUser = stateChangeDTO.getRegisteredUser();
+        ApplicationFormStatus status = applicationForm.getStatus();
+        Comment stateChangeComment = null;
+
+        switch (status) {
+        case VALIDATION:
+            ValidationComment validationComment = new ValidationComment();
+            validationComment.setQualifiedForPhd(stateChangeDTO.getQualifiedForPhd());
+            validationComment.setEnglishCompetencyOk(stateChangeDTO.getEnglishCompentencyOk());
+            validationComment.setHomeOrOverseas(stateChangeDTO.getHomeOrOverseas());
+            stateChangeComment = validationComment;
+            boolean useCustomReferenceQuestions = BooleanUtils.isTrue(stateChangeDTO.getUseCustomReferenceQuestions());
+            stateChangeComment.setUseCustomReferenceQuestions(useCustomReferenceQuestions);
+            setUseCustomQuestions(stateChangeComment, stateChangeDTO);
+            break;
+        case REVIEW:
+            stateChangeComment = new CompleteReviewComment();
+            setUseCustomQuestions(stateChangeComment, stateChangeDTO);
+            break;
+        case INTERVIEW:
+            stateChangeComment = new CompleteInterviewComment();
+            setUseCustomQuestions(stateChangeComment, stateChangeDTO);
+            break;
+        case APPROVAL:
+            stateChangeComment = new CompleteApprovalComment();
+            setUseCustomQuestions(stateChangeComment, stateChangeDTO);
+            break;
+        default:
+            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
+        }
+
+        stateChangeComment.setApplication(applicationForm);
+        stateChangeComment.setUser(registeredUser);
+        stateChangeComment.setContent(stateChangeDTO.getComment());
+        stateChangeComment.getDocuments().addAll(stateChangeDTO.getDocuments());
+
+        ApplicationFormStatus nextStatus = stateChangeDTO.getNextStatus();
+        stateChangeComment.setNextStatus(nextStatus);
+
+        if (BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights())) {
+            if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
+                String delegateAdministratorEmail = stateChangeDTO.getDelegateEmail();
+                RegisteredUser userToSaveAsDelegate = userService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);
+
+                if (userToSaveAsDelegate == null) {
+                    userToSaveAsDelegate = userService.createNewUserInRole(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(),
+                            delegateAdministratorEmail, Authority.STATEADMINISTRATOR);
+                }
+
+                stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
             }
-    	}
-    	
-    	applicationForm.setNextStatus(nextStatus);
-    	commentService.save(stateChangeComment);
+        } else {
+            if (status == nextStatus) {
+                stateChangeComment.setDelegateAdministrator(registeredUser);
+            }
+        }
+
+        applicationForm.setNextStatus(nextStatus);
+        commentService.save(stateChangeComment);
         applicationsService.save(applicationForm);
         applicationsService.refresh(applicationForm);
         applicationFormUserRoleService.stateChanged(stateChangeComment);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);	
+        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);
     }
-    
-    private void setUseCustomQuestions(StateChangeComment comment, StateChangeDTO dto) {
-        comment.setUseCustomQuestions(convertNullOrBooleanToBoolean(dto.getUseCustomQuestions()));
+
+    private void setUseCustomQuestions(Comment comment, StateChangeDTO dto) {
+        comment.setUseCustomQuestions(BooleanUtils.isTrue(dto.getUseCustomQuestions()));
     }
-    
-    private Boolean convertNullOrBooleanToBoolean(Boolean input) {
-        if (BooleanUtils.isFalse(input) || input == null) {
-            return false;
-        }
-        return true;
-    }
-    
+
 }

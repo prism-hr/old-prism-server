@@ -4,8 +4,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue(value = "COMPLETE_APPROVAL_STAGE")
-public class ApprovalComment extends Comment {
+@DiscriminatorValue(value = "ASSIGN_SUPERVISORS")
+public class AssignSupervisorsComment extends Comment {
 
     private static final long serialVersionUID = 9120577563568889651L;
 

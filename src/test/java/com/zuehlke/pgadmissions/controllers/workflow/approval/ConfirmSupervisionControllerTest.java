@@ -5,11 +5,15 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collections;
 
 import org.easymock.EasyMock;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
+import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -25,26 +29,45 @@ import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ConfirmSupervisionDTOValidator;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ConfirmSupervisionControllerTest {
 
-    private ConfirmSupervisionController controller;
 
+    @Mock
+    @InjectIntoByType
     private ApplicationsService applicationServiceMock;
 
+    @Mock
+    @InjectIntoByType
     private ApprovalService approvalServiceMock;
 
+    @Mock
+    @InjectIntoByType
     private UserService userServiceMock;
 
+    @Mock
+    @InjectIntoByType
     private DatePropertyEditor datePropertyEditorMock;
 
+    @Mock
+    @InjectIntoByType
     private ConfirmSupervisionDTOValidator confirmSupervisionDTOValidatorMock;
 
+    @Mock
+    @InjectIntoByType
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
+    @Mock
+    @InjectIntoByType
     private ActionsProvider actionsProviderMock;
 
+    @Mock
+    @InjectIntoByType
     private ProgramInstanceService programInstanceServiceMock;
 
+    @TestedObject
+    private ConfirmSupervisionController controller;
+    
     @Test
     public void testLoadConfirmSupervisionPage() {
         ApplicationForm applicationForm = new ApplicationForm();
@@ -110,17 +133,4 @@ public class ConfirmSupervisionControllerTest {
         EasyMock.verify(applicationServiceMock);
     }
 
-    @Before
-    public void setUp() {
-        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
-        userServiceMock = EasyMock.createMock(UserService.class);
-        approvalServiceMock = EasyMock.createMock(ApprovalService.class);
-        datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-        confirmSupervisionDTOValidatorMock = EasyMock.createMock(ConfirmSupervisionDTOValidator.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
-        actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
-        controller = new ConfirmSupervisionController(applicationServiceMock, userServiceMock, approvalServiceMock, datePropertyEditorMock,
-                confirmSupervisionDTOValidatorMock, applicationFormUserRoleServiceMock, actionsProviderMock, programInstanceServiceMock);
-    }
 }

@@ -116,8 +116,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         save(application);
         flushAndClearSession();
 
-        ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user)
-                .commentType(CommentType.REVIEW).build();
+        ReviewComment reviewComment = new ReviewCommentBuilder().application(application).content("comment").user(user).build();
 
         assertNull(reviewComment.getId());
 
@@ -145,12 +144,9 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         Comment comment = new CommentBuilder().user(user).comment("comment").application(application).build();
-        ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user)
-                .commentType(CommentType.REVIEW).build();
-        ReviewComment reviewComment1 = new ReviewCommentBuilder().application(application).adminsNotified(true).comment("comment").user(user)
-                .commentType(CommentType.REVIEW).build();
-        ReviewComment reviewComment2 = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user)
-                .commentType(CommentType.GENERIC).build();
+        ReviewComment reviewComment = new ReviewCommentBuilder().application(application).content("comment").user(user).build();
+        ReviewComment reviewComment1 = new ReviewCommentBuilder().application(application).content("comment").user(user).build();
+        ReviewComment reviewComment2 = new ReviewCommentBuilder().application(application).content("comment").user(user).build();
 
         save(comment, reviewComment, reviewComment1, reviewComment2);
 
@@ -171,14 +167,10 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         Comment comment = new CommentBuilder().user(user).comment("comment").application(application).build();
-        InterviewComment interviewComment1 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment")
-                .commentType(CommentType.INTERVIEW).build();
-        InterviewComment interviewComment2 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment")
-                .commentType(CommentType.REVIEW).build();
-        InterviewComment interviewComment3 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment")
-                .commentType(CommentType.INTERVIEW).build();
-        InterviewComment interviewComment4 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(true).comment("comment")
-                .commentType(CommentType.INTERVIEW).build();
+        InterviewComment interviewComment1 = new InterviewCommentBuilder().user(user).application(application).content("comment").build();
+        InterviewComment interviewComment2 = new InterviewCommentBuilder().user(user).application(application).content("comment").build();
+        InterviewComment interviewComment3 = new InterviewCommentBuilder().user(user).application(application).content("comment").build();
+        InterviewComment interviewComment4 = new InterviewCommentBuilder().user(user).application(application).content("comment").build();
 
         save(comment, interviewComment1, interviewComment2, interviewComment3, interviewComment4);
 
@@ -202,7 +194,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(reviewerUser).latestReviewRound(reviewRound)
                 .reviewRounds(reviewRound).id(1).build();
 
-        ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(reviewerUser)
+        ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(false).content("comment").user(reviewerUser)
                 .reviewer(reviewer).commentType(CommentType.REVIEW).build();
 
         save(reviewerUser, reviewer, reviewRound, application, reviewComment);
@@ -251,7 +243,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         Score score1 = new ScoreBuilder().dateResponse(new Date()).question("1??").questionType(QuestionType.RATING).ratingResponse(4).build();
         Score score2 = new ScoreBuilder().dateResponse(new Date()).question("2??").questionType(QuestionType.TEXTAREA).textResponse("aaa").build();
         ReferenceComment comment = new ReferenceCommentBuilder().comment("reference").user(user).application(application).scores(score1, score2).build();
-        
+
         save(user, application, comment);
         flushAndClearSession();
 
@@ -270,64 +262,66 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         }
         return false;
     }
-    
-    @Test(expected=ConstraintViolationException.class)
-    public void shouldThrowExceptionWhenInsertingMoreThanOneReferenceCommentPerReferee(){
-    	RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+
+    @Test(expected = ConstraintViolationException.class)
+    public void shouldThrowExceptionWhenInsertingMoreThanOneReferenceCommentPerReferee() {
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
                 .password("password").build();
-    	ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
-    	Referee author = new RefereeBuilder().application(application).id(5).build();
-        ReferenceCommentBuilder referenceCommentBuilder = new ReferenceCommentBuilder().comment("reference").user(applicant).referee(author).application(application);
-        
-        save(applicant, application, referenceCommentBuilder.build(),referenceCommentBuilder.build());
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+        Referee author = new RefereeBuilder().application(application).id(5).build();
+        ReferenceCommentBuilder referenceCommentBuilder = new ReferenceCommentBuilder().comment("reference").user(applicant).referee(author)
+                .application(application);
+
+        save(applicant, application, referenceCommentBuilder.build(), referenceCommentBuilder.build());
 
     }
 
-    @Test(expected=ConstraintViolationException.class)
-    public void shouldThrowExceptionWhenInsertingMoreThanOneReviewCommentPerReviewer(){
-    	RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
-    			.password("password").build();
-    	ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
-    	Reviewer author = new ReviewerBuilder().id(5).build();
-    	ReviewCommentBuilder reviewCommentBuilder = new ReviewCommentBuilder().comment("reference").user(applicant).reviewer(author).application(application);
-    	
-    	save(applicant, application, reviewCommentBuilder.build(),reviewCommentBuilder.build());
-    	
-    }
-    
-    @Test(expected=ConstraintViolationException.class)
-    public void shouldThrowExceptionWhenInsertingMoreThanOneInterviewCommentPerInterviewer(){
-    	RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
-    			.password("password").build();
-    	ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
-    	Interviewer author = new InterviewerBuilder().id(5).build();
-    	InterviewCommentBuilder interviewCommentBuilder = new InterviewCommentBuilder().comment("reference").user(applicant).interviewer(author).application(application);
-    	
-    	save(applicant, application, interviewCommentBuilder.build(),interviewCommentBuilder.build());
-    	
+    @Test(expected = ConstraintViolationException.class)
+    public void shouldThrowExceptionWhenInsertingMoreThanOneReviewCommentPerReviewer() {
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+                .password("password").build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+        Reviewer author = new ReviewerBuilder().id(5).build();
+        ReviewCommentBuilder reviewCommentBuilder = new ReviewCommentBuilder().content("reference").user(applicant).reviewer(author).application(application);
+
+        save(applicant, application, reviewCommentBuilder.build(), reviewCommentBuilder.build());
+
     }
 
-    @Test(expected=ConstraintViolationException.class)
-    public void shouldThrowExceptionWhenInsertingMoreThanOneInterviewVoteCommentPerInterviewParticipant(){
-    	RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
-    			.password("password").build();
-    	ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
-    	InterviewParticipant author = new InterviewParticipantBuilder().id(5).build();
-    	InterviewVoteCommentBuilder interviewCommentBuilder = new InterviewVoteCommentBuilder().user(applicant).interviewParticipant(author);
-    	
-    	save(applicant, application, interviewCommentBuilder.build(),interviewCommentBuilder.build());
-    	
+    @Test(expected = ConstraintViolationException.class)
+    public void shouldThrowExceptionWhenInsertingMoreThanOneInterviewCommentPerInterviewer() {
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+                .password("password").build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+        Interviewer author = new InterviewerBuilder().id(5).build();
+        InterviewCommentBuilder interviewCommentBuilder = new InterviewCommentBuilder().content("reference").user(applicant).interviewer(author)
+                .application(application);
+
+        save(applicant, application, interviewCommentBuilder.build(), interviewCommentBuilder.build());
+
     }
 
-    @Test(expected=ConstraintViolationException.class)
-    public void shouldThrowExceptionWhenInsertingMoreThanOneSupervisionConfirmationCommentPerSupervisor(){
-    	RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
-    			.password("password").build();
-    	ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
-    	Supervisor author = new SupervisorBuilder().id(5).build();
-    	SupervisionConfirmationCommentBuilder supervisorCommentBuilder = new SupervisionConfirmationCommentBuilder().user(applicant).supervisor(author);
-    	
-    	save(applicant, application, supervisorCommentBuilder.build(),supervisorCommentBuilder.build());
-    	
+    @Test(expected = ConstraintViolationException.class)
+    public void shouldThrowExceptionWhenInsertingMoreThanOneInterviewVoteCommentPerInterviewParticipant() {
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+                .password("password").build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+        InterviewParticipant author = new InterviewParticipantBuilder().id(5).build();
+        InterviewVoteCommentBuilder interviewCommentBuilder = new InterviewVoteCommentBuilder().user(applicant).interviewParticipant(author);
+
+        save(applicant, application, interviewCommentBuilder.build(), interviewCommentBuilder.build());
+
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void shouldThrowExceptionWhenInsertingMoreThanOneSupervisionConfirmationCommentPerSupervisor() {
+        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+                .password("password").build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+        Supervisor author = new SupervisorBuilder().id(5).build();
+        SupervisionConfirmationCommentBuilder supervisorCommentBuilder = new SupervisionConfirmationCommentBuilder().user(applicant).supervisor(author);
+
+        save(applicant, application, supervisorCommentBuilder.build(), supervisorCommentBuilder.build());
+
     }
 }

@@ -48,6 +48,7 @@ public class RefereeDAO {
     }
 
     public List<Integer> getRefereesDueReminder() {
+        // TODO use ApplicationFormUserRole
         Date today = Calendar.getInstance().getTime();
         ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class)
                 .add(Restrictions.eq("reminderType", ReminderType.REFERENCE)).uniqueResult();

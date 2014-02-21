@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
@@ -21,13 +20,11 @@ public class ValidationCommentBuilder {
     private ValidationQuestionOptions qualifiedForPhd;
     private ValidationQuestionOptions englishCompentencyOk;
     private HomeOrOverseas homeOrOverseas;
-    private CommentType type;
     private Date date;
     private String comment;
     private Integer id;
     private ApplicationFormStatus nextStatus;
     private List<Document> documents = new ArrayList<Document>();
-    private Boolean fastTrackApplication;
 
     public ValidationCommentBuilder nextStatus(ApplicationFormStatus nextStatus) {
         this.nextStatus = nextStatus;
@@ -64,11 +61,6 @@ public class ValidationCommentBuilder {
         return this;
     }
 
-    public ValidationCommentBuilder type(CommentType type) {
-        this.type = type;
-        return this;
-    }
-
     public ValidationCommentBuilder date(Date date) {
         this.date = date;
         return this;
@@ -84,25 +76,18 @@ public class ValidationCommentBuilder {
         return this;
     }
 
-    public ValidationCommentBuilder fastTrackApplication(Boolean fastTrack) {
-        this.fastTrackApplication = fastTrack;
-        return this;
-    }
-
     public ValidationComment build() {
         ValidationComment validationComment = new ValidationComment();
         validationComment.setApplication(application);
-        validationComment.setComment(comment);
-        validationComment.setDate(date);
-        validationComment.setEnglishCompentencyOk(englishCompentencyOk);
+        validationComment.setContent(comment);
+        validationComment.setCreatedTimestamp(date);
+        validationComment.setEnglishCompetencyOk(englishCompentencyOk);
         validationComment.setHomeOrOverseas(homeOrOverseas);
         validationComment.setId(id);
         validationComment.setQualifiedForPhd(qualifiedForPhd);
-        validationComment.setType(type);
         validationComment.setUser(user);
         validationComment.setNextStatus(nextStatus);
-        validationComment.setDocuments(documents);
-        validationComment.setFastTrackApplication(fastTrackApplication);
+        validationComment.getDocuments().addAll(documents);
         return validationComment;
     }
 }

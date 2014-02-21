@@ -77,13 +77,11 @@ public class MoveToReviewController {
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToReview(@RequestParam String applicationId, 
-    		@Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, 
-    		BindingResult bindingResult) {
+    public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        
+
         RegisteredUser initiator = getUser();
-        
+
         actionsProvider.validateAction(applicationForm, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
         if (bindingResult.hasErrors()) {
             return REVIEWERS_SECTION_NAME;
@@ -93,31 +91,33 @@ public class MoveToReviewController {
 
         return "/private/common/ajax_OK";
     }
-    
-    @ModelAttribute("usersInterestedInApplication") 
-    public List<RegisteredUser> getUsersInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
+
+    @ModelAttribute("usersInterestedInApplication")
+    public List<RegisteredUser> getUsersInterestedInApplication(@RequestParam String applicationId) {
+        // FIXME isReviewerInReviewRound method has been removed from RegisteredUser class, provide this information in other way (by moving the method into
+        // aservice, or this method can return a map)
+        return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
-    
-    @ModelAttribute("usersPotentiallyInterestedInApplication") 
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
+
+    @ModelAttribute("usersPotentiallyInterestedInApplication")
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
+        return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
     }
 
     @ModelAttribute("reviewRound")
     public ReviewRound getReviewRound(@RequestParam String applicationId) {
         ReviewRound reviewRound = new ReviewRound();
-        
+
         List<RegisteredUser> usersInterestedInApplication = getUsersInterestedInApplication(applicationId);
-        
+
         if (usersInterestedInApplication != null) {
-	        for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
-	        	Reviewer reviewer = new Reviewer();
-	        	reviewer.setUser(registeredUser);
-	        	reviewRound.getReviewers().add(reviewer);
-	        }
+            for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
+                Reviewer reviewer = new Reviewer();
+                reviewer.setUser(registeredUser);
+                reviewRound.getReviewers().add(reviewer);
+            }
         }
-        
+
         return reviewRound;
     }
 

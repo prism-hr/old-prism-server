@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.InterviewValidator;
 
 public class MoveToInterviewControllerTest {
 
@@ -28,10 +27,6 @@ public class MoveToInterviewControllerTest {
     @Mock
     @InjectIntoByType
     private RegisteredUser currentUserMock;
-
-    @Mock
-    @InjectIntoByType
-    private InterviewValidator interviewValidatorMock;
 
     @Mock
     @InjectIntoByType

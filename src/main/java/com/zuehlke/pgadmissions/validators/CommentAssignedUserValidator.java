@@ -8,7 +8,7 @@ import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 
 @Component
-public class SupervisorsValidator implements Validator {
+public class CommentAssignedUserValidator implements Validator {
     // TODO validate CommentAsignedUser rather than supervisor and add check if the same user is not added twice
     
     @Override

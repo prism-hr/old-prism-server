@@ -9,7 +9,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.workflow.approval.OfferRecommendationController;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.OfferRecommendationService;
@@ -55,7 +55,7 @@ public class OfferRecommendationControllerTest {
 
     @Mock
     @InjectIntoByType
-    private SupervisorPropertyEditor supervisorPropertyEditor;
+    private CommentAssignedUserPropertyEditor supervisorPropertyEditor;
 
     @TestedObject
     private OfferRecommendationController controller;

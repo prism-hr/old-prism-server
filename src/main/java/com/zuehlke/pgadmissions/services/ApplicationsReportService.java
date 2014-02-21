@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,13 +38,11 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
-import com.zuehlke.pgadmissions.utils.MathUtils;
 
 @Service("applicationsReportService")
 @Transactional
@@ -168,7 +165,7 @@ public class ApplicationsReportService {
 
         for (ApplicationForm app : applications) {
 
-            if (!app.isSubmitted() || app.getStatusWhenWithdrawn() == ApplicationFormStatus.UNSUBMITTED || app.getPersonalDetails() == null) {
+            if (!app.isSubmitted() || app.getPreviousStatus() == ApplicationFormStatus.UNSUBMITTED || app.getPersonalDetails() == null) {
                 continue;
             }
 
@@ -211,7 +208,7 @@ public class ApplicationsReportService {
                     row.addCell(canSeeRating ? printRating(getAverageReferenceRating(app)) : N_R);
 
                     // review report
-                    row.addCell(new NumberValue(app.getReviewRounds().size()));
+//                    row.addCell(new NumberValue(app.getReviewRounds().size()));
                     row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[0]) : N_R);
                     row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[1]) : N_R);
                     row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app)) : N_R);
@@ -257,7 +254,7 @@ public class ApplicationsReportService {
                     row.addCell(canSeeRating ? printRating(getAverageReferenceRating(app)) : N_R);
 
                     // review report
-                    row.addCell(new NumberValue(app.getReviewRounds().size()));
+//                    row.addCell(new NumberValue(app.getReviewRounds().size()));
                     row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.REVIEW)));
                     row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[0]) : N_R);
                     row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[1]) : N_R);
@@ -273,7 +270,7 @@ public class ApplicationsReportService {
 
                     // approval report
                     row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPROVAL)));
-                    row.addCell(new NumberValue(app.getApprovalRounds().size()));
+//                    row.addCell(new NumberValue(app.getApprovalRounds().size()));
                     row.addCell(getPrintablePrimarySupervisor(app));
                     row.addCell(getPrintableSecondarySupervisor(app));
                     row.addCell(app.getStatus() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
@@ -542,18 +539,19 @@ public class ApplicationsReportService {
     }
 
     private String getAverageRatingForAllReviewRounds(ApplicationForm app) {
-        List<ReviewRound> reviewRounds = app.getReviewRounds();
-        if (reviewRounds.isEmpty()) {
-            return null;
-        }
-        BigDecimal ratingTotal = new BigDecimal(0);
-        for (ReviewRound reviewRound : reviewRounds) {
-            BigDecimal averageRating = reviewRound.getAverageRating();
-            if (averageRating != null) {
-                ratingTotal = ratingTotal.add(averageRating);
-            }
-        }
-        return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue() / reviewRounds.size()));
+//        List<ReviewRound> reviewRounds = app.getReviewRounds();
+//        if (reviewRounds.isEmpty()) {
+//            return null;
+//        }
+//        BigDecimal ratingTotal = new BigDecimal(0);
+//        for (ReviewRound reviewRound : reviewRounds) {
+//            BigDecimal averageRating = reviewRound.getAverageRating();
+//            if (averageRating != null) {
+//                ratingTotal = ratingTotal.add(averageRating);
+//            }
+//        }
+//        return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue() / reviewRounds.size()));
+        return "666";
     }
 
     private String printRating(String rating) {

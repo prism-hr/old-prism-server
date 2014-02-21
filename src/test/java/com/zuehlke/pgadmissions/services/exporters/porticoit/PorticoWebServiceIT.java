@@ -686,14 +686,13 @@ public class PorticoWebServiceIT {
         Referee referee = randomApplicationForm.getReferees().get(0);
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";
         Domicile domicile = new DomicileBuilder().id(Integer.MAX_VALUE).code("XK").name("United Kingdom").enabled(true).build();
-        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").referee(referee).providedBy(referee.getUser())
+        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().comment("Hello World").providedBy(referee.getUser())
                         .suitableForProgramme(true).suitableForUcl(true).user(referee.getUser()).build();
         Referee refereeOne = new RefereeBuilder().user(referee.getUser()).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith").addressDomicile(domicile)
                         .address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
                         .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.")
                         .jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true)
                         .reference(referenceComment1).build();
-        referenceComment1.setReferee(refereeOne);
         refereeOne.setReference(referenceComment1);
         randomApplicationForm.getReferees().add(refereeOne);
 

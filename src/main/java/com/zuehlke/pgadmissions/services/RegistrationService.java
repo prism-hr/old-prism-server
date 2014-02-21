@@ -10,18 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.dao.SupervisorDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Reviewer;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -29,40 +23,24 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Service
 @Transactional
 public class RegistrationService {
+    // TODO fix tests
 
 	private final Logger log = LoggerFactory.getLogger(RegistrationService.class);
 
-	private final EncryptionUtils encryptionUtils;
-
-	private final RoleDAO roleDAO;
-
-	private final UserDAO userDAO;
-
-	private final InterviewerDAO interviewerDAO;
-
-	private final ReviewerDAO reviewerDAO;
-
-	private final SupervisorDAO supervisorDAO;
-
-	private final RefereeDAO refereeDAO;
-
-	private final MailSendingService mailService;
-
-	public RegistrationService() {
-		this(null, null, null, null, null, null, null, null);
-	}
+	@Autowired
+	private EncryptionUtils encryptionUtils;
 
 	@Autowired
-	public RegistrationService(final EncryptionUtils encryptionUtils, final RoleDAO roleDAO, final UserDAO userDAO, final InterviewerDAO interviewerDAO, final ReviewerDAO reviewerDAO, final SupervisorDAO supervisorDAO, final RefereeDAO refereeDAO, final MailSendingService mailService) {
-		this.encryptionUtils = encryptionUtils;
-		this.roleDAO = roleDAO;
-		this.userDAO = userDAO;
-		this.interviewerDAO = interviewerDAO;
-		this.reviewerDAO = reviewerDAO;
-		this.mailService = mailService;
-		this.supervisorDAO = supervisorDAO;
-		this.refereeDAO = refereeDAO;
-	}
+	private RoleDAO roleDAO;
+
+	@Autowired
+	private UserDAO userDAO;
+
+	@Autowired
+	private RefereeDAO refereeDAO;
+
+	@Autowired
+	private MailSendingService mailService;
 
 	public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser, String queryString) {
 		pendingApplicantUser.setUsername(pendingApplicantUser.getEmail());
@@ -101,9 +79,6 @@ public class RegistrationService {
 	}
 
 	public void sendInstructionsToRegisterIfActivationCodeIsMissing(final RegisteredUser user) {
-		Interviewer interviewer = interviewerDAO.getInterviewerByUser(user);
-		Reviewer reviewer = reviewerDAO.getReviewerByUser(user);
-		Supervisor supervisor = supervisorDAO.getSupervisorByUser(user);
 		Referee referee = refereeDAO.getRefereeByUser(user);
 
 		if (!user.getPendingRoleNotifications().isEmpty()) {
@@ -111,12 +86,6 @@ public class RegistrationService {
 				notification.setNotificationDate(null);
 			}
 			userDAO.save(user);
-		} else if (interviewer != null) {
-			interviewerDAO.save(interviewer);
-		} else if (reviewer != null) {
-			reviewerDAO.save(reviewer);
-		} else if (supervisor != null) {
-			supervisorDAO.save(supervisor);
 		} else if (referee != null) {
 			referee.setLastNotified(null);
 			refereeDAO.save(referee);

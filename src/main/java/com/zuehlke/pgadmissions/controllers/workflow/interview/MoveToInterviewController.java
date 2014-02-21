@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -34,7 +33,6 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.TimeZoneList;
-import com.zuehlke.pgadmissions.validators.InterviewValidator;
 
 @Controller
 @RequestMapping("/interview")
@@ -49,9 +47,6 @@ public class MoveToInterviewController {
     
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private InterviewValidator interviewValidator;
 
     @Autowired
     private InterviewService interviewService;
@@ -155,7 +150,7 @@ public class MoveToInterviewController {
 
     @InitBinder("interview")
     public void registerValidatorAndPropertyEditor(WebDataBinder binder) {
-        binder.setValidator(interviewValidator);
+//        binder.setValidator(interviewValidator);
         // FIXME consider creating CommentAssignedUserPropertyEditor
 //        binder.registerCustomEditor(Interviewer.class, interviewerPropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);

@@ -22,13 +22,12 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.OfferRecommendationService;
@@ -67,7 +66,7 @@ public class OfferRecommendationController {
     private ProgramInstanceService programInstanceService;
 
     @Autowired
-    private SupervisorPropertyEditor supervisorPropertyEditor;
+    private CommentAssignedUserPropertyEditor assignedUserPropertyEditor;
 
     @RequestMapping(method = RequestMethod.GET)
     public String getOfferRecommendationPage(ModelMap modelMap) {
@@ -148,7 +147,7 @@ public class OfferRecommendationController {
     @InitBinder("offerRecommendedComment")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(offerRecommendedCommentValidator);
-        binder.registerCustomEditor(Supervisor.class, supervisorPropertyEditor);
+        binder.registerCustomEditor(CommentAssignedUserPropertyEditor.class, assignedUserPropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.registerCustomEditor(Date.class, datePropertyEditor);
     }

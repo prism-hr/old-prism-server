@@ -61,6 +61,7 @@ import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 @Controller
 @RequestMapping("/editApplicationFormAsProgrammeAdmin")
 public class EditApplicationFormAsProgrammeAdminController {
+    // TODO fix tests
 
     private static final Logger log = LoggerFactory.getLogger(EditApplicationFormAsProgrammeAdminController.class);
 
@@ -79,7 +80,6 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @Autowired
     protected RefereeService refereeService;
-    
     
     @Autowired
     protected RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;

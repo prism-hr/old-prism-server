@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.validators.InterviewConfirmDTOValidator;
 @Controller
 @RequestMapping(value = { "/interviewConfirm" })
 public class InterviewConfirmController {
-    // TODO interview details combined into one field (fix in ftl)
+    // TODO interview details combined into one field (fix in ftl), fix tests
 
     private static final String INTERVIEW_CONFIRM_PAGE = "private/staff/interviewers/interview_confirm";
 

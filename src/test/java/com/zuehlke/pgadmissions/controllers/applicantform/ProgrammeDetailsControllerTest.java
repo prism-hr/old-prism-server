@@ -125,7 +125,6 @@ public class ProgrammeDetailsControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
@@ -164,7 +163,6 @@ public class ProgrammeDetailsControllerTest {
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.replay(applicationsServiceMock, currentUser);
 
         ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
@@ -179,7 +177,6 @@ public class ProgrammeDetailsControllerTest {
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.replay(applicationsServiceMock, currentUser);
         ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
         assertNull(returnedProgrammeDetails.getId());

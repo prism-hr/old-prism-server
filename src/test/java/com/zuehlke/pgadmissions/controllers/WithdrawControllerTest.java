@@ -61,7 +61,6 @@ public class WithdrawControllerTest {
         EasyMock.replay(applicationsServiceMock);
         EasyMock.reset(userServiceMock);
         RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         EasyMock.replay(userServiceMock, currentUserMock);
         ApplicationForm returnedForm = withdrawController.getApplicationForm(applicationNumber);

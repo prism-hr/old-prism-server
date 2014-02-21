@@ -6,7 +6,6 @@ import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 
-import com.zuehlke.pgadmissions.dao.InterviewVoteCommentDAO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -15,10 +14,6 @@ public class InterviewServiceTest {
     @Mock
     @InjectIntoByType
     private ApplicationsService applicationsService;
-
-    @Mock
-    @InjectIntoByType
-    private InterviewVoteCommentDAO interviewVoteCommentDAO;
 
     @Mock
     @InjectIntoByType

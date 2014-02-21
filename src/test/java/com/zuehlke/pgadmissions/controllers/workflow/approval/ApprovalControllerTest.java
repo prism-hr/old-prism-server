@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -49,7 +49,7 @@ public class ApprovalControllerTest {
 
     @Mock
     @InjectIntoByType
-    private SupervisorPropertyEditor supervisorPropertyEditorMock;
+    private CommentAssignedUserPropertyEditor supervisorPropertyEditorMock;
 
     @Mock
     @InjectIntoByType

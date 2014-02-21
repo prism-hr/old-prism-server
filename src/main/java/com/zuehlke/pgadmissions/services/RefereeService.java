@@ -184,7 +184,7 @@ public class RefereeService {
             referee.setSendToUCL(true);
         }
 
-        applicationFormUserRoleService.referencePosted(referee);
+        applicationFormUserRoleService.referencePosted(referenceComment);
 
         return referenceComment;
     }

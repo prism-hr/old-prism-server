@@ -35,6 +35,7 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.IndexColumn;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -66,9 +67,8 @@ public class Comment implements Serializable {
     @JoinColumn(name = "user_id")
     private RegisteredUser user;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "comment_id")
-    private Set<CommentAssignedUser> assignedUsers;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment")
+    private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
 
     @Column(name = "created_timestamp", insertable = false)
     @Generated(GenerationTime.INSERT)
@@ -456,15 +456,15 @@ public class Comment implements Serializable {
     }
 
     public void addDocument(Document document) {
-        if (document != null) {
-            document.setIsReferenced(true);
-            this.documents.add(document);
-        }
+        document.setIsReferenced(true);
+        this.documents.add(document);
     }
 
     public void setDocument(Document document) {
         this.documents.clear();
-        addDocument(document);
+        if (document != null) {
+            addDocument(document);
+        }
     }
 
     public boolean isAtLeastOneAnswerUnsure() {

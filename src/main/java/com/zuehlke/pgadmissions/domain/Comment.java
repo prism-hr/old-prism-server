@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -131,8 +132,18 @@ public class Comment implements Serializable {
     @Column(name = "rating")
     private Integer rating;
 
-    @Column(name = "interview_instructions")
-    private String interviewInstructions;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "appointment_datetime")
+    private Date appointmentDate;
+
+    @Column(name = " appointment_datetime ", nullable = false)
+    private TimeZone appointmentTimezone = TimeZone.getTimeZone("GMT");
+
+    @Column(name = "appointment_duration")
+    private Integer appointmentDuration;
+
+    @Column(name = "appointment_instructions")
+    private String appointmentInstructions;
 
     @Column(name = "location_url")
     private String locationUrl;
@@ -320,12 +331,36 @@ public class Comment implements Serializable {
         this.rating = rating;
     }
 
-    public String getInterviewInstructions() {
-        return interviewInstructions;
+    public Date getAppointmentDate() {
+        return appointmentDate;
     }
 
-    public void setInterviewInstructions(String interviewInstructions) {
-        this.interviewInstructions = interviewInstructions;
+    public void setAppointmentDate(Date appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public TimeZone getAppointmentTimezone() {
+        return appointmentTimezone;
+    }
+
+    public void setAppointmentTimezone(TimeZone appointmentTimezone) {
+        this.appointmentTimezone = appointmentTimezone;
+    }
+
+    public Integer getAppointmentDuration() {
+        return appointmentDuration;
+    }
+
+    public void setAppointmentDuration(Integer appointmentDuration) {
+        this.appointmentDuration = appointmentDuration;
+    }
+
+    public String getAppointmentInstructions() {
+        return appointmentInstructions;
+    }
+
+    public void setAppointmentInstructions(String appointmentInstructions) {
+        this.appointmentInstructions = appointmentInstructions;
     }
 
     public String getLocationUrl() {
@@ -426,7 +461,7 @@ public class Comment implements Serializable {
             this.documents.add(document);
         }
     }
-    
+
     public void setDocument(Document document) {
         this.documents.clear();
         addDocument(document);

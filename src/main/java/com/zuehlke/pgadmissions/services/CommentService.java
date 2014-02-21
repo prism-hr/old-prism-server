@@ -9,12 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalComment;
+import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 
 @Service
 @Transactional
@@ -40,10 +39,10 @@ public class CommentService {
     }
     
     public void declineReview(RegisteredUser user, ApplicationForm application) {
-        Reviewer currentReviewer = user.getReviewerForCurrentUserFromLatestReviewRound(application);
-        if (!commentDAO.getReviewCommentsForReviewerAndApplication(currentReviewer, application).isEmpty()) {
-            return;
-        }
+        // check if user has already responded 
+//        if (!commentDAO.getReviewCommentsForReviewerAndApplication(user, application).isEmpty()) {
+//            return;
+//        }
 
         ReviewComment reviewComment = new ReviewComment();
         reviewComment.setApplication(application);
@@ -58,7 +57,7 @@ public class CommentService {
         return commentDAO.getNotDecliningSupervisorsFromLatestApprovalStage(application);
     }
 
-    public CommentAssignedUser assignUser(ApprovalComment approvalComment, RegisteredUser user, boolean isPrimary) {
+    public CommentAssignedUser assignUser(AssignSupervisorsComment approvalComment, RegisteredUser user, boolean isPrimary) {
         CommentAssignedUser assignedUser = new CommentAssignedUser();
         assignedUser.setUser(user);
         assignedUser.setPrimary(isPrimary);

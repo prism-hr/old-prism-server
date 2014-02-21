@@ -13,15 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalComment;
-import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -56,16 +54,17 @@ public class ApprovalService {
 
     @Autowired
     private ApplicationsService applicationsService;
-    
+
     @Autowired
     private ApplicationContext applicationContext;
 
     public void confirmOrDeclineSupervision(ApplicationForm form, ConfirmSupervisionDTO confirmSupervisionDTO) {
         ApprovalService thisBean = applicationContext.getBean(ApprovalService.class);
-        
-        ApprovalComment approvalComment = (ApprovalComment) applicationsService.getLatestStateChangeComment(form, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
+
+        AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService
+                .getLatestStateChangeComment(form, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
         SupervisionConfirmationComment supervisionConfirmationComment = thisBean.createSupervisionConfirmationComment(approvalComment, confirmSupervisionDTO);
-        
+
         if (BooleanUtils.isTrue(supervisionConfirmationComment.getDeclined())) {
             form.setDueDate(new Date());
         }
@@ -73,38 +72,38 @@ public class ApprovalService {
         applicationFormUserRoleService.supervisionConfirmed(supervisionConfirmationComment);
     }
 
-    protected SupervisionConfirmationComment createSupervisionConfirmationComment(ApprovalComment approvalComment, ConfirmSupervisionDTO confirmSupervisionDTO) {
-        // TODO use approval comment
-        
+    protected SupervisionConfirmationComment createSupervisionConfirmationComment(AssignSupervisorsComment approvalComment, ConfirmSupervisionDTO confirmSupervisionDTO) {
+        // TODO use approval comment (before: approvalRound), fix tests and ftl's.
+
         SupervisionConfirmationComment supervisionConfirmationComment = new SupervisionConfirmationComment();
-//        supervisionConfirmationComment.setApplication(approvalComment.getApplication());
-//        supervisionConfirmationComment.setDate(new Date());
-//        supervisionConfirmationComment.setSupervisor(supervisor);
-//        supervisionConfirmationComment.setType(CommentType.SUPERVISION_CONFIRMATION);
-//        supervisionConfirmationComment.setUser(userService.getCurrentUser());
-//        supervisionConfirmationComment.setComment(StringUtils.EMPTY);
-//        supervisionConfirmationComment.setSecondarySupervisor(approvalComment.getSecondarySupervisor());
-//
-//        if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
-//            supervisionConfirmationComment.setProjectTitle(confirmSupervisionDTO.getProjectTitle());
-//            supervisionConfirmationComment.setProjectAbstract(confirmSupervisionDTO.getProjectAbstract());
-//            supervisionConfirmationComment.setRecommendedStartDate(confirmSupervisionDTO.getRecommendedStartDate());
-//            Boolean recommendedConditionsAvailable = confirmSupervisionDTO.getRecommendedConditionsAvailable();
-//            supervisionConfirmationComment.setRecommendedConditionsAvailable(recommendedConditionsAvailable);
-//            if (BooleanUtils.isTrue(recommendedConditionsAvailable)) {
-//                supervisionConfirmationComment.setRecommendedConditions(confirmSupervisionDTO.getRecommendedConditions());
-//            } else {
-//                supervisionConfirmationComment.setRecommendedConditions(null);
-//            }
-//        }
-//
-//        commentService.save(supervisionConfirmationComment);
+        // supervisionConfirmationComment.setApplication(approvalComment.getApplication());
+        // supervisionConfirmationComment.setDate(new Date());
+        // supervisionConfirmationComment.setSupervisor(supervisor);
+        // supervisionConfirmationComment.setType(CommentType.SUPERVISION_CONFIRMATION);
+        // supervisionConfirmationComment.setUser(userService.getCurrentUser());
+        // supervisionConfirmationComment.setComment(StringUtils.EMPTY);
+        // supervisionConfirmationComment.setSecondarySupervisor(approvalComment.getSecondarySupervisor());
+        //
+        // if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
+        // supervisionConfirmationComment.setProjectTitle(confirmSupervisionDTO.getProjectTitle());
+        // supervisionConfirmationComment.setProjectAbstract(confirmSupervisionDTO.getProjectAbstract());
+        // supervisionConfirmationComment.setRecommendedStartDate(confirmSupervisionDTO.getRecommendedStartDate());
+        // Boolean recommendedConditionsAvailable = confirmSupervisionDTO.getRecommendedConditionsAvailable();
+        // supervisionConfirmationComment.setRecommendedConditionsAvailable(recommendedConditionsAvailable);
+        // if (BooleanUtils.isTrue(recommendedConditionsAvailable)) {
+        // supervisionConfirmationComment.setRecommendedConditions(confirmSupervisionDTO.getRecommendedConditions());
+        // } else {
+        // supervisionConfirmationComment.setRecommendedConditions(null);
+        // }
+        // }
+        //
+        // commentService.save(supervisionConfirmationComment);
         return supervisionConfirmationComment;
     }
 
-    public ApprovalComment initiateApprovalComment(String applicationId) {
+    public AssignSupervisorsComment initiateApprovalComment(String applicationId) {
         ApplicationForm application = applicationDAO.getApplicationByApplicationNumber(applicationId);
-        ApprovalComment approvalComment = new ApprovalComment();
+        AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
         Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
         Project project = application.getProject();
         Date startDate = application.getProgrammeDetails().getStartDate();
@@ -154,7 +153,7 @@ public class ApprovalService {
 
         applicationDAO.save(form);
 
-        Comment approvalComment = new ApprovalComment();
+        Comment approvalComment = new AssignSupervisorsComment();
         approvalComment.setApplication(form);
         approvalComment.setContent(StringUtils.EMPTY);
         approvalComment.setProjectAbstract(newComment.getProjectAbstract());
@@ -197,14 +196,6 @@ public class ApprovalService {
         if (!form.hasEnoughReferencesToSendToPortico() || (!form.hasEnoughQualificationsToSendToPortico())) {
             throw new IllegalStateException("Send to portico data is not valid");
         }
-    }
-
-    private void addUserAsSupervisorInApprovalRound(RegisteredUser user, ApprovalRound approvalRound, boolean isPrimary) {
-        Supervisor supervisor = new Supervisor();
-        supervisor.setIsPrimary(isPrimary);
-        supervisor.setUser(user);
-        supervisor.setApprovalRound(approvalRound);
-        approvalRound.getSupervisors().add(supervisor);
     }
 
 }

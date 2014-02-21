@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -37,42 +37,33 @@ import com.zuehlke.pgadmissions.validators.ConfirmSupervisionDTOValidator;
 @Controller
 @RequestMapping("/confirmSupervision")
 public class ConfirmSupervisionController {
+    // TODO fix tests
 
     private static final String CONFIRM_SUPERVISION_PAGE = "/private/staff/supervisors/confirm_supervision_page";
 
-    private final ApplicationsService applicationsService;
-
-    private final UserService userService;
-
-    private final ApprovalService approvalService;
-
-    private final DatePropertyEditor datePropertyEditor;
-
-    private final ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator;
-
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    private final ActionsProvider actionsProvider;
-
-    private final ProgramInstanceService programInstanceService;
-
-    public ConfirmSupervisionController() {
-        this(null, null, null, null, null, null, null, null);
-    }
+    @Autowired
+    private ApplicationsService applicationsService;
 
     @Autowired
-    public ConfirmSupervisionController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
-            DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, ProgramInstanceService programInstanceService) {
-        this.applicationsService = applicationsService;
-        this.userService = userService;
-        this.approvalService = approvalService;
-        this.datePropertyEditor = datePropertyEditor;
-        this.confirmSupervisionDTOValidator = confirmSupervisionDTOValidator;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.actionsProvider = actionsProvider;
-        this.programInstanceService = programInstanceService;
-    }
+    private UserService userService;
+
+    @Autowired
+    private ApprovalService approvalService;
+
+    @Autowired
+    private DatePropertyEditor datePropertyEditor;
+
+    @Autowired
+    private ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    @Autowired
+    private ActionsProvider actionsProvider;
+
+    @Autowired
+    private ProgramInstanceService programInstanceService;
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -95,21 +86,20 @@ public class ConfirmSupervisionController {
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
 
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        ApprovalRound approvalRound = applicationForm.getLatestApprovalRound();
+        CompleteApprovalComment comment = (CompleteApprovalComment) applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
 
-        confirmSupervisionDTO.setProjectTitle(approvalRound.getProjectTitle());
-        confirmSupervisionDTO.setProjectAbstract(approvalRound.getProjectAbstract());
+        confirmSupervisionDTO.setProjectTitle(comment.getProjectTitle());
+        confirmSupervisionDTO.setProjectAbstract(comment.getProjectAbstract());
 
-        Date startDate = approvalRound.getRecommendedStartDate();
+        Date startDate = comment.getRecommendedStartDate();
 
         if (!programInstanceService.isPrefferedStartDateWithinBounds(applicationForm, startDate)) {
             startDate = programInstanceService.getEarliestPossibleStartDate(applicationForm);
         }
 
         confirmSupervisionDTO.setRecommendedStartDate(startDate);
-        confirmSupervisionDTO.setRecommendedConditionsAvailable(approvalRound.getRecommendedConditionsAvailable());
-        confirmSupervisionDTO.setRecommendedConditions(approvalRound.getRecommendedConditions());
-        confirmSupervisionDTO.setProjectAcceptingApplications(approvalRound.getProjectAcceptingApplications());
+        confirmSupervisionDTO.setRecommendedConditionsAvailable(comment.getRecommendedConditionsAvailable());
+        confirmSupervisionDTO.setRecommendedConditions(comment.getRecommendedConditions());
 
         return confirmSupervisionDTO;
     }

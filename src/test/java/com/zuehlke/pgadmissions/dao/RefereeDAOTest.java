@@ -375,15 +375,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
         save(hasRefButNotInApp, hasRefInApp, hasRefInApp1, noRefInApp, noRefInApp2, noRefNoApp);
 
-        ReferenceComment reference = new ReferenceCommentBuilder().document(document).comment("This is a reference comment").suitableForProgramme(false)
-                .referee(hasRefInApp1).user(user).application(application).build();
-
-        ReferenceComment referenceOne = new ReferenceCommentBuilder().document(document).comment("This is a reference comment").suitableForProgramme(false)
-                .referee(hasRefInApp).user(user).application(application).build();
-
-        ReferenceComment referenceTwo = new ReferenceCommentBuilder().document(document).comment("This is a reference comment").suitableForProgramme(false)
-                .referee(hasRefButNotInApp).user(user).application(application2).build();
-        save(document, reference, referenceOne, referenceTwo);
+        save(document);
 
         flushAndClearSession();
         List<Referee> referees = refereeDAO.getRefereesWhoDidntProvideReferenceYet(application);

@@ -38,7 +38,6 @@ import org.hibernate.search.annotations.Store;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "REGISTERED_USER")
@@ -182,18 +181,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @Transient
     private boolean canManageProjects;
 
-
-    public boolean canSee(ApplicationForm applicationForm) {
-        return canSeeApplication(applicationForm, this);
-    }
-
     public boolean canEditAsApplicant(ApplicationForm applicationForm) {
         return canEditApplicationAsApplicant(applicationForm, this);
     }
 
-    public boolean canEditAsAdministrator(ApplicationForm applicationForm) {
-        return canEditApplicationAsAdministrator(applicationForm, this);
-    }
 
     public boolean canSeeReference(final ReferenceComment reference) {
         return canSeeReference(reference, this);
@@ -296,17 +287,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return id;
     }
 
-    public List<Interviewer> getInterviewersForApplicationForm(final ApplicationForm form) {
-        List<Interviewer> interviewers = new ArrayList<Interviewer>();
-        List<Interviewer> formInterviewers = form.getLatestInterview().getInterviewers();
-        for (Interviewer interviewer : formInterviewers) {
-            if (this.getId().equals(interviewer.getUser().getId())) {
-                interviewers.add(interviewer);
-            }
-        }
-        return interviewers;
-    }
-
     public String getLastName() {
         return lastName;
     }
@@ -371,22 +351,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return referees;
     }
 
-    public Reviewer getReviewerForCurrentUserFromLatestReviewRound(final ApplicationForm form) {
-        ReviewRound latestReviewRound = form.getLatestReviewRound();
-
-        if (latestReviewRound == null) {
-            throw new IllegalStateException(String.format("latestReviewRound is null for application[applicationNumber=%s]", form.getApplicationNumber()));
-        }
-
-        List<Reviewer> formReviewers = latestReviewRound.getReviewers();
-        for (Reviewer reviewer : formReviewers) {
-            if (this.getId().equals(reviewer.getUser().getId())) {
-                return reviewer;
-            }
-        }
-        throw new IllegalStateException(String.format("Reviewer object could not be found for user [id=%d]", getId()));
-    }
-
     public List<Role> getRoles() {
         return roles;
     }
@@ -404,64 +368,8 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return hasAdminRightsOnApplication(form, this);
     }
 
-    public boolean hasDeclinedToProvideReviewForApplication(final ApplicationForm form) {
-        for (Comment comment : comments) {
-            if (comment.getApplication().getId().equals(form.getId()) && comment.getType().equals(CommentType.REVIEW)) {
-                ReviewComment reviewComment = (ReviewComment) comment;
-                if (reviewComment.isDecline()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public boolean hasRefereesInApplicationForm(final ApplicationForm form) {
         return getRefereeForApplicationForm(form) != null;
-    }
-
-    public boolean hasRespondedToProvideInterviewFeedbackForApplication(final ApplicationForm form) {
-        for (Comment comment : comments) {
-            if (comment.getApplication().getId().equals(form.getId()) && comment.getType().equals(CommentType.INTERVIEW)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(final ApplicationForm form) {
-        List<Interviewer> interviewers = form.getLatestInterview().getInterviewers();
-        for (Interviewer interviewer : interviewers) {
-            if (interviewer.getInterview().getId().equals(form.getLatestInterview().getId()) && this.getId().equals(interviewer.getUser().getId())
-                    && interviewer.getInterviewComment() != null) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean hasRespondedToProvideReviewForApplication(final ApplicationForm form) {
-        for (Comment comment : comments) {
-            if (comment.getApplication().getId().equals(form.getId()) && comment.getType().equals(CommentType.REVIEW)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean hasRespondedToProvideReviewForApplicationLatestRound(final ApplicationForm form) {
-        List<Reviewer> reviewers = form.getLatestReviewRound().getReviewers();
-        for (Reviewer reviewer : reviewers) {
-            if (reviewer.getReviewRound().getId().equals(form.getLatestReviewRound().getId()) && this.getId().equals(reviewer.getUser().getId())
-                    && reviewer.getReview() != null) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean hasStaffRightsOnApplicationForm(final ApplicationForm form) {
-        return hasStaffRightsOnApplication(form, this);
     }
 
     @Override
@@ -520,68 +428,16 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return !isInRoleInProgramme(programme, this, strAuthority);
     }
 
-    public boolean isInterviewerInInterview(final Interview interview) {
-        return isInterviewerInInterview(interview, this);
-    }
-
-    public boolean isInterviewerOfApplicationForm(final ApplicationForm form) {
-        return isInterviewerOfApplication(form, this);
-    }
-
     public boolean isApproverInProgram(final Program programme) {
         return isApproverInProgramme(programme, this);
-    }
-
-    public boolean isViewerOfProgramme(final ApplicationForm form) {
-        return isViewerOfProgramme(form, this);
-    }
-
-    public boolean isApplicationAdministrator(final ApplicationForm form) {
-        return isApplicationAdministrator(form, this);
     }
 
     public boolean isApplicant(final ApplicationForm form) {
         return isApplicant(form, this);
     }
 
-    public boolean isProgrammeAdministrator(final ApplicationForm form) {
-        return isProgrammeAdministrator(form, this);
-    }
-
-    public boolean isPastOrPresentInterviewerOfApplicationForm(final ApplicationForm form) {
-        return isPastOrPresentInterviewerOfApplication(form, this);
-    }
-
-    public boolean isPastOrPresentReviewerOfApplicationForm(final ApplicationForm form) {
-        return isPastOrPresentReviewerOfApplication(form, this);
-    }
-
-    public boolean isPastOrPresentSupervisorOfApplicationForm(final ApplicationForm form) {
-        return isPastOrPresentSupervisorOfApplication(form, this);
-    }
-
     public boolean isRefereeOfApplicationForm(final ApplicationForm form) {
         return isRefereeOfApplication(form, this);
-    }
-
-    public boolean isReviewerInLatestReviewRoundOfApplicationForm(final ApplicationForm form) {
-        return isReviewerInLatestReviewRoundOfApplication(form, this);
-    }
-
-    public boolean isReviewerInReviewRound(final ReviewRound reviewRound) {
-        return isReviewerInReviewRound(reviewRound, this);
-    }
-
-    public boolean isSupervisorInApprovalRound(final ApprovalRound approvalRound) {
-        return isSupervisorInApprovalRound(approvalRound, this);
-    }
-
-    public boolean isSupervisorIn(final List<Supervisor> supervisors) {
-        return containsSupervisor(this, supervisors);
-    }
-
-    public boolean isSupervisorOfApplicationForm(final ApplicationForm form) {
-        return isSupervisorOfApplicationForm(form, this);
     }
 
     public void setAccountNonExpired(final boolean accountNonExpired) {

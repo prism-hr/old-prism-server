@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
@@ -88,7 +88,7 @@ public class CreateNewSupervisorController {
 
 		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (application == null) {
-			throw new ResourceNotFoundException();
+			throw new MissingApplicationFormException(applicationId);
 		}
 		return application;
 	}

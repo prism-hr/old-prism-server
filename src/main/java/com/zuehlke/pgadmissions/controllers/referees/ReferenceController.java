@@ -20,14 +20,12 @@ import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -37,7 +35,6 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -48,44 +45,43 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 @Controller
 @RequestMapping("/referee")
 public class ReferenceController {
+    // TODO fix tests
 
     private static final Logger log = LoggerFactory.getLogger(ReferenceController.class);
     private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
-    private final ApplicationsService applicationsService;
-    private final DocumentPropertyEditor documentPropertyEditor;
-    private final FeedbackCommentValidator referenceValidator;
-    private final RefereeService refereeService;
-    private final UserService userService;
-    private final CommentService commentService;
-    private final ScoringDefinitionParser scoringDefinitionParser;
-    private final ScoresPropertyEditor scoresPropertyEditor;
-    private final ScoreFactory scoreFactory;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-    private final ActionsProvider actionsProvider;
-    private final ApplicantRatingService applicantRatingService;
-
-    ReferenceController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
-    }
 
     @Autowired
-    public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
-            DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
-            ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
-            final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, ApplicantRatingService applicantRatingService) {
-        this.applicationsService = applicationsService;
-        this.refereeService = refereeService;
-        this.userService = userService;
-        this.documentPropertyEditor = documentPropertyEditor;
-        this.referenceValidator = referenceValidator;
-        this.commentService = commentService;
-        this.scoringDefinitionParser = scoringDefinitionParser;
-        this.scoresPropertyEditor = scoresPropertyEditor;
-        this.scoreFactory = scoreFactory;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.actionsProvider = actionsProvider;
-        this.applicantRatingService = applicantRatingService;
-    }
+    private ApplicationsService applicationsService;
+
+    @Autowired
+    private DocumentPropertyEditor documentPropertyEditor;
+
+    @Autowired
+    private FeedbackCommentValidator referenceValidator;
+
+    @Autowired
+    private RefereeService refereeService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private ScoringDefinitionParser scoringDefinitionParser;
+
+    @Autowired
+    private ScoresPropertyEditor scoresPropertyEditor;
+
+    @Autowired
+    private ScoreFactory scoreFactory;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    @Autowired
+    private ActionsProvider actionsProvider;
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -112,14 +108,11 @@ public class ReferenceController {
     public ReferenceComment getComment(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser currentUser = getCurrentUser();
-        Referee refereeForApplicationForm = currentUser.getRefereeForApplicationForm(applicationForm);
 
         ReferenceComment referenceComment = new ReferenceComment();
         referenceComment.setApplication(applicationForm);
         referenceComment.setUser(currentUser);
-        referenceComment.setComment("");
-        referenceComment.setType(CommentType.REFERENCE);
-        referenceComment.setReferee(refereeForApplicationForm);
+        referenceComment.setContent("");
 
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.REFERENCE);
         if (scoringDefinition != null) {
@@ -175,13 +168,9 @@ public class ReferenceController {
             return ADD_REFERENCES_VIEW_NAME;
         }
 
-        if (comment.getReferee().getReference() == null) {
-            commentService.save(comment);
-            applicationForm.getApplicationComments().add(comment);
-            applicantRatingService.computeAverageRating(applicationForm);
-            refereeService.saveReferenceAndSendMailNotifications(comment.getReferee());
-            applicationFormUserRoleService.referencePosted(comment.getReferee());
-        }
+        commentService.save(comment);
+        applicationForm.getApplicationComments().add(comment);
+        applicationFormUserRoleService.referencePosted(comment);
 
         applicationsService.save(applicationForm);
         applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);

@@ -16,15 +16,11 @@ public class WithdrawService {
     @Autowired
     private PorticoQueueService porticoQueueService;
 
-    @Autowired
-    private EventFactory eventFactory;
-    
     @Autowired ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @Transactional
     public void withdrawApplication(final ApplicationForm application) {
         application.setStatus(ApplicationFormStatus.WITHDRAWN);
-        application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
         applicationService.save(application);
         applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
     }

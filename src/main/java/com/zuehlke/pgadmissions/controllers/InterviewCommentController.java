@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -35,7 +34,6 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -45,42 +43,41 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 @Controller
 @RequestMapping(value = { "/interviewFeedback" })
 public class InterviewCommentController {
+    // TODO use interview comment instead interview, fix tests and ftl's
 
     private static final Logger log = LoggerFactory.getLogger(InterviewCommentController.class);
+    
     private static final String INTERVIEW_FEEDBACK_PAGE = "private/staff/interviewers/feedback/interview_feedback";
-    private final ApplicationsService applicationsService;
-    private final UserService userService;
-    private final FeedbackCommentValidator feedbackCommentValidator;
-    private final CommentService commentService;
-    private final DocumentPropertyEditor documentPropertyEditor;
-    private final ScoringDefinitionParser scoringDefinitionParser;
-    private final ScoresPropertyEditor scoresPropertyEditor;
-    private final ScoreFactory scoreFactory;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-    private final ActionsProvider actionsProvider;
-    private final ApplicantRatingService applicantRatingService;
-
-    public InterviewCommentController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
-    }
 
     @Autowired
-    public InterviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-            FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
-            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ActionsProvider actionsProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ApplicantRatingService applicantRatingService) {
-        this.applicationsService = applicationsService;
-        this.userService = userService;
-        this.commentService = commentService;
-        this.feedbackCommentValidator = reviewFeedbackValidator;
-        this.documentPropertyEditor = documentPropertyEditor;
-        this.scoringDefinitionParser = scoringDefinitionParser;
-        this.scoresPropertyEditor = scoresPropertyEditor;
-        this.scoreFactory = scoreFactory;
-        this.actionsProvider = actionsProvider;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.applicantRatingService = applicantRatingService;
-    }
+    private ApplicationsService applicationsService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private FeedbackCommentValidator feedbackCommentValidator;
+
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private DocumentPropertyEditor documentPropertyEditor;
+
+    @Autowired
+    private ScoringDefinitionParser scoringDefinitionParser;
+
+    @Autowired
+    private ScoresPropertyEditor scoresPropertyEditor;
+
+    @Autowired
+    private ScoreFactory scoreFactory;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    @Autowired
+    private ActionsProvider actionsProvider;
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -111,9 +108,8 @@ public class InterviewCommentController {
         InterviewComment interviewComment = new InterviewComment();
         interviewComment.setApplication(applicationForm);
         interviewComment.setUser(currentUser);
-        interviewComment.setComment("");
-        interviewComment.setType(CommentType.INTERVIEW);
-        interviewComment.setInterviewer(currentUser.getInterviewersForApplicationForm(applicationForm).get(0));
+        interviewComment.setContent("");
+        interviewComment.setUser(currentUser);
 
         ScoringDefinition scoringDefinition = applicationForm.getProgram().getScoringDefinitions().get(ScoringStage.INTERVIEW);
 
@@ -169,13 +165,10 @@ public class InterviewCommentController {
             return INTERVIEW_FEEDBACK_PAGE;
         }
         commentService.save(comment);
-        comment.getInterviewer().setInterviewComment(comment);
         applicationForm.getApplicationComments().add(comment);
-        applicantRatingService.computeAverageRating(comment.getInterviewer().getInterview());
-        applicantRatingService.computeAverageRating(applicationForm);
 
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.interviewFeedbackPosted(comment.getInterviewer());
+        applicationFormUserRoleService.interviewFeedbackPosted(comment);
         applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
         return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();
     }

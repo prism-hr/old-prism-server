@@ -117,9 +117,9 @@ public class ValidApplicationFormBuilder {
         domicile = new DomicileBuilder().code("XK").name("United Kingdom").enabled(true).build();
         address = new AddressBuilder().domicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1])
                 .address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).build();
-        referenceComment1 = new ReferenceCommentBuilder().comment("Hello From Bob").referee(refereeOne).document(referenceDocument).providedBy(user)
+        referenceComment1 = new ReferenceCommentBuilder().comment("Hello From Bob").document(referenceDocument).providedBy(user)
                 .suitableForProgramme(true).suitableForUcl(true).user(user).build();
-        referenceComment2 = new ReferenceCommentBuilder().comment("Hello From Jane").referee(refereeTwo).document(referenceDocument).providedBy(user)
+        referenceComment2 = new ReferenceCommentBuilder().comment("Hello From Jane").document(referenceDocument).providedBy(user)
                 .suitableForProgramme(true).suitableForUcl(true).user(user).build();
         refereeOne = new RefereeBuilder().id(Integer.MAX_VALUE - 1).user(approverUser).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith")
                 .addressDomicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
@@ -129,8 +129,6 @@ public class ValidApplicationFormBuilder {
                 .addressDomicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
                 .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer")
                 .messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment2).build();
-        referenceComment1.setReferee(refereeOne);
-        referenceComment2.setReferee(refereeTwo);
         refereeOne.setReference(referenceComment1);
         refereeTwo.setReference(referenceComment2);
         employmentPosition = new EmploymentPositionBuilder().current(true).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1])
@@ -183,7 +181,7 @@ public class ValidApplicationFormBuilder {
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
                 .type(FundingType.SCHOLARSHIP).value("5").build();
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
-                .appDate(new Date()).applicant(user).applicationAdministrator(user).applicationNumber("TMRMBISING01-2012-999999")
+                .appDate(new Date()).applicant(user).applicationNumber("TMRMBISING01-2012-999999")
                 .batchDeadline(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).contactAddress(address).currentAddress(address)
                 .dueDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).employmentPositions(employmentPosition).fundings(funding)
                 .lastUpdated(new Date()).personalDetails(personalDetails).program(program).programmeDetails(programDetails).projectTitle("Project Title")

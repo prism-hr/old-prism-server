@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.dao.InterviewTimeslotDAO;
-import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
+import com.zuehlke.pgadmissions.domain.AppointmentTimeslot;
 
 @Component
 public class AcceptedTimeslotsPropertyEditor extends PropertyEditorSupport {
@@ -24,14 +24,14 @@ public class AcceptedTimeslotsPropertyEditor extends PropertyEditorSupport {
             return;
         }
         
-        Set<InterviewTimeslot> acceptedTimeslots = new HashSet<InterviewTimeslot>();
+        Set<AppointmentTimeslot> acceptedTimeslots = new HashSet<AppointmentTimeslot>();
         
         String[] ids = text.split(",");
         
         for (String id : ids) {
             int parsedId = Integer.parseInt(id);
             
-            InterviewTimeslot timeslot = timeslotDAO.getTimeslotById(parsedId);
+            AppointmentTimeslot timeslot = timeslotDAO.getTimeslotById(parsedId);
             
             if (timeslot != null) {
                 acceptedTimeslots.add(timeslot);

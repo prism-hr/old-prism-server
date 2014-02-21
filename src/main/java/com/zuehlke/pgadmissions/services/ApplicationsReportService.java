@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -32,12 +31,7 @@ import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
-import com.zuehlke.pgadmissions.domain.ApprovalRound;
-import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.InterviewComment;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -45,12 +39,8 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.domain.Reviewer;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -65,24 +55,14 @@ public class ApplicationsReportService {
 
     private static Logger logger = LoggerFactory.getLogger(ClassName.class.getName());
 
-    private final ApplicationsService applicationsService;
-
-    private final ApplicantRatingService applicantRatingService;
-
-    private final String host;
-
-    public ApplicationsReportService() {
-        this(null, null, null);
-    }
-
     @Autowired
-    public ApplicationsReportService(@Value("${application.host}") String host, ApplicationsService applicationsService, ApplicantRatingService applicantRatingService) {
-        this.applicationsService = applicationsService;
-        this.applicantRatingService = applicantRatingService;
-        this.host = host;
-    }
+    private ApplicationsService applicationsService;
+
+    @Value("${application.host}") 
+    private String host;
 
     public DataTable getApplicationsReport(RegisteredUser user, ApplicationsFiltering filtering, ReportFormat reportType) {
+        // TODO implement report functionality (supposedly using query and write new tests)
         DataTable data = new DataTable();
 
         ArrayList<ColumnDescription> cd = Lists.newArrayList();
@@ -198,7 +178,7 @@ public class ApplicationsReportService {
                 String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
                 Program program = app.getProgram();
                 ProgrammeDetails programmeDetails = app.getProgrammeDetails();
-                ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(ApplicationFormAction.COMPLETE_VALIDATION_STAGE);
+                ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(app, ApplicationFormAction.COMPLETE_VALIDATION_STAGE);
                 int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
                 int[] referenceEndorsements = getNumberOfPositiveAndNegativeReferenceEndorsements(app);
                 int[] reviewEndorsements = getNumberOfPositiveAndNegativeReviewEndorsements(app);
@@ -284,7 +264,7 @@ public class ApplicationsReportService {
                     row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app)) : N_R);
 
                     // interview report
-                    row.addCell(new NumberValue(app.getInterviews().size()));
+                    row.addCell(new NumberValue(666));
                     row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
                     row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
                     row.addCell(canSeeRating ? String.valueOf(interviewEndorsements[0]) : N_R);
@@ -327,34 +307,7 @@ public class ApplicationsReportService {
     }
 
     private long getTimeSpentIn(ApplicationForm app, ApplicationFormStatus applicationStatus) {
-        List<Event> events = app.getEvents();
-        List<StateChangeEvent> stateEvents = Lists.newArrayList(Iterables.filter(events, StateChangeEvent.class));
-        Collections.sort(stateEvents);
-
-        Date stageBegin = null;
-        long millisSum = 0;
-
-        for (StateChangeEvent event : stateEvents) {
-            if (stageBegin != null) {
-                Date stageEnd = event.getDate();
-                long millisDiff = stageEnd.getTime() - stageBegin.getTime(); // hours
-                millisSum += millisDiff;
-                stageBegin = null;
-            }
-
-            if (event.getNewStatus() == applicationStatus) {
-                stageBegin = event.getDate();
-            }
-        }
-
-        if (stageBegin != null) {
-            Date stageEnd = new Date();
-            long millisDiff = stageEnd.getTime() - stageBegin.getTime();
-            millisSum += millisDiff;
-            stageBegin = null;
-        }
-
-        return millisSum / 3600000; // convert to hours
+        return 666; // FIXME
     }
 
     private String getSuggestedSupervisors(ProgrammeDetails programmeDetails) {
@@ -411,134 +364,137 @@ public class ApplicationsReportService {
 
     private int[] getNumberOfPositiveAndNegativeReviewEndorsements(ApplicationForm app) {
         int[] endorsements = new int[2];
-        ReviewRound review = app.getLatestReviewRound();
-        if (review == null) {
-            return endorsements;
-        }
-        for (Reviewer reviewer : review.getReviewers()) {
-            if (reviewer.getReview() != null) {
-                ReviewComment comment = reviewer.getReview();
-                Boolean[] answers = new Boolean[4];
-                answers[0] = comment.getSuitableForProgramme();
-                answers[1] = comment.getSuitableForInstitution();
-                answers[2] = comment.getWillingToInterview();
-                answers[3] = comment.getWillingToSupervise();
-
-                for (Boolean answer : answers) {
-                    if (BooleanUtils.isTrue(answer)) {
-                        endorsements[0]++;
-                    } else if (BooleanUtils.isFalse(answer)) {
-                        endorsements[1]++;
-                    }
-                }
-            }
-        }
+        // FIXME
+//        ReviewRound review = app.getLatestReviewRound();
+//        if (review == null) {
+//            return endorsements;
+//        }
+//        for (Reviewer reviewer : review.getReviewers()) {
+//            if (reviewer.getReview() != null) {
+//                ReviewComment comment = reviewer.getReview();
+//                Boolean[] answers = new Boolean[4];
+//                answers[0] = comment.getSuitableForProgramme();
+//                answers[1] = comment.getSuitableForInstitution();
+//                answers[2] = comment.getWillingToInterview();
+//                answers[3] = comment.getWillingToSupervise();
+//
+//                for (Boolean answer : answers) {
+//                    if (BooleanUtils.isTrue(answer)) {
+//                        endorsements[0]++;
+//                    } else if (BooleanUtils.isFalse(answer)) {
+//                        endorsements[1]++;
+//                    }
+//                }
+//            }
+//        }
         return endorsements;
     }
 
     private int getNumberOfInterviewReports(ApplicationForm app) {
-        Interview interview = app.getLatestInterview();
-        if (interview == null) {
-            return 0;
-        }
-        int count = 0;
-        for (Interviewer interviewer : interview.getInterviewers()) {
-            if (interviewer.getInterviewComment() != null) {
-                count++;
-            }
-        }
-        return count;
+//        Interview interview = app.getLatestInterview();
+//        if (interview == null) {
+//            return 0;
+//        }
+//        int count = 0;
+//        for (Interviewer interviewer : interview.getInterviewers()) {
+//            if (interviewer.getInterviewComment() != null) {
+//                count++;
+//            }
+//        }
+//        return count;
+        return 666;
     }
 
     private int[] getNumberOfPositiveAndNegativeInterviewEndorsements(ApplicationForm app) {
-        int[] endorsements = new int[2];
-        Interview interview = app.getLatestInterview();
-        if (interview == null) {
-            return endorsements;
-        }
-        for (Interviewer interviewer : interview.getInterviewers()) {
-            if (interviewer.getInterviewComment() != null) {
-                InterviewComment comment = interviewer.getInterviewComment();
-                if (BooleanUtils.isTrue(comment.getSuitableForProgramme())) {
-                    endorsements[0]++;
-                } else if (BooleanUtils.isFalse(comment.getSuitableForProgramme())) {
-                    endorsements[1]++;
-                }
-
-                if (BooleanUtils.isTrue(comment.getSuitableForInstitution())) {
-                    endorsements[0]++;
-                } else if (BooleanUtils.isFalse(comment.getSuitableForInstitution())) {
-                    endorsements[1]++;
-                }
-            }
-        }
-        return endorsements;
+//        int[] endorsements = new int[2];
+//        Interview interview = app.getLatestInterview();
+//        if (interview == null) {
+//            return endorsements;
+//        }
+//        for (Interviewer interviewer : interview.getInterviewers()) {
+//            if (interviewer.getInterviewComment() != null) {
+//                InterviewComment comment = interviewer.getInterviewComment();
+//                if (BooleanUtils.isTrue(comment.getSuitableForProgramme())) {
+//                    endorsements[0]++;
+//                } else if (BooleanUtils.isFalse(comment.getSuitableForProgramme())) {
+//                    endorsements[1]++;
+//                }
+//
+//                if (BooleanUtils.isTrue(comment.getSuitableForInstitution())) {
+//                    endorsements[0]++;
+//                } else if (BooleanUtils.isFalse(comment.getSuitableForInstitution())) {
+//                    endorsements[1]++;
+//                }
+//            }
+//        }
+//        return endorsements;
+        return new int[]{666, 666};
     }
 
     private String getPrintablePrimarySupervisor(ApplicationForm app) {
-        ApprovalRound approvalRound = app.getLatestApprovalRound();
-        if (approvalRound != null) {
-            Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
-            if (primarySupervisor != null) {
-                return primarySupervisor.getUser().getDisplayName();
-            }
-        }
+//        ApprovalRound approvalRound = app.getLatestApprovalRound();
+//        if (approvalRound != null) {
+//            Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
+//            if (primarySupervisor != null) {
+//                return primarySupervisor.getUser().getDisplayName();
+//            }
+//        }
         return StringUtils.EMPTY;
     }
 
     private String getPrintableSecondarySupervisor(ApplicationForm app) {
-        ApprovalRound approvalRound = app.getLatestApprovalRound();
-        if (approvalRound != null) {
-            Supervisor secondarySupervisor = approvalRound.getSecondarySupervisor();
-            if (secondarySupervisor != null) {
-                return secondarySupervisor.getUser().getDisplayName();
-            }
-        }
+//        ApprovalRound approvalRound = app.getLatestApprovalRound();
+//        if (approvalRound != null) {
+//            Supervisor secondarySupervisor = approvalRound.getSecondarySupervisor();
+//            if (secondarySupervisor != null) {
+//                return secondarySupervisor.getUser().getDisplayName();
+//            }
+//        }
         return StringUtils.EMPTY;
     }
 
     private Date getApproveDate(ApplicationForm app) {
-        List<Event> events = app.getEvents();
-        for (Event event : events) {
-            if (event instanceof StateChangeEvent) {
-                StateChangeEvent stateChangeEvent = (StateChangeEvent) event;
-                if (stateChangeEvent.getNewStatus() == ApplicationFormStatus.APPROVED) {
-                    return stateChangeEvent.getDate();
-                }
-            }
-        }
+//        List<Event> events = app.getEvents();
+//        for (Event event : events) {
+//            if (event instanceof StateChangeEvent) {
+//                StateChangeEvent stateChangeEvent = (StateChangeEvent) event;
+//                if (stateChangeEvent.getNewStatus() == ApplicationFormStatus.APPROVED) {
+//                    return stateChangeEvent.getDate();
+//                }
+//            }
+//        }
         return null;
     }
 
     private String getConditionalType(ApplicationForm app) {
-        ApprovalRound approvalRound = app.getLatestApprovalRound();
-        if (approvalRound != null) {
-            if (BooleanUtils.isTrue(approvalRound.getRecommendedConditionsAvailable())) {
-                return "Conditional";
-            } else if (BooleanUtils.isTrue(approvalRound.getRecommendedConditionsAvailable())) {
-                return "Unconditional";
-            }
-        }
+//        ApprovalRound approvalRound = app.getLatestApprovalRound();
+//        if (approvalRound != null) {
+//            if (BooleanUtils.isTrue(approvalRound.getRecommendedConditionsAvailable())) {
+//                return "Conditional";
+//            } else if (BooleanUtils.isTrue(approvalRound.getRecommendedConditionsAvailable())) {
+//                return "Unconditional";
+//            }
+//        }
         return StringUtils.EMPTY;
     }
 
     private String getOfferConditions(ApplicationForm app) {
-        ApprovalRound approvalRound = app.getLatestApprovalRound();
-        if (approvalRound != null) {
-            if (approvalRound.getRecommendedConditions() != null) {
-                return approvalRound.getRecommendedConditions();
-            }
-        }
+//        ApprovalRound approvalRound = app.getLatestApprovalRound();
+//        if (approvalRound != null) {
+//            if (approvalRound.getRecommendedConditions() != null) {
+//                return approvalRound.getRecommendedConditions();
+//            }
+//        }
         return StringUtils.EMPTY;
     }
 
     private String getProjectTitle(ApplicationForm app) {
-        ApprovalRound approvalRound = app.getLatestApprovalRound();
-        if (approvalRound != null) {
-            if (approvalRound.getProjectTitle() != null) {
-                return approvalRound.getProjectTitle();
-            }
-        }
+//        ApprovalRound approvalRound = app.getLatestApprovalRound();
+//        if (approvalRound != null) {
+//            if (approvalRound.getProjectTitle() != null) {
+//                return approvalRound.getProjectTitle();
+//            }
+//        }
         return StringUtils.EMPTY;
     }
 
@@ -555,18 +511,19 @@ public class ApplicationsReportService {
     }
 
     private String getAverageRatingForAllInterviewRounds(ApplicationForm app) {
-        List<Interview> interviews = app.getInterviews();
-        if (interviews.isEmpty()) {
-            return null;
-        }
-        BigDecimal ratingTotal = new BigDecimal(0);
-        for (Interview interview : interviews) {
-            BigDecimal averageRating = interview.getAverageRating();
-            if (averageRating != null) {
-                ratingTotal = ratingTotal.add(interview.getAverageRating());
-            }
-        }
-        return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue() / interviews.size()));
+//        List<Interview> interviews = app.getInterviews();
+//        if (interviews.isEmpty()) {
+//            return null;
+//        }
+//        BigDecimal ratingTotal = new BigDecimal(0);
+//        for (Interview interview : interviews) {
+//            BigDecimal averageRating = interview.getAverageRating();
+//            if (averageRating != null) {
+//                ratingTotal = ratingTotal.add(interview.getAverageRating());
+//            }
+//        }
+//        return MathUtils.formatRating(new BigDecimal(ratingTotal.doubleValue() / interviews.size()));
+        return "666";
     }
 
     private String getFundingTotal(ApplicationForm app) {
@@ -579,8 +536,9 @@ public class ApplicationsReportService {
     }
 
     private String getAverageReferenceRating(ApplicationForm app) {
-        BigDecimal referenceRating = applicantRatingService.getAverageReferenceRating(app);
-        return MathUtils.formatRating(referenceRating);
+//        BigDecimal referenceRating = applicantRatingService.getAverageReferenceRating(app);
+//        return MathUtils.formatRating(referenceRating);
+        return "666";
     }
 
     private String getAverageRatingForAllReviewRounds(ApplicationForm app) {

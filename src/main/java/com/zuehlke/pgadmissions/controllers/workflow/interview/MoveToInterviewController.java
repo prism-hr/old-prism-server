@@ -20,15 +20,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
@@ -39,38 +39,34 @@ import com.zuehlke.pgadmissions.validators.InterviewValidator;
 @Controller
 @RequestMapping("/interview")
 public class MoveToInterviewController {
+    // TODO change interview to interviewComment, fix other mentioned problems and tests
 
     private static final String INTERVIEWERS_SECTION = "/private/staff/interviewers/interviewer_section";
     private static final String INTERVIEW_PAGE = "/private/staff/interviewers/interview_details";
-    private final ApplicationsService applicationsService;
-    private final UserService userService;
-    private final InterviewValidator interviewValidator;
-    private final InterviewerPropertyEditor interviewerPropertyEditor;
-    private final InterviewService interviewService;
-    private final DatePropertyEditor datePropertyEditor;
-    private final InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor;
-    private final ActionsProvider actionsProvider;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    MoveToInterviewController() {
-        this(null, null, null, null, null, null, null, null, null);
-    }
+    
+    @Autowired
+    private ApplicationsService applicationsService;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
-    public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
-            InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
-            InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, ActionsProvider actionsProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
-        this.applicationsService = applicationsService;
-        this.userService = userService;
-        this.interviewService = interviewService;
-        this.interviewValidator = interviewValidator;
-        this.interviewerPropertyEditor = interviewerPropertyEditor;
-        this.datePropertyEditor = datePropertyEditor;
-        this.interviewTimeslotsPropertyEditor = interviewTimeslotsPropertyEditor;
-        this.actionsProvider = actionsProvider;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-    }
+    private InterviewValidator interviewValidator;
+
+    @Autowired
+    private InterviewService interviewService;
+
+    @Autowired
+    private DatePropertyEditor datePropertyEditor;
+
+    @Autowired
+    private InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor;
+
+    @Autowired
+    private ActionsProvider actionsProvider;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -97,8 +93,7 @@ public class MoveToInterviewController {
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToInterview(@Valid @ModelAttribute("interview") Interview interview, 
-    		BindingResult bindingResult, ModelMap modelMap) {
+    public String moveToInterview(@Valid @ModelAttribute("interview") AssignInterviewersComment interviewComment, BindingResult bindingResult, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_INTERVIEWERS);
@@ -107,11 +102,13 @@ public class MoveToInterviewController {
             return INTERVIEWERS_SECTION;
         }
 
-        interviewService.moveApplicationToInterview(getUser(), interview, applicationForm);
-        if (interview.isParticipant(getUser())) {
-            modelMap.addAttribute("message", "redirectToVote");
-            return "/private/common/simpleResponse";
-        }
+        interviewService.moveApplicationToInterview(getUser(), interviewComment, applicationForm);
+
+        // TODO check if the user is participant (applicant or interviewer) so he can be redirected to voting page directly
+        // if (interview.isParticipant(getUser())) {
+        // modelMap.addAttribute("message", "redirectToVote");
+        // return "/private/common/simpleResponse";
+        // }
         return "/private/common/ajax_OK";
     }
 
@@ -121,32 +118,34 @@ public class MoveToInterviewController {
         RegisteredUser user = getUser();
         return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
     }
-    
-    @ModelAttribute("usersInterestedInApplication") 
-    public List<RegisteredUser> getUsersInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
+
+    @ModelAttribute("usersInterestedInApplication")
+    public List<RegisteredUser> getUsersInterestedInApplication(@RequestParam String applicationId) {
+        // FIXME isInterviewerInInterview method has been removed from RegisteredUser class, provide this information in other way (by moving the method into
+        // aservice, or this method can return a map)
+        return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
-    
-    @ModelAttribute("usersPotentiallyInterestedInApplication") 
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
+
+    @ModelAttribute("usersPotentiallyInterestedInApplication")
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
+        return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
     }
 
     @ModelAttribute("interview")
-    public Interview getInterview(@RequestParam String applicationId) {
-        Interview interview = new Interview();
-        
+    public AssignInterviewersComment getInterviewComment(@RequestParam String applicationId) {
+        AssignInterviewersComment interviewComment = new AssignInterviewersComment();
+
         List<RegisteredUser> usersInterestedInApplication = getUsersInterestedInApplication(applicationId);
-        
+
         if (usersInterestedInApplication != null) {
-	        for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
-	        	Interviewer interviewer = new Interviewer();
-	        	interviewer.setUser(registeredUser);
-	        	interview.getInterviewers().add(interviewer);
-	        }
+            for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
+                CommentAssignedUser interviewer = new CommentAssignedUser();
+                interviewer.setUser(registeredUser);
+                interviewComment.getAssignedUsers().add(interviewer);
+            }
         }
-        
-        return interview;
+
+        return interviewComment;
     }
 
     @ModelAttribute("user")
@@ -157,7 +156,8 @@ public class MoveToInterviewController {
     @InitBinder("interview")
     public void registerValidatorAndPropertyEditor(WebDataBinder binder) {
         binder.setValidator(interviewValidator);
-        binder.registerCustomEditor(Interviewer.class, interviewerPropertyEditor);
+        // FIXME consider creating CommentAssignedUserPropertyEditor
+//        binder.registerCustomEditor(Interviewer.class, interviewerPropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.registerCustomEditor(null, "timeslots", interviewTimeslotsPropertyEditor);

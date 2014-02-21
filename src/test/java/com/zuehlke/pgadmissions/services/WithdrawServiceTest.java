@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
@@ -17,7 +16,6 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
@@ -34,10 +32,6 @@ public class WithdrawServiceTest {
 
     @Mock
     @InjectIntoByType
-    private EventFactory eventFactoryMock;
-    
-    @Mock
-    @InjectIntoByType
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @TestedObject
@@ -47,9 +41,6 @@ public class WithdrawServiceTest {
     public void shouldWithdrawApplication() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
 
-        StateChangeEvent event = new StateChangeEvent();
-        expect(eventFactoryMock.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
-
         applicationServiceMock.save(applicationForm);
         applicationFormUserRoleServiceMock.moveToApprovedOrRejectedOrWithdrawn(applicationForm);
 
@@ -58,8 +49,6 @@ public class WithdrawServiceTest {
         verify();
 
         assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
-        assertEquals(1, applicationForm.getEvents().size());
-        assertSame(event, applicationForm.getEvents().get(0));
         assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getStatusWhenWithdrawn());
     }
 
@@ -67,9 +56,6 @@ public class WithdrawServiceTest {
     public void shouldWithdrawUnsubmittedApplication() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).build();
 
-        StateChangeEvent event = new StateChangeEvent();
-        expect(eventFactoryMock.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
-
         applicationServiceMock.save(applicationForm);
         applicationFormUserRoleServiceMock.moveToApprovedOrRejectedOrWithdrawn(applicationForm);
 
@@ -78,8 +64,6 @@ public class WithdrawServiceTest {
         verify();
 
         assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
-        assertEquals(1, applicationForm.getEvents().size());
-        assertSame(event, applicationForm.getEvents().get(0));
         assertEquals(ApplicationFormStatus.UNSUBMITTED, applicationForm.getStatusWhenWithdrawn());
     }
 

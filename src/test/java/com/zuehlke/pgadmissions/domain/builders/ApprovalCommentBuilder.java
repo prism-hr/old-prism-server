@@ -1,17 +1,18 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalComment;
-import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class ApprovalCommentBuilder {
 
     private ApplicationForm applicationForm;
-    private String comment;
+    private String content;
     private Integer id;
     private Date createdTimeStamp;
     private RegisteredUser user;
@@ -22,7 +23,7 @@ public class ApprovalCommentBuilder {
     private Date recommendedStartDate;
     private Boolean recommendedConditionsAvailable;
     private String recommendedConditions;
-    private CommentType commentType;
+    private List<CommentAssignedUser> assignedUsers;
 
     public ApprovalCommentBuilder createdTimeStamp(Date createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
@@ -69,13 +70,8 @@ public class ApprovalCommentBuilder {
         return this;
     }
 
-    public ApprovalCommentBuilder comment(String comment) {
-        this.comment = comment;
-        return this;
-    }
-
-    public ApprovalCommentBuilder commentType(CommentType commentType) {
-        this.commentType = commentType;
+    public ApprovalCommentBuilder content(String content) {
+        this.content = content;
         return this;
     }
 
@@ -83,13 +79,17 @@ public class ApprovalCommentBuilder {
         this.user = user;
         return this;
     }
+    
+    public ApprovalCommentBuilder assignedUsers(CommentAssignedUser... assignedUsers) {
+        this.assignedUsers = Arrays.asList(assignedUsers);
+        return this;
+    }
 
-    public Comment build() {
-        Comment approvalComment = new ApprovalComment();
+    public AssignSupervisorsComment build() {
+        AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
         approvalComment.setApplication(applicationForm);
-        approvalComment.setComment(comment);
-        approvalComment.setType(commentType);
-        approvalComment.setDate(createdTimeStamp);
+        approvalComment.setContent(content);
+        approvalComment.setCreatedTimestamp(createdTimeStamp);
         approvalComment.setId(id);
         approvalComment.setUser(user);
         approvalComment.setProjectDescriptionAvailable(projectDescriptionAvailable);
@@ -98,6 +98,7 @@ public class ApprovalCommentBuilder {
         approvalComment.setRecommendedStartDate(recommendedStartDate);
         approvalComment.setRecommendedConditionsAvailable(recommendedConditionsAvailable);
         approvalComment.setRecommendedConditions(recommendedConditions);
+        approvalComment.getAssignedUsers().addAll(assignedUsers);
         return approvalComment;
     }
 }

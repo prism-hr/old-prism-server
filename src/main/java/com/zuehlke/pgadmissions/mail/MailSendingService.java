@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
@@ -175,17 +176,16 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewConfirmationToInterviewers(List<Interviewer> interviewers) {
+    public void sendInterviewConfirmationToInterviewers(ApplicationForm applicationForm, List<RegisteredUser> interviewers) {
         PrismEmailMessage message = null;
-        for (Interviewer interviewer : interviewers) {
+        for (RegisteredUser interviewer : interviewers) {
             try {
-                ApplicationForm applicationForm = interviewer.getInterview().getApplication();
                 String subject = resolveMessage(INTERVIEWER_NOTIFICATION, applicationForm);
                 List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "interviewer", "application", "applicant", "host" },
                         new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), interviewer, applicationForm, applicationForm.getApplicant(),
                                 getHostName() });
-                message = buildMessage(interviewer.getUser(), subject, modelBuilder.build(), INTERVIEWER_NOTIFICATION);
+                message = buildMessage(interviewer, subject, modelBuilder.build(), INTERVIEWER_NOTIFICATION);
                 sendEmail(message);
             } catch (Exception e) {
                 log.error("Error while sending interview confirmation email to interviewer: {}", e);

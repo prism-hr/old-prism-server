@@ -3,35 +3,30 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.InterviewDAO;
-import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.InterviewVoteCommentDAO;
-import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.InterviewParticipant;
+import com.zuehlke.pgadmissions.domain.AppointmentTimeslot;
+import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
-import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
-import com.zuehlke.pgadmissions.domain.StateChangeComment;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.InterviewStage;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
-import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
@@ -39,98 +34,76 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 public class InterviewService {
 
     private final Logger log = LoggerFactory.getLogger(InterviewService.class);
-    private final InterviewDAO interviewDAO;
-    private final ApplicationFormDAO applicationFormDAO;
-    private final EventFactory eventFactory;
-    private final InterviewerDAO interviewerDAO;
-    private final InterviewParticipantDAO interviewParticipantDAO;
-    private final InterviewVoteCommentDAO interviewVoteCommentDAO;
-    private final MailSendingService mailService;
-    private final StageDurationService stageDurationService;
-    private final CommentService commentService;
-    private final CommentFactory commentFactory;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    public InterviewService() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
-    }
 
     @Autowired
-    public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory, InterviewerDAO interviewerDAO,
-            InterviewParticipantDAO interviewParticipantDAO, MailSendingService mailService, InterviewVoteCommentDAO interviewVoteCommentDAO,
-            final StageDurationService stageDurationService, CommentService commentService, CommentFactory commentFactory, 
-            ApplicationFormUserRoleService ApplicationFormUserRoleService) {
-        this.interviewDAO = interviewDAO;
-        this.applicationFormDAO = applicationFormDAO;
-        this.eventFactory = eventFactory;
-        this.interviewerDAO = interviewerDAO;
-        this.interviewParticipantDAO = interviewParticipantDAO;
-        this.mailService = mailService;
-        this.interviewVoteCommentDAO = interviewVoteCommentDAO;
-        this.stageDurationService = stageDurationService;
-        this.commentService = commentService;
-        this.commentFactory = commentFactory;
-        this.applicationFormUserRoleService = ApplicationFormUserRoleService;
-    }
+    private ApplicationsService applicationsService;
 
-    public Interview getInterviewById(Integer id) {
-        return interviewDAO.getInterviewById(id);
-    }
+    @Autowired
+    private InterviewVoteCommentDAO interviewVoteCommentDAO;
 
-    public void save(Interview interview) {
-        interviewDAO.save(interview);
-    }
+    @Autowired
+    private MailSendingService mailService;
 
-    public void moveApplicationToInterview(RegisteredUser user, final Interview interview, ApplicationForm applicationForm) {
-        interview.setApplication(applicationForm);
-        assignInterviewDueDate(interview, applicationForm);
+    @Autowired
+    private StageDurationService stageDurationService;
 
-        for (Interviewer interviewer : interview.getInterviewers()) {
-            interviewer.setInterview(interview);
-            interviewerDAO.save(interviewer);
-        }
-        
-        applicationForm.setLatestInterview(interview);
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    public void moveApplicationToInterview(RegisteredUser user, final AssignInterviewersComment interviewComment, ApplicationForm applicationForm) {
+        interviewComment.setApplication(applicationForm);
+        assignInterviewDueDate(interviewComment, applicationForm);
+
         ApplicationFormStatus previousStatus = applicationForm.getStatus();
         applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
-        applicationForm.getEvents().add(eventFactory.createEvent(interview));
 
-        applicationFormDAO.save(applicationForm);
+        applicationsService.save(applicationForm);
 
-        if (!interview.getTakenPlace()) {
-            InterviewScheduleComment scheduleComment = commentFactory.createInterviewScheduleComment(user, applicationForm, interview.getFurtherDetails(),
-                    interview.getFurtherInterviewerDetails(), interview.getLocationURL());
-            commentService.save(scheduleComment);
-        }
+        // TODO add interview status transient field to the comment and use it here
+//        if (!interview.getTakenPlace()) {
+//            InterviewScheduleComment scheduleComment = commentFactory.createInterviewScheduleComment(user, applicationForm, interview.getFurtherDetails(),
+//                    interview.getFurtherInterviewerDetails(), interview.getLocationURL());
+//            commentService.save(scheduleComment);
+//        }
+//
+//        if (interview.isScheduled() && !interview.getTakenPlace()) {
+//            sendConfirmationEmails(interview);
+//        }
+//
+//        if (interview.isScheduling()) {
+//            createParticipants(interview);
+//            mailService.sendInterviewVoteNotificationToInterviewerParticipants(interview);
+//        }
 
-        if (interview.isScheduled() && !interview.getTakenPlace()) {
-            sendConfirmationEmails(interview);
-        }
+        Comment latestStateChangeComment = applicationsService.getLatestStateChangeComment(applicationForm, null);
+        interviewComment.setUseCustomQuestions(latestStateChangeComment.getUseCustomQuestions());
+        commentService.save(interviewComment);
 
-        if (interview.isScheduling()) {
-            createParticipants(interview);
-            mailService.sendInterviewVoteNotificationToInterviewerParticipants(interview);
-        }
-
-        StateChangeComment latestStateChangeComment = applicationForm.getLatestStateChangeComment();
-        interview.setUseCustomQuestions(latestStateChangeComment.getUseCustomQuestions());
-        interviewDAO.save(interview);
-        
         if (previousStatus == ApplicationFormStatus.VALIDATION) {
             mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
             applicationForm.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
-            applicationFormDAO.save(applicationForm);
+            applicationsService.save(applicationForm);
             applicationFormUserRoleService.validationStageCompleted(applicationForm);
         }
-        
-        applicationFormUserRoleService.movedToInterviewStage(interview);
+
+        applicationFormUserRoleService.movedToInterviewStage(interviewComment);
         applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
     }
 
-    private void assignInterviewDueDate(final Interview interview, ApplicationForm applicationForm) {
-        DateTime baseDate = interview.getTakenPlace() || !interview.isScheduled() ? new DateTime() : new DateTime(interview.getInterviewDueDate());
+    // FIXME extract common subclass for AssignInterviewersComment and InterviewScheduleComment
+    protected void assignInterviewDueDate(final Comment interviewComment, ApplicationForm applicationForm) {
+        Date baseDate = interviewComment.getAppointmentDate();
+        if (baseDate == null) {
+            baseDate = new Date();
+        }
         StageDuration duration = stageDurationService.getByStatus(ApplicationFormStatus.INTERVIEW);
-        Date dueDate = DateUtils.addWorkingDaysInMinutes(DateUtils.truncateToDay(baseDate.toDate()), duration.getDurationInMinutes());
+        Date dueDate = DateUtils.addWorkingDaysInMinutes(DateUtils.truncateToDay(baseDate), duration.getDurationInMinutes());
         applicationForm.setDueDate(dueDate);
     }
 
@@ -139,37 +112,34 @@ public class InterviewService {
         interviewParticipantDAO.save(interviewParticipant);
         interviewVoteCommentDAO.save(interviewVoteComment);
         applicationFormUserRoleService.interviewParticipantResponded(interviewParticipant);
-        applicationFormUserRoleService.registerApplicationUpdate(interviewVoteComment.getApplication(), interviewParticipant.getUser(), ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.registerApplicationUpdate(interviewVoteComment.getApplication(), interviewParticipant.getUser(),
+                ApplicationUpdateScope.INTERNAL);
         mailService.sendInterviewVoteConfirmationToAdministrators(interviewParticipant);
     }
 
-    public void confirmInterview(RegisteredUser user, Interview interview, InterviewConfirmDTO interviewConfirmDTO) {
+    public void confirmInterview(RegisteredUser user, ApplicationForm applicationForm,  InterviewConfirmDTO interviewConfirmDTO) {
+        InterviewService thisBean = applicationContext.getBean(InterviewService.class);
+        
         Integer timeslotId = interviewConfirmDTO.getTimeslotId();
-        InterviewTimeslot timeslot = null;
-        for (InterviewTimeslot t : interview.getTimeslots()) {
+        AppointmentTimeslot timeslot = null;
+        AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.ASSIGN_INTERVIEWERS);
+        for (AppointmentTimeslot t : assignInterviewersComment.getAvailableAppointmentTimeslots()) {
             if (t.getId().equals(timeslotId)) {
                 timeslot = t;
             }
         }
+
         if (timeslot == null) {
-            throw new RuntimeException("Incorrect timeslotId " + timeslotId + ", application: " + interview.getApplication().getApplicationNumber());
+            throw new RuntimeException("Incorrect timeslotId " + timeslotId + ", application: " + applicationForm.getApplicationNumber());
         }
 
-        interview.setInterviewDueDate(timeslot.getDueDate());
-        interview.setInterviewTime(timeslot.getStartTime());
-        interview.setFurtherDetails(interviewConfirmDTO.getFurtherDetails());
-        interview.setFurtherInterviewerDetails(interviewConfirmDTO.getFurtherInterviewerDetails());
-        interview.setLocationURL(interviewConfirmDTO.getLocationUrl());
-        interview.setStage(InterviewStage.SCHEDULED);
-        interviewDAO.save(interview);
 
-        InterviewScheduleComment scheduleComment = commentFactory.createInterviewScheduleComment(user, interview.getApplication(),
-                interview.getFurtherDetails(), interview.getFurtherInterviewerDetails(), interview.getLocationURL());
+        InterviewScheduleComment scheduleComment = createInterviewScheduleComment(user, applicationForm, interviewConfirmDTO.getInterviewInstructions(),
+                interviewConfirmDTO.getInterviewInstructions());
         commentService.save(scheduleComment);
-        
-        ApplicationForm application = interview.getApplication(); 
-        assignInterviewDueDate(interview, application);
-        sendConfirmationEmails(interview);    
+
+        thisBean.assignInterviewDueDate(scheduleComment, applicationForm);
+        thisBean.sendConfirmationEmails(scheduleComment);
         applicationFormUserRoleService.interviewConfirmed(interview);
         applicationFormUserRoleService.registerApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
     }
@@ -188,39 +158,29 @@ public class InterviewService {
         interview.getParticipants().addAll(participants);
     }
 
-    private void sendConfirmationEmails(final Interview interview) {
-        final ApplicationForm applicationForm = interview.getApplication();
+    protected void sendConfirmationEmails(InterviewScheduleComment comment) {
+        final ApplicationForm applicationForm = comment.getApplication();
         try {
             mailService.sendInterviewConfirmationToApplicant(applicationForm);
-            mailService.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
+            List<RegisteredUser> interviewerUsers = Lists.newArrayList();
+            for(CommentAssignedUser interviewer : comment.getAssignedUsers()){
+                interviewerUsers.add(interviewer.getUser());
+            }
+            mailService.sendInterviewConfirmationToInterviewers(applicationForm, interviewerUsers);
         } catch (Exception e) {
             log.warn("{}", e);
         }
     }
 
-    public void addInterviewerInPreviousInterview(ApplicationForm applicationForm, RegisteredUser newUser) {
-        Interviewer inter = newInterviewer();
-        inter.setUser(newUser);
-        interviewerDAO.save(inter);
-        Interview latestInterview = applicationForm.getLatestInterview();
-        if (latestInterview == null) {
-            Interview interview = newInterview();
-            interview.getInterviewers().add(inter);
-            interview.setApplication(applicationForm);
-            save(interview);
-            applicationForm.setLatestInterview(interview);
-        } else {
-            latestInterview.getInterviewers().add(inter);
-            save(latestInterview);
-        }
-    }
-
-    public Interviewer newInterviewer() {
-        return new Interviewer();
-    }
-
-    public Interview newInterview() {
-        return new Interview();
+    private InterviewScheduleComment createInterviewScheduleComment(RegisteredUser user, ApplicationForm application, String interviewInstructions,
+            String locationUrl) {
+        InterviewScheduleComment scheduleComment = new InterviewScheduleComment();
+        scheduleComment.setContent("");
+        scheduleComment.setAppointmentInstructions(interviewInstructions);
+        scheduleComment.setLocationUrl(locationUrl);
+        scheduleComment.setUser(user);
+        scheduleComment.setApplication(application);
+        return scheduleComment;
     }
 
 }

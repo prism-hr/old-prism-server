@@ -1,23 +1,21 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Score;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class ReferenceCommentBuilder {
 
     private Integer id;
 
     private Document document;
-    private Referee referee;
     private boolean suitableForUcl;
     private boolean suitableForProgramme;
     private Integer applicantRating;
@@ -36,11 +34,6 @@ public class ReferenceCommentBuilder {
 
     public ReferenceCommentBuilder id(Integer id) {
         this.id = id;
-        return this;
-    }
-
-    public ReferenceCommentBuilder referee(Referee referee) {
-        this.referee = referee;
         return this;
     }
 
@@ -85,29 +78,24 @@ public class ReferenceCommentBuilder {
     }
 
     public ReferenceCommentBuilder scores(Score... scores) {
-        for (Score score : scores) {
-            this.scores.add(score);
-        }
-        ;
+        this.scores.addAll(Arrays.asList(scores));
         return this;
     }
 
     public ReferenceComment build() {
         ReferenceComment reference = new ReferenceComment();
         reference.setId(id);
-        reference.setReferee(referee);
         reference.setSuitableForProgramme(suitableForProgramme);
-        reference.setSuitableForUCL(suitableForUcl);
-        reference.setApplicantRating(applicantRating);
-        reference.setComment(comment);
+        reference.setSuitableForInstitution(suitableForUcl);
+        reference.setRating(applicantRating);
+        reference.setContent(comment);
         reference.setUser(user);
-        reference.setProvidedBy(providedBy);
-        reference.setType(CommentType.REFERENCE);
+        reference.setDelegateProvider(providedBy);
         if (document != null) {
-            reference.getDocuments().add(document);
+            reference.addDocument(document);
         }
         reference.setApplication(application);
-        reference.setDate(date);
+        reference.setCreatedTimestamp(date);
         reference.getScores().addAll(scores);
         return reference;
     }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -26,35 +25,29 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Service
 @Transactional
 public class RefereeService {
-
-    private final RefereeDAO refereeDAO;
-    private final UserService userService;
-    private final RoleDAO roleDAO;
-    private final CommentService commentService;
-    private final ApplicationFormDAO applicationFormDAO;
-    private final EncryptionUtils encryptionUtils;
-    private final EncryptionHelper encryptionHelper;
-    private final ApplicantRatingService applicantRatingService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    public RefereeService() {
-        this(null, null, null, null, null, null, null, null, null);
-    }
+    // TODO fix tests
 
     @Autowired
-    public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils, UserService userService, RoleDAO roleDAO, CommentService commentService,
-            ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper, ApplicantRatingService applicantRatingService,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
-        this.refereeDAO = refereeDAO;
-        this.encryptionUtils = encryptionUtils;
-        this.userService = userService;
-        this.roleDAO = roleDAO;
-        this.commentService = commentService;
-        this.applicationFormDAO = applicationFormDAO;
-        this.encryptionHelper = encryptionHelper;
-        this.applicantRatingService = applicantRatingService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-    }
+    private RefereeDAO refereeDAO;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private RoleDAO roleDAO;
+    
+    @Autowired
+    private CommentService commentService;
+    
+    @Autowired
+    private EncryptionUtils encryptionUtils;
+    
+    @Autowired
+    private EncryptionHelper encryptionHelper;
+    
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
 
     public Referee getRefereeById(Integer id) {
         return refereeDAO.getRefereeById(id);
@@ -166,8 +159,6 @@ public class RefereeService {
             reference.setDocument(document);
         }
 
-        applicantRatingService.computeAverageRating(applicationForm);
-
         return reference;
     }
 
@@ -188,7 +179,6 @@ public class RefereeService {
         applicationForm.getApplicationComments().add(referenceComment);
 
         commentService.save(referenceComment);
-        applicantRatingService.computeAverageRating(applicationForm);
 
         if (applicationForm.getReferencesToSendToPortico().size() < 2) {
             referee.setSendToUCL(true);

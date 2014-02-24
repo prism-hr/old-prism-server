@@ -47,25 +47,30 @@ function bindChangeInstitutionCountryAction() {
     });
 }
 
+function programChanged(){
+    clearProgramAdvertErrors();
+    changeHeaderInfoBars();
+    var programme_code = $("#programAdvertProgramSelect").val();
+    if (programme_code == "") {
+        clearProgramSection();
+        checkToDisable();
+    } else {
+        getAdvertData(programme_code);
+        getClosingDatesData(programme_code);
+    }
+}
+
 function bindCancelNewProgramAction() {
     $("#programAdvertCancelNewProgramBtn").bind('click', function() {
         $("#programAdvertSelectProgramDiv").show();
         $("#programAdvertNewProgramNameDiv").hide();
+        programChanged();
     });
 }
 
 function bindProgramSelectChangeAction() {
     $("#programAdvertProgramSelect").bind('change', function() {
-        clearProgramAdvertErrors();
-        changeHeaderInfoBars();
-        var programme_code = $("#programAdvertProgramSelect").val();
-        if (programme_code == "") {
-            clearProgramSection();
-            checkToDisable();
-        } else {
-            getAdvertData(programme_code);
-            getClosingDatesData(programme_code);
-        }
+        programChanged();
     });
 }
 
@@ -73,10 +78,7 @@ $(document).on('click', '#newProgamme', function() {
     $("#programAdvertSelectProgramDiv").hide();
     $("#programAdvertNewProgramNameDiv").show();
     $("#programAdvertProgramSelect").val("");
-    clearProgramAdvertErrors();
-    checkToDisable();
-    changeHeaderInfoBars();
-    clearProgramSection();
+    programChanged();
 });
 
 function getInstitutionData(successCallback) {

@@ -128,7 +128,7 @@ public class ManageUsersControllerTest {
         EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
         Program program1 = new ProgramBuilder().id(1).build();
         Program program2 = new ProgramBuilder().id(2).build();
-        EasyMock.expect(programServiceMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
+        EasyMock.expect(programServiceMock.getAllEnabledPrograms()).andReturn(Arrays.asList(program1, program2));
         EasyMock.replay(programServiceMock, currentUserMock, userServiceMock);
         List<Program> programs = controller.getPrograms();
         EasyMock.verify(programServiceMock, currentUserMock, userServiceMock);

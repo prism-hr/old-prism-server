@@ -41,7 +41,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
         Program programWithInactiveProgramAdvert = new ProgramBuilder().code("inactive").title("another title").institution(institution).build();
         Advert inactiveProgramAdvert = new AdvertBuilder().description("inactive program").studyDuration(9).active(false).build();
 
-        Program programWithActiveProgramAdvert = new ProgramBuilder().code("program").title("another title").institution(institution).build();
+        Program programWithActiveProgramAdvert = new ProgramBuilder().code("program").title("another title2").institution(institution).build();
         Advert programAdvert = new AdvertBuilder().description("program").studyDuration(66).build();
 
         save(programWithInactiveProgramAdvert, programWithActiveProgramAdvert);

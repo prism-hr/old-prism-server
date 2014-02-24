@@ -49,7 +49,7 @@ public class ProspectusController {
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
         if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-            return programsService.getAllPrograms();
+            return programsService.getAllEnabledPrograms();
         }
         return userService.getCurrentUser().getProgramsOfWhichAdministrator();
     }

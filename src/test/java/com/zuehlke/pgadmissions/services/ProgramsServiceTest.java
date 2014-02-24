@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -46,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -90,10 +92,10 @@ public class ProgramsServiceTest {
     public void shouldGetAllPrograms() {
         Program programOne = EasyMock.createMock(Program.class);
         Program programTwo = EasyMock.createMock(Program.class);
-        EasyMock.expect(programDAOMock.getAllPrograms()).andReturn(Arrays.asList(programOne, programTwo));
+        EasyMock.expect(programDAOMock.getAllEnabledPrograms()).andReturn(Arrays.asList(programOne, programTwo));
 
         replay();
-        List<Program> allPrograms = programsService.getAllPrograms();
+        List<Program> allPrograms = programsService.getAllEnabledPrograms();
         verify();
 
         assertEquals(2, allPrograms.size());
@@ -137,7 +139,7 @@ public class ProgramsServiceTest {
         RegisteredUser userMock = EasyMockUnitils.createMock(RegisteredUser.class);
 
         List<Program> programs = Collections.emptyList();
-        EasyMock.expect(programDAOMock.getAllPrograms()).andReturn(programs);
+        EasyMock.expect(programDAOMock.getAllEnabledPrograms()).andReturn(programs);
         EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 
         replay();
@@ -416,6 +418,39 @@ public class ProgramsServiceTest {
         assertThat(user.getInstitutions(), contains(institution));
         assertThat(user.getProgramsOfWhichAdministrator(), contains(program));
         assertThat(user.getRoles(), contains(administratorRole));
+    }
+
+    @Test
+    public void shouldNotDisableProgramIfNotCustom() {
+        Program program = new ProgramBuilder().enabled(true).programFeed(new ProgramFeed()).build();
+        expect(programDAOMock.getProgramByCode("prrr")).andReturn(program);
+
+        replay();
+        programsService.disableProgram("prrr");
+        verify();
+
+        assertTrue(program.isEnabled());
+    }
+
+    @Test
+    public void shouldDisableProgram() {
+        Project project1 = new ProjectBuilder().disabled(false).build();
+        Project project2 = new ProjectBuilder().disabled(false).build();
+        ProgramInstance programInstance1 = new ProgramInstanceBuilder().enabled(true).build();
+        ProgramInstance programInstance2 = new ProgramInstanceBuilder().enabled(true).build();
+        Program program = new ProgramBuilder().enabled(true).projects(project1, project2).instances(programInstance1, programInstance2).build();
+
+        expect(programDAOMock.getProgramByCode("prrr")).andReturn(program);
+
+        replay();
+        programsService.disableProgram("prrr");
+        verify();
+
+        assertFalse(program.isEnabled());
+        assertFalse(programInstance1.getEnabled());
+        assertFalse(programInstance2.getEnabled());
+        assertTrue(project1.isDisabled());
+        assertTrue(project2.isDisabled());
     }
 
 }

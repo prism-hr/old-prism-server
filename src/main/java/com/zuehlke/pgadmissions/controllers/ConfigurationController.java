@@ -360,7 +360,7 @@ public class ConfigurationController {
     @ModelAttribute("programs")
     public List<Program> getPrograms() {
         if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-            return programsService.getAllPrograms();
+            return programsService.getAllEnabledPrograms();
         }
         return userService.getCurrentUser().getProgramsOfWhichAdministrator();
     }

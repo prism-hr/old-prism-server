@@ -1,12 +1,12 @@
 $(document).ready(function() {
     bindDatePicker($("#programAdvertClosingDateInput"));
+    bindChangeProgramActions();
     bindAddClosingDateButtonAction();
     bindSaveButtonAction();
-    bindProgramSelectChangeAction();
     bindClosingDatesActions();
-    bindCancelNewProgramAction();
     bindChangeInstitutionCountryAction();
     bindChangeOtherInstitutionAction();
+    bindDeleteProgramAction();
 
     initEditors();
     $('select.selectpicker').selectpicker();
@@ -47,6 +47,71 @@ function bindChangeInstitutionCountryAction() {
     });
 }
 
+function bindChangeProgramActions() {
+    $("#programAdvertProgramSelect").bind('change', function() {
+        programChanged();
+    });
+    
+    $("#programAdvertCancelNewProgramBtn").bind('click', function() {
+        $("#programAdvertSelectProgramDiv").show();
+        $("#programAdvertNewProgramNameDiv").hide();
+        programChanged();
+    });
+    
+    $("#newProgammeButton").bind('click', function() {
+        $("#programAdvertSelectProgramDiv").hide();
+        $("#programAdvertNewProgramNameDiv").show();
+        $("#programAdvertProgramSelect").val("");
+        programChanged();
+    });
+}
+
+function bindDeleteProgramAction() {
+    $("#programAdvertDeleteButton").bind('click', function() {
+//        $('#dialog-box h3').text('Delete Program');
+//        $('#dialog-box #dialog-message').html('<p>Are you sure you want to remove the program?</p>');
+//        $('#dialog-box #popup-cancel-button').show();
+//        $("#popup-ok-button").bind('click', function() {
+//            $('#ajaxloader').show();
+            
+        var message = "Are you sure you want to remove this program?";
+        var onOk = function() {
+            var programCode = $("#programAdvertProgramSelect").val();
+            $.ajax({
+                type : 'POST',
+                statusCode : {
+                    401 : function() {window.location.reload();},
+                    500 : function() {window.location.href = "/pgadmissions/error";},
+                    404 : function() {window.location.href = "/pgadmissions/404";},
+                    400 : function() {window.location.href = "/pgadmissions/400";},
+                    403 : function() {window.location.href = "/pgadmissions/404";}
+                },
+                url : "/pgadmissions/prospectus/programme/deleteProgramAdvert",
+                data : {
+                    programCode : programCode
+                },
+                success : function(data) {
+                    var map = JSON.parse(data);
+                    if(map.success) {
+                        $("#programAdvertProgramSelect option").filter("[value='" + programCode + "']").remove();
+                        $("#programAdvertProgramSelect").val("");
+                        $("#programAdvertProgramSelect").selectpicker("refresh");
+                        programChanged();
+                    }
+                },
+                complete : function() {
+                }
+            });    
+        };
+        modalPrompt(message, onOk);
+            
+    });
+                
+//        $('#dialog-box').modal('show');
+//    });
+}
+
+
 function programChanged(){
     clearProgramAdvertErrors();
     changeHeaderInfoBars();
@@ -60,26 +125,6 @@ function programChanged(){
     }
 }
 
-function bindCancelNewProgramAction() {
-    $("#programAdvertCancelNewProgramBtn").bind('click', function() {
-        $("#programAdvertSelectProgramDiv").show();
-        $("#programAdvertNewProgramNameDiv").hide();
-        programChanged();
-    });
-}
-
-function bindProgramSelectChangeAction() {
-    $("#programAdvertProgramSelect").bind('change', function() {
-        programChanged();
-    });
-}
-
-$(document).on('click', '#newProgamme', function() {
-    $("#programAdvertSelectProgramDiv").hide();
-    $("#programAdvertNewProgramNameDiv").show();
-    $("#programAdvertProgramSelect").val("");
-    programChanged();
-});
 
 function getInstitutionData(successCallback) {
     $("#programAdvertInstitution").selectpicker("val", "");

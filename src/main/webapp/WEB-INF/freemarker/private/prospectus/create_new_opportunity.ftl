@@ -16,9 +16,8 @@
     </#if>
     <header>
       <a href="/pgadmissions/login" class="btn btn-danger go-back">Cancel</a>
-      <h1>Create New Opportunity</h1>
+      <h1>Have an opportunity to advertise?</h1>
     </header>
-
     <section id="plist">
       <form action="<@spring.url "/createOpportunity" />" method="POST">      
         <fieldset>

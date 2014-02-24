@@ -179,7 +179,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetUsersByProgramme() {
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a60").domicileCode("AE").enabled(true).build();
         Program programOne = new ProgramBuilder().code("111111").title("hello").institution(institution).build();
-        Program programTwo = new ProgramBuilder().code("222222").title("hello").institution(institution).build();
+        Program programTwo = new ProgramBuilder().code("222222").title("hello2").institution(institution).build();
 
         save(institution, programOne, programTwo);
 

@@ -45,7 +45,7 @@ public class ProgramControllerTest {
 	@Test
 	public void shouldShowAllPrograms() {
 	    programController.setEnabled(true);
-		EasyMock.expect(programDAOMock.getAllPrograms()).andReturn(programs);
+		EasyMock.expect(programDAOMock.getAllEnabledPrograms()).andReturn(programs);
 		EasyMock.replay(programDAOMock);
 		
 		ModelAndView modelAndView = programController.getProgramsPage();
@@ -57,7 +57,7 @@ public class ProgramControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldShowNoPrograms() {
 	    programController.setEnabled(false);
-        EasyMock.expect(programDAOMock.getAllPrograms()).andReturn(programs);
+        EasyMock.expect(programDAOMock.getAllEnabledPrograms()).andReturn(programs);
         EasyMock.replay(programDAOMock);
         programController.getProgramsPage();
 	}

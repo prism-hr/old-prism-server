@@ -96,7 +96,7 @@ public class ManageUsersController {
     public List<Program> getPrograms() {
         RegisteredUser currentUser = getCurrentUser();
         if (currentUser.isInRole(Authority.SUPERADMINISTRATOR)) {
-            return programsService.getAllPrograms();
+            return programsService.getAllEnabledPrograms();
         }
         return currentUser.getProgramsOfWhichAdministrator();
     }

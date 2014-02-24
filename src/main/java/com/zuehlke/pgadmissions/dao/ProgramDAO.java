@@ -40,9 +40,10 @@ public class ProgramDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    public List<Program> getAllPrograms() {
+    public List<Program> getAllEnabledPrograms() {
         return sessionFactory.getCurrentSession().createCriteria(Program.class)
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .add(Restrictions.eq("enabled", true))
                 .addOrder(Order.asc("title")).list();
     }
 

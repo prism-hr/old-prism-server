@@ -5,6 +5,7 @@
           <form>
           	  <input type="hidden" id="programAdvertId" value=""/>
               <input type="hidden" id="programAdvertForceCreatingNewInstitution" value="false" />
+              <input type="hidden" id="programAdvertIsCustom" value="false" />
               
               <div class="row-group">
               	<div class="row" id="programAdvertSelectProgramDiv">

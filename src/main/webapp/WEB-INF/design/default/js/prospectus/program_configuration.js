@@ -155,6 +155,7 @@ function checkToDisable() {
     var existingProgramSelected = selectedProgram != "";
     var newProgramSelected = $("#programAdvertNewProgramNameDiv").is(":visible");
     var programLocked = $("#programAdvertProgramLocked").val() == "true";
+    var isCustom = $("#programAdvertIsCustom").val() == "true";
     if ((existingProgramSelected && !programLocked) || newProgramSelected) {
         // new or existing program
         $("#institutionGroup label, #advertGroup label #programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
@@ -164,6 +165,12 @@ function checkToDisable() {
         $("#institutionGroup label, #advertGroup label #programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
         $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").attr("readonly", "readonly");
         $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").attr("disabled", "disabled");
+    }
+    
+    if ((existingProgramSelected && !programLocked && isCustom) || newProgramSelected) {
+        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
+    } else {
+        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').prop("readonly", true).attr("disabled", "disabled");
     }
 
     if (existingProgramSelected != "" && !programLocked) {
@@ -468,6 +475,7 @@ function updateAdvertSection(map) {
 
 function updateProgramSection(map) {
     $("#programAdvertProgramLocked").val(map["programLocked"]);
+    $("#programAdvertIsCustom").val(map["isCustomProgram"]);
 
     $("[name=programAdvertAtasRequired][value=" + map["atasRequired"] + "]").prop("checked", true);
 
@@ -509,12 +517,6 @@ function updateProgramSection(map) {
 
     var advertisingDeadline = map['advertisingDeadline'];
     $('#programAdvertAdvertisingDeadlineYear').val(advertisingDeadline);
-
-    if (map['isCustomProgram']) {
-        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
-    } else {
-        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').prop("readonly", true).attr("disabled", "disabled");
-    }
 }
 
 function bindSaveButtonAction() {

@@ -35,7 +35,7 @@ public class ProgramController {
 	public ModelAndView getProgramsPage() {
 		if (enabled) {
 		    MainPageModel mainPageModel = new MainPageModel();
-		    mainPageModel.setPrograms(programDAO.getAllPrograms());
+		    mainPageModel.setPrograms(programDAO.getAllEnabledPrograms());
 		    return new ModelAndView(PROJECTS_VIEW_NAME, "model", mainPageModel);
 		} else {
 		    throw new ResourceNotFoundException();

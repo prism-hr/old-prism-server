@@ -139,7 +139,7 @@ public class ProgramConfigurationController {
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
         if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-            return programsService.getAllPrograms();
+            return programsService.getAllEnabledPrograms();
         }
         return userService.getCurrentUser().getProgramsOfWhichAdministrator();
     }
@@ -199,6 +199,13 @@ public class ProgramConfigurationController {
             }
         }
         return gson.toJson(map);
+    }
+    
+    @RequestMapping(value = "/deleteProgramAdvert", method = RequestMethod.POST)
+    @ResponseBody
+    public String deleteOpportunity(@RequestParam String programCode) {
+        boolean result = programsService.disableProgram(programCode);
+        return gson.toJson(ImmutableMap.of("success", result));
     }
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)

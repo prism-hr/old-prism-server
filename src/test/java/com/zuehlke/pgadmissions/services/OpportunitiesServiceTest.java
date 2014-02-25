@@ -156,6 +156,7 @@ public class OpportunitiesServiceTest {
         expect(userService.getCurrentUser()).andReturn(currentUser);
         expect(programsService.merge(program)).andReturn(program);
         expect(programsService.saveProgramOpportunity(request)).andReturn(savedProgram);
+        mailSendingService.sendOpportunityRequestOutcome(comment);
 
         replay();
         service.respondToOpportunityRequest(8, newOpportunityRequest, comment);

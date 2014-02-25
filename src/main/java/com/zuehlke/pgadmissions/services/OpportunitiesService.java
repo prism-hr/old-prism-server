@@ -125,6 +125,7 @@ public class OpportunitiesService {
             Program savedProgram = programsService.saveProgramOpportunity(opportunityRequest);
             opportunityRequest.setSourceProgram(savedProgram);
         }
+        mailSendingService.sendOpportunityRequestOutcome(comment);
     }
 
     public List<OpportunityRequest> getAllRelatedOpportunityRequests(OpportunityRequest opportunityRequest) {

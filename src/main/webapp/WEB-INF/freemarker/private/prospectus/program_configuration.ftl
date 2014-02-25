@@ -3,7 +3,10 @@
       <h2>Manage Programmes</h2>
       <div id="programAdvertDiv">
           <form>
-          	  <input type="hidden" id="programAdvertId" value=""/>
+              <input type="hidden" id="programAdvertId" value=""/>
+              <input type="hidden" id="programAdvertForceCreatingNewInstitution" value="false" />
+              <input type="hidden" id="programAdvertProgramLocked" value="false">
+              <input type="hidden" id="programAdvertIsCustom" value="false" />
               
               <div class="row-group">
               	<div class="row" id="programAdvertSelectProgramDiv">
@@ -15,7 +18,7 @@
                             <option value="${programme.code}"<#if program?? && programme.code == program.code>selected</#if> > ${programme.title?html}</option>
                           </#list>
                       </select>
-                      <a class="btn btn-success" id="newProgamme">New Programme</a>
+                      <a class="btn btn-success" id="newProgammeButton">New Programme</a>
                   </div>
                   
                 </div>
@@ -27,10 +30,9 @@
                   </div>
                 </div>
                 
-                <input id="programAdvertProgramLocked" value="false" type="hidden">
                 
                 <div class="row" id="programAdvertAtasRequiredDiv">
-                  <label id="programAdvertAtasRequiredLabel" class="plain-label" for="atasRequired">Does the program require ATAS?<em>*</em></label>
+                  <label id="programAdvertAtasRequiredLabel" class="plain-label" for="atasRequired">Does the programme require ATAS?<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.atasRequired'/>"></span>
                   <div class="field">
                     <label><input type="radio" name="programAdvertAtasRequired" value="true" id="programAdvertAtasRequired_true" /> Yes</label>
@@ -72,7 +74,6 @@
                   </div>
                 </div>
                 
-                <input type="hidden" id="programAdvertForceCreatingNewInstitution" value="false" />
                 
                 <div class="row" id="programAdvertInstitutionOtherNameDiv">
                   <label class="plain-label" for="programAdvertInstitutionOtherName">Please Specify<em>*</em></label>
@@ -199,22 +200,31 @@
                 </div>
               </div>                                        
               <div class="row-group">
-                  <h3>Resources</h3>
-                  <div id="infoResources" class="alert alert-info">
-                      <i class="icon-info-sign"></i> Embed these resources to provide applicants with links to apply for your programme.
-                  </div>
-                  <div class="row">
-                      <label for="programAdvertLinkToApply" class="plain-label">Link to Apply</label> <span class="hint" data-desc="<@spring.message 'prospectus.linkToApply'/>"></span>
-                      <div class="field">
-                          <input id="programAdvertLinkToApply" name="project" class="input-xxlarge" type="text" role="textbox" aria-haspopup="true" readonly>
-                      </div>
-                  </div>
-                  <div class="row">
-                      <label for="programAdvertButtonToApply" class="plain-label">Button to Apply</label> <span class="hint" data-desc="<@spring.message 'prospectus.buttonToApply'/>"></span>
-                      <div class="field">
-                          <textarea id="programAdvertButtonToApply" class="input-xxlarge" rows="6" cols="150" readonly></textarea>
-                      </div>
-                  </div>
+                <h3>Resources</h3>
+                <div id="infoResources" class="alert alert-info">
+                    <i class="icon-info-sign"></i> Embed these resources to provide applicants with links to apply for your programme.
+                </div>
+                <div class="row">
+                    <label for="programAdvertLinkToApply" class="plain-label">Link to Apply</label> <span class="hint" data-desc="<@spring.message 'prospectus.linkToApply'/>"></span>
+                    <div class="field">
+                        <input id="programAdvertLinkToApply" name="project" class="input-xxlarge" type="text" role="textbox" aria-haspopup="true" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="programAdvertButtonToApply" class="plain-label">Button to Apply</label> <span class="hint" data-desc="<@spring.message 'prospectus.buttonToApply'/>"></span>
+                    <div class="field">
+                        <textarea id="programAdvertButtonToApply" class="input-xxlarge" rows="6" cols="150" readonly></textarea>
+                    </div>
+                </div>
+              </div>
+              <div class="row-group">
+                <h3>Delete</h3>
+                <div class="row">
+                    <label for="programAdvertDeleteButton" class="plain-label">Delete program</label>
+                    <div class="field">
+                        <button class="btn btn-danger" type="button" id="programAdvertDeleteButton">Delete</button>
+                    </div>
+                </div>
               </div>
           </form>
       </div>

@@ -5,7 +5,6 @@
     http://www.springframework.org/schema/security/spring-security-3.2.xsd
     http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 
-    
 	  <http pattern="/**/*.js" security="none"/>
     <http pattern="/**/*.jpg" security="none"/>
     <http pattern="/**/*.png" security="none"/>
@@ -20,16 +19,17 @@
     <http pattern="/createOpportunity/**" security="none" />
     <http pattern="/update/getInstitutionInformation/**" security="none" />
     <http pattern="/design/**" security="none" />
-    <http pattern="/programs" security="none" />
     <http pattern="/register/**" security="none" />
     <http pattern="/addReferences/**" security="none" />
     <http pattern="/referee/register/**" security="none" />
-    <http pattern="/refereeRegistration/**" security="none" />
     <http pattern="/decline/**" security="none" />
     <http pattern="/references/**" security="none" />
     <http pattern="/reportDocumentUploadFailure" security="none" />
     <http pattern="/resendApplicationToPortico" security="none" />
     <http pattern="/dwr/**" security="none" />
+    <http pattern="/error" security="none" />
+    <http pattern="/400" security="none" />
+    <http pattern="/404" security="none" />
     
     <http use-expressions="true">
         <form-login login-page="/login" login-processing-url="/j_spring_security_check" authentication-failure-url="/login?login_error=t" />

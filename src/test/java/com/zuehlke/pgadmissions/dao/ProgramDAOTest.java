@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.assertEquals;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -38,19 +37,20 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerException() {
         ProgramDAO programDAO = new ProgramDAO();
-        programDAO.getAllPrograms();
+        programDAO.getAllEnabledPrograms();
     }
 
     @Test
     public void shouldGetAllPrograms() {
-        BigInteger existingNumberOfPrograms = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from PROGRAM").uniqueResult();
-        Program program1 = new ProgramBuilder().id(1).code("code1").title("another title").institution(institution).build();
-        Program program2 = new ProgramBuilder().id(1).code("code2").title("another title").institution(institution).build();
+        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+
+        int existingNumberOfPrograms = programDAO.getAllEnabledPrograms().size();
+        Program program1 = new ProgramBuilder().id(1).code("code1").title("another title").enabled(true).institution(institution).build();
+        Program program2 = new ProgramBuilder().id(1).code("code2").title("another title2").enabled(true).institution(institution).build();
         sessionFactory.getCurrentSession().save(program1);
         sessionFactory.getCurrentSession().save(program2);
         flushAndClearSession();
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        Assert.assertEquals(existingNumberOfPrograms.intValue() + 2, programDAO.getAllPrograms().size());
+        Assert.assertEquals(existingNumberOfPrograms + 2, programDAO.getAllEnabledPrograms().size());
     }
 
     @Test
@@ -197,9 +197,9 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetLastCustomProgram() {
-        Program program1 = ProgramBuilder.aProgram(institution).code(institution.getCode() + "_00006").build();
-        Program program2 = ProgramBuilder.aProgram(institution).code(institution.getCode() + "_00008").build();
-        Program program3 = ProgramBuilder.aProgram(institution).code(institution.getCode() + "_00007").build();
+        Program program1 = ProgramBuilder.aProgram(institution).title("pdao1").code(institution.getCode() + "_00006").build();
+        Program program2 = ProgramBuilder.aProgram(institution).title("pdao2").code(institution.getCode() + "_00008").build();
+        Program program3 = ProgramBuilder.aProgram(institution).title("pdao3").code(institution.getCode() + "_00007").build();
 
         save(program1, program2, program3);
 

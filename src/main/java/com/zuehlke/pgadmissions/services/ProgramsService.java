@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -55,8 +56,8 @@ public class ProgramsService {
     @Autowired
     private RoleService roleService;
 
-    public List<Program> getAllPrograms() {
-        return programDAO.getAllPrograms();
+    public List<Program> getAllEnabledPrograms() {
+        return programDAO.getAllEnabledPrograms();
     }
 
     public Program getProgramById(Integer programId) {
@@ -77,12 +78,16 @@ public class ProgramsService {
 
     public List<Program> getProgramsForWhichCanManageProjects(RegisteredUser user) {
         if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-            return programDAO.getAllPrograms();
+            return programDAO.getAllEnabledPrograms();
         }
 
         Set<Program> programs = new TreeSet<Program>(new Comparator<Program>() {
             @Override
             public int compare(Program p1, Program p2) {
+                int compareInstitutions = p1.getInstitution().getName().compareTo(p2.getInstitution().getName());
+                if (compareInstitutions != 0) {
+                    return compareInstitutions;
+                }
                 return p1.getTitle().compareTo(p2.getTitle());
             }
         });
@@ -257,6 +262,22 @@ public class ProgramsService {
         }
         return false;
 
+    }
+
+    public boolean disableProgram(String programCode) {
+        Program program = programDAO.getProgramByCode(programCode);
+        if (program == null || program.getProgramFeed() != null) {
+            // not found or non-custom program
+            return false;
+        }
+        for (ProgramInstance instance : program.getInstances()) {
+            instance.setEnabled(false);
+        }
+        for (Project project : program.getProjects()) {
+            project.setDisabled(true);
+        }
+        program.setEnabled(false);
+        return true;
     }
 
 }

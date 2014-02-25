@@ -1,15 +1,18 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
@@ -30,6 +33,7 @@ public class ProgramBuilder {
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
     private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
+    private List<Project> projects = Lists.newArrayList();
     private Advert advert;
     private QualificationInstitution institution;
     private ProgramFeed programFeed;
@@ -98,9 +102,12 @@ public class ProgramBuilder {
     }
 
     public ProgramBuilder closingDates(ProgramClosingDate... programClosingDates) {
-        for (ProgramClosingDate programClosingDate : programClosingDates) {
-            this.programClosingDates.add(programClosingDate);
-        }
+        this.programClosingDates.addAll(Arrays.asList(programClosingDates));
+        return this;
+    }
+
+    public ProgramBuilder projects(Project... projects) {
+        this.projects.addAll(Arrays.asList(projects));
         return this;
     }
 
@@ -134,6 +141,7 @@ public class ProgramBuilder {
         program.getScoringDefinitions().putAll(scoringDefinitions);
         program.setAtasRequired(atasRequired);
         program.getClosingDates().addAll(programClosingDates);
+        program.getProjects().addAll(projects);
         program.setAdvert(advert);
         program.setInstitution(institution);
         program.setProgramFeed(programFeed);

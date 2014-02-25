@@ -178,14 +178,4 @@ public abstract class AbstractAuthorisationAPI {
         return containsUser(user, programme.getApprovers());
     }
 
-    public boolean isViewerInProgramme(final Program programme, final RegisteredUser user) {
-        if (programme == null) {
-            return false;
-        }
-
-        if (isNotInRole(user, Authority.VIEWER)) {
-            return false;
-        }
-        return containsUser(user, programme.getViewers());
-    }
 }

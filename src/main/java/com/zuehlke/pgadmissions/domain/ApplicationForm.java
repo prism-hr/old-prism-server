@@ -451,6 +451,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return previousStatus;
     }
 
+    public void setPreviousStatus(ApplicationFormStatus previousStatus) {
+        this.previousStatus = previousStatus;
+    }
+
     public Date getRejectNotificationDate() {
         return rejectNotificationDate;
     }
@@ -642,7 +646,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public List<ReferenceComment> getReferencesToSendToPortico() {
-        // FIXME should not rely on referees, move to service and count reference comments 
+        // FIXME should not rely on referees, move to service and count reference comments
         List<ReferenceComment> result = new ArrayList<ReferenceComment>(2);
         for (Referee referee : getReferees()) {
             if (BooleanUtils.isTrue(referee.getSendToUCL())) {

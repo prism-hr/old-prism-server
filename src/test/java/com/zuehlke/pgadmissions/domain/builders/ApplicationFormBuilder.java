@@ -56,6 +56,8 @@ public class ApplicationFormBuilder {
     private Project project = null;
     private BigDecimal averageRating;
     private Boolean useCustomReferenceQuestions = false;
+    private ApplicationFormStatus nextStatus;
+    private ApplicationFormStatus previousStatus;
 
     public ApplicationFormBuilder ipAddress(String ipAddress) {
         this.ipAddress = ipAddress;
@@ -89,6 +91,16 @@ public class ApplicationFormBuilder {
 
     public ApplicationFormBuilder status(ApplicationFormStatus status) {
         this.status = status;
+        return this;
+    }
+    
+    public ApplicationFormBuilder nextStatus(ApplicationFormStatus nextStatus) {
+        this.nextStatus = nextStatus;
+        return this;
+    }
+    
+    public ApplicationFormBuilder previousStatus(ApplicationFormStatus previousStatus) {
+        this.previousStatus = previousStatus;
         return this;
     }
 
@@ -253,6 +265,8 @@ public class ApplicationFormBuilder {
         application.setProgram(program);
         application.setProjectTitle(projectTitle);
         application.setStatus(status);
+        application.setNextStatus(nextStatus);
+        application.setPreviousStatus(previousStatus);
         application.setAdditionalInformation(info);
         application.setLastUpdated(lastUpdated);
         application.setAcceptedTermsOnSubmission(acceptedTerms);

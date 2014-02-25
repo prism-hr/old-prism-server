@@ -135,10 +135,6 @@ public class Program extends Authorisable implements Serializable {
         this.administrators.addAll(administrators);
     }
 
-    public boolean isApprover(final RegisteredUser user) {
-        return isApproverInProgramme(this, user);
-    }
-
     public boolean isAdministrator(final RegisteredUser user) {
         return isAdminInProgramme(this, user);
     }

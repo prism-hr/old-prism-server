@@ -8,7 +8,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Service
 public class StateTransitionViewResolver {
-    // TODO fix tests
 	
 	private static final Integer REJECTION_REASON_WHEN_PROGAMME_EXPIRED = 7;
     private static final String REJECTION_VIEW = "redirect:/rejectApplication?applicationId=";
@@ -30,8 +29,7 @@ public class StateTransitionViewResolver {
         if (!programInstanceService.isProgrammeStillAvailable(applicationForm)) {
             return REJECTION_VIEW + applicationForm.getApplicationNumber() + 
             		"&rejectionId=" + REJECTION_REASON_WHEN_PROGAMME_EXPIRED.toString() + "&rejectionIdForced=true";
-        } else if (action != null &&
-        		action.equals("abort")) {
+        } else if ("abort".equals(action)) {
         	return STATE_TRANSITION_VIEW;
         } else {
 	        ApplicationFormStatus nextStatus = applicationForm.getNextStatus();

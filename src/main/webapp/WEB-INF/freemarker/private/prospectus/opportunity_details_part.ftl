@@ -1,7 +1,4 @@
 
-<div class="alert alert-info">
-				<i class="icon-info-sign"></i> If you would like to advertise an opportunity to our users, you can apply to do this by completing the inquiry form below.  Already registered? -<a href="/pgadmissions/prospectus"> <strong>Please Login</strong></a> to proceed
-</div>
 <div class="row">
   <label class="plain-label" for="institutionCountry">Institution Country<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionCountry'/>"></span>

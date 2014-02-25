@@ -18,6 +18,10 @@
       <a href="/pgadmissions/login" class="btn btn-danger go-back">Cancel</a>
       <h1>Have an opportunity to advertise?</h1>
     </header>
+    </br>
+	<div class="alert alert-info">
+					<i class="icon-info-sign"></i> If you would like to advertise an opportunity to our users, you can apply to do this by completing the inquiry form below.  Already registered? -<a href="/pgadmissions/prospectus"> <strong>Please Login</strong></a> to proceed
+	</div>
     <section id="plist">
       <form action="<@spring.url "/createOpportunity" />" method="POST">      
         <fieldset>

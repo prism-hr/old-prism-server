@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
-import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -54,7 +54,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
-import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
+import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
@@ -938,12 +938,12 @@ public class MailSendingServiceTest {
     }
 
     @Test
-    public void shouldSendOpportunityRequestRejectionConfirmation() {
+    public void shouldSendOpportunityRequestOutcome() {
         RegisteredUser author = new RegisteredUserBuilder().firstName("Franek").build();
-        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(author).build();
+        OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().author(author).build();
 
         Map<String, Object> model1 = new HashMap<String, Object>();
-        model1.put("opportunityRequest", opportunityRequest);
+        model1.put("comment", comment);
         model1.put("host", HOST);
 
         expect(mockMailSender.resolveSubject(EmailTemplateName.OPPORTUNITY_REQUEST_OUTCOME)).andReturn("ss1");
@@ -952,7 +952,7 @@ public class MailSendingServiceTest {
         mockMailSender.sendEmail(and(isA(PrismEmailMessage.class), capture(messageCaptor)));
 
         replay(mockMailSender);
-        service.sendOpportunityRequestRejectionConfirmation(opportunityRequest);
+        service.sendOpportunityRequestOutcome(comment);
         verify(mockMailSender);
 
         PrismEmailMessage message = messageCaptor.getValues().get(0);

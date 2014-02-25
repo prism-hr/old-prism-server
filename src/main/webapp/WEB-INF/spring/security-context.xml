@@ -19,11 +19,9 @@
     <http pattern="/createOpportunity/**" security="none" />
     <http pattern="/update/getInstitutionInformation/**" security="none" />
     <http pattern="/design/**" security="none" />
-    <http pattern="/programs" security="none" />
     <http pattern="/register/**" security="none" />
     <http pattern="/addReferences/**" security="none" />
     <http pattern="/referee/register/**" security="none" />
-    <http pattern="/refereeRegistration/**" security="none" />
     <http pattern="/decline/**" security="none" />
     <http pattern="/references/**" security="none" />
     <http pattern="/reportDocumentUploadFailure" security="none" />

@@ -88,7 +88,7 @@ public class ProgramConfigurationControllerTest {
     @Mock
     @InjectIntoByType
     private OpportunitiesService opportunitiesService;
-    
+
     @Mock
     @InjectIntoByType
     private ApplicationContext applicationContext;
@@ -144,16 +144,16 @@ public class ProgramConfigurationControllerTest {
         OpportunityRequest opportunityRequest = new OpportunityRequest();
         BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
         bindingResult.rejectValue("otherInstitution", "institution.did.you.mean", null, "dupa");
-        
+
         expect(applicationContext.getMessage(eq(bindingResult.getFieldError()), isA(Locale.class))).andReturn("dupa");
-        
+
         replay();
         String result = controller.saveOpportunity(opportunityRequest, bindingResult);
         verify();
-        
+
         assertEquals("{\"otherInstitution\":{\"errorCode\":\"institution.did.you.mean\",\"institutions\":\"dupa\"}}", result);
     }
-    
+
     @Test
     public void shouldSaveOpportunity() {
         Program program = new ProgramBuilder().code("p07").build();
@@ -190,6 +190,17 @@ public class ProgramConfigurationControllerTest {
 
         assertSame(user, opportunityRequest.getAuthor());
         assertEquals("{\"changeRequestCreated\":true}", result);
+    }
+
+    @Test
+    public void shouldDeleteOpportunity() {
+        expect(programsService.disableProgram("prrr")).andReturn(true);
+
+        replay();
+        String result = controller.deleteOpportunity("prrr");
+        verify();
+
+        assertEquals("{\"success\":true}", result);
     }
 
 }

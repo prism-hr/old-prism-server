@@ -70,9 +70,8 @@
                     <div class="content-box-inner">
                       <div id="configBox" class="tabbox">
                         <ul class="tabs">
-                          <#if user.isInRole('SUPERADMINISTRATOR') || user.programsOfWhichAdministrator?has_content>
-                            <li><a href="#programmeConfiguration">Manage Programmes</a></li>
-                          </#if>
+                        
+                          <li><a href="#programmeConfiguration">Manage Programmes</a></li>
                           
                           <#if user.isCanManageProjects()>
                             <li><a href="#projectConfiguration">Manage Projects</a></li>
@@ -88,11 +87,9 @@
                           
                         </ul>
                     
-                        <#if user.isInRole('SUPERADMINISTRATOR') || user.programsOfWhichAdministrator?has_content>
-                          <div id="programmeConfiguration" class="tab-page">
-                            <#include "/private/prospectus/program_configuration.ftl"/>
-                          </div>
-                        </#if>
+                        <div id="programmeConfiguration" class="tab-page">
+                          <#include "/private/prospectus/program_configuration.ftl"/>
+                        </div>
                         
                         <#if user.isCanManageProjects()>
                           <div id="projectConfiguration" class="tab-page">

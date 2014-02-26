@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -138,7 +139,7 @@ public class ProjectConfigurationController {
 
     @ModelAttribute("program")
     public Program getProgram(@RequestParam(required = false) String programCode) {
-        if (programCode == null) {
+        if (Strings.isNullOrEmpty(programCode)) {
             return null;
         }
         return programsService.getProgramByCode(programCode);
@@ -170,7 +171,7 @@ public class ProjectConfigurationController {
     @ResponseBody
     public Map<String, Object> listProjects(@RequestParam String programCode) {
         Map<String, Object> json = new HashMap<String, Object>();
-        Program program = programsService.getProgramByCode(programCode);
+        Program program = getProgram(programCode);
         List<Project> projects = Collections.emptyList();
         if (program != null) {
             projects = programsService.listProjects(getUser(), program);

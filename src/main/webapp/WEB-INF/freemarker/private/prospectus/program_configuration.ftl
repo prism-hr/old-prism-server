@@ -20,16 +20,37 @@
                       </select>
                       <a class="btn btn-success" id="newProgammeButton">New Programme</a>
                   </div>
-                  
                 </div>
-              	<div class="row" id="programAdvertNewProgramNameDiv" style="display:none">
-                  <label for="programAdvertNewProgramName" class="plain-label">New programme name<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
+                <div id="programAdvertNewProgramDiv" style="display:none">
+                  <label for="programAdvertProgramSelect" class="plain-label">Create new program</label>
+                  <a id="programAdvertCancelNewProgramBtn" role="button" class="btn btn-danger">Cancel</a>
+                </div>
+              </div>
+              <div class="row-group" id="institutionGroup">
+                <h3>Program information</h3>
+                <div class="infoBar alert alert-info" id="infoBarInstitution">
+                  <i class="icon-info-sign"></i>Specify your program information here.
+                </div>
+
+              	<div class="row" id="programAdvertProgramNameDiv">
+                  <label for="programAdvertProgramName" class="plain-label">Programme name<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
                   <div class="field forLabel">
-                    <input id="programAdvertNewProgramName" name="title" class="input-xxlarge" type="text">
-                    <a id="programAdvertCancelNewProgramBtn" role="button" class="btn btn-danger">Cancel</a>
+                    <input id="programAdvertProgramName" name="title" class="input-xxlarge" type="text">
                   </div>
                 </div>
-                
+                                
+                <div class="row" id="programAdvertProgramTypeDiv">
+                  <label id="programAdvertProgramTypeLabel" class="plain-label" for="programAdvertProgramType">Program Type<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.programType'/>"></span>
+                  <div class="field">
+                    <select id="programAdvertProgramType">
+                      <option value="">Select...</option>
+                      <#list programTypes as programType>
+                        <option value="${programType.id.name()}">${(programType.id.displayValue?html)!}</option>
+                      </#list>
+                    </select>
+                  </div>
+                </div>
                 
                 <div class="row" id="programAdvertAtasRequiredDiv">
                   <label id="programAdvertAtasRequiredLabel" class="plain-label" for="atasRequired">Does the programme require ATAS?<em>*</em></label>
@@ -38,12 +59,6 @@
                     <label><input type="radio" name="programAdvertAtasRequired" value="true" id="programAdvertAtasRequired_true" /> Yes</label>
                     <label><input type="radio" name="programAdvertAtasRequired" value="false" id="programAdvertAtasRequired_false" /> No</label>
                   </div>
-                </div>
-              </div>
-              <div class="row-group" id="institutionGroup">
-                <h3>Institution</h3>
-                <div class="infoBar alert alert-info" id="infoBarInstitution">
-                  <i class="icon-info-sign"></i> Select institution for your programme here.
                 </div>
 
                 <div class="row" id="programAdvertInstitutionCountryDiv">

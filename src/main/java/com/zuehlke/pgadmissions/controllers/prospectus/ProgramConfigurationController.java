@@ -36,12 +36,14 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
@@ -102,6 +104,9 @@ public class ProgramConfigurationController {
 
     @Autowired
     private OpportunitiesService opportunitiesService;
+    
+    @Autowired
+    private ProgramTypePropertyEditor programTypePropertyEditor;
 
     private Gson gson;
 
@@ -117,6 +122,7 @@ public class ProgramConfigurationController {
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Program.class, programPropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+        binder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
     }
 
     @InitBinder("programClosingDate")
@@ -165,6 +171,7 @@ public class ProgramConfigurationController {
         result.put("programLocked", program.getLocked());
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
+        result.put("programType", program.getProgramType().getId());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
         result.put("institutionCode", program.getInstitution().getCode());
         result.put("advertisingDeadline", programInstanceService.getAdvertisingDeadlineYear(program));

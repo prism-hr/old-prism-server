@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -37,6 +38,7 @@ public class ProgramBuilder {
     private Advert advert;
     private QualificationInstitution institution;
     private ProgramFeed programFeed;
+    private ProgramType programType;
 
     public ProgramBuilder atasRequired(boolean flag) {
         atasRequired = flag;
@@ -126,6 +128,10 @@ public class ProgramBuilder {
         return this;
     }
 
+    public ProgramBuilder programType(ProgramType programType) {
+        this.programType = programType;
+        return this;
+    }
 
     public Program build() {
         Program program = new Program();
@@ -145,6 +151,7 @@ public class ProgramBuilder {
         program.setAdvert(advert);
         program.setInstitution(institution);
         program.setProgramFeed(programFeed);
+        program.setProgramType(programType);
         return program;
     }
     

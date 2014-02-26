@@ -19,6 +19,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -89,6 +90,10 @@ public class Program extends Authorisable implements Serializable {
 
     @Column(name = "locked")
     private boolean locked;
+
+    // make persistent
+    @Transient
+    private ProgramType programType;
 
     public Program() {
     }
@@ -234,6 +239,14 @@ public class Program extends Authorisable implements Serializable {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    public ProgramType getProgramType() {
+        return programType;
+    }
+
+    public void setProgramType(ProgramType programType) {
+        this.programType = programType;
     }
 
 }

@@ -13,10 +13,12 @@ import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
+import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
@@ -82,7 +84,10 @@ public class OpportunitiesService {
     }
 
     public OpportunityRequest getOpportunityRequest(Integer requestId) {
-        return opportunityRequestDAO.findById(requestId);
+        // TODO remove it
+        OpportunityRequest request = opportunityRequestDAO.findById(requestId);
+        request.setProgramType(new ProgramType(ProgramTypeId.VISITING_RESEARCH, 5));
+        return request;
     }
 
     public void respondToOpportunityRequest(Integer requestId, OpportunityRequest newOpportunityRequest, OpportunityRequestComment comment) {

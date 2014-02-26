@@ -54,13 +54,13 @@ function bindChangeProgramActions() {
     
     $("#programAdvertCancelNewProgramBtn").bind('click', function() {
         $("#programAdvertSelectProgramDiv").show();
-        $("#programAdvertNewProgramNameDiv").hide();
+        $("#programAdvertNewProgramDiv").hide();
         programChanged();
     });
     
     $("#newProgammeButton").bind('click', function() {
         $("#programAdvertSelectProgramDiv").hide();
-        $("#programAdvertNewProgramNameDiv").show();
+        $("#programAdvertNewProgramDiv").show();
         $("#programAdvertProgramSelect").val("");
         programChanged();
     });
@@ -68,11 +68,6 @@ function bindChangeProgramActions() {
 
 function bindDeleteProgramAction() {
     $("#programAdvertDeleteButton").bind('click', function() {
-//        $('#dialog-box h3').text('Delete Program');
-//        $('#dialog-box #dialog-message').html('<p>Are you sure you want to remove the program?</p>');
-//        $('#dialog-box #popup-cancel-button').show();
-//        $("#popup-ok-button").bind('click', function() {
-//            $('#ajaxloader').show();
             
         var message = "Are you sure you want to remove this program?";
         var onOk = function() {
@@ -107,8 +102,6 @@ function bindDeleteProgramAction() {
             
     });
                 
-//        $('#dialog-box').modal('show');
-//    });
 }
 
 
@@ -198,7 +191,7 @@ $(document).on('change', '#programAdvertInstitution', function() {
 function checkToDisable() {
     var selectedProgram = $("#programAdvertProgramSelect").val();
     var existingProgramSelected = selectedProgram != "";
-    var newProgramSelected = $("#programAdvertNewProgramNameDiv").is(":visible");
+    var newProgramSelected = $("#programAdvertNewProgramDiv").is(":visible");
     var programLocked = $("#programAdvertProgramLocked").val() == "true";
     var isCustom = $("#programAdvertIsCustom").val() == "true";
     if ((existingProgramSelected && !programLocked) || newProgramSelected) {
@@ -236,7 +229,7 @@ function checkToDisable() {
 
 function changeHeaderInfoBars(programval) {
     var programmeCode = $("#programAdvertProgramSelect").val();
-    if (programmeCode == "" || $("#programAdvertNewProgramNameDiv").is(":visible")) {
+    if (programmeCode == "" || $("#programAdvertNewProgramDiv").is(":visible")) {
         infohtml = "<i class='icon-info-sign'></i> Manage the advert for your programme here.";
         infodate = "<i class='icon-info-sign'></i> Manage closing dates for your programme here.";
         inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for your programme.";
@@ -521,7 +514,9 @@ function updateAdvertSection(map) {
 function updateProgramSection(map) {
     $("#programAdvertProgramLocked").val(map["programLocked"]);
     $("#programAdvertIsCustom").val(map["isCustomProgram"]);
-
+    
+    $("#programAdvertProgramName").val($("#programAdvertProgramSelect option:selected").text());
+    $("#programAdvertProgramType").val(map["programType"]);
     $("[name=programAdvertAtasRequired][value=" + map["atasRequired"] + "]").prop("checked", true);
 
     $("#programAdvertInstitutionCountry").selectpicker('val', map["institutionCountryCode"]);
@@ -574,7 +569,7 @@ function saveAdvert() {
     clearProgramAdvertErrors();
 
     var programCode = $("#programAdvertProgramSelect").val();
-    var programName = $("#programAdvertNewProgramName").val();
+    var programName = $("#programAdvertProgramName").val();
     var acceptApplications = "";
     if ($("#programAdvertIsActiveRadioYes").prop("checked")) {
         acceptApplications = "true";
@@ -608,6 +603,7 @@ function saveAdvert() {
         data : {
             sourceProgram : programCode,
             programTitle : programName,
+            programType : $("#programAdvertProgramType").val(),
             atasRequired : $("[name=programAdvertAtasRequired]:checked").val(),
             institutionCountry : $("#programAdvertInstitutionCountry").val(),
             institutionCode : $("#programAdvertInstitution").val(),
@@ -628,7 +624,7 @@ function saveAdvert() {
 
                 if (programCode != "") {
                     // modfy existing program option
-                    $("#programAdvertProgramSelect option").filter("[value='" + programCode + "']").val(newProgramCode);
+                    $("#programAdvertProgramSelect option").filter("[value='" + programCode + "']").val(newProgramCode).text(programName);
                 } else {
                     // add new program option
                     $("#programAdvertProgramSelect").append($("<option />").val(newProgramCode).text(programName));
@@ -637,7 +633,7 @@ function saveAdvert() {
 
                 // show select control
                 $("#programAdvertSelectProgramDiv").show();
-                $("#programAdvertNewProgramNameDiv").hide();
+                $("#programAdvertNewProgramDiv").hide();
 
                 // reload program data
                 getAdvertData(newProgramCode);
@@ -653,14 +649,25 @@ function saveAdvert() {
                 $('#dialog-box #popup-cancel-button').hide();
                 $('#dialog-box').modal('show');
 
-                $("#programAdvertProgramLocked").val(true);
-                checkToDisable();
+                if (programCode != "") {
+                    // modfy existing program option
+                    $("#programAdvertProgramLocked").val(true);
+                    checkToDisable();
+                } else {
+                    // add new program option
+                    $("#programAdvertSelectProgramDiv").show();
+                    $("#programAdvertNewProgramDiv").hide();
+                    programChanged();                    
+                }
             } else {
                 if (map['program']) {
                     $("#programAdvertSelectProgramDiv").append(getErrorMessageHTML(map['program']));
                 }
-                if (map['programName']) {
-                    $("#programAdvertNewProgramNameDiv").append(getErrorMessageHTML(map['programName']));
+                if (map['programTitle']) {
+                    $("#programAdvertProgramNameDiv").append(getErrorMessageHTML(map['programTitle']));
+                }
+                if (map['programType']) {
+                    $("#programAdvertProgramTypeDiv").append(getErrorMessageHTML(map['programType']));
                 }
                 if (map['atasRequired']) {
                     $("#programAdvertAtasRequiredDiv").append(getErrorMessageHTML(map['atasRequired']));
@@ -692,6 +699,9 @@ function saveAdvert() {
                 if (map['funding']) {
                     $("#programAdvertFundingDiv").append(getErrorMessageHTML(map['funding']));
                 }
+                if (map['acceptingApplications']) {
+                    $("#programAdvertIsActiveDiv").append(getErrorMessageHTML(map['acceptingApplications']));
+                }
                 if (map['studyDurationNumber']) {
                     $("#programAdvertStudyDurationDiv").append(getErrorMessageHTML(map['studyDurationNumber']));
                 }
@@ -719,9 +729,9 @@ function saveAdvert() {
 
 function clearAdvert() {
     $("[name=programAdvertAtasRequired]").prop("checked", false);
-    $("#institutionGroup input, #advertGroup input, #advertGroup textarea, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply, #advertGroup select").val('');
+    $("#institutionGroup input:text, #programAdvertProgramType, #advertGroup input, #advertGroup textarea, #programAdvertClosingDateGroup input, #programAdvertLinkToApply, #programAdvertButtonToApply, #advertGroup select").val('');
     $("#programAdvertIsActiveRadioYes, #programAdvertIsActiveRadioNo").prop('checked', false);
-    $('#institutionGroup select').selectpicker("val", "");
+    $('#programAdvertInstitutionCountry, #programAdvertInstitution').selectpicker("val", "");
     tinyMCE.get('programAdvertDescriptionText').setContent('');
     tinyMCE.get('programAdvertFundingText').setContent('');
 }
@@ -771,6 +781,6 @@ function clearProgramAdvertErrors() {
 }
 
 function clearInfoBarWarning() {
-    $('#infoBarProgram').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
+    $('#infoBarProgram, #infoBarInstitution').removeClass('alert-error').addClass('alert-info').find('i').removeClass('icon-warning-sign').addClass('icon-info-sign');
     checkIfErrors();
 }

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -17,14 +18,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -53,7 +58,7 @@ public class CreateNewOpportunityController {
     @Autowired
     private DomicilePropertyEditor domicilePropertyEditor;
 
-    @Autowired
+    @Resource(name = "opportunityRequestValidator")
     private OpportunityRequestValidator opportunityRequestValidator;
 
     @Autowired
@@ -64,12 +69,16 @@ public class CreateNewOpportunityController {
 
     @Autowired
     private ProgramInstanceService programInstanceService;
+    
+    @Autowired
+    private ProgramTypePropertyEditor programTypePropertyEditor;
 
     @InitBinder(value = "opportunityRequest")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(opportunityRequestValidator);
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
+        binder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -121,6 +130,12 @@ public class CreateNewOpportunityController {
     @ModelAttribute("advertisingDeadlines")
     public List<Integer> getAdvertisingDeadlines() {
         return programInstanceService.getPossibleAdvertisingDeadlineYears();
+    }
+
+    @ModelAttribute("programTypes")
+    public List<ProgramType> getProgramTypes() {
+        return Lists.newArrayList(new ProgramType(ProgramTypeId.INTERNSHIP, 5), new ProgramType(ProgramTypeId.RESEARCH_DEGREE, 8), new ProgramType(
+                ProgramTypeId.VISITING_RESEARCH, 666));
     }
 
 }

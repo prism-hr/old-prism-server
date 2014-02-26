@@ -196,7 +196,6 @@ public class ProgramsService {
             program = merge(program);
         } else {
             program = new Program();
-            program.setTitle(opportunityRequest.getProgramTitle());
             program.setEnabled(true);
         }
 
@@ -207,6 +206,7 @@ public class ProgramsService {
             program.setInstitution(institution);
             program.setCode(thisBean.generateNextProgramCode(institution));
         }
+        program.setTitle(opportunityRequest.getProgramTitle());
         program.setAtasRequired(opportunityRequest.getAtasRequired());
         save(program);
         return program;

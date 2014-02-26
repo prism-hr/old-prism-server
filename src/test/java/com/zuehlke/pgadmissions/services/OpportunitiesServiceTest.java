@@ -176,6 +176,7 @@ public class OpportunitiesServiceTest {
         assertSame(savedProgram, request.getSourceProgram());
 
         OpportunityRequestComment returncomment = Iterables.getOnlyElement(request.getComments());
+        assertSame(comment, returncomment);
         assertSame(currentUser, returncomment.getAuthor());
         assertEquals("ok", returncomment.getContent());
         assertEquals(OpportunityRequestCommentType.APPROVE, returncomment.getCommentType());

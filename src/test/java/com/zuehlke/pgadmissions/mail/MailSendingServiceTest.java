@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -54,6 +55,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -940,9 +942,11 @@ public class MailSendingServiceTest {
     @Test
     public void shouldSendOpportunityRequestOutcome() {
         RegisteredUser author = new RegisteredUserBuilder().firstName("Franek").build();
-        OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().author(author).build();
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(author, null).build();
+        OpportunityRequestComment comment = OpportunityRequestCommentBuilder.aOpportunityRequestComment(null, opportunityRequest).build();
 
         Map<String, Object> model1 = new HashMap<String, Object>();
+        model1.put("user", author);
         model1.put("comment", comment);
         model1.put("host", HOST);
 

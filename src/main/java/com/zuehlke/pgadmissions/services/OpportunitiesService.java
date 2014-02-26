@@ -125,6 +125,7 @@ public class OpportunitiesService {
         // create comment
         comment.setAuthor(userService.getCurrentUser());
         opportunityRequest.getComments().add(comment);
+        comment.setOpportunityRequest(opportunityRequest);
 
         if (comment.getCommentType() == OpportunityRequestCommentType.APPROVE) {
             Program savedProgram = programsService.saveProgramOpportunity(opportunityRequest);

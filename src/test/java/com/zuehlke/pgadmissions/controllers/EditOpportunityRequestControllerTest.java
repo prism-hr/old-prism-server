@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
@@ -35,6 +36,7 @@ import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
@@ -43,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -83,6 +86,10 @@ public class EditOpportunityRequestControllerTest {
     @Mock
     @InjectIntoByType
     private DatePropertyEditor datePropertyEditor;
+    
+    @Mock
+    @InjectIntoByType
+    private ProgramTypePropertyEditor programTypePropertyEditor;
 
     @Mock
     @InjectIntoByType
@@ -116,11 +123,13 @@ public class EditOpportunityRequestControllerTest {
 
     @Test
     public void shouldRespondToOpportunityRequest() {
-        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDurationUnit("MONTHS").studyDurationNumber(3).build();
+        OpportunityRequest existingOpportunityRequest = new OpportunityRequestBuilder().acceptingApplications(true).build();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDurationUnit("MONTHS").studyDurationNumber(3).acceptingApplications(false).build();
         OpportunityRequestComment comment = new OpportunityRequestComment();
         BindingResult requestBindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
         BindingResult commentBindingResult = new DirectFieldBindingResult(comment, "comment");
 
+        expect(opportunitiesService.getOpportunityRequest(8)).andReturn(existingOpportunityRequest);
         opportunitiesService.respondToOpportunityRequest(8, opportunityRequest, comment);
 
         replay();
@@ -131,6 +140,7 @@ public class EditOpportunityRequestControllerTest {
         assertEquals(3, opportunityRequest.getStudyDuration().intValue());
         assertEquals("/requests", result.getUrl());
         assertFalse(result.isExposePathVariables());
+        assertTrue(opportunityRequest.getAcceptingApplications());
     }
 
     @Test
@@ -197,6 +207,7 @@ public class EditOpportunityRequestControllerTest {
         dataBinder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         dataBinder.registerCustomEditor(Date.class, datePropertyEditor);
         dataBinder.registerCustomEditor(eq(String.class), isA(StringTrimmerEditor.class));
+        dataBinder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
 
         replay();
         controller.registerOpportunityRequestPropertyEditors(dataBinder);

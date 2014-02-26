@@ -29,6 +29,8 @@ public class OpportunityRequestValidator extends AbstractValidator {
     @Autowired
     private FullTextSearchService fullTextSearchService;
 
+    private boolean validatingProgram;
+
     @Override
     public boolean supports(Class<?> clazz) {
         return OpportunityRequest.class.equals(clazz);
@@ -43,6 +45,7 @@ public class OpportunityRequestValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCode", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programDescription", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "atasRequired", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programType", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
         // validate institution code / name
         String institutionCode = opportunityRequest.getInstitutionCode();
@@ -106,6 +109,10 @@ public class OpportunityRequestValidator extends AbstractValidator {
                 }
             }
         }
+        
+        if(validatingProgram) {
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "acceptingApplications", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        }
 
     }
 
@@ -116,8 +123,13 @@ public class OpportunityRequestValidator extends AbstractValidator {
     void setProgramInstanceService(ProgramInstanceService programInstanceService) {
         this.programInstanceService = programInstanceService;
     }
-    
+
     void setFullTextSearchService(FullTextSearchService fullTextSearchService) {
         this.fullTextSearchService = fullTextSearchService;
     }
+
+    public void setValidatingProgram(boolean validatingProgram) {
+        this.validatingProgram = validatingProgram;
+    }
+
 }

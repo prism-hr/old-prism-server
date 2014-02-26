@@ -102,6 +102,28 @@
 </div>
 
 <div class="row">
+  <label id="programTypeLabel" class="plain-label" for="programType">Program Type<em>*</em></label>
+  <span class="hint" data-desc="<@spring.message 'opportunityRequest.programType'/>"></span>
+  <div class="field">
+    <select id="programType" name="programType">
+      <option value="">Select...</option>
+      <#list programTypes as programType>
+        <option value="${programType.id.name()}"
+          <#if opportunityRequest.programType?? && opportunityRequest.programType.id == programType.id> selected="selected"</#if>
+          >${(programType.id.displayValue?html)!}
+        </option>
+      </#list>
+    </select>
+    <@spring.bind "opportunityRequest.programType" />
+    <#list spring.status.errorMessages as error>
+      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+        ${error}
+      </div>
+    </#list>
+  </div>
+</div>
+
+<div class="row">
   <label class="plain-label" for="studyOption">Study Options<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.studyOptions'/>"></span>
   <div class="field">

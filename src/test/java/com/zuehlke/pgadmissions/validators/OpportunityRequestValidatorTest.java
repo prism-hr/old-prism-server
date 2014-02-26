@@ -235,6 +235,18 @@ public class OpportunityRequestValidatorTest {
     }
 
     @Test
+    public void shouldRejectIfProgramTypeIsEmpty() {
+        opportunityRequest.setProgramType(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+
+        assertEquals(1, mappingResult.getErrorCount());
+        assertEquals(AbstractValidator.EMPTY_DROPDOWN_ERROR_MESSAGE, mappingResult.getFieldError("programType").getCode());
+    }
+
+    @Test
     public void shouldRejectIfProgramTitleIsNull() {
         opportunityRequest.setProgramTitle(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -75,7 +76,7 @@ public class ProgramConfigurationController {
     @Autowired
     private DomicilePropertyEditor domicilePropertyEditor;
 
-    @Autowired
+    @Resource(name = "programValidator")
     private OpportunityRequestValidator opportunityRequestValidator;
 
     @Autowired

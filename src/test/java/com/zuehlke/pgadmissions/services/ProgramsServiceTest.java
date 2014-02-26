@@ -302,6 +302,7 @@ public class ProgramsServiceTest {
         verify();
 
         assertTrue(returned.getAtasRequired());
+        assertEquals(opportunityRequest.getProgramTitle(), program.getTitle());
     }
 
     @Test

@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Shell template</title>
+
+<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+<link type="text/css" rel="stylesheet" href="css/private/global_private.css" />
+<link type="text/css" rel="stylesheet" href="css/private/application.css" />
+
+<link type="text/css" rel="stylesheet" href="css/private/staff/add_reviewer.css" />
+
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+
+<!--[if IE 9]>
+<body class="ie9">
+<![endif]-->
+<!--[if lt IE 9]>
+<body class="old-ie">
+<![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<body>
+<!--<![endif]-->
+
+<div id="wrapper">
+
+  <!-- Header. -->
+  <div id="header">
+    <p>Postgraduate Research Admissions Tool</p>
+  </div>
+  
+  <!-- Middle. -->
+  <div id="middle">
+  
+    <header>
+
+      <!-- App logo and tagline -->
+      <div class="logo"><img src="images/ph_logo_app.png" alt="" /></div>
+
+      <div class="tagline">Your Gateway to Research Opportunities</div>
+
+      <!-- Main tabbed menu -->
+      <nav>
+        <ul>
+          <li><a href="#">My account</a></li>    
+          <li class="current"><a href="#">My applications <span class="indicator blue">1</span></a></li>    
+          <li><a href="#">Messages</a></li>    
+          <li><a href="#">Help</a></li>    
+        </ul>
+        
+        <div class="user">
+          Jonathan Smith
+          <a class="button user-logout">Logout</a>
+        </div>
+      </nav>
+      
+    </header>
+    
+    
+    <!-- Main content area. -->
+    <article id="content" role="main">
+      
+      <!-- "Tools" -->
+      <div id="tools">
+        <ul class="left">
+          <li class="icon-pdf"><a href="#">Generate PDF</a></li>
+          <li class="icon-print"><a href="#">Print Page</a></li>
+        </ul>
+        <ul class="right">
+          <li class="icon-progress"><a href="#">Progress</a></li>
+          <li class="current icon-application"><a href="#">View Application</a></li>
+        </ul>
+      </div>
+          
+      <!-- content box -->
+      <div class="content-box">
+        <div class="content-box-inner">
+          
+          <!-- FLOATING TOOLBAR -->
+          <ul id="view-toolbar">
+          	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
+          	<li class="pdf"><a href="#" title="Download as PDF">Download as PDF</a></li>
+          	<li class="print"><a href="#" title="Print">Print</a></li>
+          </ul>
+          
+          <div id="programme-details">
+          
+            <div class="row">
+              <label>Programme Name</label>
+              <input disabled size="109" value="W3P7 - Some Study On Some Course" />
+            </div>
+            
+            <div class="row half">
+              <label>Application Number</label>
+              <input disabled size="20" value="3273334B" />
+            </div>
+
+            <div class="row half">
+              <label>Submission deadline</label>
+              <input disabled size="20" value="01/08/2011" />
+            </div>
+
+            <div class="row half">
+              <label>Have you discussed with potential supervisor?</label>
+              <label class="checkbox"><input type="checkbox" /> Yes</label>
+            </div>
+
+            <div class="row half">
+              <label>Enter email address</label>
+              <input size="29" value="" />
+            </div>
+
+          </div>
+          
+          <hr />
+
+          <section class="folding violet">
+            <div>
+              <form method="post" action="woooop">
+
+                <div>
+                  <!-- Programme name (disabled) -->
+                  <div class="row">
+                    <label class="label">Supervision</label>
+                    <div class="field">
+                    	<p><strong>Selected Reviewers</strong></p>
+                      <select id="reviewer-list" size="5" multiple="multiple">
+                      	<option>Reviewer One (someone@one.com)</option>
+                      	<option>Reviewer Two (someone@one.com)</option>
+                      	<option>Reviewer Three (someone@one.com)</option>
+                      	<option>Reviewer Four (someone@one.com)</option>
+                      	<option>Reviewer Five (someone@one.com)</option>
+                      	<option>Reviewer Six (someone@one.com)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="row reviewer-buttons">
+                    <div class="field">
+                    	<span>
+                    	<button class="blue">Add</button>
+                    	<button class="blue">Remove</button>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="field">
+                    	<p><strong>Available Users</strong></p>
+                      <select id="user-list" size="5" multiple="multiple">
+                      	<option>Reviewer One</option>
+                      	<option>Reviewer Two</option>
+                      	<option>Reviewer Three</option>
+                      	<option>Reviewer Four</option>
+                      	<option>Reviewer Five</option>
+                      	<option>Reviewer Six</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                </div>
+
+                <div>
+                
+                	<p><strong>Add New User</strong></p>
+                  
+                  <div class="row">
+                    <label class="label normal">Supervisor First Name</label>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <input class="full" type="text" value="" />
+                  </div>
+
+                  <div class="row">
+                    <label class="label normal">Supervisor Last Name</label>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <input class="full" type="text" value="" />
+                  </div>
+                  
+                  <div class="row">
+                    <label class="label normal">Supervisor Email</label>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <input class="full" type="text" value="" />
+                  </div>
+
+                  <div class="row normal">
+                    <label class="label normal">Is the Supervisor aware of your application?</label>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                      <input type="checkbox" value="" />
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="field">
+		                  <a class="button blue" href="#">Add supervisor</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="buttons">
+                  <a class="button blue" href="#">Close</a>
+                </div>
+
+              </form>
+            </div>
+          </section>
+          
+          
+        </div><!-- .content-box-inner -->
+      </div><!-- .content-box -->
+      
+    </article>
+    
+  </div>
+  
+  <!-- Footer. -->
+  <div id="footer">
+    <ul>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms &amp; conditions</a></li>
+      <li><a href="#">Contact us</a></li>
+      <li><a href="#">Glossary</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/libraries.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+<script type="text/javascript">
+
+	$(document).ready(function(){
+	
+		$('table.data-table button').click(function(){
+		
+			var $copiedRow = $(this).parent().parent().clone();
+		
+			$('table.data-table tbody').append($copiedRow);
+			
+			return false;
+		
+		});
+	
+	});
+
+</script>
+</body>
+</html>

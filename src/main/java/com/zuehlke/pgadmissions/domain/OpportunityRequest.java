@@ -87,6 +87,10 @@ public class OpportunityRequest {
     @OrderBy("createdTimestamp")
     private List<OpportunityRequestComment> comments = Lists.newArrayList();
 
+    // TODO map to existing column
+    @Transient
+    private ProgramType programType;
+
     @Transient
     private String funding;
 
@@ -225,6 +229,14 @@ public class OpportunityRequest {
 
     public List<OpportunityRequestComment> getComments() {
         return comments;
+    }
+
+    public ProgramType getProgramType() {
+        return programType;
+    }
+
+    public void setProgramType(ProgramType programType) {
+        this.programType = programType;
     }
 
     public String getFunding() {

@@ -692,6 +692,9 @@ function saveAdvert() {
                 if (map['funding']) {
                     $("#programAdvertFundingDiv").append(getErrorMessageHTML(map['funding']));
                 }
+                if (map['acceptingApplications']) {
+                    $("#programAdvertIsActiveDiv").append(getErrorMessageHTML(map['acceptingApplications']));
+                }
                 if (map['studyDurationNumber']) {
                     $("#programAdvertStudyDurationDiv").append(getErrorMessageHTML(map['studyDurationNumber']));
                 }

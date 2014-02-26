@@ -8,11 +8,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
@@ -72,6 +75,12 @@ public class ProspectusController {
     @ModelAttribute("advertisingDeadlines")
     public List<Integer> getAdvertisingDeadlines() {
         return programInstanceService.getPossibleAdvertisingDeadlineYears();
+    }
+    
+    @ModelAttribute("programTypes")
+    public List<ProgramType> getProgramTypes() {
+        return Lists.newArrayList(new ProgramType(ProgramTypeId.INTERNSHIP, 5), new ProgramType(ProgramTypeId.RESEARCH_DEGREE, 8), new ProgramType(
+                ProgramTypeId.VISITING_RESEARCH, 666));
     }
 
 }

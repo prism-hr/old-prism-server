@@ -33,6 +33,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
@@ -40,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -80,6 +82,10 @@ public class CreateNewOpportunityControllerTest {
 	@Mock
 	@InjectIntoByType
 	private ProgramInstanceService programInstanceService;
+	
+	@Mock
+	@InjectIntoByType
+	private ProgramTypePropertyEditor programTypePropertyEditor;
 
 	@TestedObject
 	private CreateNewOpportunityController controller = new CreateNewOpportunityController();
@@ -126,6 +132,7 @@ public class CreateNewOpportunityControllerTest {
 		dataBinder.setValidator(opportunityRequestValidator);
 		dataBinder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
 		dataBinder.registerCustomEditor(Date.class, datePropertyEditor);
+		dataBinder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
 
 		replay();
 		controller.registerPropertyEditors(dataBinder);

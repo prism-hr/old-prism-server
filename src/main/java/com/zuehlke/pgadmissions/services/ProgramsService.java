@@ -22,12 +22,14 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
@@ -73,7 +75,10 @@ public class ProgramsService {
     }
 
     public Program getProgramByCode(String code) {
-        return programDAO.getProgramByCode(code);
+        Program program = programDAO.getProgramByCode(code);
+        // TODO remove it
+        program.setProgramType(new ProgramType(ProgramTypeId.VISITING_RESEARCH, 5));
+        return program;
     }
 
     public List<Program> getProgramsForWhichCanManageProjects(RegisteredUser user) {

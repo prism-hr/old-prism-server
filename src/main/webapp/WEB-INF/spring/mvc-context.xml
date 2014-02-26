@@ -90,5 +90,14 @@
     <bean id="notificationsDurationPropertyEditor" class="com.zuehlke.pgadmissions.propertyeditors.JsonPropertyEditor">
       <property name="targetClass" value="com.zuehlke.pgadmissions.domain.NotificationsDuration" />
     </bean>
+    
+    <bean id="programValidator" class="com.zuehlke.pgadmissions.validators.OpportunityRequestValidator">
+      <property name="validatingProgram" value="true" />
+    </bean>
+    
+    <bean id="opportunityRequestValidator" class="com.zuehlke.pgadmissions.validators.OpportunityRequestValidator">
+    </bean>
+    
+    
 
 </beans>

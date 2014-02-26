@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +20,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -54,7 +59,7 @@ public class EditOpportunityRequestController {
     @Autowired
     private DomicilePropertyEditor domicilePropertyEditor;
 
-    @Autowired
+    @Resource(name = "opportunityRequestValidator")
     private OpportunityRequestValidator opportunityRequestValidator;
 
     @Autowired
@@ -65,6 +70,9 @@ public class EditOpportunityRequestController {
 
     @Autowired
     private ApplicationContext applicationContext;
+    
+    @Autowired
+    private ProgramTypePropertyEditor programTypePropertyEditor;
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
     public String getEditOpportunityRequestPage(@PathVariable("requestId") Integer requestId, ModelMap modelMap) {
@@ -92,8 +100,8 @@ public class EditOpportunityRequestController {
     public Object respondToOpportunityRequest(@PathVariable("requestId") Integer requestId, @Valid OpportunityRequest opportunityRequest,
             BindingResult requestBindingResult, @ModelAttribute("comment") @Valid OpportunityRequestComment comment, BindingResult commentBindingResult,
             ModelMap modelMap) {
+        OpportunityRequest existingRequest = opportunitiesService.getOpportunityRequest(requestId);
         if (requestBindingResult.hasErrors() || commentBindingResult.hasErrors()) {
-            OpportunityRequest existingRequest = opportunitiesService.getOpportunityRequest(requestId);
 
             opportunityRequest.setAuthor(existingRequest.getAuthor());
             opportunityRequest.setCreatedDate(existingRequest.getCreatedDate());
@@ -113,6 +121,7 @@ public class EditOpportunityRequestController {
 
             return EDIT_REQUEST_PAGE_VIEW_NAME;
         }
+        opportunityRequest.setAcceptingApplications(existingRequest.getAcceptingApplications());
         opportunitiesService.respondToOpportunityRequest(requestId, opportunityRequest, comment);
         return new RedirectView("/requests", true, true, false);
     }
@@ -123,6 +132,7 @@ public class EditOpportunityRequestController {
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+        binder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
     }
 
     @InitBinder(value = "comment")
@@ -148,6 +158,12 @@ public class EditOpportunityRequestController {
     @ModelAttribute("advertisingDeadlines")
     public List<Integer> getAdvertisingDeadlines() {
         return programInstanceService.getPossibleAdvertisingDeadlineYears();
+    }
+
+    @ModelAttribute("programTypes")
+    public List<ProgramType> getProgramTypes() {
+        return Lists.newArrayList(new ProgramType(ProgramTypeId.INTERNSHIP, 5), new ProgramType(ProgramTypeId.RESEARCH_DEGREE, 8), new ProgramType(
+                ProgramTypeId.VISITING_RESEARCH, 666));
     }
 
 }

@@ -11,14 +11,9 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class DataMaintenanceTaskTest {
-
-    @Mock
-    @InjectIntoByType
-    private ProgramInstanceService programInstanceService;
     
     @Mock
     @InjectIntoByType
@@ -29,7 +24,6 @@ public class DataMaintenanceTaskTest {
 
     @Test
     public void shouldMaintainData() {
-        programInstanceService.disableLapsedInstances();
         documentService.deleteOrphanDocuments();
 
         replay();

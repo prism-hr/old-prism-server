@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -29,8 +28,6 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
@@ -194,10 +191,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadProgramsOfWhichAdministrator() throws Exception {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a45").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("111111").title("hello").institution(institution).build();
-        save(institution, program);
-        flushAndClearSession();
+        Program program = testObjectProvider.getEnabledProgram();
 
         RegisteredUser admin = new RegisteredUserBuilder().programsOfWhichAdministrator(program).firstName("Jane").lastName("Doe").email("email@test.com")
                 .username("username10").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -214,10 +208,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldLoadProgramsOfWhichApprover() throws Exception {
-        QualificationInstitution institution = (QualificationInstitution) sessionFactory.getCurrentSession().get(QualificationInstitution.class, 3800);
-        Program program = new ProgramBuilder().code("111111").title("hello").institution(institution).build();
-        save(program);
-        flushAndClearSession();
+        Program program = testObjectProvider.getEnabledProgram();
 
         RegisteredUser approver = new RegisteredUserBuilder().programsOfWhichApprover(program).firstName("Jane").lastName("Doe").email("email@test.com")
                 .username("username10").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -239,7 +230,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
         sessionFactory.getCurrentSession().save(applicant);
 
-        ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(1).build();
+        ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(1).advert(testObjectProvider.getEnabledProgram()).build();
 
         sessionFactory.getCurrentSession().save(application);
 
@@ -276,9 +267,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a62").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-        save(institution, program);
+        Program program = testObjectProvider.getEnabledProgram();
 
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();

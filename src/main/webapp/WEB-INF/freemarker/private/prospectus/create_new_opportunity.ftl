@@ -12,7 +12,7 @@
     </form>
 	
     <header>
-      <a href="/pgadmissions/login" class="btn btn-danger go-back">Cancel</a>
+      <a href="/pgadmissions/login" class="btn btn-danger newOpportunityCancel">Cancel</a>
       <h1>Create New Oppotunity</h1>
     </header>
 

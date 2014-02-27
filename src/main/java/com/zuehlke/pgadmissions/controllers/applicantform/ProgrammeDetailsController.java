@@ -94,7 +94,7 @@ public class ProgrammeDetailsController {
                 programmeDetails.getStudyOption()));
         programmeDetailsService.save(programmeDetails);
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getApplicationNumber();
     }
 

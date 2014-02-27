@@ -16,20 +16,15 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class InterviewMappingTest extends AutomaticRollbackTestCase{
 
 	private RegisteredUser user;
-	private Program program;
 	private RegisteredUser interviewerUser;
 	private ApplicationForm application;
 	
@@ -62,10 +57,8 @@ public class InterviewMappingTest extends AutomaticRollbackTestCase{
         interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com")
                 .username("brady").password("password").accountNonExpired(false).accountNonLocked(false)
                 .credentialsNonExpired(false).enabled(false).build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a12").domicileCode("AE").enabled(true).build();
-        program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-        application = new ApplicationFormBuilder().program(program).applicant(user).build();
-        save(user, institution, program, interviewerUser, application);
+        application = new ApplicationFormBuilder().advert(testObjectProvider.getEnabledProgram()).applicant(user).build();
+        save(user, interviewerUser, application);
         flushAndClearSession();
 	}
 }

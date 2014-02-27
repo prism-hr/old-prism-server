@@ -122,6 +122,8 @@ public class ProgrammesImporter implements IProgrammesImporter {
                 programDAO.save(prismProgram);
             }
         }
+        
+        
 
     }
 

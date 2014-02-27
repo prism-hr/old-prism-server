@@ -43,7 +43,7 @@ public class AcceptTermsControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.reset(userServiceMock);
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(currentUserMock.isApplicant(applicationForm)).andReturn(true);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 		EasyMock.replay(userServiceMock,currentUserMock);
 		ApplicationForm returnedForm = acceptTermsController.getApplicationForm(applicationNumber);
@@ -59,14 +59,14 @@ public class AcceptTermsControllerTest {
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfUserCannotSeeApplicationForm() {
+	public void shouldThrowResourceNotFoundExceptionIfUserIsNotApplicant() {
 		String applicationNumber = "abc";
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.reset(userServiceMock);
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(false);
+		EasyMock.expect(currentUserMock.isApplicant(applicationForm)).andReturn(false);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 		EasyMock.replay(userServiceMock,currentUserMock);
 		acceptTermsController.getApplicationForm(applicationNumber);
@@ -74,19 +74,8 @@ public class AcceptTermsControllerTest {
 	}
 	@Test
 	public void shouldGetAcceptedTermsView() {
-		assertEquals("/private/pgStudents/form/components/terms_and_conditions", acceptTermsController.getAcceptedTermsView());
+		assertEquals("/private/pgStudents/form/components/terms_and_conditions", acceptTermsController.getAcceptedTermsView(new ApplicationForm()));
 	}
-
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResournceNotFoundExceptionIfNotApplicant() {
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-				.role(new RoleBuilder().id(Authority.REFEREE).build()).build();
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-		EasyMock.replay(userServiceMock);
-		acceptTermsController.getAcceptedTermsView();
-	}
-
 
 	@Before
 	public void setUp() {

@@ -131,7 +131,7 @@ public class ConfirmSupervisionController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return CONFIRM_SUPERVISION_PAGE;
     }
 
@@ -146,7 +146,7 @@ public class ConfirmSupervisionController {
         }
 
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
 
         if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
             return "redirect:/applications?messageCode=supervision.confirmed&application=" + applicationForm.getApplicationNumber();

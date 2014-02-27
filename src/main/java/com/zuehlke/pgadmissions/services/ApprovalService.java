@@ -222,7 +222,7 @@ public class ApprovalService {
         
         commentDAO.save(approvalComment);
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
-        applicationFormUserRoleService.registerApplicationUpdate(form, initiator, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(form, initiator, ApplicationUpdateScope.ALL_USERS);
     }
 
     private void checkApplicationStatus(ApplicationForm form) {

@@ -38,13 +38,6 @@ public class ProgramTest {
     }
 
     @Test
-    public void shouldReturnFalseIfUserIsNotApprover() {
-        RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
-        Program program = new ProgramBuilder().id(1).approver(approver).build();
-        assertFalse(program.isApprover(approver));
-    }
-
-    @Test
     public void shouldReturnTrueIfUserIsAdminOfProgram() {
         RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
         Program program = new ProgramBuilder().id(1).administrators(admin).build();
@@ -55,13 +48,6 @@ public class ProgramTest {
     public void shouldReturnFalseIfUserIsNotAdminOfProgram() {
         RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
         Program program = new ProgramBuilder().id(1).build();
-        assertFalse(program.isAdministrator(admin));
-    }
-
-    @Test
-    public void shouldReturnFalseIfUserIsNotAdmin() {
-        RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
-        Program program = new ProgramBuilder().id(1).administrators(admin).build();
         assertFalse(program.isAdministrator(admin));
     }
 

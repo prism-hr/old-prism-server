@@ -102,7 +102,7 @@ public class ApplicationFormTest {
         InterviewVoteComment interviewerVoteComment = new InterviewVoteComment();
         interviewerVoteComment.setUser(interviewer);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().build())
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).advert(new ProgramBuilder().build())
                 .comments(genericComment, interviewComment, scheduleComment, applicantVoteComment, interviewerVoteComment).build();
 
         List<Comment> visibleComments = applicationForm.getVisibleComments(user);
@@ -181,7 +181,7 @@ public class ApplicationFormTest {
         InterviewVoteComment interviewVoteCommentByApplicant = new InterviewVoteCommentBuilder().date(format.parse("01 01 2011")).id(2).user(applicant).build();
 
         Program program = new ProgramBuilder().id(1).viewers(interviewerUser).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).interviews(interview).id(5)
+        ApplicationForm applicationForm = new ApplicationFormBuilder().advert(program).applicant(applicant).interviews(interview).id(5)
                 .comments(interviewVoteCommentByInterviewer, interviewVoteCommentByApplicant).build();
         List<Comment> visibleComments = applicationForm.getVisibleComments(applicant);
         assertEquals(1, visibleComments.size());
@@ -202,7 +202,7 @@ public class ApplicationFormTest {
         InterviewVoteComment interviewVoteCommentByApplicant = new InterviewVoteCommentBuilder().date(format.parse("01 01 2011")).id(2).user(applicant).build();
 
         Program program = new ProgramBuilder().id(1).viewers(interviewerUser).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).interviews(interview).id(5)
+        ApplicationForm applicationForm = new ApplicationFormBuilder().advert(program).applicant(applicant).interviews(interview).id(5)
                 .comments(interviewVoteCommentByInterviewer, interviewVoteCommentByApplicant).build();
         List<Comment> visibleCommentsForInterviewer = applicationForm.getVisibleComments(interviewerUser);
         assertEquals(2, visibleCommentsForInterviewer.size());
@@ -229,7 +229,7 @@ public class ApplicationFormTest {
                 new ReviewerBuilder().user(reviewerUserTwo).build()).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).id(5).comments(commentOne, commentTwo, commentThree)
-                .program(program).build();
+                .advert(program).build();
 
         Referee referee = new RefereeBuilder().application(applicationForm).build();
         reviewerUserTwo.getReferees().add(referee);
@@ -440,13 +440,13 @@ public class ApplicationFormTest {
 
     @Test
     public void shouldGetProgramAndProjectTitle() {
-        ApplicationForm application = new ApplicationFormBuilder().program(new ProgramBuilder().title("Ppp").build()).projectTitle("Rrr").build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(new ProgramBuilder().title("Ppp").build()).projectTitle("Rrr").build();
         assertEquals("Ppp (project: Rrr)", application.getProgramAndProjectTitle());
     }
 
     @Test
     public void shouldGetProgramAndProjectTitleWhenProjectTitleIsNull() {
-        ApplicationForm application = new ApplicationFormBuilder().program(new ProgramBuilder().title("Ppp").build()).build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(new ProgramBuilder().title("Ppp").build()).build();
         assertEquals("Ppp", application.getProgramAndProjectTitle());
     }
 

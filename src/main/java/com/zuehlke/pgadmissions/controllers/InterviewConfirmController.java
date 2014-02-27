@@ -106,7 +106,7 @@ public class InterviewConfirmController {
         interviewConfirmDTO.setFurtherInterviewerDetails(applicationForm.getLatestInterview().getFurtherInterviewerDetails());
         interviewConfirmDTO.setLocationUrl(applicationForm.getLatestInterview().getLocationURL());
         modelMap.put("interviewConfirmDTO", interviewConfirmDTO);
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_CONFIRM_PAGE;
     }
 

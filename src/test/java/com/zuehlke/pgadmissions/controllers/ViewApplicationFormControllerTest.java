@@ -46,7 +46,7 @@ public class ViewApplicationFormControllerTest {
         ApplicationPageModel model = new ApplicationPageModel();
 
         EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, uploadErrorCode, view, null, null)).andReturn(model);
-        applicationFormUserRoleServiceMock.deregisterApplicationUpdate(applicationForm, userMock);
+        applicationFormUserRoleServiceMock.deleteApplicationUpdate(applicationForm, userMock);
 
         EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock);
         ModelAndView modelAndView = controller.getViewApplicationPage(view, "1", uploadErrorCode, null, null);
@@ -66,7 +66,7 @@ public class ViewApplicationFormControllerTest {
         ApplicationPageModel model = new ApplicationPageModel();
 
         EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, uploadErrorCode, view, null, null)).andReturn(model);
-        applicationFormUserRoleServiceMock.deregisterApplicationUpdate(applicationForm, userMock);
+        applicationFormUserRoleServiceMock.deleteApplicationUpdate(applicationForm, userMock);
 
         EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock);
         ModelAndView modelAndView = controller.getViewApplicationPage(view, "1", uploadErrorCode, null, null);
@@ -86,7 +86,7 @@ public class ViewApplicationFormControllerTest {
 
         ApplicationPageModel model = new ApplicationPageModel();
         EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, uploadErrorCode, view, null, null)).andReturn(model);
-        applicationFormUserRoleServiceMock.deregisterApplicationUpdate(applicationForm, userMock);
+        applicationFormUserRoleServiceMock.deleteApplicationUpdate(applicationForm, userMock);
         
         EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock, applicationFormUserRoleServiceMock);
         ModelAndView modelAndView = controller.getViewApplicationPage(view, "1", uploadErrorCode, null, null);

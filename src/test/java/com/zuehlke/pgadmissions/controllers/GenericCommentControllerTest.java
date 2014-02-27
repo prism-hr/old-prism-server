@@ -43,7 +43,7 @@ public class GenericCommentControllerTest {
     @Test
     public void shouldGetApplicationFormFromId() {
         Program program = new ProgramBuilder().id(7).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).advert(program).build();
 
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);

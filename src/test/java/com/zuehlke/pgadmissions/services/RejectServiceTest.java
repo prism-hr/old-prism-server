@@ -83,7 +83,7 @@ public class RejectServiceTest {
 		admin = new RegisteredUserBuilder().id(324).username("admin").role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
 		approver = new RegisteredUserBuilder().id(22414).username("real approver").role(new RoleBuilder().id(Authority.APPROVER).build()).build();
 		Program program = new ProgramBuilder().id(10023).administrators(admin).approver(approver).build();
-		application = new ApplicationFormBuilder().id(200).program(program).status(ApplicationFormStatus.VALIDATION).build();
+		application = new ApplicationFormBuilder().id(200).advert(program).status(ApplicationFormStatus.VALIDATION).build();
 
 		reason1 = new RejectReasonBuilder().id(1).text("idk").build();
 		reason2 = new RejectReasonBuilder().id(2).text("idc").build();
@@ -99,7 +99,7 @@ public class RejectServiceTest {
 		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
 		expect(eventFactoryMock.createEvent(ApplicationFormStatus.REJECTED)).andReturn(event);
 		mailServiceMock.sendRejectionConfirmationToApplicant(application);
-		applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
+		applicationFormUserRoleService.deleteApplicationActions(application);
 		
 		replay();
 		rejectService.moveApplicationToReject(application, rejection);

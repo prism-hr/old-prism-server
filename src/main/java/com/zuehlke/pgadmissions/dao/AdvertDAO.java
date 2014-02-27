@@ -25,11 +25,9 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
@@ -50,24 +48,6 @@ public class AdvertDAO {
     @Autowired
     public AdvertDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-    }
-
-    public void save(Advert advert) {
-        sessionFactory.getCurrentSession().saveOrUpdate(advert);
-    }
-
-    public Program getProgram(Advert advert) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .add(Restrictions.eq("advert", advert)).uniqueResult();
-    }
-
-    public Project getProject(Advert advert) {
-        return (Project) sessionFactory.getCurrentSession().createCriteria(Project.class)
-                .add(Restrictions.eq("advert", advert)).uniqueResult();
-    }
-
-    public Advert getAdvertById(int advertId) {
-        return (Advert) sessionFactory.getCurrentSession().get(Advert.class, advertId);
     }
 
     public List<AdvertDTO> getAdvertFeed(OpportunityListType feedKey, String feedKeyValue, Integer selectedAdvertId) {
@@ -257,7 +237,7 @@ public class AdvertDAO {
         Type advertTypeEnum = new TypeLocatorImpl(new TypeResolver()).custom(EnumType.class, customDTOProperties);
         
         return (List<AdvertDTO>) sessionFactory.getCurrentSession()
-            .createSQLQuery("CALL SELECT_RECOMMENDED_ADVERT(?, ?);")
+            .createSQLQuery("CALL SP_SELECT_RECOMMENDED_ADVERTS(?, ?);")
                 .addScalar("id", IntegerType.INSTANCE)
                 .addScalar("title", StringType.INSTANCE)
                 .addScalar("description", StringType.INSTANCE)

@@ -39,10 +39,6 @@ public class Project extends Advert {
     @JoinColumn(name = "secondary_supervisor_id")
     private RegisteredUser secondarySupervisor;
 
-    public Program getProgram() {
-        return program;
-    }
-
     public void setProgram(Program program) {
         this.program = program;
     }
@@ -78,5 +74,15 @@ public class Project extends Advert {
     public void setSecondarySupervisor(RegisteredUser secondarySupervisor) {
         this.secondarySupervisor = secondarySupervisor;
     }
-
+    
+    @Override
+    public Program getProgram() {
+        return program;
+    }
+    
+    @Override
+    public Project getProject() {
+        return this;
+    }
+    
 }

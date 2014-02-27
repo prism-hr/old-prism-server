@@ -67,7 +67,7 @@ public class ProjectConfigurationControllerTest {
         EasyMock.expect(projectConverter.toDomainObject(projectDTO)).andReturn(project);
         userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
         EasyMock.expectLastCall().times(1);
-        programsService.saveProject(project);
+        programsService.save(project);
         EasyMock.expectLastCall().times(1);
         EasyMock.replay(projectConverter, userService, programsService, result);
         project.setSecondarySupervisor(null);
@@ -88,7 +88,7 @@ public class ProjectConfigurationControllerTest {
         EasyMock.expect(projectConverter.toDomainObject(projectDTO)).andReturn(project);
         userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
         EasyMock.expectLastCall().times(1);
-        programsService.saveProject(project);
+        programsService.save(project);
         EasyMock.expectLastCall().times(1);
         EasyMock.replay(projectConverter, userService, programsService, result);
         project.setSecondarySupervisor(null);

@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
@@ -45,6 +47,42 @@ public class ProgramDAO {
     public ProgramDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
+    
+    public Advert getById(Integer advertId) {
+        return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class)
+                .add(Restrictions.eq("id", advertId)).uniqueResult();
+    }
+    
+    public Advert getAcceptingApplicationsById(Integer advertId) {
+        return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class)
+                .add(Restrictions.eq("id", advertId))
+                .add(Restrictions.eq("active", true)).uniqueResult();
+    }
+    
+    public Program getProgramByCode(String code) {
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .add(Restrictions.eq("code", code)).uniqueResult();
+    }
+    
+    public Program getProgamAcceptingApplicationsByCode(String code) {
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .add(Restrictions.eq("code", code))
+                .add(Restrictions.eq("active", true)).uniqueResult();
+    }
+    
+    public String getProgramIdByCode(String code) {
+        return (String) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .setProjection(Projections.property("id"))
+                .add(Restrictions.eq("code", code)).uniqueResult().toString();
+    }
+
+    public void save(Advert advert) {
+        sessionFactory.getCurrentSession().saveOrUpdate(advert);
+    }
+    
+    public Advert merge(Advert advert) {
+        return (Advert) sessionFactory.getCurrentSession().merge(advert);
+    }
 
     public List<Program> getAllPrograms() {
         return sessionFactory.getCurrentSession().createCriteria(Program.class)
@@ -61,46 +99,23 @@ public class ProgramDAO {
     
     public List<Program> getProgramsForWhichUserCanManageProjects(RegisteredUser user) {
         if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-            getAllEnabledPrograms();
+            return getAllEnabledPrograms();
+        } else {
+    
+            Set<Program> programs = new TreeSet<Program>(new Comparator<Program>() {
+                @Override
+                public int compare(Program p1, Program p2) {
+                    return p1.getTitle().compareTo(p2.getTitle());
+                }
+            });
+    
+            programs.addAll(getEnabledProgramsForWhichUserHasProgramAuthority(user));
+            programs.addAll(getEnabledProgramsForWhichUserHasProjectAuthority(user));
+            programs.addAll(getEnabledProgramsForWhichUserHasApplicationAuthority(user));
+
+            return Lists.newArrayList(programs);
         }
-
-        Set<Program> programs = new TreeSet<Program>(new Comparator<Program>() {
-            @Override
-            public int compare(Program p1, Program p2) {
-                return p1.getTitle().compareTo(p2.getTitle());
-            }
-        });
-
-        programs.addAll(getEnabledProgramsForWhichUserHasProgramAuthority(user));
-        programs.addAll(getEnabledProgramsForWhichUserHasProjectAuthority(user));
-        programs.addAll(getEnabledProgramsForWhichUserHasApplicationAuthority(user));
-
-        return Lists.newArrayList(programs);
     }
-
-    public Program getProgramById(Integer programId) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .add(Restrictions.eq("id", programId)).uniqueResult();
-    }
-
-    public void save(Program program) {
-        sessionFactory.getCurrentSession().saveOrUpdate(program);
-    }
-
-    public Program getProgramByCode(String code) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .add(Restrictions.eq("code", code)).uniqueResult();
-    }
-    
-    public String getProgramIdByCode(String code) {
-        return (String) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .setProjection(Projections.property("id"))
-                .add(Restrictions.eq("code", code)).uniqueResult().toString();
-    }
-    
-	public Program merge(Program program) {
-		return (Program) sessionFactory.getCurrentSession().merge(program);
-	}
 	
     public Program getLastCustomProgram(QualificationInstitution institution) {
         String matcher = String.format("%s_%%", institution.getCode());
@@ -168,9 +183,9 @@ public class ProgramDAO {
     public List<Program> getEnabledProgramsForWhichUserHasProgramAuthority(RegisteredUser user) {
         HashSet<Program> programs = new HashSet<Program>();
         for (Authority authority : AuthorityGroup.INTERNAL_PROGRAM_AUTHORITIES.getAuthorities()) {
-            String property = authority.toString().toLowerCase() + "s";
             programs.addAll((List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                    .createAlias(property, "registeredUser", JoinType.INNER_JOIN)
+                    .createAlias(authority.toString().toLowerCase() + "s", "registeredUser", JoinType.INNER_JOIN)
+                    .add(Restrictions.eq("enabled", true))
                     .add(Restrictions.eq("registeredUser.id", user.getId())).list());
         }
         return new ArrayList<Program>(programs);
@@ -193,8 +208,31 @@ public class ProgramDAO {
                 .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
                 .createAlias("role", "applicationRole", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("user", user))
                 .add(Restrictions.in("applicationRole.id", AuthorityGroup.INTERNAL_APPLICATION_AUTHORITIES.getAuthorities()))
                 .add(Restrictions.eq("program.enabled", true)).list();
+    }
+    
+    public List<Project> getProjectsForProgram(Program program) {
+        return sessionFactory.getCurrentSession().createCriteria(Project.class).
+                add(Restrictions.eq("program", program)).
+                add(Restrictions.eq("enabled", true)).list();
+    }
+
+    public List<Project> getProjectsForProgramOfWhichAuthor(Program program, RegisteredUser author) {
+        return sessionFactory.getCurrentSession().createCriteria(Project.class).
+                add(Restrictions.eq("program", program)).
+                add(Restrictions.disjunction().
+                    add(Restrictions.eq("contactUser", author)).
+                    add(Restrictions.eq("administrator", author)).
+                    add(Restrictions.eq("primarySupervisor", author))).
+                add(Restrictions.eq("enabled", true)).list();
+    }
+    
+    public void deleteInactiveAdverts() {
+        Query query = sessionFactory.getCurrentSession()
+                .createSQLQuery("CALL SP_DELETE_INACTIVE_ADVERTS();");
+        query.executeUpdate();
     }
     
 }

@@ -12,9 +12,9 @@ public class AdvertBuilder {
     private String description;
     private Integer studyDuration;
     private String funding;
-    private Boolean active;
-    private Boolean enabled;
-    private Date lastEditedTimestamp;
+    private Boolean active = true;
+    private Boolean enabled = true;
+    private Date lastEditedTimestamp = new Date();
     private RegisteredUser contactUser;
 
     public AdvertBuilder id(Integer id) {
@@ -63,7 +63,7 @@ public class AdvertBuilder {
     }
 
     public Advert build() {
-        Advert advert = new Advert();
+        Advert advert = new ConcreteAdvert();
         advert.setId(id);
         advert.setTitle(title);
         advert.setDescription(description);

@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -51,21 +52,21 @@ public class ApplicationFormCreationService {
     @Autowired
     private ApplicationFormCopyHelper applicationFormCopyHelper;
 
-    public ApplicationForm createOrGetUnsubmittedApplicationForm(final RegisteredUser applicant, final Program program, Project project) {
+    public ApplicationForm createOrGetUnsubmittedApplicationForm(final RegisteredUser applicant, final Advert advert) {
         userService.addRoleToUser(applicant, Authority.APPLICANT);
         
         ApplicationFormCreationService thisBean = applicationContext.getBean(ApplicationFormCreationService.class);
 
-        ApplicationForm applicationForm = thisBean.findMostRecentApplication(applicant, program, project);
+        ApplicationForm applicationForm = thisBean.findMostRecentApplication(applicant, advert);
         if (applicationForm != null) {
             return applicationForm;
         }
 
-        applicationForm = thisBean.createNewApplicationForm(applicant, program, project);
+        applicationForm = thisBean.createNewApplicationForm(applicant, advert);
 
         thisBean.fillWithDataFromPreviousApplication(applicationForm);
 
-        thisBean.addSuggestedSupervisors(applicationForm, project);
+        thisBean.addSuggestedSupervisors(applicationForm, advert);
         
         applicationFormUserRoleService.applicationCreated(applicationForm);
 
@@ -80,21 +81,20 @@ public class ApplicationFormCreationService {
         }
     }
 
-    protected ApplicationForm createNewApplicationForm(RegisteredUser applicant, Program program, Project project) {
+    protected ApplicationForm createNewApplicationForm(RegisteredUser applicant, Advert advert) {
         ApplicationFormCreationService thisBean = applicationContext.getBean(ApplicationFormCreationService.class);
-
-        String applicationNumber = thisBean.generateNewApplicationNumber(program);
+        
+        String applicationNumber = thisBean.generateNewApplicationNumber(advert.getProgram());
 
         ApplicationForm applicationForm = new ApplicationForm();
         applicationForm.setApplicant(applicant);
-        applicationForm.setProgram(program);
-        applicationForm.setProject(project);
+        applicationForm.setAdvert(advert);
         applicationForm.setApplicationNumber(applicationNumber);
 
         applicationFormDAO.save(applicationForm);
 
         ProgrammeDetails programmeDetails = new ProgrammeDetails();
-        programmeDetails.setProgrammeName(applicationForm.getProgram().getTitle());
+        programmeDetails.setProgrammeName(applicationForm.getAdvert().getProgram().getTitle());
         applicationForm.setProgrammeDetails(programmeDetails);
         programmeDetails.setApplication(applicationForm);
 
@@ -110,31 +110,37 @@ public class ApplicationFormCreationService {
         return applicationNumber;
     }
 
-    protected void addSuggestedSupervisors(ApplicationForm applicationForm, Project project) {
-        if (project == null) {
-            return;
+    protected void addSuggestedSupervisors(ApplicationForm applicationForm, Advert advert) {
+        if (advert != null) {
+            Project project = advert.getProject();
+            
+            if (project != null) {
+                List<SuggestedSupervisor> suggestedSupervisors = Lists.newArrayListWithCapacity(2);
+                List<RegisteredUser> projectSupervisors = Lists.newArrayListWithCapacity(2);
+                projectSupervisors.add(project.getPrimarySupervisor());
+                
+                if (project.getSecondarySupervisor() != null) {
+                    projectSupervisors.add(project.getSecondarySupervisor());
+                }
+        
+                for (RegisteredUser projectSupervisor : projectSupervisors) {
+                    SuggestedSupervisor supervisor = new SuggestedSupervisor();
+                    supervisor.setEmail(projectSupervisor.getEmail());
+                    supervisor.setFirstname(projectSupervisor.getFirstName());
+                    supervisor.setLastname(projectSupervisor.getLastName());
+                    supervisor.setAware(true);
+                    suggestedSupervisors.add(supervisor);
+                }
+                
+                applicationForm.getProgrammeDetails().getSuggestedSupervisors().addAll(suggestedSupervisors);
+            }
         }
-
-        List<SuggestedSupervisor> suggestedSupervisors = Lists.newArrayListWithCapacity(2);
-        List<RegisteredUser> projectSupervisors = Lists.newArrayListWithCapacity(2);
-        projectSupervisors.add(project.getPrimarySupervisor());
-        if (project.getSecondarySupervisor() != null) {
-            projectSupervisors.add(project.getSecondarySupervisor());
-        }
-
-        for (RegisteredUser projectSupervisor : projectSupervisors) {
-            SuggestedSupervisor supervisor = new SuggestedSupervisor();
-            supervisor.setEmail(projectSupervisor.getEmail());
-            supervisor.setFirstname(projectSupervisor.getFirstName());
-            supervisor.setLastname(projectSupervisor.getLastName());
-            supervisor.setAware(true);
-            suggestedSupervisors.add(supervisor);
-        }
-
-        applicationForm.getProgrammeDetails().getSuggestedSupervisors().addAll(suggestedSupervisors);
     }
 
-    protected ApplicationForm findMostRecentApplication(final RegisteredUser applicant, final Program program, Project project) {
+    protected ApplicationForm findMostRecentApplication(final RegisteredUser applicant, final Advert advert) {
+        Program program = advert.getProgram();
+        Project project = advert.getProject();
+        
         List<ApplicationForm> applications = project == null ? applicationFormDAO.getApplicationsByApplicantAndProgram(applicant, program) : applicationFormDAO
                 .getApplicationsByApplicantAndProgramAndProject(applicant, program, project);
 

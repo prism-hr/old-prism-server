@@ -150,8 +150,8 @@ function renderAdvert(advert){
 				'<!-- AddThis Button END -->'+
 			'</div>'+
 			'<div class="applyBox">'+
-				'<a href="mailto:'+advert.primarySupervisorEmail+'?subject=Question About:'+advert.title+'" class="question">Ask a question</a>'+
-				'<button id="'+advert.programCode+'" class="btn btn-primary apply">'+buttonText+'</button>'+
+				'<a href="mailto:'+advert.primarySupervisorEmail+'?subject=Question About:'+advert.title+'" class="question">Enquire</a>'+
+				'<button id="'+advert.id+'" class="btn btn-primary apply">'+buttonText+'</button>'+
 			'</div>'+
 		'</div>'+
 	'</li>';

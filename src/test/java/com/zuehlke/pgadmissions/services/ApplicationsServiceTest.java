@@ -114,7 +114,7 @@ public class ApplicationsServiceTest {
     @Test
     public void shouldGetBatchDeadlineForApplication() {
         Program program = new ProgramBuilder().code("KLOP").id(1).build();
-        ApplicationForm form = new ApplicationFormBuilder().program(program).build();
+        ApplicationForm form = new ApplicationFormBuilder().advert(program).build();
         DateTime deadline = new DateTime(new Date());
         Date deadlineTruncated = new DateTime(deadline.getYear(), deadline.getMonthOfYear(), deadline.getDayOfMonth(), 0, 0, 0).toDate();
         EasyMock.expect(programDAOMock.getNextClosingDate(EasyMock.eq(program))).andReturn(deadlineTruncated);

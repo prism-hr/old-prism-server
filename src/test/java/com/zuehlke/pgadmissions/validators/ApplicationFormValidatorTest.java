@@ -216,7 +216,7 @@ public class ApplicationFormValidatorTest {
 				.applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).build();
 		program.setInstances(Arrays.asList(programInstance));
 		programmeDetails = new ProgrammeDetailsBuilder().studyOption("1", "Full-time").id(2).build();
-		applicationForm = new ApplicationFormBuilder().program(program).programmeDetails(programmeDetails)
+		applicationForm = new ApplicationFormBuilder().advert(program).programmeDetails(programmeDetails)
 				.acceptedTerms(true).personalDetails(new PersonalDetailsBuilder().id(1).build())
 				.additionalInformation(new AdditionalInformationBuilder().id(3).build())//
 				.currentAddress(new AddressBuilder().address1("address").build()).contactAddress(new AddressBuilder().address1("address").build())//

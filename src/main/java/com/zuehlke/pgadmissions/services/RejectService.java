@@ -56,7 +56,7 @@ public class RejectService {
 		
 		sendRejectNotificationToApplicant(form);
 		applicationDao.save(form);
-		applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(form);
+		applicationFormUserRoleService.deleteApplicationActions(form);
 	}
 	
 	private void sendRejectNotificationToApplicant(ApplicationForm form) {

@@ -27,7 +27,7 @@ public class ProjectConverter {
         if (projectAdvertDTO == null) {
             return null;
         }
-        Project project = projectAdvertDTO.getId() == null ? new Project() : programService.getProject(projectAdvertDTO.getId());
+        Project project = projectAdvertDTO.getId() == null ? new Project() : (Project) programService.getById(projectAdvertDTO.getId());
         if (project == null) {
             return null;
         }
@@ -36,19 +36,27 @@ public class ProjectConverter {
     }
 
     private void updateProjectFromDTO(Project project, ProjectDTO projectAdvertDTO) {
+        project.setTitle(projectAdvertDTO.getTitle());
+        project.setDescription(projectAdvertDTO.getDescription());
+        project.setStudyDuration(projectAdvertDTO.getStudyDuration());
+        project.setFunding(projectAdvertDTO.getFunding());
+        project.setActive(projectAdvertDTO.getActive());
+        
         if (projectAdvertDTO.getClosingDateSpecified()) {
             project.setClosingDate(projectAdvertDTO.getClosingDate());
         }
         project.setProgram(projectAdvertDTO.getProgram());
         
         RegisteredUser administrator = loadPerson(projectAdvertDTO.getAdministrator());
-        project.setContactUser(administrator);
+        project.setAdministrator(administrator);
 
         RegisteredUser primarySupervisor = loadPerson(projectAdvertDTO.getPrimarySupervisor());
         project.setPrimarySupervisor(primarySupervisor);
+        project.setContactUser(primarySupervisor);
 
         RegisteredUser secondarySupervisor = loadPerson(projectAdvertDTO.getSecondarySupervisor());
         project.setSecondarySupervisor(secondarySupervisor);
+        
     }
 
     private RegisteredUser loadPerson(Person person) {

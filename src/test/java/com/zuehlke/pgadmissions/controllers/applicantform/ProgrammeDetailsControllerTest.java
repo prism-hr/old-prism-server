@@ -83,7 +83,7 @@ public class ProgrammeDetailsControllerTest {
     public void shouldReturnAvaialbeStudyOptionLevels() {
         final String applicationNumber = "1";
         Program program = new ProgramBuilder().id(7).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).program(program).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).advert(program).build();
         controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
                 supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock,
                 sourcesOfInterestPropertyEditorMock, applicationFormUserRoleServiceMock) {

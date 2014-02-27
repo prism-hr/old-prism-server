@@ -26,7 +26,7 @@ public class WithdrawService {
         application.setStatus(ApplicationFormStatus.WITHDRAWN);
         application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
         applicationService.save(application);
-        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
+        applicationFormUserRoleService.deleteApplicationActions(application);
     }
 
     @Transactional

@@ -86,7 +86,7 @@ public class ResearchOpportunitiesFeedService {
     public ResearchOpportunitiesFeed saveNewFeed(final List<Integer> selectedProgramIds, final RegisteredUser user, final FeedFormat format, final String title) {
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeed();
         for (Integer programId : selectedProgramIds) {
-            feed.getPrograms().add(programService.getProgramById(programId));
+            feed.getPrograms().add((Program) programService.getById(programId));
         }
         feed.setFeedFormat(format);
         feed.setTitle(title);
@@ -174,7 +174,7 @@ public class ResearchOpportunitiesFeedService {
         feed.setFeedFormat(format);
         feed.getPrograms().clear();
         for (Integer programId : selectedProgramIds) {
-            feed.getPrograms().add(programService.getProgramById(programId));
+            feed.getPrograms().add((Program) programService.getById(programId));
         }
         feed.setTitle(title);
         return feed;

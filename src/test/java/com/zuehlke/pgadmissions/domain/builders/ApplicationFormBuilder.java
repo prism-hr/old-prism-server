@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -37,7 +38,7 @@ public class ApplicationFormBuilder {
     private Integer id;
     private RegisteredUser applicant;
     private String projectTitle;
-    private Program program;
+    private Advert advert;
     private Date appDate;
     private Date submittedDate;
     private Date batchDeadline;
@@ -66,7 +67,6 @@ public class ApplicationFormBuilder {
     private String uclBookingReferenceNumber;
     private String ipAddress;
     private Boolean isEditableByApplicant = true;
-    private Project project = null;
     private BigDecimal averageRating;
     private Boolean useCustomReferenceQuestions = false;
 
@@ -191,8 +191,8 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder program(Program program) {
-        this.program = program;
+    public ApplicationFormBuilder advert(Advert advert) {
+        this.advert = advert;
         return this;
     }
 
@@ -285,11 +285,6 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder project(Project project) {
-        this.project = project;
-        return this;
-    }
-
     public ApplicationFormBuilder averageRating(BigDecimal averageRating) {
         this.averageRating = averageRating;
         return this;
@@ -316,7 +311,7 @@ public class ApplicationFormBuilder {
         application.setCurrentAddress(currentAddress);
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
-        application.setProgram(program);
+        application.setAdvert(advert);
         application.setEvents(events);
         application.setProjectTitle(projectTitle);
         application.setStatus(status);
@@ -338,7 +333,6 @@ public class ApplicationFormBuilder {
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         application.getEmploymentPositions().addAll(employmentPositions);
         application.setIsEditableByApplicant(isEditableByApplicant);
-        application.setProject(project);
         application.setAverageRating(averageRating);
         application.setUseCustomReferenceQuestions(useCustomReferenceQuestions);
 

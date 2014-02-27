@@ -124,7 +124,7 @@ public class InterviewService {
         }
         
         applicationFormUserRoleService.movedToInterviewStage(interview);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
     }
 
     private void assignInterviewDueDate(final Interview interview, ApplicationForm applicationForm) {
@@ -139,7 +139,7 @@ public class InterviewService {
         interviewParticipantDAO.save(interviewParticipant);
         interviewVoteCommentDAO.save(interviewVoteComment);
         applicationFormUserRoleService.interviewParticipantResponded(interviewParticipant);
-        applicationFormUserRoleService.registerApplicationUpdate(interviewVoteComment.getApplication(), interviewParticipant.getUser(), ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.insertApplicationUpdate(interviewVoteComment.getApplication(), interviewParticipant.getUser(), ApplicationUpdateScope.INTERNAL);
         mailService.sendInterviewVoteConfirmationToAdministrators(interviewParticipant);
     }
 
@@ -171,7 +171,7 @@ public class InterviewService {
         assignInterviewDueDate(interview, application);
         sendConfirmationEmails(interview);    
         applicationFormUserRoleService.interviewConfirmed(interview);
-        applicationFormUserRoleService.registerApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
     }
 
     private void createParticipants(final Interview interview) {

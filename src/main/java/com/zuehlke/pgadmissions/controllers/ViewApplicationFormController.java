@@ -52,7 +52,7 @@ public class ViewApplicationFormController {
        RegisteredUser currentuser = userService.getCurrentUser();
        
        actionsProvider.validateAction(applicationForm, currentuser, ApplicationFormAction.VIEW); 
-       ApplicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, currentuser);
+       ApplicationFormUserRoleService.deleteApplicationUpdate(applicationForm, currentuser);
         
        if (applicationForm == null) {
            throw new MissingApplicationFormException(applicationId);

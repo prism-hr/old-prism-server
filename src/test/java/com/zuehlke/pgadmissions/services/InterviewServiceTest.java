@@ -110,7 +110,7 @@ public class InterviewServiceTest {
         applicationFormDAOMock.save(applicationForm);
         applicationFormUserRoleServiceMock.validationStageCompleted(applicationForm);
         applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
 
         EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
         interviewService.moveApplicationToInterview(user, interview, applicationForm);
@@ -147,7 +147,7 @@ public class InterviewServiceTest {
         interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
         applicationFormUserRoleServiceMock.validationStageCompleted(applicationForm);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
 
         EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, mailServiceMock, stageDurationServiceMock, commentServiceMock,
@@ -181,7 +181,7 @@ public class InterviewServiceTest {
         EasyMock.expect(commentFactoryMock.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!", "loc")).andReturn(
                 interviewScheduleComment);
         commentServiceMock.save(interviewScheduleComment);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
 
         EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock,
@@ -208,7 +208,7 @@ public class InterviewServiceTest {
         EasyMock.expect(commentFactoryMock.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!", "loc")).andReturn(
                 interviewScheduleComment);
         commentServiceMock.save(interviewScheduleComment);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         applicationFormUserRoleServiceMock.movedToInterviewStage(interview);
 
         EasyMock.replay(interviewDAOMock, applicationFormDAOMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock,
@@ -223,7 +223,7 @@ public class InterviewServiceTest {
     public void shouldCreateNewInterviewerInNewInterviewRoundIfLatestRoundIsNull() {
         RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).build())
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(new ProgramBuilder().id(1).build())
                 .applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION).build();
         interviewerDAOMock.save(interviewer);
         EasyMock.replay(interviewerDAOMock);
@@ -238,7 +238,7 @@ public class InterviewServiceTest {
         RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         Interview latestInterview = new InterviewBuilder().build();
-        ApplicationForm application = new ApplicationFormBuilder().latestInterview(latestInterview).id(1).program(new ProgramBuilder().id(1).build())
+        ApplicationForm application = new ApplicationFormBuilder().latestInterview(latestInterview).id(1).advert(new ProgramBuilder().id(1).build())
                 .applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION).build();
         interviewerDAOMock.save(interviewer);
 
@@ -259,7 +259,7 @@ public class InterviewServiceTest {
         interviewVoteCommentDAOMock.save(interviewVoteComment);
         mailServiceMock.sendInterviewVoteConfirmationToAdministrators(participant);
         applicationFormUserRoleServiceMock.interviewParticipantResponded(participant);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(interviewVoteComment.getApplication(), participant.getUser(), ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(interviewVoteComment.getApplication(), participant.getUser(), ApplicationUpdateScope.INTERNAL);
 
         EasyMock.replay(interviewParticipantDAOMock, interviewVoteCommentDAOMock, mailServiceMock, applicationFormUserRoleServiceMock);
         interviewService.postVote(participant, interviewVoteComment);
@@ -298,7 +298,7 @@ public class InterviewServiceTest {
         mailServiceMock.sendInterviewConfirmationToApplicant(applicationForm);
         mailServiceMock.sendInterviewConfirmationToInterviewers(interview.getInterviewers());
         applicationFormUserRoleServiceMock.interviewConfirmed(interview);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
 
         EasyMock.replay(interviewDAOMock, mailServiceMock, stageDurationServiceMock, commentFactoryMock, commentServiceMock, applicationFormUserRoleServiceMock);
         interviewService.confirmInterview(user, interview, interviewConfirmDTO);

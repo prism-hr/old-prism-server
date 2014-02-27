@@ -48,7 +48,7 @@ public class UserDAO {
     }
 
     @Autowired
-    public UserDAO(SessionFactory sessionFactory, ReminderIntervalDAO reminderIntervalDAO, NotificationsDurationDAO notificationsDurationDAO, ProgramDAO programDAO) {
+    public UserDAO(SessionFactory sessionFactory, ProgramDAO programDAO, ReminderIntervalDAO reminderIntervalDAO, NotificationsDurationDAO notificationsDurationDAO) {
         this.sessionFactory = sessionFactory;
         this.programDAO = programDAO;
         this.reminderIntervalDAO = reminderIntervalDAO;
@@ -62,7 +62,8 @@ public class UserDAO {
     }
 
     public RegisteredUser get(Integer id) {
-        return (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
+        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+                .add(Restrictions.eq("id", id)).uniqueResult();
     }
 
     public RegisteredUser getUserByUsername(String username) {

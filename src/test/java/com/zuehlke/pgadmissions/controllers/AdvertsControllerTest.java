@@ -34,9 +34,8 @@ public class AdvertsControllerTest {
         ModelMap modelMap = new ModelMap();
         controller.getStandaloneOpportunities(null, null, modelMap);
 
-        assertEquals(2, modelMap.size());
+        assertEquals(1, modelMap.size());
         assertTrue(modelMap.containsAttribute("shouldOpenNewTab"));
-        assertEquals(8, modelMap.get("feedId"));
 
     }
 

@@ -180,8 +180,8 @@ public class Qualification implements FormSectionObject, Serializable {
 	public void setProofOfAward(Document proofOfAward) {
 	    if (proofOfAward != null) {
 	        proofOfAward.setIsReferenced(true);
-	        this.proofOfAward = proofOfAward;
 	    }
+	    this.proofOfAward = proofOfAward;
 	}
 
 	public boolean isAcceptedTerms() {

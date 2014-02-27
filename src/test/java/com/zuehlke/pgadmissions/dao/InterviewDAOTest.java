@@ -16,14 +16,11 @@ import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.InterviewTimeslot;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewParticipantBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewTimeslotBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
@@ -35,7 +32,7 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveInterview() {
-        ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(2).advert(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
         save(application);
         flushAndClearSession();
 
@@ -47,12 +44,11 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
 
         Interview returnedInterview = (Interview) sessionFactory.getCurrentSession().get(Interview.class, interview.getId());
         assertEquals(returnedInterview.getId(), interview.getId());
-
     }
 
     @Test
     public void shouldGetInterviewerById() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
         save(application);
         flushAndClearSession();
 
@@ -65,7 +61,7 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveInterviewScheduleData() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
         RegisteredUser user1 = new RegisteredUserBuilder().username("1@mail.com").build();
         RegisteredUser user2 = new RegisteredUserBuilder().username("2@mail.com").build();
         save(application, user1, user2);
@@ -106,7 +102,7 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldRemoveInterviewScheduleData() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).build();
         RegisteredUser user1 = new RegisteredUserBuilder().username("1@mail.com").build();
         RegisteredUser user2 = new RegisteredUserBuilder().username("2@mail.com").build();
         save(application, user1, user2);
@@ -147,11 +143,8 @@ public class InterviewDAOTest extends AutomaticRollbackTestCase {
     public void prepare() {
         applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a40").domicileCode("AE").enabled(true).build();
-        program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-
-        save(applicant, institution, program, applicant);
-
+        save(applicant);
         dao = new InterviewDAO(sessionFactory);
+        program = testObjectProvider.getEnabledProgram();
     }
 }

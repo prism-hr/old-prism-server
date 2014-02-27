@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,7 +23,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "ADVERT")
 @Inheritance(strategy = InheritanceType.JOINED) 
-public class Advert implements Serializable {
+public abstract class Advert implements Serializable {
     private static final long serialVersionUID = 5963260213501162814L;
 
     @Id
@@ -57,7 +56,7 @@ public class Advert implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastEditedTimestamp;
     
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registered_user_id")
     private RegisteredUser contactUser;
     
@@ -157,5 +156,9 @@ public class Advert implements Serializable {
     public void setContactUser(RegisteredUser contactUser) {
         this.contactUser = contactUser;
     }
+    
+    public abstract Program getProgram();
+    
+    public abstract Project getProject();
     
 }

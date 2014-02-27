@@ -10,12 +10,12 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 public class ProjectBuilder {
  
     private Integer id;
-    private String title;
-    private String description;
-    private Integer studyDuration;
+    private String title = "Title.";
+    private String description = "Description.";
+    private Integer studyDuration = 12;
     private String funding;
-    private Boolean active;
-    private Boolean enabled;
+    private Boolean active = true;
+    private Boolean enabled = true;
     private Date lastEditedTimestamp;
     private RegisteredUser contactUser;
     private Program program;

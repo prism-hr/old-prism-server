@@ -71,7 +71,7 @@ public class DocumentServiceTest {
 	}
 	
 	@Test
-	public void shouldRemoveQualificationProtofOfAwardAndDelete(){
+	public void shouldRemoveQualificationProofOfAwardAndDelete(){
 		Document document = new DocumentBuilder().id(1).build();
 		Qualification qualification = new QualificationBuilder().id(1).proofOfAward(document).build();
 		documentDAOMock.deleteDocument(document);

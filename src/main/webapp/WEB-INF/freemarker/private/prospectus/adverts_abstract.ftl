@@ -17,13 +17,13 @@
   	
     <header>
 	    <#if feedId == "standalone-opportunity-list">
-	      <a href="/pgadmissions/createOpportunity" class="btn btn-success newOportunity">Advertise Opportunity</a>
+	      <a href="/pgadmissions/createOpportunity" <#if shouldOpenNewTab??>target="_blank"</#if> class="btn btn-success newOpportunity">Advertise</a>
 	    </#if>
       <h1>
         <#if feedTitle??>
           ${feedTitle}
         <#else>
-          Research Study Opportunities
+          Opportunities
         </#if>
       </h1>
     </header>

@@ -11,8 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
-import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
-import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
@@ -89,23 +88,11 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
                 return new AlertDefinition(AlertType.INFO, "Cannot update application", "The application can no longer be updated: " + ex.getApplicationNumber());
             }
         });
-        addHandler(CannotApplyToProgramException.class, new PgadmissionExceptionHandler<CannotApplyToProgramException>() {
+        addHandler(CannotApplyException.class, new PgadmissionExceptionHandler<CannotApplyException>() {
             @Override
-            public AlertDefinition handlePgadmissionsException(CannotApplyToProgramException ex, HttpServletRequest request) {
-                if (ex.getProgram() == null) {
-                    return new AlertDefinition(AlertType.INFO, "The programme that you attempted to apply for cannot be found" , null);
-                }
-                return new AlertDefinition(AlertType.INFO, ex.getProgram().getTitle() + " is no longer accepting applications" , null);
+            public AlertDefinition handlePgadmissionsException(CannotApplyException ex, HttpServletRequest request) {
+                return new AlertDefinition(AlertType.INFO, "Cannot apply", "The opportunity that you attempted to apply for is no longer accepting applications");
             }
-        });
-        addHandler(CannotApplyToProjectException.class, new PgadmissionExceptionHandler<CannotApplyToProjectException>() {
-        	@Override
-        	public AlertDefinition handlePgadmissionsException(CannotApplyToProjectException ex, HttpServletRequest request) {
-        	    if (ex.getProject() == null) {
-        	        return new AlertDefinition(AlertType.INFO, "The project that you attempted to apply for cannot be found" , null);
-        	    }
-        		return new AlertDefinition(AlertType.INFO, ex.getProject().getTitle() + " is no longer accepting applications" , null);
-        	}
         });
     }
     

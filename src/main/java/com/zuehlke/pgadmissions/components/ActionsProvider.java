@@ -20,7 +20,7 @@ public class ActionsProvider {
     @Transactional
     public ApplicationDescriptor getApplicationDescriptorForUser(final ApplicationForm application, final RegisteredUser user) {
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.getActionDefinitions().addAll(applicationFormUserRoleDAO.findActionsByUserAndApplicationForm(user, application));
+        applicationDescriptor.getActionDefinitions().addAll(applicationFormUserRoleDAO.selectUserActions(user.getId(), application.getId(), application.getStatus()));
         applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormUserRoleDAO.findRaisesUrgentFlagByUserAndApplicationForm(user, application));
         applicationDescriptor.setNeedsToSeeUpdateFlag(applicationFormUserRoleDAO.findRaisesUpdateFlagByUserAndApplicationForm(user, application));
         return applicationDescriptor;

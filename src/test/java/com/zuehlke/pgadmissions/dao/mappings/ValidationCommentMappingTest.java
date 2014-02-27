@@ -8,13 +8,9 @@ import static org.junit.Assert.assertSame;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -24,14 +20,11 @@ import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 public class ValidationCommentMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadValidationComment() {
-	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a52").domicileCode("AE").enabled(true).build();
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).program(program).build();
-		save(institution, program,  user, applicationForm);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).advert(testObjectProvider.getEnabledProgram()).build();
+		save(user, applicationForm);
 
 		flushAndClearSession();
 

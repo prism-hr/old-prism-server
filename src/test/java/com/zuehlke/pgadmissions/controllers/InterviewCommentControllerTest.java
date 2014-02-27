@@ -119,7 +119,7 @@ public class InterviewCommentControllerTest {
     public void shouldCreateNewInterviewCommentForApplicationForm() throws Exception {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.INTERVIEW).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.INTERVIEW, scoringDefinition)).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().advert(program).build();
         final RegisteredUser currentUser = createMock(RegisteredUser.class);
         final Interviewer interviewer = new InterviewerBuilder().id(5).build();
 
@@ -152,7 +152,7 @@ public class InterviewCommentControllerTest {
     public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.INTERVIEW).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.INTERVIEW, scoringDefinition)).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().advert(program).build();
         final RegisteredUser currentUser = createMock(RegisteredUser.class);
         final Interviewer interviewer = new InterviewerBuilder().id(5).build();
 
@@ -187,7 +187,7 @@ public class InterviewCommentControllerTest {
     public void shouldReturnToCommentsPageIfErrors() throws ScoringDefinitionParseException {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().advert(program).build();
         InterviewComment comment = new InterviewCommentBuilder().application(applicationForm).build();
         BindingResult errorsMock = new BeanPropertyBindingResult(comment, "comment");
         errorsMock.reject("error");
@@ -200,7 +200,7 @@ public class InterviewCommentControllerTest {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
         ApplicationForm application = new ApplicationFormBuilder().id(6).applicationNumber("abc").applicationAdministrator(new RegisteredUser())
-                .program(program).build();
+                .advert(program).build();
         Interview interview = new Interview();
         Interviewer interviewer = new InterviewerBuilder().interview(interview).build();
         InterviewComment comment = new InterviewCommentBuilder().id(1).application(application).interviewer(interviewer).build();
@@ -213,7 +213,7 @@ public class InterviewCommentControllerTest {
         applicantRatingServiceMock.computeAverageRating(interview);
         applicantRatingServiceMock.computeAverageRating(application);
         applicationFormUserRoleServiceMock.interviewFeedbackPosted(interviewer);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, userServiceMock.getCurrentUser(), ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(application, userServiceMock.getCurrentUser(), ApplicationUpdateScope.INTERNAL);
 
         replay(commentServiceMock, applicationsServiceMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
         assertEquals("redirect:/applications?messageCode=interview.feedback&application=abc", controller.addComment(comment, errorsMock, modelMap));

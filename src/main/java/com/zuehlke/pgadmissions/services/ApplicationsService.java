@@ -79,8 +79,7 @@ public class ApplicationsService {
         List<ApplicationDescriptor> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
         for (ApplicationDescriptor application : applications) {
             application.getActionDefinitions().addAll(
-                    applicationFormUserRoleDAO.findActionsByUserIdAndApplicationIdAndApplicationFormStatus(user.getId(), application.getApplicationFormId(),
-                            application.getApplicationFormStatus()));
+                    applicationFormUserRoleDAO.selectUserActions(user.getId(), application.getApplicationFormId(), application.getApplicationFormStatus()));
         }
         return applications;
     }

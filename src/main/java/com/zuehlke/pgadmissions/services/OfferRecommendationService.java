@@ -88,7 +88,7 @@ public class OfferRecommendationService {
             }
         }
         commentDAO.save(offerRecommendedComment);
-        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(form);
+        applicationFormUserRoleService.deleteApplicationActions(form);
         return true;
     }
 

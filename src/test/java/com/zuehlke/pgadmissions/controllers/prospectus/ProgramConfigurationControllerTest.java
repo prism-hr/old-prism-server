@@ -119,9 +119,7 @@ public class ProgramConfigurationControllerTest {
                 .advert(new AdvertBuilder().id(999).build()).locked(true).build();
 
         Map<String, Object> dataMap = Maps.newHashMap();
-        dataMap.put("programCode", "07");
         dataMap.put("advertId", 999);
-
         expect(programsService.getProgramByCode("07")).andReturn(program);
         expect(domicileService.getEnabledDomicileByCode("PL")).andReturn(domicile);
         expect(encryptionHelper.encrypt(88)).andReturn("encPL");
@@ -131,11 +129,11 @@ public class ProgramConfigurationControllerTest {
         expect(templateRenderer.renderLink(dataMap)).andReturn("button");
 
         replay();
-        String result = controller.getOpportunityData("07");
+        String result = controller.getOpportunityData("07", 999);
         verify();
 
         assertEquals(
-                "{\"atasRequired\":false,\"studyOptions\":[\"opt1\",\"opt2\"],\"advert\":{\"id\":999,\"active\":true},\"buttonToApply\":\"button\",\"linkToApply\":\"button\",\"institutionCountryCode\":\"encPL\",\"programLocked\":true,\"advertisingDeadline\":2084,\"isCustomProgram\":true}",
+                "{\"atasRequired\":false,\"studyOptions\":[\"opt1\",\"opt2\"],\"programId\":999,\"buttonToApply\":\"button\",\"linkToApply\":\"button\",\"institutionCountryCode\":\"encPL\",\"programLock\":true,\"advertisingDeadline\":2084,\"isCustomProgram\":true}",
                 result);
     }
 

@@ -27,10 +27,10 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationR
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV2;
 import com.zuehlke.pgadmissions.utils.StacktraceDump;
 
@@ -44,9 +44,9 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
     
     private ApplicationFormDAO applicationFormDAO;
     
-    private UserService userServiceMock;
-    
     private SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder;
+
+    private UserDAO userDAOMock;
     
     /**
      * This test collects all the completed application forms (except test applications) from the database 
@@ -122,13 +122,13 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
     }
 
     private boolean isTestProgram(ApplicationForm form) {
-        return form.getProgram().getTitle().equalsIgnoreCase("ABC") || form.getProgram().getTitle().equalsIgnoreCase("Test Programme");
+        return form.getAdvert().getTitle().equalsIgnoreCase("ABC") || form.getAdvert().getTitle().equalsIgnoreCase("Test Programme");
     }
     
     @Before
     public void initialise() {
-        userServiceMock = EasyMock.createMock(UserService.class);
-        applicationFormDAO = new ApplicationFormDAO(sessionFactory, userServiceMock);
+        userDAOMock = EasyMock.createMock(UserDAO.class);
+        applicationFormDAO = new ApplicationFormDAO(sessionFactory, userDAOMock);
         requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory());
     }
 }

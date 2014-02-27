@@ -28,7 +28,6 @@ public class UserServiceResetPasswordTest {
     private UserFactory userFactoryMock;
     private EncryptionUtils encryptionUtilsMock;
     private MailSendingService mailServiceMock;
-    private ProgramsService programsServiceMock;
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Before
@@ -42,7 +41,7 @@ public class UserServiceResetPasswordTest {
         mailServiceMock = createMock(MailSendingService.class);
         applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
 
-        serviceUT = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock, programsServiceMock, applicationFormUserRoleServiceMock);
+        serviceUT = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock, applicationFormUserRoleServiceMock);
     }
 
     private void replayAllMocks() {

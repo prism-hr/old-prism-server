@@ -20,12 +20,12 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 public class ProgramBuilder {
 
     private Integer id;
-    private String title;
-    private String description;
-    private Integer studyDuration;
+    private String title = "Title.";
+    private String description = "Description.";
+    private Integer studyDuration = 12;
     private String funding;
-    private Boolean active;
-    private Boolean enabled;
+    private Boolean active = true;
+    private Boolean enabled = true;
     private Date lastEditedTimestamp;
     private RegisteredUser contactUser;
     private String code;
@@ -38,7 +38,7 @@ public class ProgramBuilder {
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
     private QualificationInstitution institution;
     private ProgramFeed programFeed;
-    private ProgramType programType;
+    private ProgramType programType = ProgramTypeBuilder.aProgramType(institution).build();
     private boolean locked;
 
     public ProgramBuilder id(Integer id) {
@@ -145,7 +145,7 @@ public class ProgramBuilder {
         this.programFeed = programFeed;
         return this;
     }
-    
+
     public ProgramBuilder programType(ProgramType programType) {
         this.programType = programType;
         return this;

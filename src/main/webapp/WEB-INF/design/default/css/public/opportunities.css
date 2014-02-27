@@ -25,23 +25,23 @@ body {
   margin-top: 0px;
   margin-bottom: 0px;
 }
-.placeholder footer {
+.placeholder footer, #pholder footer {
   border-top: 1px solid #DDD;
   padding-top: 4px;
   margin-top: 4px;
   padding-bottom: 4px;
   height: 37px;
 }
-.placeholder footer .left{
+.placeholder footer .left, #pholder footer .left {
   float: left;
   display: block;
 
 }
-.placeholder footer .right{
+.placeholder footer .right, #pholder #pfooter .right {
   float: right;
   display: block;
 }
-.placeholder .placeholder-list {
+.placeholder .placeholder-list, #pholder #plist {
   margin: 4px 0 0 0;
   overflow-y: auto;
 }
@@ -206,11 +206,6 @@ li.project.selected {
   text-decoration: none;
 }
 
-/* Small variation of the feeder */
-.placeholder.small h1 {
-  line-height: 20px;
- padding-bottom: 4px;
-}
 .placeholder.small h3 {
   line-height: 18px;
   margin: 2px 0;
@@ -635,6 +630,10 @@ label em {
 }
 .ui-tooltip, .qtip {
     line-height: 14px !important;
+}
+.newOpportunity, .newOpportunityCancel {
+    float:right;
+    font-weight: bold;
 }
 /*!
  * bootstrap-select v1.4.2

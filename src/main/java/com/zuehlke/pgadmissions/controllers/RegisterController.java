@@ -16,17 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
-import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationFormCreationService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
@@ -52,31 +46,24 @@ public class RegisterController {
 
     private final ApplicationFormCreationService applicationFormCreationService;
 
-    private final ProgramsService programService;
+    private final ProgramsService programsService;
 
     private final ApplicationQueryStringParser applicationQueryStringParser;
 
-    private final AdvertService advertService;
-
-    private final ProgramInstanceDAO programInstanceDAO;
-
     public RegisterController() {
-        this(null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
     public RegisterController(RegisterFormValidator validator, UserService userService, RegistrationService registrationService,
-            ApplicationFormCreationService applicationFormCreationService, ProgramsService programService,
-            ApplicationQueryStringParser applicationQueryStringParser, EncryptionHelper encryptionHelper, AdvertService advertService,
-            ProgramInstanceDAO programInstanceDAO) {
+            ApplicationFormCreationService applicationFormCreationService, ProgramsService programsService,
+            ApplicationQueryStringParser applicationQueryStringParser, EncryptionHelper encryptionHelper) {
         this.registerFormValidator = validator;
         this.userService = userService;
         this.registrationService = registrationService;
         this.applicationFormCreationService = applicationFormCreationService;
-        this.programService = programService;
+        this.programsService = programsService;
         this.applicationQueryStringParser = applicationQueryStringParser;
-        this.advertService = advertService;
-        this.programInstanceDAO = programInstanceDAO;
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.GET)
@@ -149,25 +136,14 @@ public class RegisterController {
 
     private String createApplicationAndReturnApplicationViewValue(final RegisteredUser user, final String redirectView) {
         Map<String, String> params = applicationQueryStringParser.parse(user.getOriginalApplicationQueryString());
-        Program program = programService.getProgramByCode(params.get("program"));
-
-        Project project = null;
-        String projectId = params.get("project");
-        if (!StringUtils.isBlank(projectId) && StringUtils.isNumeric(projectId)) {
-            project = programService.getProject(Integer.valueOf(projectId));
-            if (project == null && program == null) {
-                throw new CannotApplyToProjectException(project);
-            }
-            program = project.getProgram();
-        }
-        
-        if (program == null || programInstanceDAO.getActiveProgramInstances(program).isEmpty() || !program.isEnabled()) {
-            throw new CannotApplyToProgramException(program);
-        }
-        
         String applyingAdvertId = params.get("advert");
+        Integer advertId = null;
+        if (applyingAdvertId != null) {
+            advertId = Integer.parseInt(applyingAdvertId);
+        }
+        Advert advert = programsService.getValidProgramProjectAdvert(params.get("program"), advertId);
         String applyingAdvert = !StringUtils.isBlank(applyingAdvertId) ? "&advert=" + applyingAdvertId : "";
-        ApplicationForm newApplicationForm = applicationFormCreationService.createOrGetUnsubmittedApplicationForm(user, program, project);
+        ApplicationForm newApplicationForm = applicationFormCreationService.createOrGetUnsubmittedApplicationForm(user, advert);
         return redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber() + applyingAdvert;
     }
 
@@ -201,7 +177,7 @@ public class RegisterController {
 
         if (advert != null) {
             Integer requestedAdvertId = Integer.valueOf(advert);
-            Advert requestedAdvert = advertService.getAdvertById(requestedAdvertId);
+            Advert requestedAdvert = programsService.getById(requestedAdvertId);
             modelMap.addAttribute("title", requestedAdvert.getTitle());
             modelMap.addAttribute("description", requestedAdvert.getDescriptionForFacebook());
             modelMap.addAttribute("advertId", requestedAdvertId);

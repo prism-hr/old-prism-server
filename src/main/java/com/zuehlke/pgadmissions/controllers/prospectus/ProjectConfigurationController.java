@@ -159,7 +159,7 @@ public class ProjectConfigurationController {
             Project project = projectConverter.toDomainObject(projectDTO);
             project.setContactUser(currentUser);
             addSupervisorsRoles(project);
-            programsService.saveProject(project);
+            programsService.save(project);
             map.put("success", "true");
         }
 
@@ -196,7 +196,7 @@ public class ProjectConfigurationController {
     @ResponseBody
     public String getProject(@PathVariable("projectId") int projectId) throws TemplateException, IOException {
         Map<String, Object> map = Maps.newHashMap();
-        Project project = programsService.getProject(projectId);
+        Project project = (Project) programsService.getById(projectId);
         if (project == null || !project.isEnabled()) {
             throw new ResourceNotFoundException();
         }
@@ -226,7 +226,7 @@ public class ProjectConfigurationController {
                 throw new ResourceNotFoundException();
             }
             addSupervisorsRoles(project);
-            programsService.saveProject(project);
+            programsService.save(project);
             map.put("success", "true");
         }
         return gson.toJson(map);
@@ -252,7 +252,7 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
     @ResponseBody
     public String removeProject(@PathVariable("projectId") int projectId) {
-        programsService.removeProject(projectId);
+        programsService.removeAdvert(projectId);
         return "ok";
     }
 

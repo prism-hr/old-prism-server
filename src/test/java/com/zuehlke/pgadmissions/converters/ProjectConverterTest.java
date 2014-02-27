@@ -73,7 +73,7 @@ public class ProjectConverterTest {
 	@Test
 	public void shouldReturn_NullProject_WhenProjectDoesNotExists(){
 		reset(programService, userService);
-		EasyMock.expect(programService.getProject(PROJECT_ID)).andReturn(null);
+		EasyMock.expect(programService.getById(PROJECT_ID)).andReturn(null);
 		EasyMock.replay(programService, userService);
 		assertThat(converter.toDomainObject(projectDTO), nullValue());
 	}
@@ -98,7 +98,7 @@ public class ProjectConverterTest {
 	
 	private void assertThatConvertedProjectHasSameFieldsAsDto(Project project, ProjectDTO dto) {
 		assertThat(project.getId(), equalTo(dto.getId()));
-		assertThat(project.getContactUser(), nullValue());
+		assertThat(project.getContactUser(), equalTo(primarySupervisorUser));
 		assertThat(project, notNullValue());
 		assertThat(project.isActive(), equalTo(dto.getActive()));
 		assertThat(project.getDescription(), equalTo(dto.getDescription()));
@@ -155,7 +155,7 @@ public class ProjectConverterTest {
 
 	private void setupProgramService() {
 		programService = EasyMock.createMock(ProgramsService.class);
-		expect(programService.getProject(PROJECT_ID)).andReturn(project);
+		expect(programService.getById(PROJECT_ID)).andReturn(project);
 		EasyMock.replay(programService);
 	}
 

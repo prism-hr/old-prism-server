@@ -150,7 +150,7 @@ public abstract class AbstractMailSendingService {
         if (applicant == null) {
             throw new IllegalArgumentException("applicant must be provided!");
         }
-        Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
+        Object[] args = new Object[] { form.getApplicationNumber(), form.getAdvert().getTitle(), applicant.getFirstName(), applicant.getLastName(),
                 previousStage.displayValue() };
 
         return resolveMessage(templateName, args);
@@ -159,9 +159,9 @@ public abstract class AbstractMailSendingService {
     protected String resolveMessage(EmailTemplateName templateName, ApplicationForm applicationForm) {
         RegisteredUser applicant = applicationForm.getApplicant();
         if (applicant == null) {
-            return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm.getProgram().getTitle());
+            return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm.getAdvert().getTitle());
         } else {
-            return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm.getProgram().getTitle(),
+            return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm.getAdvert().getTitle(),
                     applicant.getFirstName(), applicant.getLastName());
         }
     }

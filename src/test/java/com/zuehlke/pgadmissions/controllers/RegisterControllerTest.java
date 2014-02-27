@@ -19,7 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.validation.BindingResult;
 
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -31,10 +30,9 @@ import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationFormCreationService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
@@ -62,10 +60,6 @@ public class RegisterControllerTest {
 
     private MockHttpSession mockHttpSession;
 
-    private AdvertService advertServiceMock;
-    
-    private ProgramInstanceDAO programInstanceDAOMock;
-
     @Before
     public void setUp() {
         regusterFormValidatorMock = EasyMock.createMock(RegisterFormValidator.class);
@@ -75,10 +69,8 @@ public class RegisterControllerTest {
         programServiceMock = EasyMock.createMock(ProgramsService.class);
         qureyStringParserMock = EasyMock.createMock(ApplicationQueryStringParser.class);
         encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
-        advertServiceMock = EasyMock.createMock(AdvertService.class);
-        programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
         registerController = new RegisterController(regusterFormValidatorMock, userServiceMock, registrationServiceMock, applicationFormCreationServiceMock,
-                programServiceMock, qureyStringParserMock, encryptionHelper, advertServiceMock, programInstanceDAOMock);
+                programServiceMock, qureyStringParserMock, encryptionHelper);
         mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED, true);
     }
@@ -299,7 +291,7 @@ public class RegisterControllerTest {
     }
 
     @Test
-    public void shouldCreatNewApplicationAndRedirectToItIfQueryStringExistsOnUser() throws ParseException {
+    public void shouldCreateNewApplicationAndRedirectToItIfQueryStringExistsOnUser() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
         String queryString = "queryString";
         Program program = new ProgramBuilder().id(1).build();
@@ -310,9 +302,9 @@ public class RegisterControllerTest {
         Map<String, String> parsedParams = new HashMap<String, String>(3);
         parsedParams.put("program", "code");
         EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(parsedParams);
-        EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
+        EasyMock.expect(programServiceMock.getValidProgramProjectAdvert("code", null)).andReturn(program);
         userServiceMock.save(user);
-        EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(user, program, null)).andReturn(applicationForm);
+        EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(user, program)).andReturn(applicationForm);
         EasyMock.replay(userServiceMock, applicationFormCreationServiceMock, programServiceMock, qureyStringParserMock);
         String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
         EasyMock.verify(userServiceMock);
@@ -321,10 +313,9 @@ public class RegisterControllerTest {
     }
 
     @Test
-    public void shouldCreatNewApplicationAndRedirectToItIfQueryStringExistsOnUserWithProject() throws ParseException {
+    public void shouldCreateNewApplicationAndRedirectToItIfQueryStringExistsOnUserWithProject() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
         String queryString = "queryString";
-        Program program = new ProgramBuilder().id(1).build();
         Project project = new ProjectBuilder().id(1).advert(new AdvertBuilder().id(1).build()).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).applicationNumber("ABC").build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).originalApplicationQueryString(queryString).activationCode(activationCode).enabled(false)
@@ -334,10 +325,9 @@ public class RegisterControllerTest {
         parsedParams.put("program", "code");
         parsedParams.put("project", "1");
         EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(parsedParams);
-        EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
-        EasyMock.expect(programServiceMock.getProject(1)).andReturn(project);
+        EasyMock.expect(programServiceMock.getValidProgramProjectAdvert("code", null)).andReturn(project);
         userServiceMock.save(user);
-        EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(user, program, project)).andReturn(applicationForm);
+        EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(user, project)).andReturn(applicationForm);
         EasyMock.replay(userServiceMock, applicationFormCreationServiceMock, programServiceMock, qureyStringParserMock);
         String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
         EasyMock.verify(userServiceMock);
@@ -345,60 +335,18 @@ public class RegisterControllerTest {
         assertTrue(user.isEnabled());
     }
 
-    @Test(expected = CannotApplyToProjectException.class)
-    public void shouldThrowExceptionIfRegisteringForAnInactiveProjectAdvert() throws ParseException {
+    @Test(expected = CannotApplyException.class)
+    public void shouldThrowExceptionIfRegisteringForAnInvalidOpportunity() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
         String queryString = "queryString";
-        Program program = new ProgramBuilder().id(1).build();
-        Project project = new ProjectBuilder().id(1).advert(new AdvertBuilder().id(1).active(false).build()).build();
         RegisteredUser user = new RegisteredUserBuilder().id(1).originalApplicationQueryString(queryString).activationCode(activationCode).enabled(false)
                 .username("email@email.com").email("email@email.com").password("1234").build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         Map<String, String> parsedParams = new HashMap<String, String>(3);
         parsedParams.put("program", "code");
-        parsedParams.put("project", "1");
+        parsedParams.put("advert", "1");
         EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(parsedParams);
-        EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
-        EasyMock.expect(programServiceMock.getProject(1)).andReturn(project);
-        userServiceMock.save(user);
-        EasyMock.replay(userServiceMock, applicationFormCreationServiceMock, programServiceMock, qureyStringParserMock);
-        registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
-    }
-
-    @Test(expected = CannotApplyToProjectException.class)
-    public void shouldThrowExceptionIfRegisteringForADisabledProject() throws ParseException {
-        String activationCode = "ul5oaij68186jbcg";
-        String queryString = "queryString";
-        Program program = new ProgramBuilder().id(1).build();
-        Project project = new ProjectBuilder().id(1).enabled(false).advert(new AdvertBuilder().id(1).active(false).build()).build();
-        RegisteredUser user = new RegisteredUserBuilder().id(1).originalApplicationQueryString(queryString).activationCode(activationCode).enabled(false)
-                .username("email@email.com").email("email@email.com").password("1234").build();
-        EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
-        Map<String, String> parsedParams = new HashMap<String, String>(3);
-        parsedParams.put("program", "code");
-        parsedParams.put("project", "1");
-        EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(parsedParams);
-        EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
-        EasyMock.expect(programServiceMock.getProject(1)).andReturn(project);
-        userServiceMock.save(user);
-        EasyMock.replay(userServiceMock, applicationFormCreationServiceMock, programServiceMock, qureyStringParserMock);
-        registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
-    }
-
-    @Test(expected = CannotApplyToProjectException.class)
-    public void shouldThrowExceptionIfRegisteringForANonExistentProject() throws ParseException {
-        String activationCode = "ul5oaij68186jbcg";
-        String queryString = "queryString";
-        Program program = new ProgramBuilder().id(1).build();
-        RegisteredUser user = new RegisteredUserBuilder().id(1).originalApplicationQueryString(queryString).activationCode(activationCode).enabled(false)
-                .username("email@email.com").email("email@email.com").password("1234").build();
-        EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
-        Map<String, String> parsedParams = new HashMap<String, String>(3);
-        parsedParams.put("program", "code");
-        parsedParams.put("project", "1");
-        EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(parsedParams);
-        EasyMock.expect(programServiceMock.getProgramByCode("code")).andReturn(program);
-        EasyMock.expect(programServiceMock.getProject(1)).andReturn(null);
+        EasyMock.expect(programServiceMock.getValidProgramProjectAdvert("code", 1)).andThrow(new CannotApplyException());
         userServiceMock.save(user);
         EasyMock.replay(userServiceMock, applicationFormCreationServiceMock, programServiceMock, qureyStringParserMock);
         registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());

@@ -112,7 +112,7 @@ public class ReferenceControllerTest {
     public void shouldReturnNewReferenceComment() throws Exception {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).advert(program).build();
         final Referee referee = new RefereeBuilder().id(8).build();
 
         final Question question1 = new Question();
@@ -144,7 +144,7 @@ public class ReferenceControllerTest {
     public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).advert(program).build();
         final Referee referee = new RefereeBuilder().id(8).build();
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
@@ -180,7 +180,7 @@ public class ReferenceControllerTest {
     @Test
     public void shouldReturnToFormViewIfValidationErrors() throws ScoringDefinitionParseException {
         final Program program = new ProgramBuilder().build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("app1").program(program).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("app1").advert(program).build();
         final ReferenceComment comment = new ReferenceCommentBuilder().application(applicationForm).build();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
@@ -194,7 +194,7 @@ public class ReferenceControllerTest {
     public void shouldSaveReferenceAndRedirectToSaveViewIfNoErrors() throws ScoringDefinitionParseException {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").program(program).build();
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").advert(program).build();
         final Referee referee = new RefereeBuilder().id(1).build();
         final ReferenceComment reference = new ReferenceCommentBuilder().application(application).referee(referee).id(4).build();
         ModelMap modelMap = new ModelMap();
@@ -208,7 +208,7 @@ public class ReferenceControllerTest {
 
         BindingResult errors = new DirectFieldBindingResult(reference, "comment");
         actionsProviderMock.validateAction(application, currentUser, ApplicationFormAction.PROVIDE_REFERENCE);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, currentUser, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(application, currentUser, ApplicationUpdateScope.ALL_USERS);
 
         replay(commentServiceMock, refereeServiceMock, actionsProviderMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
         assertEquals("redirect:/applications?messageCode=reference.uploaded&application=12", controller.handleReferenceSubmission(reference, errors, modelMap));

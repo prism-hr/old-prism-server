@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ApplicationFormCreationServiceTest {
@@ -50,6 +51,10 @@ public class ApplicationFormCreationServiceTest {
     @Mock
     @InjectIntoByType
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    
+    @Mock
+    @InjectIntoByType
+    private UserService userService;
 
     @Mock
     @InjectIntoByType
@@ -61,17 +66,18 @@ public class ApplicationFormCreationServiceTest {
     @Test
     public void shouldReturnRecentApplicationForm() throws ParseException {
         RegisteredUser applicant = new RegisteredUser();
-        Program program = new Program();
         Project project = new Project();
         ApplicationForm existingApplicationForm = new ApplicationForm();
 
         ApplicationFormCreationService thisBeanMock = EasyMockUnitils.createMock(ApplicationFormCreationService.class);
 
+        userService.addRoleToUser(applicant, Authority.APPLICANT);
         expect(applicationContextMock.getBean(ApplicationFormCreationService.class)).andReturn(thisBeanMock);
-        expect(thisBeanMock.findMostRecentApplication(applicant, program, project)).andReturn(existingApplicationForm);
+        
+        expect(thisBeanMock.findMostRecentApplication(applicant, project)).andReturn(existingApplicationForm);
 
         replay();
-        ApplicationForm returnedForm = service.createOrGetUnsubmittedApplicationForm(applicant, program, project);
+        ApplicationForm returnedForm = service.createOrGetUnsubmittedApplicationForm(applicant, project);
         verify();
 
         assertSame(existingApplicationForm, returnedForm);
@@ -80,21 +86,21 @@ public class ApplicationFormCreationServiceTest {
     @Test
     public void shouldCreateAndSaveNewApplicationForm() throws ParseException {
         RegisteredUser applicant = new RegisteredUser();
-        Program program = new Program();
         Project project = new Project();
         ApplicationForm newApplicationForm = new ApplicationForm();
 
         ApplicationFormCreationService thisBeanMock = EasyMockUnitils.createMock(ApplicationFormCreationService.class);
 
+        userService.addRoleToUser(applicant, Authority.APPLICANT);
         expect(applicationContextMock.getBean(ApplicationFormCreationService.class)).andReturn(thisBeanMock);
-        expect(thisBeanMock.findMostRecentApplication(applicant, program, project)).andReturn(null);
-        expect(thisBeanMock.createNewApplicationForm(applicant, program, project)).andReturn(newApplicationForm);
+        expect(thisBeanMock.findMostRecentApplication(applicant, project)).andReturn(null);
+        expect(thisBeanMock.createNewApplicationForm(applicant, project)).andReturn(newApplicationForm);
         thisBeanMock.fillWithDataFromPreviousApplication(newApplicationForm);
         thisBeanMock.addSuggestedSupervisors(newApplicationForm, project);
         applicationFormUserRoleServiceMock.applicationCreated(newApplicationForm);
 
         replay();
-        ApplicationForm returnedForm = service.createOrGetUnsubmittedApplicationForm(applicant, program, project);
+        ApplicationForm returnedForm = service.createOrGetUnsubmittedApplicationForm(applicant, project);
         verify();
 
         assertSame(newApplicationForm, returnedForm);
@@ -118,7 +124,7 @@ public class ApplicationFormCreationServiceTest {
 
         // WHEN
         replay();
-        ApplicationForm returnedForm = service.findMostRecentApplication(registeredUser, program, null);
+        ApplicationForm returnedForm = service.findMostRecentApplication(registeredUser, program);
         // THEN
         verify();
 
@@ -144,7 +150,7 @@ public class ApplicationFormCreationServiceTest {
 
         // WHEN
         replay();
-        ApplicationForm returnedForm = service.findMostRecentApplication(registeredUser, program, null);
+        ApplicationForm returnedForm = service.findMostRecentApplication(registeredUser, program);
 
         // THEN
         verify();
@@ -171,7 +177,7 @@ public class ApplicationFormCreationServiceTest {
 
         // WHEN
         replay();
-        ApplicationForm returnedForm = service.findMostRecentApplication(registeredUser, program, null);
+        ApplicationForm returnedForm = service.findMostRecentApplication(registeredUser, program);
         verify();
 
         // THEN
@@ -191,11 +197,6 @@ public class ApplicationFormCreationServiceTest {
         verify();
 
         assertEquals("KLOP-" + thisYear + "-000024", result);
-    }
-
-    @Test
-    public void shouldNotAddSuggestedSupervisorsIfNoProject() {
-        service.addSuggestedSupervisors(null, null);
     }
 
     @Test
@@ -226,6 +227,7 @@ public class ApplicationFormCreationServiceTest {
         RegisteredUser applicant = new RegisteredUser();
         Program program = new ProgramBuilder().title("A program").build();
         Project project = new Project();
+        project.setProgram(program);
 
         ApplicationFormCreationService thisBeanMock = EasyMockUnitils.createMock(ApplicationFormCreationService.class);
 
@@ -235,11 +237,11 @@ public class ApplicationFormCreationServiceTest {
         programmeDetailsServiceMock.save(isA(ProgrammeDetails.class));
 
         replay();
-        ApplicationForm applicationForm = service.createNewApplicationForm(applicant, program, project);
+        ApplicationForm applicationForm = service.createNewApplicationForm(applicant, project);
         verify();
 
         assertSame(applicant, applicationForm.getApplicant());
-        assertSame(program, applicationForm.getProgram());
+        assertSame(program, applicationForm.getAdvert().getProgram());
         assertSame(project, applicationForm.getProject());
         assertEquals("007", applicationForm.getApplicationNumber());
 

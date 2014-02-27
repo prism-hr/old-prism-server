@@ -24,23 +24,17 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.builders.ActionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormUserRoleBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
 
 public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
-    private ActionDAO actionDAO;
     private RoleDAO roleDAO;
     private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
     private Action comment;
@@ -146,7 +140,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
         save(role1, role2, role3);
 
-        List<ActionDefinition> actions = applicationFormUserRoleDAO.findActionsByUserAndApplicationForm(user, application);
+        List<ActionDefinition> actions = applicationFormUserRoleDAO.selectUserActions(user.getId(), application.getId(), application.getStatus());
         System.out.println(actions);
 
         assertThat(actions, containsInAnyOrder( //
@@ -173,7 +167,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
         save(role1, role2, role3);
 
-        List<ActionDefinition> actions = applicationFormUserRoleDAO.findActionsByUserAndApplicationForm(user, application);
+        List<ActionDefinition> actions = applicationFormUserRoleDAO.selectUserActions(user.getId(), application.getId(), application.getStatus());
         System.out.println(actions);
 
         assertThat(actions, containsInAnyOrder( //
@@ -254,25 +248,23 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a44").domicileCode("AE").enabled(true).build();
-        
-        program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-        
-        comment = new ActionBuilder().id(ApplicationFormAction.COMMENT).notification(null).build();
-        reference = new ActionBuilder().id(ApplicationFormAction.PROVIDE_REFERENCE).notification(NotificationMethod.INDIVIDUAL).build();
-        eligibility = new ActionBuilder().id(ApplicationFormAction.CONFIRM_ELIGIBILITY).notification(NotificationMethod.INDIVIDUAL).build();
-
         Date lastUpdatedDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 06 2011 14:05:23");
+        
+        program = testObjectProvider.getEnabledProgram();
+        
         application = new ApplicationForm();
         application.setApplicant(user);
         application.setLastUpdated(lastUpdatedDate);
-        application.setProgram(program);
+        application.setAdvert(program);
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setApplicationNumber("ABC");
 
-        save(user, institution, program, application);
-
+        save(user, application);
         flushAndClearSession();
+        
+        comment = testObjectProvider.getAction(ApplicationFormAction.COMMENT);
+        reference = testObjectProvider.getAction(ApplicationFormAction.PROVIDE_REFERENCE);
+        eligibility = testObjectProvider.getAction(ApplicationFormAction.CONFIRM_ELIGIBILITY);
     }
 
 }

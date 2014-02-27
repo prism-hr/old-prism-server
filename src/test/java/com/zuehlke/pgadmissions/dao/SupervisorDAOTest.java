@@ -10,13 +10,10 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -32,10 +29,9 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
         dao = new SupervisorDAO(sessionFactory);
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a6").domicileCode("AE").enabled(true).build();
-        program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-        save(user, institution, program);
+        save(user);
         flushAndClearSession();
+        program = testObjectProvider.getEnabledProgram();
     }
 
     @Test(expected = NullPointerException.class)
@@ -58,7 +54,7 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnApprovalRoundForGivenSupervisor() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
         Supervisor supervisor = new SupervisorBuilder().user(user).isPrimary(false).build();
         ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).projectTitle("title").application(application).build();
         application.setLatestApprovalRound(approvalRound);

@@ -41,12 +41,12 @@ public class Program extends Advert {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feed_id")
     private ProgramFeed programFeed;
-
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichApprover")
-    private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
-
+    
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichAdministrator")
     private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
+    
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichApprover")
+    private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "programsOfWhichViewer")
     private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
@@ -66,9 +66,6 @@ public class Program extends Advert {
     
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     private List<Project> projects = new ArrayList<Project>();
-    
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
-    private List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_type_id")
@@ -179,10 +176,6 @@ public class Program extends Advert {
     public void setProjects(List<Project> projects) {
         this.projects = projects;
     }
-
-    public List<ApplicationForm> getApplications() {
-        return applications;
-    }
     
     public ProgramType getProgramType() {
         return programType;
@@ -198,6 +191,16 @@ public class Program extends Advert {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+    
+    @Override
+    public Program getProgram() {
+        return this;
+    }
+    
+    @Override
+    public Project getProject() {
+        return null;
     }
 
 }

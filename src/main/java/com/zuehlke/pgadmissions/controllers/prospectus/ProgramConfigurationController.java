@@ -138,13 +138,13 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
-    public String getOpportunityData(@RequestParam String programCode) {
+    public String getOpportunityData(@RequestParam(required=false) String programCode, @RequestParam(required=false) Integer advertId) {
         Program program = programsService.getProgramByCode(programCode);
 
         Map<String, Object> result = Maps.newHashMap();
 
         HashMap<String, Object> dataMap = new HashMap<String, Object>();
-        dataMap.put("programCode", programCode);
+        dataMap.put("advertId", advertId);
         
         Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
         
@@ -157,6 +157,7 @@ public class ProgramConfigurationController {
         result.put("atasRequired", program.getAtasRequired());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
         result.put("institutionCode", program.getInstitution().getCode());
+        result.put("programLock", program.getLocked());
         result.put("advertisingDeadline", programInstanceService.getAdvertisingDeadlineYear(program));
         result.put("studyOptions", programInstanceService.getStudyOptions(program));
         result.put("buttonToApply", templateRenderer.renderButton(dataMap));
@@ -242,9 +243,9 @@ public class ProgramConfigurationController {
 
         if (map.isEmpty()) {
             map.put("programCode", programCode);
-
             map.put("closingDates", program.getClosingDates());
         }
+        
         return gson.toJson(map);
     }
     

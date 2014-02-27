@@ -62,7 +62,8 @@ public class ResearchOpportunitiesFeedServiceTest {
                 .user(user).build();
         Map<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("host", HOST);
-        dataMap.put("feed", 1);
+        dataMap.put("feedKey", "OPPORTUNITIESBYFEEDID");
+        dataMap.put("feedKeyValue", 1);
 
         Configuration configurationMock = EasyMock.createMock(Configuration.class);
         Template templateMock = EasyMock.createMock(Template.class);
@@ -84,7 +85,8 @@ public class ResearchOpportunitiesFeedServiceTest {
                 .user(user).build();
         Map<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("host", HOST);
-        dataMap.put("user", "fooBarZ@fooBarZ.com");
+        dataMap.put("feedKey", "OPPORTUNITIESBYUSERUSERNAME");
+        dataMap.put("feedKeyValue", "fooBarZ@fooBarZ.com");
 
         Configuration configurationMock = EasyMock.createMock(Configuration.class);
         Template templateMock = EasyMock.createMock(Template.class);
@@ -104,7 +106,7 @@ public class ResearchOpportunitiesFeedServiceTest {
         RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
 
-        EasyMock.expect(programServiceMock.getProgramById(1)).andReturn(program);
+        EasyMock.expect(programServiceMock.getById(1)).andReturn(program);
         daoMock.save(EasyMock.anyObject(ResearchOpportunitiesFeed.class));
 
         EasyMock.replay(programServiceMock, daoMock);
@@ -173,7 +175,7 @@ public class ResearchOpportunitiesFeedServiceTest {
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed")
                 .user(user).build();
 
-        EasyMock.expect(programServiceMock.getProgramById(1)).andReturn(program);
+        EasyMock.expect(programServiceMock.getById(1)).andReturn(program);
         EasyMock.expect(daoMock.getById(1)).andReturn(feed);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 

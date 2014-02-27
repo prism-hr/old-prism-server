@@ -39,7 +39,7 @@ public class AcceptTermsController {
 	@ModelAttribute
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null || !userService.getCurrentUser().canSee(applicationForm)) {
+		if (applicationForm == null || !userService.getCurrentUser().isApplicant(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;
@@ -47,7 +47,7 @@ public class AcceptTermsController {
 	}
 
 	@RequestMapping(value = "/getTermsAndConditions", method = RequestMethod.GET)
-	public String getAcceptedTermsView() {
+	public String getAcceptedTermsView(@ModelAttribute ApplicationForm applicationForm) {
 		return TERMS_AND_CONDITIONS_VIEW_NAME;
 	}
 

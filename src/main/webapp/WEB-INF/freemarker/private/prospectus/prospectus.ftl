@@ -73,15 +73,16 @@
                         
                           <li><a href="#programmeConfiguration">Manage Programmes</a></li>
                           
-                          <#if user.isCanManageProjects()>
+                          <#assign canManageProjects = permissionsService.canManageProjects()>
+                          <#if canManageProjects>
                             <li><a href="#projectConfiguration">Manage Projects</a></li>
                           </#if>
                           
-                          <#if user.isCanManageProjects()>
+                          <#if canManageProjects>
                             <li><a href="#researchOpportunitiesFeedSection">Research Opportunities Feed</a></li>
                           </#if>
                           
-                          <#if user.isCanManageProjects()>
+                          <#if canManageProjects>
                             <li><a href="#irisSection">Link to UCL IRIS</a></li>
                           </#if>
                           
@@ -91,19 +92,19 @@
                           <#include "/private/prospectus/program_configuration.ftl"/>
                         </div>
                         
-                        <#if user.isCanManageProjects()>
+                        <#if canManageProjects>
                           <div id="projectConfiguration" class="tab-page">
                             <#include "/private/prospectus/project_configuration.ftl"/>
                           </div>
                         </#if>
                         
-                        <#if user.isCanManageProjects()>
+                        <#if canManageProjects>
                           <div id="researchOpportunitiesFeedSection" class="tab-page">
                             <#include "/private/prospectus/research_opportunities_feed_configuration.ftl"/>
                           </div>
                         </#if>
                         
-                        <#if user.isCanManageProjects()>
+                        <#if canManageProjects>
                           <div id="irisSection" class="tab-page">
                             <#include "/private/prospectus/iris_configuration.ftl"/>
                           </div>

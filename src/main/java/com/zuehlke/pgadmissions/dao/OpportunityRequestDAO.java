@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 
 @SuppressWarnings("unchecked")
@@ -74,6 +75,13 @@ public class OpportunityRequestDAO {
         return sessionFactory.getCurrentSession() //
                 .createCriteria(OpportunityRequest.class) //
                 .add(Restrictions.eq("status", status)) //
+                .list();
+    }
+
+    public List<OpportunityRequest> getOpportunityRequestsForAuthor(RegisteredUser author) {
+        return sessionFactory.getCurrentSession() //
+                .createCriteria(OpportunityRequest.class)
+                .add(Restrictions.eq("author", author))
                 .list();
     }
 

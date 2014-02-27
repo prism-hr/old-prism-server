@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service("userService")
@@ -34,31 +32,29 @@ public class UserService {
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    private final UserDAO userDAO;
-    private final RoleDAO roleDAO;
-    private final ApplicationsFilteringDAO filteringDAO;
-    private final UserFactory userFactory;
-    private final EncryptionUtils encryptionUtils;
-    private final MailSendingService mailService;
-    private final ProgramsService programsService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    public UserService() {
-        this(null, null, null, null, null, null, null, null);
-    }
+    @Autowired
+    private UserDAO userDAO;
 
     @Autowired
-    public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, UserFactory userFactory, EncryptionUtils encryptionUtils,
-            MailSendingService mailService, ProgramsService programsService, ApplicationFormUserRoleService applicationFormUserRoleService) {
-        this.userDAO = userDAO;
-        this.roleDAO = roleDAO;
-        this.filteringDAO = filteringDAO;
-        this.userFactory = userFactory;
-        this.encryptionUtils = encryptionUtils;
-        this.mailService = mailService;
-        this.programsService = programsService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-    }
+    private RoleDAO roleDAO;
+
+    @Autowired
+    private ApplicationsFilteringDAO filteringDAO;
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private UserFactory userFactory;
+
+    @Autowired
+    private EncryptionUtils encryptionUtils;
+
+    @Autowired
+    private MailSendingService mailService;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public RegisteredUser getUser(Integer id) {
         return userDAO.get(id);
@@ -101,17 +97,13 @@ public class UserService {
     }
 
     public RegisteredUser getCurrentUser() {
-        RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        RegisteredUser user = userDAO.get(currentUser.getId());
-        boolean canManageProjects = !programsService.getProgramsForWhichCanManageProjects(user).isEmpty();
-        user.setCanManageProjects(canManageProjects);
-        return user;
+        return authenticationService.getCurrentUser();
     }
 
     public void addRoleToUser(RegisteredUser user, Authority authority) {
         user.getRoles().add(roleDAO.getRoleByAuthority(authority));
         if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
-        	applicationFormUserRoleService.createUserInRole(user, authority);
+            applicationFormUserRoleService.createUserInRole(user, authority);
         }
     }
 
@@ -180,7 +172,7 @@ public class UserService {
         if (!selectedUser.isInRole(authority) && newAuthoritiesContains(newAuthorities, authority)) {
             selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
             if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
-            	applicationFormUserRoleService.createUserInRole(selectedUser, authority);
+                applicationFormUserRoleService.createUserInRole(selectedUser, authority);
             }
         }
     }
@@ -196,29 +188,28 @@ public class UserService {
     private boolean newAuthoritiesContains(Authority[] newAuthorities, Authority authority) {
         return Arrays.asList(newAuthorities).contains(authority);
     }
-    
-    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, 
-    		final Authority... authorities) {
+
+    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, final Authority... authorities) {
         RegisteredUser newUser = userDAO.getUserByEmail(email);
-        
+
         if (newUser != null) {
             throw new IllegalStateException(String.format("user with email: %s already exists!", email));
         }
-        
+
         newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authorities);
-        
+
         for (Authority authority : authorities) {
             if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER, Authority.STATEADMINISTRATOR).contains(authority)) {
-            	applicationFormUserRoleService.createUserInRole(newUser, authority);
+                applicationFormUserRoleService.createUserInRole(newUser, authority);
             }
         }
-        
+
         userDAO.save(newUser);
         return newUser;
     }
 
-    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, 
-    		final DirectURLsEnum directURL, final ApplicationForm application, final Authority... authorities) {
+    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, final DirectURLsEnum directURL,
+            final ApplicationForm application, final Authority... authorities) {
         RegisteredUser newUser = createNewUserInRole(firstName, lastName, email, authorities);
         setDirectURLAndSaveUser(directURL, application, newUser);
         return newUser;
@@ -243,7 +234,7 @@ public class UserService {
 
         newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authList);
         userDAO.save(newUser);
-        
+
         if (authList.contains(Authority.SUPERADMINISTRATOR)) {
             addPendingRoleNotificationToUser(newUser, Authority.SUPERADMINISTRATOR, null);
             applicationFormUserRoleService.createUserInRole(newUser, Authority.SUPERADMINISTRATOR);
@@ -266,7 +257,7 @@ public class UserService {
             addPendingRoleNotificationToUser(newUser, Authority.VIEWER, program);
             applicationFormUserRoleService.createUserInProgramRole(newUser, program, Authority.VIEWER);
         }
-        
+
         return newUser;
     }
 
@@ -399,11 +390,11 @@ public class UserService {
     public List<RegisteredUser> getUsersWithUpi(final String upi) {
         return userDAO.getUsersWithUpi(upi);
     }
-    
+
     public void setApplicationFormListLastAccessTimestamp(RegisteredUser registeredUser) {
-    	registeredUser.setApplicationListLastAccessTimestamp(new Date());
-    	userDAO.save(registeredUser);
-    	
+        registeredUser.setApplicationListLastAccessTimestamp(new Date());
+        userDAO.save(registeredUser);
+
     }
-    
+
 }

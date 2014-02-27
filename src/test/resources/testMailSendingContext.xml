@@ -120,6 +120,8 @@
     <bean id="opportunitiesService" class="com.zuehlke.pgadmissions.services.OpportunitiesService" />
 
     <bean id="registrationService" class="com.zuehlke.pgadmissions.services.RegistrationService" />
+    
+    <bean id="authenticationService" class="com.zuehlke.pgadmissions.services.AuthenticationService" />
 
     <context:component-scan base-package="com.zuehlke.pgadmissions.dao" />
     <context:component-scan base-package="com.zuehlke.pgadmissions.components" />

@@ -226,7 +226,7 @@ span.count {
                             <!-- Box start -->
                             <div class="box">
                               <#assign author = comment.author> 
-                              <div class="title"> <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
+                              <div class="title"> <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span> <span class="datetime"><span class="datetime">${comment.createdTimestamp?string("dd MMM yyyy")} at ${comment.createdTimestamp?string('HH:mm')}</span></span> </div>
                               <p class="highlight">Request ${(comment.commentType == 'REJECT')?string('Rejected','Approved')}.</p>
                               <#if comment.content??>
                                 <i class="icon-minus-sign"></i>

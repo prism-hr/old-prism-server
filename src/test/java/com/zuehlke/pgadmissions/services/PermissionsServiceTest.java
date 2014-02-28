@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
@@ -15,11 +17,15 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
+import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class PermissionsServiceTest {
@@ -46,7 +52,7 @@ public class PermissionsServiceTest {
         expect(authenticationService.getCurrentUser()).andReturn(registeredUser);
 
         replay();
-        service.canSeeOpportunityRequests();
+        assertTrue(service.canSeeOpportunityRequests());
         verify();
     }
 
@@ -58,7 +64,57 @@ public class PermissionsServiceTest {
         expect(opportunityRequestDAO.getOpportunityRequestsForAuthor(registeredUser)).andReturn(Collections.singletonList(new OpportunityRequest()));
 
         replay();
-        service.canSeeOpportunityRequests();
+        assertTrue(service.canSeeOpportunityRequests());
+        verify();
+    }
+
+    @Test
+    public void shouldNotBeAbleToSeeOpportunityRequests() {
+        RegisteredUser registeredUser = new RegisteredUser();
+
+        expect(authenticationService.getCurrentUser()).andReturn(registeredUser);
+        expect(opportunityRequestDAO.getOpportunityRequestsForAuthor(registeredUser)).andReturn(Collections.<OpportunityRequest> emptyList());
+
+        replay();
+        assertFalse(service.canSeeOpportunityRequests());
+        verify();
+    }
+
+    @Test
+    public void shouldRequestAuthorNotBeAbleToApproveOpportunityRequest() {
+        RegisteredUser registeredUser = new RegisteredUserBuilder().id(53425345).build();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
+        OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.APPROVE).build();
+
+        expect(authenticationService.getCurrentUser()).andReturn(registeredUser).anyTimes();
+
+        replay();
+        assertFalse(service.canPostOpportunityRequestComment(opportunityRequest, comment));
+        verify();
+    }
+
+    @Test
+    public void shouldRequestAuthorBeAbleToReviseOpportunityRequest() {
+        RegisteredUser registeredUser = new RegisteredUserBuilder().id(53425345).build();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
+        OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.REVISE).build();
+
+        expect(authenticationService.getCurrentUser()).andReturn(registeredUser).anyTimes();
+
+        replay();
+        assertTrue(service.canPostOpportunityRequestComment(opportunityRequest, comment));
+        verify();
+    }
+
+    @Test
+    public void shouldRequestAuthorBeAbleToSeeOpportunityRequest() {
+        RegisteredUser registeredUser = new RegisteredUserBuilder().id(53425345).build();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
+
+        expect(authenticationService.getCurrentUser()).andReturn(registeredUser);
+
+        replay();
+        assertTrue(service.canSeeOpportunityRequest(opportunityRequest));
         verify();
     }
 
@@ -70,7 +126,7 @@ public class PermissionsServiceTest {
         expect(programsService.getProgramsForWhichCanManageProjects(registeredUser)).andReturn(Collections.singletonList(new Program()));
 
         replay();
-        service.canManageProjects();
+        assertTrue(service.canManageProjects());
         verify();
     }
 

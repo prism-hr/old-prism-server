@@ -51,18 +51,28 @@ function bindChangeProgramActions() {
         programChanged();
     });
     
-    $("#programAdvertCancelNewProgramBtn").bind('click', function() {
-        $("#programAdvertSelectProgramDiv").show();
-        $("#programAdvertNewProgramDiv").hide();
+    $("#cancelNewProgramBtn").bind('click', function() {
+        setNewProgramCreationMode(false);
         programChanged();
     });
     
     $("#newProgammeButton").bind('click', function() {
-        $("#programAdvertSelectProgramDiv").hide();
-        $("#programAdvertNewProgramDiv").show();
+        setNewProgramCreationMode(true);
         $("#programAdvertProgramSelect").val("");
         programChanged();
     });
+}
+
+function setNewProgramCreationMode(flag) {
+    if(flag) {
+        $("#newProgammeButton").hide();
+        $("#cancelNewProgramBtn").show();
+        $("#programAdvertProgramSelect").attr("readonly", "readonly").attr("disabled", "disabled");
+    } else {
+        $("#cancelNewProgramBtn").hide();
+        $("#newProgammeButton").show();
+        $("#programAdvertProgramSelect").removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
+    }
 }
 
 function programChanged(){
@@ -151,7 +161,7 @@ $(document).on('change', '#programAdvertInstitution', function() {
 function checkToDisable() {
     var selectedProgram = $("#programAdvertProgramSelect").val();
     var existingProgramSelected = selectedProgram != "";
-    var newProgramSelected = $("#programAdvertNewProgramDiv").is(":visible");
+    var newProgramSelected = $("#programAdvertProgramSelect").is(":disabled");
     var programLocked = $("#programAdvertProgramLocked").val() == "true";
     var isCustom = $("#programAdvertIsCustom").val() == "true";
     if ((existingProgramSelected && !programLocked) || newProgramSelected) {
@@ -189,7 +199,7 @@ function checkToDisable() {
 
 function changeHeaderInfoBars(programval) {
     var programmeCode = $("#programAdvertProgramSelect").val();
-    if (programmeCode == "" || $("#programAdvertNewProgramDiv").is(":visible")) {
+    if (programmeCode == "" || $("#programAdvertProgramSelect").is(":disabled")) {
         infohtml = "<i class='icon-info-sign'></i> Manage the advert for your programme here.";
         infodate = "<i class='icon-info-sign'></i> Manage closing dates for your programme here.";
         inforesource = "<i class='icon-info-sign'></i> Embed these resources to provide applicants with links to apply for your programme.";
@@ -592,8 +602,7 @@ function saveAdvert() {
                 }
 
                 // show select control
-                $("#programAdvertSelectProgramDiv").show();
-                $("#programAdvertNewProgramDiv").hide();
+                setNewProgramCreationMode(false);
 
                 // reload program data
                 getAdvertData(newProgramCode);
@@ -615,8 +624,7 @@ function saveAdvert() {
                     checkToDisable();
                 } else {
                     // add new program option
-                    $("#programAdvertSelectProgramDiv").show();
-                    $("#programAdvertNewProgramDiv").hide();
+                    setNewProgramCreationMode(false);
                     programChanged();                    
                 }
             } else {

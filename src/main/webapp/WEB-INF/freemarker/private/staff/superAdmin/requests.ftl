@@ -155,14 +155,14 @@
                   <td class="centre">
                     <select class="opportunityRequestActionType selectpicker actionType" data-request-id="${opportunityRequest.id?string}" data-email="${opportunityRequest.author.email}" data-program="${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}">
                       <option class="title">Actions</option>
-                      <#if user.isInRole('SUPERADMINISTRATOR') && opportunityRequest.status != "APPROVED">
-                        <option value="approve">Review</option>
-                      <#elseif opportunityRequest.status == "REJECTED">
-                        <option value="view">Revise</option>
-                      <#else>
-                        <option value="view">View</option>
-                      </#if>
-                        <option value="email">Email Requester</option>
+                      <option value="view">
+                        <#if opportunityRequest.status == "APPROVED">
+                          View
+                        <#else>
+                          View / Edit
+                        </#if>
+                      </option>
+                      <option value="email">Email Requester</option>
                     </select>
                   </td>
                   <td class="centre">

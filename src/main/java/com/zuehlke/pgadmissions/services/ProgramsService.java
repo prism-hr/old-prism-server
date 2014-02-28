@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
@@ -267,22 +266,6 @@ public class ProgramsService {
         }
         return false;
 
-    }
-
-    public boolean disableProgram(String programCode) {
-        Program program = programDAO.getProgramByCode(programCode);
-        if (program == null || program.getProgramFeed() != null) {
-            // not found or non-custom program
-            return false;
-        }
-        for (ProgramInstance instance : program.getInstances()) {
-            instance.setEnabled(false);
-        }
-        for (Project project : program.getProjects()) {
-            project.setDisabled(true);
-        }
-        program.setEnabled(false);
-        return true;
     }
 
 }

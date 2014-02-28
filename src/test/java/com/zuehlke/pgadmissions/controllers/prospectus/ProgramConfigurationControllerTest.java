@@ -194,15 +194,4 @@ public class ProgramConfigurationControllerTest {
         assertEquals("{\"changeRequestCreated\":true}", result);
     }
 
-    @Test
-    public void shouldDeleteOpportunity() {
-        expect(programsService.disableProgram("prrr")).andReturn(true);
-
-        replay();
-        String result = controller.deleteOpportunity("prrr");
-        verify();
-
-        assertEquals("{\"success\":true}", result);
-    }
-
 }

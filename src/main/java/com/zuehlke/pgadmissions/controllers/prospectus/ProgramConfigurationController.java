@@ -104,7 +104,7 @@ public class ProgramConfigurationController {
 
     @Autowired
     private OpportunitiesService opportunitiesService;
-    
+
     @Autowired
     private ProgramTypePropertyEditor programTypePropertyEditor;
 
@@ -190,8 +190,7 @@ public class ProgramConfigurationController {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
             FieldError otherInstitutionError = result.getFieldError("otherInstitution");
             if (otherInstitutionError != null && "institution.did.you.mean".equals(otherInstitutionError.getCode())) {
-                map.put("otherInstitution",
-                        ImmutableMap.of("errorCode", "institution.did.you.mean", "institutions", otherInstitutionError.getDefaultMessage()));
+                map.put("otherInstitution", ImmutableMap.of("errorCode", "institution.did.you.mean", "institutions", otherInstitutionError.getDefaultMessage()));
             }
         } else {
             map = Maps.newHashMap();
@@ -207,13 +206,6 @@ public class ProgramConfigurationController {
             }
         }
         return gson.toJson(map);
-    }
-    
-    @RequestMapping(value = "/deleteProgramAdvert", method = RequestMethod.POST)
-    @ResponseBody
-    public String deleteOpportunity(@RequestParam String programCode) {
-        boolean result = programsService.disableProgram(programCode);
-        return gson.toJson(ImmutableMap.of("success", result));
     }
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)

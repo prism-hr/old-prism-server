@@ -130,7 +130,7 @@
                     <i class="icon-bell-alt"></i>
                   <#else>
                     <td class="applicant-name flaggreen">
-                      <i class="icon-coffee"></i>
+                    <i class="icon-coffee"></i>
                   </#if>
                   ${opportunityRequest.author.displayName}
                   </td>
@@ -140,15 +140,16 @@
                   <td class="status">
                     <#if opportunityRequest.status == "NEW">
                       <#if opportunityRequest.type == "CHANGE">
-                      <span data-desc="Change Request" class="icon-status withdrawn">Change Request</span>
+                        <span data-desc="Change Request" class="icon-status withdrawn">Change Request</span>
                       <#else>
-                      <span data-desc="New Request" class="icon-status validation">New Request</span>
+                        <span data-desc="New Request" class="icon-status review">New Request</span>
                       </#if>
-
                     <#elseif opportunityRequest.status == "REJECTED">
-                    <span data-desc="Rejected" class="icon-status rejected">Rejected</span>
+                      <span data-desc="Rejected" class="icon-status rejected">Rejected</span>
                     <#elseif opportunityRequest.status == "APPROVED">
-                    <span data-desc="Approved" class="icon-status offer-recommended">Approved</span>
+                      <span data-desc="Approved" class="icon-status offer-recommended">Approved</span>
+                    <#elseif opportunityRequest.status == "REVISED">
+                      <span data-desc="Revised" class="icon-status validation">Revised</span>
                     </#if>
                   </td>
                   <td class="centre">

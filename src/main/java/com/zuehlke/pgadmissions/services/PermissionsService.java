@@ -5,8 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service
 @Transactional
@@ -22,13 +26,36 @@ public class PermissionsService {
     private ProgramsService programsService;
 
     public boolean canSeeOpportunityRequests() {
-        RegisteredUser user = authenticationService.getCurrentUser();
+        RegisteredUser user = getCurrentUser();
         return user.isInRole(Authority.SUPERADMINISTRATOR) || !opportunityRequestDAO.getOpportunityRequestsForAuthor(user).isEmpty();
     }
 
     public boolean canManageProjects() {
-        RegisteredUser user = authenticationService.getCurrentUser();
+        RegisteredUser user = getCurrentUser();
         return !programsService.getProgramsForWhichCanManageProjects(user).isEmpty();
+    }
+
+    public boolean canSeeOpportunityRequest(OpportunityRequest opportunityRequest) {
+        RegisteredUser user = getCurrentUser();
+        return user.isInRole(Authority.SUPERADMINISTRATOR) || HibernateUtils.sameEntities(user, opportunityRequest.getAuthor());
+    }
+
+    public boolean canPostOpportunityRequestComment(OpportunityRequest opportunityRequest, OpportunityRequestComment comment) {
+        RegisteredUser user = getCurrentUser();
+
+        if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
+            return true;
+        }
+
+        if (canSeeOpportunityRequest(opportunityRequest) && comment.getCommentType() == OpportunityRequestCommentType.REVISE) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private RegisteredUser getCurrentUser() {
+        return authenticationService.getCurrentUser();
     }
 
 }

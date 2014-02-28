@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 
 @SuppressWarnings("unchecked")
@@ -35,7 +37,7 @@ public class OpportunityRequestDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(opportunityRequest);
     }
 
-    public List<OpportunityRequest> getInitialOpportunityRequests() {
+    public List<OpportunityRequest> listOpportunityRequests(RegisteredUser user) {
         DetachedCriteria initialRequestsWithProgramsCriteria = DetachedCriteria.forClass(OpportunityRequest.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("sourceProgram")) //
@@ -43,13 +45,19 @@ public class OpportunityRequestDAO {
                         .add(Projections.max("id"))) //
                 .add(Restrictions.isNotNull("sourceProgram"));
 
-        return sessionFactory
+        Criteria opportunitiesCriteria = sessionFactory
                 .getCurrentSession()
                 .createCriteria(OpportunityRequest.class)
                 .add(Restrictions.disjunction()
                         .add(Subqueries.propertiesIn(new String[] { "sourceProgram", "createdDate", "id" }, initialRequestsWithProgramsCriteria))
                         .add(Restrictions.isNull("sourceProgram"))) //
-                .addOrder(Order.asc("status")).list();
+                .addOrder(Order.asc("status"));
+        
+        if (!user.isInRole(Authority.SUPERADMINISTRATOR)) {
+            opportunitiesCriteria = opportunitiesCriteria.add(Restrictions.eq("author", user));
+        }
+        
+        return opportunitiesCriteria.list();
     }
 
     public OpportunityRequest findById(Integer requestId) {
@@ -80,9 +88,7 @@ public class OpportunityRequestDAO {
 
     public List<OpportunityRequest> getOpportunityRequestsForAuthor(RegisteredUser author) {
         return sessionFactory.getCurrentSession() //
-                .createCriteria(OpportunityRequest.class)
-                .add(Restrictions.eq("author", author))
-                .list();
+                .createCriteria(OpportunityRequest.class).add(Restrictions.eq("author", author)).list();
     }
 
 }

@@ -113,13 +113,14 @@ public class OpportunitiesServiceTest {
     }
 
     @Test
-    public void shouldGetOpportunityRequests() {
+    public void shouldlistOpportunityRequests() {
         List<OpportunityRequest> requests = Lists.newArrayList();
+        RegisteredUser user = new RegisteredUser();
 
-        expect(opportunityRequestDAO.getInitialOpportunityRequests()).andReturn(requests);
+        expect(opportunityRequestDAO.listOpportunityRequests(user)).andReturn(requests);
 
         replay();
-        List<OpportunityRequest> returned = service.getInitialOpportunityRequests();
+        List<OpportunityRequest> returned = service.listOpportunityRequests(user);
         verify();
 
         assertSame(requests, returned);

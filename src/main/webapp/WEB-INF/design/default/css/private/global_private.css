@@ -1437,7 +1437,7 @@ i {
 .field input[type="radio"]{
    margin-top: -3px;
 }
-#newProgamme, #programAdvertCancelNewProgramBtn {
+#newProgammeButton, #cancelNewProgramBtn {
 	margin-bottom: 10px;
 }
 #commentsection .field>label, #documentUploadForm .field>label {

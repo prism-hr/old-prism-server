@@ -110,17 +110,20 @@ span.count {
                         </#if> 
                       </h3>
                       
-                      <#assign comments = opportunityRequest.comments>
-                      <#if user.id == opportunityRequest.author.id && comments?has_content && comments?last.commentType == "REJECT"> 
-                        <div class="alert alert-warning">
-                          Please revise your request. Recent rejection reason:
-                          <p>
-                            <i>${comments?last.content}</i>
-                          </p>
-                        </div>
-                      </#if>
+                      <input id="isRequestEditable" type="hidden" value="${isRequestEditable?c}"> 
                       
                       <#if isRequestEditable>
+                      
+                        <#assign comments = opportunityRequest.comments>
+                        <#if user.id == opportunityRequest.author.id && comments?has_content && comments?last.commentType == "REJECT"> 
+                          <div class="alert alert-warning">
+                            Please revise your request. Recent rejection reason:
+                            <p>
+                              <i>${comments?last.content}</i>
+                            </p>
+                          </div>
+                        </#if>
+                        
                         <#include "/private/prospectus/opportunity_details_part.ftl"/>
                       <#else>
                       

@@ -18,12 +18,12 @@
                             <option value="${programme.code}"<#if program?? && programme.code == program.code>selected</#if> > ${programme.title?html}</option>
                           </#list>
                       </select>
-                      <a class="btn btn-success" id="newProgammeButton">New Programme</a>
+                      <a id="newProgammeButton" class="btn btn-success">New Programme</a>
+                      <a id="cancelNewProgramBtn" class="btn btn-danger" style="display:none">Cancel</a>
                   </div>
                 </div>
                 <div id="programAdvertNewProgramDiv" style="display:none">
                   <label for="programAdvertProgramSelect" class="plain-label">Create new program</label>
-                  <a id="programAdvertCancelNewProgramBtn" role="button" class="btn btn-danger">Cancel</a>
                 </div>
               </div>
               <div class="row-group" id="institutionGroup">

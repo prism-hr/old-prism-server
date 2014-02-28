@@ -110,6 +110,16 @@ span.count {
                         </#if> 
                       </h3>
                       
+                      <#assign comments = opportunityRequest.comments>
+                      <#if comments?has_content && comments?last.commentType == "REJECT"> 
+                        <div class="alert alert-warning">
+                          Please revise your request. Recent rejection reason:
+                          <p>
+                            <i>${comments?last.content}</i>
+                          </p>
+                        </div>
+                      </#if>
+                      
                       <#if isRequestEditable>
                         <#include "/private/prospectus/opportunity_details_part.ftl"/>
                       <#else>

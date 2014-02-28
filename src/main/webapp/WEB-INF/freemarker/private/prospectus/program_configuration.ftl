@@ -211,7 +211,7 @@
                   </div>
                 </div>
                 <div class="field">
-                  <a id="addProgramAdvertClosingDate" role="button" class="btn btn-primary">Add</a>
+                  <button id="addProgramAdvertClosingDate" role="button" class="btn btn-primary">Add</button>
                 </div>
               </div>                                        
               <div class="row-group">
@@ -229,15 +229,6 @@
                     <label for="programAdvertButtonToApply" class="plain-label">Button to Apply</label> <span class="hint" data-desc="<@spring.message 'prospectus.buttonToApply'/>"></span>
                     <div class="field">
                         <textarea id="programAdvertButtonToApply" class="input-xxlarge" rows="6" cols="150" readonly></textarea>
-                    </div>
-                </div>
-              </div>
-              <div class="row-group">
-                <h3>Delete</h3>
-                <div class="row">
-                    <label for="programAdvertDeleteButton" class="plain-label">Delete program</label>
-                    <div class="field">
-                        <button class="btn btn-danger" type="button" id="programAdvertDeleteButton">Delete</button>
                     </div>
                 </div>
               </div>

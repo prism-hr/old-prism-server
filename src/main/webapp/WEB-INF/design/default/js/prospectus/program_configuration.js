@@ -6,7 +6,6 @@ $(document).ready(function() {
     bindClosingDatesActions();
     bindChangeInstitutionCountryAction();
     bindChangeOtherInstitutionAction();
-    bindDeleteProgramAction();
 
     initEditors();
     $('select.selectpicker').selectpicker();
@@ -65,45 +64,6 @@ function bindChangeProgramActions() {
         programChanged();
     });
 }
-
-function bindDeleteProgramAction() {
-    $("#programAdvertDeleteButton").bind('click', function() {
-            
-        var message = "Are you sure you want to remove this program?";
-        var onOk = function() {
-            var programCode = $("#programAdvertProgramSelect").val();
-            $.ajax({
-                type : 'POST',
-                statusCode : {
-                    401 : function() {window.location.reload();},
-                    500 : function() {window.location.href = "/pgadmissions/error";},
-                    404 : function() {window.location.href = "/pgadmissions/404";},
-                    400 : function() {window.location.href = "/pgadmissions/400";},
-                    403 : function() {window.location.href = "/pgadmissions/404";}
-                },
-                url : "/pgadmissions/prospectus/programme/deleteProgramAdvert",
-                data : {
-                    programCode : programCode
-                },
-                success : function(data) {
-                    var map = JSON.parse(data);
-                    if(map.success) {
-                        $("#programAdvertProgramSelect option").filter("[value='" + programCode + "']").remove();
-                        $("#programAdvertProgramSelect").val("");
-                        $("#programAdvertProgramSelect").selectpicker("refresh");
-                        programChanged();
-                    }
-                },
-                complete : function() {
-                }
-            });    
-        };
-        modalPrompt(message, onOk);
-            
-    });
-                
-}
-
 
 function programChanged(){
     clearProgramAdvertErrors();
@@ -215,11 +175,11 @@ function checkToDisable() {
         // existing program
         $("#programAdvertClosingDateGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
         $("#programAdvertClosingDateGroup input").removeAttr("readonly", "readonly");
-        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup a").removeAttr("disabled", "disabled");
+        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup button").removeAttr("disabled", "disabled");
     } else {
         $("#programAdvertClosingDateGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
         $("#programAdvertClosingDateGroup input").attr("readonly", "readonly");
-        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup a").attr("disabled", "disabled");
+        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup button").attr("disabled", "disabled");
     }
 
     otherInstitutionCheck();

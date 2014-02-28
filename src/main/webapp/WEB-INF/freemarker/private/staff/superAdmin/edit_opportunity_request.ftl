@@ -111,7 +111,7 @@ span.count {
                       </h3>
                       
                       <#assign comments = opportunityRequest.comments>
-                      <#if comments?has_content && comments?last.commentType == "REJECT"> 
+                      <#if user.id == opportunityRequest.author.id && comments?has_content && comments?last.commentType == "REJECT"> 
                         <div class="alert alert-warning">
                           Please revise your request. Recent rejection reason:
                           <p>

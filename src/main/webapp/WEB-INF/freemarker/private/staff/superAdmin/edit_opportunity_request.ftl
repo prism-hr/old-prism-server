@@ -102,7 +102,13 @@ span.count {
                   <form id="opportunityRequestEditForm" method="POST">
                     <#assign isRequestEditable = opportunityRequest.status != "APPROVED">
                     <div class="row-group">
-                      <h3 class="no-arrow"> Opportunity Details  </h3>
+                      <h3 class="no-arrow">
+                        <#if user.isInRole('SUPERADMINISTRATOR')>
+                          Opportunity Details
+                        <#else>
+                          Revise Opportunity Request
+                        </#if> 
+                      </h3>
                       
                       <#if isRequestEditable>
                         <#include "/private/prospectus/opportunity_details_part.ftl"/>
@@ -172,7 +178,13 @@ span.count {
                         <h3 class="no-arrow">Revision Details</h3>
   
                         <div class="row">
-                          <label id="commentContentLabel" class="plain-label" for="commentContent">Comment</label>
+                          <label id="commentContentLabel" class="plain-label" for="commentContent">
+                            <#if user.isInRole('SUPERADMINISTRATOR')>
+                              Comment<em>*</em>
+                            <#else>
+                              Description of Changes<em>*</em>
+                            </#if>                             
+                          </label>
                           <span class="hint" data-desc="<@spring.message 'opportunityRequestComment.contentTooltip'/>"></span>
                           <div class="field">
                             <textarea id="commentContent" name="content" class="max" cols="70" rows="6">${(comment.content?html)!}</textarea>
@@ -185,6 +197,7 @@ span.count {
                           </div>
                         </div>
                         
+                        <#if user.isInRole('SUPERADMINISTRATOR')>
                           <div class="row">
                             <label id="commentTypeLabel" class="plain-label" for="commentType">Review outcome<em>*</em></label>
                             <span class="hint" data-desc="<@spring.message 'opportunityRequestComment.commentType'/>"></span>
@@ -202,6 +215,9 @@ span.count {
                               </#list>
                             </div>
                           </div>
+                        <#else>
+                          <input name="commentType" type="hidden" value="REVISE" />
+                        </#if> 
                         
                       </div>
                     

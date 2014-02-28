@@ -79,13 +79,13 @@ public class OpportunitiesService {
         opportunityRequestDAO.save(opportunityRequest);
     }
 
-    public List<OpportunityRequest> getInitialOpportunityRequests() {
-        return opportunityRequestDAO.getInitialOpportunityRequests();
+    public List<OpportunityRequest> listOpportunityRequests(RegisteredUser user) {
+        return opportunityRequestDAO.listOpportunityRequests(user);
     }
 
     public OpportunityRequest getOpportunityRequest(Integer requestId) {
-        // TODO remove it
         OpportunityRequest request = opportunityRequestDAO.findById(requestId);
+        // TODO remove it
         request.setProgramType(new ProgramType(ProgramTypeId.VISITING_RESEARCH, 5));
         return request;
     }
@@ -103,8 +103,7 @@ public class OpportunitiesService {
         }
 
         // update opportunity request
-        opportunityRequest.setStatus(comment.getCommentType() == OpportunityRequestCommentType.APPROVE ? OpportunityRequestStatus.APPROVED
-                : OpportunityRequestStatus.REJECTED);
+        opportunityRequest.setStatus(comment.getCommentType().getTargetRequestStatus());
         opportunityRequest.setInstitutionCountry(newOpportunityRequest.getInstitutionCountry());
         opportunityRequest.setInstitutionCode(newOpportunityRequest.getInstitutionCode());
         opportunityRequest.setOtherInstitution(newOpportunityRequest.getOtherInstitution());

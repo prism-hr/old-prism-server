@@ -29,11 +29,13 @@ import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
+import com.zuehlke.pgadmissions.services.PermissionsService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
@@ -70,13 +72,19 @@ public class EditOpportunityRequestController {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Autowired
     private ProgramTypePropertyEditor programTypePropertyEditor;
+
+    @Autowired
+    private PermissionsService permissionsService;
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
     public String getEditOpportunityRequestPage(@PathVariable("requestId") Integer requestId, ModelMap modelMap) {
         OpportunityRequest opportunityRequest = opportunitiesService.getOpportunityRequest(requestId);
+        if (!permissionsService.canSeeOpportunityRequest(opportunityRequest)) {
+            throw new ResourceNotFoundException();
+        }
 
         // force to recompute study duration number and unit
         opportunityRequest.setStudyDuration(opportunityRequest.getStudyDuration());
@@ -101,6 +109,10 @@ public class EditOpportunityRequestController {
             BindingResult requestBindingResult, @ModelAttribute("comment") @Valid OpportunityRequestComment comment, BindingResult commentBindingResult,
             ModelMap modelMap) {
         OpportunityRequest existingRequest = opportunitiesService.getOpportunityRequest(requestId);
+        if (!permissionsService.canPostOpportunityRequestComment(existingRequest, comment)) {
+            throw new ResourceNotFoundException();
+        }
+
         if (requestBindingResult.hasErrors() || commentBindingResult.hasErrors()) {
 
             opportunityRequest.setAuthor(existingRequest.getAuthor());

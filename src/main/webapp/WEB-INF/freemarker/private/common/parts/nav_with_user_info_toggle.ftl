@@ -29,14 +29,14 @@
                 		My Applications
                 	</a>
                 </li>    
-                <#if loggedInUser.isInRole('SUPERADMINISTRATOR') >
+                <#if permissionsService.canSeeOpportunityRequests() >
                   	<li
                   		<#if activeTab=="requests">
                   			class="current"
                   		</#if>>
                   		<a href="<@spring.url '/requests'/>">
                   			<i class="icon-rocket"></i>
-                  			New Program Requests
+                  			Program Requests
                   		</a>
                   	</li>
                 </#if>

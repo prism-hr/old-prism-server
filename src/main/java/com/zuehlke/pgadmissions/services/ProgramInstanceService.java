@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -44,7 +42,7 @@ public class ProgramInstanceService {
         ProgrammeDetails details = applicationForm.getProgrammeDetails();
 
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
-            boolean isProgrammeEnabled = applicationForm.getProgram().isEnabled();
+            boolean isProgrammeEnabled = applicationForm.getAdvert().isEnabled();
             boolean isInstanceEnabled = isActive(instance);
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
@@ -77,7 +75,7 @@ public class ProgramInstanceService {
             boolean beforeEndDate = todayPlusConsiderationPeriod.before(instance.getApplicationDeadline());
             boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (applicationForm.getProgram().isEnabled() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption
+            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption
                     && sameStudyOptionCode) {
                 if (startDateInFuture && (result == null || result.after(applicationStartDate))) {
                     result = applicationStartDate;
@@ -103,7 +101,7 @@ public class ProgramInstanceService {
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
             boolean sameStudyOption = programDetails.getStudyOption().equals(instance.getStudyOption());
             boolean sameStudyOptionCode = programDetails.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (applicationForm.getProgram().isEnabled() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode) {
+            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode) {
                 return true;
             }
         }
@@ -222,28 +220,6 @@ public class ProgramInstanceService {
         }
 
         return penultimateSeptemberMonday;
-    }
-
-    @Transactional
-    public void disableLapsedInstances() {
-        Set<Program> modifiedPrograms = Sets.newHashSet();
-
-        List<ProgramInstance> lapsedInstances = programInstanceDAO.getLapsedInstances();
-        for (ProgramInstance lapsedInstance : lapsedInstances) {
-            lapsedInstance.setEnabled(false);
-            modifiedPrograms.add(lapsedInstance.getProgram());
-        }
-
-        // disable programs without active instances
-        for (Program program : modifiedPrograms) {
-            if (program.getProgramFeed() != null) {
-                throw new RuntimeException("Only custom programs can be disabled during data maintenance. Something went wrong. " + program.getId());
-            }
-            if (programInstanceDAO.getActiveProgramInstances(program).isEmpty()) {
-                program.setEnabled(false);
-            }
-        }
-
     }
 
     public List<Integer> getPossibleAdvertisingDeadlineYears() {

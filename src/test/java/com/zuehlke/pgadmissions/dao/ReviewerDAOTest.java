@@ -9,13 +9,10 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -30,7 +27,7 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveReviewer() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
         save(application);
         flushAndClearSession();
 
@@ -47,19 +44,14 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
     public void initialise() {
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a29").domicileCode("AE").enabled(true).build();
-        program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-
         ReminderIntervalDAO reminderIntervalDAO = new ReminderIntervalDAO(sessionFactory);
         ReminderInterval reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.INTERVIEW_SCHEDULE);
         reminderInterval.setDuration(1);
         reminderInterval.setUnit(DurationUnitEnum.WEEKS);
-
         sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
-
-        save(user, institution, program);
-
+        save(user);
         dao = new ReviewerDAO(sessionFactory);
+        program = testObjectProvider.getEnabledProgram();
     }
 
 }

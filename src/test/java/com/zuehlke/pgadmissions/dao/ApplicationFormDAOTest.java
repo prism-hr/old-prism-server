@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.easymock.EasyMock;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -31,12 +32,13 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
+    private UserDAO userDAOMock;
     private ApplicationFormDAO applicationDAO;
     private RegisteredUser user;
     private Program program;
@@ -45,16 +47,13 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        applicationDAO = new ApplicationFormDAO(sessionFactory);
+        userDAOMock = EasyMock.createMock(UserDAO.class);
+        applicationDAO = new ApplicationFormDAO(sessionFactory, userDAOMock);
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a22").domicileCode("AE").enabled(true).build();
-        program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-
-        save(user, institution, program);
-
+        save(user);
         flushAndClearSession();
+        program = testObjectProvider.getEnabledProgram();
     }
 
     @Test(expected = NullPointerException.class)
@@ -68,7 +67,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     public void shouldSaveAndLoadApplication() throws Exception {
 
         ApplicationForm inApplication = new ApplicationForm();
-        inApplication.setProgram(program);
+        inApplication.setAdvert(program);
 
         inApplication.setApplicant(user);
 
@@ -102,7 +101,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldAssignDateToApplicationForm() {
         ApplicationForm inApplication = new ApplicationForm();
-        inApplication.setProgram(program);
+        inApplication.setAdvert(program);
         inApplication.setApplicant(user);
 
         applicationDAO.save(inApplication);
@@ -110,7 +109,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         Integer id = inApplication.getId();
         ApplicationForm reloadedApplication = applicationDAO.get(id);
         assertNotNull(reloadedApplication.getApplicationTimestamp());
-
     }
 
     @Test
@@ -120,9 +118,14 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         String nextYear = new Integer(Integer.parseInt(thisYear) + 1).toString();
         flushAndClearSession();
 
+        QualificationInstitution institution = testObjectProvider.getEnabledInstitution();
+        Program program = new ProgramBuilder().code("test").title("test").description("test")
+                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).institution(institution).build();
+        save(program);
+        
         long number = applicationDAO.getApplicationsInProgramThisYear(program, thisYear);
         assertEquals(0, number);
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().advert(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
 
         save(applicationFormOne);
 
@@ -130,7 +133,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         assertEquals(Long.valueOf(1), applicationDAO.getApplicationsInProgramThisYear(program, thisYear));
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().advert(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
         save(applicationFormTwo);
 
         flushAndClearSession();
@@ -150,7 +153,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetApplicationByApplicationNumber() {
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(user)
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(user)
                 .status(ApplicationFormStatus.APPROVAL).build();
 
         save(applicationFormOne);
@@ -165,7 +168,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         application = new ApplicationForm();
         application.setApplicant(user);
-        application.setProgram(program);
+        application.setAdvert(program);
 
         QualificationTypeDAO typeDao = new QualificationTypeDAO(sessionFactory);
 
@@ -199,8 +202,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldGetTwoApplicationsByApplicantAndProgram() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
-        ApplicationForm applicationForm2 = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().advert(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        ApplicationForm applicationForm2 = new ApplicationFormBuilder().advert(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).build();
 
         save(applicationForm, applicationForm2);
         flushAndClearSession();
@@ -223,22 +226,29 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetPreviousApplicationForApplicant() {
         DateTime initialDate = new DateTime(2014, 5, 13, 15, 56);
-        
 
         RegisteredUser otherApplicant = new RegisteredUserBuilder().firstName("Other").lastName("Applicant").email("other@applicant.com").username("other")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).toDate()).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
-        ApplicationForm applicationForm2 = new ApplicationFormBuilder().submittedDate(initialDate.toDate()).program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
-        ApplicationForm applicationForm3 = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(1).toDate()).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).build();
-        ApplicationForm recentApplicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).plusMinutes(2).toDate()).program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).toDate()).advert(program).applicant(user)
+                .status(ApplicationFormStatus.APPROVAL).build();
+        ApplicationForm applicationForm2 = new ApplicationFormBuilder().submittedDate(initialDate.toDate()).advert(program).applicant(user)
+                .status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationForm3 = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(1).toDate()).advert(program).applicant(user)
+                .status(ApplicationFormStatus.INTERVIEW).build();
 
-        ApplicationForm otherApplication = new ApplicationFormBuilder().submittedDate(initialDate.plusWeeks(1).toDate()).program(program).applicant(otherApplicant).status(ApplicationFormStatus.REVIEW).build();
+        ApplicationForm recentApplicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).plusMinutes(2).toDate()).advert(program)
+                .applicant(otherApplicant).status(ApplicationFormStatus.UNSUBMITTED).build();
+        ApplicationForm otherApplication = new ApplicationFormBuilder().submittedDate(initialDate.plusWeeks(1).toDate()).advert(program)
+                .applicant(otherApplicant).status(ApplicationFormStatus.REVIEW).build();
 
         save(otherApplicant, applicationForm, applicationForm2, applicationForm3, recentApplicationForm, otherApplication);
-        
+
+        EasyMock.expect(userDAOMock.getCurrentUser()).andReturn(otherApplicant);
+        EasyMock.replay(userDAOMock);
+
         ApplicationForm returned = applicationDAO.getPreviousApplicationForApplicant(recentApplicationForm);
-        
+
         assertEquals(otherApplication.getId(), returned.getId());
     }
 

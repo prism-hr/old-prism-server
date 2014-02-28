@@ -119,7 +119,7 @@ public class ReviewCommentControllerTest {
     public void shouldCreateNewReviewCommentForApplicationForm() throws Exception {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).advert(program).build();
         final RegisteredUser currentUser = createMock(RegisteredUser.class);
         final Reviewer reviewer = new ReviewerBuilder().id(5).build();
 
@@ -152,7 +152,7 @@ public class ReviewCommentControllerTest {
     public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
         final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).advert(program).build();
         final RegisteredUser currentUser = createMock(RegisteredUser.class);
         final Reviewer reviewer = new ReviewerBuilder().id(5).build();
 
@@ -187,7 +187,7 @@ public class ReviewCommentControllerTest {
     @Test
     public void shouldReturnToCommentsPageIfErrors() throws ScoringDefinitionParseException {
         Program program = new Program();
-        final ApplicationForm application = new ApplicationFormBuilder().program(program).applicationNumber("5").build();
+        final ApplicationForm application = new ApplicationFormBuilder().advert(program).applicationNumber("5").build();
         ReviewComment comment = new ReviewCommentBuilder().application(application).build();
         BindingResult result = new BeanPropertyBindingResult(comment, "comment");
         result.reject("error");
@@ -198,7 +198,7 @@ public class ReviewCommentControllerTest {
     @Test
     public void shouldSaveCommentAndRedirectApplicationsPageIfNoErrors() throws ScoringDefinitionParseException {
         Program program = new Program();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).program(program).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).advert(program).build();
         ReviewRound reviewRound = new ReviewRound();
         Reviewer reviewer = new ReviewerBuilder().reviewRound(reviewRound).build();
         ReviewComment comment = new ReviewCommentBuilder().id(1).application(applicationForm).reviewer(reviewer).build();
@@ -210,7 +210,7 @@ public class ReviewCommentControllerTest {
         applicantRatingServiceMock.computeAverageRating(reviewRound);
         applicantRatingServiceMock.computeAverageRating(applicationForm);
         applicationFormUserRoleServiceMock.reviewPosted(reviewer);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.INTERNAL);
 
         replay(commentServiceMock, applicantRatingServiceMock, applicationFormUserRoleServiceMock);
         assertEquals("redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber(),

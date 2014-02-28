@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,10 +74,9 @@ public class DocumentDAO {
 	}
 	
 	public void deleteOrphanDocuments() {
-	    sessionFactory.getCurrentSession().createSQLQuery(
-            "DELETE FROM DOCUMENT " +
-            "WHERE is_referenced = 0 " + 
-                "AND DATE(uploaded_time_stamp) < CURRENT_DATE - INTERVAL 1 WEEK").executeUpdate();
+	   Query query = sessionFactory.getCurrentSession()
+	           .createSQLQuery("CALL SP_DELETE_ORPHAN_DOCUMENTS();");
+	   query.executeUpdate();
 	}
 
 }

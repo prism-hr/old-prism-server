@@ -19,7 +19,11 @@ import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
@@ -59,6 +63,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     private NotificationsDurationDAO notificationsDurationDAOMock;
 
     private UserNotificationListBuilder userNotificationListBuilder;
+
+    private ProgramDAO programDAOMock;
 
     @Test
     public void shouldSaveAndLoadUser() throws Exception {
@@ -178,8 +184,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetUsersByProgramme() {
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a60").domicileCode("AE").enabled(true).build();
-        Program programOne = new ProgramBuilder().code("111111").title("hello").institution(institution).build();
-        Program programTwo = new ProgramBuilder().code("222222").title("hello2").institution(institution).build();
+        Program programOne = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("111111").title("hello").institution(institution).build();
+        Program programTwo = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("222222").title("hello").institution(institution).build();
 
         save(institution, programOne, programTwo);
 
@@ -352,7 +358,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a10").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
@@ -377,7 +383,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a66").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
@@ -575,12 +581,27 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         assertEquals(userNotificationListBuilder.getOpportunityRequestNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS * 5,
                 actualOpportunityRequestNotificationCount);
     }
+    
+    @Test
+    public void shouldGetCurrentUser() {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+        RegisteredUser currentUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        authenticationToken.setDetails(currentUser);
+        SecurityContextImpl secContext = new SecurityContextImpl();
+        secContext.setAuthentication(authenticationToken);
+        SecurityContextHolder.setContext(secContext);
+        EasyMock.expect(programDAOMock.getProgramsForWhichUserCanManageProjects(currentUser)).andReturn(Lists.newArrayList(new Program()));
+        EasyMock.replay(programDAOMock);
+        RegisteredUser loadedUser = userDAO.getCurrentUser();
+        assertSame(loadedUser, currentUser);
+    }
 
     @Before
     public void prepare() {
         reminderIntervalDAOMock = EasyMock.createMock(ReminderIntervalDAO.class);
         notificationsDurationDAOMock = EasyMock.createMock(NotificationsDurationDAO.class);
-        userDAO = new UserDAO(sessionFactory, reminderIntervalDAOMock, notificationsDurationDAOMock);
+        programDAOMock = EasyMock.createMock(ProgramDAO.class);
+        userDAO = new UserDAO(sessionFactory, programDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock);
         roleDAO = new RoleDAO(sessionFactory);
 
         DateTime baseline = new DateTime(new Date());
@@ -588,7 +609,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         notificationBaselineDate = cleanBaseline.toDate();
 
         userNotificationListBuilder = new UserNotificationListBuilder(sessionFactory, notificationBaselineDate, NOTIFICATION_TEST_ITERATIONS,
-                NOTIFICATION_REMINDER_INTERVAL, NOTIFICATION_EXPIRY_INTERVAL);
+                NOTIFICATION_REMINDER_INTERVAL, NOTIFICATION_EXPIRY_INTERVAL, testObjectProvider.getEnabledProgram());
     }
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {

@@ -51,7 +51,7 @@ public class WithdrawServiceTest {
         expect(eventFactoryMock.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
 
         applicationServiceMock.save(applicationForm);
-        applicationFormUserRoleServiceMock.moveToApprovedOrRejectedOrWithdrawn(applicationForm);
+        applicationFormUserRoleServiceMock.deleteApplicationActions(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);
@@ -71,7 +71,7 @@ public class WithdrawServiceTest {
         expect(eventFactoryMock.createEvent(ApplicationFormStatus.WITHDRAWN)).andReturn(event);
 
         applicationServiceMock.save(applicationForm);
-        applicationFormUserRoleServiceMock.moveToApprovedOrRejectedOrWithdrawn(applicationForm);
+        applicationFormUserRoleServiceMock.deleteApplicationActions(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);

@@ -91,7 +91,7 @@ public class MoveToInterviewControllerTest {
     @Test
     public void shouldGetApplicationFromIdForAdmin() {
         Program program = new ProgramBuilder().id(6).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).advert(program).build();
 
         expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
         expect(currentUserMock.canSee(applicationForm)).andReturn(true);

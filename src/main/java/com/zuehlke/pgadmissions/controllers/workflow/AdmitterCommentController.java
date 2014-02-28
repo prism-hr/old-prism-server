@@ -116,7 +116,7 @@ public class AdmitterCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_ELIGIBILITY);
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return GENERIC_COMMENT_PAGE;
     }
 
@@ -138,7 +138,7 @@ public class AdmitterCommentController {
         commentService.save(comment);
         applicationsService.save(application);
         applicationFormUserRoleService.admitterCommentPosted(comment);
-        applicationFormUserRoleService.registerApplicationUpdate(application, user, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.insertApplicationUpdate(application, user, ApplicationUpdateScope.INTERNAL);
         return "redirect:/applications?messageCode=validation.comment.success&application=" + application.getApplicationNumber();
     }
 

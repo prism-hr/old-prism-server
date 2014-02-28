@@ -5,12 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,16 +28,19 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 public class ApplicationFormDAO {
 
     private final SessionFactory sessionFactory;
+    
+    private final UserDAO userDAO;
 
     private List<ApplicationFormStatus> activeStates = Lists.newArrayList();
 
     public ApplicationFormDAO() {
-        this(null);
+        this(null, null);
     }
 
     @Autowired
-    public ApplicationFormDAO(SessionFactory sessionFactory) {
+    public ApplicationFormDAO(SessionFactory sessionFactory, UserDAO userDAO) {
         this.sessionFactory = sessionFactory;
+        this.userDAO = userDAO;
         activeStates.add(ApplicationFormStatus.VALIDATION);
         activeStates.add(ApplicationFormStatus.REVIEW);
         activeStates.add(ApplicationFormStatus.INTERVIEW);
@@ -133,16 +135,40 @@ public class ApplicationFormDAO {
     }
 
     public ApplicationForm getPreviousApplicationForApplicant(ApplicationForm applicationForm) {
-        DetachedCriteria previousAppCriteria = DetachedCriteria.forClass(ApplicationForm.class)
-                .setProjection(Projections.max("applicationTimestamp"))
-                .add(Restrictions.eq("applicant", applicationForm.getApplicant()))
-                .add(Restrictions.ne("id", applicationForm.getId()));
-
-        int latestApplication = (Integer) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .setProjection(Projections.max("id"))
-                .add(Property.forName("applicationTimestamp").eq(previousAppCriteria)).uniqueResult();
+        Boolean copySubmittedApplication = true;
+        Integer applicationFormId = applicationForm.getId();
+        RegisteredUser applicant = userDAO.getCurrentUser();
         
-        return get(latestApplication);
+        Date copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .setProjection(Projections.max("submittedDate"))
+                .add(Restrictions.eq("applicant", applicant))
+                .add(Restrictions.isNotNull("submittedDate"))
+                .add(Restrictions.ne("id", applicationFormId)).uniqueResult();
+        
+        if (copyOnDate == null) {
+            copySubmittedApplication = false;
+            copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                    .setProjection(Projections.min("applicationTimestamp"))
+                    .add(Restrictions.eq("applicant", applicant))
+                    .add(Restrictions.ne("id", applicationFormId)).uniqueResult();
+        }
+        
+        if (copyOnDate != null) {
+            Criteria getPreviousApplication = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                    .setProjection(Projections.max("id"))
+                    .add(Restrictions.eq("applicant", applicant))
+                    .add(Restrictions.ne("id", applicationFormId));
+            
+            if (BooleanUtils.isTrue(copySubmittedApplication)) {
+                getPreviousApplication.add(Restrictions.ge("submittedDate", copyOnDate));
+            } else {
+                getPreviousApplication.add(Restrictions.ge("applicationTimestamp", copyOnDate));
+            }
+            
+            return get((Integer) getPreviousApplication.uniqueResult());
+        }
+
+        return null;
     }
 
 }

@@ -14,12 +14,9 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormTransferBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
@@ -30,21 +27,20 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
     
     private ApplicationForm applicationForm;
     
+    private Program program;
+    
     @Before
     public void prepare() {
         applicationFormTransferDAO = new ApplicationFormTransferDAO(sessionFactory);
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
                 .credentialsNonExpired(false).enabled(false).build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a61").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 
-        save(user, institution, program);
+        save(user);
         flushAndClearSession();
-
-        applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
+        program = testObjectProvider.getEnabledProgram();
+        applicationForm = new ApplicationFormBuilder().advert(program).applicant(user)
                 .status(ApplicationFormStatus.VALIDATION).build();
-
         save(applicationForm);
         flushAndClearSession();
     }
@@ -82,10 +78,12 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         
         RegisteredUser applicant = new RegisteredUserBuilder().id(Integer.MAX_VALUE).username("ked9999@zuhlke.com").email("ked@zuhlke.com").build();
         
-        ApplicationForm approvedForm1 = new ApplicationFormBuilder().applicant(applicant).build();
-        ApplicationForm approvedForm2 = new ApplicationFormBuilder().applicant(applicant).build();
-        ApplicationForm withdrawnForm1 = new ApplicationFormBuilder().applicant(applicant).build();
-        ApplicationForm rejectedForm1 = new ApplicationFormBuilder().applicant(applicant).build();
+        program = testObjectProvider.getEnabledProgram();
+        
+        ApplicationForm approvedForm1 = new ApplicationFormBuilder().advert(program).applicant(applicant).build();
+        ApplicationForm approvedForm2 = new ApplicationFormBuilder().advert(program).applicant(applicant).build();
+        ApplicationForm withdrawnForm1 = new ApplicationFormBuilder().advert(program).applicant(applicant).build();
+        ApplicationForm rejectedForm1 = new ApplicationFormBuilder().advert(program).applicant(applicant).build();
         
         approvedForm1.setStatus(ApplicationFormStatus.APPROVED);
         approvedForm1.setApplicationNumber("1");
@@ -130,12 +128,14 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         
         RegisteredUser applicant = new RegisteredUserBuilder().id(Integer.MAX_VALUE).username("ked9999@zuhlke.com").email("ked@zuhlke.com").build();
         
-        ApplicationForm approvedForm1 = new ApplicationFormBuilder().applicant(applicant).build();
-        ApplicationForm approvedForm2 = new ApplicationFormBuilder().applicant(applicant).build();
-        ApplicationForm withdrawnForm1 = new ApplicationFormBuilder().applicant(applicant).build();
-        ApplicationForm rejectedForm1 = new ApplicationFormBuilder().applicant(applicant).build();
-        ApplicationForm approvedForm3 = new ApplicationFormBuilder().applicant(applicant).build();
-        ApplicationForm approvedForm4 = new ApplicationFormBuilder().applicant(applicant).build();
+        program = testObjectProvider.getEnabledProgram();
+        
+        ApplicationForm approvedForm1 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
+        ApplicationForm approvedForm2 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
+        ApplicationForm withdrawnForm1 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
+        ApplicationForm rejectedForm1 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
+        ApplicationForm approvedForm3 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
+        ApplicationForm approvedForm4 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
         
         approvedForm1.setStatus(ApplicationFormStatus.APPROVED);
         approvedForm1.setApplicationNumber("1");

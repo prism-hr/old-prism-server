@@ -158,9 +158,9 @@ public class ProjectConfigurationController {
         if (map.isEmpty()) {
             RegisteredUser currentUser = getUser();
             Project project = projectConverter.toDomainObject(projectDTO);
-            project.setAuthor(currentUser);
+            project.setContactUser(currentUser);
             addSupervisorsRoles(project);
-            programsService.saveProject(project);
+            programsService.save(project);
             map.put("success", "true");
         }
 
@@ -177,9 +177,7 @@ public class ProjectConfigurationController {
             projects = programsService.listProjects(getUser(), program);
             json.put("projects", gson.toJson(projects));
             json.put("closingDate", programsService.getDefaultClosingDate(program));
-            if (program.getAdvert() != null) {
-                json.put("studyDuration", program.getAdvert().getStudyDuration());
-            }
+            json.put("studyDuration", program.getStudyDuration());
         }
         return json;
     }
@@ -199,8 +197,8 @@ public class ProjectConfigurationController {
     @ResponseBody
     public String getProject(@PathVariable("projectId") int projectId) throws TemplateException, IOException {
         Map<String, Object> map = Maps.newHashMap();
-        Project project = programsService.getProject(projectId);
-        if (project == null || project.isDisabled()) {
+        Project project = (Project) programsService.getById(projectId);
+        if (project == null || !project.isEnabled()) {
             throw new ResourceNotFoundException();
         }
         map.put("project", project);
@@ -212,7 +210,6 @@ public class ProjectConfigurationController {
         Map<String, Object> dataMap = Maps.newHashMapWithExpectedSize(3);
         dataMap.put("programCode", project.getProgram().getCode());
         dataMap.put("projectId", project.getId());
-        dataMap.put("advertId", project.getAdvert().getId());
         dataMap.put("host", host);
         Map<String, Object> templateMap = Maps.newHashMapWithExpectedSize(2);
         templateMap.put("buttonToApply", templateRenderer.renderButton(dataMap));
@@ -230,7 +227,7 @@ public class ProjectConfigurationController {
                 throw new ResourceNotFoundException();
             }
             addSupervisorsRoles(project);
-            programsService.saveProject(project);
+            programsService.save(project);
             map.put("success", "true");
         }
         return gson.toJson(map);
@@ -256,7 +253,7 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
     @ResponseBody
     public String removeProject(@PathVariable("projectId") int projectId) {
-        programsService.removeProject(projectId);
+        programsService.removeAdvert(projectId);
         return "ok";
     }
 

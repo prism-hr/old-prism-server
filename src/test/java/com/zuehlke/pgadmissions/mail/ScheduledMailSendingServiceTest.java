@@ -127,7 +127,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         Date baselineDate = new Date();
         ArrayList<Integer> users = Lists.newArrayList();
 
-        applicationFormUserRoleService.updateRaisesUrgentFlag();
+        applicationFormUserRoleService.updateUrgentApplications();
         expect(userDAOMock.getUsersDueUpdateNotification(baselineDate)).andReturn(users);
 
         replay(applicationFormUserRoleService, userDAOMock);

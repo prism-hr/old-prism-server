@@ -18,6 +18,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -35,18 +36,21 @@ import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 public class UserDAO {
 
     private final SessionFactory sessionFactory;
+    
+    private final ProgramDAO programDAO;
 
     private final ReminderIntervalDAO reminderIntervalDAO;
 
     private final NotificationsDurationDAO notificationsDurationDAO;
 
     public UserDAO() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Autowired
-    public UserDAO(SessionFactory sessionFactory, ReminderIntervalDAO reminderIntervalDAO, NotificationsDurationDAO notificationsDurationDAO) {
+    public UserDAO(SessionFactory sessionFactory, ProgramDAO programDAO, ReminderIntervalDAO reminderIntervalDAO, NotificationsDurationDAO notificationsDurationDAO) {
         this.sessionFactory = sessionFactory;
+        this.programDAO = programDAO;
         this.reminderIntervalDAO = reminderIntervalDAO;
         this.notificationsDurationDAO = notificationsDurationDAO;
     }
@@ -58,7 +62,8 @@ public class UserDAO {
     }
 
     public RegisteredUser get(Integer id) {
-        return (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
+        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+                .add(Restrictions.eq("id", id)).uniqueResult();
     }
 
     public RegisteredUser getUserByUsername(String username) {
@@ -264,6 +269,13 @@ public class UserDAO {
                 .add(Restrictions.eq("accountNonExpired", true))
                 .add(Restrictions.eq("accountNonLocked", true))
                 .add(Restrictions.eq("credentialsNonExpired", true)).list();
+    }
+    
+    public RegisteredUser getCurrentUser() {
+        RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        RegisteredUser user = get(currentUser.getId());
+        user.setCanManageProjects(!programDAO.getProgramsForWhichUserCanManageProjects(user).isEmpty());
+        return user;
     }
     
     private Date getBaselineDate(Date seedDate) {

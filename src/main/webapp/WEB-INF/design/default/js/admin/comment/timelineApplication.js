@@ -2,7 +2,7 @@ $(document).ready(function()
 {
 
 	$('#timeline').hide();
-	$('#opportunities').hide();
+	$('#opportunity').hide();
 
 	var jumpToTimeline = false; // prevent jumping to the timeline on page load.
 	
@@ -18,7 +18,7 @@ $(document).ready(function()
 			$('#ajaxloader').show();
 		}
 		$('#timeline').show();
-		$('#opportunities').hide();
+		$('#opportunity').hide();
 		
 		$.ajax({
 			 type: 'GET',
@@ -142,7 +142,7 @@ $(document).ready(function()
 			return false;
 		});
 		$('#application').html("");
-		$('#opportunities').hide();
+		$('#opportunity').hide();
 	}
 
 	if($('#isReferee').val() == 'true'){
@@ -152,13 +152,62 @@ $(document).ready(function()
 		$('#timelineBtn').trigger('click');
 	}
 	
-	$('#opportunitiesBtn').click(function(){
+	var jumpToOpportunity = false; // prevent jumping to opportunity on page load.
+	
+	$('#opportunityBtn').click(function(){
 		// Set the current tab.
 		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		$('#application').hide();
 		$('#timeline').hide();
-		$('#opportunities').show();
-		window.scrollTo(0, $('#opportunities').offset().top - 30);
+		if ($('#opportunity').children().length == 0) {
+			$('#ajaxloader').show();
+		}
+		$('#opportunity').show();
+		
+		$.ajax({
+			 type: 'GET',
+			 statusCode: {
+				  401: function() {
+					  window.location.reload();
+				  },
+				  500: function() {
+					  window.location.href = "/pgadmissions/error";
+				  },
+				  404: function() {
+					  window.location.href = "/pgadmissions/404";
+				  },
+				  400: function() {
+					  window.location.href = "/pgadmissions/400";
+				  },				  
+				  403: function() {
+					  window.location.href = "/pgadmissions/404";
+				  }
+			  },
+			  url: "/pgadmissions/opportunities/related",
+			  data:{
+					id: $('#applicationId').val(),
+					cacheBreaker: new Date().getTime() 
+				}, 
+			  success:	function(data)
+				{
+					$('#opportunity').html(data);	
+					// Scroll to the tab.
+					if (jumpToOpportunity)
+					{
+						window.scrollTo(0, $('#opportunity').offset().top - 30);
+					}
+					else
+					{
+						jumpToOpportunity = true;
+					}
+					addToolTips();
+					toggleScores();	
+				}, complete: function() {
+                 $('#ajaxloader').fadeOut('fast');
+             }	
+		});
+		
+		return false;
 	});
 });

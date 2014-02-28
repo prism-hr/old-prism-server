@@ -118,7 +118,7 @@ public class EmploymentController {
         
         employmentPositionService.save(employment);
         applicationService.save(employment.getApplication());
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         
         return "redirect:/update/getEmploymentPosition?applicationId=" + employment.getApplication().getApplicationNumber();
     }

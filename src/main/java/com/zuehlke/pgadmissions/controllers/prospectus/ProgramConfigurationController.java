@@ -31,7 +31,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -101,7 +100,7 @@ public class ProgramConfigurationController {
 
     @Autowired
     private DomicileService domicileService;
-
+    
     @Autowired
     private OpportunitiesService opportunitiesService;
 
@@ -131,13 +130,6 @@ public class ProgramConfigurationController {
         binder.registerCustomEditor(Date.class, "closingDate", datePropertyEditor);
     }
 
-    private Advert getProgrameAdvert(Program program) {
-        if (program == null) {
-            return null;
-        }
-        return program.getAdvert();
-    }
-
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();
@@ -153,27 +145,27 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
-    public String getOpportunityData(@RequestParam String programCode) {
+    public String getOpportunityData(@RequestParam(required=false) String programCode, @RequestParam(required=false) Integer advertId) {
         Program program = programsService.getProgramByCode(programCode);
-        Advert advert = getProgrameAdvert(program);
 
         Map<String, Object> result = Maps.newHashMap();
-        result.put("advert", advert);
 
         HashMap<String, Object> dataMap = new HashMap<String, Object>();
-        dataMap.put("programCode", programCode);
-        if (advert != null) {
-            dataMap.put("advertId", advert.getId());
-        }
-
+        dataMap.put("advertId", advertId);
+        
         Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
-
-        result.put("programLocked", program.getLocked());
+        
+        result.put("programId", program.getId());
+        result.put("programTitle", program.getTitle());
+        result.put("programDescription", program.getDescription());
+        result.put("programStudyDuration", program.getStudyDuration());
+        result.put("programFunding", program.getFunding());
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
         result.put("programType", program.getProgramType().getId());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
         result.put("institutionCode", program.getInstitution().getCode());
+        result.put("programLock", program.getLocked());
         result.put("advertisingDeadline", programInstanceService.getAdvertisingDeadlineYear(program));
         result.put("studyOptions", programInstanceService.getStudyOptions(program));
         result.put("buttonToApply", templateRenderer.renderButton(dataMap));
@@ -181,7 +173,7 @@ public class ProgramConfigurationController {
 
         return gson.toJson(result);
     }
-
+    
     @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
     @ResponseBody
     public String saveOpportunity(@Valid OpportunityRequest opportunityRequest, BindingResult result) {
@@ -207,7 +199,7 @@ public class ProgramConfigurationController {
         }
         return gson.toJson(map);
     }
-
+    
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
     @ResponseBody
     public String addClosingDate(@RequestParam String programCode, ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
@@ -245,7 +237,7 @@ public class ProgramConfigurationController {
 
         return gson.toJson(map);
     }
-
+    
     @RequestMapping(value = "/getClosingDates", method = RequestMethod.GET)
     @ResponseBody
     public String getClosingDates(@RequestParam String programCode, HttpServletRequest request) throws TemplateException, IOException {
@@ -258,12 +250,12 @@ public class ProgramConfigurationController {
 
         if (map.isEmpty()) {
             map.put("programCode", programCode);
-
             map.put("closingDates", program.getClosingDates());
         }
+        
         return gson.toJson(map);
     }
-
+    
     @RequestMapping(value = "/removeClosingDate", method = RequestMethod.POST)
     @ResponseBody
     public String removeClosingDate(@RequestParam String programCode, @RequestParam Integer closingDateId, HttpServletRequest request)

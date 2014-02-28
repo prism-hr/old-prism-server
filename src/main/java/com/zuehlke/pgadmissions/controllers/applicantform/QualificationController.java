@@ -145,7 +145,7 @@ public class QualificationController {
         
         qualificationService.save(qualification);
         applicationService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
 	}
 	

@@ -15,15 +15,11 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -99,7 +95,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("user").password("password")
                         .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-        ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).build();
+        ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).advert(testObjectProvider.getEnabledProgram()).build();
 
         Domicile domicile = new DomicileBuilder().name("nae").code("NA").enabled(true).build();
         save(applicant, application, domicile);
@@ -120,19 +116,13 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a50").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-
-        save(institution, program);
-
         applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                         .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         refereeUser = new RegisteredUserBuilder().firstName("hanna").lastName("hoopla").email("hoopla@test.com").username("username1").password("password")
                         .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         save(applicant, refereeUser);
         save(applicant);
-
-        applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+        applicationForm = new ApplicationFormBuilder().applicant(applicant).advert(testObjectProvider.getEnabledProgram()).build();
         save(applicationForm);
         flushAndClearSession();
     }

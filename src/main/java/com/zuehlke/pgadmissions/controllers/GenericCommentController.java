@@ -110,7 +110,7 @@ public class GenericCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return GENERIC_COMMENT_PAGE;
     }
 
@@ -125,7 +125,7 @@ public class GenericCommentController {
         
         commentService.save(comment);
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getUser(), ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getUser(), ApplicationUpdateScope.INTERNAL);
         return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
     }
 

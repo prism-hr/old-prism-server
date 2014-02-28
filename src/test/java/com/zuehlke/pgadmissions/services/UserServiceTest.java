@@ -180,6 +180,16 @@ public class UserServiceTest {
     }
 
     @Test
+    public void shouldGetUserFromSecurityContextAndRefresh() {
+        RegisteredUser refreshedUser = new RegisteredUser();
+        EasyMock.expect(userDAOMock.getCurrentUser()).andReturn(refreshedUser);
+        EasyMock.replay(userDAOMock);
+        RegisteredUser loadedUser = userService.getCurrentUser();
+        EasyMock.verify(userDAOMock);
+        assertEquals(loadedUser.getId(), refreshedUser.getId());
+    }
+
+    @Test
     public void shouldAddRoleToUser() {
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(new RoleBuilder().id(Authority.ADMINISTRATOR).build());
         EasyMockUnitils.replay();
@@ -460,8 +470,6 @@ public class UserServiceTest {
     @Test
     public void shouldUpdateCurrentUserAndSendEmailConfirmation() throws UnsupportedEncodingException {
         final RegisteredUser currentUser = new RegisteredUserBuilder().firstName("f").lastName("l").id(7).password("12").email("em").username("em").build();
-        RegisteredUser userOne = new RegisteredUserBuilder().firstName("a").firstName2("a2").firstName3("a3").lastName("o").email("two").password("12")
-                .newPassword("newpass").build();
 
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("newpass")).andReturn("encryptednewpass");
         expect(authenticationService.getCurrentUser()).andReturn(currentUser);

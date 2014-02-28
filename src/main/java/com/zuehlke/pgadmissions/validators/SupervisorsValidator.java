@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -42,6 +43,16 @@ public class SupervisorsValidator implements Validator {
 
             if (primarySupervisors != 1) {
                 errors.rejectValue("supervisors", "approvalround.supervisors.noprimary");
+            }
+            
+            List<Supervisor> inspectSupervisors = new ArrayList<Supervisor>(supervisors.size());
+            for (Supervisor supervisor : supervisors) {
+                if (!inspectSupervisors.isEmpty()) {
+                    if (inspectSupervisors.contains(supervisor)) {
+                        errors.rejectValue("supervisors", "approvaround.supervisors.duplicates");
+                    }
+                }
+                inspectSupervisors.add(supervisor);
             }
         }
     }

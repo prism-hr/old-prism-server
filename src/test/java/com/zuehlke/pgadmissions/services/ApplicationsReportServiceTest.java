@@ -101,7 +101,7 @@ public class ApplicationsReportServiceTest {
         Program program1 = new ProgramBuilder().code("ABC").title("BBC").build();
         PersonalDetails personalDetails = new PersonalDetailsBuilder().dateOfBirth(new Date()).gender(Gender.MALE).firstNationality(new LanguageBuilder().name("British").enabled(true).build()).build();
         ProgrammeDetails programmeDetails1 = new ProgrammeDetailsBuilder().sourcesOfInterest(new SourcesOfInterestBuilder().name("fooBar").build()).build();
-        ApplicationForm app1 = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).personalDetails(personalDetails).applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1).build();
+        ApplicationForm app1 = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).personalDetails(personalDetails).applicant(applicant1).applicationNumber("07").advert(program1).programmeDetails(programmeDetails1).build();
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
@@ -293,7 +293,7 @@ public class ApplicationsReportServiceTest {
         Supervisor secondarySupervisor = new SupervisorBuilder().isPrimary(false).user(new RegisteredUserBuilder().firstName("Secondary").lastName("Supervisor").build()).build();
         ApprovalRound approvalRound = new ApprovalRoundBuilder().projectTitle("title").supervisors(primarySupervisor, secondarySupervisor).recommendedConditionsAvailable(true).recommendedConditions("Conditions").build();
         
-        ApplicationForm app1 = new ApplicationFormBuilder().applicant(applicant1).applicationNumber("07").program(program1).programmeDetails(programmeDetails1)
+        ApplicationForm app1 = new ApplicationFormBuilder().applicant(applicant1).applicationNumber("07").advert(program1).programmeDetails(programmeDetails1)
                 .approvalRounds(approvalRound).personalDetails(personalDetails).latestApprovalRound(approvalRound).submittedDate(yesterday).lastUpdated(today).status(ApplicationFormStatus.APPROVED).events(validationEvent, reviewEvent, interviewEvent1, interviewEvent2, approveEvent).comments(validationComment).referees(referee1, referee2, referee3).latestInterview(interview).latestReviewRound(reviewRound).averageRating(new BigDecimal("1.56")).build();
         return app1;
     }

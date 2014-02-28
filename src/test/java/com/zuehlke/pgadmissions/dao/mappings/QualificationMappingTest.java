@@ -14,14 +14,10 @@ import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
@@ -78,17 +74,10 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 	
 	@Before
 	public void initialise() {
-	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a2").domicileCode("AE").enabled(true).build();
-		Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-		
-		save(institution, program);
-
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-
 		save(applicant);
-
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).advert(testObjectProvider.getEnabledProgram()).build();
 		save(applicationForm);
 		flushAndClearSession();
 	}

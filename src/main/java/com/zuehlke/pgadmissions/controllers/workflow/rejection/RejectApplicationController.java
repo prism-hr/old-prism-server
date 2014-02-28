@@ -75,7 +75,7 @@ public class RejectApplicationController {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
-        applicationFormUserRoleService.deregisterApplicationUpdate(application, user);
+        applicationFormUserRoleService.deleteApplicationUpdate(application, user);
         return REJECT_VIEW_NAME;
     }
 
@@ -91,8 +91,8 @@ public class RejectApplicationController {
 
         rejectService.moveApplicationToReject(application, rejection);
         rejectService.sendToPortico(application);
-        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
-        applicationFormUserRoleService.registerApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.deleteApplicationActions(application);
+        applicationFormUserRoleService.insertApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
         return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
     }
 

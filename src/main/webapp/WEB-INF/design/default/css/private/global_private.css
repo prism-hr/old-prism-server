@@ -2019,12 +2019,9 @@ background: #909194;
 	width: 518px !important;
 	margin-bottom: 0px;
 }
-.newOportunity, .go-back {
+.newOpportunity, .newOpportunityCancel {
     float:right;
     font-weight: bold;
-}
-#yourApplication {
-	padding: 7px;
 }
 #resourcesModal .alert-info {
 	margin-bottom: 10px;
@@ -2032,10 +2029,10 @@ background: #909194;
 #opportunities h1 {
 	float: none;
 }
-#opportunities #opportunitiList {
-	height: 512px;
+.placeholder {
+	height: 800px;
 }
-#opportunities #opportunitiList .newOportunity{
+#opportunities #opportunitiList .newOpportunity{
 	display: none;
 }
 #opportunityRequestEditForm .form-rows .alert{

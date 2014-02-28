@@ -107,7 +107,7 @@ public class CreateNewInterviewerControllerTest {
     @Test
     public void shouldGetApplicationFromIdForAdmin() {
         Program program = new ProgramBuilder().id(6).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).advert(program).build();
 
         EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
         EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);

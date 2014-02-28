@@ -14,14 +14,11 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -30,9 +27,7 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadReferenceComment() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a31").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-        save(institution, program);
+        Program program = testObjectProvider.getEnabledProgram();
 
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
                         .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
@@ -43,7 +38,7 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
         RegisteredUser commentProviderUser = new RegisteredUserBuilder().firstName("Bob").lastName("Kowalski").email("bob@test.com").username("bob")
                         .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).build();
+        ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).advert(program).build();
 
         Domicile domicile = new DomicileBuilder().name("nae").code("aa").enabled(true).build();
         save(applicant, application, domicile, commentProviderUser);
@@ -52,7 +47,7 @@ public class ReferenceCommentMappingTest extends AutomaticRollbackTestCase {
                         .address1("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").user(refereeUser).build();
         save(refereeUser, referee);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
         save(applicationForm);
 
         flushAndClearSession();

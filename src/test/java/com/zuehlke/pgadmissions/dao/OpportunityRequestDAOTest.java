@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 
 public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
@@ -51,7 +50,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser otherUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, 15);
         Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
         QualificationInstitution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
-        Program program = ProgramBuilder.aProgram(institution).build();
+        Program program = testObjectProvider.getEnabledProgram();
 
         DateTime date = new DateTime(1410, 7, 14, 12, 0);
 
@@ -78,7 +77,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser user = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, 15);
         Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
         QualificationInstitution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
-        Program program = ProgramBuilder.aProgram(institution).build();
+        Program program = testObjectProvider.getEnabledProgram();
 
         DateTime date = new DateTime(1410, 7, 14, 12, 0);
 

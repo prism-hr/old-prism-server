@@ -1,19 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.unitils.easymock.EasyMockUnitils.replay;
-import static org.unitils.easymock.EasyMockUnitils.verify;
+import static org.easymock.EasyMock.createMock;
 
 import javax.mail.internet.AddressException;
 
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.unitils.UnitilsJUnit4TestClassRunner;
-import org.unitils.easymock.annotation.Mock;
-import org.unitils.inject.annotation.InjectIntoByType;
-import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
@@ -23,47 +18,48 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
-@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class UserServiceResetPasswordTest {
 
-    @Mock
-    @InjectIntoByType
+    private UserService serviceUT;
+
     private UserDAO userDAOMock;
-
-    @Mock
-    @InjectIntoByType
     private RoleDAO roleDAOMock;
-
-    @Mock
-    @InjectIntoByType
     private ApplicationsFilteringDAO filteringDAOMock;
-
-    @Mock
-    @InjectIntoByType
     private UserFactory userFactoryMock;
-
-    @Mock
-    @InjectIntoByType
     private EncryptionUtils encryptionUtilsMock;
-
-    @Mock
-    @InjectIntoByType
     private MailSendingService mailServiceMock;
-
-    @Mock
-    @InjectIntoByType
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
-    @TestedObject
-    private UserService service;
+    @Before
+    public void setUp() {
+        encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
+
+        userDAOMock = EasyMock.createMock(UserDAO.class);
+        roleDAOMock = EasyMock.createMock(RoleDAO.class);
+        filteringDAOMock = EasyMock.createMock(ApplicationsFilteringDAO.class);
+        userFactoryMock = createMock(UserFactory.class);
+        mailServiceMock = createMock(MailSendingService.class);
+        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+
+        serviceUT = new UserService(userDAOMock, roleDAOMock, filteringDAOMock, userFactoryMock, encryptionUtilsMock, mailServiceMock, applicationFormUserRoleServiceMock);
+    }
+
+    private void replayAllMocks() {
+        EasyMock.replay(userDAOMock, encryptionUtilsMock, mailServiceMock);
+    }
+
+    private void verifyAllMocks() {
+        EasyMock.verify(userDAOMock, encryptionUtilsMock, mailServiceMock);
+    }
 
     @Test
     public void ignoreInvalidEmails() {
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("aaaa")).andReturn(null);
+        replayAllMocks();
 
-        replay();
-        service.resetPassword("aaaa");
-        verify();
+        serviceUT.resetPassword("aaaa");
+
+        verifyAllMocks();
     }
 
     @Test
@@ -82,11 +78,11 @@ public class UserServiceResetPasswordTest {
         EasyMock.expect(encryptionUtilsMock.getMD5Hash(newPassword)).andReturn(hashedNewPassword);
         userDAOMock.save(storedUser);
         EasyMock.expectLastCall();
+        replayAllMocks();
 
-        replay();
-        service.resetPassword("aaaa");
-        verify();
+        serviceUT.resetPassword("aaaa");
 
+        verifyAllMocks();
         Assert.assertEquals(hashedNewPassword, storedUser.getPassword());
     }
 
@@ -102,11 +98,11 @@ public class UserServiceResetPasswordTest {
 
         mailServiceMock.sendResetPasswordMessage(storedUser, newPassword);
         EasyMock.expectLastCall().andThrow(new RuntimeException("intentional exception"));
+        replayAllMocks();
 
-        replay();
-        service.resetPassword("aaaa");
-        verify();
+        serviceUT.resetPassword("aaaa");
 
+        verifyAllMocks();
         Assert.assertEquals(oldPassword, storedUser.getPassword());
     }
 }

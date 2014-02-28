@@ -337,11 +337,11 @@
 										<div class="buttons">
 											<button class="btn btn-primary" type="button" id="changeStateButton" value="save">Submit</button>
 										</div>
+										<input type="hidden" id="applicationId" value="${(stateChangeDTO.applicationForm.applicationNumber)!}"/>
+										<#list stateChangeDTO.customQuestionCoverage as scoringStage>
+											<input type="hidden" name="customQuestionCoverage" value="${(scoringStage)!}"/>
+										</#list>
 									</form>
-									<input type="hidden" id="applicationId" value="${(stateChangeDTO.applicationForm.applicationNumber)!}"/>
-									<#list stateChangeDTO.customQuestionCoverage as scoringStage>
-										<input type="hidden" name="customQuestionCoverage" value="${(scoringStage)!}"/>
-									</#list>
 								</div>
 							</section>
 							<#include "/private/staff/admin/comment/timeline_application.ftl"/>

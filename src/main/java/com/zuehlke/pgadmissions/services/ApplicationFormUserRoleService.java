@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
@@ -328,73 +327,59 @@ public class ApplicationFormUserRoleService {
         return applicationFormUserRoleDAO.findUsersPotentiallyInterestedInApplication(applicationForm);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteApplicationActions(ApplicationForm applicationForm) {
         applicationFormUserRoleDAO.deleteApplicationActions(applicationForm);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteApplicationUpdate(ApplicationForm applicationForm, RegisteredUser registeredUser) {
         applicationFormUserRoleDAO.deleteApplicationUpdate(applicationForm, registeredUser);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {
         applicationFormUserRoleDAO.deleteProgramRole(registeredUser, program, authority);
     }
  
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void deleteRoleAction(ApplicationForm applicationForm, Authority authority, ApplicationFormAction action) {
         applicationFormUserRoleDAO.deleteRoleAction(applicationForm, authority, action);
     }
-    
-    @Transactional(propagation = Propagation.REQUIRES_NEW)   
+     
     private void deleteStateActions(ApplicationForm applicationForm) {
         applicationFormUserRoleDAO.deleteStateActions(applicationForm);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void deleteUserAction(ApplicationForm applicationForm, RegisteredUser registeredUser, Authority authority, ApplicationFormAction action) {
         deleteUserAction(applicationForm, registeredUser, authority, action);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteUserRole(RegisteredUser registeredUser, Authority authority) {
         applicationFormUserRoleDAO.deleteUserRole(registeredUser, authority);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void insertApplicationUpdate(ApplicationForm applicationForm, RegisteredUser author, ApplicationUpdateScope updateVisibility) {
         Date updateTimestamp = new Date();
         applicationFormUserRoleDAO.insertApplicationUpdate(applicationForm, author, updateTimestamp, updateVisibility);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void insertProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {
         applicationFormUserRoleDAO.insertProgramRole(registeredUser, program, authority);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void insertUserRole(RegisteredUser registeredUser, Authority authority) {
         applicationFormUserRoleDAO.insertUserRole(registeredUser, authority);
     }
     
-    @Transactional(propagation = Propagation.NEVER)
     public List<ActionDefinition> selectUserActions(Integer registeredUserId, Integer applicationFormId, ApplicationFormStatus status) {
         return applicationFormUserRoleDAO.selectUserActions(registeredUserId, applicationFormId, status);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateUrgentApplications() {
         applicationFormUserRoleDAO.updateUrgentApplications();
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void updateApplicationDueDate(ApplicationForm applicationForm, Date deadlineTimestamp) {
         applicationFormUserRoleDAO.updateApplicationDueDate(applicationForm, deadlineTimestamp);
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void updateApplicationInterest(ApplicationForm applicationForm, RegisteredUser registeredUser, Boolean interested) {
         applicationFormUserRoleDAO.updateApplicationInterest(applicationForm, registeredUser, interested);
     }

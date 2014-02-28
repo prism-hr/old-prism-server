@@ -4,6 +4,7 @@ $(document).ready(function()
 	$('#opportunity').hide();
 	
 	$('#applicationBtn').click(function(){
+		alert("Got Here");
 		// Set the current tab.
 		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');

@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.easymock.EasyMock;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -38,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
-    private UserDAO userDAOMock;
     private ApplicationFormDAO applicationDAO;
     private RegisteredUser user;
     private Program program;
@@ -47,8 +45,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        userDAOMock = EasyMock.createMock(UserDAO.class);
-        applicationDAO = new ApplicationFormDAO(sessionFactory, userDAOMock);
+        applicationDAO = new ApplicationFormDAO(sessionFactory);
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         save(user);
@@ -244,10 +241,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         save(otherApplicant, applicationForm, applicationForm2, applicationForm3, recentApplicationForm, otherApplication);
 
-        EasyMock.expect(userDAOMock.getCurrentUser()).andReturn(otherApplicant);
-        EasyMock.replay(userDAOMock);
-
-        ApplicationForm returned = applicationDAO.getPreviousApplicationForApplicant(recentApplicationForm);
+        ApplicationForm returned = applicationDAO.getPreviousApplicationForApplicant(recentApplicationForm, otherApplicant);
 
         assertEquals(otherApplication.getId(), returned.getId());
     }

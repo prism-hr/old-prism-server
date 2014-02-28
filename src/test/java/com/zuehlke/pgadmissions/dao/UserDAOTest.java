@@ -19,11 +19,7 @@ import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
@@ -63,8 +59,6 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     private NotificationsDurationDAO notificationsDurationDAOMock;
 
     private UserNotificationListBuilder userNotificationListBuilder;
-
-    private ProgramDAO programDAOMock;
 
     @Test
     public void shouldSaveAndLoadUser() throws Exception {
@@ -581,27 +575,12 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         assertEquals(userNotificationListBuilder.getOpportunityRequestNotificationSuccessCount() / NOTIFICATION_TEST_ITERATIONS * 5,
                 actualOpportunityRequestNotificationCount);
     }
-    
-    @Test
-    public void shouldGetCurrentUser() {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-        RegisteredUser currentUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
-        authenticationToken.setDetails(currentUser);
-        SecurityContextImpl secContext = new SecurityContextImpl();
-        secContext.setAuthentication(authenticationToken);
-        SecurityContextHolder.setContext(secContext);
-        EasyMock.expect(programDAOMock.getProgramsForWhichUserCanManageProjects(currentUser)).andReturn(Lists.newArrayList(new Program()));
-        EasyMock.replay(programDAOMock);
-        RegisteredUser loadedUser = userDAO.getCurrentUser();
-        assertSame(loadedUser, currentUser);
-    }
 
     @Before
     public void prepare() {
         reminderIntervalDAOMock = EasyMock.createMock(ReminderIntervalDAO.class);
         notificationsDurationDAOMock = EasyMock.createMock(NotificationsDurationDAO.class);
-        programDAOMock = EasyMock.createMock(ProgramDAO.class);
-        userDAO = new UserDAO(sessionFactory, programDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock);
+        userDAO = new UserDAO(sessionFactory, reminderIntervalDAOMock, notificationsDurationDAOMock);
         roleDAO = new RoleDAO(sessionFactory);
 
         DateTime baseline = new DateTime(new Date());

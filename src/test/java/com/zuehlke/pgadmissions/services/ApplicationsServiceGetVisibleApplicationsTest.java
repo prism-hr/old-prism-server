@@ -24,7 +24,6 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
-import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -86,18 +85,13 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     private QualificationInstitution institution;
 
-    private ProgramDAO programDAO;
-
     @Before
     public void prepare() {
-
-        programDAO = new ProgramDAO(sessionFactory);
-
-        userDAO = new UserDAO(sessionFactory, programDAO, null, null);
+        userDAO = new UserDAO(sessionFactory, null, null);
 
         applicationFormListDAO = new ApplicationFormListDAO(sessionFactory, userDAO);
 
-        applicationFormDAO = new ApplicationFormDAO(sessionFactory, userDAO);
+        applicationFormDAO = new ApplicationFormDAO(sessionFactory);
 
         applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
 

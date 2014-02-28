@@ -75,7 +75,7 @@ public class ApplicationFormCreationService {
     }
 
     protected void fillWithDataFromPreviousApplication(ApplicationForm applicationForm) {
-        ApplicationForm previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(applicationForm);
+        ApplicationForm previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(applicationForm, userService.getCurrentUser());
         if (previousApplication != null) {
             applicationFormCopyHelper.copyApplicationFormData(applicationForm, previousApplication);
         }

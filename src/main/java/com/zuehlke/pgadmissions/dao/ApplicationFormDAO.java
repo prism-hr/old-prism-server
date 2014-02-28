@@ -28,19 +28,16 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 public class ApplicationFormDAO {
 
     private final SessionFactory sessionFactory;
-    
-    private final UserDAO userDAO;
 
     private List<ApplicationFormStatus> activeStates = Lists.newArrayList();
 
     public ApplicationFormDAO() {
-        this(null, null);
+        this(null);
     }
 
     @Autowired
-    public ApplicationFormDAO(SessionFactory sessionFactory, UserDAO userDAO) {
+    public ApplicationFormDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-        this.userDAO = userDAO;
         activeStates.add(ApplicationFormStatus.VALIDATION);
         activeStates.add(ApplicationFormStatus.REVIEW);
         activeStates.add(ApplicationFormStatus.INTERVIEW);
@@ -134,10 +131,9 @@ public class ApplicationFormDAO {
                         .add(Restrictions.eq("cv", document))).uniqueResult();
     }
 
-    public ApplicationForm getPreviousApplicationForApplicant(ApplicationForm applicationForm) {
+    public ApplicationForm getPreviousApplicationForApplicant(ApplicationForm applicationForm, RegisteredUser applicant) {
         Boolean copySubmittedApplication = true;
         Integer applicationFormId = applicationForm.getId();
-        RegisteredUser applicant = userDAO.getCurrentUser();
         
         Date copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
                 .setProjection(Projections.max("submittedDate"))

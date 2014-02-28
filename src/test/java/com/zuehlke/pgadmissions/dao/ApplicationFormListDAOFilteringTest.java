@@ -38,8 +38,6 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     private ApplicationFormListDAO applicationDAO;
 
-    private ProgramDAO programDAO;
-
     private UserDAO userDAO;
 
     private RegisteredUser applicant;
@@ -72,8 +70,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Before
     public void prepare() {
-        programDAO = new ProgramDAO(sessionFactory);
-        userDAO = new UserDAO(sessionFactory, programDAO, null, null);
+        userDAO = new UserDAO(sessionFactory, null, null);
         applicationDAO = new ApplicationFormListDAO(sessionFactory, userDAO);
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         role = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);

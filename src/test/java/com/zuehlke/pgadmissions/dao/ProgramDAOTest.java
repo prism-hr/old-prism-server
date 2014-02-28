@@ -4,11 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,16 +42,20 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         project = testObjectProvider.getEnabledProject();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldGetAllPrograms() {
-        BigInteger existingNumberOfPrograms = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from PROGRAM").uniqueResult();
+        List<Program> programs = (List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .add(Restrictions.eq("enabled", true))
+                .addOrder(Order.asc("title")).list();
         Program program1 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code1").title("another title").institution(institution).build();
         Program program2 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code2").title("another title").institution(institution).build();
         sessionFactory.getCurrentSession().save(program1);
         sessionFactory.getCurrentSession().save(program2);
         flushAndClearSession();
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        Assert.assertEquals(existingNumberOfPrograms.intValue() + 2, programDAO.getAllPrograms().size());
+        Assert.assertEquals(programs.size() + 2, programDAO.getAllEnabledPrograms().size());
     }
 
     @Test

@@ -237,13 +237,34 @@ span.count {
                   <div class="row-group">
                     <ul id="timeline-statuses">
                       <#list opportunityRequests as opportunityRequest>
-                        <#list opportunityRequest.comments?reverse as comment>                    
-                          <li class="${(comment.commentType == 'REJECT')?string('rejected','offer_recommended')}"> 
+                        <#list opportunityRequest.comments?reverse as comment>     
+                          
+                          <#assign author = comment.author> 
+                          
+                          <#if comment.commentType == "REJECT">
+                            <#assign elementClass = "rejected">
+                            <#assign actionText = "Request Rejected.">
+                          <#elseif comment.commentType == "APPROVE">
+                            <#assign elementClass = "offer_recommended">
+                            <#assign actionText = "Request Approved.">
+                          <#else>
+                            <#assign elementClass = "approval">
+                            <#assign actionText = "Request Revised.">
+                          </#if>               
+                          
+                          <#if comment.author.id == opportunityRequest.author.id>
+                            <#assign roleName = "Author">
+                            <#assign roleClassName = "applicant">
+                          <#else>
+                            <#assign roleName = "Administrator">
+                            <#assign roleClassName = "administrator">
+                          </#if>
+                          
+                          <li class="${elementClass}"> 
                             <!-- Box start -->
                             <div class="box">
-                              <#assign author = comment.author> 
-                              <div class="title"> <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span> <span class="datetime"><span class="datetime">${comment.createdTimestamp?string("dd MMM yyyy")} at ${comment.createdTimestamp?string('HH:mm')}</span></span> </div>
-                              <p class="highlight">Request ${(comment.commentType == 'REJECT')?string('Rejected','Approved')}.</p>
+                              <div class="title"> <span data-desc="${author.displayName?html} (${author.email?html}) as: ${roleName}" class="icon-role ${roleClassName}" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span> <span class="datetime"><span class="datetime">${comment.createdTimestamp?string("dd MMM yyyy")} at ${comment.createdTimestamp?string('HH:mm')}</span></span> </div>
+                              <p class="highlight">${actionText}</p>
                               <#if comment.content??>
                                 <i class="icon-minus-sign"></i>
                               </#if> 
@@ -251,10 +272,10 @@ span.count {
                             <#if comment.content??>
                               <div class="excontainer">
                                 <ul class="status-info">
-                                  <li class="${(comment.commentType == 'REJECT')?string('rejected','offer_recommended')}">
+                                  <li class="${elementClass}">
                                     <div class="box">
                                       <div class="title">
-                                        <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span>
+                                        <span data-desc="${author.displayName?html} (${author.email?html}) as: ${roleName}" class="icon-role ${roleClassName}" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span>
                                         <em>Commented:</em>
                                       </div>
                                       <div class="textContainer">

@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -28,18 +27,21 @@ public class ProjectConverter {
         if (projectAdvertDTO == null) {
             return null;
         }
-        Project project = projectAdvertDTO.getId() == null ? new Project() : programService.getProject(projectAdvertDTO.getId());
+        Project project = projectAdvertDTO.getId() == null ? new Project() : (Project) programService.getById(projectAdvertDTO.getId());
         if (project == null) {
             return null;
         }
-        Advert advert = project.getAdvert() == null ? new Advert() : project.getAdvert();
-        project.setAdvert(advert);
         updateProjectFromDTO(project, projectAdvertDTO);
-        updateProjectAdvert(advert, projectAdvertDTO);
         return project;
     }
 
     private void updateProjectFromDTO(Project project, ProjectDTO projectAdvertDTO) {
+        project.setTitle(projectAdvertDTO.getTitle());
+        project.setDescription(projectAdvertDTO.getDescription());
+        project.setStudyDuration(projectAdvertDTO.getStudyDuration());
+        project.setFunding(projectAdvertDTO.getFunding());
+        project.setActive(projectAdvertDTO.getActive());
+        
         if (projectAdvertDTO.getClosingDateSpecified()) {
             project.setClosingDate(projectAdvertDTO.getClosingDate());
         }
@@ -50,9 +52,11 @@ public class ProjectConverter {
 
         RegisteredUser primarySupervisor = loadPerson(projectAdvertDTO.getPrimarySupervisor());
         project.setPrimarySupervisor(primarySupervisor);
+        project.setContactUser(primarySupervisor);
 
         RegisteredUser secondarySupervisor = loadPerson(projectAdvertDTO.getSecondarySupervisor());
         project.setSecondarySupervisor(secondarySupervisor);
+        
     }
 
     private RegisteredUser loadPerson(Person person) {
@@ -60,16 +64,6 @@ public class ProjectConverter {
             return null;
         }
         return userService.getUserByEmailIncludingDisabledAccounts(person.getEmail());
-    }
-
-    private void updateProjectAdvert(Advert advert, ProjectDTO projectAdvertDTO) {
-        advert.setTitle(projectAdvertDTO.getTitle());
-        String description = projectAdvertDTO.getDescription();
-        advert.setDescription(description);
-        advert.setStudyDuration(projectAdvertDTO.getStudyDuration());
-        String funding = projectAdvertDTO.getFunding();       
-        advert.setFunding(funding);
-        advert.setActive(projectAdvertDTO.getActive());
     }
 
 }

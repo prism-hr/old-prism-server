@@ -984,7 +984,7 @@ public class MailSendingServiceTest {
         RejectReason reason = new RejectReasonBuilder().text(SAMPLE_REJECTION_REASON).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).status(ApplicationFormStatus.APPROVED)
                 .rejection(new RejectionBuilder().rejectionReason(reason).includeProspectusLink(false).build()).applicant(applicant)
-                .programmeDetails(programDetails).applicationNumber(SAMPLE_APPLICATION_NUMBER).program(program).build();
+                .programmeDetails(programDetails).applicationNumber(SAMPLE_APPLICATION_NUMBER).advert(program).build();
         return applicationForm;
 
     }

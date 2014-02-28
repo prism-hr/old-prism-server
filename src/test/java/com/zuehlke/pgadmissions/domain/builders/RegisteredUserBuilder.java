@@ -34,21 +34,16 @@ public class RegisteredUserBuilder {
     private String activationCode;
     private String upi;
     private Date applicationListLastAccessTimestamp;
-
     private List<Referee> referees = new ArrayList<Referee>();
     private List<Comment> comments = new ArrayList<Comment>();
-
     private List<Role> roles = new ArrayList<Role>();
     private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
     private List<Program> programsOfWhichApprover = new ArrayList<Program>();
     private List<Program> programsOfWhichViewer = new ArrayList<Program>();
     private List<QualificationInstitution> institutions = Lists.newArrayList();
-
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
     private ApplicationsFiltering filtering;
-
     private String originalApplicationQueryString;
-
     private RegisteredUser primaryAccount;
     private List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
 
@@ -226,7 +221,6 @@ public class RegisteredUserBuilder {
         user.setCredentialsNonExpired(credentialsNonExpired);
         user.setActivationCode(activationCode);
         user.getRoles().addAll(roles);
-
         user.getProgramsOfWhichAdministrator().addAll(programsOfWhichAdministrator);
         user.getProgramsOfWhichApprover().addAll(programsOfWhichApprover);
         user.getProgramsOfWhichViewer().addAll(programsOfWhichViewer);
@@ -238,12 +232,11 @@ public class RegisteredUserBuilder {
         user.setDirectToUrl(directURL);
         user.setOriginalApplicationQueryString(originalApplicationQueryString);
         user.setFiltering(filtering);
-
         user.setUpi(upi);
         user.setApplicationListLastAccessTimestamp(applicationListLastAccessTimestamp);
         user.getLinkedAccounts().addAll(linkedAccounts);
         user.setPrimaryAccount(primaryAccount);
-
         return user;
     }
+    
 }

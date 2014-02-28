@@ -13,11 +13,9 @@
 	<ul class="tabs">
 		<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
 		<li><a href="#application" id="applicationBtn">Application</a></li>
-		<li><a href="#opportunities" id="opportunitiesBtn">Opportunities</a></li>
+		<li><a href="#opportunity" id="opportunityBtn">Opportunity</a></li>
 	</ul>
 	<div class="tab-page" id="timeline"></div>
 	<div class="tab-page" id="application"></div>
-	<div class="tab-page" id="opportunities" style="display:none">
-		<#include "/private/prospectus/opportunities.ftl"/>
-	</div>
+	<div class="tab-page" id="opportunity"></div>
 </div>

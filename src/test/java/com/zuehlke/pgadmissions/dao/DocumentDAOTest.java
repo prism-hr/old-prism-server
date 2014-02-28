@@ -20,15 +20,12 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
@@ -128,7 +125,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		dao.save(document);
 		flushAndClearSession();
 		ApplicationForm application = new ApplicationForm();
-		application.setProgram(program);
+		application.setAdvert(program);
 		application.setApplicant(user);
 
 		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432")
@@ -150,7 +147,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		dao.save(document);
 		flushAndClearSession();
 		ApplicationForm application = new ApplicationForm();
-		application.setProgram(program);
+		application.setAdvert(program);
 		application.setApplicant(user);
 
 		Integer id = document.getId();
@@ -166,7 +163,7 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		DocumentDAO dao = new DocumentDAO(sessionFactory);
 		dao.save(document);
 		flushAndClearSession();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).build();
 		save(application);
 		flushAndClearSession();
 
@@ -220,9 +217,8 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
                 .credentialsNonExpired(false).enabled(false).build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a21").domicileCode("AE").enabled(true).build();
-		program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-		save(user, institution, program);
+		save(user);
 		flushAndClearSession();
+		program = testObjectProvider.getEnabledProgram();
 	}
 }

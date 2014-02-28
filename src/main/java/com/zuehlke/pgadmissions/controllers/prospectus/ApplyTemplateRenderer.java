@@ -40,10 +40,11 @@ public class ApplyTemplateRenderer {
             linkToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(ApplyTemplateRenderer.LINK_TO_APPLY);
             buttonToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(ApplyTemplateRenderer.BUTTON_TO_APPLY);
         } catch (IOException e) {
-            throw new PgadmissionsException(e) {/*
-                                                 * PostConstruct MUST NOT throw
-                                                 * checked exception
-                                                 */
+            throw new PgadmissionsException(e) {
+                /*
+                 * PostConstruct MUST NOT throw
+                 * checked exception
+                 */
             };
         }
     }

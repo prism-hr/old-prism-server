@@ -1,116 +1,87 @@
 var buttonText;
 
 $(document).ready(function(){
-	getAdverts();
-	setClass();
-	$(window).bind('resize', function() { 
-    	setClass(); 
-    });
+	$.each($('[id^=placeholder-]'), function() {
+		var feedId = $(this).attr('id').replace("placeholder-", "");
+		getAdverts(feedId);
+		setClass(feedId);
+		$(window).bind('resize', function() { 
+	    	setClass(feedId); 
+	    });
+	});
 });
-function setHsize() {
+
+function setHsize(feedId) {
 	 var container;
 	 var paddings = 32;
-	 var header = $('#pholder header').height();
-	 var footer = $('#pholder footer').height();
+	 var header = $('#placeholder-' + feedId + ' header').height();
+	 var footer = $('#placeholder-' + feedId + ' footer').height();
 	 var isEmbed = window != window.parent;
 	 if (isEmbed) {
 	 	container =  $(window).height();
 	 } else {
-	 	container =  $('#pholder').parent().parent().height();
+	 	container =  $('#placeholder-' + feedId).parent().parent().height();
 	 }
 	 var sum = container - header - footer - paddings;
-	 $('#plist').height(sum);
+	 $('#list-' + feedId).height(sum);
 }
-function setClass() {
-	if ($('#pholder').width() < 390) {
-		$('#pholder').addClass('small');
+
+function setClass(feedId) {
+	if ($('#placeholder-' + feedId).width() < 390) {
+		$('#placeholder-' + feedId).addClass('small');
 		buttonText = 'Read More';
 	} else {
-		$('#pholder').removeClass('small');
+		$('#placeholder-' + feedId).removeClass('small');
 		buttonText = 'Apply Now';
 	}
-	setHsize();
+	setHsize(feedId);
 }
 
-function getAdverts(){
-	var selectedAdvertId= getUrlParam("advert");
-	if(selectedAdvertId !== undefined && selectedAdvertId != "undefined"){
+function getAdverts(feedId){
+	var selectedAdvertId = getUrlParam("advert");
+	if (selectedAdvertId !== undefined) {
 		selectedAdvertId = decodeURIComponent(selectedAdvertId);
 	}
-	var feedId = $('#feedId').val();
-	var user = $('#user').val();
-	var upi = $('#upi').val();
-	if (feedId != undefined || user != undefined || upi != undefined) {
-		var data = {
-			feedId : feedId,
-			user : user,
-			upi : upi
-		};
-		$.ajax({
-			type: 'GET',
-			data: data,
-			url: "/pgadmissions/opportunities/feeds",
-			success: function(data) {
-				processAdverts(data.adverts);
-				highlightSelectedAdvert();
-				bindAddThisShareOverFix();
-			}
-		});
-	} else {
-		$.ajax({
-			type: 'GET',
-			statusCode: {
-				401: function() { window.location.reload(); },
-				500: function() { window.location.href = "/pgadmissions/error"; },
-				404: function() { window.location.href = "/pgadmissions/404"; },
-				400: function() { window.location.href = "/pgadmissions/400"; },                  
-				403: function() { window.location.href = "/pgadmissions/404"; }
-			},
-			data: {
-				advert: selectedAdvertId,
-	        }, 
-			url: "/pgadmissions/opportunities/activeOpportunities",
-			success: function(data) {
-				var map = JSON.parse(data);
-				processAdverts(map.adverts);
-				highlightSelectedAdvert();
-				bindAddThisShareOverFix();
-			},
-			complete: function() {
-			}
-		});
-		
+	var key = getUrlParam("feedKey");
+	if (key == undefined) {
+		key = $('#feedKey-' + feedId).val();
 	}
+	var value = getUrlParam("feedKeyValue");
+	if (value == undefined) {
+		value = $('#feedKeyValue-' + feedId).val();
+	}
+	var data = {
+		feedKey: key,
+		feedKeyValue: value, 
+		advert: selectedAdvertId
+	};
+	$.ajax({
+		type: 'GET',
+		data: data,
+		url: "/pgadmissions/opportunities/embedded",
+		success: function(data) {
+			var map = JSON.parse(data);
+			processAdverts(map.adverts, feedId);
+			bindAddThisShareOverFix();
+		}
+	});
 }
 
-function processAdverts(adverts){
+function processAdverts(adverts, feedId){
 	if (adverts.length == 0) {
-		$('#pholder').hide();
+		$('#placeholder-' + feedId).hide();
 	}
-	$('#plist > li').remove();
+	$('#list-' + feedId + ' > li').remove();
 	$.each(adverts, function(index, advert){
 		var advertElement = renderAdvert(advert);
-		$('#plist ul').append(advertElement);
+		$('#list-' + feedId + ' ul').append(advertElement);
 		bindAdvertApplyButton($('#ad-'+advert.id+' button.apply'), advert);
 	});
 }
 
-function highlightSelectedAdvert(){
-	var selectedAdvertId=$('#prospectusSelectedAdvert');
-	if(selectedAdvertId){
-		var selectedAdvert=$('#ad-'+selectedAdvertId.val());
-		selectedAdvert.addClass('selected');
-		selectedAdvert.parent().prepend(selectedAdvert);
-	}
-}
-
-function bindAdvertApplyButton(button,advert){
+function bindAdvertApplyButton(button, advert){
 	button.click(function() {
-    	$('#program').val(advert.programCode);
     	$('#advert').val(advert.id);
-    	if(advert.projectId){
-    		$('#project').val(advert.projectId);
-    	}
     	$('#applyForm').submit();
    });
 }
@@ -123,6 +94,7 @@ function bindAddThisShareOverFix(){
 	    });
 	});
 }
+
 function renderAdvert(advert){
 	var psupervisor = '';
 	var ssupervisor = '';
@@ -131,13 +103,13 @@ function renderAdvert(advert){
 	if(advert.funding){
 		funding = '<div class="fdescription"><p><strong>Funding Information</strong>: '+advert.funding+'</p></div>';
 	}
-	if(advert.type == 'program') {
+	if(advert.advertType == 'PROGRAM') {
 		psupervisor = '';
 		ssupervisor = '';
-	} else if (advert.type == 'project') {
-		psupervisor = '<div class="psupervisor"><p>'+advert.primarySupervisor.firstname + ' ' + advert.primarySupervisor.lastname + ' (PI)';
-		if (advert.secondarySupervisorSpecified) {
-			ssupervisor = '<span class="ssupervisor">, '+ advert.secondarySupervisor.firstname + ' ' + advert.secondarySupervisor.lastname+'</span></p></div>'; 
+	} else if (advert.advertType == 'PROJECT') {
+		psupervisor = '<div class="psupervisor"><p>'+advert.primarySupervisorFirstName + ' ' + advert.primarySupervisorLastName + ' (PI)';
+		if (advert.secondarySupervisorFirstname != undefined) {
+			ssupervisor = '<span class="ssupervisor">, '+ advert.secondarySupervisorFirstName + ' ' + advert.secondarySupervisorLastName+'</span></p></div>'; 
 		} else {
 			ssupervisor = '</p></div>';
 		}
@@ -159,30 +131,30 @@ function renderAdvert(advert){
 		popupbuttons = '<a href="http://api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>';
 	}
 	
-	return '<li class="'+ advert.type+' item '+ selectedClass +'" id="ad-'+advert.id+'">'+
-	'<div class="pdetails clearfix">'+
-		'<h3>'+advert.title+'</h3>'+
-		psupervisor +
-		ssupervisor +
-		'<div class="pdescription"><p>'+advert.description+'</p></div>'+
-		funding	+	
-		'<div class="cdate">'+closingDateString(advert.closingDate)+'</div>'+
-		'<div class="duration">Study duration: <span>'+ studyDuration +'</span></div>'+
-	'</div>'+
-	'<div class="pactions clearfix">'+
-		'<div class="social">'+
-			'<!-- AddThis Button BEGIN -->'+
-			'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+' addthis:description="'+addThisDescription+'">'+
-			popupbuttons +
+	return '<li class="'+ advert.advertType.toLowerCase() +' item '+ selectedClass +'" id="ad-'+advert.id+'">'+
+		'<div class="pdetails clearfix">'+
+			'<h3>'+advert.title+'</h3>'+
+			psupervisor +
+			ssupervisor +
+			'<div class="pdescription"><p>'+advert.description+'</p></div>'+
+			funding	+	
+			'<div class="cdate">'+closingDateString(advert.closingDate)+'</div>'+
+			'<div class="duration">Study duration: <span>'+ studyDuration +'</span></div>'+
+		'</div>'+
+		'<div class="pactions clearfix">'+
+			'<div class="social">'+
+				'<!-- AddThis Button BEGIN -->'+
+				'<div class="addthis_toolbox addthis_default_style addthis_16x16_style" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+addThisDescription+'">'+
+				popupbuttons +
+				'</div>'+
+				'<!-- AddThis Button END -->'+
 			'</div>'+
-			'<!-- AddThis Button END -->'+
+			'<div class="applyBox">'+
+				'<a href="mailto:'+advert.primarySupervisorEmail+'?subject=Question About:'+advert.title+'" class="question">Enquire</a>'+
+				'<button id="'+advert.id+'" class="btn btn-primary apply">'+buttonText+'</button>'+
+			'</div>'+
 		'</div>'+
-		'<div class="applyBox">'+
-			'<a href="mailto:'+advert.email+'?subject=Question About:'+advert.title+'" class="question">Ask a question</a>'+
-			'<button id="'+advert.programCode+'" class="btn btn-primary apply">'+buttonText+'</button>'+
-		'</div>'+
-	'</div>'+
-'</li>';
+	'</li>';
 }
 
 function closingDateString(closingDate){
@@ -216,16 +188,12 @@ function durationOfStudyString(studyDuration){
 	return normalizedDuration+" "+ normalizedUnit+ pluralSuffix;
 }
 
-function getAdvertUrl(advert){
-	url = window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advert=" + advert.id + "&program=" + advert.programCode;
-	if(advert.type == 'project') {
-		url = url + '&project=' + advert.projectId; 
-	}
-	return url;
+function getAdvertUrl (advert) {
+	return window.location.protocol +"//" +window.location.host + '/pgadmissions/register' + "?advert=" + advert.id;
 }
 
-function getUrlParam(name){
-    var results = new RegExp('[\\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
+function getUrlParam(name) {
+    var results = new RegExp('[\\?&;]' + name + '=([^&;#]*)').exec(window.location.href);
     if(results!=null && results.length>0){
     	return results[1];	
     }

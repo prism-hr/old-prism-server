@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -40,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
-import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
@@ -50,8 +48,6 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -81,8 +77,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         ApplicationForm application = new ApplicationForm();
         application.setApplicant(user);
         application.setLastUpdated(lastUpdatedDate);
-        application.setProgram(program);
-        application.setProject(project);
+        application.setAdvert(project);
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setApplicationAdministrator(applicationAdmin);
         application.setApplicationNumber("ABC");
@@ -103,10 +98,10 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
         assertEquals(user.getId(), reloadedApplication.getApplicant().getId());
 
-        assertEquals(program.getId(), reloadedApplication.getProgram().getId());
+        assertEquals(project.getProgram().getId(), reloadedApplication.getProgram().getId());
         assertEquals(project.getId(), reloadedApplication.getProject().getId());
         assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
-        assertEquals("title", reloadedApplication.getProjectTitle());
+        assertEquals(project.getTitle(), reloadedApplication.getProjectTitle());
         assertEquals(lastUpdatedDate, application.getLastUpdated());
         assertEquals(applicationAdmin, application.getApplicationAdministrator());
         assertEquals("ABC", application.getApplicationNumber());
@@ -120,7 +115,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         Language nationality1 = new LanguageBuilder().name("aaaaa").code("aa").enabled(true).build();
         save(country1, country2, country3, nationality1);
 
-        ApplicationForm application = new ApplicationFormBuilder().applicant(user).program(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().applicant(user).advert(program).build();
         PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).firstNationality(nationality1)
                 .dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).title(Title.MR).gender(Gender.MALE).residenceDomicile(country3)
                 .requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").applicationForm(application).build();
@@ -136,7 +131,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldLoadApplicationFormWithInterview() throws ParseException {
 
-        ApplicationForm application = new ApplicationFormBuilder().applicant(user).program(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().applicant(user).advert(program).build();
 
         sessionFactory.getCurrentSession().save(application);
         flushAndClearSession();
@@ -153,7 +148,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadApplicationFormWithAddress() {
         ApplicationForm application = new ApplicationForm();
-        application.setProgram(program);
+        application.setAdvert(program);
         application.setApplicant(user);
 
         Domicile domicile = new DomicileBuilder().name("AA").code("AA").enabled(true).build();
@@ -179,7 +174,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     public void shouldLoadApplicationFormWithCVAndPersonalStatement() {
 
         ApplicationForm application = new ApplicationForm();
-        application.setProgram(program);
+        application.setAdvert(program);
         application.setApplicant(user);
         Document cv = new DocumentBuilder().fileName("bob").type(DocumentType.CV).content("aaa!".getBytes()).build();
         Document personalStatement = new DocumentBuilder().fileName("bob").type(DocumentType.PERSONAL_STATEMENT).content("aaa!".getBytes()).build();
@@ -201,7 +196,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     public void shouldLoadApplicationFormWithComments() {
 
         ApplicationForm application = new ApplicationForm();
-        application.setProgram(program);
+        application.setAdvert(program);
         application.setApplicant(user);
 
         sessionFactory.getCurrentSession().save(application);
@@ -225,7 +220,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     public void shouldSaveQualificationsWithApplication() throws ParseException {
 
         ApplicationForm application = new ApplicationForm();
-        application.setProgram(program);
+        application.setAdvert(program);
         application.setApplicant(user);
 
         QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
@@ -256,7 +251,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
                 .build();
         StateChangeEvent eventTwo = new StateChangeEventBuilder().date(simpleDateFormat.parse("03 12 2011 14:09:26"))
                 .newStatus(ApplicationFormStatus.UNSUBMITTED).build();
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).events(eventOne, eventTwo).build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).events(eventOne, eventTwo).build();
 
         save(application);
         Integer eventOneId = eventOne.getId();
@@ -285,7 +280,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldLoadInterviewsForApplicationForm() throws ParseException, InterruptedException {
 
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
         save(application);
 
         Interview interviewOne = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).build()).application(application).build();
@@ -309,7 +304,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadLatestInterview() throws ParseException, InterruptedException {
 
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
         save(application);
 
         Interview interview = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).build()).application(application).build();
@@ -327,7 +322,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldLoadReveiwRoundForApplicationForm() throws ParseException, InterruptedException {
 
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
         save(application);
 
         ReviewRound reviewRoundOne = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).build()).application(application).build();
@@ -352,7 +347,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadLatestReviewRound() throws ParseException, InterruptedException {
 
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
         save(application);
 
         ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).build()).application(application).build();
@@ -371,7 +366,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadRejection() throws ParseException, InterruptedException {
 
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
         save(application);
 
         RejectReasonDAO rejectReasonDAO = new RejectReasonDAO(sessionFactory);
@@ -395,16 +390,15 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         ApplicationForm application = new ApplicationForm();
         application.setApplicant(user);
         application.setLastUpdated(lastUpdatedDate);
-        application.setProgram(program);
-        application.setProject(project);
+        application.setAdvert(project);
         application.setStatus(ApplicationFormStatus.APPROVED);
         application.setApplicationAdministrator(applicationAdmin);
         application.setApplicationNumber("ABC");
         assertNull(application.getId());
 
         sessionFactory.getCurrentSession().save(application);
-        project.setDisabled(true);
-        project.getAdvert().setActive(false);
+        project.setEnabled(false);
+        project.setActive(false);
         sessionFactory.getCurrentSession().update(project);
 
         assertNotNull(application.getId());
@@ -420,11 +414,11 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
         assertEquals(user.getId(), reloadedApplication.getApplicant().getId());
 
-        assertEquals(program.getId(), reloadedApplication.getProgram().getId());
+        assertEquals(project.getProgram().getId(), reloadedApplication.getProgram().getId());
         assertEquals(project.getId(), reloadedApplication.getProject().getId());
-        assertTrue(project.isDisabled());
+        assertTrue(!project.isEnabled());
         assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
-        assertEquals("title", reloadedApplication.getProjectTitle());
+        assertEquals(project.getTitle(), reloadedApplication.getProjectTitle());
         assertEquals(lastUpdatedDate, application.getLastUpdated());
         assertEquals(applicationAdmin, application.getApplicationAdministrator());
         assertEquals("ABC", application.getApplicationNumber());
@@ -448,15 +442,14 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a41").domicileCode("AE").enabled(true).build();
-        
-        program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
 
-        Advert advert = new AdvertBuilder().title("title").description("description").funding("funding").studyDuration(6).build();
-        project = new ProjectBuilder().advert(advert).author(applicationAdmin).primarySupervisor(applicationAdmin).program(program).build();
-
-        save(user, reviewerUser, institution, program, interviewerUser, applicationAdmin, approver, project);
+        save(user, reviewerUser, institution, interviewerUser, applicationAdmin, approver);
 
         flushAndClearSession();
+        
+        program = testObjectProvider.getEnabledProgram();
+        project = testObjectProvider.getEnabledProject();
+        
     }
 
     private boolean listContainsId(Comment comment, List<Comment> comments) {

@@ -138,7 +138,7 @@ public class AdmitterCommentControllerTest {
         modelMap.put("user", currentUser);
 
         actionsProviderMock.validateAction(applicationForm, currentUser, ApplicationFormAction.CONFIRM_ELIGIBILITY);
-        applicationFormUserRoleServiceMock.deregisterApplicationUpdate(applicationForm, currentUser);
+        applicationFormUserRoleServiceMock.deleteApplicationUpdate(applicationForm, currentUser);
 
         replay();
         assertEquals("private/staff/admin/comment/genericcomment", controller.getConfirmEligibilityPage(modelMap));
@@ -170,7 +170,7 @@ public class AdmitterCommentControllerTest {
         applicationsServiceMock.save(application);
         commentServiceMock.save(comment);
         applicationFormUserRoleServiceMock.admitterCommentPosted(comment);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(application, currentUser, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(application, currentUser, ApplicationUpdateScope.INTERNAL);
         
         replay();
         String result = controller.confirmEligibility(modelMap, comment, resultMock);

@@ -129,7 +129,7 @@ public class ApprovalServiceTest {
         applicationFormDAOMock.save(applicationForm);
         applicationFormUserRoleService.validationStageCompleted(applicationForm);
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
 
         replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock, applicationFormUserRoleService, userServiceMock);
         approvalService.moveApplicationToApproval(applicationForm, approvalRound, userServiceMock.getCurrentUser());
@@ -165,7 +165,7 @@ public class ApprovalServiceTest {
         Capture<ApprovalComment> approvalCommentCapture = new Capture<ApprovalComment>();
         commentDAOMock.save(capture(approvalCommentCapture));
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
 
         replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, userServiceMock, applicationFormUserRoleService);
         approvalService.moveApplicationToApproval(applicationForm, approvalRound, user);
@@ -199,7 +199,7 @@ public class ApprovalServiceTest {
         applicationFormDAOMock.save(applicationForm);
         commentDAOMock.save(isA(ApprovalComment.class));
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
 
         replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, applicationFormUserRoleService);
         approvalService.moveApplicationToApproval(applicationForm, approvalRound, null);
@@ -266,7 +266,7 @@ public class ApprovalServiceTest {
         applicationFormDAOMock.save(applicationForm);
         commentDAOMock.save(isA(ApprovalComment.class));
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, initiator, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, initiator, ApplicationUpdateScope.ALL_USERS);
 
         replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, commentDAOMock, applicationFormUserRoleService);
         approvalService.moveApplicationToApproval(applicationForm, approvalRound, initiator);
@@ -428,7 +428,7 @@ public class ApprovalServiceTest {
         Supervisor secondary = new Supervisor();
         secondary.setUser(secondarySupervisor);
 
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("bob").program(program).project(project)
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("bob").advert(project)
                 .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build())
                 .programmeDetails(new ProgrammeDetails()).build();
 
@@ -480,7 +480,7 @@ public class ApprovalServiceTest {
 
         ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(testDate).studyOption("1", "full").build();
 
-        final ApplicationForm application = new ApplicationFormBuilder().id(2).program(program).applicationNumber("bob").programmeDetails(programmeDetails)
+        final ApplicationForm application = new ApplicationFormBuilder().id(2).advert(program).applicationNumber("bob").programmeDetails(programmeDetails)
                 .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, suprvisorTwo).build()).build();
 
         Capture<ApprovalRound> approvalRoundCapture = new Capture<ApprovalRound>();

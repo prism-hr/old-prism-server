@@ -13,14 +13,10 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
@@ -30,9 +26,6 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadReviewComment() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a9").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-        save(institution, program);
 
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
@@ -43,7 +36,7 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase {
         Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).build();
         save(applicant, reviewerUser, reviewer);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).advert(testObjectProvider.getEnabledProgram()).build();
         save(applicationForm);
 
         flushAndClearSession();

@@ -17,6 +17,32 @@ public class ProgramType implements Serializable {
 
     @Id
     @Enumerated(EnumType.STRING)
+    ProgramTypeId id;
+    
+    @Column(name = "default_study_duration")
+    Integer defaultStudyDuration;
+
+    public ProgramTypeId getId() {
+        return id;
+    }
+
+    public void setId(ProgramTypeId id) {
+        this.id = id;
+    }
+
+    public Integer getDefaultStudyDuration() {
+        return defaultStudyDuration;
+    }
+
+    public void setDefaultStudyDuration(Integer defaultStudyDuration) {
+        this.defaultStudyDuration = defaultStudyDuration;
+    }
+    
+    public String getDisplayValue() {
+        return id.getDisplayValue();
+    }
+    
+}
     private ProgramTypeId id;
 
     @Column(name = "default_study_duration")

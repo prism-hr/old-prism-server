@@ -1,83 +1,201 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
+import com.zuehlke.pgadmissions.domain.builders.ResearchOpportunitiesFeedBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
+import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
+import com.zuehlke.pgadmissions.dto.AdvertDTO;
 
 public class AdvertDAOTest extends AutomaticRollbackTestCase {
 
     private AdvertDAO advertDAO;
-    private ReminderIntervalDAO reminderIntervalDAO;
-    private NotificationsDurationDAO notificationsDurationDAO;
-    private UserDAO userDAO;
-    private QualificationInstitution institution;
     
     @Override
     public void setup() {
         super.setup();
         advertDAO = new AdvertDAO(sessionFactory);
-        reminderIntervalDAO = new ReminderIntervalDAO(sessionFactory);
-        notificationsDurationDAO = new NotificationsDurationDAO(sessionFactory);
-        userDAO = new UserDAO(sessionFactory, reminderIntervalDAO, notificationsDurationDAO);
-        institution = (QualificationInstitution) sessionFactory.getCurrentSession().get(QualificationInstitution.class, 3800);
-        save(institution);
     }
-
+    
     @Test
-    public void shouldGetActiveAdverts() {
-        Program programWithInactiveProgramAdvert = new ProgramBuilder().code("inactive").title("another title").institution(institution).build();
-        Advert inactiveProgramAdvert = new AdvertBuilder().description("inactive program").studyDuration(9).active(false).build();
-
-        Program programWithActiveProgramAdvert = new ProgramBuilder().code("program").title("another title2").institution(institution).build();
-        Advert programAdvert = new AdvertBuilder().description("program").studyDuration(66).build();
-
-        save(programWithInactiveProgramAdvert, programWithActiveProgramAdvert);
-        save(inactiveProgramAdvert, programAdvert);
-        flushAndClearSession();
-
-        List<Advert> activeAdverts = advertDAO.getActiveAdverts();
-        assertThat(activeAdverts.size(), greaterThanOrEqualTo(1));
-        assertTrue(advertInList(programAdvert, activeAdverts));
+    public void shouldGetAllActiveAdverts() {
+        Integer activeAdvertCount = sessionFactory.getCurrentSession().createCriteria(Advert.class)
+                .add(Restrictions.eq("enabled", true))
+                .add(Restrictions.eq("active", true)).list().size();
+        List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(null, null, null);
+        assertThat(loadedAdverts.size(), equalTo(activeAdvertCount));
     }
-
-    /**
-     * Test uses a real user with real applications as the test seed for the recommender algorithm
-     * The test will fail
-     */
+    
     @Test
-    public void shouldGetRecommendedAdverts() {
-        RegisteredUser testUser = userDAO.get(4157);
-        List<Advert> gotAdverts = advertDAO.getRecommendedAdverts(testUser);
-        assertTrue(gotAdverts.size() > 0);
-        RegisteredUser testUserWithNoApplications = userDAO.get(15);
-        gotAdverts = advertDAO.getRecommendedAdverts(testUserWithNoApplications);
-        assertTrue(gotAdverts.size() == 0);
+    public void shouldGetProgramAdvert() {
+        Program program = testObjectProvider.getEnabledProgram();
+        String programId = program.getId().toString(); 
+        List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYADVERTID, programId, null);
+        assertThat(loadedAdverts.size(), equalTo(1));
+        assertThat(loadedAdverts.get(0).getId(), equalTo(program.getId()));
     }
-
-    private boolean advertInList(Advert programAdvert, List<Advert> activeAdverts) {
-        for (Advert loadedAdvert : activeAdverts) {
-            if (loadedAdvert.getId().equals(programAdvert.getId())) {
-                assertThat(loadedAdvert.getId(), equalTo(programAdvert.getId()));
-                assertThat(loadedAdvert.getDescription(), equalTo(programAdvert.getDescription()));
-                assertThat(loadedAdvert.getStudyDuration(), equalTo(programAdvert.getStudyDuration()));
-                assertThat(loadedAdvert.getId(), equalTo(programAdvert.getId()));
-                return true;
+    
+    @Test
+    public void shouldGetProjectAdvert() {
+        Project project = testObjectProvider.getEnabledProject();
+        String projectId = project.getId().toString(); 
+        List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYADVERTID, projectId, null);
+        assertThat(loadedAdverts.size(), equalTo(1));
+        assertThat(loadedAdverts.get(0).getId(), equalTo(project.getId()));
+    }
+    
+    @Test
+    public void shouldGetProgramApplicationAdvert() {
+        ApplicationForm applicationForm = testObjectProvider.getEnabledProgramApplication();
+        String applicationFormId = applicationForm.getId().toString(); 
+        List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYAPPLICATIONFORMID, applicationFormId, null);
+        assertThat(loadedAdverts.size(), equalTo(1));
+        assertThat(loadedAdverts.get(0).getId(), equalTo(applicationForm.getProgram().getId()));
+    }
+    
+    @Test
+    public void shouldGetProjectApplicationAdvert() {
+        ApplicationForm applicationForm = testObjectProvider.getEnabledProjectApplication();
+        String applicationFormId = applicationForm.getId().toString();
+        List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYAPPLICATIONFORMID, applicationFormId, null);
+        assertThat(loadedAdverts.size(), equalTo(2));
+        assertThat(loadedAdverts.get(0).getId(), equalTo(applicationForm.getProgram().getId()));
+        assertThat(loadedAdverts.get(1).getId(), equalTo(applicationForm.getProject().getId()));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldGetAdvertsByUserUsername() {
+        RegisteredUser testUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        String testUserUsername = testUser.getUsername();
+        
+        List<Integer> advertIds = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("program.id"))
+                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("registeredUser.username", testUserUsername))
+                .add(Restrictions.eq("program.enabled", true))
+                .add(Restrictions.eq("program.active", true)).list();
+        
+        advertIds.addAll(sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("project.id"))
+                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+                .createAlias("program.projects", "project", JoinType.INNER_JOIN)
+                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("registeredUser.username", testUserUsername))
+                .add(Restrictions.eq("project.enabled", true))
+                .add(Restrictions.eq("project.active", true)).list());
+        
+        List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.OPPORTUNITIESBYUSERUSERNAME, testUserUsername, null);
+        
+        Integer correctlyLoadedAdvertCount = 0;
+        for (AdvertDTO loadedAdvert : loadedAdverts) {
+            if (advertIds.contains(loadedAdvert.getId())) {
+                correctlyLoadedAdvertCount ++;
             }
         }
-        return false;
+        
+        assertThat(loadedAdverts.size(), equalTo(correctlyLoadedAdvertCount));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldGetAdvertsByUserUpi() {
+        String testUPI = "testUPI";
+        RegisteredUser testUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        testUser.setUpi(testUPI);
+        save(testUser);
+        
+        List<Integer> advertIds = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("program.id"))
+                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("registeredUser.upi", testUPI))
+                .add(Restrictions.eq("program.enabled", true))
+                .add(Restrictions.eq("program.active", true)).list();
+        
+        advertIds.addAll(sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("project.id"))
+                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+                .createAlias("program.projects", "project", JoinType.INNER_JOIN)
+                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("registeredUser.upi", testUPI))
+                .add(Restrictions.eq("project.enabled", true))
+                .add(Restrictions.eq("project.active", true)).list());
+        
+        List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.OPPORTUNITIESBYUSERUSERNAME, "ts", null);
+        
+        Integer correctlyLoadedAdvertCount = 0;
+        for (AdvertDTO loadedAdvert : loadedAdverts) {
+            if (advertIds.contains(loadedAdvert.getId())) {
+                correctlyLoadedAdvertCount ++;
+            }
+        }
+        
+        assertThat(loadedAdverts.size(), equalTo(correctlyLoadedAdvertCount));
+    }
+    
+    @Test
+    public void shouldGetAdvertsByFeedId() {
+        Program program = testObjectProvider.getEnabledProgram();
+        Program otherProgram = testObjectProvider.getAlternativeEnabledProgram(program);
+        
+        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(program, otherProgram)
+                .title("feed").user(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).build();
+        save(feed);
+        
+        List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.OPPORTUNITIESBYFEEDID, feed.getId().toString(), null);
+
+        Program programWithActiveProgramAdvert = new ProgramBuilder().code("program").title("another title").institution(institution).build();
+        Advert programAdvert = new AdvertBuilder().description("program").studyDuration(66).build();
+
+    @Test
+    public void shouldHighlightSelectedAdvert() {
+        Program program = testObjectProvider.getEnabledProgram();
+        List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYADVERTID, program.getId().toString(), null);
+        assertThat(loadedAdverts.get(0).getId(), equalTo(program.getId()));
+        assertTrue(loadedAdverts.get(0).getSelected());
+        
+        loadedAdverts = advertDAO.getAdvertFeed(null, null, program.getId());
+        
+        Boolean excludesSelectedAdvert = true;
+        for (AdvertDTO loadedAdvert : loadedAdverts) {
+            if (loadedAdvert.getId() == program.getId()) {
+                excludesSelectedAdvert = false;
+                break;
+            }
+        }
+        
+        assertTrue(excludesSelectedAdvert);
+    }
+
+    @Test
+    public void shouldGetRecommendedAdverts() {
+        String testUserId = new Integer(testObjectProvider.getEnabledUserInRole(Authority.APPLICANT).getId()).toString();
+        List<AdvertDTO> gotAdverts = advertDAO.getAdvertFeed(OpportunityListType.RECOMMENDEDOPPORTUNTIIESBYAPPLICANTID, testUserId, null);
+        assertTrue(gotAdverts.size() > 0);
     }
 
 }

@@ -178,7 +178,7 @@ public class PersonalDetailsController {
         userService.updateCurrentUser(updatedUser);
         application.setPersonalDetails(personalDetails);
         applicationsService.save(application);
-        applicationFormUserRoleService.registerApplicationUpdate(application, getUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(application, getUser(), ApplicationUpdateScope.ALL_USERS);
 
         sessionStatus.setComplete();
 

@@ -78,7 +78,7 @@ public class ReviewService {
         }
         
         applicationFormUserRoleService.movedToReviewStage(reviewRound);
-        applicationFormUserRoleService.registerApplicationUpdate(application, initiator, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(application, initiator, ApplicationUpdateScope.ALL_USERS);
 		applicationDAO.save(application);
 	}
 

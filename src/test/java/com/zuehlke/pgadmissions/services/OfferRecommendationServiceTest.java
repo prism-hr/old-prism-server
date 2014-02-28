@@ -96,7 +96,7 @@ public class OfferRecommendationServiceTest {
                 .enabled(true).studyOption("1", "full").build();
         Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
         ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().supervisors(new Supervisor()).build();
-        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).advert(program).id(2)
                 .programmeDetails(programmeDetails).latestApprovalRound(latestApprovalRound).build();
         Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
         Supervisor secondarySupervisor = new SupervisorBuilder().id(1).build();
@@ -110,7 +110,7 @@ public class OfferRecommendationServiceTest {
         expect(eventFactoryMock.createEvent(ApplicationFormStatus.APPROVED)).andReturn(event);
         expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(true);
         mailSendingServiceMock.sendApprovedNotification(application);
-        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
+        applicationFormUserRoleService.deleteApplicationActions(application);
 
         replay();
         service.moveToApproved(application, offerRecommendedComment);
@@ -140,7 +140,7 @@ public class OfferRecommendationServiceTest {
         ProgramInstance instanceEnabled = new ProgramInstanceBuilder().applicationStartDate(DateUtils.addDays(startDate, 3))
                 .applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(true).studyOption("1", "full").build();
         Program program = new ProgramBuilder().id(1).enabled(true).instances(instanceDisabled, instanceEnabled).build();
-        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).advert(program).id(2)
                 .programmeDetails(programmeDetails).latestApprovalRound(new ApprovalRound()).build();
         OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
 
@@ -154,7 +154,7 @@ public class OfferRecommendationServiceTest {
         expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application)).andReturn(false);
         expect(programInstanceServiceMock.getEarliestPossibleStartDate(application)).andReturn(DateUtils.addDays(startDate, 3));
         mailSendingServiceMock.sendApprovedNotification(application);
-        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
+        applicationFormUserRoleService.deleteApplicationActions(application);
 
         replay();
         service.moveToApproved(application, offerRecommendedComment);

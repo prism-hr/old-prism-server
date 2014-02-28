@@ -118,7 +118,7 @@ public class RefereeController {
         }
 
         applicationsService.save(application);
-        applicationFormUserRoleService.registerApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber();
     }
     

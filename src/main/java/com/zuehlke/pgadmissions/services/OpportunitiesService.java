@@ -118,7 +118,7 @@ public class OpportunitiesService {
         Program program = opportunityRequest.getSourceProgram();
         if (program != null) {
             program.setLocked(false);
-            program = programsService.merge(program);
+            program = (Program) programsService.merge(program);
         }
 
         // create comment

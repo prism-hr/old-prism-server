@@ -69,7 +69,6 @@ public class ApplicationFormValidator extends AbstractValidator {
             if (programInstances == null || programInstances.isEmpty()) {
                 List<ProgramInstance> allActiveProgramInstances = programInstanceDAO.getActiveProgramInstances(applicationForm.getProgram());
                 if (allActiveProgramInstances == null || allActiveProgramInstances.isEmpty()) {
-                    // program is no longer active
                     errors.rejectValue("program", "application.program.invalid");
                 } else {
                     // program is active, but not with selected study option

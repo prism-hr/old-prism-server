@@ -82,7 +82,7 @@ public class ReviewServiceTest {
     public void shouldCreateNewInterviewerInNewInterviewRoundIfLatestRoundIsNull() {
         RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).build())
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(new ProgramBuilder().id(1).build())
                 .applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION).build();
         reviewerDAO.save(reviewer);
         EasyMock.replay(reviewerDAO);
@@ -97,7 +97,7 @@ public class ReviewServiceTest {
         RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         ReviewRound latestReviewRound = new ReviewRoundBuilder().build();
-        ApplicationForm application = new ApplicationFormBuilder().latestReviewRound(latestReviewRound).id(1).program(new ProgramBuilder().id(1).build())
+        ApplicationForm application = new ApplicationFormBuilder().latestReviewRound(latestReviewRound).id(1).advert(new ProgramBuilder().id(1).build())
                 .applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION).build();
         reviewerDAO.save(reviewer);
         EasyMock.replay(reviewerDAO);
@@ -126,7 +126,7 @@ public class ReviewServiceTest {
         applicationFormDAOMock.save(applicationForm);
         applicationFormUserRoleServiceMock.validationStageCompleted(applicationForm);
         applicationFormUserRoleServiceMock.movedToReviewStage(reviewRound);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
 
         EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, mailServiceMock, stageDurationDAOMock, eventFactoryMock, applicationFormUserRoleServiceMock);
         reviewService.moveApplicationToReview(applicationForm, reviewRound, null);
@@ -153,7 +153,7 @@ public class ReviewServiceTest {
         
         applicationFormDAOMock.save(applicationForm);
         applicationFormUserRoleServiceMock.movedToReviewStage(reviewRound);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, null, ApplicationUpdateScope.ALL_USERS);
 
         EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, applicationFormUserRoleServiceMock);
         reviewService.moveApplicationToReview(applicationForm, reviewRound, null);

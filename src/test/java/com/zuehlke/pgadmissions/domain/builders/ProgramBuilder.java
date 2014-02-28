@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,10 +40,9 @@ public class ProgramBuilder {
     private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
     private List<Project> projects = Lists.newArrayList();
-    private Advert advert;
     private QualificationInstitution institution;
     private ProgramFeed programFeed;
-    private ProgramType programType = ProgramTypeBuilder.aProgramType(institution).build();
+    private ProgramType programType = ProgramTypeBuilder.aProgramType().build();
     private boolean locked;
 
     public ProgramBuilder id(Integer id) {
@@ -189,7 +189,6 @@ public class ProgramBuilder {
         program.setAtasRequired(atasRequired);
         program.getClosingDates().addAll(programClosingDates);
         program.getProjects().addAll(projects);
-        program.setAdvert(advert);
         program.setInstitution(institution);
         program.setProgramFeed(programFeed);
         program.setProgramType(programType);

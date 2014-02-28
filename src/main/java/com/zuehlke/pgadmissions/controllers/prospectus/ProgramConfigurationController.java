@@ -151,6 +151,12 @@ public class ProgramConfigurationController {
         Map<String, Object> result = Maps.newHashMap();
 
         HashMap<String, Object> dataMap = new HashMap<String, Object>();
+        if (advertId == null) {
+            if (program != null) {
+                advertId = program.getId();
+            }
+        }
+        
         dataMap.put("advertId", advertId);
         
         Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());

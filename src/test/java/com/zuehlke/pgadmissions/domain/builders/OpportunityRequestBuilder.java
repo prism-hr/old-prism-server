@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
-import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 
 public class OpportunityRequestBuilder {
 
@@ -39,7 +38,6 @@ public class OpportunityRequestBuilder {
     private Boolean acceptingApplications = true;
     private Integer studyDurationNumber;
     private String studyDurationUnit;
-    
 
     public OpportunityRequestBuilder id(Integer id) {
         this.id = id;
@@ -100,7 +98,7 @@ public class OpportunityRequestBuilder {
         this.studyOptions = studyOptions;
         return this;
     }
-    
+
     public OpportunityRequestBuilder programType(ProgramType programType) {
         this.programType = programType;
         return this;
@@ -177,7 +175,8 @@ public class OpportunityRequestBuilder {
 
         return new OpportunityRequestBuilder().author(author).createdDate(date.toDate()).institutionCode("AGH").institutionCountry(institutionCountry)
                 .programDescription("This is really amazing Opportunity!").programTitle("Amazing Opportunity").advertisingDeadlineYear(2014).atasRequired(true)
-                .studyDuration(24).studyDurationNumber(2).studyDurationUnit("YEARS").studyOptions("B+++++,F+++++").programType(new ProgramType(ProgramTypeId.INTERNSHIP, 2));
+                .studyDuration(24).studyDurationNumber(2).studyDurationUnit("YEARS").studyOptions("B+++++,F+++++")
+                .programType(ProgramTypeBuilder.aProgramType().build());
     }
 
 }

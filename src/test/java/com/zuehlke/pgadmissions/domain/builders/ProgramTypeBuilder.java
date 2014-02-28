@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import com.zuehlke.pgadmissions.domain.ProgramType;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 
 public class ProgramTypeBuilder {
@@ -26,7 +25,7 @@ public class ProgramTypeBuilder {
         return programType;
     }
     
-    public static ProgramTypeBuilder aProgramType(QualificationInstitution institution) {
+    public static ProgramTypeBuilder aProgramType() {
         return new ProgramTypeBuilder().id(ProgramTypeId.RESEARCH_DEGREE).defaultStudyDuration(36);
     }
 }

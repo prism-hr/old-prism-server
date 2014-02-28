@@ -33,29 +33,29 @@ public class UserService {
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    private final UserDAO userDAO;
-    private final RoleDAO roleDAO;
-    private final ApplicationsFilteringDAO filteringDAO;
-    private final UserFactory userFactory;
-    private final EncryptionUtils encryptionUtils;
-    private final MailSendingService mailService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    public UserService() {
-        this(null, null, null, null, null, null, null);
-    }
+    @Autowired
+    private UserDAO userDAO;
 
     @Autowired
-    public UserService(UserDAO userDAO, RoleDAO roleDAO, ApplicationsFilteringDAO filteringDAO, UserFactory userFactory, EncryptionUtils encryptionUtils,
-            MailSendingService mailService, ApplicationFormUserRoleService applicationFormUserRoleService) {
-        this.userDAO = userDAO;
-        this.roleDAO = roleDAO;
-        this.filteringDAO = filteringDAO;
-        this.userFactory = userFactory;
-        this.encryptionUtils = encryptionUtils;
-        this.mailService = mailService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-    }
+    private RoleDAO roleDAO;
+
+    @Autowired
+    private ApplicationsFilteringDAO filteringDAO;
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private UserFactory userFactory;
+
+    @Autowired
+    private EncryptionUtils encryptionUtils;
+
+    @Autowired
+    private MailSendingService mailService;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public RegisteredUser getUser(Integer id) {
         return userDAO.get(id);
@@ -98,7 +98,7 @@ public class UserService {
     }
 
     public RegisteredUser getCurrentUser() {
-        return userDAO.getCurrentUser();
+        return authenticationService.getCurrentUser();
     }
 
     public void addRoleToUser(RegisteredUser user, Authority authority) {

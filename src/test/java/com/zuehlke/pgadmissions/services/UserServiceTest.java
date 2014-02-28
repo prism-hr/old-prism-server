@@ -174,26 +174,17 @@ public class UserServiceTest {
     public void shouldGetUserByUsername() {
         RegisteredUser user = EasyMock.createMock(RegisteredUser.class);
         EasyMock.expect(userDAOMock.getUserByUsername("mike")).andReturn(user);
-
+        
         EasyMockUnitils.replay();
         Assert.assertEquals(user, userService.getUserByUsername("mike"));
     }
 
     @Test
-    public void shouldGetUserFromSecurityContextAndRefresh() {
-        RegisteredUser refreshedUser = new RegisteredUser();
-        EasyMock.expect(userDAOMock.getCurrentUser()).andReturn(refreshedUser);
-        EasyMock.replay(userDAOMock);
-        RegisteredUser loadedUser = userService.getCurrentUser();
-        EasyMock.verify(userDAOMock);
-        assertEquals(loadedUser.getId(), refreshedUser.getId());
-    }
-
-    @Test
     public void shouldAddRoleToUser() {
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(new RoleBuilder().id(Authority.ADMINISTRATOR).build());
-        EasyMockUnitils.replay();
         RegisteredUser user = new RegisteredUserBuilder().build();
+        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(new RoleBuilder().id(Authority.ADMINISTRATOR).build());
+        userDAOMock.save(user);
+        EasyMockUnitils.replay();
         userService.addRoleToUser(user, Authority.ADMINISTRATOR);
         assertEquals(1, user.getRoles().size());
         assertEquals(Authority.ADMINISTRATOR, user.getRoles().get(0).getId());
@@ -231,7 +222,7 @@ public class UserServiceTest {
         Program selectedProgram = new ProgramBuilder().id(4).build();
 
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).anyTimes();
-        applicationFormUserRoleServiceMock.createUserInProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
+        applicationFormUserRoleServiceMock.insertProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
         userDAOMock.save(selectedUser);
 
         replay();
@@ -247,7 +238,7 @@ public class UserServiceTest {
         Program selectedProgram = new ProgramBuilder().id(4).build();
 
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPROVER)).andReturn(new RoleBuilder().id(Authority.APPROVER).build()).anyTimes();
-        applicationFormUserRoleServiceMock.createUserInProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
+        applicationFormUserRoleServiceMock.insertProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
         userDAOMock.save(selectedUser);
 
         replay();
@@ -264,7 +255,7 @@ public class UserServiceTest {
         Role role = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
 
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(role).anyTimes();
-        applicationFormUserRoleServiceMock.createUserInProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
+        applicationFormUserRoleServiceMock.insertProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
         userDAOMock.save(selectedUser);
 
         replay();
@@ -280,7 +271,7 @@ public class UserServiceTest {
         RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
         Role role = new RoleBuilder().id(Authority.APPROVER).build();
         EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPROVER)).andReturn(role).anyTimes();
-        applicationFormUserRoleServiceMock.createUserInProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
+        applicationFormUserRoleServiceMock.insertProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
         userDAOMock.save(selectedUser);
 
         replay();
@@ -295,7 +286,7 @@ public class UserServiceTest {
         Program selectedProgram = new ProgramBuilder().id(1).build();
         RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichAdministrator(selectedProgram).id(1).build();
 
-        applicationFormUserRoleServiceMock.revokeUserFromProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
+        applicationFormUserRoleServiceMock.deleteProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
         userDAOMock.save(selectedUser);
 
         replay();
@@ -310,7 +301,7 @@ public class UserServiceTest {
         Program selectedProgram = new ProgramBuilder().id(1).build();
         RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichApprover(selectedProgram).id(1).build();
 
-        applicationFormUserRoleServiceMock.revokeUserFromProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
+        applicationFormUserRoleServiceMock.deleteProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
         userDAOMock.save(selectedUser);
 
         replay();
@@ -351,10 +342,10 @@ public class UserServiceTest {
         expect(roleDAOMock.getRoleByAuthority(Authority.APPROVER)).andReturn(role_3);
         expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(role_6);
 
-        applicationFormUserRoleServiceMock.createUserInRole(newUser, Authority.SUPERADMINISTRATOR);
-        applicationFormUserRoleServiceMock.createUserInProgramRole(newUser, program, Authority.ADMINISTRATOR);
-        applicationFormUserRoleServiceMock.createUserInProgramRole(newUser, program, Authority.APPROVER);
-        applicationFormUserRoleServiceMock.createUserInProgramRole(newUser, program, Authority.VIEWER);
+        applicationFormUserRoleServiceMock.insertUserRole(newUser, Authority.SUPERADMINISTRATOR);
+        applicationFormUserRoleServiceMock.insertProgramRole(newUser, program, Authority.ADMINISTRATOR);
+        applicationFormUserRoleServiceMock.insertProgramRole(newUser, program, Authority.APPROVER);
+        applicationFormUserRoleServiceMock.insertProgramRole(newUser, program, Authority.VIEWER);
 
         replay();
         RegisteredUser createdUser = userService.createNewUserForProgramme("la", "le", "some@email.com", program, Authority.SUPERADMINISTRATOR,
@@ -470,6 +461,8 @@ public class UserServiceTest {
     @Test
     public void shouldUpdateCurrentUserAndSendEmailConfirmation() throws UnsupportedEncodingException {
         final RegisteredUser currentUser = new RegisteredUserBuilder().firstName("f").lastName("l").id(7).password("12").email("em").username("em").build();
+        RegisteredUser userOne = new RegisteredUserBuilder().firstName("a").firstName2("a2").firstName3("a3").lastName("o").email("two").password("12")
+                .newPassword("newpass").build();
 
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("newpass")).andReturn("encryptednewpass");
         expect(authenticationService.getCurrentUser()).andReturn(currentUser);

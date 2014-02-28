@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
@@ -28,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
@@ -37,6 +35,7 @@ import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.PermissionsService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
+import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
 
@@ -63,6 +62,9 @@ public class EditOpportunityRequestController {
 
     @Resource(name = "opportunityRequestValidator")
     private OpportunityRequestValidator opportunityRequestValidator;
+    
+    @Autowired
+    private ProgramsService programsService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;
@@ -174,8 +176,7 @@ public class EditOpportunityRequestController {
 
     @ModelAttribute("programTypes")
     public List<ProgramType> getProgramTypes() {
-        return Lists.newArrayList(new ProgramType(ProgramTypeId.INTERNSHIP, 5), new ProgramType(ProgramTypeId.RESEARCH_DEGREE, 8), new ProgramType(
-                ProgramTypeId.VISITING_RESEARCH, 666));
+        return programsService.getProgramTypes();
     }
 
 }

@@ -156,7 +156,7 @@ public class TestObjectProvider {
     public ApplicationForm getDisabledProjectApplication() {
         return getProjectApplication(false);
     }
-    
+
     private RegisteredUser getUser(Authority authority, Boolean isInRole, Boolean userEnabled) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
                 .createAlias("applicationFormUserRoles", "applicationFormUserRole", JoinType.INNER_JOIN)

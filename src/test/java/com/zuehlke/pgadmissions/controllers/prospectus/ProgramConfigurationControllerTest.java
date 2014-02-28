@@ -30,14 +30,12 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
@@ -113,12 +111,12 @@ public class ProgramConfigurationControllerTest {
         controller.registerPropertyEditorsForOpportunityRequest(binderMock);
         verify();
     }
-
+    
     @Test
     public void shouldGetOpportunityData() {
         Domicile domicile = new DomicileBuilder().id(88).build();
         Program program = new ProgramBuilder().code("07").institution(new QualificationInstitutionBuilder().domicileCode("PL").build()) //
-                .advert(new AdvertBuilder().id(999).build()).locked(true).programType(new ProgramType(ProgramTypeId.MSC, 5)).build();
+                .advert(new AdvertBuilder().id(999).build()).locked(true).build();
 
         Map<String, Object> dataMap = Maps.newHashMap();
         dataMap.put("advertId", 999);
@@ -135,7 +133,7 @@ public class ProgramConfigurationControllerTest {
         verify();
 
         assertEquals(
-                "{\"atasRequired\":false,\"studyOptions\":[\"opt1\",\"opt2\"],\"advert\":{\"id\":999,\"active\":true},\"buttonToApply\":\"button\",\"linkToApply\":\"button\",\"institutionCountryCode\":\"encPL\",\"programLocked\":true,\"advertisingDeadline\":2084,\"isCustomProgram\":true}",
+                "{\"atasRequired\":false,\"studyOptions\":[\"opt1\",\"opt2\"],\"programId\":999,\"buttonToApply\":\"button\",\"linkToApply\":\"button\",\"institutionCountryCode\":\"encPL\",\"programLock\":true,\"advertisingDeadline\":2084,\"programType\":\"RESEARCH_DEGREE\",\"isCustomProgram\":true}",
                 result);
     }
 

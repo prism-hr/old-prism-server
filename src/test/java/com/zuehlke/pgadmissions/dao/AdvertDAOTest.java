@@ -168,8 +168,28 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
         
         List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.OPPORTUNITIESBYFEEDID, feed.getId().toString(), null);
 
-        Program programWithActiveProgramAdvert = new ProgramBuilder().code("program").title("another title").institution(institution).build();
-        Advert programAdvert = new AdvertBuilder().description("program").studyDuration(66).build();
+        Integer correctlyLoadedAdvertCount = 0;
+        for (AdvertDTO loadedAdvert : loadedAdverts) {
+            if (program.getId() == loadedAdvert.getId() || otherProgram.getId() == loadedAdvert.getId()) {
+                correctlyLoadedAdvertCount ++;
+            } else {
+                for (Project project : program.getProjects()) {
+                    if (project.getId() == loadedAdvert.getId()) {
+                        correctlyLoadedAdvertCount ++;
+                        continue;
+                    }
+                }
+                for (Project project : otherProgram.getProjects()) {
+                    if (project.getId() == loadedAdvert.getId()) {
+                        correctlyLoadedAdvertCount ++;
+                        continue;
+                    }
+                }
+            }
+        }
+        
+        assertThat(loadedAdverts.size(), equalTo(correctlyLoadedAdvertCount));
+    }
 
     @Test
     public void shouldHighlightSelectedAdvert() {

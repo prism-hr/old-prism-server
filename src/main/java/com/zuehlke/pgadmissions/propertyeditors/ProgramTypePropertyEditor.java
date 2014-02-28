@@ -31,7 +31,7 @@ public class ProgramTypePropertyEditor extends PropertyEditorSupport {
             setValue(null);
             return;
         }
-        setValue(new ProgramType(ProgramTypeId.valueOf(strId), 665));
+        setValue(programsService.getProgramTypeById(ProgramTypeId.valueOf(strId)));
     }
 
     @Override

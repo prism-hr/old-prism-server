@@ -229,7 +229,7 @@ public class TestObjectProvider {
     
     private Program getProgram(Boolean enabled, Program alternativeOf) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .add(Restrictions.eq("enabled", enabled));
+                .add(Restrictions.eq("active", enabled));
         
         if (alternativeOf != null) {
             criteria.add(Restrictions.ne("id", alternativeOf.getId()));
@@ -241,7 +241,7 @@ public class TestObjectProvider {
     private ApplicationForm getProgramApplication(Boolean enabled) {
         return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
                 .createAlias("program", "program", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("program.enabled", enabled))
+                .add(Restrictions.eq("program.active", enabled))
                 .add(Restrictions.isNull("project"))
                 .setMaxResults(1).uniqueResult();
     }
@@ -249,15 +249,15 @@ public class TestObjectProvider {
     private ApplicationForm getProjectApplication(Boolean enabled) {
         return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
                 .createAlias("project", "project", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("project.enabled", enabled))
+                .add(Restrictions.eq("project.active", enabled))
                 .setMaxResults(1).uniqueResult();
     }
     
     private Project getProject(Boolean enabled, Project alternativeOf) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Project.class)
                 .createAlias("program", "program", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("enabled", enabled))
-                .add(Restrictions.eq("program.enabled", enabled));
+                .add(Restrictions.eq("active", enabled))
+                .add(Restrictions.eq("program.active", enabled));
        
         if (alternativeOf != null) {
             criteria.add(Restrictions.eq("id", alternativeOf.getId()));

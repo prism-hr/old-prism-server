@@ -119,7 +119,7 @@ public class QualificationController {
 	}
 
     public StringTrimmerEditor newStringTrimmerEditor() {
-        return new StringTrimmerEditor(false);
+        return new StringTrimmerEditor(true);
     }
 	
 	@RequestMapping(value = "/getQualification", method = RequestMethod.GET)

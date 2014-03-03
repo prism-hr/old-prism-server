@@ -494,29 +494,25 @@ function updateProgramSection(map) {
         $("#programAdvertInstitution").val(map["institutionCode"]);
     });
     $("#programAdvertInstitutionOtherName").val("");
+    tinyMCE.get('programAdvertDescriptionText').setContent(map['programDescription']);
 
-    var advert = map['advert'];
-    if (advert) {
-        tinyMCE.get('programAdvertDescriptionText').setContent(advert['description']);
-        tinyMCE.get('programAdvertFundingText').setContent(advert['funding'] ? advert['funding'] : "");
-        $("#programAdvertId").val(advert.id);
-        var durationOfStudyInMonths = advert['studyDuration'];
-        if (durationOfStudyInMonths % 12 == 0) {
-            $("#programAdvertStudyDurationInput").val((durationOfStudyInMonths / 12).toString());
-            $("#programAdvertStudyDurationUnitSelect").val('YEARS');
-        } else {
-            $("#programAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
-            $("#programAdvertStudyDurationUnitSelect").val('MONTHS');
-        }
-        if (advert['active']) {
-            $("#programAdvertIsActiveRadioYes").prop("checked", true);
-        } else {
-            $("#programAdvertIsActiveRadioNo").prop("checked", true);
-        }
+    var durationOfStudyInMonths = map['programStudyDuration'];
+    if (durationOfStudyInMonths % 12 == 0) {
+        $("#programAdvertStudyDurationInput").val((durationOfStudyInMonths / 12).toString());
+        $("#programAdvertStudyDurationUnitSelect").val('YEARS');
     } else {
-        clearAdvert();
+        $("#programAdvertStudyDurationInput").val(durationOfStudyInMonths.toString());
+        $("#programAdvertStudyDurationUnitSelect").val('MONTHS');
     }
 
+    tinyMCE.get('programAdvertFundingText').setContent(map['programFunding'] ? map['programFunding'] : "");
+    
+    if (map['programIsActive']) {
+        $("#programAdvertIsActiveRadioYes").prop("checked", true);
+    } else {
+        $("#programAdvertIsActiveRadioNo").prop("checked", true);
+    }
+    
     $("#programAdvertStudyOptionsSelect").find('option:selected').removeAttr("selected").end();
     if (map['studyOptions']) {
         var studyOptions = map['studyOptions'];

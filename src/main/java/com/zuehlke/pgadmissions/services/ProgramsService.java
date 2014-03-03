@@ -150,9 +150,11 @@ public class ProgramsService {
                 return program;
             }
             program = (Program) merge(program);
+            program.setContactUser(getContactUserForProgram(program, opportunityRequest.getAuthor()));
         } else {
             program = new Program();
             program.setEnabled(true);
+            program.setContactUser(opportunityRequest.getAuthor());
         }
 
         if (program.getInstitution() == null || !Objects.equal(program.getInstitution().getCode(), opportunityRequest.getInstitutionCode())) {
@@ -162,8 +164,15 @@ public class ProgramsService {
             program.setInstitution(institution);
             program.setCode(thisBean.generateNextProgramCode(institution));
         }
+        
         program.setTitle(opportunityRequest.getProgramTitle());
+        program.setDescription(opportunityRequest.getProgramDescription());
         program.setAtasRequired(opportunityRequest.getAtasRequired());
+        program.setStudyDuration(opportunityRequest.getStudyDuration());
+        program.setFunding(opportunityRequest.getFunding());
+        program.setActive(opportunityRequest.getAcceptingApplications());
+        program.setProgramType(opportunityRequest.getProgramType());
+        
         save(program);
         return program;
     }
@@ -186,12 +195,6 @@ public class ProgramsService {
 
         Program program = thisBean.createOrGetProgram(opportunityRequest);
 
-        program.setDescription(opportunityRequest.getProgramDescription());
-        program.setStudyDuration(opportunityRequest.getStudyDuration());
-        program.setFunding(opportunityRequest.getFunding());
-        program.setActive(opportunityRequest.getAcceptingApplications());
-        program.setContactUser(getContactUserForProgram(program, opportunityRequest.getAuthor()));
-        
         if (program.getProgramFeed() == null) {
             programInstanceService.createRemoveProgramInstances(program, opportunityRequest.getStudyOptions(), opportunityRequest.getAdvertisingDeadlineYear());
         }

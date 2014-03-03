@@ -17,10 +17,10 @@ public class ProgramType implements Serializable {
 
     @Id
     @Enumerated(EnumType.STRING)
-    ProgramTypeId id;
+    private ProgramTypeId id;
     
     @Column(name = "default_study_duration")
-    Integer defaultStudyDuration;
+    private Integer defaultStudyDuration;
 
     public ProgramTypeId getId() {
         return id;

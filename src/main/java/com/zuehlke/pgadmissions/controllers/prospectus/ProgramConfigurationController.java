@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.controllers.prospectus;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +99,7 @@ public class ProgramConfigurationController {
 
     @Autowired
     private DomicileService domicileService;
-    
+
     @Autowired
     private OpportunitiesService opportunitiesService;
 
@@ -145,27 +144,22 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
-    public String getOpportunityData(@RequestParam(required=false) String programCode, @RequestParam(required=false) Integer advertId) {
+    public String getOpportunityData(@RequestParam(required = false) String programCode) {
         Program program = programsService.getProgramByCode(programCode);
 
         Map<String, Object> result = Maps.newHashMap();
 
-        HashMap<String, Object> dataMap = new HashMap<String, Object>();
-        if (advertId == null) {
-            if (program != null) {
-                advertId = program.getId();
-            }
-        }
-        
-        dataMap.put("advertId", advertId);
-        
+        Map<String, Object> dataMap = Maps.newHashMap();
+        dataMap.put("advertId", program.getId());
+
         Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
-        
+
         result.put("programId", program.getId());
         result.put("programTitle", program.getTitle());
         result.put("programDescription", program.getDescription());
         result.put("programStudyDuration", program.getStudyDuration());
         result.put("programFunding", program.getFunding());
+        result.put("programIsActive", program.isActive());
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
         result.put("programType", program.getProgramType().getId());
@@ -179,7 +173,7 @@ public class ProgramConfigurationController {
 
         return gson.toJson(result);
     }
-    
+
     @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
     @ResponseBody
     public String saveOpportunity(@Valid OpportunityRequest opportunityRequest, BindingResult result) {
@@ -205,7 +199,7 @@ public class ProgramConfigurationController {
         }
         return gson.toJson(map);
     }
-    
+
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
     @ResponseBody
     public String addClosingDate(@RequestParam String programCode, ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
@@ -243,7 +237,7 @@ public class ProgramConfigurationController {
 
         return gson.toJson(map);
     }
-    
+
     @RequestMapping(value = "/getClosingDates", method = RequestMethod.GET)
     @ResponseBody
     public String getClosingDates(@RequestParam String programCode, HttpServletRequest request) throws TemplateException, IOException {
@@ -258,10 +252,10 @@ public class ProgramConfigurationController {
             map.put("programCode", programCode);
             map.put("closingDates", program.getClosingDates());
         }
-        
+
         return gson.toJson(map);
     }
-    
+
     @RequestMapping(value = "/removeClosingDate", method = RequestMethod.POST)
     @ResponseBody
     public String removeClosingDate(@RequestParam String programCode, @RequestParam Integer closingDateId, HttpServletRequest request)

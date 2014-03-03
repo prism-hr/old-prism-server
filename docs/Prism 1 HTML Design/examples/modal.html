@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+<link href="../css/jqModal.css" type="text/css" rel="stylesheet" />
+<style>
+#modal {
+	background: #FFF;
+	border-radius: 5px;
+	box-shadow: 0 0 6px #333;
+	display: none;
+	left: 50%;
+	margin-left: -400px;
+	padding: 15px;
+	position: absolute;
+	top: 50%;
+	width: 800px;	
+}
+</style>
+</head>
+<body>
+
+<p><a href="#" class="show">Try it</a></p>
+<div id="modal">
+	<b>Test content</b>
+  <p>Vestibulum at ligula erat, et vestibulum neque. Cras id arcu a enim tristique egestas ac nec sapien. Vivamus bibendum accumsan arcu quis posuere. Sed vitae tortor in lacus malesuada pretium rutrum nec dui. Suspendisse sit amet ornare urna. Aliquam non nisi erat, eget fermentum lorem. Maecenas pharetra, massa nec suscipit euismod, leo magna commodo diam, quis molestie tellus mi sit amet ligula. Nullam ornare vulputate molestie. Sed tempor, leo sed sodales consequat, felis enim pharetra felis, eget commodo nisi massa ut metus.</p>
+  <p><a href="#" class="close">close</a></p>
+</div>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jqModal.js"></script>
+<script>
+$(document).ready(function()
+{
+	$('#modal').jqm({
+		modal: true,
+		onShow: function(hash)
+		{
+			// function is here to position the modal window at a vertical centre.
+			var $this = $(hash.w);
+			$this.css({marginTop: -($this.height() / 2)+'px'});
+			$this.show();
+		},
+		/*onHide: function(hash)
+		{
+			// function is here to fade out the overlay in a similar fashion to how it appears.
+			var $this = $(hash.w);
+			var $overlay = $(hash.o);
+			$overlay.fadeOut('800', function(){ $overlay.remove(); });
+			$this.fadeOut('500');
+		},*/
+		trigger: 'a.show'
+	}).hide();
+	$('#modal a.close').bind('click', function() { $('#modal').jqmHide(); });
+});
+</script>
+</body>
+</html>

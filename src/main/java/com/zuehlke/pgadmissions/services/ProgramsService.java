@@ -150,7 +150,7 @@ public class ProgramsService {
                 return program;
             }
             program = (Program) merge(program);
-            program.setContactUser(getContactUserForProgram(program, opportunityRequest.getAuthor()));
+            program.setContactUser(thisBean.getContactUserForProgram(program, opportunityRequest.getAuthor()));
         } else {
             program = new Program();
             program.setEnabled(true);
@@ -257,7 +257,7 @@ public class ProgramsService {
         programDAO.deleteInactiveAdverts();
     }
     
-    private RegisteredUser getContactUserForProgram(Program program, RegisteredUser candidateUser) {        
+    protected RegisteredUser getContactUserForProgram(Program program, RegisteredUser candidateUser) {        
         List<RegisteredUser> administrators = program.getAdministrators();
         if (!administrators.isEmpty()) {
             if (administrators.contains(candidateUser)) {

@@ -56,11 +56,28 @@ SET ADVERT.title = PROGRAM.title
 ;
 
 ALTER TABLE ADVERT
+
+ALTER TABLE ADVERT
+	ADD COLUMN program_id INT(10) UNSIGNED,
 	ADD COLUMN enabled INT(1) UNSIGNED NOT NULL DEFAULT 1,
 	ADD INDEX (enabled),
 	ADD COLUMN registered_user_id INT(10) UNSIGNED,
 	ADD INDEX (registered_user_id)
 ;
+
+INSERT INTO ADVERT(description, program_id)
+	SELECT "Advert coming soon!", PROGRAM.id
+	FROM PROGRAM LEFT JOIN ADVERT
+		ON PROGRAM.advert_id = ADVERT.id
+	WHERE ADVERT.id IS NULL
+;
+
+UPDATE PROGRAM INNER JOIN ADVERT
+	ON PROGRAM.id = ADVERT.program_id
+SET PROGRAM.advert_id = ADVERT.id
+;
+
+
 
 UPDATE ADVERT INNER JOIN PROGRAM
 	ON ADVERT.id = PROGRAM.advert_id
@@ -111,11 +128,12 @@ WHERE registered_user_id IS NULL
 
 ALTER TABLE ADVERT
 	MODIFY title VARCHAR(255) NOT NULL,
-	MODIFY description VARCHAR(3000) NOT NULL DEFAULT "Programme advert coming soon!",
+	MODIFY description VARCHAR(3000) NOT NULL DEFAULT "Advert coming soon!",
 	MODIFY active INT(1) UNSIGNED NOT NULL DEFAULT 1,
 	MODIFY enabled INT(1) UNSIGNED NOT NULL DEFAULT 1,
 	MODIFY study_duration INT(4) UNSIGNED NOT NULL,
 	MODIFY registered_user_id INT(10) UNSIGNED NOT NULL,
+	DROP COLUMN program_id,
 	ADD FOREIGN KEY (registered_user_id) REFERENCES REGISTERED_USER (id)
 ;
 

@@ -36,7 +36,7 @@ public abstract class Advert implements Serializable {
     
     @Size(max = 3000, message = "A maximum of 2000 characters are allowed.")
     @Column(name = "description", nullable = false)
-    private String description = "Programme advert coming soon!";
+    private String description = "Advert coming soon!";
 
     @Column(name = "study_duration")
     private Integer studyDuration;

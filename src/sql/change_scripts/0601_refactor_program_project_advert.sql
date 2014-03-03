@@ -50,38 +50,17 @@ ALTER TABLE PROGRAM
 	MODIFY program_type_id VARCHAR(50) NOT NULL
 ;
 
-UPDATE ADVERT INNER JOIN PROGRAM
-	ON ADVERT.id = PROGRAM.advert_id
-SET ADVERT.title = PROGRAM.title
-;
-
 ALTER TABLE ADVERT
-
-ALTER TABLE ADVERT
-	ADD COLUMN program_id INT(10) UNSIGNED,
 	ADD COLUMN enabled INT(1) UNSIGNED NOT NULL DEFAULT 1,
 	ADD INDEX (enabled),
 	ADD COLUMN registered_user_id INT(10) UNSIGNED,
 	ADD INDEX (registered_user_id)
 ;
 
-INSERT INTO ADVERT(description, program_id)
-	SELECT "Advert coming soon!", PROGRAM.id
-	FROM PROGRAM LEFT JOIN ADVERT
-		ON PROGRAM.advert_id = ADVERT.id
-	WHERE ADVERT.id IS NULL
-;
-
-UPDATE PROGRAM INNER JOIN ADVERT
-	ON PROGRAM.id = ADVERT.program_id
-SET PROGRAM.advert_id = ADVERT.id
-;
-
-
-
 UPDATE ADVERT INNER JOIN PROGRAM
 	ON ADVERT.id = PROGRAM.advert_id
-SET ADVERT.enabled = PROGRAM.enabled
+SET ADVERT.title = PROGRAM.title,
+	ADVERT.enabled = PROGRAM.enabled
 ;
 
 ALTER TABLE PROGRAM
@@ -93,19 +72,12 @@ UPDATE ADVERT INNER JOIN PROJECT
 SET ADVERT.enabled = 
 	IF(PROJECT.disabled = 0,
 		1,
-		0)
+		0),
+	ADVERT.registered_user_id = PROJECT.primary_supervisor_id
 ;
 
 ALTER TABLE PROJECT
-	DROP COLUMN disabled
-;
-
-UPDATE ADVERT INNER JOIN PROJECT
-	ON ADVERT.id = PROJECT.advert_id
-SET ADVERT.registered_user_id = PROJECT.primary_supervisor_id
-;
-
-ALTER TABLE PROJECT
+	DROP COLUMN disabled,
 	DROP FOREIGN KEY project_author_fk,
 	DROP COLUMN author_id
 ;
@@ -127,17 +99,51 @@ WHERE registered_user_id IS NULL
 ;
 
 ALTER TABLE ADVERT
+	ADD COLUMN program_id INT(10) UNSIGNED,
 	MODIFY title VARCHAR(255) NOT NULL,
-	MODIFY description VARCHAR(3000) NOT NULL DEFAULT "Advert coming soon!",
+	MODIFY description VARCHAR(3000) NOT NULL DEFAULT "Programme advert coming soon!",
 	MODIFY active INT(1) UNSIGNED NOT NULL DEFAULT 1,
 	MODIFY enabled INT(1) UNSIGNED NOT NULL DEFAULT 1,
 	MODIFY study_duration INT(4) UNSIGNED NOT NULL,
 	MODIFY registered_user_id INT(10) UNSIGNED NOT NULL,
-	DROP COLUMN program_id,
 	ADD FOREIGN KEY (registered_user_id) REFERENCES REGISTERED_USER (id)
 ;
 
+INSERT INTO ADVERT (title, program_id, study_duration, registered_user_id)
+	SELECT PROGRAM.title, PROGRAM.id, PROGRAM_TYPE.default_study_duration,
+		IF(CONTACT.registered_user_id IS NOT NULL,
+			CONTACT.registered_user_id,
+			15)
+	FROM PROGRAM LEFT JOIN (
+		SELECT MIN(administrator_id) as registered_user_id,
+			program_id AS program_id
+		FROM PROGRAM_ADMINISTRATOR_LINK
+		GROUP BY program_id) AS CONTACT
+		ON PROGRAM.id = CONTACT.program_id
+	INNER JOIN PROGRAM_TYPE
+		ON PROGRAM.program_type_id = PROGRAM_TYPE.id
+	WHERE PROGRAM.advert_id IS NULL
+;
+
+UPDATE PROGRAM INNER JOIN ADVERT
+	ON PROGRAM.id = ADVERT.program_id
+SET PROGRAM.advert_id = ADVERT.id
+WHERE PROGRAM.id = ADVERT.program_id
+;
+
+ALTER TABLE ADVERT
+	DROP COLUMN program_id
+;
+
 SET foreign_key_checks = 0
+;
+
+UPDATE PROGRAM
+SET id = advert_id
+;
+
+UPDATE PROJECT
+SET id = advert_id
 ;
 
 UPDATE APPLICATION_FORM INNER JOIN PROJECT
@@ -183,44 +189,6 @@ SET PROJECT.program_id = PROGRAM.advert_id
 UPDATE SCORING_DEFINITION INNER JOIN PROGRAM
 	ON SCORING_DEFINITION.program_id = PROGRAM.id
 SET SCORING_DEFINITION.program_id = PROGRAM.advert_id
-;
-
-UPDATE PROJECT
-SET id = advert_id
-;
-
-ALTER TABLE ADVERT
-	ADD COLUMN program_id INT(10) UNSIGNED
-;
-
-INSERT INTO ADVERT (title, program_id, study_duration, registered_user_id)
-	SELECT PROGRAM.title, PROGRAM.id, PROGRAM_TYPE.default_study_duration,
-		IF(CONTACT.registered_user_id IS NOT NULL,
-			CONTACT.registered_user_id,
-			15)
-	FROM PROGRAM LEFT JOIN (
-		SELECT MIN(administrator_id) as registered_user_id,
-			program_id AS program_id
-		FROM PROGRAM_ADMINISTRATOR_LINK
-		GROUP BY program_id) AS CONTACT
-		ON PROGRAM.id = CONTACT.program_id
-	INNER JOIN PROGRAM_TYPE
-		ON PROGRAM.program_type_id = PROGRAM_TYPE.id
-	WHERE PROGRAM.advert_id IS NULL
-;
-
-UPDATE PROGRAM INNER JOIN ADVERT
-	ON PROGRAM.id = ADVERT.program_id
-SET PROGRAM.advert_id = ADVERT.id
-WHERE PROGRAM.id = ADVERT.program_id
-;
-
-ALTER TABLE ADVERT
-	DROP COLUMN program_id
-;
-
-UPDATE PROGRAM
-SET id = advert_id
 ;
 
 ALTER TABLE PROGRAM

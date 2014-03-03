@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -87,8 +88,8 @@ public class OpportunityRequest {
     @OrderBy("createdTimestamp")
     private List<OpportunityRequestComment> comments = Lists.newArrayList();
 
-    // TODO map to existing column
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "program_type_id")
     private ProgramType programType;
 
     @Transient

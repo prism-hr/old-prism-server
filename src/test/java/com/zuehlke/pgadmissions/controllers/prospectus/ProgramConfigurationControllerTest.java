@@ -4,10 +4,13 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
@@ -35,7 +38,9 @@ import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramTypeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
@@ -113,10 +118,14 @@ public class ProgramConfigurationControllerTest {
     }
     
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldGetOpportunityData() {
         Domicile domicile = new DomicileBuilder().id(88).build();
-        Program program = new ProgramBuilder().code("07").institution(new QualificationInstitutionBuilder().domicileCode("PL").build()) //
-                .advert(new AdvertBuilder().id(999).build()).locked(true).build();
+        Program program = new ProgramBuilder().code("07").institution(new QualificationInstitutionBuilder().domicileCode("PL").code("inst").build()) //
+                .advert(new AdvertBuilder().id(999).build()).locked(true).title("Dlaczego w pizdzie nie ma krzesel?").description("Zeby chuj stal").studyDuration(8).
+                funding("Ni ma kasy").active(true).atasRequired(false).programType(new ProgramTypeBuilder().id(ProgramTypeId.INTERNSHIP).build())
+                .locked(true)
+                .build();
 
         Map<String, Object> dataMap = Maps.newHashMap();
         dataMap.put("advertId", 999);
@@ -129,12 +138,26 @@ public class ProgramConfigurationControllerTest {
         expect(templateRenderer.renderLink(dataMap)).andReturn("button");
 
         replay();
-        String result = controller.getOpportunityData("07", 999);
+        String result = controller.getOpportunityData("07");
         verify();
 
-        assertEquals(
-                "{\"atasRequired\":false,\"studyOptions\":[\"opt1\",\"opt2\"],\"programId\":999,\"buttonToApply\":\"button\",\"linkToApply\":\"button\",\"institutionCountryCode\":\"encPL\",\"programLock\":true,\"advertisingDeadline\":2084,\"programType\":\"RESEARCH_DEGREE\",\"isCustomProgram\":true}",
-                result);
+        Map<String, Object> resultMap = new Gson().fromJson(result, Map.class);
+        
+        assertEquals(999, ((Double)resultMap.get("programId")).intValue());
+        assertEquals("Dlaczego w pizdzie nie ma krzesel?", resultMap.get("programTitle"));
+        assertEquals("Zeby chuj stal", resultMap.get("programDescription"));
+        assertEquals(8, ((Double)resultMap.get("programStudyDuration")).intValue());
+        assertEquals("Ni ma kasy", resultMap.get("programFunding"));
+        assertTrue((Boolean)resultMap.get("programIsActive"));
+        assertTrue((Boolean)resultMap.get("isCustomProgram"));
+        assertTrue((Boolean)resultMap.get("isCustomProgram"));
+        assertFalse((Boolean)resultMap.get("atasRequired"));
+        assertEquals("INTERNSHIP", resultMap.get("programType"));
+        assertEquals("encPL", resultMap.get("institutionCountryCode"));
+        assertEquals("inst", resultMap.get("institutionCode"));
+        assertTrue((Boolean)resultMap.get("programLock"));
+        assertEquals(2084, ((Double)resultMap.get("advertisingDeadline")).intValue());
+        assertEquals(Arrays.asList("opt1", "opt2" ), resultMap.get("studyOptions"));
     }
 
     @Test

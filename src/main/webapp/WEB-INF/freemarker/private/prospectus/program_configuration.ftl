@@ -3,7 +3,6 @@
       <h2>Manage Programmes</h2>
       <div id="programAdvertDiv">
           <form>
-              <input type="hidden" id="programAdvertId" value=""/>
               <input type="hidden" id="programAdvertForceCreatingNewInstitution" value="false" />
               <input type="hidden" id="programAdvertProgramLocked" value="false">
               <input type="hidden" id="programAdvertIsCustom" value="false" />

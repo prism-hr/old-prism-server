@@ -112,10 +112,6 @@ public abstract class Advert implements Serializable {
         return enabled;
     }
     
-    public Boolean isAcceptingApplications() {
-        return isActive() && isEnabled();
-    }
-
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }

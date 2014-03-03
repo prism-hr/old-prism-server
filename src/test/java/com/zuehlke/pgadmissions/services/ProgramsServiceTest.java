@@ -229,7 +229,8 @@ public class ProgramsServiceTest {
         Domicile domicile = new Domicile();
         ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
 
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, domicile).otherInstitution("other_name").build();
+        RegisteredUser requestAuthor = new RegisteredUser();
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, domicile).otherInstitution("other_name").build();
         QualificationInstitution institution = new QualificationInstitutionBuilder().build();
 
         expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
@@ -237,11 +238,12 @@ public class ProgramsServiceTest {
         Capture<Program> programCapture = new Capture<Program>();
         expect(thisBean.generateNextProgramCode(institution)).andReturn("AAA_00000");
         programDAOMock.save(capture(programCapture));
-        
+
         replay();
         Program program = programsService.createOrGetProgram(opportunityRequest);
         verify();
-        
+
+        assertSame(program.getContactUser(), requestAuthor);
         assertSame(programCapture.getValue(), program);
         assertEquals(opportunityRequest.getAtasRequired(), program.getAtasRequired());
         assertSame(institution, program.getInstitution());
@@ -253,10 +255,12 @@ public class ProgramsServiceTest {
     public void shouldGetCustomProgram() {
         ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
         Program program = new ProgramBuilder().institution(new QualificationInstitutionBuilder().code("any_inst").build()).build();
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, null).institutionCode("any_inst").atasRequired(true)
-                .sourceProgram(program).build();
+        RegisteredUser requestAuthor = new RegisteredUser();
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, null).institutionCode("any_inst")
+                .atasRequired(true).sourceProgram(program).acceptingApplications(true).build();
 
         expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
+        expect(thisBean.getContactUserForProgram(program, requestAuthor)).andReturn(requestAuthor);
         expect(programDAOMock.merge(program)).andReturn(program);
         programDAOMock.save(program);
 
@@ -265,7 +269,14 @@ public class ProgramsServiceTest {
         verify();
 
         assertTrue(returned.getAtasRequired());
-        assertEquals(opportunityRequest.getProgramTitle(), program.getTitle());
+        assertEquals(program.getTitle(), opportunityRequest.getProgramTitle());
+        assertEquals(program.getDescription(), opportunityRequest.getProgramDescription());
+        assertEquals(program.getAtasRequired(), opportunityRequest.getAtasRequired());
+        assertEquals(program.getStudyDuration(), opportunityRequest.getStudyDuration());
+        assertEquals(program.getFunding(), opportunityRequest.getFunding());
+        assertTrue(program.isActive());
+        assertSame(program.getProgramType(), opportunityRequest.getProgramType());
+        assertSame(program.getContactUser(), requestAuthor);
     }
 
     @Test
@@ -326,15 +337,15 @@ public class ProgramsServiceTest {
 
         assertEquals("AAA_00000", nextCode);
     }
-    
-    @Test(expected = CannotApplyException.class) 
+
+    @Test(expected = CannotApplyException.class)
     public void shouldThrowCannotApplyExceptionIfProgramAndProjectAreNull() {
         replay();
         programsService.getValidProgramProjectAdvert(null, null);
         verify();
     }
-    
-    @Test(expected = CannotApplyException.class) 
+
+    @Test(expected = CannotApplyException.class)
     public void shouldThrowCannotApplyExceptionIfProgramAndProjectAreNotActive() {
         String programCode = "test";
         Integer advertId = 0;
@@ -344,8 +355,8 @@ public class ProgramsServiceTest {
         programsService.getValidProgramProjectAdvert(programCode, advertId);
         verify();
     }
-    
-    @Test 
+
+    @Test
     public void shouldReturnAdvertByProgramCodeIfProgramIsActive() {
         Program program = new ProgramBuilder().code("test").build();
         EasyMock.expect(programDAOMock.getProgamAcceptingApplicationsByCode(program.getCode())).andReturn(program);
@@ -354,8 +365,8 @@ public class ProgramsServiceTest {
         verify();
         assertEquals(advert.getProgram(), program);
     }
-    
-    @Test 
+
+    @Test
     public void shouldReturnAdvertByProgramIdIfProgramIsActive() {
         Program program = new ProgramBuilder().id(1).build();
         EasyMock.expect(programDAOMock.getAcceptingApplicationsById(program.getId())).andReturn(program);
@@ -364,8 +375,8 @@ public class ProgramsServiceTest {
         verify();
         assertEquals(advert.getProgram(), program);
     }
-    
-    @Test 
+
+    @Test
     public void shouldReturnAdvertByProjectIdIfProjectIsActive() {
         Project project = new ProjectBuilder().id(1).build();
         EasyMock.expect(programDAOMock.getAcceptingApplicationsById(project.getId())).andReturn(project);
@@ -374,8 +385,8 @@ public class ProgramsServiceTest {
         verify();
         assertEquals(advert.getProject(), project);
     }
-    
-    @Test 
+
+    @Test
     public void shouldReturnAdvertByProgramIdInPreferenceOfProgramByProgramCode() {
         Program program = new ProgramBuilder().id(1).code("one").build();
         Program otherProgram = new ProgramBuilder().id(2).code("two").build();

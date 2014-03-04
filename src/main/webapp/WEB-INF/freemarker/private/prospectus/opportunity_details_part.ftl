@@ -113,7 +113,7 @@
     <textarea id="programDescription" name="programDescription" class="max" cols="70" rows="6">${(opportunityRequest.programDescription?html)!}</textarea>
     <@spring.bind "opportunityRequest.programDescription" />
     <#list spring.status.errorMessages as error>
-      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+      <div class="alert alert-error" id="programDescriptionError"> <i class="icon-warning-sign"></i>
         ${error}
       </div>
     </#list>
@@ -170,14 +170,14 @@
 </div>
 
 <div class="row">
-  <label class="plain-label grey-label" for="atasRequired">Does your programme require ATAS (UK research programmes only)<em>*</em></label>
+  <label id="atasRequiredLabel" class="plain-label grey-label" for="atasRequired">Does your programme require ATAS (UK research programmes only)<em>*</em></label>
   <span class="hint grey" data-desc="<@spring.message 'opportunityRequest.atasRequired'/>"></span>
   <div class="field">
-    <label><input type="radio" name="atasRequired" value="true" id="atasRequired_true"
-      <#if opportunityRequest.atasRequired?? && opportunityRequest.atasRequired> checked="checked" </#if>
+    <label name="atasRadioValueText" class="grey-label"><input type="radio" name="atasRequired" value="true" id="atasRequired_true" disabled="disabled"
+      <#if opportunityRequest.atasRequired?? && opportunityRequest.atasRequired> checked="checked"</#if>
       /> Yes</label>
-    <label><input type="radio" name="atasRequired" value="false" id="atasRequired_false"
-      <#if  opportunityRequest.atasRequired?? && !opportunityRequest.atasRequired> checked="checked" </#if>
+    <label name="atasRadioValueText" class="grey-label"><input type="radio" name="atasRequired" value="false" id="atasRequired_false" disabled="disabled"
+      <#if opportunityRequest.atasRequired?? && !opportunityRequest.atasRequired> checked="checked"</#if>
       /> No</label>
     <@spring.bind "opportunityRequest.atasRequired" />
     <#list spring.status.errorMessages as error>

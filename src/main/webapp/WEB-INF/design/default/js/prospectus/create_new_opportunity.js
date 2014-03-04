@@ -119,19 +119,40 @@ function refreshControls() {
     if ($('#institutionCountry').val() === "") {
         $("#institution").attr("readonly", "readonly");
         $("#institution").attr("disabled", "disabled");
+        $("#lbl-providerName").addClass("grey-label").parent().find('.hint').addClass("grey");
+        refreshAtasRequiredField();
     } else {
         $("#institution").removeAttr("readonly", "readonly");
         $("#institution").removeAttr("disabled", "disabled");
+        $("#lbl-providerName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+        refreshAtasRequiredField();
     }
 
     if ($('#institution').val() === "OTHER") {
         $("#otherInstitution").removeAttr("readonly", "readonly");
         $("#otherInstitution").removeAttr("disabled", "disabled");
+        $("#lbl-otherInstitutionProviderName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     } else {
         $("#otherInstitution").attr("readonly", "readonly");
         $("#otherInstitution").attr("disabled", "disabled");
+        $("#lbl-otherInstitutionProviderName").addClass("grey-label").parent().find('.hint').addClass("grey");
     }
     $("#institution").selectpicker('refresh');
+}
+
+function refreshAtasRequiredField() {
+	var encryptedUKCountryValue = "United Kingdom";
+    if($("#institutionCountry option:selected").text().trim() == encryptedUKCountryValue) {
+        $("#atasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+        $("[name=atasRequired]").removeAttr("disabled", "disabled");
+        $("[name=atasRadioValueText]").removeClass("grey-label");
+    } else {
+        $("#atasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
+        $("[name=atasRequired]").prop("disabled", "disabled");
+        $("#atasRadioValueYes").addClass("grey-label");
+        $("[name=atasRadioValueText]").addClass("grey-label");
+        $("[name=atasRequired]").prop("checked", false);
+    }
 }
 
 function initEditors() {

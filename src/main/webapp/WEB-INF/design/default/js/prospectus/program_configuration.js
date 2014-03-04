@@ -43,6 +43,7 @@ function bindChangeOtherInstitutionAction() {
 function bindChangeInstitutionCountryAction() {
     $('#programAdvertInstitutionCountry').change(function() {
         getInstitutionData();
+        refreshAtasRequiredField();
     });
 }
 
@@ -192,9 +193,21 @@ function checkToDisable() {
         $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup button").attr("disabled", "disabled");
     }
 
+    refreshAtasRequiredField();
     otherInstitutionCheck();
     
     $('select.selectpicker').selectpicker('refresh');
+}
+
+function refreshAtasRequiredField() {
+    if($("#programAdvertInstitutionCountry").val() == "VY2V0mkiXwZOpOBwMMmjWA") {
+        // UK
+        $("#programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+        $("[name=programAdvertAtasRequired]").removeAttr("disabled", "disabled");
+    } else {
+        $("#programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
+        $("[name=programAdvertAtasRequired]").attr("disabled", "disabled");
+    }
 }
 
 function changeHeaderInfoBars(programval) {

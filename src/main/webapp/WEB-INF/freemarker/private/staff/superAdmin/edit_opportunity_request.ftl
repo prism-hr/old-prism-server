@@ -65,11 +65,17 @@ span.count {
                 <span class="label label-info">Status</span>
                 <div class="icon">
                     <#if opportunityRequest.status == "NEW">
-                    New Request <span class="icon-status validation"></span>
+                      <#if opportunityRequest.type == "CHANGE">
+                        Change Request<span data-desc="Change Request" class="icon-status withdrawn"></span>
+                      <#else>
+                        New Request<span data-desc="New Request" class="icon-status review"></span>
+                      </#if>
                     <#elseif opportunityRequest.status == "REJECTED">
-                    Rejected <span class="icon-status rejected"></span>
+                      Rejected<span data-desc="Rejected" class="icon-status rejected"></span>
                     <#elseif opportunityRequest.status == "APPROVED">
-                    Approved <span class="icon-status offer-recommended"></span>
+                      Approved<span data-desc="Approved" class="icon-status offer-recommended"></span>
+                    <#elseif opportunityRequest.status == "REVISED">
+                      Revised<span data-desc="Revised" class="icon-status validation"></span>
                     </#if>
                 </div>
                 <div class="row authname"><strong>Author:</strong> 

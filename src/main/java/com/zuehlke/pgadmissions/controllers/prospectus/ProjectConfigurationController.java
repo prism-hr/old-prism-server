@@ -41,7 +41,6 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -159,7 +158,6 @@ public class ProjectConfigurationController {
             RegisteredUser currentUser = getUser();
             Project project = projectConverter.toDomainObject(projectDTO);
             project.setContactUser(currentUser);
-            addSupervisorsRoles(project);
             programsService.save(project);
             map.put("success", "true");
         }
@@ -226,18 +224,10 @@ public class ProjectConfigurationController {
             if (project == null) {
                 throw new ResourceNotFoundException();
             }
-            addSupervisorsRoles(project);
             programsService.save(project);
             map.put("success", "true");
         }
         return gson.toJson(map);
-    }
-
-    private void addSupervisorsRoles(Project project) {
-        userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
-        if (project.getSecondarySupervisor() != null) {
-            userService.updateUserWithNewRoles(project.getSecondarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
-        }
     }
 
     private Map<String, Object> getErrorValues(BindingResult result, HttpServletRequest request) {

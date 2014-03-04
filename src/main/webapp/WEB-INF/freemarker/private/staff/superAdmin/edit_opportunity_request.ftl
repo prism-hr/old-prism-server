@@ -81,7 +81,7 @@ span.count {
                 <div class="row authname"><strong>Author:</strong> 
                 ${(opportunityRequest.author.firstName)!} ${(opportunityRequest.author.lastName)!}
                 </div>
-                <div class="row"><strong>Email:</strong> <a href="mailto:${(opportunityRequest.author.email)!}?subject=Question Regarding UCL Prism Programme request: ${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}"> <i class="icon-envelope-alt"></i> ${(opportunityRequest.author.email)!}</a> </div>
+                <div class="row"><strong>Email:</strong> <a href="mailto:${(opportunityRequest.author.email)!}?subject=Question Regarding UCL Prism Programme request"> <i class="icon-envelope-alt"></i> ${(opportunityRequest.author.email)!}</a> </div>
               </div>
             </div>
             <div class="requestinfo">
@@ -91,7 +91,7 @@ span.count {
               <#if opportunityRequest.sourceProgram??>
                 ${opportunityRequest.sourceProgram.code?html}
               </#if>
-              ${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}
+              ${(opportunityRequest.sourceProgram.title)!"Revise Program Request"}
             </div>
             <div class="row">
               <label>Submitted</label> ${opportunityRequest.createdDate?string("dd MMM yyyy")}
@@ -120,15 +120,27 @@ span.count {
                       
                       <#if isRequestEditable>
                       
-                        <#assign comments = opportunityRequest.comments>
-                        <#if user.id == opportunityRequest.author.id && comments?has_content && comments?last.commentType == "REJECT"> 
-                          <div class="alert alert-warning">
-                            Please revise your request. Recent rejection reason:
-                            <p>
-                              <i>${comments?last.content}</i>
-                            </p>
-                          </div>
+                        <@spring.bind "opportunityRequest.*"/>
+                        <#if spring.status.errorMessages?size &gt; 0>
+                          <#assign errorsInRequest = true>
                         </#if>
+                        
+                        <@spring.bind "comment.*"/>
+                        <#if spring.status.errorMessages?size &gt; 0>
+                          <#assign errorsInComment = true>
+                        </#if>
+
+                        <#assign comments = opportunityRequest.comments>
+                        
+                        <#if errorsInRequest?? || errorsInComment??>
+                          <div class="alert alert-error" >
+                          <i class="icon-warning-sign"></i>
+                        <#else> 
+                          <div class="alert alert-info">
+                          <i class="icon-info-sign"></i>
+                        </#if> 
+                        Complete the form below to revise and resubmit your request.
+                        </div>
                         
                         <#include "/private/prospectus/opportunity_details_part.ftl"/>
                       <#else>

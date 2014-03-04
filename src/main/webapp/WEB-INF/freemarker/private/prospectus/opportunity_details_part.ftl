@@ -48,7 +48,7 @@
 
 <div class="row">
   <label id="lbl-otherInstitutionProviderName" class="plain-label grey-label" for="otherInstitutionProviderName">Please Specify</label>
-  <span class="hint grey" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
+  <span class="hint grey" data-desc="<@spring.message 'opportunityRequest.otherInstitutionTooltip'/>"></span>
   <div class="field">
     <input readonly disabled="disabled" id="otherInstitution" name="otherInstitution" class="full" type="text" autocomplete="off" value="${(opportunityRequest.otherInstitution?html)!}" />
     <@spring.bind "opportunityRequest.otherInstitution" />

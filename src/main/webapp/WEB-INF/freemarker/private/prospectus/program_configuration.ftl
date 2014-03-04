@@ -62,7 +62,7 @@
                 
                 <div class="row" id="programAdvertInstitutionOtherNameDiv">
                   <label class="plain-label" for="programAdvertInstitutionOtherName">Please Specify<em>*</em></label>
-                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.otherInstitutionTooltip'/>"></span>
                   <div class="field">
                     <input id="programAdvertInstitutionOtherName" class="full" type="text" autocomplete="off" />
                   </div>

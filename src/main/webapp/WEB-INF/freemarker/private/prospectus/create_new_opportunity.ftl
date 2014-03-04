@@ -20,12 +20,12 @@
      		<div class="alert alert-error" >
             <i class="icon-warning-sign"></i>
 	    <#else>
-            <div class="alert alert-info">
+        <div class="alert alert-info">
   			<i class="icon-info-sign"></i>
       	</#if>
 		Complete the form below to advertise and manage recruitment to your own programme using our software. 
 			<strong><a href="/pgadmissions/prospectus">Login</a></strong> to proceed if you are already a PRiSM user.
-	</div>
+	     </div>
     <section id="plist">
       <form action="<@spring.url "/createOpportunity" />" method="POST">
         <fieldset>

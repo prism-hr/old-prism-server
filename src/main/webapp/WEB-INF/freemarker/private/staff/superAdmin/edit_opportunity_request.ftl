@@ -81,7 +81,7 @@ span.count {
                 <div class="row authname"><strong>Author:</strong> 
                 ${(opportunityRequest.author.firstName)!} ${(opportunityRequest.author.lastName)!}
                 </div>
-                <div class="row"><strong>Email:</strong> <a href="mailto:${(opportunityRequest.author.email)!}?subject=Question Regarding UCL Prism Program request: ${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}"> <i class="icon-envelope-alt"></i> ${(opportunityRequest.author.email)!}</a> </div>
+                <div class="row"><strong>Email:</strong> <a href="mailto:${(opportunityRequest.author.email)!}?subject=Question Regarding UCL Prism Programme request: ${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}"> <i class="icon-envelope-alt"></i> ${(opportunityRequest.author.email)!}</a> </div>
               </div>
             </div>
             <div class="requestinfo">
@@ -110,9 +110,9 @@ span.count {
                     <div class="row-group">
                       <h3 class="no-arrow">
                         <#if user.isInRole('SUPERADMINISTRATOR')>
-                          Opportunity Details
+                          Program Request
                         <#else>
-                          Revise Opportunity Request
+                          Revise Programme Request
                         </#if> 
                       </h3>
                       

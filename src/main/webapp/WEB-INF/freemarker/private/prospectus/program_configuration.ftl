@@ -22,37 +22,17 @@
                   </div>
                 </div>
                 <div id="programAdvertNewProgramDiv" style="display:none">
-                  <label for="programAdvertProgramSelect" class="plain-label">Create new program</label>
+                  <label for="programAdvertProgramSelect" class="plain-label">Create new programme</label>
                 </div>
               </div>
               <div class="row-group" id="institutionGroup">
-                <h3>Program information</h3>
+                <h3>Programme Information</h3>
                 <div class="infoBar alert alert-info" id="infoBarInstitution">
-                  <i class="icon-info-sign"></i>Specify your program information here.
-                </div>
-
-              	<div class="row" id="programAdvertProgramNameDiv">
-                  <label for="programAdvertProgramName" class="plain-label">Programme name<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
-                  <div class="field forLabel">
-                    <input id="programAdvertProgramName" name="title" class="input-xxlarge" type="text">
-                  </div>
-                </div>
-                                
-                <div class="row" id="programAdvertProgramTypeDiv">
-                  <label id="programAdvertProgramTypeLabel" class="plain-label" for="programAdvertProgramType">Program Type<em>*</em></label>
-                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.programType'/>"></span>
-                  <div class="field">
-                    <select id="programAdvertProgramType">
-                      <option value="">Select...</option>
-                      <#list programTypes as programType>
-                        <option value="${programType.id.name()}">${(programType.id.displayValue?html)!}</option>
-                      </#list>
-                    </select>
-                  </div>
+                  <i class="icon-info-sign"></i> Specify your programme information here.
                 </div>
                 
                 <div class="row" id="programAdvertInstitutionCountryDiv">
-                  <label class="plain-label" for="programAdvertInstitutionCountry">Institution Country<em>*</em></label>
+                  <label class="plain-label" for="programAdvertInstitutionCountry">Organisation Country<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionCountry'/>"></span>
                   <div class="field">
                     <select class="full selectpicker" data-live-search="true" data-size="6" id="programAdvertInstitutionCountry">
@@ -67,7 +47,7 @@
                 </div>
                 
                 <div class="row" id="programAdvertInstitutionDiv">
-                  <label class="plain-label" for="programAdvertInstitution">Institution Name<em>*</em></label>
+                  <label class="plain-label" for="programAdvertInstitution">Organisation Name<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionName'/>"></span>
                   <div class="field">
                     <select class="full selectpicker" data-live-search="true" data-size="6"  id="programAdvertInstitution">
@@ -87,8 +67,28 @@
                     <input id="programAdvertInstitutionOtherName" class="full" type="text" autocomplete="off" />
                   </div>
                 </div>
-
-                <div class="row" id="programAdvertAtasRequiredDiv">
+                
+                <div class="row" id="programAdvertProgramNameDiv">
+                  <label for="programAdvertProgramName" class="plain-label">Programme Name<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
+                  <div class="field forLabel">
+                    <input id="programAdvertProgramName" name="title" class="input-xxlarge" type="text">
+                  </div>
+                </div>
+                                
+                <div class="row" id="programAdvertProgramTypeDiv">
+                  <label id="programAdvertProgramTypeLabel" class="plain-label" for="programAdvertProgramType">Programme Type<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.programType'/>"></span>
+                  <div class="field">
+                    <select id="programAdvertProgramType">
+                      <option value="">Select...</option>
+                      <#list programTypes as programType>
+                        <option value="${programType.id.name()}">${(programType.id.displayValue?html)!}</option>
+                      </#list>
+                    </select>
+                  </div>
+                </div>
+                
+               	<div class="row" id="programAdvertAtasRequiredDiv">
                   <label id="programAdvertAtasRequiredLabel" class="plain-label" for="atasRequired">Does the programme require ATAS?<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.atasRequired'/>"></span>
                   <div class="field">
@@ -141,7 +141,7 @@
                 </div>
                 
                 <div class="row" id="programAdvertStudyOptionsDiv">
-                  <label class="plain-label" for="programAdvertStudyOptionsSelect">Study Options<em>*</em></label>
+                  <label id = "programAdvertStudyOptionsLabel" class="plain-label" for="programAdvertStudyOptionsSelect">Available Study Options<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.studyOptions'/>"></span>
                   <div class="field">
                     <select multiple size="3" class="full" id="programAdvertStudyOptionsSelect">
@@ -155,7 +155,7 @@
                 </div>
                 
                 <div class="row" id="programAdvertAdvertisingDeadlineYearDiv">
-                  <label class="plain-label" for="advertisingDeadlineYear">Advertise deadline<em>*</em></label>
+                  <label id = "programAdvertAdvertisingDeadlineYearLabel" class="plain-label" for="advertisingDeadlineYear">Expiry Date<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.advertisingDeadlineYear'/>"></span>
                   <div class="field">
                     <select class="full" id="programAdvertAdvertisingDeadlineYear">

@@ -44,7 +44,6 @@ public class OpportunityRequestValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCountry", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCode", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programDescription", EMPTY_FIELD_ERROR_MESSAGE);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "atasRequired", EMPTY_DROPDOWN_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programType", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
         // validate institution code / name
@@ -61,6 +60,10 @@ public class OpportunityRequestValidator extends AbstractValidator {
                     errors.rejectValue("otherInstitution", "institution.did.you.mean", Joiner.on("::").join(matchingInstitutions));
                 }
             }
+        }
+
+        if (opportunityRequest.getInstitutionCountry() != null && "XK".equals(opportunityRequest.getInstitutionCountry().getCode())) {
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "atasRequired", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
 
         // validate study duration
@@ -109,8 +112,8 @@ public class OpportunityRequestValidator extends AbstractValidator {
                 }
             }
         }
-        
-        if(validatingProgram) {
+
+        if (validatingProgram) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "acceptingApplications", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
 

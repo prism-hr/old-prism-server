@@ -63,7 +63,7 @@ public class ApplicationFormCreationService {
         }
 
         applicationForm = thisBean.createNewApplicationForm(applicant, advert);
-
+        
         thisBean.fillWithDataFromPreviousApplication(applicationForm);
 
         thisBean.addSuggestedSupervisors(applicationForm, advert);
@@ -75,6 +75,8 @@ public class ApplicationFormCreationService {
     }
 
     protected void fillWithDataFromPreviousApplication(ApplicationForm applicationForm) {
+        
+        
         ApplicationForm previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(applicationForm, userService.getCurrentUser());
         if (previousApplication != null) {
             applicationFormCopyHelper.copyApplicationFormData(applicationForm, previousApplication);

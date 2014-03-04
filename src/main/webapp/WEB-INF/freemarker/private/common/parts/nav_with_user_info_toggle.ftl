@@ -36,7 +36,7 @@
                   		</#if>>
                   		<a href="<@spring.url '/requests'/>">
                   			<i class="icon-rocket"></i>
-                  			Program Requests
+                  			New Programme Requests
                   		</a>
                   	</li>
                 </#if>

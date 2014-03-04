@@ -68,11 +68,11 @@ function setNewProgramCreationMode(flag) {
     if(flag) {
         $("#newProgammeButton").hide();
         $("#cancelNewProgramBtn").show();
-        $("#programAdvertProgramSelect").attr("readonly", "readonly").attr("disabled", "disabled");
+        $("#programAdvertProgramSelect").prop("readonly", "readonly").prop("disabled", "disabled");
     } else {
         $("#cancelNewProgramBtn").hide();
         $("#newProgammeButton").show();
-        $("#programAdvertProgramSelect").removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
+        $("#programAdvertProgramSelect").removeProp("readonly", "readonly").removeProp("disabled", "disabled");
     }
 }
 
@@ -168,29 +168,29 @@ function checkToDisable() {
     if ((existingProgramSelected && !programLocked) || newProgramSelected) {
         // new or existing program
         $("#institutionGroup label, #advertGroup label #programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").removeAttr("readonly", "readonly");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").removeAttr("disabled", "disabled");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").removeProp("readonly", "readonly");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").removeProp("disabled", "disabled");
     } else {
         $("#institutionGroup label, #advertGroup label #programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").attr("readonly", "readonly");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").attr("disabled", "disabled");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").prop("readonly", "readonly");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").prop("disabled", "disabled");
     }
     
     if ((existingProgramSelected && !programLocked && isCustom) || newProgramSelected) {
-        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
+        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').removeProp("readonly", "readonly").removeProp("disabled", "disabled");
     } else {
-        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').prop("readonly", true).attr("disabled", "disabled");
+        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').prop("readonly", true).prop("disabled", "disabled");
     }
 
     if (existingProgramSelected != "" && !programLocked) {
         // existing program
         $("#programAdvertClosingDateGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("#programAdvertClosingDateGroup input").removeAttr("readonly", "readonly");
-        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup button").removeAttr("disabled", "disabled");
+        $("#programAdvertClosingDateGroup input").removeProp("readonly", "readonly");
+        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup button").removeProp("disabled", "disabled");
     } else {
         $("#programAdvertClosingDateGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("#programAdvertClosingDateGroup input").attr("readonly", "readonly");
-        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup button").attr("disabled", "disabled");
+        $("#programAdvertClosingDateGroup input").prop("readonly", "readonly");
+        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup button").prop("disabled", "disabled");
     }
 
     refreshAtasRequiredField();
@@ -216,10 +216,10 @@ function refreshAtasRequiredField() {
     if($("#programAdvertInstitutionCountry").val() == "VY2V0mkiXwZOpOBwMMmjWA") {
         // UK
         $("#programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("[name=programAdvertAtasRequired]").removeAttr("disabled", "disabled");
+        $("[name=programAdvertAtasRequired]").removeProp("disabled", "disabled");
     } else {
         $("#programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("[name=programAdvertAtasRequired]").attr("disabled", "disabled");
+        $("[name=programAdvertAtasRequired]").prop("disabled", "disabled");
     }
 }
 
@@ -539,7 +539,7 @@ function updateProgramSection(map) {
         $("#programAdvertIsActiveRadioNo").prop("checked", true);
     }
     
-    $("#programAdvertStudyOptionsSelect").find('option:selected').removeAttr("selected").end();
+    $("#programAdvertStudyOptionsSelect").find('option:selected').removeProp("selected").end();
     if (map['studyOptions']) {
         var studyOptions = map['studyOptions'];
         studyOptions.forEach(function(option) {
@@ -676,7 +676,7 @@ function saveAdvert() {
                             message += i == institutionNames.length - 1 ? ". " : ", ";
                         }
                         message += '<a name="didYouMeanInstitutionButtonNo">Use original</a>.';
-                        $("#programAdvertInstitutionOtherNameDiv").append($(getErrorMessageHTML(message)).attr("id", "didYouMeanInstitutionDiv"));
+                        $("#programAdvertInstitutionOtherNameDiv").append($(getErrorMessageHTML(message)).prop("id", "didYouMeanInstitutionDiv"));
                         bindChooseSuggestedInstitutionNameAction();
                     } else {
                         $("#programAdvertInstitutionOtherNameDiv").append(getErrorMessageHTML(map['otherInstitution']));
@@ -731,7 +731,7 @@ function setTextAreaValue(textArea, value) {
     }
     textArea.val(value);
     triggerKeyUp(textArea);
-    idselect = textArea.attr("id");
+    idselect = textArea.prop("id");
     tinymce.get(idselect).setContent(value);
 }
 

@@ -15,7 +15,7 @@
 		<li><a href="#application" id="applicationBtn">Application</a></li>
 		<li><a href="#opportunity" id="opportunityBtn">Opportunity</a></li>
 	</ul>
-	<div class="tab-page" id="timeline"></div>
-	<div class="tab-page" id="application"></div>
-	<div class="tab-page" id="opportunity"></div>
+	<div class="tab-page" id="timelineTab"></div>
+	<div class="tab-page" id="applicationTab"></div>
+	<div class="tab-page" id="opportunityTab"></div>
 </div>

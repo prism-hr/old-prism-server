@@ -1,31 +1,31 @@
 $(document).ready(function()
 {
-	$('#timeline').hide();
-	$('#opportunity').hide();
+	$('#timelineTab').hide();
+	$('#opportunityTab').hide();
 	
 	$('#applicationBtn').click(function(){
 		alert("Got Here");
 		// Set the current tab.
-		$('#timelineview ul.tabs li').removeClass('current');
+		$('#timelineTabview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
-		$('#opportunity').hide();
-		$('#timeline').hide();
-		$('#application').show();
-		window.scrollTo(0, $('#application').offset().top - 30);
+		$('#opportunityTab').hide();
+		$('#timelineTab').hide();
+		$('#applicationTab').show();
+		window.scrollTo(0, $('#applicationTab').offset().top - 30);
 	});
 	
 	var jumpToOpportunity = false; // prevent jumping to opportunity on page load.
 	
-	$('#opportunityBtn').click(function(){
+	$('#opportunityTabBtn').click(function(){
 		// Set the current tab.
-		$('#timelineview ul.tabs li').removeClass('current');
+		$('#timelineTabview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
-		$('#application').hide();
-		$('#timeline').hide();
-		if ($('#opportunity').children().length == 0) {
+		$('#applicationTab').hide();
+		$('#timelineTab').hide();
+		if ($('#opportunityTab').children().length == 0) {
 			$('#ajaxloader').show();
 		}
-		$('#opportunity').show();
+		$('#opportunityTab').show();
 		
 		$.ajax({
 			 type: 'GET',
@@ -53,11 +53,11 @@ $(document).ready(function()
 				}, 
 			  success:	function(data)
 				{
-					$('#opportunity').html(data);	
+					$('#opportunityTab').html(data);	
 					// Scroll to the tab.
 					if (jumpToOpportunity)
 					{
-						window.scrollTo(0, $('#opportunity').offset().top - 30);
+						window.scrollTo(0, $('#opportunityTab').offset().top - 30);
 					}
 					else
 					{
@@ -76,17 +76,17 @@ $(document).ready(function()
 	var jumpToTimeline = false; // prevent jumping to the timeline on page load.
 	
 	// Timeline tab.	
-	$('#timelineBtn').click(function()
+	$('#timelineTabBtn').click(function()
 	{
 		// Set the current tab.
-		$('#timelineview ul.tabs li').removeClass('current');
+		$('#timelineTabview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
-		$('#application').hide();
-		$('#opportunity').hide();
-		if ($('#timeline').children().length == 0) {
+		$('#applicationTab').hide();
+		$('#opportunityTab').hide();
+		if ($('#timelineTab').children().length == 0) {
 			$('#ajaxloader').show();
 		}
-		$('#timeline').show();
+		$('#timelineTab').show();
 		
 		$.ajax({
 			 type: 'GET',
@@ -114,11 +114,11 @@ $(document).ready(function()
 				}, 
 			  success:	function(data)
 				{
-					$('#timeline').html(data);	
+					$('#timelineTab').html(data);	
 					// Scroll to the tab.
 					if (jumpToTimeline)
 					{
-						window.scrollTo(0, $('#timeline').offset().top - 30);
+						window.scrollTo(0, $('#timelineTab').offset().top - 30);
 					}
 					else
 					{

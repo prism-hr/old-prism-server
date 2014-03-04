@@ -6,6 +6,7 @@ $(document).ready(function() {
         setHsize();
     });
     setHsize();
+    refreshControls();
 
     $("a[name=didYouMeanInstitutionButtonYes]").bind('click', function() {
         var text = $(this).text();
@@ -119,14 +120,11 @@ function refreshControls() {
         $("#institution").attr("readonly", "readonly");
         $("#institution").attr("disabled", "disabled");
         $("#lbl-providerName").addClass("grey-label").parent().find('.hint').addClass("grey");
-        refreshAtasRequiredField();
     } else {
         $("#institution").removeAttr("readonly", "readonly");
         $("#institution").removeAttr("disabled", "disabled");
         $("#lbl-providerName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        refreshAtasRequiredField();
     }
-
     if ($('#institution').val() === "OTHER") {
         $("#otherInstitution").removeAttr("readonly", "readonly");
         $("#otherInstitution").removeAttr("disabled", "disabled");
@@ -137,6 +135,7 @@ function refreshControls() {
         $("#lbl-otherInstitutionProviderName").addClass("grey-label").parent().find('.hint').addClass("grey");
     }
     $("#institution").selectpicker('refresh');
+    refreshAtasRequiredField();
 }
 
 function refreshAtasRequiredField() {

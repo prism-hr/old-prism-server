@@ -1,24 +1,24 @@
 $(document).ready(function()
 {
 
-	$('#timeline').hide();
-	$('#opportunity').hide();
+	$('#timelineTab').hide();
+	$('#opportunityTab').hide();
 
 	var jumpToTimeline = false; // prevent jumping to the timeline on page load.
 	
 	// Timeline tab.	
-	$('#timelineBtn').click(function()
+	$('#timelineTabBtn').click(function()
 	{
 		// Set the current tab.
-		$('#timelineview ul.tabs li').removeClass('current');
+		$('#timelineTabview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		
-		$('#application').hide();
-		if ( $('#timeline').children().length == 0 ) {
+		$('#applicationTab').hide();
+		if ( $('#timelineTab').children().length == 0 ) {
 			$('#ajaxloader').show();
 		}
-		$('#timeline').show();
-		$('#opportunity').hide();
+		$('#timelineTab').show();
+		$('#opportunityTab').hide();
 		
 		$.ajax({
 			 type: 'GET',
@@ -46,11 +46,11 @@ $(document).ready(function()
 				}, 
 			  success:	function(data)
 				{
-					$('#timeline').html(data);	
+					$('#timelineTab').html(data);	
 					// Scroll to the tab.
 					if (jumpToTimeline)
 					{
-						window.scrollTo(0, $('#timeline').offset().top);
+						window.scrollTo(0, $('#timelineTab').offset().top);
 					}
 					else
 					{
@@ -70,22 +70,22 @@ $(document).ready(function()
 		return false;
 	});
 	
-	if($('#application').length > 0){
+	if($('#applicationTab').length > 0){
 		// Application tab.
-		$('#applicationBtn').click(function()
+		$('#applicationTabBtn').click(function()
 		{
 			// Set the current tab.
-			$('#timelineview ul.tabs li').removeClass('current');
+			$('#timelineTabview ul.tabs li').removeClass('current');
 			$(this).parent('li').addClass('current');
 	
-			$('#timeline').hide();
-			if ( $('#application').children().length == 0 ) {
+			$('#timelineTab').hide();
+			if ( $('#applicationTab').children().length == 0 ) {
 				$('#ajaxloader').show();
 			}
-			$('#application').show();
+			$('#applicationTab').show();
 			
 			// Only fetch the application form if it hasn't been fetched already.
-			if ($('#application').html()=="")
+			if ($('#applicationTab').html()=="")
 			{
 	
 				$.ajax({
@@ -115,12 +115,12 @@ $(document).ready(function()
 						}, 
 					  success:	function(data)
 						{
-							$('#application').html(data);
+							$('#applicationTab').html(data);
 	
-							window.scrollTo(0, $('#timeline').offset().top);		
+							window.scrollTo(0, $('#timelineTab').offset().top);		
 	
 							// Toggle grey-label class where you find instances of "Not Provided" text.
-							$('#application .field').each(function()
+							$('#applicationTab .field').each(function()
 							{
 								 var strValue = $(this).text();
 								 if (strValue.match("Not Provided"))
@@ -137,33 +137,33 @@ $(document).ready(function()
 			}
 			else
 			{
-				window.scrollTo(0, $('#timeline').offset().top);		
+				window.scrollTo(0, $('#timelineTab').offset().top);		
 			}
 			return false;
 		});
-		$('#application').html("");
-		$('#opportunity').hide();
+		$('#applicationTab').html("");
+		$('#opportunityTab').hide();
 	}
 
 	if($('#isReferee').val() == 'true'){
-		$('#applicationBtn').trigger('click');
+		$('#applicationTabBtn').trigger('click');
 	}else{
 		// "Open" the timeline tab by default.	
-		$('#timelineBtn').trigger('click');
+		$('#timelineTabBtn').trigger('click');
 	}
 	
 	var jumpToOpportunity = false; // prevent jumping to opportunity on page load.
 	
-	$('#opportunityBtn').click(function(){
+	$('#opportunityTabBtn').click(function(){
 		// Set the current tab.
-		$('#timelineview ul.tabs li').removeClass('current');
+		$('#timelineTabview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
-		$('#application').hide();
-		$('#timeline').hide();
-		if ($('#opportunity').children().length == 0) {
+		$('#applicationTab').hide();
+		$('#timelineTab').hide();
+		if ($('#opportunityTab').children().length == 0) {
 			$('#ajaxloader').show();
 		}
-		$('#opportunity').show();
+		$('#opportunityTab').show();
 		
 		$.ajax({
 			 type: 'GET',
@@ -191,11 +191,11 @@ $(document).ready(function()
 				}, 
 			  success:	function(data)
 				{
-					$('#opportunity').html(data);	
+					$('#opportunityTab').html(data);	
 					// Scroll to the tab.
 					if (jumpToOpportunity)
 					{
-						window.scrollTo(0, $('#opportunity').offset().top - 30);
+						window.scrollTo(0, $('#opportunityTab').offset().top - 30);
 					}
 					else
 					{

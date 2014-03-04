@@ -79,7 +79,7 @@
                                 <li><a href="#timeline" id="timelineBtn">Timeline</a></li>
                                 <li><a href="#opportunity" id="opportunityBtn">Opportunity</a></li>
                             </ul>
-                            <div class="tab-page" id="application">
+                            <div class="tab-page" id="applicationTab">
                                 
                                 <section id="programmeDetailsSection" class="folding form-rows violet"><#include "/private/staff/application/components/programme_details.ftl"/></section>
 
@@ -108,8 +108,8 @@
                                 </div>
                                 
                             </div>
-                            <div class="tab-page" id="timeline"></div>
-                            <div class="tab-page" id="opportunity"></div>
+                            <div class="tab-page" id="timelineTab"></div>
+                            <div class="tab-page" id="opportunityTab"></div>
                         </div>
                         <!-- timlelint -->
                     </div>

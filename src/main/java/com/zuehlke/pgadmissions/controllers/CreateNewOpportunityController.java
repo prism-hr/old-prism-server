@@ -41,7 +41,7 @@ public class CreateNewOpportunityController {
 
     static final String LOGIN_PAGE = "public/login/login_page";
 
-    static final String REGISTER_COMPLETE_VIEW_NAME = "public/register/registration_complete";
+    static final String OPPORTUNITY_REQUEST_COMPLETE_VIEW_NAME = "public/register/opportunity_request_complete";
 
     static final String CLICKED_ON_CREATE_OPPORTUNITY = "CLICKED_ON_CREATE_OPPORTUNITY";
 
@@ -104,7 +104,7 @@ public class CreateNewOpportunityController {
         opportunitiesService.createOpportunityRequest(opportunityRequest, true);
 
         model.addAttribute("pendingUser", opportunityRequest.getAuthor());
-        return REGISTER_COMPLETE_VIEW_NAME;
+        return OPPORTUNITY_REQUEST_COMPLETE_VIEW_NAME;
     }
 
     @ModelAttribute("countries")

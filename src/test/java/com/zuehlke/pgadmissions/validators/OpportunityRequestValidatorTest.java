@@ -116,7 +116,20 @@ public class OpportunityRequestValidatorTest {
     }
 
     @Test
-    public void shouldRejectIfAtasRequiredIsEmpty() {
+    public void shouldNotRejectIfAtasRequiredIsEmptyOutsideUK() {
+        opportunityRequest.setAtasRequired(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
+        
+        configureAndReplayRegisterFormValidator(mappingResult);
+        opportunityRequestValidator.validate(opportunityRequest, mappingResult);
+        
+        assertEquals(0, mappingResult.getErrorCount());
+    }
+    
+    @Test
+    public void shouldRejectIfAtasRequiredIsEmptyInUK() {
+        Domicile institutionCountry = new DomicileBuilder().code("XK").build();
+        opportunityRequest.setInstitutionCountry(institutionCountry);
         opportunityRequest.setAtasRequired(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 

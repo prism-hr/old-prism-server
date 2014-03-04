@@ -135,11 +135,11 @@ function refreshControls() {
 function refreshAtasRequiredField() {
     if($("#institutionCountry option:selected").text().trim() == "United Kingdom") {
         $("#atasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("[name=atasRequired]").removeProp("disabled", "disabled");
+        $("[name=atasRequired]").removeAttr("disabled", "disabled");
         $("[name=atasRadioValueText]").removeClass("grey-label");
     } else {
         $("#atasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("[name=atasRequired]").prop("disabled", "disabled");
+        $("[name=atasRequired]").attr("disabled", "disabled");
         $("[name=atasRadioValueText]").addClass("grey-label");
         $("[name=atasRequired]").prop("checked", false);
     }

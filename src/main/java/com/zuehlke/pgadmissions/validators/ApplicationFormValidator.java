@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
@@ -18,13 +19,16 @@ public class ApplicationFormValidator extends AbstractValidator {
 
     private final ProgramInstanceDAO programInstanceDAO;
 
+    private final ProgrammeDetailsValidator programmeDetailsValidator;
+    
     ApplicationFormValidator() {
-        this(null);
+        this(null, null);
     }
 
     @Autowired
-    public ApplicationFormValidator(ProgramInstanceDAO programInstanceDAO) {
+    public ApplicationFormValidator(ProgramInstanceDAO programInstanceDAO, ProgrammeDetailsValidator programmeDetailsValidator) {
         this.programInstanceDAO = programInstanceDAO;
+        this.programmeDetailsValidator = programmeDetailsValidator;
 
     }
 
@@ -41,19 +45,21 @@ public class ApplicationFormValidator extends AbstractValidator {
         if (programmeDetails != null && programmeDetails.getId() == null) {
             errors.rejectValue("programmeDetails", "user.programmeDetails.incomplete");
         } else {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeDetails", "user.programmeDetails.incomplete");
+            Errors programDetailsErrors = new BeanPropertyBindingResult(programmeDetails, "programmeDetails");
+            programmeDetailsValidator.validate(programmeDetails, programDetailsErrors);
+            if (programDetailsErrors.hasErrors()) {
+                ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeDetails", "user.programmeDetails.incomplete");
+            }
         }
 
         if (applicationForm.getPersonalDetails() != null && applicationForm.getPersonalDetails().getId() == null) {
             errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
-        } else {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalDetails", "user.personalDetails.incomplete");
         }
+
         if (applicationForm.getAdditionalInformation() != null && applicationForm.getAdditionalInformation().getId() == null) {
             errors.rejectValue("additionalInformation", "user.additionalInformation.incomplete");
-        } else {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "additionalInformation", "user.additionalInformation.incomplete");
         }
+
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress", "user.addresses.notempty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddress", "user.addresses.notempty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalStatement", "documents.section.invalid");

@@ -605,6 +605,7 @@ function saveAdvert() {
                 if (programCode != "") {
                     // modfy existing program option
                     $("#programAdvertProgramSelect option").filter("[value='" + programCode + "']").val(newProgramCode).text(programName);
+                    $("#projectAdvertProgramSelect option").filter("[value='" + programCode + "']").val(newProgramCode).text(programName);
                 } else {
                     // add new program option
                     $("#programAdvertProgramSelect").append($("<option />").val(newProgramCode).text(programName));

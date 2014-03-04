@@ -583,8 +583,7 @@ function saveAdvert() {
             studyOptions : studyOptions,
             advertisingDeadlineYear : $("#programAdvertAdvertisingDeadlineYear").val()
         },
-        success : function(data) {
-            var map = JSON.parse(data);
+        success : function(map) {
             if (map['success']) {
                 var newProgramCode = map["programCode"];
 

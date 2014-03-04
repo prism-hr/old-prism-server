@@ -93,7 +93,7 @@
                   <label class="plain-label" for="programAdvertInstitutionOtherName">Please Specify<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
                   <div class="field">
-                    <input id="programAdvertInstitutionOtherName" class="full" type="text"/>
+                    <input id="programAdvertInstitutionOtherName" class="full" type="text" autocomplete="off" />
                   </div>
                 </div>
 

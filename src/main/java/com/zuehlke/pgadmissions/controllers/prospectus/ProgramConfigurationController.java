@@ -174,7 +174,7 @@ public class ProgramConfigurationController {
         return gson.toJson(result);
     }
 
-    @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
+    @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String saveOpportunity(@Valid OpportunityRequest opportunityRequest, BindingResult result) {
         Map<String, Object> map;

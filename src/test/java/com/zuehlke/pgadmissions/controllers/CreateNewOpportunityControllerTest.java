@@ -162,7 +162,7 @@ public class CreateNewOpportunityControllerTest {
 		String result = controller.postOpportunityRequest(opportunityRequest, bindingResult, model, request);
 		verify();
 
-		assertEquals(CreateNewOpportunityController.REGISTER_COMPLETE_VIEW_NAME, result);
+		assertEquals(CreateNewOpportunityController.OPPORTUNITY_REQUEST_COMPLETE_VIEW_NAME, result);
 		assertEquals(24, opportunityRequest.getStudyDuration().intValue());
 		assertSame(author, model.asMap().get("pendingUser"));
 	}

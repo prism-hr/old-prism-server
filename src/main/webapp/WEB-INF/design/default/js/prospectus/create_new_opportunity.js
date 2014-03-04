@@ -141,15 +141,13 @@ function refreshControls() {
 }
 
 function refreshAtasRequiredField() {
-	var encryptedUKCountryValue = "United Kingdom";
-    if($("#institutionCountry option:selected").text().trim() == encryptedUKCountryValue) {
+    if($("#institutionCountry option:selected").text().trim() == "United Kingdom") {
         $("#atasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("[name=atasRequired]").removeAttr("disabled", "disabled");
+        $("[name=atasRequired]").removeProp("disabled", "disabled");
         $("[name=atasRadioValueText]").removeClass("grey-label");
     } else {
         $("#atasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
         $("[name=atasRequired]").prop("disabled", "disabled");
-        $("#atasRadioValueYes").addClass("grey-label");
         $("[name=atasRadioValueText]").addClass("grey-label");
         $("[name=atasRequired]").prop("checked", false);
     }

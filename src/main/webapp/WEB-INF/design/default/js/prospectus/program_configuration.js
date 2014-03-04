@@ -200,6 +200,19 @@ function checkToDisable() {
 }
 
 function refreshAtasRequiredField() {
+    if($("#programAdvertInstitutionCountry option:selected").text().trim() == "United Kingdom") {
+        $("#programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+        $("[name=programAdvertAtasRequired]").removeProp("disabled", "disabled");
+        $("[name=programAdvertAtasRadioValueText]").removeClass("grey-label");
+    } else {
+        $("#programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
+        $("[name=programAdvertAtasRequired]").prop("disabled", "disabled");
+        $("[name=programAdvertAtasRadioValueText]").addClass("grey-label");
+        $("[name=programAdvertAtasRequired]").prop("checked", false);
+    }
+}
+
+function refreshAtasRequiredField() {
     if($("#programAdvertInstitutionCountry").val() == "VY2V0mkiXwZOpOBwMMmjWA") {
         // UK
         $("#programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");

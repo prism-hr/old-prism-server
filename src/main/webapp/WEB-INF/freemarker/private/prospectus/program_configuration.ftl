@@ -92,8 +92,8 @@
                   <label id="programAdvertAtasRequiredLabel" class="plain-label" for="atasRequired">Does the programme require ATAS?<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.atasRequired'/>"></span>
                   <div class="field">
-                    <label><input type="radio" name="programAdvertAtasRequired" value="true" id="programAdvertAtasRequired_true" /> Yes</label>
-                    <label><input type="radio" name="programAdvertAtasRequired" value="false" id="programAdvertAtasRequired_false" /> No</label>
+                    <label name="programAdvertAtasRadioValueText" class="grey-label"><input type="radio" name="programAdvertAtasRequired" value="true" id="programAdvertAtasRequired_true" /> Yes</label>
+                    <label name="programAdvertAtasRadioValueText" class="grey-label" ><input type="radio" name="programAdvertAtasRequired" value="false" id="programAdvertAtasRequired_false" /> No</label>
                   </div>
                 </div>
                 

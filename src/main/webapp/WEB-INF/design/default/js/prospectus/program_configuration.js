@@ -212,17 +212,6 @@ function refreshAtasRequiredField() {
     }
 }
 
-function refreshAtasRequiredField() {
-    if($("#programAdvertInstitutionCountry").val() == "VY2V0mkiXwZOpOBwMMmjWA") {
-        // UK
-        $("#programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("[name=programAdvertAtasRequired]").removeProp("disabled", "disabled");
-    } else {
-        $("#programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("[name=programAdvertAtasRequired]").prop("disabled", "disabled");
-    }
-}
-
 function changeHeaderInfoBars(programval) {
     var programmeCode = $("#programAdvertProgramSelect").val();
     if (programmeCode == "" || $("#programAdvertProgramSelect").is(":disabled")) {

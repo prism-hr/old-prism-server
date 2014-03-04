@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,11 @@ public class AuthenticationService {
     private UserDAO userDAO;
 
     public RegisteredUser getCurrentUser() {
-        RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+        RegisteredUser currentUser = (RegisteredUser) authentication.getDetails();
         RegisteredUser user = userDAO.get(currentUser.getId());
         return user;
     }

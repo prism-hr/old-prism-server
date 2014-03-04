@@ -182,11 +182,18 @@ public class ProgramsService {
             user.getInstitutions().add(program.getInstitution());
         }
         Role adminRole = roleService.getRoleByAuthority(Authority.ADMINISTRATOR);
+        Role approverRole = roleService.getRoleByAuthority(Authority.APPROVER);
         if (!HibernateUtils.containsEntity(user.getRoles(), adminRole)) {
             user.getRoles().add(adminRole);
         }
+        if (!HibernateUtils.containsEntity(user.getRoles(), approverRole)) {
+            user.getRoles().add(approverRole);
+        }
         if (!HibernateUtils.containsEntity(user.getProgramsOfWhichAdministrator(), program)) {
             user.getProgramsOfWhichAdministrator().add(program);
+        }
+        if (!HibernateUtils.containsEntity(user.getProgramsOfWhichApprover(), program)) {
+            user.getProgramsOfWhichApprover().add(program);
         }
     }
 

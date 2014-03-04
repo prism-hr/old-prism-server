@@ -178,8 +178,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetUsersByProgramme() {
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a60").domicileCode("AE").enabled(true).build();
-        Program programOne = new ProgramBuilder().code("111111").title("hello").institution(institution).build();
-        Program programTwo = new ProgramBuilder().code("222222").title("hello2").institution(institution).build();
+        Program programOne = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("111111").title("hello").institution(institution).build();
+        Program programTwo = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("222222").title("hello").institution(institution).build();
 
         save(institution, programOne, programTwo);
 
@@ -352,7 +352,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a10").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
@@ -377,7 +377,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
 
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a66").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
@@ -588,7 +588,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         notificationBaselineDate = cleanBaseline.toDate();
 
         userNotificationListBuilder = new UserNotificationListBuilder(sessionFactory, notificationBaselineDate, NOTIFICATION_TEST_ITERATIONS,
-                NOTIFICATION_REMINDER_INTERVAL, NOTIFICATION_EXPIRY_INTERVAL);
+                NOTIFICATION_REMINDER_INTERVAL, NOTIFICATION_EXPIRY_INTERVAL, testObjectProvider.getEnabledProgram());
     }
 
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {

@@ -118,7 +118,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
     }
 
     private boolean isTestProgram(ApplicationForm form) {
-        return form.getProgram().getTitle().equalsIgnoreCase("ABC") || form.getProgram().getTitle().equalsIgnoreCase("Test Programme");
+        return form.getAdvert().getTitle().equalsIgnoreCase("ABC") || form.getAdvert().getTitle().equalsIgnoreCase("Test Programme");
     }
     
     @Before

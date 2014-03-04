@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramFeedBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
@@ -43,8 +44,8 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnProgramInstanceForOtherProgram() {
-        Program progOne = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
-        Program progTwo = new ProgramBuilder().code("bbbb").title("hello").institution(institution).build();
+        Program progOne = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("aaaaa").title("hi").institution(institution).build();
+        Program progTwo = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("bbbb").title("hello").institution(institution).build();
         save(progOne, progTwo);
         Date now = Calendar.getInstance().getTime();
         Date oneYearInFuture = DateUtils.addYears(now, 1);
@@ -65,7 +66,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnProgramInstanceWithDeadlineInTheFuture() {
-        Program program = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("aaaaa").title("hi").institution(institution).build();
         save(program);
         Date now = Calendar.getInstance().getTime();
         Date oneYearInFuture = DateUtils.addYears(now, 1);
@@ -84,7 +85,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnProgramInstanceWithDeadlineToday() {
-        Program program = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("aaaaa").title("hi").institution(institution).build();
         save(program);
         Date now = Calendar.getInstance().getTime();
         Date today = DateUtils.truncate(now, Calendar.DATE);
@@ -101,7 +102,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnProgramInstanceWithDeadlineInThePast() {
-        Program program = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("aaaaa").title("hi").institution(institution).build();
         save(program);
         Date now = Calendar.getInstance().getTime();
         Date oneYearAgo = DateUtils.addYears(now, -1);
@@ -118,8 +119,8 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnProgramInstanceWithStudyOptionAndDeadlineNotInThePastForOtherProgram() {
-        Program progOne = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
-        Program progTwo = new ProgramBuilder().code("bbbb").title("hello").institution(institution).build();
+        Program progOne = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("aaaaa").title("hi").institution(institution).build();
+        Program progTwo = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("bbbb").title("hello").institution(institution).build();
         save(progOne, progTwo);
         Date now = Calendar.getInstance().getTime();
         Date today = DateUtils.truncate(now, Calendar.DATE);
@@ -140,7 +141,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnProgramInstanceWithStudyOptionAndDeadlineNotInThePast() {
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a57").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("aaaaa").title("hi").institution(institution).build();
         save(institution, program);
         Date now = Calendar.getInstance().getTime();
         Date today = DateUtils.truncate(now, Calendar.DATE);
@@ -158,7 +159,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldNotReturnProgramInstanceWithStudyOptionAndDeadlineInThePast() {
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a63").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("aaaaa").title("hi").institution(institution).build();
         save(institution, program);
         Date now = Calendar.getInstance().getTime();
         Date oneYearAgo = DateUtils.addYears(now, -1);
@@ -175,7 +176,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnProgramInstanceWithoutStudyOptionAndDeadlineNotInThePast() {
-        Program program = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("aaaaa").title("hi").institution(institution).build();
         save(program);
         Date now = Calendar.getInstance().getTime();
         Date oneYearAgo = DateUtils.addYears(now, -1);
@@ -192,7 +193,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldFindProgrameInstancesWithAStartDateInTheFuture() {
-        Program program = new ProgramBuilder().code("aaaaa").title("hi").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("aaaaa").title("hi").institution(institution).build();
         save(program);
         Date now = Calendar.getInstance().getTime();
         Date yesterday = DateUtils.addDays(now, -1);
@@ -227,9 +228,9 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
         ProgramFeed programFeed1 = new ProgramFeedBuilder().feedUrl("url").institution(institution).build();
         ProgramFeed programFeed2 = new ProgramFeedBuilder().feedUrl("url2").institution(institution).build();
 
-        Program program1 = new ProgramBuilder().programFeed(programFeed1).code("AAA").institution(institution).build();
-        Program program2 = new ProgramBuilder().programFeed(programFeed2).code("BBB").institution(institution).build();
-        Program program3 = new ProgramBuilder().programFeed(programFeed2).code("CCC").institution(institution).build();
+        Program program1 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).programFeed(programFeed1).code("AAA").institution(institution).build();
+        Program program2 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).programFeed(programFeed2).code("BBB").institution(institution).build();
+        Program program3 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).programFeed(programFeed2).code("CCC").institution(institution).build();
 
         ProgramInstance programInstance1 = new ProgramInstanceBuilder().identifier("i1").program(program1).academicYear("1985")
                 .applicationStartDate(new Date()).applicationDeadline(new Date()).enabled(true).build();
@@ -256,7 +257,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetLapsedInstances() {
-        Program program = ProgramBuilder.aProgram(institution).build();
+        Program program = ProgramBuilder.aProgram(institution).contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).build();
         DateTime today = new DateTime().withTimeAtStartOfDay();
         DateTime yesterday = today.minusDays(1);
         DateTime tomorrow = today.plusDays(1);
@@ -284,8 +285,8 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetLatestActiveInstanceDeadlineForProgram() {
-        Program program1 = new ProgramBuilder().code("AAA").institution(institution).build();
-        Program program2 = new ProgramBuilder().code("BBB").institution(institution).build();
+        Program program1 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("AAA").institution(institution).build();
+        Program program2 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("BBB").institution(institution).build();
 
         DateTime today = new DateTime().withTimeAtStartOfDay();
         DateTime yesterday = today.minusDays(1);
@@ -306,8 +307,8 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetStudyOptionsForProgram() {
-        Program program1 = new ProgramBuilder().code("AAA").institution(institution).build();
-        Program program2 = new ProgramBuilder().code("BBB").institution(institution).build();
+        Program program1 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("AAA").institution(institution).build();
+        Program program2 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("BBB").institution(institution).build();
 
         ProgramInstance instance1 = ProgramInstanceBuilder.aProgramInstance(program1).enabled(true).studyOption("o1", "o1").build();
         ProgramInstance instance2 = ProgramInstanceBuilder.aProgramInstance(program1).enabled(false).studyOption("o2", "o2").build();

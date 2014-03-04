@@ -58,7 +58,7 @@ public class ReviewService {
         }
         
         applicationFormUserRoleService.movedToReviewStage(assignReviewersComment);
-        applicationFormUserRoleService.registerApplicationUpdate(application, assignReviewersComment.getUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(application, assignReviewersComment.getUser(), ApplicationUpdateScope.ALL_USERS);
 		applicationsService.save(application);
 	}
 

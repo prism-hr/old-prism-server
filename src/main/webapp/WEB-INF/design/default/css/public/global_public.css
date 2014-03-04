@@ -681,7 +681,7 @@ div#ajaxloader {
     width: 220px;
 }
 /* RSS feed box */
-#pContainer #pholder {
+#pContainer .placeholder {
     border: none;
 }
 
@@ -733,10 +733,6 @@ div#ajaxloader {
     font-size: 11px;
     line-height: 16px;
     padding-left: 34px;
-}
-.newOportunity, .go-back {
-    float:right;
-    font-weight: bold;
 }
 #topBar h1 strong {
     font-size: 16px;

@@ -100,13 +100,13 @@ public class ApplicationFormTest {
 
     @Test
     public void shouldGetProgramAndProjectTitle() {
-        ApplicationForm application = new ApplicationFormBuilder().program(new ProgramBuilder().title("Ppp").build()).projectTitle("Rrr").build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(new ProgramBuilder().title("Ppp").build()).projectTitle("Rrr").build();
         assertEquals("Ppp (project: Rrr)", application.getProgramAndProjectTitle());
     }
 
     @Test
     public void shouldGetProgramAndProjectTitleWhenProjectTitleIsNull() {
-        ApplicationForm application = new ApplicationFormBuilder().program(new ProgramBuilder().title("Ppp").build()).build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(new ProgramBuilder().title("Ppp").build()).build();
         assertEquals("Ppp", application.getProgramAndProjectTitle());
     }
 

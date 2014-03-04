@@ -120,7 +120,7 @@ public class InterviewCommentController {
                 interviewComment.getScores().addAll(scores);
                 interviewComment.setAlert(customQuestion.getAlert());
             } catch (ScoringDefinitionParseException e) {
-                log.error("Incorrect scoring XML configuration for interview stage in program: " + applicationForm.getProgram().getTitle());
+                log.error("Incorrect scoring XML configuration for interview stage in program: " + applicationForm.getAdvert().getTitle());
             }
         }
 
@@ -139,7 +139,7 @@ public class InterviewCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK);
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_FEEDBACK_PAGE;
     }
 
@@ -169,7 +169,7 @@ public class InterviewCommentController {
 
         applicationsService.save(applicationForm);
         applicationFormUserRoleService.interviewFeedbackPosted(comment);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
         return "redirect:/applications?messageCode=interview.feedback&application=" + applicationForm.getApplicationNumber();
     }
 

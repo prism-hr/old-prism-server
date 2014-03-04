@@ -70,7 +70,7 @@
         <div class="content-box-inner requestbox">
           <!-- searchbox -->
           <div id="table-bar">
-          <div id="search-box" class="clearfix"> 
+            <div id="search-box" class="clearfix"> 
 
               <!-- Search/filter box. -->
               <div class="filter">
@@ -83,22 +83,22 @@
                 <input type="text" placeholder="Filter by..." value="" name="searchTerm" id="searchTerm_new" class="filterInput">
                 <button class="btn remove btn-inverse" title="Remove filter"><i class="icon icon-minus"></i></button>
                 <button class="btn add btn-inverse" title="Add filter"><i class="icon icon-plus"></i></button>
-
+  
               </div>
-
-                  <div class="btn-actions">
-                    <div class="btn-group">
-                      <button id="search-go" class="btn btn-success enabled">Filter</button>
-                      <button data-toggle="dropdown" class="btn btn-success dropdown-toggle"><span class="caret"></span></button>
-                      <ul class="dropdown-menu">
-                        <li><a id="storeFiltersBtn" href="#">Save as Default Filter</a></li>
-                        <li><a href="/pgadmissions/applications?applyFilters=default">Load Default Filter</a></li>
-                        <li><a href="/pgadmissions/applications?applyFilters=urgent">Display Urgent Applications</a></li>
-                        <li><a href="/pgadmissions/applications?applyFilters=active">Display Active Applications</a></li>
-                      </ul>
-                    </div>
-                    <button id="search-reset" type="button" class="btn btn-info">Clear</button>
-                  </div>
+  
+              <div class="btn-actions">
+                <div class="btn-group">
+                  <button id="search-go" class="btn btn-success enabled">Filter</button>
+                  <button data-toggle="dropdown" class="btn btn-success dropdown-toggle"><span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a id="storeFiltersBtn" href="#">Save as Default Filter</a></li>
+                    <li><a href="/pgadmissions/applications?applyFilters=default">Load Default Filter</a></li>
+                    <li><a href="/pgadmissions/applications?applyFilters=urgent">Display Urgent Applications</a></li>
+                    <li><a href="/pgadmissions/applications?applyFilters=active">Display Active Applications</a></li>
+                  </ul>
+                </div>
+                <button id="search-reset" type="button" class="btn btn-info">Clear</button>
+              </div>
 
             </div>
           </div>
@@ -130,7 +130,7 @@
                     <i class="icon-bell-alt"></i>
                   <#else>
                     <td class="applicant-name flaggreen">
-                      <i class="icon-coffee"></i>
+                    <i class="icon-coffee"></i>
                   </#if>
                   ${opportunityRequest.author.displayName}
                   </td>
@@ -140,26 +140,29 @@
                   <td class="status">
                     <#if opportunityRequest.status == "NEW">
                       <#if opportunityRequest.type == "CHANGE">
-                      <span data-desc="Change Request" class="icon-status withdrawn">Change Request</span>
+                        <span data-desc="Change Request" class="icon-status withdrawn">Change Request</span>
                       <#else>
-                      <span data-desc="New Request" class="icon-status validation">New Request</span>
+                        <span data-desc="New Request" class="icon-status review">New Request</span>
                       </#if>
-
                     <#elseif opportunityRequest.status == "REJECTED">
-                    <span data-desc="Rejected" class="icon-status rejected">Rejected</span>
+                      <span data-desc="Rejected" class="icon-status rejected">Rejected</span>
                     <#elseif opportunityRequest.status == "APPROVED">
-                    <span data-desc="Approved" class="icon-status offer-recommended">Approved</span>
+                      <span data-desc="Approved" class="icon-status offer-recommended">Approved</span>
+                    <#elseif opportunityRequest.status == "REVISED">
+                      <span data-desc="Revised" class="icon-status validation">Revised</span>
                     </#if>
                   </td>
                   <td class="centre">
                     <select class="opportunityRequestActionType selectpicker actionType" data-request-id="${opportunityRequest.id?string}" data-email="${opportunityRequest.author.email}" data-program="${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}">
                       <option class="title">Actions</option>
-                      <#if opportunityRequest.status == "NEW">
-                        <option value="approve">Review</option>
-                      <#else>
-                        <option value="view">View</option>
-                      </#if>
-                        <option value="email">Email Requester</option>
+                      <option value="view">
+                        <#if opportunityRequest.status == "APPROVED">
+                          View
+                        <#else>
+                          View / Edit
+                        </#if>
+                      </option>
+                      <option value="email">Email Requester</option>
                     </select>
                   </td>
                   <td class="centre">

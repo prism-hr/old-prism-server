@@ -13,12 +13,9 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -71,14 +68,10 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 	public void prepare() {
 		RoleDAO roleDAO = new RoleDAO(sessionFactory);
 		reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
-
-		QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a8").domicileCode("AE").enabled(true).build();
-		program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-		save(institution, program);
-		
 		creatingUser = new RegisteredUserBuilder().firstName("Hanna").lastName("Doe").email("email@test.com").username("username2").password("password2")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(creatingUser);
-		flushAndClearSession();
+		flushAndClearSession();	
+		program = testObjectProvider.getEnabledProgram();
 	}
 }

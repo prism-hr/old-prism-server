@@ -77,8 +77,8 @@ public class OpportunitiesService {
         opportunityRequestDAO.save(opportunityRequest);
     }
 
-    public List<OpportunityRequest> getInitialOpportunityRequests() {
-        return opportunityRequestDAO.getInitialOpportunityRequests();
+    public List<OpportunityRequest> listOpportunityRequests(RegisteredUser user) {
+        return opportunityRequestDAO.listOpportunityRequests(user);
     }
 
     public OpportunityRequest getOpportunityRequest(Integer requestId) {
@@ -98,8 +98,7 @@ public class OpportunitiesService {
         }
 
         // update opportunity request
-        opportunityRequest.setStatus(comment.getCommentType() == OpportunityRequestCommentType.APPROVE ? OpportunityRequestStatus.APPROVED
-                : OpportunityRequestStatus.REJECTED);
+        opportunityRequest.setStatus(comment.getCommentType().getTargetRequestStatus());
         opportunityRequest.setInstitutionCountry(newOpportunityRequest.getInstitutionCountry());
         opportunityRequest.setInstitutionCode(newOpportunityRequest.getInstitutionCode());
         opportunityRequest.setOtherInstitution(newOpportunityRequest.getOtherInstitution());
@@ -114,17 +113,19 @@ public class OpportunitiesService {
         Program program = opportunityRequest.getSourceProgram();
         if (program != null) {
             program.setLocked(false);
-            program = programsService.merge(program);
+            program = (Program) programsService.merge(program);
         }
 
         // create comment
         comment.setAuthor(userService.getCurrentUser());
         opportunityRequest.getComments().add(comment);
+        comment.setOpportunityRequest(opportunityRequest);
 
         if (comment.getCommentType() == OpportunityRequestCommentType.APPROVE) {
             Program savedProgram = programsService.saveProgramOpportunity(opportunityRequest);
             opportunityRequest.setSourceProgram(savedProgram);
         }
+        mailSendingService.sendOpportunityRequestOutcome(comment);
     }
 
     public List<OpportunityRequest> getAllRelatedOpportunityRequests(OpportunityRequest opportunityRequest) {

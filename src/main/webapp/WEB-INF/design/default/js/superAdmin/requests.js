@@ -6,9 +6,6 @@ $(document).ready(function() {
         
         $('#ajaxloader').show();
         switch ($(this).val()) {
-        case 'approve':
-            window.location.href = "/pgadmissions/requests/edit/"+ requestId;
-            break;
         case 'view':  window.location.href = "/pgadmissions/requests/edit/"+ requestId;
             break;
         case 'email':

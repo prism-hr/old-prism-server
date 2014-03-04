@@ -134,7 +134,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute ApplicationForm applicationForm) {
     	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.VIEW_EDIT);
-    	applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
+    	applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
 
@@ -157,7 +157,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             map.putAll(FieldErrorUtils.populateMapWithErrors(refereesAdminEditDTOResult, messageSource));
         }
         
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         Gson gson = new Gson();
         return gson.toJson(map);
     }
@@ -203,7 +203,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
             applicationsService.save(applicationForm);
             applicationFormUserRoleService.referencePosted(newComment);
-            applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+            applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
             String newRefereeId = encryptionHelper.encrypt(referee.getId());
             model.addAttribute("editedRefereeId", newRefereeId);
@@ -234,7 +234,7 @@ public class EditApplicationFormAsProgrammeAdminController {
                 refereesAdminEditDTO.getScores().addAll(scores);
                 refereesAdminEditDTO.setAlert(customQuestion.getAlert());
             } catch (ScoringDefinitionParseException e) {
-                log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getProgram().getTitle());
+                log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getAdvert().getTitle());
             }
         }
         return refereesAdminEditDTO;

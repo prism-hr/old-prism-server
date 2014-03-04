@@ -113,13 +113,14 @@ public class OpportunitiesServiceTest {
     }
 
     @Test
-    public void shouldGetOpportunityRequests() {
+    public void shouldlistOpportunityRequests() {
         List<OpportunityRequest> requests = Lists.newArrayList();
+        RegisteredUser user = new RegisteredUser();
 
-        expect(opportunityRequestDAO.getInitialOpportunityRequests()).andReturn(requests);
+        expect(opportunityRequestDAO.listOpportunityRequests(user)).andReturn(requests);
 
         replay();
-        List<OpportunityRequest> returned = service.getInitialOpportunityRequests();
+        List<OpportunityRequest> returned = service.listOpportunityRequests(user);
         verify();
 
         assertSame(requests, returned);
@@ -156,6 +157,7 @@ public class OpportunitiesServiceTest {
         expect(userService.getCurrentUser()).andReturn(currentUser);
         expect(programsService.merge(program)).andReturn(program);
         expect(programsService.saveProgramOpportunity(request)).andReturn(savedProgram);
+        mailSendingService.sendOpportunityRequestOutcome(comment);
 
         replay();
         service.respondToOpportunityRequest(8, newOpportunityRequest, comment);
@@ -175,6 +177,7 @@ public class OpportunitiesServiceTest {
         assertSame(savedProgram, request.getSourceProgram());
 
         OpportunityRequestComment returncomment = Iterables.getOnlyElement(request.getComments());
+        assertSame(comment, returncomment);
         assertSame(currentUser, returncomment.getAuthor());
         assertEquals("ok", returncomment.getContent());
         assertEquals(OpportunityRequestCommentType.APPROVE, returncomment.getCommentType());

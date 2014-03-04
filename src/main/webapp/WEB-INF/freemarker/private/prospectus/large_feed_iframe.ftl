@@ -1,1 +1,1 @@
-<iframe src="${host}/pgadmissions/opportunities/standaloneOpportunities?<#if feed??>feed=${feed}<#elseif user??>user=${user}</#if>" width="430" height="514" style="border:none;"></iframe>
+<iframe src="${host}/pgadmissions/opportunities/standaloneOpportunities<#if feedKey??>?feedKey=${feedKey}</#if><#if feedKeyValue??>&feedKeyValue=${feedKeyValue}</#if>" width="430" height="514" style="border:none;"></iframe>

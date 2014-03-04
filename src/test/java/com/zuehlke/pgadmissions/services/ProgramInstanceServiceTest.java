@@ -77,7 +77,7 @@ public class ProgramInstanceServiceTest {
                 .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
                 .build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).program(program).programmeDetails(programDetails).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).advert(program).programmeDetails(programDetails).build();
 
         assertFalse("Should have returned false because the largest possible end date is " + instance2EndDate.toString() + " which is before today",
                 service.isProgrammeStillAvailable(applicationForm));
@@ -104,7 +104,7 @@ public class ProgramInstanceServiceTest {
                 .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
                 .build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).program(program).programmeDetails(programDetails).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).advert(program).programmeDetails(programDetails).build();
 
         assertTrue("Should have returned true because the largest possible end date is " + instance2EndDate.toString() + " which is after today",
                 service.isProgrammeStillAvailable(applicationForm));
@@ -131,7 +131,7 @@ public class ProgramInstanceServiceTest {
                 .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
                 .build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).program(program).programmeDetails(programDetails).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).advert(program).programmeDetails(programDetails).build();
 
         assertFalse("Should have returned false because the programme is not enabled", service.isProgrammeStillAvailable(applicationForm));
     }
@@ -157,7 +157,7 @@ public class ProgramInstanceServiceTest {
                 .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
                 .build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).program(program).programmeDetails(programDetails).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).advert(program).programmeDetails(programDetails).build();
 
         assertFalse("Should have returned false because the programme instances are not enabled", service.isProgrammeStillAvailable(applicationForm));
     }
@@ -183,7 +183,7 @@ public class ProgramInstanceServiceTest {
                 .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("H+++++", "Part-time")
                 .build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).program(program).programmeDetails(programDetails).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).advert(program).programmeDetails(programDetails).build();
 
         assertFalse("Should have returned false because the study options do not match the programme instances",
                 service.isProgrammeStillAvailable(applicationForm));
@@ -294,29 +294,6 @@ public class ProgramInstanceServiceTest {
         verify();
 
         assertThat(studyOptions, containsInAnyOrder(partOption, fullOption));
-    }
-
-    @Test
-    public void souldDisableLapsedInstances() {
-        Program program1 = new ProgramBuilder().id(1).enabled(true).build();
-        Program program2 = new ProgramBuilder().id(2).enabled(true).build();
-        
-        ProgramInstance instance1 = new ProgramInstanceBuilder().enabled(true).program(program1).build();
-        ProgramInstance instance2 = new ProgramInstanceBuilder().enabled(true).program(program2).build();
-        
-        expect(programInstanceDAO.getLapsedInstances()).andReturn(Lists.newArrayList(instance1, instance2));
-        expect(programInstanceDAO.getActiveProgramInstances(program1)).andReturn(Lists.newArrayList(new ProgramInstance()));
-        expect(programInstanceDAO.getActiveProgramInstances(program2)).andReturn(Lists.<ProgramInstance>newArrayList());
-
-        replay();
-        service.disableLapsedInstances();
-        verify();
-
-        assertFalse(instance1.getEnabled());
-        assertFalse(instance2.getEnabled());
-        
-        assertTrue(program1.isEnabled());
-        assertFalse(program2.isEnabled());
     }
 
     @Test

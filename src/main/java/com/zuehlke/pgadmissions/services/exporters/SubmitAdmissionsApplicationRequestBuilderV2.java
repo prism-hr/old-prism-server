@@ -547,11 +547,6 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                 QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
 
                 qualificationsTp.setStartDate(buildXmlDate(qualification.getQualificationStartDate()));
-
-                // TODO: This might be null because we've changed this to a
-                // mandatory field in mid flight.
-                // Talk to Alastair about this when we go live!
-                // Sending a null value will be rejected by the web service.
                 qualificationsTp.setEndDate(buildXmlDate(qualification.getQualificationAwardDate()));
 
                 qualificationsTp.setGrade(qualification.getQualificationGrade());

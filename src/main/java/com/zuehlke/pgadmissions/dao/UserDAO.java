@@ -58,7 +58,8 @@ public class UserDAO {
     }
 
     public RegisteredUser get(Integer id) {
-        return (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
+        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+                .add(Restrictions.eq("id", id)).uniqueResult();
     }
 
     public RegisteredUser getUserByUsername(String username) {

@@ -20,22 +20,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
-import com.zuehlke.pgadmissions.exceptions.CannotApplyToProjectException;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
@@ -69,7 +66,7 @@ public class SubmitApplicationFormController {
     private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @Autowired
-    private ProgramInstanceDAO programInstanceDAO;
+    private ProgramsService programsService;
 
     @RequestMapping(method = RequestMethod.POST)
     public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result, HttpServletRequest request) {
@@ -79,7 +76,7 @@ public class SubmitApplicationFormController {
 
         if (result.hasErrors()) {
             if (result.getFieldError("program") != null) {
-                throw new CannotApplyToProgramException(applicationForm.getProgram());
+                throw new CannotApplyException();
             }
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }
@@ -97,7 +94,7 @@ public class SubmitApplicationFormController {
         assignBatchDeadline(applicationForm);
         applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
         applicationFormUserRoleService.applicationSubmitted(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
     }
 
@@ -124,18 +121,10 @@ public class SubmitApplicationFormController {
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = getCurrentUser();
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.VIEW);      
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         
         if (user.canEditAsApplicant(applicationForm)) {
-            Program program = applicationForm.getProgram();
-            Project project = applicationForm.getProject();
-        	if (programInstanceDAO.getActiveProgramInstances(program).isEmpty()) {
-            	throw new CannotApplyToProgramException(program);
-            } else if (project != null) {
-            	if (!project.isAcceptingApplications()) {
-            		throw new CannotApplyToProjectException(project);
-            	}
-            }
+            programsService.getValidProgramProjectAdvert(applicationForm.getAdvert());
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }
 

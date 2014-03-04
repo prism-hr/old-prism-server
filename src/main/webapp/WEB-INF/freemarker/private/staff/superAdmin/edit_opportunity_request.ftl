@@ -102,9 +102,28 @@ span.count {
                   <form id="opportunityRequestEditForm" method="POST">
                     <#assign isRequestEditable = opportunityRequest.status != "APPROVED">
                     <div class="row-group">
-                      <h3 class="no-arrow"> Opportunity Details  </h3>
+                      <h3 class="no-arrow">
+                        <#if user.isInRole('SUPERADMINISTRATOR')>
+                          Opportunity Details
+                        <#else>
+                          Revise Opportunity Request
+                        </#if> 
+                      </h3>
+                      
+                      <input id="isRequestEditable" type="hidden" value="${isRequestEditable?c}"> 
                       
                       <#if isRequestEditable>
+                      
+                        <#assign comments = opportunityRequest.comments>
+                        <#if user.id == opportunityRequest.author.id && comments?has_content && comments?last.commentType == "REJECT"> 
+                          <div class="alert alert-warning">
+                            Please revise your request. Recent rejection reason:
+                            <p>
+                              <i>${comments?last.content}</i>
+                            </p>
+                          </div>
+                        </#if>
+                        
                         <#include "/private/prospectus/opportunity_details_part.ftl"/>
                       <#else>
                       
@@ -172,7 +191,13 @@ span.count {
                         <h3 class="no-arrow">Revision Details</h3>
   
                         <div class="row">
-                          <label id="commentContentLabel" class="plain-label" for="commentContent">Comment</label>
+                          <label id="commentContentLabel" class="plain-label" for="commentContent">
+                            <#if user.isInRole('SUPERADMINISTRATOR')>
+                              Comment<em>*</em>
+                            <#else>
+                              Description of Changes<em>*</em>
+                            </#if>                             
+                          </label>
                           <span class="hint" data-desc="<@spring.message 'opportunityRequestComment.contentTooltip'/>"></span>
                           <div class="field">
                             <textarea id="commentContent" name="content" class="max" cols="70" rows="6">${(comment.content?html)!}</textarea>
@@ -185,6 +210,7 @@ span.count {
                           </div>
                         </div>
                         
+                        <#if user.isInRole('SUPERADMINISTRATOR')>
                           <div class="row">
                             <label id="commentTypeLabel" class="plain-label" for="commentType">Review outcome<em>*</em></label>
                             <span class="hint" data-desc="<@spring.message 'opportunityRequestComment.commentType'/>"></span>
@@ -202,6 +228,9 @@ span.count {
                               </#list>
                             </div>
                           </div>
+                        <#else>
+                          <input name="commentType" type="hidden" value="REVISE" />
+                        </#if> 
                         
                       </div>
                     
@@ -221,13 +250,34 @@ span.count {
                   <div class="row-group">
                     <ul id="timeline-statuses">
                       <#list opportunityRequests as opportunityRequest>
-                        <#list opportunityRequest.comments?reverse as comment>                    
-                          <li class="${(comment.commentType == 'REJECT')?string('rejected','offer_recommended')}"> 
+                        <#list opportunityRequest.comments?reverse as comment>     
+                          
+                          <#assign author = comment.author> 
+                          
+                          <#if comment.commentType == "REJECT">
+                            <#assign elementClass = "rejected">
+                            <#assign actionText = "Request Rejected.">
+                          <#elseif comment.commentType == "APPROVE">
+                            <#assign elementClass = "offer_recommended">
+                            <#assign actionText = "Request Approved.">
+                          <#else>
+                            <#assign elementClass = "approval">
+                            <#assign actionText = "Request Revised.">
+                          </#if>               
+                          
+                          <#if comment.author.id == opportunityRequest.author.id>
+                            <#assign roleName = "Author">
+                            <#assign roleClassName = "applicant">
+                          <#else>
+                            <#assign roleName = "Administrator">
+                            <#assign roleClassName = "administrator">
+                          </#if>
+                          
+                          <li class="${elementClass}"> 
                             <!-- Box start -->
                             <div class="box">
-                              <#assign author = comment.author> 
-                              <div class="title"> <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span> <span class="datetime"><span class="datetime">  at </span></span> </div>
-                              <p class="highlight">Request ${(comment.commentType == 'REJECT')?string('Rejected','Approved')}.</p>
+                              <div class="title"> <span data-desc="${author.displayName?html} (${author.email?html}) as: ${roleName}" class="icon-role ${roleClassName}" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span> <span class="datetime"><span class="datetime">${comment.createdTimestamp?string("dd MMM yyyy")} at ${comment.createdTimestamp?string('HH:mm')}</span></span> </div>
+                              <p class="highlight">${actionText}</p>
                               <#if comment.content??>
                                 <i class="icon-minus-sign"></i>
                               </#if> 
@@ -235,10 +285,10 @@ span.count {
                             <#if comment.content??>
                               <div class="excontainer">
                                 <ul class="status-info">
-                                  <li class="${(comment.commentType == 'REJECT')?string('rejected','offer_recommended')}">
+                                  <li class="${elementClass}">
                                     <div class="box">
                                       <div class="title">
-                                        <span data-desc="${author.displayName?html} (${author.email?html}) as: Administrator" class="icon-role administrator" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span>
+                                        <span data-desc="${author.displayName?html} (${author.email?html}) as: ${roleName}" class="icon-role ${roleClassName}" data-hasqtip="35" aria-describedby="qtip-35"></span> <span class="name">${author.displayName?html}</span>
                                         <em>Commented:</em>
                                       </div>
                                       <div class="textContainer">

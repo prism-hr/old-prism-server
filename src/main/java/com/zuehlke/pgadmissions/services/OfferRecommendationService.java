@@ -69,7 +69,7 @@ public class OfferRecommendationService {
         offerRecommendedComment.setContent("");
         offerRecommendedComment.setUser(userService.getCurrentUser());
         commentDAO.save(offerRecommendedComment);
-        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(form);
+        applicationFormUserRoleService.deleteApplicationActions(form);
         return true;
     }
 

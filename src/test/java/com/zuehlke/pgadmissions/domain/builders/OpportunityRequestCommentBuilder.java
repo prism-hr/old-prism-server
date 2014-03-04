@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
@@ -13,6 +14,7 @@ public class OpportunityRequestCommentBuilder {
     private OpportunityRequestCommentType commentType;
     private String content;
     private Date createdTimestamp;
+    private OpportunityRequest opportunityRequest;
 
     public OpportunityRequestCommentBuilder id(Integer id) {
         this.id = id;
@@ -39,6 +41,11 @@ public class OpportunityRequestCommentBuilder {
         return this;
     }
 
+    public OpportunityRequestCommentBuilder opportunityRequest(OpportunityRequest opportunityRequest) {
+        this.opportunityRequest = opportunityRequest;
+        return this;
+    }
+
     public OpportunityRequestComment build() {
         OpportunityRequestComment comment = new OpportunityRequestComment();
         comment.setId(id);
@@ -46,11 +53,12 @@ public class OpportunityRequestCommentBuilder {
         comment.setCommentType(commentType);
         comment.setContent(content);
         comment.setCreatedTimestamp(createdTimestamp);
+        comment.setOpportunityRequest(opportunityRequest);
         return comment;
     }
 
-    public static OpportunityRequestCommentBuilder aOpportunityRequestComment(RegisteredUser author) {
-        return new OpportunityRequestCommentBuilder().author(author).commentType(OpportunityRequestCommentType.APPROVE).content("Approving!");
+    public static OpportunityRequestCommentBuilder aOpportunityRequestComment(RegisteredUser author, OpportunityRequest opportunityRequest) {
+        return new OpportunityRequestCommentBuilder().author(author).commentType(OpportunityRequestCommentType.APPROVE).content("Approving!").opportunityRequest(opportunityRequest);
     }
 
 }

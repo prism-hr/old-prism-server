@@ -70,7 +70,7 @@ public class RejectApplicationControllerTest {
         reason2 = new RejectReasonBuilder().id(20).text("idc").build();
         approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().id(Authority.APPROVER).build()).build();
         program = new ProgramBuilder().id(100).administrators(admin).approver(approver).build();
-        application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION).applicationNumber("abc").program(program)//
+        application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION).applicationNumber("abc").advert(program)//
                 .build();
 
         rejectServiceMock = EasyMock.createMock(RejectService.class);

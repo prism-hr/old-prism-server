@@ -98,7 +98,7 @@ public class FundingController {
         
 		fundingService.save(funding);
 		applicationService.save(applicationForm);
-		applicationFormUserRoleService.registerApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+		applicationFormUserRoleService.insertApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber();
 	}
 

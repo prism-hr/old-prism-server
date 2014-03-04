@@ -17,23 +17,17 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class CommentMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadComment() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a50").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-        save(institution, program);
-
+        Program program = testObjectProvider.getEnabledProgram();
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
@@ -44,7 +38,7 @@ public class CommentMappingTest extends AutomaticRollbackTestCase {
         Document documentTwo = new DocumentBuilder().content("hello".getBytes()).fileName("fre").build();
         save(applicant, reviewer, documentOne, documentTwo);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
         save(applicationForm);
 
         flushAndClearSession();

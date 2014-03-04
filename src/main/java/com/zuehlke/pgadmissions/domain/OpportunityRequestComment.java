@@ -32,6 +32,10 @@ public class OpportunityRequestComment {
     @JoinColumn(name = "author_id", nullable = false)
     private RegisteredUser author;
 
+    @ManyToOne
+    @JoinColumn(name = "opportunity_request_id", insertable = false, updatable = false)
+    private OpportunityRequest opportunityRequest;
+
     @Column(name = "comment_type", nullable = false)
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -40,6 +44,7 @@ public class OpportunityRequestComment {
     @Column(name = "content")
     @Lob
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 500000)
+    @NotNull
     private String content;
 
     @Column(name = "created_timestamp", insertable = false, nullable = false)
@@ -61,6 +66,14 @@ public class OpportunityRequestComment {
 
     public void setAuthor(RegisteredUser author) {
         this.author = author;
+    }
+
+    public OpportunityRequest getOpportunityRequest() {
+        return opportunityRequest;
+    }
+
+    public void setOpportunityRequest(OpportunityRequest opportunityRequest) {
+        this.opportunityRequest = opportunityRequest;
     }
 
     public OpportunityRequestCommentType getCommentType() {

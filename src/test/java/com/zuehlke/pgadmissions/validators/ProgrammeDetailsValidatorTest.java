@@ -387,7 +387,7 @@ public class ProgrammeDetailsValidatorTest {
 		program.setInstances(Arrays.asList(programInstance));
 		form = new ApplicationFormBuilder()
 		    .id(2)
-		    .program(program)
+		    .advert(program)
 		    .applicant(currentUser)
 		    .status(ApplicationFormStatus.UNSUBMITTED)
 		    .build();

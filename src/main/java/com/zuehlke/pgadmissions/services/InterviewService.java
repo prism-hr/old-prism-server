@@ -88,7 +88,7 @@ public class InterviewService {
         }
 
         applicationFormUserRoleService.movedToInterviewStage(interviewComment);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
     }
 
     // FIXME extract common subclass for AssignInterviewersComment and InterviewScheduleComment
@@ -108,7 +108,7 @@ public class InterviewService {
                 application, ApplicationFormAction.ASSIGN_INTERVIEWERS);
         commentService.save(interviewVoteComment);
         applicationFormUserRoleService.interviewParticipantResponded(assignInterviewersComment, registeredUser);
-        applicationFormUserRoleService.registerApplicationUpdate(interviewVoteComment.getApplication(), registeredUser,
+        applicationFormUserRoleService.insertApplicationUpdate(interviewVoteComment.getApplication(), registeredUser,
                 ApplicationUpdateScope.INTERNAL);
         mailService.sendInterviewVoteConfirmationToAdministrators(application, registeredUser);
     }
@@ -137,7 +137,7 @@ public class InterviewService {
         thisBean.assignInterviewDueDate(scheduleComment, applicationForm);
         thisBean.sendConfirmationEmails(scheduleComment);
         applicationFormUserRoleService.interviewConfirmed(scheduleComment);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
     }
 
     

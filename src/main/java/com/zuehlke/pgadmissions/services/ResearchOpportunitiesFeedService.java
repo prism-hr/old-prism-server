@@ -66,11 +66,12 @@ public class ResearchOpportunitiesFeedService {
             Map<String, Object> dataMap = new HashMap<String, Object>();
             dataMap.put("host", host);
             if (feed.getId() == DEFAULT_SMALL_FEED_ID || feed.getId() == DEFAULT_LARGE_FEED_ID) {
-                dataMap.put("user", userService.getCurrentUser().getUsername());
+                dataMap.put("feedKey", "OPPORTUNITIESBYUSERUSERNAME");
+                dataMap.put("feedKeyValue", userService.getCurrentUser().getUsername());
             } else {
-                dataMap.put("feed", feed.getId());
+                dataMap.put("feedKey", "OPPORTUNITIESBYFEEDID");
+                dataMap.put("feedKeyValue", feed.getId());
             }
-
             StringWriter writer = new StringWriter();
             template.process(dataMap, writer);
             return writer.toString();
@@ -85,7 +86,7 @@ public class ResearchOpportunitiesFeedService {
     public ResearchOpportunitiesFeed saveNewFeed(final List<Integer> selectedProgramIds, final RegisteredUser user, final FeedFormat format, final String title) {
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeed();
         for (Integer programId : selectedProgramIds) {
-            feed.getPrograms().add(programService.getProgramById(programId));
+            feed.getPrograms().add((Program) programService.getById(programId));
         }
         feed.setFeedFormat(format);
         feed.setTitle(title);
@@ -173,7 +174,7 @@ public class ResearchOpportunitiesFeedService {
         feed.setFeedFormat(format);
         feed.getPrograms().clear();
         for (Integer programId : selectedProgramIds) {
-            feed.getPrograms().add(programService.getProgramById(programId));
+            feed.getPrograms().add((Program) programService.getById(programId));
         }
         feed.setTitle(title);
         return feed;

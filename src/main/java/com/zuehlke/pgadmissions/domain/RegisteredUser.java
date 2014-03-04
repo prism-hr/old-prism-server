@@ -178,9 +178,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     @OneToMany(mappedBy = "user")
     private List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds = new ArrayList<ResearchOpportunitiesFeed>();
 
-    @Transient
-    private boolean canManageProjects;
-
     public boolean canEditAsApplicant(ApplicationForm applicationForm) {
         return canEditApplicationAsApplicant(applicationForm, this);
     }
@@ -534,14 +531,6 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
 
     public void setUpi(final String upi) {
         this.upi = upi;
-    }
-
-    public boolean isCanManageProjects() {
-        return canManageProjects;
-    }
-
-    public void setCanManageProjects(boolean canManageProjects) {
-        this.canManageProjects = canManageProjects;
     }
 
     @Override

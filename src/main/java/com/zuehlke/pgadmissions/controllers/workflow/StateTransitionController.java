@@ -165,7 +165,7 @@ public class StateTransitionController {
             stateChangeDTO.setDelegate(false);
         }
 
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, registeredUser);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, registeredUser);
         return stateTransitionService.resolveView(applicationForm, action);
     }
 
@@ -317,7 +317,7 @@ public class StateTransitionController {
         applicationsService.save(applicationForm);
         applicationsService.refresh(applicationForm);
         applicationFormUserRoleService.stateChanged(stateChangeComment);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);	
     }
 
     private void setUseCustomQuestions(Comment comment, StateChangeDTO dto) {

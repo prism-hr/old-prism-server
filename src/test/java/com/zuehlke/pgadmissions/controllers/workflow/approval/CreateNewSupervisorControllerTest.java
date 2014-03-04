@@ -107,7 +107,7 @@ public class CreateNewSupervisorControllerTest {
 	@Test
 	public void shouldGetApplicationFromIdForAdmin() {
 		Program program = new ProgramBuilder().id(6).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).advert(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
@@ -121,7 +121,7 @@ public class CreateNewSupervisorControllerTest {
 	@Test
 	public void shouldGetApplicationFromIdForSupervisor() {
 		Program program = new ProgramBuilder().id(6).build();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).advert(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);

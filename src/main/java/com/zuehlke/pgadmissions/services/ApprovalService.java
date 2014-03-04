@@ -127,7 +127,7 @@ public class ApprovalService {
                 commentService.assignUser(approvalComment, secondarySupervisor, false);
             }
             approvalComment.setProjectDescriptionAvailable(true);
-            approvalComment.setProjectTitle(project.getAdvert().getTitle());
+            approvalComment.setProjectTitle(project.getTitle());
         }
 
         if (!programInstanceService.isPrefferedStartDateWithinBounds(application, startDate)) {
@@ -175,7 +175,7 @@ public class ApprovalService {
 
         commentService.save(approvalComment);
         applicationFormUserRoleService.movedToApprovalStage(approvalComment);
-        applicationFormUserRoleService.registerApplicationUpdate(form, initiator, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(form, initiator, ApplicationUpdateScope.ALL_USERS);
     }
 
     private void checkApplicationStatus(ApplicationForm form) {

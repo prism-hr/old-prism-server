@@ -117,7 +117,7 @@ public class ReviewCommentController {
                 reviewComment.getScores().addAll(scores);
                 reviewComment.setAlert(customQuestion.getAlert());
             } catch (ScoringDefinitionParseException e) {
-                log.error("Incorrect scoring XML configuration for review stage in program: " + applicationForm.getProgram().getTitle());
+                log.error("Incorrect scoring XML configuration for review stage in program: " + applicationForm.getAdvert().getTitle());
             }
         }
 
@@ -136,7 +136,7 @@ public class ReviewCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
-        ApplicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        ApplicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return REVIEW_FEEDBACK_PAGE;
     }
 
@@ -160,12 +160,12 @@ public class ReviewCommentController {
         if (result.hasErrors()) {
             return REVIEW_FEEDBACK_PAGE;
         }
-
+        
         applicationsService.save(applicationForm);
         commentService.save(comment);
         applicationForm.getApplicationComments().add(comment);
         ApplicationFormUserRoleService.reviewPosted(comment);
-        ApplicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
+        ApplicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
 
         return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
     }

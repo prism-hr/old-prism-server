@@ -3,11 +3,9 @@ package com.zuehlke.pgadmissions.services;
 import static junit.framework.Assert.assertSame;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.expect;
-import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
@@ -28,31 +26,25 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
-import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
-import com.zuehlke.pgadmissions.domain.ProgramFeed;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ProgramsServiceTest {
@@ -60,18 +52,6 @@ public class ProgramsServiceTest {
     @Mock
     @InjectIntoByType
     private ProgramDAO programDAOMock;
-
-    @Mock
-    @InjectIntoByType
-    private AdvertDAO advertDAOMock;
-
-    @Mock
-    @InjectIntoByType
-    private ProjectDAO projectDAOMock;
-
-    @Mock
-    @InjectIntoByType
-    private RoleService roleService;
 
     @Mock
     @InjectIntoByType
@@ -107,10 +87,10 @@ public class ProgramsServiceTest {
     public void shouldGetProgramById() {
         Program program = EasyMock.createMock(Program.class);
         program.setId(2);
-        EasyMock.expect(programDAOMock.getProgramById(2)).andReturn(program);
+        EasyMock.expect(programDAOMock.getById(2)).andReturn(program);
 
         replay();
-        assertEquals(program, programsService.getProgramById(2));
+        assertEquals(program, programsService.getById(2));
         verify();
     }
 
@@ -135,34 +115,17 @@ public class ProgramsServiceTest {
     }
 
     @Test
-    public void shouldGetProgramsForWhichCanManageProjectsIfAdmin() {
+    public void shouldGetProgramsForWhichCanManageProjects() {
         RegisteredUser userMock = EasyMockUnitils.createMock(RegisteredUser.class);
 
         List<Program> programs = Collections.emptyList();
-        EasyMock.expect(programDAOMock.getAllEnabledPrograms()).andReturn(programs);
-        EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+        EasyMock.expect(programDAOMock.getProgramsForWhichUserCanManageProjects(userMock)).andReturn(programs);
 
         replay();
         List<Program> returnedPrograms = programsService.getProgramsForWhichCanManageProjects(userMock);
         verify();
 
         assertSame(programs, returnedPrograms);
-    }
-
-    @Test
-    public void shouldGetProgramsForWhichCanManageProjectsIfNotAdmin() {
-        RegisteredUser userMock = EasyMockUnitils.createMock(RegisteredUser.class);
-
-        EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-        EasyMock.expect(userMock.getProgramsOfWhichAdministrator()).andReturn(Collections.<Program> emptyList());
-        EasyMock.expect(userMock.getProgramsOfWhichApprover()).andReturn(Collections.<Program> emptyList());
-        EasyMock.expect(programDAOMock.getProgramsOfWhichPreviousReviewer(userMock)).andReturn(Collections.<Program> emptyList());
-        EasyMock.expect(programDAOMock.getProgramsOfWhichPreviousInterviewer(userMock)).andReturn(Collections.<Program> emptyList());
-        EasyMock.expect(programDAOMock.getProgramsOfWhichPreviousSupervisor(userMock)).andReturn(Collections.<Program> emptyList());
-
-        replay();
-        programsService.getProgramsForWhichCanManageProjects(userMock);
-        verify();
     }
 
     @Test
@@ -183,35 +146,35 @@ public class ProgramsServiceTest {
     @Test
     public void shouldGetProjectById() {
         Project project = EasyMock.createMock(Project.class);
-        expect(projectDAOMock.getProjectById(1)).andReturn(project);
+        expect(programDAOMock.getById(1)).andReturn(project);
 
         replay();
-        assertEquals(project, programsService.getProject(1));
+        assertEquals(project, programsService.getById(1));
         verify();
     }
 
     @Test
     public void shouldDelegateSaveProjectToDAO() {
         Project project = EasyMock.createMock(Project.class);
-        projectDAOMock.save(project);
+        programDAOMock.save(project);
 
         replay();
-        programsService.saveProject(project);
+        programsService.save(project);
         verify();
     }
 
     @Test
     public void shouldDisableProjectAndAdvertOnRemoveProject() {
         Project project = new ProjectBuilder().advert(new AdvertBuilder().build()).build();
-        expect(projectDAOMock.getProjectById(1)).andReturn(project);
-        projectDAOMock.save(project);
+        expect(programDAOMock.getById(1)).andReturn(project);
+        programDAOMock.save(project);
 
         replay();
-        programsService.removeProject(1);
+        programsService.removeAdvert(1);
         verify();
 
-        assertTrue(project.isDisabled());
-        assertFalse(project.getAdvert().getActive());
+        assertFalse(project.isEnabled());
+        assertFalse(project.isActive());
     }
 
     @Test
@@ -220,7 +183,7 @@ public class ProgramsServiceTest {
         RegisteredUser superAdmin = EasyMockUnitils.createMock(RegisteredUser.class);
         expect(superAdmin.isInRole(superAdmin, Authority.SUPERADMINISTRATOR)).andReturn(true);
         List<Project> allProjects = Collections.emptyList();
-        expect(projectDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
+        expect(programDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
 
         replay();
         List<Project> loadedProjects = programsService.listProjects(superAdmin, program);
@@ -236,7 +199,7 @@ public class ProgramsServiceTest {
         expect(admin.isInRole(admin, Authority.SUPERADMINISTRATOR)).andReturn(false);
         expect(admin.isAdminInProgramme(program)).andReturn(true);
         List<Project> allProjects = Collections.emptyList();
-        expect(projectDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
+        expect(programDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
 
         replay();
         List<Project> loadedProjects = programsService.listProjects(admin, program);
@@ -252,7 +215,7 @@ public class ProgramsServiceTest {
         expect(user.isInRole(user, Authority.SUPERADMINISTRATOR)).andReturn(false);
         expect(user.isAdminInProgramme(program)).andReturn(false);
         List<Project> allProjects = Collections.emptyList();
-        expect(projectDAOMock.getProjectsForProgramOfWhichAuthor(program, user)).andReturn(allProjects);
+        expect(programDAOMock.getProjectsForProgramOfWhichAuthor(program, user)).andReturn(allProjects);
 
         replay();
         List<Project> loadedProjects = programsService.listProjects(user, program);
@@ -266,19 +229,21 @@ public class ProgramsServiceTest {
         Domicile domicile = new Domicile();
         ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
 
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, domicile).otherInstitution("other_name").build();
+        RegisteredUser requestAuthor = new RegisteredUser();
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, domicile).otherInstitution("other_name").build();
         QualificationInstitution institution = new QualificationInstitutionBuilder().build();
 
         expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
         expect(qualificationInstitutionService.getOrCreateCustomInstitution("AGH", domicile, "other_name")).andReturn(institution);
         Capture<Program> programCapture = new Capture<Program>();
-        programDAOMock.save(capture(programCapture));
         expect(thisBean.generateNextProgramCode(institution)).andReturn("AAA_00000");
+        programDAOMock.save(capture(programCapture));
 
         replay();
         Program program = programsService.createOrGetProgram(opportunityRequest);
         verify();
 
+        assertSame(program.getContactUser(), requestAuthor);
         assertSame(programCapture.getValue(), program);
         assertEquals(opportunityRequest.getAtasRequired(), program.getAtasRequired());
         assertSame(institution, program.getInstitution());
@@ -290,10 +255,12 @@ public class ProgramsServiceTest {
     public void shouldGetCustomProgram() {
         ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
         Program program = new ProgramBuilder().institution(new QualificationInstitutionBuilder().code("any_inst").build()).build();
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, null).institutionCode("any_inst").atasRequired(true)
-                .sourceProgram(program).build();
+        RegisteredUser requestAuthor = new RegisteredUser();
+        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, null).institutionCode("any_inst")
+                .atasRequired(true).sourceProgram(program).acceptingApplications(true).build();
 
         expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
+        expect(thisBean.getContactUserForProgram(program, requestAuthor)).andReturn(requestAuthor);
         expect(programDAOMock.merge(program)).andReturn(program);
         programDAOMock.save(program);
 
@@ -302,45 +269,14 @@ public class ProgramsServiceTest {
         verify();
 
         assertTrue(returned.getAtasRequired());
-    }
-
-    @Test
-    public void shouldGetBuiltinProgram() {
-        ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
-        Program program = new ProgramBuilder().programFeed(new ProgramFeed()).build();
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, null).sourceProgram(program).build();
-
-        expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
-
-        replay();
-        programsService.createOrGetProgram(opportunityRequest);
-        verify();
-    }
-
-    @Test
-    public void shouldSaveProgramOpportunity() {
-        ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
-        RegisteredUser author = new RegisteredUser();
-        OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(author, null).build();
-        Program program = new Program();
-
-        expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
-        expect(thisBean.createOrGetProgram(opportunityRequest)).andReturn(program);
-        expect(programInstanceService.createRemoveProgramInstances(program, "B+++++,F+++++", 2014)).andReturn(null);
-        thisBean.grantAdminPermissionsForProgram(author, program);
-
-        replay();
-        Program returned = programsService.saveProgramOpportunity(opportunityRequest);
-        verify();
-
-        Advert advert = program.getAdvert();
-
-        assertSame(program, returned);
-        assertTrue(advert.getActive());
-        assertEquals(opportunityRequest.getProgramDescription(), advert.getDescription());
-        assertEquals(opportunityRequest.getStudyDuration(), advert.getStudyDuration());
-
-        assertSame(advert, program.getAdvert());
+        assertEquals(program.getTitle(), opportunityRequest.getProgramTitle());
+        assertEquals(program.getDescription(), opportunityRequest.getProgramDescription());
+        assertEquals(program.getAtasRequired(), opportunityRequest.getAtasRequired());
+        assertEquals(program.getStudyDuration(), opportunityRequest.getStudyDuration());
+        assertEquals(program.getFunding(), opportunityRequest.getFunding());
+        assertTrue(program.isActive());
+        assertSame(program.getProgramType(), opportunityRequest.getProgramType());
+        assertSame(program.getContactUser(), requestAuthor);
     }
 
     @Test
@@ -402,55 +338,63 @@ public class ProgramsServiceTest {
         assertEquals("AAA_00000", nextCode);
     }
 
-    @Test
-    public void shouldGrantAdminPermissionsForProgram() {
-        Role administratorRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
-        RegisteredUser user = new RegisteredUser();
-        QualificationInstitution institution = new QualificationInstitution();
-        Program program = new ProgramBuilder().institution(institution).build();
-
-        expect(roleService.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(administratorRole);
-
+    @Test(expected = CannotApplyException.class)
+    public void shouldThrowCannotApplyExceptionIfProgramAndProjectAreNull() {
         replay();
-        programsService.grantAdminPermissionsForProgram(user, program);
+        programsService.getValidProgramProjectAdvert(null, null);
         verify();
+    }
 
-        assertThat(user.getInstitutions(), contains(institution));
-        assertThat(user.getProgramsOfWhichAdministrator(), contains(program));
-        assertThat(user.getRoles(), contains(administratorRole));
+    @Test(expected = CannotApplyException.class)
+    public void shouldThrowCannotApplyExceptionIfProgramAndProjectAreNotActive() {
+        String programCode = "test";
+        Integer advertId = 0;
+        EasyMock.expect(programDAOMock.getAcceptingApplicationsById(advertId)).andReturn(null);
+        EasyMock.expect(programDAOMock.getProgamAcceptingApplicationsByCode(programCode)).andReturn(null);
+        replay();
+        programsService.getValidProgramProjectAdvert(programCode, advertId);
+        verify();
     }
 
     @Test
-    public void shouldNotDisableProgramIfNotCustom() {
-        Program program = new ProgramBuilder().enabled(true).programFeed(new ProgramFeed()).build();
-        expect(programDAOMock.getProgramByCode("prrr")).andReturn(program);
-
+    public void shouldReturnAdvertByProgramCodeIfProgramIsActive() {
+        Program program = new ProgramBuilder().code("test").build();
+        EasyMock.expect(programDAOMock.getProgamAcceptingApplicationsByCode(program.getCode())).andReturn(program);
         replay();
-        programsService.disableProgram("prrr");
+        Advert advert = programsService.getValidProgramProjectAdvert(program.getCode(), null);
         verify();
-
-        assertTrue(program.isEnabled());
+        assertEquals(advert.getProgram(), program);
     }
 
     @Test
-    public void shouldDisableProgram() {
-        Project project1 = new ProjectBuilder().disabled(false).build();
-        Project project2 = new ProjectBuilder().disabled(false).build();
-        ProgramInstance programInstance1 = new ProgramInstanceBuilder().enabled(true).build();
-        ProgramInstance programInstance2 = new ProgramInstanceBuilder().enabled(true).build();
-        Program program = new ProgramBuilder().enabled(true).projects(project1, project2).instances(programInstance1, programInstance2).build();
-
-        expect(programDAOMock.getProgramByCode("prrr")).andReturn(program);
-
+    public void shouldReturnAdvertByProgramIdIfProgramIsActive() {
+        Program program = new ProgramBuilder().id(1).build();
+        EasyMock.expect(programDAOMock.getAcceptingApplicationsById(program.getId())).andReturn(program);
         replay();
-        programsService.disableProgram("prrr");
+        Advert advert = programsService.getValidProgramProjectAdvert(null, program.getId());
         verify();
+        assertEquals(advert.getProgram(), program);
+    }
 
-        assertFalse(program.isEnabled());
-        assertFalse(programInstance1.getEnabled());
-        assertFalse(programInstance2.getEnabled());
-        assertTrue(project1.isDisabled());
-        assertTrue(project2.isDisabled());
+    @Test
+    public void shouldReturnAdvertByProjectIdIfProjectIsActive() {
+        Project project = new ProjectBuilder().id(1).build();
+        EasyMock.expect(programDAOMock.getAcceptingApplicationsById(project.getId())).andReturn(project);
+        replay();
+        Advert advert = programsService.getValidProgramProjectAdvert(null, project.getId());
+        verify();
+        assertEquals(advert.getProject(), project);
+    }
+
+    @Test
+    public void shouldReturnAdvertByProgramIdInPreferenceOfProgramByProgramCode() {
+        Program program = new ProgramBuilder().id(1).code("one").build();
+        Program otherProgram = new ProgramBuilder().id(2).code("two").build();
+        EasyMock.expect(programDAOMock.getAcceptingApplicationsById(program.getId())).andReturn(program);
+        replay();
+        Advert advert = programsService.getValidProgramProjectAdvert(otherProgram.getCode(), program.getId());
+        verify();
+        assertEquals(advert.getProgram(), program);
     }
 
 }

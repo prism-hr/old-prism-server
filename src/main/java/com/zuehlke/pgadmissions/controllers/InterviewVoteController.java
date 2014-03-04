@@ -96,7 +96,7 @@ public class InterviewVoteController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_VOTE_PAGE;
     }
 

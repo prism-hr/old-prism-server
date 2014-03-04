@@ -1,92 +1,89 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
+    private ProgramDAO programDAO;
     private QualificationInstitution institution;
+    private Project project;
 
     @Override
     public void setup() {
         super.setup();
-        institution = new QualificationInstitutionBuilder().code("code").name("a14").domicileCode("AE").enabled(true).build();
-        save(institution);
+        programDAO = new ProgramDAO(sessionFactory);
+        institution = testObjectProvider.getEnabledInstitution();
+        flushAndClearSession();
+        project = testObjectProvider.getEnabledProject();
     }
 
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowNullPointerException() {
-        ProgramDAO programDAO = new ProgramDAO();
-        programDAO.getAllEnabledPrograms();
-    }
-
+    @SuppressWarnings("unchecked")
     @Test
     public void shouldGetAllPrograms() {
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-
-        int existingNumberOfPrograms = programDAO.getAllEnabledPrograms().size();
-        Program program1 = new ProgramBuilder().id(1).code("code1").title("another title").enabled(true).institution(institution).build();
-        Program program2 = new ProgramBuilder().id(1).code("code2").title("another title2").enabled(true).institution(institution).build();
+        List<Program> programs = (List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .add(Restrictions.eq("enabled", true))
+                .addOrder(Order.asc("title")).list();
+        Program program1 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code1").title("another title").institution(institution).build();
+        Program program2 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code2").title("another title").institution(institution).build();
         sessionFactory.getCurrentSession().save(program1);
         sessionFactory.getCurrentSession().save(program2);
         flushAndClearSession();
-        Assert.assertEquals(existingNumberOfPrograms + 2, programDAO.getAllEnabledPrograms().size());
+        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+        Assert.assertEquals(programs.size() + 2, programDAO.getAllEnabledPrograms().size());
     }
 
     @Test
     public void shouldGetProgramById() {
-        Program program = new ProgramBuilder().id(1).code("code1").title("another title").institution(institution).build();
-
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code1").title("another title").institution(institution).build();
         sessionFactory.getCurrentSession().save(program);
         flushAndClearSession();
-
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        assertEquals(program.getId(), programDAO.getProgramById(program.getId()).getId());
+        assertEquals(program.getId(), programDAO.getById(program.getId()).getId());
     }
 
     @Test
     public void shouldGetProgramByCode() {
-        Program program = new ProgramBuilder().id(1).code("code1").title("another title").institution(institution).build();
-
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code1").title("another title").institution(institution).build();
         sessionFactory.getCurrentSession().save(program);
         flushAndClearSession();
-
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
         assertEquals(program.getId(), programDAO.getProgramByCode("code1").getId());
     }
 
     @Test
     public void shouldSaveProgram() {
-        Program program = new ProgramBuilder().code("code1").title("another title").institution(institution).build();
-
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code1").title("another title").institution(institution).build();
         programDAO.save(program);
         Assert.assertNotNull(program.getId());
     }
 
     @Test
     public void shouldGetProgramWithScoringDefinitions() {
-        Program program = new ProgramBuilder().code("code1").title("another title").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code1").title("another title").institution(institution).build();
         ScoringDefinition scoringDef1 = new ScoringDefinition();
         scoringDef1.setContent("aaa");
         scoringDef1.setStage(ScoringStage.INTERVIEW);
@@ -95,82 +92,18 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         scoringDef2.setStage(ScoringStage.REVIEW);
         program.getScoringDefinitions().put(ScoringStage.INTERVIEW, scoringDef1);
         program.getScoringDefinitions().put(ScoringStage.REVIEW, scoringDef2);
-
         sessionFactory.getCurrentSession().save(program);
         flushAndClearSession();
-
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
         Program loadedProgram = programDAO.getProgramByCode("code1");
         assertEquals(program.getId(), loadedProgram.getId());
-
         Map<ScoringStage, ScoringDefinition> scoringDefinitions = loadedProgram.getScoringDefinitions();
-
         assertEquals(2, scoringDefinitions.size());
-
         ScoringDefinition interviewDefinition1 = scoringDefinitions.get(ScoringStage.INTERVIEW);
         assertEquals("aaa", interviewDefinition1.getContent());
         assertEquals(ScoringStage.INTERVIEW, interviewDefinition1.getStage());
-
         ScoringDefinition interviewDefinition2 = scoringDefinitions.get(ScoringStage.REVIEW);
         assertEquals("bb", interviewDefinition2.getContent());
         assertEquals(ScoringStage.REVIEW, interviewDefinition2.getStage());
-    }
-
-    @Test
-    public void shouldGetProgramOfWhichPreviousReviewer() {
-//        Program program = new ProgramBuilder().code("code1").title("another title").institution(institution).build();
-//        RegisteredUser applicant = new RegisteredUserBuilder().username("applicant").build();
-        RegisteredUser user = new RegisteredUserBuilder().username("aaa").build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).build();
-//        ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).build();
-//        Reviewer reviewer = new ReviewerBuilder().user(user).reviewRound(reviewRound).build();
-//
-//        save(program, applicant, user, applicationForm, reviewRound, reviewer);
-//        flushAndClearSession();
-
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        List<Program> programs = programDAO.getProgramsOfWhichPreviousReviewer(user);
-
-        Assert.assertEquals(1, programs.size());
-//        Assert.assertEquals(program.getId(), programs.iterator().next().getId());
-    }
-
-    @Test
-    public void shouldGetProgramOfWhichPreviousInterviewer() {
-//        Program program = new ProgramBuilder().code("code1").title("another title").institution(institution).build();
-//        RegisteredUser applicant = new RegisteredUserBuilder().username("applicant").build();
-        RegisteredUser user = new RegisteredUserBuilder().username("aaa").build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).build();
-//        Interview interview = new InterviewBuilder().application(applicationForm).build();
-//        Interviewer interviewer = new InterviewerBuilder().user(user).interview(interview).build();
-//
-//        save(program, applicant, user, applicationForm, interview, interviewer);
-//        flushAndClearSession();
-
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        List<Program> programs = programDAO.getProgramsOfWhichPreviousInterviewer(user);
-
-        Assert.assertEquals(1, programs.size());
-//        Assert.assertEquals(program.getId(), programs.iterator().next().getId());
-    }
-
-    @Test
-    public void shouldGetProgramOfWhichPreviousSupervisor() {
-//        Program program = new ProgramBuilder().code("code1").title("another title").institution(institution).build();
-//        RegisteredUser applicant = new RegisteredUserBuilder().username("applicant").build();
-        RegisteredUser user = new RegisteredUserBuilder().username("aaa").build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).build();
-//        Supervisor supervisor = new SupervisorBuilder().user(user).isPrimary(true).build();
-//        ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).supervisors(supervisor).build();
-//
-//        save(program, applicant, user, applicationForm, approvalRound, supervisor);
-//        flushAndClearSession();
-
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        List<Program> programs = programDAO.getProgramsOfWhichPreviousSupervisor(user);
-
-        Assert.assertEquals(1, programs.size());
-//        Assert.assertEquals(program.getId(), programs.iterator().next().getId());
     }
 
     @Test
@@ -179,43 +112,32 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         ProgramClosingDate badge1 = new ProgramClosingDateBuilder().closingDate(closingDates.minusMonths(1).toDate()).build();
         ProgramClosingDate badge2 = new ProgramClosingDateBuilder().closingDate(closingDates.plusMonths(1).toDate()).build();
         ProgramClosingDate badge3 = new ProgramClosingDateBuilder().closingDate(closingDates.plusMonths(2).toDate()).build();
-        Program program = new ProgramBuilder().code("code2").institution(institution).closingDates(badge1, badge2, badge3).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code2").institution(institution).closingDates(badge1, badge2, badge3).build();
         badge1.setProgram(program);
         badge2.setProgram(program);
         badge3.setProgram(program);
-
         save(program, badge1, badge2, badge3);
         flushAndClearSession();
-
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
         Date result = programDAO.getNextClosingDate(program);
-
         Assert.assertNotNull(result);
-
         Assert.assertEquals(0, result.compareTo(badge2.getClosingDate()));
     }
 
     @Test
     public void shouldGetLastCustomProgram() {
-        Program program1 = ProgramBuilder.aProgram(institution).title("pdao1").code(institution.getCode() + "_00006").build();
-        Program program2 = ProgramBuilder.aProgram(institution).title("pdao2").code(institution.getCode() + "_00008").build();
-        Program program3 = ProgramBuilder.aProgram(institution).title("pdao3").code(institution.getCode() + "_00007").build();
-
+        Program program1 = ProgramBuilder.aProgram(institution).contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code(institution.getCode() + "_00006").build();
+        Program program2 = ProgramBuilder.aProgram(institution).contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code(institution.getCode() + "_00008").build();
+        Program program3 = ProgramBuilder.aProgram(institution).contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code(institution.getCode() + "_00007").build();
         save(program1, program2, program3);
-
         flushAndClearSession();
-
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-
         Program returned = programDAO.getLastCustomProgram(institution);
-
         assertEquals(program2.getCode(), returned.getCode());
     }
 
     @Test
     public void shouldGetClosingDateById() {
         ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
-        Program program = new ProgramBuilder().code("code").institution(institution).closingDates(putClosingDate).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
         ProgramClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDate.getId());
@@ -226,7 +148,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetClosingDateByDate() {
         Date closingDate = new Date();
         ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(closingDate).build();
-        Program program = new ProgramBuilder().code("code").institution(institution).closingDates(putClosingDate).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
         ProgramClosingDate gotClosingDate = programDAO.getClosingDateByDate(program, closingDate);
@@ -241,7 +163,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         Date testDateOne = truncatedDateToday.toDate();
         Date testDateTwo = truncatedDateTomorrow.toDate();
         ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(testDateOne).build();
-        Program program = new ProgramBuilder().code("code").institution(institution).closingDates(putClosingDate).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
         sessionFactory.getCurrentSession().flush();
         sessionFactory.getCurrentSession().clear();
@@ -258,7 +180,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     public void shouldDeleteClosingDate() {
         ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
         Integer putClosingDateId = putClosingDate.getId();
-        Program program = new ProgramBuilder().code("code").institution(institution).closingDates(putClosingDate).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
         sessionFactory.getCurrentSession().flush();
         sessionFactory.getCurrentSession().clear();
@@ -269,25 +191,81 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         ProgramClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDateId);
         assertEquals(gotClosingDate, null);
     }
-
+    
     @Test
-    public void shouldGetFirstEnabledAdministrator() {
-        Program program = new ProgramBuilder().code("code").institution(institution).build();
-        sessionFactory.getCurrentSession().save(program);
-        RegisteredUser user1 = new RegisteredUserBuilder().username("testuser1").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
-                .enabled(false).programsOfWhichAdministrator(program).build();
-        sessionFactory.getCurrentSession().save(user1);
-        RegisteredUser user2 = new RegisteredUserBuilder().username("testuser2").accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true)
-                .enabled(true).programsOfWhichAdministrator(program).build();
-        sessionFactory.getCurrentSession().save(user2);
-        RegisteredUser user3 = new RegisteredUserBuilder().username("testuser3").accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true)
-                .enabled(true).programsOfWhichAdministrator(program).build();
-        sessionFactory.getCurrentSession().save(user3);
-        program.setAdministrators(Arrays.asList(user1, user2, user3));
-        sessionFactory.getCurrentSession().update(program);
-        ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        RegisteredUser gotUser = programDAO.getFirstAdministratorForProgram(program);
-        assertEquals(gotUser, user2);
+    public void shouldSaveProjectAndAdvert() {
+        programDAO.save(project);
+        flushAndClearSession();
+        assertNotNull(project.getId());
     }
 
+    @Test
+    public void shouldLoadProjectAndAdvert() {
+        Project loadedProject = (Project) programDAO.getById(project.getId());
+        assertNotNull(loadedProject);
+        assertEquals(loadedProject.getId(), project.getId());
+    }
+
+    @Test
+    public void shouldGetEnabledProjectsForProgram() {
+        programDAO.save(project);
+        flushAndClearSession();
+
+        List<Project> projects = programDAO.getProjectsForProgram(project.getProgram());
+        assertTrue(projects.size() >= 1);
+        assertProjectIncluded(true, projects, project);
+    }
+
+    @Test
+    public void shouldNotGetDisabledProjectsForProgram() {
+        project.setEnabled(false);
+        project.setActive(false);
+        programDAO.save(project);
+        flushAndClearSession();
+
+        List<Project> projects = programDAO.getProjectsForProgram(project.getProgram());
+        assertProjectIncluded(false, projects, project);
+    }
+
+    @Test
+    public void shouldGetProjectsForProgramAndAuthor() {
+        programDAO.save(project);
+        flushAndClearSession();
+
+        List<Project> projects = programDAO.getProjectsForProgramOfWhichAuthor(project.getProgram(), project.getContactUser());
+        assertProjectIncluded(true, projects, project);
+    }
+    
+    @Test
+    public void shouldGetProgramAcceptingApplicationsByCode() {
+        Program program = testObjectProvider.getEnabledProgram();
+        Program loadedProgram = programDAO.getProgamAcceptingApplicationsByCode(program.getCode());
+        assertEquals(loadedProgram.getId(), program.getId());
+    }
+    
+    @Test
+    public void shouldGetProgramAcceptingApplicationsById() {
+        Program program = testObjectProvider.getEnabledProgram();
+        Advert loadedAdvert = programDAO.getAcceptingApplicationsById(program.getId());
+        assertEquals(loadedAdvert.getProgram().getId(), program.getId());
+    }
+    
+    @Test
+    public void shouldGetProjectAcceptingApplicationsById() {
+        Advert loadedProject = programDAO.getAcceptingApplicationsById(project.getId());
+        assertEquals(loadedProject.getProject().getId(), project.getId());
+    }
+
+    private void assertProjectIncluded(final boolean expected, List<Project> projects, Project expectedProject) {
+        assertTrue(projects.size() >= (expected ? 1 : 0));
+        boolean projectIncluded = false;
+        for (Project loadedProject : projects) {
+            assertTrue(loadedProject.isEnabled());
+            if (expectedProject.getId().equals(loadedProject.getId())) {
+                projectIncluded = true;
+            }
+        }
+        assertEquals(expected, projectIncluded);
+    }
+    
 }

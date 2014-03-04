@@ -22,7 +22,7 @@ public class WithdrawService {
     public void withdrawApplication(final ApplicationForm application) {
         application.setStatus(ApplicationFormStatus.WITHDRAWN);
         applicationService.save(application);
-        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(application);
+        applicationFormUserRoleService.deleteApplicationActions(application);
     }
 
     @Transactional

@@ -3,11 +3,11 @@ package com.zuehlke.pgadmissions.controllers.prospectus;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -30,17 +30,18 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
@@ -75,7 +76,7 @@ public class ProgramConfigurationController {
     @Autowired
     private DomicilePropertyEditor domicilePropertyEditor;
 
-    @Autowired
+    @Resource(name = "programValidator")
     private OpportunityRequestValidator opportunityRequestValidator;
 
     @Autowired
@@ -102,6 +103,9 @@ public class ProgramConfigurationController {
     @Autowired
     private OpportunitiesService opportunitiesService;
 
+    @Autowired
+    private ProgramTypePropertyEditor programTypePropertyEditor;
+
     private Gson gson;
 
     @PostConstruct
@@ -116,19 +120,13 @@ public class ProgramConfigurationController {
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Program.class, programPropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+        binder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
     }
 
     @InitBinder("programClosingDate")
     public void registerEditorsAndValidatorsForClosingDate(WebDataBinder binder) {
         binder.registerCustomEditor(Program.class, "program", programPropertyEditor);
         binder.registerCustomEditor(Date.class, "closingDate", datePropertyEditor);
-    }
-
-    private Advert getProgrameAdvert(Program program) {
-        if (program == null) {
-            return null;
-        }
-        return program.getAdvert();
     }
 
     @ModelAttribute("user")
@@ -146,26 +144,28 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
     @ResponseBody
-    public String getOpportunityData(@RequestParam String programCode) {
+    public String getOpportunityData(@RequestParam(required = false) String programCode) {
         Program program = programsService.getProgramByCode(programCode);
-        Advert advert = getProgrameAdvert(program);
 
         Map<String, Object> result = Maps.newHashMap();
-        result.put("advert", advert);
 
-        HashMap<String, Object> dataMap = new HashMap<String, Object>();
-        dataMap.put("programCode", programCode);
-        if (advert != null) {
-            dataMap.put("advertId", advert.getId());
-        }
+        Map<String, Object> dataMap = Maps.newHashMap();
+        dataMap.put("advertId", program.getId());
 
         Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
 
-        result.put("programLocked", program.getLocked());
+        result.put("programId", program.getId());
+        result.put("programTitle", program.getTitle());
+        result.put("programDescription", program.getDescription());
+        result.put("programStudyDuration", program.getStudyDuration());
+        result.put("programFunding", program.getFunding());
+        result.put("programIsActive", program.isActive());
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
+        result.put("programType", program.getProgramType().getId());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
         result.put("institutionCode", program.getInstitution().getCode());
+        result.put("programLock", program.getLocked());
         result.put("advertisingDeadline", programInstanceService.getAdvertisingDeadlineYear(program));
         result.put("studyOptions", programInstanceService.getStudyOptions(program));
         result.put("buttonToApply", templateRenderer.renderButton(dataMap));
@@ -174,7 +174,7 @@ public class ProgramConfigurationController {
         return gson.toJson(result);
     }
 
-    @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST)
+    @RequestMapping(value = "/saveProgramAdvert", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String saveOpportunity(@Valid OpportunityRequest opportunityRequest, BindingResult result) {
         Map<String, Object> map;
@@ -182,8 +182,7 @@ public class ProgramConfigurationController {
             map = FieldErrorUtils.populateMapWithErrors(result, applicationContext);
             FieldError otherInstitutionError = result.getFieldError("otherInstitution");
             if (otherInstitutionError != null && "institution.did.you.mean".equals(otherInstitutionError.getCode())) {
-                map.put("otherInstitution",
-                        ImmutableMap.of("errorCode", "institution.did.you.mean", "institutions", otherInstitutionError.getDefaultMessage()));
+                map.put("otherInstitution", ImmutableMap.of("errorCode", "institution.did.you.mean", "institutions", otherInstitutionError.getDefaultMessage()));
             }
         } else {
             map = Maps.newHashMap();
@@ -199,13 +198,6 @@ public class ProgramConfigurationController {
             }
         }
         return gson.toJson(map);
-    }
-    
-    @RequestMapping(value = "/deleteProgramAdvert", method = RequestMethod.POST)
-    @ResponseBody
-    public String deleteOpportunity(@RequestParam String programCode) {
-        boolean result = programsService.disableProgram(programCode);
-        return gson.toJson(ImmutableMap.of("success", result));
     }
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
@@ -258,9 +250,9 @@ public class ProgramConfigurationController {
 
         if (map.isEmpty()) {
             map.put("programCode", programCode);
-
             map.put("closingDates", program.getClosingDates());
         }
+
         return gson.toJson(map);
     }
 

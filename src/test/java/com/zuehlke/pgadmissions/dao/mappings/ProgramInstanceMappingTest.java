@@ -13,21 +13,14 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 
 public class ProgramInstanceMappingTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadProgramInstance() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a11").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("xxxxxx").title("hi").institution(institution).build();
-        save(institution, program);
-        flushAndClearSession();
         Date applicationDeadline = new Date();
-
+        Program program = testObjectProvider.getEnabledProgram();
         ProgramInstance programInstance = new ProgramInstanceBuilder().program(program).applicationDeadline(applicationDeadline).studyOption("1", "Full-time")
                 .applicationStartDate(new Date()).academicYear("2013").enabled(true).build();
         sessionFactory.getCurrentSession().saveOrUpdate(programInstance);
@@ -44,4 +37,5 @@ public class ProgramInstanceMappingTest extends AutomaticRollbackTestCase {
         assertEquals("Full-time", reloadedProgramInstance.getStudyOption());
         assertEquals(program.getId(), reloadedProgramInstance.getProgram().getId());
     }
+    
 }

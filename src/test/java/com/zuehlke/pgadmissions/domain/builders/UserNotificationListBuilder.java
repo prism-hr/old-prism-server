@@ -11,9 +11,9 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.helpers.NotificationListTestCase;
@@ -22,11 +22,13 @@ import com.zuehlke.pgadmissions.domain.helpers.RegisteredUserTestHarness;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class UserNotificationListBuilder {
-
+    
     private int taskReminderSuccessCount = 0;
     private int taskNotificationSuccessCount = 0;
     private int updateNotificationSuccessCount = 0;
     private int opportunityRequestNotificationSuccessCount = 0;
+    private Program program;
+    private final TestObjectProvider testObjectProvider;
     private final HashMap<Integer, RegisteredUser> testUsers = new HashMap<Integer, RegisteredUser>();
     private final Action actionWithSyndicatedNotification;
     private final Action actionWithIndividualNotification;
@@ -40,23 +42,25 @@ public class UserNotificationListBuilder {
     private final Date updateBaselineDate;
     private final Date opportunityRequestBaselineDate;
     private final Date reminderBaselineDate;
-    private final Date expiryBaselineDate;
+    private final Date expiryBaselineDate;    
 
     public UserNotificationListBuilder(SessionFactory sessionFactory, Date baselineDate, int testIterations, int reminderIntervalInDays,
-            int expiryIntervalInDays) {
+            int expiryIntervalInDays, Program program) {
         this.encryptionUtils = new EncryptionUtils();
         this.sessionFactory = sessionFactory;
         this.baselineDate = baselineDate;
         this.testIterations = testIterations;
+        this.testObjectProvider = new TestObjectProvider(sessionFactory);
+        this.program = testObjectProvider.getEnabledProgram();
         this.updateBaselineDate = DateUtils.addDays((Date) baselineDate.clone(), -1);
         this.opportunityRequestBaselineDate = DateUtils.addDays((Date) baselineDate.clone(), -1);
         this.reminderBaselineDate = DateUtils.addDays((Date) baselineDate.clone(), -reminderIntervalInDays);
         this.expiryBaselineDate = DateUtils.addDays((Date) baselineDate.clone(), -expiryIntervalInDays);
-        this.actionWithSyndicatedNotification = getDummyAction(ApplicationFormAction.COMPLETE_VALIDATION_STAGE, NotificationMethod.SYNDICATED);
-        this.actionWithIndividualNotification = getDummyAction(ApplicationFormAction.PROVIDE_REFERENCE, NotificationMethod.INDIVIDUAL);
-        this.roleWithUpdateNotification = getDummyRole(Authority.APPLICANT, true);
-        this.roleWithoutUpdateNotification = getDummyRole(Authority.ADMINISTRATOR, false);
-        this.superadministratorRole = getDummyRole(Authority.SUPERADMINISTRATOR, false);
+        this.actionWithSyndicatedNotification = testObjectProvider.getAction(NotificationMethod.SYNDICATED);
+        this.actionWithIndividualNotification = testObjectProvider.getAction(NotificationMethod.INDIVIDUAL);             
+        this.roleWithUpdateNotification = testObjectProvider.getRole(true);
+        this.roleWithoutUpdateNotification = testObjectProvider.getRole(false);
+        this.superadministratorRole = testObjectProvider.getRole(Authority.SUPERADMINISTRATOR);
     }
 
     public HashMap<Integer, RegisteredUserTestHarness> builtTestInstances() {
@@ -344,7 +348,7 @@ public class UserNotificationListBuilder {
     }
 
     private ApplicationForm getDummyApplication() {
-        ApplicationForm application = new ApplicationFormBuilder().applicant(getDummyUser()).build();
+        ApplicationForm application = new ApplicationFormBuilder().applicant(getDummyUser()).advert(program).build();
         saveDummyObject(application);
         return application;
     }
@@ -372,18 +376,6 @@ public class UserNotificationListBuilder {
         applicationFormActionRequired.setAction(action);
         applicationFormActionRequired.setDeadlineTimestamp(baselineDate);
         return applicationFormActionRequired;
-    }
-
-    private Action getDummyAction(ApplicationFormAction actionId, NotificationMethod notification) {
-        Action action = new ActionBuilder().id(actionId).notification(notification).build();
-        updateDummyObject(action);
-        return action;
-    }
-
-    private Role getDummyRole(Authority authority, Boolean doSendUpdateNotification) {
-        Role role = new RoleBuilder().id(authority).doSendUpdateNotification(doSendUpdateNotification).build();
-        updateDummyObject(role);
-        return role;
     }
 
     private void saveDummyObject(Object dummyObject) {

@@ -10,6 +10,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
@@ -28,6 +29,7 @@ public class OpportunityRequestBuilder {
     private Integer studyDuration;
     private Boolean atasRequired;
     private String studyOptions;
+    private ProgramType programType;
     private Integer advertisingDeadlineYear;
     private OpportunityRequestType type = OpportunityRequestType.CREATE;
     private Program sourceProgram;
@@ -97,6 +99,11 @@ public class OpportunityRequestBuilder {
         return this;
     }
 
+    public OpportunityRequestBuilder programType(ProgramType programType) {
+        this.programType = programType;
+        return this;
+    }
+
     public OpportunityRequestBuilder advertisingDeadlineYear(Integer advertisingDeadlineYear) {
         this.advertisingDeadlineYear = advertisingDeadlineYear;
         return this;
@@ -151,6 +158,7 @@ public class OpportunityRequestBuilder {
         request.setStudyDuration(studyDuration);
         request.setAtasRequired(atasRequired);
         request.setStudyOptions(studyOptions);
+        request.setProgramType(programType);
         request.setAdvertisingDeadlineYear(advertisingDeadlineYear);
         request.setType(type);
         request.setSourceProgram(sourceProgram);
@@ -167,7 +175,8 @@ public class OpportunityRequestBuilder {
 
         return new OpportunityRequestBuilder().author(author).createdDate(date.toDate()).institutionCode("AGH").institutionCountry(institutionCountry)
                 .programDescription("This is really amazing Opportunity!").programTitle("Amazing Opportunity").advertisingDeadlineYear(2014).atasRequired(true)
-                .studyDuration(24).studyDurationNumber(2).studyDurationUnit("YEARS").studyOptions("B+++++,F+++++");
+                .studyDuration(24).studyDurationNumber(2).studyDurationUnit("YEARS").studyOptions("B+++++,F+++++")
+                .programType(ProgramTypeBuilder.aProgramType().build());
     }
 
 }

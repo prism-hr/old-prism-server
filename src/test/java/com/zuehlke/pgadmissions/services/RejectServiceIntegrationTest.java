@@ -80,7 +80,7 @@ public class RejectServiceIntegrationTest {
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a5").domicileCode("AE").enabled(true).build();
         qualificationInstitutionDAO.save(institution);
         
-        Program program = new ProgramBuilder().title("alelele").code("blabjk").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(approver).title("alelele").code("blabjk").institution(institution).build();
         program.getApprovers().add(approver);
         programDao.save(program);
 
@@ -90,14 +90,14 @@ public class RejectServiceIntegrationTest {
         userDAO.save(user);
         application.setApplicant(user);
 
-        application.setProgram(program);
+        application.setAdvert(program);
         applicationDAO.save(application);
 
         flushNClear();
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 
-        authenticationToken.setDetails(user);
+        authenticationToken.setDetails(approver);
         SecurityContextImpl secContext = new SecurityContextImpl();
         secContext.setAuthentication(authenticationToken);
         SecurityContextHolder.setContext(secContext);

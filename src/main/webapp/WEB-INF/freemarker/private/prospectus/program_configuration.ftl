@@ -3,7 +3,6 @@
       <h2>Manage Programmes</h2>
       <div id="programAdvertDiv">
           <form>
-              <input type="hidden" id="programAdvertId" value=""/>
               <input type="hidden" id="programAdvertForceCreatingNewInstitution" value="false" />
               <input type="hidden" id="programAdvertProgramLocked" value="false">
               <input type="hidden" id="programAdvertIsCustom" value="false" />
@@ -18,18 +17,39 @@
                             <option value="${programme.code}"<#if program?? && programme.code == program.code>selected</#if> > ${programme.title?html}</option>
                           </#list>
                       </select>
-                      <a class="btn btn-success" id="newProgammeButton">New Programme</a>
+                      <a id="newProgammeButton" class="btn btn-success">New Programme</a>
+                      <a id="cancelNewProgramBtn" class="btn btn-danger" style="display:none">Cancel</a>
                   </div>
-                  
                 </div>
-              	<div class="row" id="programAdvertNewProgramNameDiv" style="display:none">
-                  <label for="programAdvertNewProgramName" class="plain-label">New programme name<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
+                <div id="programAdvertNewProgramDiv" style="display:none">
+                  <label for="programAdvertProgramSelect" class="plain-label">Create new program</label>
+                </div>
+              </div>
+              <div class="row-group" id="institutionGroup">
+                <h3>Program information</h3>
+                <div class="infoBar alert alert-info" id="infoBarInstitution">
+                  <i class="icon-info-sign"></i>Specify your program information here.
+                </div>
+
+              	<div class="row" id="programAdvertProgramNameDiv">
+                  <label for="programAdvertProgramName" class="plain-label">Programme name<em>*</em></label> <span class="hint" data-desc="<@spring.message 'prospectus.programme'/>"></span>
                   <div class="field forLabel">
-                    <input id="programAdvertNewProgramName" name="title" class="input-xxlarge" type="text">
-                    <a id="programAdvertCancelNewProgramBtn" role="button" class="btn btn-danger">Cancel</a>
+                    <input id="programAdvertProgramName" name="title" class="input-xxlarge" type="text">
                   </div>
                 </div>
-                
+                                
+                <div class="row" id="programAdvertProgramTypeDiv">
+                  <label id="programAdvertProgramTypeLabel" class="plain-label" for="programAdvertProgramType">Program Type<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.programType'/>"></span>
+                  <div class="field">
+                    <select id="programAdvertProgramType">
+                      <option value="">Select...</option>
+                      <#list programTypes as programType>
+                        <option value="${programType.id.name()}">${(programType.id.displayValue?html)!}</option>
+                      </#list>
+                    </select>
+                  </div>
+                </div>
                 
                 <div class="row" id="programAdvertAtasRequiredDiv">
                   <label id="programAdvertAtasRequiredLabel" class="plain-label" for="atasRequired">Does the programme require ATAS?<em>*</em></label>
@@ -38,12 +58,6 @@
                     <label><input type="radio" name="programAdvertAtasRequired" value="true" id="programAdvertAtasRequired_true" /> Yes</label>
                     <label><input type="radio" name="programAdvertAtasRequired" value="false" id="programAdvertAtasRequired_false" /> No</label>
                   </div>
-                </div>
-              </div>
-              <div class="row-group" id="institutionGroup">
-                <h3>Institution</h3>
-                <div class="infoBar alert alert-info" id="infoBarInstitution">
-                  <i class="icon-info-sign"></i> Select institution for your programme here.
                 </div>
 
                 <div class="row" id="programAdvertInstitutionCountryDiv">
@@ -79,7 +93,7 @@
                   <label class="plain-label" for="programAdvertInstitutionOtherName">Please Specify<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
                   <div class="field">
-                    <input id="programAdvertInstitutionOtherName" class="full" type="text"/>
+                    <input id="programAdvertInstitutionOtherName" class="full" type="text" autocomplete="off" />
                   </div>
                 </div>
 
@@ -196,7 +210,7 @@
                   </div>
                 </div>
                 <div class="field">
-                  <a id="addProgramAdvertClosingDate" role="button" class="btn btn-primary">Add</a>
+                  <button id="addProgramAdvertClosingDate" role="button" class="btn btn-primary">Add</button>
                 </div>
               </div>                                        
               <div class="row-group">
@@ -214,15 +228,6 @@
                     <label for="programAdvertButtonToApply" class="plain-label">Button to Apply</label> <span class="hint" data-desc="<@spring.message 'prospectus.buttonToApply'/>"></span>
                     <div class="field">
                         <textarea id="programAdvertButtonToApply" class="input-xxlarge" rows="6" cols="150" readonly></textarea>
-                    </div>
-                </div>
-              </div>
-              <div class="row-group">
-                <h3>Delete</h3>
-                <div class="row">
-                    <label for="programAdvertDeleteButton" class="plain-label">Delete program</label>
-                    <div class="field">
-                        <button class="btn btn-danger" type="button" id="programAdvertDeleteButton">Delete</button>
                     </div>
                 </div>
               </div>

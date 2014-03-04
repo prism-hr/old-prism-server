@@ -676,6 +676,10 @@ label em {
 .grey-label em { 
 	color: #AAA !important; 
 }
+#programDescriptionError {
+	margin-top: 10px;
+}
+
 /*!
  * bootstrap-select v1.4.2
  * http://silviomoreto.github.io/bootstrap-select/

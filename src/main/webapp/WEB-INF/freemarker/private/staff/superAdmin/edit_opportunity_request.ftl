@@ -110,7 +110,7 @@ span.count {
                     <div class="row-group">
                       <h3 class="no-arrow">
                         <#if user.isInRole('SUPERADMINISTRATOR')>
-                          Program Request
+                          Original Program Request
                         <#else>
                           Revise Programme Request
                         </#if> 
@@ -165,11 +165,13 @@ span.count {
                           <#assign selectedOptionsString = opportunityRequest.studyOptions!"">    
                           <#assign selectedOptions = selectedOptionsString?split(",")>
                           <label class="admin_row_label">Study Options</label>
-                          <#list studyOptions as studyOption>
-                            <#if selectedOptions?seq_contains(studyOption.id)>
-                              <div class="field">${(studyOption.id)!}</div>
-                            </#if>
-                          </#list>
+                          <div class="field">
+	                          <#list studyOptions as studyOption>
+	                            <#if selectedOptions?seq_contains(studyOption.id)>
+	                              ${(studyOption.name)!}<#if studyOption_has_next>,<#else>.</#if>
+	                            </#if>
+	                          </#list>
+	                      </div>
                         </div>
                         
                         <div class="admin_row">

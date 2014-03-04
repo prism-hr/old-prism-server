@@ -68,11 +68,11 @@ function setNewProgramCreationMode(flag) {
     if(flag) {
         $("#newProgammeButton").hide();
         $("#cancelNewProgramBtn").show();
-        $("#programAdvertProgramSelect").prop("readonly", "readonly").prop("disabled", "disabled");
+        $("#programAdvertProgramSelect").attr("readonly", "readonly").attr("disabled", "disabled");
     } else {
         $("#cancelNewProgramBtn").hide();
         $("#newProgammeButton").show();
-        $("#programAdvertProgramSelect").removeProp("readonly", "readonly").removeProp("disabled", "disabled");
+        $("#programAdvertProgramSelect").removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
     }
 }
 
@@ -148,10 +148,10 @@ function getInstitutionData(successCallback) {
 function otherInstitutionCheck() {
     if ($('#programAdvertInstitution').val() == 'OTHER') {
         $("#programAdvertInstitutionOtherNameDiv label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("#programAdvertInstitutionOtherNameDiv input").prop("readonly", false).prop("disabled", false);
+        $("#programAdvertInstitutionOtherNameDiv input").attr("readonly", false).attr("disabled", false);
     } else {
         $("#programAdvertInstitutionOtherNameDiv label").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("#programAdvertInstitutionOtherNameDiv input").prop("readonly", true).prop("disabled", true).val('');
+        $("#programAdvertInstitutionOtherNameDiv input").attr("readonly", true).attr("disabled", true).val('');
     }
 };
 
@@ -168,29 +168,29 @@ function checkToDisable() {
     if ((existingProgramSelected && !programLocked) || newProgramSelected) {
         // new or existing program
         $("#institutionGroup label, #advertGroup label #programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").removeProp("readonly", "readonly");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").removeProp("disabled", "disabled");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").removeAttr("readonly", "readonly");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").removeAttr("disabled", "disabled");
     } else {
         $("#institutionGroup label, #advertGroup label #programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").prop("readonly", "readonly");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").prop("disabled", "disabled");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").attr("readonly", "readonly");
+        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").attr("disabled", "disabled");
     }
     
     if ((existingProgramSelected && !programLocked && isCustom) || newProgramSelected) {
-        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').removeProp("readonly", "readonly").removeProp("disabled", "disabled");
+        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
     } else {
-        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').prop("readonly", true).prop("disabled", "disabled");
+        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').attr("readonly", true).attr("disabled", "disabled");
     }
 
     if (existingProgramSelected != "" && !programLocked) {
         // existing program
         $("#programAdvertClosingDateGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("#programAdvertClosingDateGroup input").removeProp("readonly", "readonly");
-        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup button").removeProp("disabled", "disabled");
+        $("#programAdvertClosingDateGroup input").removeAttr("readonly", "readonly");
+        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup button").removeAttr("disabled", "disabled");
     } else {
         $("#programAdvertClosingDateGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("#programAdvertClosingDateGroup input").prop("readonly", "readonly");
-        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup button").prop("disabled", "disabled");
+        $("#programAdvertClosingDateGroup input").attr("readonly", "readonly");
+        $("#programAdvertClosingDateGroup input, #programAdvertClosingDateGroup button").attr("disabled", "disabled");
     }
 
     refreshAtasRequiredField();
@@ -202,13 +202,13 @@ function checkToDisable() {
 function refreshAtasRequiredField() {
     if($("#programAdvertInstitutionCountry option:selected").text().trim() == "United Kingdom") {
         $("#programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("[name=programAdvertAtasRequired]").removeProp("disabled", "disabled");
+        $("[name=programAdvertAtasRequired]").removeAttr("disabled", "disabled");
         $("[name=programAdvertAtasRadioValueText]").removeClass("grey-label");
     } else {
         $("#programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("[name=programAdvertAtasRequired]").prop("disabled", "disabled");
+        $("[name=programAdvertAtasRequired]").attr("disabled", "disabled");
         $("[name=programAdvertAtasRadioValueText]").addClass("grey-label");
-        $("[name=programAdvertAtasRequired]").prop("checked", false);
+        $("[name=programAdvertAtasRequired]").attr("checked", false);
     }
 }
 

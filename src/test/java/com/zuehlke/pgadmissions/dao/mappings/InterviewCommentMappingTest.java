@@ -10,23 +10,15 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class InterviewCommentMappingTest extends AutomaticRollbackTestCase {
 
-    @Test
-    public void shouldSaveAndLoadInterviewComment() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a55").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-        save(institution, program);
-
+	@Test
+	public void shouldSaveAndLoadInterviewComment() {
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
@@ -35,8 +27,8 @@ public class InterviewCommentMappingTest extends AutomaticRollbackTestCase {
 
         save(applicant, interviewerUser);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
-        save(applicationForm);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).advert(testObjectProvider.getEnabledProgram()).build();
+		save(applicationForm);
 
         flushAndClearSession();
 

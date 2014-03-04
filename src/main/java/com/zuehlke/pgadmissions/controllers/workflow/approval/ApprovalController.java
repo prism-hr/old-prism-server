@@ -111,7 +111,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             modelMap.put("sendToPorticoData", porticoData);
         }
 
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, registeredUser);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, registeredUser);
         return APPROVAL_PAGE;
     }
 
@@ -198,7 +198,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         approvalRound.setMissingQualificationExplanation(sendToPorticoData.getEmptyQualificationsExplanation());
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return PROPOSE_OFFER_RECOMMENDATION_SECTION;
     }
 
@@ -210,7 +210,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         }
 
         qualificationService.selectForSendingToPortico(applicationForm, sendToPorticoData.getQualificationsSendToPortico());
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return QUALIFICATION_SECTION;
     }
 
@@ -256,7 +256,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             // applicationsService.refresh(applicationForm);
             // refereeService.refresh(referee);
 
-            applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+            applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
             applicationsService.save(applicationForm);
 
             String newRefereeId = encryptionHelper.encrypt(referee.getId());

@@ -122,7 +122,7 @@ public class ReferenceController {
                 referenceComment.getScores().addAll(scores);
                 referenceComment.setAlert(customQuestion.getAlert());
             } catch (ScoringDefinitionParseException e) {
-                log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getProgram().getTitle());
+                log.error("Incorrect scoring XML configuration for reference stage in program: " + applicationForm.getAdvert().getTitle());
             }
         }
 
@@ -142,7 +142,7 @@ public class ReferenceController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, getCurrentUser());
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return ADD_REFERENCES_VIEW_NAME;
     }
 
@@ -173,7 +173,7 @@ public class ReferenceController {
         applicationFormUserRoleService.referencePosted(comment);
 
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=reference.uploaded&application=" + comment.getApplication().getApplicationNumber();
     }
 

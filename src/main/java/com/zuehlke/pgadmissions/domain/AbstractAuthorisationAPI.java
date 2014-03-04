@@ -137,7 +137,7 @@ public abstract class AbstractAuthorisationAPI {
 
     public boolean isProjectAdministrator(final ApplicationForm form, final RegisteredUser user) {
         Project project = form.getProject();
-        return project != null && (areEqual(user, project.getAdministrator()) || areEqual(user, project.getPrimarySupervisor()));
+        return project != null && (areEqual(user, project.getContactUser()) || areEqual(user, project.getPrimarySupervisor()));
     }
 
     public boolean isProgrammeAdministrator(final ApplicationForm form, final RegisteredUser user) {

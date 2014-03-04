@@ -109,7 +109,7 @@ public class InterviewConfirmController {
         interviewConfirmDTO.setInterviewInstructions(latestComment.getAppointmentInstructions());
         interviewConfirmDTO.setLocationUrl(latestComment.getLocationUrl());
         modelMap.put("interviewConfirmDTO", interviewConfirmDTO);
-        applicationFormUserRoleService.deregisterApplicationUpdate(applicationForm, user);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_CONFIRM_PAGE;
     }
 

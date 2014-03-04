@@ -7,24 +7,20 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 
 @Service
 public class DataMaintenanceTask {
 
     private final Logger log = LoggerFactory.getLogger(DataMaintenanceTask.class);
-
-    @Autowired
-    private ProgramInstanceService programInstanceService;
     
     @Autowired
     private DocumentService documentService;
 
     @Scheduled(cron = "${data.maintenance.cron}")
     public void maintainData() {
-        log.info("Running maintenance task");
-        programInstanceService.disableLapsedInstances();
+        log.info("Running data maintenance tasks");
         documentService.deleteOrphanDocuments();
+        log.info("Completed data maintenance tasks");
     }
 
 }

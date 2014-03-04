@@ -96,7 +96,7 @@ public class OfferRecommendationController {
         modelMap.put("offerRecommendedComment", offerRecommendedComment);
         // TODO using approvalComment instead of approval round, fix tests and ftl's
         modelMap.put("approvalComment", approvalComment);
-        applicationFormUserRoleService.deregisterApplicationUpdate(application, user);
+        applicationFormUserRoleService.deleteApplicationUpdate(application, user);
         return OFFER_RECOMMENDATION_VIEW_NAME;
     }
 
@@ -116,7 +116,7 @@ public class OfferRecommendationController {
             offerRecommendedService.sendToPortico(application);
             modelMap.put("messageCode", "move.approved");
             modelMap.put("application", application.getApplicationNumber());
-            applicationFormUserRoleService.registerApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
+            applicationFormUserRoleService.insertApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
             return "redirect:/applications";
         } else {
             return "redirect:/rejectApplication?applicationId=" + application.getApplicationNumber() + "&rejectionId=7";

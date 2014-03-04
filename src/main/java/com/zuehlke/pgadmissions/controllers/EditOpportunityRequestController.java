@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +24,18 @@ import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
+import com.zuehlke.pgadmissions.services.PermissionsService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
+import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
 
@@ -54,8 +60,11 @@ public class EditOpportunityRequestController {
     @Autowired
     private DomicilePropertyEditor domicilePropertyEditor;
 
-    @Autowired
+    @Resource(name = "opportunityRequestValidator")
     private OpportunityRequestValidator opportunityRequestValidator;
+    
+    @Autowired
+    private ProgramsService programsService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;
@@ -66,9 +75,18 @@ public class EditOpportunityRequestController {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private ProgramTypePropertyEditor programTypePropertyEditor;
+
+    @Autowired
+    private PermissionsService permissionsService;
+
     @RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
     public String getEditOpportunityRequestPage(@PathVariable("requestId") Integer requestId, ModelMap modelMap) {
         OpportunityRequest opportunityRequest = opportunitiesService.getOpportunityRequest(requestId);
+        if (!permissionsService.canSeeOpportunityRequest(opportunityRequest)) {
+            throw new ResourceNotFoundException();
+        }
 
         // force to recompute study duration number and unit
         opportunityRequest.setStudyDuration(opportunityRequest.getStudyDuration());
@@ -92,8 +110,12 @@ public class EditOpportunityRequestController {
     public Object respondToOpportunityRequest(@PathVariable("requestId") Integer requestId, @Valid OpportunityRequest opportunityRequest,
             BindingResult requestBindingResult, @ModelAttribute("comment") @Valid OpportunityRequestComment comment, BindingResult commentBindingResult,
             ModelMap modelMap) {
+        OpportunityRequest existingRequest = opportunitiesService.getOpportunityRequest(requestId);
+        if (!permissionsService.canPostOpportunityRequestComment(existingRequest, comment)) {
+            throw new ResourceNotFoundException();
+        }
+
         if (requestBindingResult.hasErrors() || commentBindingResult.hasErrors()) {
-            OpportunityRequest existingRequest = opportunitiesService.getOpportunityRequest(requestId);
 
             opportunityRequest.setAuthor(existingRequest.getAuthor());
             opportunityRequest.setCreatedDate(existingRequest.getCreatedDate());
@@ -113,6 +135,7 @@ public class EditOpportunityRequestController {
 
             return EDIT_REQUEST_PAGE_VIEW_NAME;
         }
+        opportunityRequest.setAcceptingApplications(existingRequest.getAcceptingApplications());
         opportunitiesService.respondToOpportunityRequest(requestId, opportunityRequest, comment);
         return new RedirectView("/requests", true, true, false);
     }
@@ -123,6 +146,7 @@ public class EditOpportunityRequestController {
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+        binder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
     }
 
     @InitBinder(value = "comment")
@@ -148,6 +172,11 @@ public class EditOpportunityRequestController {
     @ModelAttribute("advertisingDeadlines")
     public List<Integer> getAdvertisingDeadlines() {
         return programInstanceService.getPossibleAdvertisingDeadlineYears();
+    }
+
+    @ModelAttribute("programTypes")
+    public List<ProgramType> getProgramTypes() {
+        return programsService.getProgramTypes();
     }
 
 }

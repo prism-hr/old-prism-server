@@ -191,7 +191,7 @@ public class RegisteredUserTest {
     @Test
     public void shouldHaveAdminRightsOnAppIfAdministratorInApplicationProgram() {
         RegisteredUser user = new RegisteredUserBuilder().id(8).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().administrators(user).build())
+        ApplicationForm applicationForm = new ApplicationFormBuilder().advert(new ProgramBuilder().administrators(user).build())
                 .status(ApplicationFormStatus.VALIDATION).build();
         assertTrue(user.hasAdminRightsOnApplication(applicationForm));
     }
@@ -199,7 +199,7 @@ public class RegisteredUserTest {
     @Test
     public void shouldHaveAdminRightsOnAppIfAdministratorInApplicationProject() {
         RegisteredUser user = new RegisteredUserBuilder().id(8).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(new Program()).project(new ProjectBuilder().administrator(user).build())
+        ApplicationForm applicationForm = new ApplicationFormBuilder().advert(new Program()).advert(new ProjectBuilder().contactUser(user).build())
                 .status(ApplicationFormStatus.VALIDATION).build();
         assertTrue(user.hasAdminRightsOnApplication(applicationForm));
     }
@@ -214,7 +214,7 @@ public class RegisteredUserTest {
     @Test
     public void shouldNotHaveAdminRightsOnAppNeihterAdministratorOfProgramOrApplication() {
         RegisteredUser user = new RegisteredUserBuilder().id(8).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().program(new Program()).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().advert(new Program()).status(ApplicationFormStatus.VALIDATION).build();
         assertFalse(user.hasAdminRightsOnApplication(applicationForm));
     }
 

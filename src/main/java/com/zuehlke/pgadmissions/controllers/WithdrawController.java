@@ -55,8 +55,8 @@ public class WithdrawController {
 
         withdrawService.withdrawApplication(applicationForm);
         withdrawService.sendToPortico(applicationForm);
-        applicationFormUserRoleService.moveToApprovedOrRejectedOrWithdrawn(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.deleteApplicationActions(applicationForm);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();
     }
 

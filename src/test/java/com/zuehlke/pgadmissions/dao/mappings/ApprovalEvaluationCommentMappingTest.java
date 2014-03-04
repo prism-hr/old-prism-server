@@ -17,14 +17,15 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class ApprovalEvaluationCommentMappingTest extends AutomaticRollbackTestCase {
 
-    @Test
-    public void shouldSaveAndLoadInterviewEvaluationComment() {
-        Program program = (Program) sessionFactory.getCurrentSession().get(Program.class, 63);
+	
+	@Test
+	public void shouldSaveAndLoadInterviewEvaluationComment() {
+	    Program program = testObjectProvider.getEnabledProgram();
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).program(program).build();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(user).advert(program).build();
 
         save(user, applicationForm);
 

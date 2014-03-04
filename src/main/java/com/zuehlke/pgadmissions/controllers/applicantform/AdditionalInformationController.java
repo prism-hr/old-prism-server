@@ -71,7 +71,7 @@ public class AdditionalInformationController {
         
         application.setAdditionalInformation(info);
         additionalService.save(info);
-        applicationFormUserRoleService.registerApplicationUpdate(application, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(application, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
         return "redirect:/update/getAdditionalInformation?applicationId=" + info.getApplication().getApplicationNumber();
 

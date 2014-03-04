@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
@@ -35,16 +36,20 @@ import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
+import com.zuehlke.pgadmissions.services.PermissionsService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
@@ -86,6 +91,14 @@ public class EditOpportunityRequestControllerTest {
 
     @Mock
     @InjectIntoByType
+    private ProgramTypePropertyEditor programTypePropertyEditor;
+
+    @Mock
+    @InjectIntoByType
+    private PermissionsService permissionsService;
+
+    @Mock
+    @InjectIntoByType
     private ApplicationContext applicationContext;
 
     @TestedObject
@@ -99,6 +112,7 @@ public class EditOpportunityRequestControllerTest {
         ModelMap modelMap = new ModelMap();
         List<QualificationInstitution> institutions = Lists.newArrayList();
 
+        expect(permissionsService.canSeeOpportunityRequest(opportunityRequest)).andReturn(true);
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(opportunityRequest);
         expect(opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest)).andReturn(requests);
         expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutions);
@@ -114,13 +128,28 @@ public class EditOpportunityRequestControllerTest {
         assertEquals(EditOpportunityRequestController.EDIT_REQUEST_PAGE_VIEW_NAME, result);
     }
 
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldNotGetEditOpportunityRequestPageIfNotEnoughPermissions() {
+        OpportunityRequest opportunityRequest = new OpportunityRequest();
+
+        expect(permissionsService.canSeeOpportunityRequest(opportunityRequest)).andReturn(false);
+        expect(opportunitiesService.getOpportunityRequest(8)).andReturn(opportunityRequest);
+
+        replay();
+        controller.getEditOpportunityRequestPage(8, null);
+    }
+
     @Test
     public void shouldRespondToOpportunityRequest() {
-        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDurationUnit("MONTHS").studyDurationNumber(3).build();
+        OpportunityRequest existingOpportunityRequest = new OpportunityRequestBuilder().acceptingApplications(true).build();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDurationUnit("MONTHS").studyDurationNumber(3).acceptingApplications(false)
+                .build();
         OpportunityRequestComment comment = new OpportunityRequestComment();
         BindingResult requestBindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
         BindingResult commentBindingResult = new DirectFieldBindingResult(comment, "comment");
 
+        expect(permissionsService.canPostOpportunityRequestComment(existingOpportunityRequest, comment)).andReturn(true);
+        expect(opportunitiesService.getOpportunityRequest(8)).andReturn(existingOpportunityRequest);
         opportunitiesService.respondToOpportunityRequest(8, opportunityRequest, comment);
 
         replay();
@@ -131,25 +160,28 @@ public class EditOpportunityRequestControllerTest {
         assertEquals(3, opportunityRequest.getStudyDuration().intValue());
         assertEquals("/requests", result.getUrl());
         assertFalse(result.isExposePathVariables());
+        assertTrue(opportunityRequest.getAcceptingApplications());
     }
 
     @Test
     public void shouldRespondToOpportunityRequestWhenBindingErrors() {
+        RegisteredUser author = new RegisteredUser();
+        Date createdDate = new Date();
         Domicile institutionCountry = new DomicileBuilder().code("PL").build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).build();
+        OpportunityRequest existingRequest = new OpportunityRequestBuilder().author(author).createdDate(createdDate).status(OpportunityRequestStatus.REJECTED)
+                .build();
         OpportunityRequestComment comment = new OpportunityRequestComment();
-        RegisteredUser author = new RegisteredUser();
         ModelMap modelMap = new ModelMap();
         BindingResult requestBindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
         requestBindingResult.reject("error");
         BindingResult commentBindingResult = new DirectFieldBindingResult(comment, "comment");
         List<QualificationInstitution> institutions = Lists.newArrayList();
-        Date createdDate = new Date();
         List<OpportunityRequest> requests = Lists.newArrayList();
 
+        expect(permissionsService.canPostOpportunityRequestComment(existingRequest, comment)).andReturn(true);
         expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutions);
-        expect(opportunitiesService.getOpportunityRequest(8)).andReturn(
-                new OpportunityRequestBuilder().author(author).createdDate(createdDate).status(OpportunityRequestStatus.REJECTED).build());
+        expect(opportunitiesService.getOpportunityRequest(8)).andReturn(existingRequest);
         expect(opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest)).andReturn(requests);
 
         replay();
@@ -163,7 +195,19 @@ public class EditOpportunityRequestControllerTest {
         assertSame(author, opportunityRequest.getAuthor());
         assertSame(createdDate, opportunityRequest.getCreatedDate());
         assertEquals(OpportunityRequestStatus.REJECTED, opportunityRequest.getStatus());
-        
+
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldNotRespondToOpportunityRequestIfNotEnoughPermissions() {
+        OpportunityRequest opportunityRequest = new OpportunityRequest();
+        OpportunityRequestComment comment = new OpportunityRequestComment();
+
+        expect(permissionsService.canPostOpportunityRequestComment(opportunityRequest, comment)).andReturn(false);
+        expect(opportunitiesService.getOpportunityRequest(8)).andReturn(opportunityRequest);
+
+        replay();
+        controller.respondToOpportunityRequest(8, null, null, comment, null, null);
     }
 
     @Test
@@ -197,6 +241,7 @@ public class EditOpportunityRequestControllerTest {
         dataBinder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         dataBinder.registerCustomEditor(Date.class, datePropertyEditor);
         dataBinder.registerCustomEditor(eq(String.class), isA(StringTrimmerEditor.class));
+        dataBinder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
 
         replay();
         controller.registerOpportunityRequestPropertyEditors(dataBinder);

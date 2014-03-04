@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -86,6 +87,10 @@ public class OpportunityRequest {
     @JoinColumn(name = "opportunity_request_id", nullable = false)
     @OrderBy("createdTimestamp")
     private List<OpportunityRequestComment> comments = Lists.newArrayList();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "program_type_id")
+    private ProgramType programType;
 
     @Transient
     private String funding;
@@ -225,6 +230,14 @@ public class OpportunityRequest {
 
     public List<OpportunityRequestComment> getComments() {
         return comments;
+    }
+
+    public ProgramType getProgramType() {
+        return programType;
+    }
+
+    public void setProgramType(ProgramType programType) {
+        this.programType = programType;
     }
 
     public String getFunding() {

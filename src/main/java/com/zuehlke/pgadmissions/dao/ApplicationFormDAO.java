@@ -5,12 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -134,14 +133,40 @@ public class ApplicationFormDAO {
                         .add(Restrictions.eq("cv", document))).uniqueResult();
     }
 
-    public ApplicationForm getPreviousApplicationForApplicant(ApplicationForm applicationForm) {
-        DetachedCriteria previousAppCriteria = DetachedCriteria.forClass(ApplicationForm.class).setProjection(Projections.max("applicationTimestamp"))
-                .add(Restrictions.eq("applicant", applicationForm.getApplicant())).add(Restrictions.ne("id", applicationForm.getId()));
+    public ApplicationForm getPreviousApplicationForApplicant(ApplicationForm applicationForm, RegisteredUser applicant) {
+        Boolean copySubmittedApplication = true;
+        Integer applicationFormId = applicationForm.getId();
+        
+        Date copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .setProjection(Projections.max("submittedDate"))
+                .add(Restrictions.eq("applicant", applicant))
+                .add(Restrictions.isNotNull("submittedDate"))
+                .add(Restrictions.ne("id", applicationFormId)).uniqueResult();
+        
+        if (copyOnDate == null) {
+            copySubmittedApplication = false;
+            copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                    .setProjection(Projections.min("applicationTimestamp"))
+                    .add(Restrictions.eq("applicant", applicant))
+                    .add(Restrictions.ne("id", applicationFormId)).uniqueResult();
+        }
+        
+        if (copyOnDate != null) {
+            Criteria getPreviousApplication = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                    .setProjection(Projections.max("id"))
+                    .add(Restrictions.eq("applicant", applicant))
+                    .add(Restrictions.ne("id", applicationFormId));
+            
+            if (BooleanUtils.isTrue(copySubmittedApplication)) {
+                getPreviousApplication.add(Restrictions.ge("submittedDate", copyOnDate));
+            } else {
+                getPreviousApplication.add(Restrictions.ge("applicationTimestamp", copyOnDate));
+            }
+            
+            return get((Integer) getPreviousApplication.uniqueResult());
+        }
 
-        int latestApplication = (Integer) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).setProjection(Projections.max("id"))
-                .add(Property.forName("applicationTimestamp").eq(previousAppCriteria)).uniqueResult();
-
-        return get(latestApplication);
+        return null;
     }
 
     public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ApplicationFormAction completeStageAction) {

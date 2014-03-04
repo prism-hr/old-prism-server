@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.OpportunityRequest;
+import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -236,17 +236,16 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendOpportunityRequestRejectionConfirmation(OpportunityRequest opportunityRequest) {
-        RegisteredUser author = opportunityRequest.getAuthor();
+    public void sendOpportunityRequestOutcome(OpportunityRequestComment comment) {
+        RegisteredUser user = comment.getOpportunityRequest().getAuthor();
         PrismEmailMessage message = null;
         String subject = resolveMessage(OPPORTUNITY_REQUEST_OUTCOME);
-
         try {
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "opportunityRequest", "host" }, new Object[] { opportunityRequest, getHostName() });
-            message = buildMessage(author, subject, modelBuilder.build(), OPPORTUNITY_REQUEST_OUTCOME);
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] {"user", "comment", "host" }, new Object[] {user, comment, getHostName() });
+            message = buildMessage(user, subject, modelBuilder.build(), OPPORTUNITY_REQUEST_OUTCOME);
             sendEmail(message);
         } catch (Exception e) {
-            log.error("Error while sending opportunity request rejection confirmation: " + author.getDisplayName(), e.getMessage());
+            log.error("Error while sending opportunity request outcome confirmation: " + user.getDisplayName(), e.getMessage());
         }
     }
 

@@ -163,7 +163,7 @@ public class ValidApplicationFormBuilder {
                 .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 5)).enabled(true).studyOption("F+++++", "Full-time")
                 .identifier("0009").build();
         institution = new QualificationInstitutionBuilder().code("code").name("jakas instytucja").domicileCode("AE").enabled(true).build();
-        program = new ProgramBuilder().administrators(user).approver(user).code("TMRMBISING99").enabled(true).instances(instance)
+        program = new ProgramBuilder().contactUser(approverUser).administrators(user).approver(user).code("TMRMBISING99").enabled(true).instances(instance)
                 .title("MRes Medical and Biomedical Imaging").institution(institution).build();
         interest = new SourcesOfInterestBuilder().code("BRIT_COUN").name("British Council").build();
         programDetails = new ProgrammeDetailsBuilder().programmeName("MRes Medical and Biomedical Imaging").projectName("Project Title")
@@ -184,7 +184,7 @@ public class ValidApplicationFormBuilder {
                 .appDate(new Date()).applicant(user).applicationNumber("TMRMBISING01-2012-999999")
                 .batchDeadline(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).contactAddress(address).currentAddress(address)
                 .dueDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).employmentPositions(employmentPosition).fundings(funding)
-                .lastUpdated(new Date()).personalDetails(personalDetails).program(program).programmeDetails(programDetails).projectTitle("Project Title")
+                .lastUpdated(new Date()).personalDetails(personalDetails).advert(program).programmeDetails(programDetails).projectTitle("Project Title")
                 .qualification(qualification1, qualification2).status(ApplicationFormStatus.APPROVED).submittedDate(new Date()).cv(cvDocument)
                 .personalStatement(personalStatement).referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");
         applicationForm = getApplicationFormBuilder().build();

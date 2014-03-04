@@ -119,7 +119,7 @@ public class QualificationController {
 	}
 
     public StringTrimmerEditor newStringTrimmerEditor() {
-        return new StringTrimmerEditor(false);
+        return new StringTrimmerEditor(true);
     }
 	
 	@RequestMapping(value = "/getQualification", method = RequestMethod.GET)
@@ -145,7 +145,7 @@ public class QualificationController {
         
         qualificationService.save(qualification);
         applicationService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
 	}
 	

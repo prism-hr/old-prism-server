@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 
@@ -24,13 +25,13 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 	@Before
 	public void prepare() {
 	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a54").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("newproject").title("another title").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("newproject").title("another title").institution(institution).build();
         save(institution, program);
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
                 .email("email@test.com").username("username").password("password").accountNonExpired(false)
                 .accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         save(applicant);
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
 		save(applicationForm);
 		flushAndClearSession();
 	}
@@ -47,7 +48,6 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void storeFullAdditionalInfo() {
 		AdditionalInfoDAO infoDAO = new AdditionalInfoDAO(sessionFactory);
-		String infoText = "blablabal";
 		String conText = "streaking in public";
 		AdditionalInformation info = new AdditionalInformationBuilder()//
 				.setConvictions(true).convictionsText(conText)//

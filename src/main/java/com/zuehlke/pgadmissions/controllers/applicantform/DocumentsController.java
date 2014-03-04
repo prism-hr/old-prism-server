@@ -68,7 +68,7 @@ public class DocumentsController {
         }
         
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.registerApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/update/getDocuments?applicationId=" + applicationForm.getApplicationNumber();
     }
 

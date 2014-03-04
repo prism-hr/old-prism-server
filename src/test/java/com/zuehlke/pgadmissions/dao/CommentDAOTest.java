@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -28,8 +27,6 @@ import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
@@ -54,18 +51,14 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         commentDAO = new CommentDAO(sessionFactory);
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a24").domicileCode("AE").enabled(true).build();
-        program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-
-        save(user, institution, program);
-
+        save(user);
         flushAndClearSession();
+        program = testObjectProvider.getEnabledProgram();
     }
 
     @Test
     public void shouldSaveAndLoadGenericComment() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).build();
         save(application);
         flushAndClearSession();
 
@@ -94,7 +87,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadReviewComment() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).build();
         save(application);
         flushAndClearSession();
 
@@ -121,7 +114,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetAllReviewCommentsDueAdminEmailNotification() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).build();
         save(application);
         flushAndClearSession();
 
@@ -144,7 +137,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetAllInterviewCommentsDueAdminEmailNotification() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).build();
         save(application);
         flushAndClearSession();
 
@@ -172,7 +165,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
 
         save(user, application);
         flushAndClearSession();
@@ -186,7 +179,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
         Score score1 = new ScoreBuilder().dateResponse(new Date()).question("1??").questionType(QuestionType.RATING).ratingResponse(4).build();
         Score score2 = new ScoreBuilder().dateResponse(new Date()).question("2??").questionType(QuestionType.TEXTAREA).textResponse("aaa").build();
         ReferenceComment comment = new ReferenceCommentBuilder().comment("reference").user(user).application(application).scores(score1, score2).build();

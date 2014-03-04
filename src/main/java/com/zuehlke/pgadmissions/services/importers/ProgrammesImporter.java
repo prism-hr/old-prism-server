@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Preconditions;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProgramFeedDAO;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
@@ -27,6 +28,8 @@ import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgramType;
+import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.referencedata.adapters.PrismProgrammeAdapter;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences;
@@ -41,7 +44,7 @@ public class ProgrammesImporter implements IProgrammesImporter {
     private ApplicationContext applicationContext;
     private final JAXBContext context;
     private final ProgramInstanceDAO programInstanceDAO;
-    private final ProgramDAO programDao;
+    private final ProgramDAO programDAO;
     private final ProgramFeedDAO programFeedDAO;
     private final ImportService importService;
 
@@ -58,7 +61,7 @@ public class ProgrammesImporter implements IProgrammesImporter {
             throws JAXBException {
         this.applicationContext = applicationContext;
         this.programInstanceDAO = programDAO;
-        this.programDao = programDao;
+        this.programDAO = programDao;
         this.programFeedDAO = programFeedDAO;
         this.importService = importService;
         this.user = user;
@@ -101,19 +104,26 @@ public class ProgrammesImporter implements IProgrammesImporter {
             if (program.getId() == null) {
                 program.setProgramFeed(programFeed);
                 program.setInstitution(programFeed.getInstitution());
-                programDao.save(program);
+                ProgramTypeId programTypeId = ProgramTypeId.findValueFromString(program.getTitle());
+                Preconditions.checkNotNull(programTypeId, "Tried to import a program: " + program.getCode() + " with no known type");
+                ProgramType programType = programDAO.getProgramTypeById(programTypeId);
+                program.setProgramType(programType);
+                program.setStudyDuration(programType.getDefaultStudyDuration());
+                programDAO.save(program);
             }
         }
 
         // Update the require ATAS flag in our PRISM domain object
         for (ProgrammeOccurrence programmeOccurence : programmes.getProgrammeOccurrence()) {
             Programme programme = programmeOccurence.getProgramme();
-            Program prismProgram = programDao.getProgramByCode(programme.getCode());
+            Program prismProgram = programDAO.getProgramByCode(programme.getCode());
             if (prismProgram != null) {
                 prismProgram.setAtasRequired(BooleanUtils.isTrue(programme.isAtasRegistered()));
-                programDao.save(prismProgram);
+                programDAO.save(prismProgram);
             }
         }
+        
+        
 
     }
 

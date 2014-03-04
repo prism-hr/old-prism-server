@@ -120,8 +120,16 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     private String projectTitle;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "advert_id")
+    private Advert advert;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
     private Program program;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    private Project project;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "personal_detail_id")
@@ -171,10 +179,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Column(name = "ucl_booking_ref_number")
     private String uclBookingReferenceNumber;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id")
-    private Project project;
 
     @OneToMany(mappedBy = "applicationForm")
     private List<ApplicationFormUserRole> applicationFormUserRoles = new ArrayList<ApplicationFormUserRole>();
@@ -407,17 +411,45 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.dueDate = validationDueDate;
     }
 
+    public Advert getAdvert() {
+        return advert;
+    }
+
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
+        if (advert != null) {
+            Program program = null;
+            Project project = advert.getProject();
+            if (project != null) {
+                program = project.getProgram();
+            } else {
+                program = advert.getProgram();
+            }
+            this.program = program;
+            this.project = project;
+        }
+    }
+    
     public Program getProgram() {
         return program;
     }
-
+    
     public void setProgram(Program program) {
         this.program = program;
     }
+    
+    public Project getProject() {
+        return project;
+    }
+    
+    public void setProject(Project project) {
+        this.project = project;
+    }  
 
     public String getProjectTitle() {
-        if (getProject() != null) {
-            return getProject().getAdvert().getTitle();
+        Project project = getProject();
+        if (project != null) {
+            return project.getTitle();
         } else {
             return projectTitle;
         }
@@ -714,27 +746,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return today.after(dueDate);
     }
 
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
     public String getProgramAndProjectTitle() {
         if (getProjectTitle() == null) {
-            return getProgram().getTitle();
+            return getAdvert().getTitle();
         }
         String format = "%s (project: %s)";
-        return String.format(format, getProgram().getTitle(), getProjectTitle());
+        return String.format(format, getAdvert().getTitle(), getProjectTitle());
     }
 
     public String getProjectOrProgramTitle() {
         if (getProjectTitle() != null) {
             return getProjectTitle();
         }
-        return getProgram().getTitle();
+        return getAdvert().getTitle();
     }
 
     public Integer getAverageRatingPercent() {

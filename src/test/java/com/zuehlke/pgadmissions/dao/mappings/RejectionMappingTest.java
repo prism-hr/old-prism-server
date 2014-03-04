@@ -10,14 +10,10 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 
@@ -48,12 +44,8 @@ public class RejectionMappingTest extends AutomaticRollbackTestCase {
     public void shouldLoadApformWithRejection() {
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a17").domicileCode("AE").enabled(true).build();
-        Program program = new ProgramBuilder().code("doesntexist").title("another title").institution(institution).build();
-
-        save(user, institution, program);
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
+        save(user);
+        ApplicationForm application = new ApplicationFormBuilder().advert(testObjectProvider.getEnabledProgram()).applicant(user).build();
         save(application);
 
         RejectReasonDAO rejectReasonDAO = new RejectReasonDAO(sessionFactory);

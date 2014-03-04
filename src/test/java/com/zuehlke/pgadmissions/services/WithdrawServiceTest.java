@@ -42,7 +42,7 @@ public class WithdrawServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
 
         applicationServiceMock.save(applicationForm);
-        applicationFormUserRoleServiceMock.moveToApprovedOrRejectedOrWithdrawn(applicationForm);
+        applicationFormUserRoleServiceMock.deleteApplicationActions(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);
@@ -57,7 +57,7 @@ public class WithdrawServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).build();
 
         applicationServiceMock.save(applicationForm);
-        applicationFormUserRoleServiceMock.moveToApprovedOrRejectedOrWithdrawn(applicationForm);
+        applicationFormUserRoleServiceMock.deleteApplicationActions(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);

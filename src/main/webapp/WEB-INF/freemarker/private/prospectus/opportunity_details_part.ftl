@@ -1,7 +1,4 @@
 
-<div class="alert alert-info">
-				<i class="icon-info-sign"></i> If you would like to advertise an opportunity to our users, you can apply to do this by completing the inquiry form below.  Already registered? -<a href="/pgadmissions/prospectus"> <strong>Please Login</strong></a> to proceed
-</div>
 <div class="row">
   <label class="plain-label" for="institutionCountry">Institution Country<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionCountry'/>"></span>
@@ -93,6 +90,28 @@
   <div class="field">
     <textarea id="programDescription" name="programDescription" class="max" cols="70" rows="6">${(opportunityRequest.programDescription?html)!}</textarea>
     <@spring.bind "opportunityRequest.programDescription" />
+    <#list spring.status.errorMessages as error>
+      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+        ${error}
+      </div>
+    </#list>
+  </div>
+</div>
+
+<div class="row">
+  <label id="programTypeLabel" class="plain-label" for="programType">Program Type<em>*</em></label>
+  <span class="hint" data-desc="<@spring.message 'opportunityRequest.programType'/>"></span>
+  <div class="field">
+    <select id="programType" name="programType">
+      <option value="">Select...</option>
+      <#list programTypes as programType>
+        <option value="${programType.id.name()}"
+          <#if opportunityRequest.programType?? && opportunityRequest.programType.id == programType.id> selected="selected"</#if>
+          >${(programType.id.displayValue?html)!}
+        </option>
+      </#list>
+    </select>
+    <@spring.bind "opportunityRequest.programType" />
     <#list spring.status.errorMessages as error>
       <div class="alert alert-error"> <i class="icon-warning-sign"></i>
         ${error}

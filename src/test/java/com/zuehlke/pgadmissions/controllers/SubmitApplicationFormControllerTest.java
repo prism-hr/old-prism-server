@@ -34,7 +34,6 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -51,11 +50,12 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
-import com.zuehlke.pgadmissions.exceptions.CannotApplyToProgramException;
+import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
@@ -89,7 +89,7 @@ public class SubmitApplicationFormControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ProgramInstanceDAO programInstanceDAOMock;
+    private ProgramsService programsService;
 
     private MockHttpServletRequest httpServletRequestMock;
 
@@ -105,17 +105,14 @@ public class SubmitApplicationFormControllerTest {
     }
 
     @Test
-    public void shouldReturnStudenApplicationViewOnGetForApplicantOfApplciation() {
+    public void shouldReturnStudenApplicationViewOnGetForApplicantOfApplication() {
         Program program = new ProgramBuilder().id(1).build();
         ProgramInstance instance = new ProgramInstanceBuilder().program(program).applicationDeadline(DateUtils.addMonths(new Date(), 1)).enabled(true).build();
         program.getInstances().add(instance);
         List<ProgramInstance> referenceInstanceList = new ArrayList<ProgramInstance>();
         referenceInstanceList.add(instance);
 
-        expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(referenceInstanceList);
-        replay(programInstanceDAOMock);
-
-        String view = controller.getApplicationView(null, new ApplicationFormBuilder().applicant(student).id(1).program(program).build());
+        String view = controller.getApplicationView(null, new ApplicationFormBuilder().applicant(student).id(1).advert(program).build());
 
         assertEquals("/private/pgStudents/form/main_application_page", view);
     }
@@ -123,7 +120,7 @@ public class SubmitApplicationFormControllerTest {
     @Test
     public void shouldReturnAdminApplicationViewOnGetForApplicantButNotOfApplication() {
         String view = controller.getApplicationView(null,
-                new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().id(6).build()).id(1).program(new ProgramBuilder().id(1).build()).build());
+                new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().id(6).build()).id(1).advert(new ProgramBuilder().id(1).build()).build());
         assertEquals("/private/staff/application/main_application_page", view);
     }
 
@@ -135,7 +132,7 @@ public class SubmitApplicationFormControllerTest {
         replay(userServiceMock);
 
         String view = controller.getApplicationView(null,
-                new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(1).program(new ProgramBuilder().id(1).build()).applicant(student)
+                new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(1).advert(new ProgramBuilder().id(1).build()).applicant(student)
                         .build());
         assertEquals("/private/staff/application/main_application_page", view);
     }
@@ -143,7 +140,7 @@ public class SubmitApplicationFormControllerTest {
     @Test
     public void shouldReturnEditableApplicationViewOnGetForProgrammeAdministrator() {
         Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).applicationNumber("abc").program(program)
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).applicationNumber("abc").advert(program)
                 .applicant(student).build();
 
         reset(userServiceMock, actionsProviderMock);
@@ -160,7 +157,7 @@ public class SubmitApplicationFormControllerTest {
     @Test
     public void shouldNotReturnEditableApplicationViewOnGetForProgrammeAdministratorIfApplicationIsNotSubmitted() {
         Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).id(1).program(program).applicant(student)
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).id(1).advert(program).applicant(student)
                 .build();
 
         reset(userServiceMock);
@@ -174,7 +171,7 @@ public class SubmitApplicationFormControllerTest {
     @Test
     public void shouldNotReturnEditableApplicationViewOnGetForProgrammeAdministratorIfApplicationIsDecided() {
         Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(1).program(program).applicant(student).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(1).advert(program).applicant(student).build();
 
         reset(userServiceMock);
         expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
@@ -199,7 +196,7 @@ public class SubmitApplicationFormControllerTest {
     @Test
     public void shouldNotReturnEditableApplicationViewOnGetForProgrammeAdministratorIfApplicationIsInValidation() {
         Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).program(program).applicant(student)
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).advert(program).applicant(student)
                 .build();
 
         reset(userServiceMock);
@@ -215,7 +212,7 @@ public class SubmitApplicationFormControllerTest {
         reset(userServiceMock);
         expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         replay(userServiceMock);
-        String view = controller.getApplicationView(null, new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).build()).applicant(student)
+        String view = controller.getApplicationView(null, new ApplicationFormBuilder().id(1).advert(new ProgramBuilder().id(1).build()).applicant(student)
                 .build());
         assertEquals("/private/staff/application/main_application_page", view);
     }
@@ -249,7 +246,7 @@ public class SubmitApplicationFormControllerTest {
         assertEquals("/private/pgStudents/form/main_application_page", view);
     }
 
-    @Test(expected = CannotApplyToProgramException.class)
+    @Test(expected = CannotApplyException.class)
     public void shouldThrowCannotApplyToProgramExceptionIfNotAvailable() {
         BindingResult errorsMock = createMock(BindingResult.class);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).build();
@@ -276,7 +273,7 @@ public class SubmitApplicationFormControllerTest {
         StageDuration validationDuration = new StageDurationBuilder().duration(1).stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.WEEKS).build();
         expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(validationDuration);
         applicationFormUserRoleServiceMock.applicationSubmitted(applicationForm);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
         controller.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
@@ -305,7 +302,7 @@ public class SubmitApplicationFormControllerTest {
         expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
         applicationFormUserRoleServiceMock.applicationSubmitted(applicationForm);
-        applicationFormUserRoleServiceMock.registerApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
         String view = controller.submitApplication(applicationForm, errorsMock, httpServletRequestMock);

@@ -61,7 +61,7 @@ public class MoveToReviewController {
     public String getReviewRoundDetailsPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         actionsProvider.validateAction(application, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
-        applicationFormUserRoleService.deregisterApplicationUpdate(application, getUser());
+        applicationFormUserRoleService.deleteApplicationUpdate(application, getUser());
         return REVIEW_DETAILS_VIEW_NAME;
     }
 

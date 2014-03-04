@@ -99,19 +99,19 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional
     public List<Integer> getUsersForTaskNotification(Date baselineDate) {
-        applicationFormUserRoleService.updateRaisesUrgentFlag();
+        applicationFormUserRoleService.updateUrgentApplications();
         return userDAO.getUsersDueTaskNotification(baselineDate);
     }
 
     @Transactional
     public List<Integer> getUsersForTaskReminder(Date baselineDate) {
-        applicationFormUserRoleService.updateRaisesUrgentFlag();
+        applicationFormUserRoleService.updateUrgentApplications();
         return userDAO.getUsersDueTaskReminder(baselineDate);
     }
 
     @Transactional
     public List<Integer> getUsersForUpdateNotification(Date baselineDate) {
-        applicationFormUserRoleService.updateRaisesUrgentFlag();
+        applicationFormUserRoleService.updateUrgentApplications();
         return userDAO.getUsersDueUpdateNotification(baselineDate);
     }
 
@@ -204,7 +204,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
                     adminsEmails, referee, application, application.getApplicant(), getHostName() });
-
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
             sendEmail(message);
             referee.setLastNotified(new Date());

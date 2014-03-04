@@ -348,7 +348,7 @@ public class ApplicationFormUserRoleService {
     }
     
     private void deleteUserAction(ApplicationForm applicationForm, RegisteredUser registeredUser, Authority authority, ApplicationFormAction action) {
-        deleteUserAction(applicationForm, registeredUser, authority, action);
+        applicationFormUserRoleDAO.deleteUserAction(applicationForm, registeredUser, authority, action);
     }
     
     public void deleteUserRole(RegisteredUser registeredUser, Authority authority) {

@@ -142,9 +142,8 @@ public class RegisterController {
             advertId = Integer.parseInt(applyingAdvertId);
         }
         Advert advert = programsService.getValidProgramProjectAdvert(params.get("program"), advertId);
-        String applyingAdvert = !StringUtils.isBlank(applyingAdvertId) ? "&advert=" + applyingAdvertId : "";
         ApplicationForm newApplicationForm = applicationFormCreationService.createOrGetUnsubmittedApplicationForm(user, advert);
-        return redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber() + applyingAdvert;
+        return redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber();
     }
 
     @RequestMapping(method = RequestMethod.GET)

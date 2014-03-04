@@ -126,7 +126,7 @@ public class ConfirmSupervisionController {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
     }
 
-    @RequestMapping(value = "confirmSupervision", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public String confirmSupervision(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");

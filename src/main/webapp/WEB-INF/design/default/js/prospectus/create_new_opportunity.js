@@ -6,6 +6,7 @@ $(document).ready(function() {
         setHsize();
     });
     setHsize();
+    refreshControls();
 
     $("a[name=didYouMeanInstitutionButtonYes]").bind('click', function() {
         var text = $(this).text();

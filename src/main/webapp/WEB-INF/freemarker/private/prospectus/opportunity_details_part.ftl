@@ -1,6 +1,6 @@
 
 <div class="row">
-  <label class="plain-label" for="institutionCountry">Institution Country<em>*</em></label>
+  <label class="plain-label" for="institutionCountry">Organisation Country<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionCountry'/>"></span>
   <div class="field">
     <select class="full selectpicker" data-live-search="true" data-size="6" id="institutionCountry" name="institutionCountry">
@@ -22,8 +22,8 @@
 </div>
 
 <div class="row">
-  <label id="lbl-providerName" class="plain-label" for="institution">Institution Name<em>*</em></label>
-  <span class="hint" data-desc="<@spring.message 'opportunityRequest.institutionName'/>"></span>
+  <label id="lbl-providerName" class="plain-label grey-label" for="institution">Organisation Name<em>*</em></label>
+  <span class="hint grey" data-desc="<@spring.message 'opportunityRequest.institutionName'/>"></span>
   <div class="field">
     <select class="full selectpicker" data-live-search="true" data-size="6"  id="institution" name="institutionCode">
       <option value="">Select...</option>
@@ -47,8 +47,8 @@
 <input type="hidden" id="forceCreatingNewInstitution" name="forceCreatingNewInstitution" value="${opportunityRequest.forceCreatingNewInstitution?c}" />
 
 <div class="row">
-  <label id="lbl-otherInstitutionProviderName" class="plain-label" for="otherInstitutionProviderName">Please Specify</label>
-  <span class="hint" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
+  <label id="lbl-otherInstitutionProviderName" class="plain-label grey-label" for="otherInstitutionProviderName">Please Specify</label>
+  <span class="hint grey" data-desc="<@spring.message 'opportunityRequest.otherInstitution'/>"></span>
   <div class="field">
     <input readonly disabled="disabled" id="otherInstitution" name="otherInstitution" class="full" type="text" autocomplete="off" value="${(opportunityRequest.otherInstitution?html)!}" />
     <@spring.bind "opportunityRequest.otherInstitution" />
@@ -71,35 +71,7 @@
 </div>
 
 <div class="row">
-  <label id="programTitleLabel" class="plain-label" for="programTitle">Program Title<em>*</em></label>
-  <span class="hint" data-desc="<@spring.message 'opportunityRequest.programTitle'/>"></span>
-  <div class="field">
-    <input id="programTitle" name="programTitle" class="full" type="text" value="${(opportunityRequest.programTitle?html)!}" />
-    <@spring.bind "opportunityRequest.programTitle" />
-    <#list spring.status.errorMessages as error>
-      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-        ${error}
-      </div>
-    </#list>
-  </div>
-</div>
-
-<div class="row">
-  <label id="programDescriptionLabel" class="plain-label" for="programDescription">Program Description<em>*</em></label>
-  <span class="hint" data-desc="<@spring.message 'opportunityRequest.programDescription'/>"></span>
-  <div class="field">
-    <textarea id="programDescription" name="programDescription" class="max" cols="70" rows="6">${(opportunityRequest.programDescription?html)!}</textarea>
-    <@spring.bind "opportunityRequest.programDescription" />
-    <#list spring.status.errorMessages as error>
-      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-        ${error}
-      </div>
-    </#list>
-  </div>
-</div>
-
-<div class="row">
-  <label id="programTypeLabel" class="plain-label" for="programType">Program Type<em>*</em></label>
+  <label id="programTypeLabel" class="plain-label" for="programType">Programme Type<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.programType'/>"></span>
   <div class="field">
     <select id="programType" name="programType">
@@ -121,7 +93,35 @@
 </div>
 
 <div class="row">
-  <label class="plain-label" for="studyOption">Study Options<em>*</em></label>
+  <label id="programTitleLabel" class="plain-label" for="programTitle">Programme Title<em>*</em></label>
+  <span class="hint" data-desc="<@spring.message 'opportunityRequest.programTitle'/>"></span>
+  <div class="field">
+    <input id="programTitle" name="programTitle" class="full" type="text" value="${(opportunityRequest.programTitle?html)!}" />
+    <@spring.bind "opportunityRequest.programTitle" />
+    <#list spring.status.errorMessages as error>
+      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+        ${error}
+      </div>
+    </#list>
+  </div>
+</div>
+
+<div class="row">
+  <label id="programDescriptionLabel" class="plain-label" for="programDescription">Programme Description<em>*</em></label>
+  <span class="hint" data-desc="<@spring.message 'opportunityRequest.programDescription'/>"></span>
+  <div class="field">
+    <textarea id="programDescription" name="programDescription" class="max" cols="70" rows="6">${(opportunityRequest.programDescription?html)!}</textarea>
+    <@spring.bind "opportunityRequest.programDescription" />
+    <#list spring.status.errorMessages as error>
+      <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+        ${error}
+      </div>
+    </#list>
+  </div>
+</div>
+
+<div class="row">
+  <label class="plain-label" for="studyOption">Available Study Options<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.studyOptions'/>"></span>
   <div class="field">
     <select multiple size="3" class="full" id="studyOptions" name="studyOptions">
@@ -170,8 +170,8 @@
 </div>
 
 <div class="row">
-  <label class="plain-label" for="atasRequired">Does the opportunity require ATAS?<em>*</em></label>
-  <span class="hint" data-desc="<@spring.message 'opportunityRequest.atasRequired'/>"></span>
+  <label class="plain-label grey-label" for="atasRequired">Does your programme require ATAS (UK research programmes only)<em>*</em></label>
+  <span class="hint grey" data-desc="<@spring.message 'opportunityRequest.atasRequired'/>"></span>
   <div class="field">
     <label><input type="radio" name="atasRequired" value="true" id="atasRequired_true"
       <#if opportunityRequest.atasRequired?? && opportunityRequest.atasRequired> checked="checked" </#if>
@@ -189,7 +189,7 @@
 </div>
 
 <div class="row">
-  <label class="plain-label" for="advertisingDeadlineYear">Advertise deadline<em>*</em></label>
+  <label class="plain-label" for="advertisingDeadlineYear">Expiry Date<em>*</em></label>
   <span class="hint" data-desc="<@spring.message 'opportunityRequest.advertisingDeadlineYear'/>"></span>
   <div class="field">
     <select class="full" id="advertisingDeadlineYear" name="advertisingDeadlineYear">

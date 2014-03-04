@@ -560,6 +560,41 @@ input, select, textarea {
     margin-left: 10px;
     margin-top: 0.1em;
 }
+.hint:before, .remove-date:before, .clone-times:before, .arrow:before, .button-delete:before, .button-show:before, .button-edit:before, .button-responded:before, span.icon-status:before {
+  font-family:FontAwesome;font-weight:normal;
+  font-style:normal;
+  text-decoration:inherit;-webkit-font-smoothing:antialiased;
+  display:inline-block;
+  width:auto;
+  height:auto;
+  line-height:normal;
+  vertical-align:baseline;
+  background-image:none;
+  background-position:0 0;
+  background-repeat:repeat;
+  margin-top:0;
+  text-decoration: none;
+  text-align: center;
+  width: 25px;
+  -webkit-font-smoothing: antialiased;
+  cursor:default;
+}
+.hint:before {
+	z-index: 500;
+	position: relative;
+}
+.remove-date:before {
+	width: 26px;
+}
+.hint:before {
+  cursor: default;
+  content:"\f059";
+  color: #9B9DA0;
+  font-size:28px;
+}
+.hint.grey:before { 
+	color: #DDE4E2;
+}
 .plain-label {
     float: left;
     font-weight: normal;
@@ -634,6 +669,12 @@ label em {
 .newOpportunity, .newOpportunityCancel {
     float:right;
     font-weight: bold;
+}
+.grey-label { 
+	color: #AAA; 
+}
+.grey-label em { 
+	color: #AAA !important; 
 }
 /*!
  * bootstrap-select v1.4.2

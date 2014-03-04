@@ -358,6 +358,7 @@ public class ApplicationFormUserRoleService {
     public void insertApplicationUpdate(ApplicationForm applicationForm, RegisteredUser author, ApplicationUpdateScope updateVisibility) {
         Date updateTimestamp = new Date();
         applicationFormUserRoleDAO.insertApplicationUpdate(applicationForm, author, updateTimestamp, updateVisibility);
+        applicationForm.setLastUpdated(updateTimestamp);
     }
     
     public void insertProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {

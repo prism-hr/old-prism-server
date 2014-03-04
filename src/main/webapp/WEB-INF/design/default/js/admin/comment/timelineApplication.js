@@ -1,15 +1,11 @@
-$(document).ready(function()
-{
-
+$(document).ready(function() {
 	$('#timelineTab').hide();
 	$('#opportunityTab').hide();
 
-	var jumpToTimeline = false; // prevent jumping to the timeline on page load.
-	
-	// Timeline tab.	
-	$('#timelineTabBtn').click(function()
+	var jumpToTimeline = false;
+		
+	$('#timelineBtn').click(function()
 	{
-		// Set the current tab.
 		$('#timelineTabview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		
@@ -47,7 +43,6 @@ $(document).ready(function()
 			  success:	function(data)
 				{
 					$('#timelineTab').html(data);	
-					// Scroll to the tab.
 					if (jumpToTimeline)
 					{
 						window.scrollTo(0, $('#timelineTab').offset().top);
@@ -58,7 +53,6 @@ $(document).ready(function()
 					}
 					addToolTips();
 					toggleScores();
-					/* Timeline expandable history*/
 				 	exStatus();
 				},
 				 complete: function() {
@@ -71,10 +65,8 @@ $(document).ready(function()
 	});
 	
 	if($('#applicationTab').length > 0){
-		// Application tab.
-		$('#applicationTabBtn').click(function()
+		$('#applicationBtn').click(function()
 		{
-			// Set the current tab.
 			$('#timelineTabview ul.tabs li').removeClass('current');
 			$(this).parent('li').addClass('current');
 	
@@ -83,8 +75,6 @@ $(document).ready(function()
 				$('#ajaxloader').show();
 			}
 			$('#applicationTab').show();
-			
-			// Only fetch the application form if it hasn't been fetched already.
 			if ($('#applicationTab').html()=="")
 			{
 	
@@ -116,10 +106,7 @@ $(document).ready(function()
 					  success:	function(data)
 						{
 							$('#applicationTab').html(data);
-	
 							window.scrollTo(0, $('#timelineTab').offset().top);		
-	
-							// Toggle grey-label class where you find instances of "Not Provided" text.
 							$('#applicationTab .field').each(function()
 							{
 								 var strValue = $(this).text();
@@ -145,17 +132,15 @@ $(document).ready(function()
 		$('#opportunityTab').hide();
 	}
 
-	if($('#isReferee').val() == 'true'){
-		$('#applicationTabBtn').trigger('click');
-	}else{
-		// "Open" the timeline tab by default.	
-		$('#timelineTabBtn').trigger('click');
+	if ($('#isReferee').val() == 'true'){
+		$('#applicationBtn').trigger('click');
+	} else {
+		$('#timelineBtn').trigger('click');
 	}
 	
-	var jumpToOpportunity = false; // prevent jumping to opportunity on page load.
+	var jumpToOpportunity = false;
 	
-	$('#opportunityTabBtn').click(function(){
-		// Set the current tab.
+	$('#opportunityBtn').click(function(){
 		$('#timelineTabview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		$('#applicationTab').hide();
@@ -192,7 +177,6 @@ $(document).ready(function()
 			  success:	function(data)
 				{
 					$('#opportunityTab').html(data);	
-					// Scroll to the tab.
 					if (jumpToOpportunity)
 					{
 						window.scrollTo(0, $('#opportunityTab').offset().top - 30);

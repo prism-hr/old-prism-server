@@ -639,7 +639,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Override
     public int compareTo(ApplicationForm appForm) {
-
         if (appForm.getSubmittedDate() != null && this.getSubmittedDate() == null) {
             return -1;
         }

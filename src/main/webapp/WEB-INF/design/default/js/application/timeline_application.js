@@ -1,10 +1,8 @@
-$(document).ready(function()
-{
+$(document).ready(function() {
 	$('#timelineTab').hide();
 	$('#opportunityTab').hide();
 	
 	$('#applicationBtn').click(function(){
-		alert("Got Here");
 		// Set the current tab.
 		$('#timelineTabview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
@@ -16,7 +14,7 @@ $(document).ready(function()
 	
 	var jumpToOpportunity = false; // prevent jumping to opportunity on page load.
 	
-	$('#opportunityTabBtn').click(function(){
+	$('#opportunityBtn').click(function(){
 		// Set the current tab.
 		$('#timelineTabview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
@@ -76,7 +74,7 @@ $(document).ready(function()
 	var jumpToTimeline = false; // prevent jumping to the timeline on page load.
 	
 	// Timeline tab.	
-	$('#timelineTabBtn').click(function()
+	$('#timelineBtn').click(function()
 	{
 		// Set the current tab.
 		$('#timelineTabview ul.tabs li').removeClass('current');

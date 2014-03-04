@@ -131,6 +131,11 @@ function renderAdvert(advert){
 		popupbuttons = '<a href="http://api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>';
 	}
 	
+	var applyButton = "";
+	if (feedId != "CURRENTOPPORTUNITYBYAPPLICATIONFORMID") {
+		applyButton = '<button id="'+advert.id+'" class="btn btn-primary apply">'+buttonText+'</button>';
+	}
+	
 	return '<li class="'+ advert.advertType.toLowerCase() +' item '+ selectedClass +'" id="ad-'+advert.id+'">'+
 		'<div class="pdetails clearfix">'+
 			'<h3>'+advert.title+'</h3>'+
@@ -150,8 +155,7 @@ function renderAdvert(advert){
 				'<!-- AddThis Button END -->'+
 			'</div>'+
 			'<div class="applyBox">'+
-				'<a href="mailto:'+advert.primarySupervisorEmail+'?subject=Question About:'+advert.title+'" class="question">Enquire</a>'+
-				'<button id="'+advert.id+'" class="btn btn-primary apply">'+buttonText+'</button>'+
+				'<a href="mailto:'+advert.primarySupervisorEmail+'?subject=Question About:'+advert.title+'" class="question">Enquire</a>'+ applyButton +
 			'</div>'+
 		'</div>'+
 	'</li>';

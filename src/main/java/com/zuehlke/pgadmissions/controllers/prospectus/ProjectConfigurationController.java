@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -76,21 +75,19 @@ public class ProjectConfigurationController {
 
     private final ApplyTemplateRenderer templateRenderer;
 
-    private final String host;
-
     private final DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
 
     private Gson gson;
 
     public ProjectConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ProjectConfigurationController(UserService userService, ProgramsService programsService, ApplicationContext applicationContext,
             ProjectDTOValidator projectDTOValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
             PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer,
-            @Value("${application.host}") final String host, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor) {
+            DurationOfStudyPropertyEditor durationOfStudyPropertyEditor) {
         this.userService = userService;
         this.programsService = programsService;
         this.applicationContext = applicationContext;
@@ -101,7 +98,6 @@ public class ProjectConfigurationController {
         this.projectConverter = projectConverter;
         this.templateRenderer = templateRenderer;
         this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
-        this.host = host;
     }
 
     @PostConstruct
@@ -206,9 +202,7 @@ public class ProjectConfigurationController {
 
     private Map<String, Object> createApplyTemplates(Project project) throws TemplateException, IOException {
         Map<String, Object> dataMap = Maps.newHashMapWithExpectedSize(3);
-        dataMap.put("programCode", project.getProgram().getCode());
-        dataMap.put("projectId", project.getId());
-        dataMap.put("host", host);
+        dataMap.put("advertId", project.getId());
         Map<String, Object> templateMap = Maps.newHashMapWithExpectedSize(2);
         templateMap.put("buttonToApply", templateRenderer.renderButton(dataMap));
         templateMap.put("linkToApply", templateRenderer.renderLink(dataMap));

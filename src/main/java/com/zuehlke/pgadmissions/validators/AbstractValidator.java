@@ -13,6 +13,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
@@ -110,4 +111,14 @@ public abstract class AbstractValidator implements org.springframework.validatio
             errors.rejectValue("studyDuration", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
     }
+    
+    public boolean isValid(Object target) {
+        if(target == null){
+            return false;
+        }
+        Errors errors = new BeanPropertyBindingResult(target, "target");
+        validate(target, errors);
+        return !errors.hasErrors();
+    }
+    
 }

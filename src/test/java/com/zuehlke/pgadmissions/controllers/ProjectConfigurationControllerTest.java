@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
@@ -49,9 +48,8 @@ public class ProjectConfigurationControllerTest {
         PersonPropertyEditor personPropertyEditor = EasyMock.createMock(PersonPropertyEditor.class);
         projectConverter = EasyMock.createMock(ProjectConverter.class);
         ApplyTemplateRenderer templateRenderer = EasyMock.createMock(ApplyTemplateRenderer.class);
-        String host = "localhost";
         controller = new ProjectConfigurationController(userService, programsService, applicationContext, projectDTOValidator, datePropertyEditor,
-                programPropertyEditor, personPropertyEditor, projectConverter, templateRenderer, host, durationOfStudyPropertyEditor);
+                programPropertyEditor, personPropertyEditor, projectConverter, templateRenderer, durationOfStudyPropertyEditor);
         controller.customizeJsonSerializer();
     }
 

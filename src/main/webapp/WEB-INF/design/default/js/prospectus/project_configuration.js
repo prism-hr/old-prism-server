@@ -382,15 +382,12 @@ function fillProjectAdvertForm(data) {
 	displayProjectAdministrator(project.administrator);
 
 	$("#projectAdvertTitleInput").val(project.title);
-	$("#projectAdvertDescriptionText").val(project.description);
 
 	tinymce.get('projectAdvertDescriptionText').setContent(project.description);
 	
 	setStudyDuration(project);
 
-	$("#projectAdvertFundingText").val(project.funding);
-
-	tinymce.get('projectAdvertFundingText').setContent(project.funding);
+	tinymce.get('projectAdvertFundingText').setContent(project.funding ? project.funding : "");
 
 	if (project.closingDate) {
 		$("#projectAdvertHasClosingDateRadioYes").prop("checked", true);

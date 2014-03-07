@@ -64,7 +64,6 @@ $(document).ready(function() {
 		var idString = getAssignedReviewerIdString();
 		
 		if(!idString) {
-			alert("Please select a reviewer to assign.");
 			return false;
 		}
 		var postData = {

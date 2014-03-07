@@ -82,7 +82,9 @@ public class OfferRecommendationService {
     }
     
     public void sendToPortico(ApplicationForm form) {
-        approvedSenderService.sendToPortico(form);
+        if (form.getProgram().getProgramFeed() != null) {
+            approvedSenderService.sendToPortico(form);
+        }
     }
 
 }

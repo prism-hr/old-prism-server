@@ -293,6 +293,7 @@ public class StateTransitionController {
 
         ApplicationFormStatus nextStatus = stateChangeDTO.getNextStatus();
         stateChangeComment.setNextStatus(nextStatus);
+		stateChangeComment.setDelegateAdministrator(null);
 
         if (BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights())) {
             if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {

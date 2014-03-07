@@ -1,24 +1,20 @@
-$(document).ready(function()
-{
+$(document).ready(function() {
+	$('#timelineTab').hide();
+	$('#opportunityTab').hide();
 
-	$('#timeline').hide();
-	$('#opportunity').hide();
-
-	var jumpToTimeline = false; // prevent jumping to the timeline on page load.
-	
-	// Timeline tab.	
+	var jumpToTimeline = false;
+		
 	$('#timelineBtn').click(function()
 	{
-		// Set the current tab.
-		$('#timelineview ul.tabs li').removeClass('current');
+		$('#timelineTabview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		
-		$('#application').hide();
-		if ( $('#timeline').children().length == 0 ) {
+		$('#applicationTab').hide();
+		if ( $('#timelineTab').children().length == 0 ) {
 			$('#ajaxloader').show();
 		}
-		$('#timeline').show();
-		$('#opportunity').hide();
+		$('#timelineTab').show();
+		$('#opportunityTab').hide();
 		
 		$.ajax({
 			 type: 'GET',
@@ -46,11 +42,10 @@ $(document).ready(function()
 				}, 
 			  success:	function(data)
 				{
-					$('#timeline').html(data);	
-					// Scroll to the tab.
+					$('#timelineTab').html(data);	
 					if (jumpToTimeline)
 					{
-						window.scrollTo(0, $('#timeline').offset().top);
+						window.scrollTo(0, $('#timelineTab').offset().top);
 					}
 					else
 					{
@@ -58,7 +53,6 @@ $(document).ready(function()
 					}
 					addToolTips();
 					toggleScores();
-					/* Timeline expandable history*/
 				 	exStatus();
 				},
 				 complete: function() {
@@ -70,22 +64,18 @@ $(document).ready(function()
 		return false;
 	});
 	
-	if($('#application').length > 0){
-		// Application tab.
+	if($('#applicationTab').length > 0){
 		$('#applicationBtn').click(function()
 		{
-			// Set the current tab.
-			$('#timelineview ul.tabs li').removeClass('current');
+			$('#timelineTabview ul.tabs li').removeClass('current');
 			$(this).parent('li').addClass('current');
 	
-			$('#timeline').hide();
-			if ( $('#application').children().length == 0 ) {
+			$('#timelineTab').hide();
+			if ( $('#applicationTab').children().length == 0 ) {
 				$('#ajaxloader').show();
 			}
-			$('#application').show();
-			
-			// Only fetch the application form if it hasn't been fetched already.
-			if ($('#application').html()=="")
+			$('#applicationTab').show();
+			if ($('#applicationTab').html()=="")
 			{
 	
 				$.ajax({
@@ -115,12 +105,9 @@ $(document).ready(function()
 						}, 
 					  success:	function(data)
 						{
-							$('#application').html(data);
-	
-							window.scrollTo(0, $('#timeline').offset().top);		
-	
-							// Toggle grey-label class where you find instances of "Not Provided" text.
-							$('#application .field').each(function()
+							$('#applicationTab').html(data);
+							window.scrollTo(0, $('#timelineTab').offset().top);		
+							$('#applicationTab .field').each(function()
 							{
 								 var strValue = $(this).text();
 								 if (strValue.match("Not Provided"))
@@ -137,33 +124,31 @@ $(document).ready(function()
 			}
 			else
 			{
-				window.scrollTo(0, $('#timeline').offset().top);		
+				window.scrollTo(0, $('#timelineTab').offset().top);		
 			}
 			return false;
 		});
-		$('#application').html("");
-		$('#opportunity').hide();
+		$('#applicationTab').html("");
+		$('#opportunityTab').hide();
 	}
 
-	if($('#isReferee').val() == 'true'){
+	if ($('#isReferee').val() == 'true'){
 		$('#applicationBtn').trigger('click');
-	}else{
-		// "Open" the timeline tab by default.	
+	} else {
 		$('#timelineBtn').trigger('click');
 	}
 	
-	var jumpToOpportunity = false; // prevent jumping to opportunity on page load.
+	var jumpToOpportunity = false;
 	
 	$('#opportunityBtn').click(function(){
-		// Set the current tab.
-		$('#timelineview ul.tabs li').removeClass('current');
+		$('#timelineTabview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
-		$('#application').hide();
-		$('#timeline').hide();
-		if ($('#opportunity').children().length == 0) {
+		$('#applicationTab').hide();
+		$('#timelineTab').hide();
+		if ($('#opportunityTab').children().length == 0) {
 			$('#ajaxloader').show();
 		}
-		$('#opportunity').show();
+		$('#opportunityTab').show();
 		
 		$.ajax({
 			 type: 'GET',
@@ -191,11 +176,10 @@ $(document).ready(function()
 				}, 
 			  success:	function(data)
 				{
-					$('#opportunity').html(data);	
-					// Scroll to the tab.
+					$('#opportunityTab').html(data);	
 					if (jumpToOpportunity)
 					{
-						window.scrollTo(0, $('#opportunity').offset().top - 30);
+						window.scrollTo(0, $('#opportunityTab').offset().top - 30);
 					}
 					else
 					{

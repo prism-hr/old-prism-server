@@ -9,6 +9,7 @@
 <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 <meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1" />
 <!-- Styles for Application List Page -->
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/opportunities.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/timeline.css' />"/>
@@ -65,17 +66,23 @@ span.count {
                 <span class="label label-info">Status</span>
                 <div class="icon">
                     <#if opportunityRequest.status == "NEW">
-                    New Request <span class="icon-status validation"></span>
+                      <#if opportunityRequest.type == "CHANGE">
+                        Change Request<span data-desc="Change Request" class="icon-status withdrawn"></span>
+                      <#else>
+                        New Request<span data-desc="New Request" class="icon-status review"></span>
+                      </#if>
                     <#elseif opportunityRequest.status == "REJECTED">
-                    Rejected <span class="icon-status rejected"></span>
+                      Rejected<span data-desc="Rejected" class="icon-status rejected"></span>
                     <#elseif opportunityRequest.status == "APPROVED">
-                    Approved <span class="icon-status offer-recommended"></span>
+                      Approved<span data-desc="Approved" class="icon-status offer-recommended"></span>
+                    <#elseif opportunityRequest.status == "REVISED">
+                      Revised<span data-desc="Revised" class="icon-status validation"></span>
                     </#if>
                 </div>
                 <div class="row authname"><strong>Author:</strong> 
                 ${(opportunityRequest.author.firstName)!} ${(opportunityRequest.author.lastName)!}
                 </div>
-                <div class="row"><strong>Email:</strong> <a href="mailto:${(opportunityRequest.author.email)!}?subject=Question Regarding UCL Prism Program request: ${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}"> <i class="icon-envelope-alt"></i> ${(opportunityRequest.author.email)!}</a> </div>
+                <div class="row"><strong>Email:</strong> <a href="mailto:${(opportunityRequest.author.email)!}?subject=Question Regarding UCL Prism Programme request"> <i class="icon-envelope-alt"></i> ${(opportunityRequest.author.email)!}</a> </div>
               </div>
             </div>
             <div class="requestinfo">
@@ -85,7 +92,7 @@ span.count {
               <#if opportunityRequest.sourceProgram??>
                 ${opportunityRequest.sourceProgram.code?html}
               </#if>
-              ${opportunityRequest.programTitle!opportunityRequest.sourceProgram.title}
+              ${(opportunityRequest.sourceProgram.title)!"Revise Program Request"}
             </div>
             <div class="row">
               <label>Submitted</label> ${opportunityRequest.createdDate?string("dd MMM yyyy")}
@@ -104,9 +111,9 @@ span.count {
                     <div class="row-group">
                       <h3 class="no-arrow">
                         <#if user.isInRole('SUPERADMINISTRATOR')>
-                          Opportunity Details
+                          Original Program Request
                         <#else>
-                          Revise Opportunity Request
+                          Revise Programme Request
                         </#if> 
                       </h3>
                       
@@ -114,15 +121,27 @@ span.count {
                       
                       <#if isRequestEditable>
                       
-                        <#assign comments = opportunityRequest.comments>
-                        <#if user.id == opportunityRequest.author.id && comments?has_content && comments?last.commentType == "REJECT"> 
-                          <div class="alert alert-warning">
-                            Please revise your request. Recent rejection reason:
-                            <p>
-                              <i>${comments?last.content}</i>
-                            </p>
-                          </div>
+                        <@spring.bind "opportunityRequest.*"/>
+                        <#if spring.status.errorMessages?size &gt; 0>
+                          <#assign errorsInRequest = true>
                         </#if>
+                        
+                        <@spring.bind "comment.*"/>
+                        <#if spring.status.errorMessages?size &gt; 0>
+                          <#assign errorsInComment = true>
+                        </#if>
+
+                        <#assign comments = opportunityRequest.comments>
+                        
+                        <#if errorsInRequest?? || errorsInComment??>
+                          <div class="alert alert-error" >
+                          <i class="icon-warning-sign"></i>
+                        <#else> 
+                          <div class="alert alert-info">
+                          <i class="icon-info-sign"></i>
+                        </#if> 
+                        Complete the form below to revise and resubmit your request.
+                        </div>
                         
                         <#include "/private/prospectus/opportunity_details_part.ftl"/>
                       <#else>
@@ -159,11 +178,13 @@ span.count {
                           <#assign selectedOptionsString = opportunityRequest.studyOptions!"">    
                           <#assign selectedOptions = selectedOptionsString?split(",")>
                           <label class="admin_row_label">Study Options</label>
-                          <#list studyOptions as studyOption>
-                            <#if selectedOptions?seq_contains(studyOption.id)>
-                              <div class="field">${(studyOption.id)!}</div>
-                            </#if>
-                          </#list>
+                          <div class="field">
+	                          <#list studyOptions as studyOption>
+	                            <#if selectedOptions?seq_contains(studyOption.id)>
+	                              ${(studyOption.name)!}<#if studyOption_has_next>,<#else>.</#if>
+	                            </#if>
+	                          </#list>
+	                      </div>
                         </div>
                         
                         <div class="admin_row">

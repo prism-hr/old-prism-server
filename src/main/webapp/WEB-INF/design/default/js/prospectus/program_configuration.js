@@ -43,6 +43,7 @@ function bindChangeOtherInstitutionAction() {
 function bindChangeInstitutionCountryAction() {
     $('#programAdvertInstitutionCountry').change(function() {
         getInstitutionData();
+        refreshAtasRequiredField();
     });
 }
 
@@ -147,10 +148,10 @@ function getInstitutionData(successCallback) {
 function otherInstitutionCheck() {
     if ($('#programAdvertInstitution').val() == 'OTHER') {
         $("#programAdvertInstitutionOtherNameDiv label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("#programAdvertInstitutionOtherNameDiv input").prop("readonly", false).prop("disabled", false);
+        $("#programAdvertInstitutionOtherNameDiv input").attr("readonly", false).attr("disabled", false);
     } else {
         $("#programAdvertInstitutionOtherNameDiv label").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("#programAdvertInstitutionOtherNameDiv input").prop("readonly", true).prop("disabled", true).val('');
+        $("#programAdvertInstitutionOtherNameDiv input").attr("readonly", true).attr("disabled", true).val('');
     }
 };
 
@@ -164,23 +165,32 @@ function checkToDisable() {
     var newProgramSelected = $("#programAdvertProgramSelect").is(":disabled");
     var programLocked = $("#programAdvertProgramLocked").val() == "true";
     var isCustom = $("#programAdvertIsCustom").val() == "true";
+    
     if ((existingProgramSelected && !programLocked) || newProgramSelected) {
-        // new or existing program
-        $("#institutionGroup label, #advertGroup label #programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").removeAttr("readonly", "readonly");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").removeAttr("disabled", "disabled");
+        $("#advertGroup label, #programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+        $("#advertGroup input, #advertGroup textarea, #advertGroup select").removeAttr("readonly", "readonly");
+        $("#advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").removeAttr("disabled", "disabled");
+        refreshAtasRequiredField();
     } else {
-        $("#institutionGroup label, #advertGroup label #programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select").attr("readonly", "readonly");
-        $("#institutionGroup input, #institutionGroup select, #advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").attr("disabled", "disabled");
+        $("#advertGroup label, #programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
+        $("#advertGroup input, #advertGroup textarea, #advertGroup select").attr("readonly", "readonly");
+        $("#advertGroup input, #advertGroup textarea, #advertGroup select, #advertGroup button, input[name=programAdvertAtasRequired]").attr("disabled", "disabled");
     }
     
     if ((existingProgramSelected && !programLocked && isCustom) || newProgramSelected) {
-        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
+        // new or existing program
+        $("#institutionGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+        $("#institutionGroup input, #institutionGroup select").removeAttr("readonly", "readonly");
+        $("#institutionGroup input, #institutionGroup select").removeAttr("disabled", "disabled");
+        $("#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect").removeAttr("readonly", "readonly").removeAttr("disabled", "disabled");
+        refreshAtasRequiredField();
     } else {
-        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').prop("readonly", true).attr("disabled", "disabled");
+        $("#institutionGroup label").addClass("grey-label").parent().find('.hint').addClass("grey");
+        $("#institutionGroup input, #institutionGroup select").attr("readonly", "readonly");
+        $("#institutionGroup input, #institutionGroup select").attr("disabled", "disabled");
+        $('#programAdvertAdvertisingDeadlineYear, #programAdvertStudyOptionsSelect').attr("readonly", "readonly").attr("disabled", "disabled");
     }
-
+    
     if (existingProgramSelected != "" && !programLocked) {
         // existing program
         $("#programAdvertClosingDateGroup label").removeClass("grey-label").parent().find('.hint').removeClass("grey");
@@ -195,6 +205,19 @@ function checkToDisable() {
     otherInstitutionCheck();
     
     $('select.selectpicker').selectpicker('refresh');
+}
+
+function refreshAtasRequiredField() {
+    if($("#programAdvertInstitutionCountry option:selected").text().trim() == "United Kingdom") {
+        $("#programAdvertAtasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+        $("[name=programAdvertAtasRequired]").removeAttr("disabled", "disabled").removeAttr("readonly", "readonly");
+        $("[name=programAdvertAtasRadioValueText]").removeClass("grey-label");
+    } else {
+        $("#programAdvertAtasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
+        $("[name=programAdvertAtasRequired]").attr("disabled", "disabled").attr("readonly", "readonly");
+        $("[name=programAdvertAtasRadioValueText]").addClass("grey-label");
+        $("[name=programAdvertAtasRequired]").attr("checked", false);
+    }
 }
 
 function changeHeaderInfoBars(programval) {
@@ -513,7 +536,7 @@ function updateProgramSection(map) {
         $("#programAdvertIsActiveRadioNo").prop("checked", true);
     }
     
-    $("#programAdvertStudyOptionsSelect").find('option:selected').removeAttr("selected").end();
+    $("#programAdvertStudyOptionsSelect").find('option:selected').removeProp("selected").end();
     if (map['studyOptions']) {
         var studyOptions = map['studyOptions'];
         studyOptions.forEach(function(option) {
@@ -590,6 +613,7 @@ function saveAdvert() {
                 if (programCode != "") {
                     // modfy existing program option
                     $("#programAdvertProgramSelect option").filter("[value='" + programCode + "']").val(newProgramCode).text(programName);
+                    $("#projectAdvertProgramSelect option").filter("[value='" + programCode + "']").val(newProgramCode).text(programName);
                 } else {
                     // add new program option
                     $("#programAdvertProgramSelect").append($("<option />").val(newProgramCode).text(programName));
@@ -650,7 +674,7 @@ function saveAdvert() {
                             message += i == institutionNames.length - 1 ? ". " : ", ";
                         }
                         message += '<a name="didYouMeanInstitutionButtonNo">Use original</a>.';
-                        $("#programAdvertInstitutionOtherNameDiv").append($(getErrorMessageHTML(message)).attr("id", "didYouMeanInstitutionDiv"));
+                        $("#programAdvertInstitutionOtherNameDiv").append($(getErrorMessageHTML(message)).prop("id", "didYouMeanInstitutionDiv"));
                         bindChooseSuggestedInstitutionNameAction();
                     } else {
                         $("#programAdvertInstitutionOtherNameDiv").append(getErrorMessageHTML(map['otherInstitution']));
@@ -705,7 +729,7 @@ function setTextAreaValue(textArea, value) {
     }
     textArea.val(value);
     triggerKeyUp(textArea);
-    idselect = textArea.attr("id");
+    idselect = textArea.prop("id");
     tinymce.get(idselect).setContent(value);
 }
 

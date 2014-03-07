@@ -182,7 +182,7 @@
 							<li><a href="#opportunity" id="opportunityBtn">Opportunities</a></li>
 						</ul>
 				
-						<div class="tab-page" id="application">
+						<div class="tab-page" id="applicationTab">
 	
 		          <!-- Programme Details -->
 		          <section id="programmeDetailsSection" class="folding form-rows violet <#if programDetailsError || studyOptionError>error</#if>">                      
@@ -246,8 +246,8 @@
 		          </div>
 		          		          
 	         	</div>
-				<div class="tab-page" id="timeline"></div>				
-				<div class="tab-page" id="opportunity"></div>
+				<div class="tab-page" id="timelineTab"></div>				
+				<div class="tab-page" id="opportunityTab"></div>
 			</div>
 			
         </div><!-- .content-box-inner -->

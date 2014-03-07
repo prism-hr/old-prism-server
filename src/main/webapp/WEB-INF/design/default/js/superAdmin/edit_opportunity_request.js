@@ -56,22 +56,10 @@ $(document).ready(function() {
     
     
         initEditors();
-        checkFormErrors();
     }
     
     exStatus();
 });
-
-function checkFormErrors() {
-    var errorCount = $('#opportunityRequestEditForm .alert-error').length;
-    if (errorCount > 0) {
-        $('#opportunityRequestEditForm').prepend('<div id="info-section" class="alert alert-error"><i class="icon-warning-sign"></i>You have some errors in the form</div>');
-    } else {
-        if ($('#info-section').length > 0) {
-            $('#info-section').remove();
-        }
-    }
-}
 
 function institutionCountryChanged() {
     $("#institution").val("");
@@ -125,19 +113,36 @@ function refreshControls() {
     if ($('#institutionCountry').val() === "") {
         $("#institution").attr("readonly", "readonly");
         $("#institution").attr("disabled", "disabled");
+        $("#lbl-providerName").addClass("grey-label").parent().find('.hint').addClass("grey");
     } else {
         $("#institution").removeAttr("readonly", "readonly");
         $("#institution").removeAttr("disabled", "disabled");
+        $("#lbl-providerName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     }
-
     if ($('#institution').val() === "OTHER") {
         $("#otherInstitution").removeAttr("readonly", "readonly");
         $("#otherInstitution").removeAttr("disabled", "disabled");
+        $("#lbl-otherInstitutionProviderName").removeClass("grey-label").parent().find('.hint').removeClass("grey");
     } else {
         $("#otherInstitution").attr("readonly", "readonly");
         $("#otherInstitution").attr("disabled", "disabled");
+        $("#lbl-otherInstitutionProviderName").addClass("grey-label").parent().find('.hint').addClass("grey");
     }
     $("#institution").selectpicker('refresh');
+    refreshAtasRequiredField();
+}
+
+function refreshAtasRequiredField() {
+    if($("#institutionCountry option:selected").text().trim() == "United Kingdom") {
+        $("#atasRequiredLabel").removeClass("grey-label").parent().find('.hint').removeClass("grey");
+        $("[name=atasRequired]").removeAttr("disabled", "disabled");
+        $("[name=atasRadioValueText]").removeClass("grey-label");
+    } else {
+        $("#atasRequiredLabel").addClass("grey-label").parent().find('.hint').addClass("grey");
+        $("[name=atasRequired]").attr("disabled", "disabled");
+        $("[name=atasRadioValueText]").addClass("grey-label");
+        $("[name=atasRequired]").prop("checked", false);
+    }
 }
 
 function initEditors() {

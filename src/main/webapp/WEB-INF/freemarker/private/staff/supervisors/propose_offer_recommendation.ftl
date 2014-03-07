@@ -76,7 +76,7 @@
     </#list>
     </div>
      </div>
-     <#if applicationForm?? && applicationForm.project?? && !applicationForm.project.disabled>
+     <#if applicationForm?? && applicationForm.project?? && applicationForm.project.isEnabled()>
 	    <div class="row" >
 	        <label id="lbl_projectAcceptingApplications" class="plain-label" for="acceptingApplications">Do you wish to continue accepting applications?<em>*</em></label>
 	        <span class="hint" data-desc="<@spring.message 'prospectus.acceptingApplications'/>"></span>

@@ -107,6 +107,7 @@ public class PorticoExportService {
         } catch (PorticoExportServiceException e) {
             throw e;
         } catch (Exception e) {
+            log.error("Error sending application to PORTICO", e);
             applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.CANCELLED);
             ApplicationFormTransferError transferError = applicationFormTransferService.createTransferError(new ApplicationFormTransferErrorBuilder()
                     .diagnosticInfo(e).errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)

@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
@@ -49,9 +48,8 @@ public class ProjectConfigurationControllerTest {
         PersonPropertyEditor personPropertyEditor = EasyMock.createMock(PersonPropertyEditor.class);
         projectConverter = EasyMock.createMock(ProjectConverter.class);
         ApplyTemplateRenderer templateRenderer = EasyMock.createMock(ApplyTemplateRenderer.class);
-        String host = "localhost";
         controller = new ProjectConfigurationController(userService, programsService, applicationContext, projectDTOValidator, datePropertyEditor,
-                programPropertyEditor, personPropertyEditor, projectConverter, templateRenderer, host, durationOfStudyPropertyEditor);
+                programPropertyEditor, personPropertyEditor, projectConverter, templateRenderer, durationOfStudyPropertyEditor);
         controller.customizeJsonSerializer();
     }
 
@@ -65,15 +63,14 @@ public class ProjectConfigurationControllerTest {
         EasyMock.expect(result.getErrorCount()).andReturn(0).anyTimes();
         EasyMock.expect(result.hasErrors()).andReturn(false).anyTimes();
         EasyMock.expect(projectConverter.toDomainObject(projectDTO)).andReturn(project);
-        userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
         EasyMock.expectLastCall().times(1);
         programsService.save(project);
         EasyMock.expectLastCall().times(1);
-        EasyMock.replay(projectConverter, userService, programsService, result);
+        EasyMock.replay(projectConverter, programsService, result);
         project.setSecondarySupervisor(null);
 
         controller.saveProject(projectDTO, result, request);
-        EasyMock.verify(projectConverter, userService, programsService, result);
+        EasyMock.verify(projectConverter, programsService, result);
     }
 
     @Test
@@ -86,15 +83,14 @@ public class ProjectConfigurationControllerTest {
         EasyMock.expect(result.getErrorCount()).andReturn(0).anyTimes();
         EasyMock.expect(result.hasErrors()).andReturn(false).anyTimes();
         EasyMock.expect(projectConverter.toDomainObject(projectDTO)).andReturn(project);
-        userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
         EasyMock.expectLastCall().times(1);
         programsService.save(project);
         EasyMock.expectLastCall().times(1);
-        EasyMock.replay(projectConverter, userService, programsService, result);
+        EasyMock.replay(projectConverter, programsService, result);
         project.setSecondarySupervisor(null);
 
         controller.saveProject(projectDTO, result, request);
-        EasyMock.verify(projectConverter, userService, programsService, result);
+        EasyMock.verify(projectConverter, programsService, result);
     }
 
     private Project createProject() {

@@ -73,7 +73,7 @@
             <div id="search-box" class="clearfix"> 
 
               <!-- Search/filter box. -->
-              <div class="filter">
+              <#-- <div class="filter">
                 <select class="selectCategory" name="searchCategory" id="searchCategory">
                   <option value="">Column...</option>
                 </select>
@@ -101,7 +101,7 @@
               </div>
 
             </div>
-          </div>
+          </div> -->
 
           <table class="data table table-striped table-condensed table-bordered table-hover appliList" id="opportunityRequestsList" border="0">
             <colgroup>

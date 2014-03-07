@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -41,7 +40,6 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -77,21 +75,19 @@ public class ProjectConfigurationController {
 
     private final ApplyTemplateRenderer templateRenderer;
 
-    private final String host;
-
     private final DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
 
     private Gson gson;
 
     public ProjectConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ProjectConfigurationController(UserService userService, ProgramsService programsService, ApplicationContext applicationContext,
             ProjectDTOValidator projectDTOValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
             PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer,
-            @Value("${application.host}") final String host, DurationOfStudyPropertyEditor durationOfStudyPropertyEditor) {
+            DurationOfStudyPropertyEditor durationOfStudyPropertyEditor) {
         this.userService = userService;
         this.programsService = programsService;
         this.applicationContext = applicationContext;
@@ -102,7 +98,6 @@ public class ProjectConfigurationController {
         this.projectConverter = projectConverter;
         this.templateRenderer = templateRenderer;
         this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
-        this.host = host;
     }
 
     @PostConstruct
@@ -159,7 +154,6 @@ public class ProjectConfigurationController {
             RegisteredUser currentUser = getUser();
             Project project = projectConverter.toDomainObject(projectDTO);
             project.setContactUser(currentUser);
-            addSupervisorsRoles(project);
             programsService.save(project);
             map.put("success", "true");
         }
@@ -208,9 +202,7 @@ public class ProjectConfigurationController {
 
     private Map<String, Object> createApplyTemplates(Project project) throws TemplateException, IOException {
         Map<String, Object> dataMap = Maps.newHashMapWithExpectedSize(3);
-        dataMap.put("programCode", project.getProgram().getCode());
-        dataMap.put("projectId", project.getId());
-        dataMap.put("host", host);
+        dataMap.put("advertId", project.getId());
         Map<String, Object> templateMap = Maps.newHashMapWithExpectedSize(2);
         templateMap.put("buttonToApply", templateRenderer.renderButton(dataMap));
         templateMap.put("linkToApply", templateRenderer.renderLink(dataMap));
@@ -226,18 +218,10 @@ public class ProjectConfigurationController {
             if (project == null) {
                 throw new ResourceNotFoundException();
             }
-            addSupervisorsRoles(project);
             programsService.save(project);
             map.put("success", "true");
         }
         return gson.toJson(map);
-    }
-
-    private void addSupervisorsRoles(Project project) {
-        userService.updateUserWithNewRoles(project.getPrimarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
-        if (project.getSecondarySupervisor() != null) {
-            userService.updateUserWithNewRoles(project.getSecondarySupervisor(), project.getProgram(), Authority.SUPERVISOR);
-        }
     }
 
     private Map<String, Object> getErrorValues(BindingResult result, HttpServletRequest request) {

@@ -85,11 +85,11 @@
 					<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
       				<li><a href="#opportunity" id="opportunityBtn">Opportunities</a></li>
 				</ul>
-				<div class="tab-page" id="application">
+				<div class="tab-page" id="applicationTab">
 		        	<#include "/private/staff/application/main_application_view.ftl"/>
 	         	</div>
-				<div class="tab-page" id="timeline"></div>
-	        	<div class="tab-page" id="opportunity"></div>
+				<div class="tab-page" id="timelineTab"></div>
+	        	<div class="tab-page" id="opportunityTab"></div>
 			</div><!-- timlelint -->
 			
       	</div><!-- .content-box-inner -->

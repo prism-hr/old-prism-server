@@ -677,57 +677,60 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = xmlFactory.createEnglishLanguageQualificationDetailsTp();
 
         LanguageQualification languageQualification = personalDetails.getLanguageQualification();
-        EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
-        englishLanguageTp.setDateTaken(buildXmlDate(languageQualification.getDateOfExamination()));
+        if (languageQualification != null) {
+            EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
+            englishLanguageTp.setDateTaken(buildXmlDate(languageQualification.getDateOfExamination()));
 
-        if (languageQualification.getQualificationType() == LanguageQualificationEnum.OTHER) {
-            englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
-            englishLanguageTp.setOtherLanguageExam(languageQualification.getOtherQualificationTypeName());
-        } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.TOEFL) {
-            englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
-            if (languageQualification.getExamTakenOnline()) {
-                englishLanguageTp.setMethod("TOEFL_INTERNET");
+            if (languageQualification.getQualificationType() == LanguageQualificationEnum.OTHER) {
+                englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
+                englishLanguageTp.setOtherLanguageExam(languageQualification.getOtherQualificationTypeName());
+            } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.TOEFL) {
+                englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
+                if (languageQualification.getExamTakenOnline()) {
+                    englishLanguageTp.setMethod("TOEFL_INTERNET");
+                } else {
+                    englishLanguageTp.setMethod("TOEFL_PAPER");
+                }
+            } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.IELTS_ACADEMIC) {
+                englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.IELTS);
             } else {
-                englishLanguageTp.setMethod("TOEFL_PAPER");
+                throw new IllegalArgumentException(String.format("QualificationType type [%s] could not be converted",
+                        languageQualification.getQualificationType()));
             }
-        } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.IELTS_ACADEMIC) {
-            englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.IELTS);
-        } else {
-            throw new IllegalArgumentException(
-                    String.format("QualificationType type [%s] could not be converted", languageQualification.getQualificationType()));
+
+            // The web service does not allow scores in the format "6.0" it only
+            // accepts "6" and the like.
+            EnglishLanguageScoreTp overallScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            overallScoreTp.setName(LanguageBandScoreTp.OVERALL);
+            overallScoreTp.setScore(languageQualification.getOverallScore().replace(".0", ""));
+
+            EnglishLanguageScoreTp readingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            readingScoreTp.setName(LanguageBandScoreTp.READING);
+            readingScoreTp.setScore(languageQualification.getReadingScore().replace(".0", ""));
+
+            EnglishLanguageScoreTp writingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            writingScoreTp.setName(LanguageBandScoreTp.WRITING);
+            writingScoreTp.setScore(languageQualification.getWritingScore().replace(".0", ""));
+
+            EnglishLanguageScoreTp essayOrSpeakingScoreTp = null;
+            if (StringUtils.equalsIgnoreCase("TOEFL_PAPER", englishLanguageTp.getMethod())) {
+                essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+                essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.ESSAY);
+                essayOrSpeakingScoreTp.setScore(languageQualification.getWritingScore().replace(".0", ""));
+            } else {
+                essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+                essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
+                essayOrSpeakingScoreTp.setScore(languageQualification.getSpeakingScore().replace(".0", ""));
+            }
+
+            EnglishLanguageScoreTp listeningScoreTp = xmlFactory.createEnglishLanguageScoreTp();
+            listeningScoreTp.setName(LanguageBandScoreTp.LISTENING);
+            listeningScoreTp.setScore(languageQualification.getListeningScore().replace(".0", ""));
+
+            englishLanguageTp.getLanguageScore()
+                    .addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayOrSpeakingScoreTp, listeningScoreTp));
+            englishLanguageQualificationDetailsTp.getEnglishLanguageQualification().add(englishLanguageTp);
         }
-
-        // The web service does not allow scores in the format "6.0" it only
-        // accepts "6" and the like.
-        EnglishLanguageScoreTp overallScoreTp = xmlFactory.createEnglishLanguageScoreTp();
-        overallScoreTp.setName(LanguageBandScoreTp.OVERALL);
-        overallScoreTp.setScore(languageQualification.getOverallScore().replace(".0", ""));
-
-        EnglishLanguageScoreTp readingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
-        readingScoreTp.setName(LanguageBandScoreTp.READING);
-        readingScoreTp.setScore(languageQualification.getReadingScore().replace(".0", ""));
-
-        EnglishLanguageScoreTp writingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
-        writingScoreTp.setName(LanguageBandScoreTp.WRITING);
-        writingScoreTp.setScore(languageQualification.getWritingScore().replace(".0", ""));
-
-        EnglishLanguageScoreTp essayOrSpeakingScoreTp = null;
-        if (StringUtils.equalsIgnoreCase("TOEFL_PAPER", englishLanguageTp.getMethod())) {
-            essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
-            essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.ESSAY);
-            essayOrSpeakingScoreTp.setScore(languageQualification.getWritingScore().replace(".0", ""));
-        } else {
-            essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
-            essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
-            essayOrSpeakingScoreTp.setScore(languageQualification.getSpeakingScore().replace(".0", ""));
-        }
-
-        EnglishLanguageScoreTp listeningScoreTp = xmlFactory.createEnglishLanguageScoreTp();
-        listeningScoreTp.setName(LanguageBandScoreTp.LISTENING);
-        listeningScoreTp.setScore(languageQualification.getListeningScore().replace(".0", ""));
-
-        englishLanguageTp.getLanguageScore().addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayOrSpeakingScoreTp, listeningScoreTp));
-        englishLanguageQualificationDetailsTp.getEnglishLanguageQualification().add(englishLanguageTp);
         return englishLanguageQualificationDetailsTp;
     }
 

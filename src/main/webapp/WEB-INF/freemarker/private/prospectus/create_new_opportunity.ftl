@@ -13,14 +13,21 @@
 	
     <header>
       <a href="/pgadmissions/login" class="btn btn-danger newOpportunityCancel">Cancel</a>
-      <h1>Have an opportunity to advertise?</h1>
+      <h1>Opportunities to Advertise?</h1>
     </header>
-    </br>
-	<div class="alert alert-info">
-					<i class="icon-info-sign"></i> If you would like to advertise an opportunity to our users, you can apply to do this by completing the inquiry form below.  <strong><i>Already registered? - <a href="/pgadmissions/prospectus">Please Login</a> to proceed</i></strong>
-	</div>
+    	<@spring.bind "opportunityRequest.*"/>
+        <#if spring.status.errorMessages?size &gt; 0>
+     		<div class="alert alert-error" >
+            <i class="icon-warning-sign"></i>
+	    <#else>
+        <div class="alert alert-info">
+  			<i class="icon-info-sign"></i>
+      	</#if>
+		Complete the form below to advertise and manage recruitment to your own programme using our software. 
+			<strong><a href="/pgadmissions/prospectus">Login</a></strong> to proceed if you are already a PRiSM user.
+	     </div>
     <section id="plist">
-      <form action="<@spring.url "/createOpportunity" />" method="POST">      
+      <form action="<@spring.url "/createOpportunity" />" method="POST">
         <fieldset>
         
         

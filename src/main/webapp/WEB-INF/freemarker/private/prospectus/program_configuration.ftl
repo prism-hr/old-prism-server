@@ -88,6 +88,35 @@
                   </div>
                 </div>
                 
+                <div class="row" id="programAdvertStudyOptionsDiv">
+                  <label id = "programAdvertStudyOptionsLabel" class="plain-label" for="programAdvertStudyOptionsSelect">Available Study Options<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.studyOptions'/>"></span>
+                  <div class="field">
+                    <select multiple size="3" class="full" id="programAdvertStudyOptionsSelect">
+                      <#list studyOptions as studyOption>
+                        <option value="${studyOption.id}">
+                          ${studyOption.name?html}
+                        </option>
+                      </#list>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="row" id="programAdvertAdvertisingDeadlineYearDiv">
+                  <label id = "programAdvertAdvertisingDeadlineYearLabel" class="plain-label" for="advertisingDeadlineYear">Expiry Date<em>*</em></label>
+                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.advertisingDeadlineYear'/>"></span>
+                  <div class="field">
+                    <select class="full" id="programAdvertAdvertisingDeadlineYear">
+                      <option value="">Select...</option>
+                      <#list advertisingDeadlines as advertisingDeadline>
+                        <option value="${advertisingDeadline?c}">
+                          30 September ${advertisingDeadline?c}
+                        </option>
+                      </#list>                
+                    </select>
+                  </div>
+                </div>
+                
                	<div class="row" id="programAdvertAtasRequiredDiv">
                   <label id="programAdvertAtasRequiredLabel" class="plain-label" for="atasRequired">Does the programme require ATAS?<em>*</em></label>
                   <span class="hint" data-desc="<@spring.message 'opportunityRequest.atasRequired'/>"></span>
@@ -137,35 +166,6 @@
                     <input id="programAdvertIsActiveRadioNo" type="radio" name="switch" value="false">
                       No
                     </input>
-                  </div>
-                </div>
-                
-                <div class="row" id="programAdvertStudyOptionsDiv">
-                  <label id = "programAdvertStudyOptionsLabel" class="plain-label" for="programAdvertStudyOptionsSelect">Available Study Options<em>*</em></label>
-                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.studyOptions'/>"></span>
-                  <div class="field">
-                    <select multiple size="3" class="full" id="programAdvertStudyOptionsSelect">
-                      <#list studyOptions as studyOption>
-                        <option value="${studyOption.id}">
-                          ${studyOption.name?html}
-                        </option>
-                      </#list>
-                    </select>
-                  </div>
-                </div>
-                
-                <div class="row" id="programAdvertAdvertisingDeadlineYearDiv">
-                  <label id = "programAdvertAdvertisingDeadlineYearLabel" class="plain-label" for="advertisingDeadlineYear">Expiry Date<em>*</em></label>
-                  <span class="hint" data-desc="<@spring.message 'opportunityRequest.advertisingDeadlineYear'/>"></span>
-                  <div class="field">
-                    <select class="full" id="programAdvertAdvertisingDeadlineYear">
-                      <option value="">Select...</option>
-                      <#list advertisingDeadlines as advertisingDeadline>
-                        <option value="${advertisingDeadline?c}">
-                          30 September ${advertisingDeadline?c}
-                        </option>
-                      </#list>                
-                    </select>
                   </div>
                 </div>
                 

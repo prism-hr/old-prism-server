@@ -201,7 +201,7 @@ public class AdvertDAO {
                         .add(Projections.property("project.studyDuration"), "studyDuration")
                         .add(Projections.property("project.funding"), "funding")
                         .add(Projections.property("program.code"), "programCode")
-                        .add(Projections.min("closingDate.closingDate"), "closingDate")
+                        .add(Projections.min("project.closingDate"), "closingDate")
                         .add(Projections.property("primarySupervisor.firstName"), "primarySupervisorFirstName")
                         .add(Projections.property("primarySupervisor.lastName"), "primarySupervisorLastName")
                         .add(Projections.property("primarySupervisor.email"), "primarySupervisorEmail")

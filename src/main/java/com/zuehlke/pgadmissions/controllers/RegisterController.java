@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
@@ -31,6 +33,8 @@ import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 @Controller
 @RequestMapping(value = "/register")
 public class RegisterController {
+
+    private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 
     private static final String REGISTER_USERS_VIEW_NAME = "public/register/register_applicant";
 
@@ -131,6 +135,7 @@ public class RegisterController {
 
         redirectView += "activationCode=" + user.getActivationCode();
 
+        log.info("Activation page requested by " + user.getUsername() + ". Redirecting to: " + redirectView);
         return redirectView;
     }
 

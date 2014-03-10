@@ -28,21 +28,28 @@ import javax.validation.Valid;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.apache.solr.analysis.LowerCaseFilterFactory;
+import org.apache.solr.analysis.StandardTokenizerFactory;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.AnalyzerDef;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "REGISTERED_USER")
+@AnalyzerDef(name = "registeredUserAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
 @Indexed
+@Entity(name = "REGISTERED_USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class RegisteredUser extends Authorisable implements UserDetails, Comparable<RegisteredUser>, Serializable {
 
@@ -53,23 +60,23 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     private Integer id;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String firstName;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String firstName2;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String firstName3;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String lastName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String email;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)

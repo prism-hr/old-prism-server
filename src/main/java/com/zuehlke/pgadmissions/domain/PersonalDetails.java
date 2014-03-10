@@ -51,7 +51,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @Column(name = "language_qualification_available")
     private Boolean languageQualificationAvailable;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "language_qualification_id")
     @Valid
     private LanguageQualification languageQualification;
@@ -62,16 +62,16 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @Column(name = "passport_available")
     private Boolean passportAvailable;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "passport_information_id")
     @Valid
     private PassportInformation passportInformation;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "first_nationality")
     private Language firstNationality = null;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "second_nationality")
     private Language secondNationality = null;
 
@@ -86,19 +86,19 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "country_id")
     private Country country;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ethnicity_id")
     private Ethnicity ethnicity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "disability_id")
     private Disability disability;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "domicile_id")
     private Domicile residenceCountry;
 

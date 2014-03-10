@@ -13,6 +13,8 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.zuehlke.pgadmissions.domain.enums.AdvertType;
+
 @Entity(name = "PROJECT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Project extends Advert {
@@ -38,6 +40,11 @@ public class Project extends Advert {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "secondary_supervisor_id")
     private RegisteredUser secondarySupervisor;
+    
+    public Project() {
+        super();
+        super.setAdvertType(AdvertType.PROJECT);
+    }
 
     public void setProgram(Program program) {
         this.program = program;

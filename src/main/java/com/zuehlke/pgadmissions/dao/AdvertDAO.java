@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.dto.AdvertDTO;
 @SuppressWarnings("unchecked")
 public class AdvertDAO {
     
-    private static final BigDecimal RECOMMENDED_ADVERT_FEED_THRESHOLD = new BigDecimal(0.05);
+    private static final BigDecimal RECOMMENDED_ADVERT_FEED_THRESHOLD = new BigDecimal(0.15);
     
     private final SessionFactory sessionFactory;
 
@@ -181,7 +181,8 @@ public class AdvertDAO {
                         .add(Projections.min("closingDate.closingDate"), "closingDate")
                         .add(Projections.property("contactUser.firstName"), "primarySupervisorFirstName")
                         .add(Projections.property("contactUser.lastName"), "primarySupervisorLastName")
-                        .add(Projections.property("contactUser.email"), "primarySupervisorEmail"))
+                        .add(Projections.property("contactUser.email"), "primarySupervisorEmail")
+                        .add(Projections.property("program.advertType"), "advertType"))
                 .createAlias("program.contactUser", "contactUser", JoinType.INNER_JOIN)
                 .createAlias("program.closingDates", "closingDate", JoinType.LEFT_OUTER_JOIN)
                 .add(Restrictions.eq("program.enabled", true))
@@ -205,7 +206,7 @@ public class AdvertDAO {
                         .add(Projections.property("primarySupervisor.firstName"), "primarySupervisorFirstName")
                         .add(Projections.property("primarySupervisor.lastName"), "primarySupervisorLastName")
                         .add(Projections.property("primarySupervisor.email"), "primarySupervisorEmail")
-                        .add(Projections.property("project.id"), "projectId")
+                        .add(Projections.property("project.advertType"), "advertType")
                         .add(Projections.property("secondarySupervisor.firstName"), "secondarySupervisorFirstName")
                         .add(Projections.property("secondarySupervisor.lastName"), "secondarySupervisorLastName"))
                 .createAlias("project.primarySupervisor", "primarySupervisor", JoinType.INNER_JOIN)
@@ -249,7 +250,6 @@ public class AdvertDAO {
                 .addScalar("primarySupervisorLastName", StringType.INSTANCE)
                 .addScalar("primarySupervisorEmail", StringType.INSTANCE)
                 .addScalar("advertType", advertTypeEnum)
-                .addScalar("projectId", IntegerType.INSTANCE)
                 .addScalar("secondarySupervisorFirstName", StringType.INSTANCE)
                 .addScalar("secondarySupervisorLastName", StringType.INSTANCE)
                 .setInteger(0, Integer.parseInt(feedKeyValue))

@@ -10,14 +10,13 @@ public class AdvertDTO {
     private String title;
     private String description;
     private Integer studyDuration;
-    private String funding;
+    private String funding = null;
     private String programCode;
-	private Date closingDate;
+	private Date closingDate = null;
 	private String primarySupervisorFirstName;
 	private String primarySupervisorLastName;
 	private String primarySupervisorEmail;
-    private AdvertType advertType = AdvertType.PROGRAM;
-	private Integer projectId = null;
+    private AdvertType advertType;
     private String secondarySupervisorFirstName = null;
     private String secondarySupervisorLastName = null;
     private Boolean selected = false;
@@ -108,17 +107,6 @@ public class AdvertDTO {
 
     public void setType(AdvertType advertType) {
         this.advertType = advertType;
-    }
-
-    public Integer getProjectId() {
-        return projectId;
-    }
-    
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-        if (projectId != null) {
-            setType(AdvertType.PROJECT);
-        }
     }
     
     public String getSecondarySupervisorFirstName() {

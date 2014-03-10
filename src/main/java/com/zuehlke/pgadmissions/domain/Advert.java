@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,10 +21,11 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
+import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "ADVERT")
-@Inheritance(strategy = InheritanceType.JOINED) 
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Advert implements Serializable {
     private static final long serialVersionUID = 5963260213501162814L;
 
@@ -59,6 +62,10 @@ public abstract class Advert implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registered_user_id")
     private RegisteredUser contactUser;
+    
+    @Column(name = "advert_type")
+    @Enumerated(EnumType.STRING)
+    private AdvertType advertType;
     
     public Integer getId() {
         return id;
@@ -153,6 +160,22 @@ public abstract class Advert implements Serializable {
         this.contactUser = contactUser;
     }
     
+    public AdvertType getAdvertType() {
+        return advertType;
+    }
+    
+    public void setAdvertType(AdvertType advertType) {
+        this.advertType = advertType;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
     public abstract Program getProgram();
     
     public abstract Project getProject();

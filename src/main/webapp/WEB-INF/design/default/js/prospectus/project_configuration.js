@@ -40,6 +40,7 @@ function registerAutosuggest() {
 function registerProgramSelect() {
 	$("#projectAdvertProgramSelect").change(function() {
 		loadProjects();
+		$('#projectsClear').hide();
 		clearAll();
 	});
 }
@@ -122,8 +123,9 @@ function addOrEditProjectAdvert() {
 				displayErrors(map);
 			} else {
 				loadProjects();
-				clearAll();
+				loadProject(map['projectId']);
 				$('#resourcesModal').modal('show');
+				$('#projectsClear').show();
 			}
 			changeInfoBarNameProject(labeltext, true);
 		},
@@ -159,14 +161,14 @@ function displayErrors(map) {
 
 function registerEditProjectAdvertButton() {
 	$('#projectAdvertsTable').on('click', '.button-edit', function() {
-		var $row = $(this).closest('tr');
-		loadProject($row);
+		var projectId = $(this).closest('tr').attr("project-id");
+		loadProject(projectId);
 	});
 }
 function registerShowProjectAdvertButton() {
 	$('#projectAdvertsTable').on('click', '.button-show', function() {
-		var $row = $(this).closest('tr');
-		loadProject($row);
+		var projectId = $(this).closest('tr').attr("project-id");
+		loadProject(projectId);
 		$('html, body').animate({
 			scrollTop : $("#resourcesProject").offset().top
 		}, 300);
@@ -338,8 +340,7 @@ function removeProject(projectRow) {
 	});
 }
 
-function loadProject(advertRow) {
-	projectId = advertRow.attr("project-id");
+function loadProject(projectId) {
 	showLoader();
 	$.ajax({
 		type : 'GET',
@@ -520,7 +521,6 @@ function loadProjects() {
 			setStudyDuration(null);
 			checkToDisableProject();
 			clearProjectAdvertErrors();
-			$('#projectsClear').hide();
 		},
 		complete : function() {
 			hideLoader();

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -19,11 +20,13 @@ import javax.persistence.OrderBy;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Entity(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@DiscriminatorValue(value="PROGRAM")
 public class Program extends Advert {
 
     private static final long serialVersionUID = -9073611033741317582L;
@@ -74,6 +77,11 @@ public class Program extends Advert {
     @Column(name = "locked")
     private boolean locked;
 
+    public Program() {
+        super();
+        super.setAdvertType(AdvertType.PROGRAM);
+    }
+    
     public void setCode(final String code) {
         this.code = code;
     }

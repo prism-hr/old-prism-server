@@ -156,6 +156,7 @@ public class ProjectConfigurationController {
             project.setContactUser(currentUser);
             programsService.save(project);
             map.put("success", "true");
+            map.put("projectId", project.getId());
         }
 
         return gson.toJson(map);
@@ -220,6 +221,7 @@ public class ProjectConfigurationController {
             }
             programsService.save(project);
             map.put("success", "true");
+            map.put("projectId", project.getId());
         }
         return gson.toJson(map);
     }

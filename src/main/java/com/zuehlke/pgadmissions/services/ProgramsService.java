@@ -230,10 +230,6 @@ public class ProgramsService {
 
     }
 
-    public Advert getValidProgramProjectAdvert(Advert advert) {
-        return getValidProgramProjectAdvert(null, advert.getId());
-    }
-
     public Advert getValidProgramProjectAdvert(String programCode, Integer advertId) {
         Advert advert = null;
         if (advertId != null) {

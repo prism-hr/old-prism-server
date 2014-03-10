@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
@@ -130,7 +131,8 @@ public class SubmitApplicationFormController {
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         
         if (user.canEditAsApplicant(applicationForm)) {
-            programsService.getValidProgramProjectAdvert(applicationForm.getAdvert());
+            Advert advert = applicationForm.getAdvert();
+            programsService.getValidProgramProjectAdvert(advert.getProgram().getCode(), advert.getId());
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }
 

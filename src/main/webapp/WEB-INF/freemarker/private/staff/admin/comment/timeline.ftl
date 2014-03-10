@@ -254,7 +254,7 @@
 			            </#if>
 		            </#list>                       
 		          </ul>
-		          <#elseif timelineObject.referee?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isApplicationAdministrator(applicationForm) || timelineObject.referee.user == user) || user.isInRole("ADMITTER")> 
+		          <#elseif timelineObject.referee?? && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isApplicationAdministrator(applicationForm) || timelineObject.referee.user == user || user.isInRole("ADMITTER"))> 
 		            	<#include "timeline_snippets/reference_comment.ftl"/>
 		          <#elseif timelineObject.type == 'confirmEligibility' && (user.hasStaffRightsOnApplicationForm(applicationForm) || user.isApplicationAdministrator(applicationForm) ||  user.isInRole("ADMITTER"))>
 		            	<#include "timeline_snippets/eligibility_comment.ftl"/>

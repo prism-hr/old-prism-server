@@ -134,33 +134,27 @@ public class ApplicationFormDAO {
     public ApplicationForm getPreviousApplicationForApplicant(ApplicationForm applicationForm, RegisteredUser applicant) {
         Boolean copySubmittedApplication = true;
         Integer applicationFormId = applicationForm.getId();
-        
-        Date copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .setProjection(Projections.max("submittedDate"))
-                .add(Restrictions.eq("applicant", applicant))
-                .add(Restrictions.isNotNull("submittedDate"))
-                .add(Restrictions.ne("id", applicationFormId)).uniqueResult();
-        
+
+        Date copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).setProjection(Projections.max("submittedDate"))
+                .add(Restrictions.eq("applicant", applicant)).add(Restrictions.isNotNull("submittedDate")).add(Restrictions.ne("id", applicationFormId))
+                .uniqueResult();
+
         if (copyOnDate == null) {
             copySubmittedApplication = false;
-            copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                    .setProjection(Projections.min("applicationTimestamp"))
-                    .add(Restrictions.eq("applicant", applicant))
-                    .add(Restrictions.ne("id", applicationFormId)).uniqueResult();
+            copyOnDate = (Date) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).setProjection(Projections.min("applicationTimestamp"))
+                    .add(Restrictions.eq("applicant", applicant)).add(Restrictions.ne("id", applicationFormId)).uniqueResult();
         }
-        
+
         if (copyOnDate != null) {
-            Criteria getPreviousApplication = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                    .setProjection(Projections.max("id"))
-                    .add(Restrictions.eq("applicant", applicant))
-                    .add(Restrictions.ne("id", applicationFormId));
-            
+            Criteria getPreviousApplication = sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).setProjection(Projections.max("id"))
+                    .add(Restrictions.eq("applicant", applicant)).add(Restrictions.ne("id", applicationFormId));
+
             if (BooleanUtils.isTrue(copySubmittedApplication)) {
                 getPreviousApplication.add(Restrictions.ge("submittedDate", copyOnDate));
             } else {
                 getPreviousApplication.add(Restrictions.ge("applicationTimestamp", copyOnDate));
             }
-            
+
             return get((Integer) getPreviousApplication.uniqueResult());
         }
 

@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -53,13 +51,13 @@ import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EthnicityService;
 import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsUserValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 
 @Controller
 @RequestMapping("/update")
-@SessionAttributes({ "personalDetails" })
 public class PersonalDetailsController {
 
     private static final String STUDENTS_FORM_PERSONAL_DETAILS_VIEW = "/private/pgStudents/form/components/personal_details";
@@ -84,10 +82,11 @@ public class PersonalDetailsController {
     private final DocumentService documentService;
     private final EncryptionHelper encryptionHelper;
     private final PersonalDetailsUserValidator personalDetailsUserValidator;
+    private final PersonalDetailsService personalDetailsService;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     public PersonalDetailsController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
@@ -95,10 +94,10 @@ public class PersonalDetailsController {
             ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor, CountryService countryService,
             EthnicityService ethnicityService, DisabilityService disabilityService, LanguageService languageService,
             LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, DisabilityPropertyEditor disabilityPropertyEditor,
-            EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator,
-            DomicileService domicileService, DomicilePropertyEditor domicilePropertyEditor, DocumentPropertyEditor documentPropertyEditor,
-            DocumentService documentService, EncryptionHelper encryptionHelper, PersonalDetailsUserValidator personalDetailsUserValidator,
-            final ApplicationFormUserRoleService applicationFormUserRoleService) {
+            EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator, DomicileService domicileService,
+            DomicilePropertyEditor domicilePropertyEditor, DocumentPropertyEditor documentPropertyEditor, DocumentService documentService,
+            EncryptionHelper encryptionHelper, PersonalDetailsUserValidator personalDetailsUserValidator, PersonalDetailsService personalDetailsService,
+            ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -118,6 +117,7 @@ public class PersonalDetailsController {
         this.documentService = documentService;
         this.encryptionHelper = encryptionHelper;
         this.personalDetailsUserValidator = personalDetailsUserValidator;
+        this.personalDetailsService = personalDetailsService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
@@ -146,9 +146,9 @@ public class PersonalDetailsController {
     @RequestMapping(value = "/getPersonalDetails", method = RequestMethod.GET)
     public String getPersonalDetailsView(@RequestParam String applicationId, Model model) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        
+
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        if(personalDetails == null){
+        if (personalDetails == null) {
             personalDetails = new PersonalDetails();
             applicationForm.setPersonalDetails(personalDetails);
         }
@@ -165,7 +165,7 @@ public class PersonalDetailsController {
 
     @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
     public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult,
-            @ModelAttribute("updatedUser") @Valid RegisteredUser updatedUser, BindingResult userResult, Model model, SessionStatus sessionStatus,
+            @ModelAttribute("updatedUser") @Valid RegisteredUser updatedUser, BindingResult userResult, Model model,
             @ModelAttribute("applicationForm") ApplicationForm application) {
         if (application.isDecided()) {
             throw new CannotUpdateApplicationException(application.getApplicationNumber());
@@ -176,11 +176,10 @@ public class PersonalDetailsController {
         }
 
         userService.updateCurrentUser(updatedUser);
-        application.setPersonalDetails(personalDetails);
-        applicationsService.save(application);
-        applicationFormUserRoleService.insertApplicationUpdate(application, getUser(), ApplicationUpdateScope.ALL_USERS);
 
-        sessionStatus.setComplete();
+        personalDetailsService.save(application, personalDetails);
+
+        applicationFormUserRoleService.insertApplicationUpdate(application, getUser(), ApplicationUpdateScope.ALL_USERS);
 
         return "redirect:/update/getPersonalDetails?applicationId=" + personalDetails.getApplication().getApplicationNumber();
     }

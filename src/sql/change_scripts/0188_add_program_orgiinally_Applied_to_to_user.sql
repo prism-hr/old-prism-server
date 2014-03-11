@@ -1,0 +1,1 @@
+ALTER TABLE REGISTERED_USER ADD COLUMN originally_program_id INTEGER UNSIGNED,  ADD CONSTRAINT program_user_fk FOREIGN KEY (originally_program_id) REFERENCES PROGRAM(id);

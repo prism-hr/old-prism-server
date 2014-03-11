@@ -29,9 +29,6 @@ public class RejectService {
 	private RejectReasonDAO rejectDao;
 	
 	@Autowired
-	private EventFactory eventFactory;
-	
-	@Autowired
 	private PorticoQueueService porticoQueueService;
 	
 	@Autowired
@@ -52,7 +49,6 @@ public class RejectService {
 
 		form.setStatus(ApplicationFormStatus.REJECTED);		
 		form.setRejection(rejection);
-		form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.REJECTED));
 		
 		sendRejectNotificationToApplicant(form);
 		applicationDao.save(form);

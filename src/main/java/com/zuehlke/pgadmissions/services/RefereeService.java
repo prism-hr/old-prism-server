@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -19,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -28,38 +25,36 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Service
 @Transactional
 public class RefereeService {
-
-    private final RefereeDAO refereeDAO;
-    private final UserService userService;
-    private final RoleDAO roleDAO;
-    private final CommentService commentService;
-    private final EventFactory eventFactory;
-    private final ApplicationFormDAO applicationFormDAO;
-    private final EncryptionUtils encryptionUtils;
-    private final EncryptionHelper encryptionHelper;
-    private final ApplicantRatingService applicantRatingService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    public RefereeService() {
-        this(null, null, null, null, null, null, null, null, null, null);
-    }
+    // TODO fix tests
 
     @Autowired
-    public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils, UserService userService, RoleDAO roleDAO, CommentService commentService,
-            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper, ApplicantRatingService applicantRatingService, ApplicationFormUserRoleService applicationFormUserRoleService) {
-        this.refereeDAO = refereeDAO;
-        this.encryptionUtils = encryptionUtils;
-        this.userService = userService;
-        this.roleDAO = roleDAO;
-        this.commentService = commentService;
-        this.eventFactory = eventFactory;
-        this.applicationFormDAO = applicationFormDAO;
-        this.encryptionHelper = encryptionHelper;
-        this.applicantRatingService = applicantRatingService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-    }
+    private RefereeDAO refereeDAO;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private RoleDAO roleDAO;
+    
+    @Autowired
+    private CommentService commentService;
+    
+    @Autowired
+    private EncryptionUtils encryptionUtils;
+    
+    @Autowired
+    private EncryptionHelper encryptionHelper;
+    
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
 
     public Referee getRefereeById(Integer id) {
+        return refereeDAO.getRefereeById(id);
+    }
+    
+    public Referee getRefereeById(String idString) {
+        Integer id = encryptionHelper.decryptToInteger(idString);
         return refereeDAO.getRefereeById(id);
     }
 
@@ -69,10 +64,6 @@ public class RefereeService {
 
     public void refresh(Referee referee) {
         refereeDAO.refresh(referee);
-    }
-
-    public void saveReferenceAndSendMailNotifications(Referee referee) {
-        addReferenceEventToApplication(referee);
     }
 
     public void processRefereesRoles(List<Referee> referees) {
@@ -87,7 +78,7 @@ public class RefereeService {
         if (userExists(user) && !isUserReferee(user)) {
             user.getRoles().add(refereeRole);
             if (user.getActivationCode() == null) {
-            	user.setActivationCode(encryptionUtils.generateUUID());
+                user.setActivationCode(encryptionUtils.generateUUID());
             }
         }
         if (!userExists(user)) {
@@ -134,21 +125,9 @@ public class RefereeService {
         refereeDAO.delete(referee);
     }
 
-    public Referee getRefereeByUserAndApplication(RegisteredUser user, ApplicationForm form) {
-        Referee matchedReferee = null;
-        List<Referee> referees = user.getReferees();
-        for (Referee referee : referees) {
-            if (referee.getApplication() != null && referee.getApplication().getId().equals(form.getId())) {
-                matchedReferee = referee;
-            }
-        }
-        return matchedReferee;
-    }
-
     public void declineToActAsRefereeAndSendNotification(Referee referee) {
         referee.setDeclined(true);
         refereeDAO.save(referee);
-        addReferenceEventToApplication(referee);
     }
 
     public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> refereesSendToPortico) {
@@ -168,19 +147,17 @@ public class RefereeService {
         Referee referee = getRefereeById(refereeId);
         ReferenceComment reference = referee.getReference();
 
-        reference.setComment(refereesAdminEditDTO.getComment());
-        reference.setSuitableForUCL(refereesAdminEditDTO.getSuitableForUCL());
+        reference.setContent(refereesAdminEditDTO.getComment());
+        reference.setSuitableForInstitution(refereesAdminEditDTO.getSuitableForUCL());
         reference.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
-        reference.setApplicantRating(refereesAdminEditDTO.getApplicantRating());
+        reference.setRating(refereesAdminEditDTO.getApplicantRating());
         reference.getScores().clear();
         reference.getScores().addAll(refereesAdminEditDTO.getScores());
 
         Document document = refereesAdminEditDTO.getReferenceDocument();
         if (document != null) {
-            reference.setDocuments(Collections.singletonList(document));
+            reference.setDocument(document);
         }
-        
-        applicantRatingService.computeAverageRating(applicationForm);
 
         return reference;
     }
@@ -202,15 +179,13 @@ public class RefereeService {
         applicationForm.getApplicationComments().add(referenceComment);
 
         commentService.save(referenceComment);
-        applicantRatingService.computeAverageRating(applicationForm);
 
         if (applicationForm.getReferencesToSendToPortico().size() < 2) {
             referee.setSendToUCL(true);
         }
-        
-        applicationFormUserRoleService.referencePosted(referee);
 
-        saveReferenceAndSendMailNotifications(referee);
+        applicationFormUserRoleService.referencePosted(referenceComment);
+
         return referenceComment;
     }
 
@@ -231,27 +206,19 @@ public class RefereeService {
     private ReferenceComment createReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO, Referee referee, ApplicationForm applicationForm) {
         ReferenceComment referenceComment = new ReferenceComment();
         referenceComment.setApplication(applicationForm);
-        referenceComment.setReferee(referee);
-        referenceComment.setType(CommentType.REFERENCE);
         referenceComment.setUser(referee.getUser());
-        referenceComment.setProvidedBy(userService.getCurrentUser());
-        referenceComment.setComment(refereesAdminEditDTO.getComment());
+        referenceComment.setDelegateProvider(userService.getCurrentUser());
+        referenceComment.setContent(refereesAdminEditDTO.getComment());
         referenceComment.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
-        referenceComment.setSuitableForUCL(refereesAdminEditDTO.getSuitableForUCL());
-        referenceComment.setApplicantRating(refereesAdminEditDTO.getApplicantRating());
-        referenceComment.setScores(refereesAdminEditDTO.getScores());
+        referenceComment.setSuitableForInstitution(refereesAdminEditDTO.getSuitableForUCL());
+        referenceComment.setRating(refereesAdminEditDTO.getApplicantRating());
+        referenceComment.getScores().addAll(refereesAdminEditDTO.getScores());
 
         Document document = refereesAdminEditDTO.getReferenceDocument();
         if (document != null) {
-            referenceComment.setDocuments(Collections.singletonList(document));
+            referenceComment.setDocument(document);
         }
         return referenceComment;
-    }
-
-    private void addReferenceEventToApplication(Referee referee) {
-        ApplicationForm application = referee.getApplication();
-        application.getEvents().add(eventFactory.createEvent(referee));
-        applicationFormDAO.save(application);
     }
 
 }

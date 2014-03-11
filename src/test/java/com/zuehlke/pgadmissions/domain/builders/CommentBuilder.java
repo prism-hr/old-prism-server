@@ -52,10 +52,10 @@ public class CommentBuilder {
 	public Comment build() {
 		Comment comment = new Comment();
 		comment.setApplication(application);
-		comment.setComment(strComment);
+		comment.setContent(strComment);
 		comment.setId(id);
 		comment.setUser(user);
-		comment.setDate(createdTimeStamp);
+		comment.setCreatedTimestamp(createdTimeStamp);
 		comment.getScores().addAll(scores);
 		return comment;
 	}

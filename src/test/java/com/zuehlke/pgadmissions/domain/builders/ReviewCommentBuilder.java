@@ -5,8 +5,6 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.Reviewer;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class ReviewCommentBuilder {
 
@@ -16,14 +14,11 @@ public class ReviewCommentBuilder {
     private Boolean willingToWorkWithApplicant;
     private Integer applicantRating;
     private boolean decline;
-    private boolean adminsNotified;
     private ApplicationForm applicationForm;
-    private String comment;
+    private String content;
     private Integer id;
     private Date createdTimeStamp;
     private RegisteredUser user;
-    private CommentType commentType;
-    private Reviewer reviewer;
 
     public ReviewCommentBuilder willingToWorkWithApplicant(Boolean willingToWorkWithApplicant) {
         this.willingToWorkWithApplicant = willingToWorkWithApplicant;
@@ -32,11 +27,6 @@ public class ReviewCommentBuilder {
 
     public ReviewCommentBuilder createdTimeStamp(Date createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
-        return this;
-    }
-
-    public ReviewCommentBuilder reviewer(Reviewer reviewer) {
-        this.reviewer = reviewer;
         return this;
     }
 
@@ -65,11 +55,6 @@ public class ReviewCommentBuilder {
         return this;
     }
 
-    public ReviewCommentBuilder adminsNotified(boolean adminsNotified) {
-        this.adminsNotified = adminsNotified;
-        return this;
-    }
-
     public ReviewCommentBuilder id(Integer id) {
         this.id = id;
         return this;
@@ -80,13 +65,8 @@ public class ReviewCommentBuilder {
         return this;
     }
 
-    public ReviewCommentBuilder comment(String comment) {
-        this.comment = comment;
-        return this;
-    }
-
-    public ReviewCommentBuilder commentType(CommentType commentType) {
-        this.commentType = commentType;
+    public ReviewCommentBuilder content(String content) {
+        this.content = content;
         return this;
     }
 
@@ -98,19 +78,16 @@ public class ReviewCommentBuilder {
     public ReviewComment build() {
         ReviewComment reviewComment = new ReviewComment();
         reviewComment.setApplication(applicationForm);
-        reviewComment.setComment(comment);
-        reviewComment.setType(commentType);
-        reviewComment.setDate(createdTimeStamp);
-        reviewComment.setDecline(decline);
+        reviewComment.setContent(content);
+        reviewComment.setCreatedTimestamp(createdTimeStamp);
+        reviewComment.setDeclined(decline);
         reviewComment.setId(id);
-        reviewComment.setSuitableCandidateForUcl(suitableCandidateForUcl);
+        reviewComment.setSuitableForInstitution(suitableCandidateForUcl);
         reviewComment.setUser(user);
         reviewComment.setWillingToInterview(willingToInterview);
-        reviewComment.setAdminsNotified(adminsNotified);
-        reviewComment.setReviewer(reviewer);
-        reviewComment.setSuitableCandidateForProgramme(suitableCandidateForProgramme);
-        reviewComment.setWillingToWorkWithApplicant(willingToWorkWithApplicant);
-        reviewComment.setApplicantRating(applicantRating);
+        reviewComment.setSuitableForProgramme(suitableCandidateForProgramme);
+        reviewComment.setWillingToSupervise(willingToWorkWithApplicant);
+        reviewComment.setRating(applicantRating);
         return reviewComment;
     }
 }

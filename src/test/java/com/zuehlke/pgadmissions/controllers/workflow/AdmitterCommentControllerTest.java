@@ -7,8 +7,6 @@ import static org.easymock.EasyMock.expect;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
-import java.util.Date;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.ui.ModelMap;
@@ -21,8 +19,6 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ConfirmEligibilityEvent;
-import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AdmitterCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -37,7 +33,6 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdmitterCommentValidator;
 
@@ -75,10 +70,6 @@ public class AdmitterCommentControllerTest {
     @InjectIntoByType
     private MailSendingService mailServiceMock;
 
-    @Mock
-    @InjectIntoByType
-    private EventFactory eventFactoryMock;
-    
     @Mock
     @InjectIntoByType
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
@@ -159,13 +150,6 @@ public class AdmitterCommentControllerTest {
         modelMap.put("applicationForm", application);
         modelMap.put("user", currentUser);
 
-        Event event = new ConfirmEligibilityEvent();
-        event.setId(654);
-        event.setApplication(application);
-        event.setDate(new Date());
-        event.setUser(currentUser);
-        expect(eventFactoryMock.createEvent(comment)).andReturn(event);
-
         actionsProviderMock.validateAction(application, currentUser, ApplicationFormAction.CONFIRM_ELIGIBILITY);
         applicationsServiceMock.save(application);
         commentServiceMock.save(comment);
@@ -178,11 +162,8 @@ public class AdmitterCommentControllerTest {
 
         assertEquals("redirect:/applications?messageCode=validation.comment.success&application=appId", result);
         assertEquals(currentUser, comment.getUser());
-        assertNotNull(comment.getDate());
+        assertNotNull(comment.getCreatedTimestamp());
         assertEquals(application, comment.getApplication());
-
-        assertNotNull(application.getEvents().get(0));
-        assertEquals(event, application.getEvents().get(0));
     }
 
 }

@@ -25,8 +25,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Event;
-import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -36,25 +34,18 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
-import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -79,7 +70,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         application.setLastUpdated(lastUpdatedDate);
         application.setAdvert(project);
         application.setStatus(ApplicationFormStatus.APPROVED);
-        application.setApplicationAdministrator(applicationAdmin);
         application.setApplicationNumber("ABC");
         assertNull(application.getId());
 
@@ -103,7 +93,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
         assertEquals(project.getTitle(), reloadedApplication.getProjectTitle());
         assertEquals(lastUpdatedDate, application.getLastUpdated());
-        assertEquals(applicationAdmin, application.getApplicationAdministrator());
         assertEquals("ABC", application.getApplicationNumber());
     }
 
@@ -126,23 +115,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
         ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
         assertEquals(personalDetails.getId(), reloadedApplication.getPersonalDetails().getId());
-    }
-
-    @Test
-    public void shouldLoadApplicationFormWithInterview() throws ParseException {
-
-        ApplicationForm application = new ApplicationFormBuilder().applicant(user).advert(program).build();
-
-        sessionFactory.getCurrentSession().save(application);
-        flushAndClearSession();
-        Interview interview = new InterviewBuilder().application(application).lastNotified(new Date()).furtherDetails("tba").locationURL("pgadmissions")
-                .build();
-
-        sessionFactory.getCurrentSession().save(interview);
-        flushAndClearSession();
-
-        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(interview.getId(), reloadedApplication.getInterviews().get(0).getId());
     }
 
     @Test
@@ -245,125 +217,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldSaveAndLoadEventsWithApplication() throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-        StateChangeEvent eventOne = new StateChangeEventBuilder().date(simpleDateFormat.parse("01 12 2011 14:09:26")).newStatus(ApplicationFormStatus.REJECTED)
-                .build();
-        StateChangeEvent eventTwo = new StateChangeEventBuilder().date(simpleDateFormat.parse("03 12 2011 14:09:26"))
-                .newStatus(ApplicationFormStatus.UNSUBMITTED).build();
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).events(eventOne, eventTwo).build();
-
-        save(application);
-        Integer eventOneId = eventOne.getId();
-        assertNotNull(eventOneId);
-        assertNotNull(eventTwo.getId());
-        flushAndClearSession();
-
-        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(2, reloadedApplication.getEvents().size());
-
-        assertTrue(listContainsId(eventOne, reloadedApplication.getEvents()));
-        assertTrue(listContainsId(eventTwo, reloadedApplication.getEvents()));
-
-        eventOne = (StateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, eventOneId);
-        reloadedApplication.getEvents().remove(eventOne);
-        save(reloadedApplication);
-        flushAndClearSession();
-
-        reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(1, reloadedApplication.getEvents().size());
-        assertTrue(listContainsId(eventTwo, reloadedApplication.getEvents()));
-
-        assertNull(sessionFactory.getCurrentSession().get(StateChangeEvent.class, eventOneId));
-    }
-
-    @Test
-    public void shouldLoadInterviewsForApplicationForm() throws ParseException, InterruptedException {
-
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
-        save(application);
-
-        Interview interviewOne = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).build()).application(application).build();
-        save(interviewOne);
-
-        Interview interviewTwo = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).build()).application(application).build();
-        save(interviewTwo);
-
-        Interview interviewTrhee = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).build()).application(application).build();
-        save(interviewTrhee);
-
-        flushAndClearSession();
-
-        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(3, reloadedApplication.getInterviews().size());
-        assertTrue(listContainsId(interviewOne, reloadedApplication.getInterviews()));
-        assertTrue(listContainsId(interviewTwo, reloadedApplication.getInterviews()));
-        assertTrue(listContainsId(interviewTrhee, reloadedApplication.getInterviews()));
-    }
-
-    @Test
-    public void shouldSaveAndLoadLatestInterview() throws ParseException, InterruptedException {
-
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
-        save(application);
-
-        Interview interview = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).build()).application(application).build();
-        save(interview);
-
-        application.setLatestInterview(interview);
-        save(application);
-
-        flushAndClearSession();
-
-        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(interview.getId(), reloadedApplication.getLatestInterview().getId());
-    }
-
-    @Test
-    public void shouldLoadReveiwRoundForApplicationForm() throws ParseException, InterruptedException {
-
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
-        save(application);
-
-        ReviewRound reviewRoundOne = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).build()).application(application).build();
-        save(reviewRoundOne);
-
-        ReviewRound reviewRoundTwo = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).build()).application(application).build();
-        save(reviewRoundTwo);
-
-        ReviewRound reviewRoundTrhee = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).build()).application(application).build();
-        save(reviewRoundTrhee);
-
-        flushAndClearSession();
-
-        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-        assertEquals(3, reloadedApplication.getReviewRounds().size());
-
-        assertTrue(listContainsId(reviewRoundOne, reloadedApplication.getReviewRounds()));
-        assertTrue(listContainsId(reviewRoundTwo, reloadedApplication.getReviewRounds()));
-        assertTrue(listContainsId(reviewRoundTrhee, reloadedApplication.getReviewRounds()));
-    }
-
-    @Test
-    public void shouldSaveAndLoadLatestReviewRound() throws ParseException, InterruptedException {
-
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
-        save(application);
-
-        ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).build()).application(application).build();
-        save(reviewRound);
-
-        application.setLatestReviewRound(reviewRound);
-        save(application);
-
-        flushAndClearSession();
-
-        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-
-        assertEquals(reviewRound.getId(), reloadedApplication.getLatestReviewRound().getId());
-    }
-
-    @Test
     public void shouldSaveAndLoadRejection() throws ParseException, InterruptedException {
 
         ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
@@ -392,7 +245,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         application.setLastUpdated(lastUpdatedDate);
         application.setAdvert(project);
         application.setStatus(ApplicationFormStatus.APPROVED);
-        application.setApplicationAdministrator(applicationAdmin);
         application.setApplicationNumber("ABC");
         assertNull(application.getId());
 
@@ -420,7 +272,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
         assertEquals(project.getTitle(), reloadedApplication.getProjectTitle());
         assertEquals(lastUpdatedDate, application.getLastUpdated());
-        assertEquals(applicationAdmin, application.getApplicationAdministrator());
         assertEquals("ABC", application.getApplicationNumber());
     }
 
@@ -443,6 +294,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
         QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a41").domicileCode("AE").enabled(true).build();
 
+
         save(user, reviewerUser, institution, interviewerUser, applicationAdmin, approver);
 
         flushAndClearSession();
@@ -455,33 +307,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
     private boolean listContainsId(Comment comment, List<Comment> comments) {
         for (Comment entry : comments) {
             if (entry.getId().equals(comment.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean listContainsId(StateChangeEvent event, List<Event> events) {
-        for (Event entry : events) {
-            if (entry.getId().equals(event.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean listContainsId(Interview interview, List<Interview> interviews) {
-        for (Interview entry : interviews) {
-            if (entry.getId().equals(interview.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean listContainsId(ReviewRound review, List<ReviewRound> reviewRounds) {
-        for (ReviewRound entry : reviewRounds) {
-            if (entry.getId().equals(review.getId())) {
                 return true;
             }
         }

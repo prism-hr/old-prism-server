@@ -76,7 +76,6 @@ public class AddressControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
@@ -115,7 +114,6 @@ public class AddressControllerTest {
         Address addressTwo = new AddressBuilder().id(2).address1("location2").address2("location2-line2").domicile(domicileTwo).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).contactAddress(addressOne).currentAddress(addressTwo).build();
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
         AddressSectionDTO returnedAddress = controller.getAddressDTO("1");
@@ -141,7 +139,6 @@ public class AddressControllerTest {
         Address addressTwo = new AddressBuilder().id(2).address1("location1").domicile(domicileOne).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).contactAddress(addressOne).currentAddress(addressTwo).build();
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
 
@@ -163,7 +160,6 @@ public class AddressControllerTest {
         EasyMock.replay(userServiceMock);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
 

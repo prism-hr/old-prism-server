@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -16,12 +15,10 @@ import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class RefereeMappingTest extends AutomaticRollbackTestCase {
@@ -87,30 +84,6 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
         reloadedReferee.setReference(null);
         sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
         flushAndClearSession();
-
-    }
-
-    @Test
-    public void shoulLoadReferenceWithReferee() throws ParseException {
-
-        RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("user").password("password")
-                        .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-        ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(2).advert(testObjectProvider.getEnabledProgram()).build();
-
-        Domicile domicile = new DomicileBuilder().name("nae").code("NA").enabled(true).build();
-        save(applicant, application, domicile);
-
-        Referee referee = new RefereeBuilder().application(application).email("email@test.com").firstname("bob").lastname("smith").addressDomicile(domicile)
-                        .address1("london").jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("hallihallo").user(refereeUser).build();
-
-        ReferenceComment referenceComment = new ReferenceCommentBuilder().referee(referee).comment("This is a reference comment").suitableForProgramme(false)
-                        .user(refereeUser).application(applicationForm).build();
-        save(referee, referenceComment);
-        assertNotNull(referenceComment.getId());
-        flushAndClearSession();
-
-        Referee reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
-        assertEquals(referenceComment.getId(), reloadedReferee.getReference().getId());
 
     }
 

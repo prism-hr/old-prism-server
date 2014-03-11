@@ -23,12 +23,15 @@ import junit.framework.Assert;
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
+import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -36,14 +39,12 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -54,49 +55,72 @@ import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFo
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class SubmitApplicationFormControllerTest {
 
-    private SubmitApplicationFormController applicationController;
+    @Mock
+    @InjectIntoByType
     private ApplicationsService applicationsServiceMock;
+
+    @Mock
+    @InjectIntoByType
     private ApplicationFormValidator applicationFormValidatorMock;
+
+    @Mock
+    @InjectIntoByType
     private StageDurationService stageDurationServiceMock;
-    private EventFactory eventFactoryMock;
+
+    @Mock
+    @InjectIntoByType
     private UserService userServiceMock;
-    private MockHttpServletRequest httpServletRequestMock;
+
+    @Mock
+    @InjectIntoByType
     private ActionsProvider actionsProviderMock;
+
+    @Mock
+    @InjectIntoByType
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+
+    @Mock
+    @InjectIntoByType
     private ProgramsService programsService;
+
+    private MockHttpServletRequest httpServletRequestMock;
+
     private RegisteredUser student;
+
     private RegisteredUser admin;
+
+    private SubmitApplicationFormController controller;
 
     @Test
     public void shouldReturnCurrentUser() {
-        assertEquals(student, applicationController.getUser());
+        assertEquals(student, controller.getUser());
     }
 
     @Test
-    public void shouldReturnStudenApplicationViewOnGetForApplicantOfApplciation() {
+    public void shouldReturnStudenApplicationViewOnGetForApplicantOfApplication() {
         Program program = new ProgramBuilder().id(1).build();
         ProgramInstance instance = new ProgramInstanceBuilder().program(program).applicationDeadline(DateUtils.addMonths(new Date(), 1)).enabled(true).build();
         program.getInstances().add(instance);
         List<ProgramInstance> referenceInstanceList = new ArrayList<ProgramInstance>();
         referenceInstanceList.add(instance);
 
-        String view = applicationController.getApplicationView(null, new ApplicationFormBuilder().applicant(student).id(1).advert(program).build());
+        String view = controller.getApplicationView(null, new ApplicationFormBuilder().applicant(student).id(1).advert(program).build());
 
         assertEquals("/private/pgStudents/form/main_application_page", view);
     }
 
     @Test
     public void shouldReturnAdminApplicationViewOnGetForApplicantButNotOfApplication() {
-        String view = applicationController.getApplicationView(null, new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().id(6).build()).id(1)
-                .advert(new ProgramBuilder().id(1).build()).build());
+        String view = controller.getApplicationView(null,
+                new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().id(6).build()).id(1).advert(new ProgramBuilder().id(1).build()).build());
         assertEquals("/private/staff/application/main_application_page", view);
     }
 
@@ -107,7 +131,7 @@ public class SubmitApplicationFormControllerTest {
         expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         replay(userServiceMock);
 
-        String view = applicationController.getApplicationView(null,
+        String view = controller.getApplicationView(null,
                 new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(1).advert(new ProgramBuilder().id(1).build()).applicant(student)
                         .build());
         assertEquals("/private/staff/application/main_application_page", view);
@@ -126,7 +150,7 @@ public class SubmitApplicationFormControllerTest {
         expect(actionsProviderMock.checkActionAvailable(applicationForm, admin, ApplicationFormAction.VIEW_EDIT)).andReturn(true).once();
         replay(userServiceMock, actionsProviderMock);
 
-        String view = applicationController.getApplicationView(null, applicationForm);
+        String view = controller.getApplicationView(null, applicationForm);
         assertEquals("redirect:/editApplicationFormAsProgrammeAdmin?applicationId=abc", view);
     }
 
@@ -140,7 +164,7 @@ public class SubmitApplicationFormControllerTest {
         expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         replay(userServiceMock);
 
-        String view = applicationController.getApplicationView(null, applicationForm);
+        String view = controller.getApplicationView(null, applicationForm);
         assertEquals("/private/staff/application/main_application_page", view);
     }
 
@@ -153,7 +177,7 @@ public class SubmitApplicationFormControllerTest {
         expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         replay(userServiceMock);
 
-        String view = applicationController.getApplicationView(null, applicationForm);
+        String view = controller.getApplicationView(null, applicationForm);
         assertEquals("/private/staff/application/main_application_page", view);
     }
 
@@ -165,7 +189,7 @@ public class SubmitApplicationFormControllerTest {
         expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         replay(userServiceMock);
 
-        String view = applicationController.getApplicationView(null, applicationForm);
+        String view = controller.getApplicationView(null, applicationForm);
         assertEquals("/private/staff/application/main_application_page", view);
     }
 
@@ -179,7 +203,7 @@ public class SubmitApplicationFormControllerTest {
         expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         replay(userServiceMock);
 
-        String view = applicationController.getApplicationView(null, applicationForm);
+        String view = controller.getApplicationView(null, applicationForm);
         assertEquals("/private/staff/application/main_application_page", view);
     }
 
@@ -188,8 +212,8 @@ public class SubmitApplicationFormControllerTest {
         reset(userServiceMock);
         expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
         replay(userServiceMock);
-        String view = applicationController.getApplicationView(null,
-                new ApplicationFormBuilder().id(1).advert(new ProgramBuilder().id(1).build()).applicant(student).build());
+        String view = controller.getApplicationView(null, new ApplicationFormBuilder().id(1).advert(new ProgramBuilder().id(1).build()).applicant(student)
+                .build());
         assertEquals("/private/staff/application/main_application_page", view);
     }
 
@@ -204,7 +228,7 @@ public class SubmitApplicationFormControllerTest {
         expect(request.getParameter("embeddedApplication")).andReturn("true");
         expect(request.getParameter("embeddedApplication")).andReturn("true");
         replay(request);
-        String view = applicationController.getApplicationView(request, applicationForm);
+        String view = controller.getApplicationView(request, applicationForm);
         assertEquals("/private/staff/application/main_application_page_without_headers", view);
     }
 
@@ -216,7 +240,7 @@ public class SubmitApplicationFormControllerTest {
         expect(errorsMock.getFieldError("program")).andReturn(null);
 
         replay(errorsMock);
-        String view = applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
+        String view = controller.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
         verify(errorsMock);
 
         assertEquals("/private/pgStudents/form/main_application_page", view);
@@ -230,7 +254,7 @@ public class SubmitApplicationFormControllerTest {
         expect(errorsMock.getFieldError("program")).andReturn(new FieldError("applicationForm", "application.program.invalid", null));
 
         replay(errorsMock);
-        applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
+        controller.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
         verify(errorsMock);
     }
 
@@ -240,9 +264,6 @@ public class SubmitApplicationFormControllerTest {
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).build();
         expect(errorsMock.hasErrors()).andReturn(false);
-
-        StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
-        expect(eventFactoryMock.createEvent(ApplicationFormStatus.VALIDATION)).andReturn(event);
 
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
 
@@ -254,9 +275,9 @@ public class SubmitApplicationFormControllerTest {
         applicationFormUserRoleServiceMock.applicationSubmitted(applicationForm);
         applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
-        replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, eventFactoryMock, applicationFormUserRoleServiceMock);
-        applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
-        verify(applicationsServiceMock, errorsMock, stageDurationServiceMock, eventFactoryMock, applicationFormUserRoleServiceMock);
+        replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
+        controller.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
+        verify(applicationsServiceMock, errorsMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
 
         assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());
 
@@ -265,9 +286,7 @@ public class SubmitApplicationFormControllerTest {
         Date dueDate = com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(submittedDate, validationDuration.getDurationInMinutes());
         assertEquals(0, dueDate.compareTo(applicationForm.getDueDate()));
 
-        assertEquals(1, applicationForm.getEvents().size());
         assertNotNull(applicationForm.getDueDate());
-        assertEquals(event, applicationForm.getEvents().get(0));
     }
 
     @Test
@@ -286,7 +305,7 @@ public class SubmitApplicationFormControllerTest {
         applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
-        String view = applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
+        String view = controller.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
         verify(applicationsServiceMock, errorsMock, stageDurationServiceMock, applicationFormUserRoleServiceMock);
 
         assertEquals("redirect:/applications?messageCode=application.submitted&application=abc", view);
@@ -306,7 +325,7 @@ public class SubmitApplicationFormControllerTest {
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
 
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock);
-        applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
+        controller.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
         verify(applicationsServiceMock, errorsMock, stageDurationServiceMock);
 
         assertEquals(httpServletRequestMock.getRemoteAddr(), applicationForm.getIpAddressAsString());
@@ -317,7 +336,7 @@ public class SubmitApplicationFormControllerTest {
         WebDataBinder binderMock = createMock(WebDataBinder.class);
         binderMock.setValidator(applicationFormValidatorMock);
         replay(binderMock);
-        applicationController.registerValidator(binderMock);
+        controller.registerValidator(binderMock);
         verify(binderMock);
     }
 
@@ -327,7 +346,7 @@ public class SubmitApplicationFormControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).status(ApplicationFormStatus.UNSUBMITTED).applicant(student).build();
         expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
         replay(applicationsServiceMock);
-        ApplicationForm returnedApplicationForm = applicationController.getApplicationForm("2");
+        ApplicationForm returnedApplicationForm = controller.getApplicationForm("2");
         assertEquals(applicationForm, returnedApplicationForm);
 
     }
@@ -340,7 +359,7 @@ public class SubmitApplicationFormControllerTest {
         replay(userServiceMock);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).build();
-        applicationController.submitApplication(applicationForm, null, httpServletRequestMock);
+        controller.submitApplication(applicationForm, null, httpServletRequestMock);
 
     }
 
@@ -348,7 +367,7 @@ public class SubmitApplicationFormControllerTest {
     public void shouldThrowResourceNotFoundExceptionIfSubmittedApplicationFormDoesNotExist() {
         expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(null);
         replay(applicationsServiceMock);
-        applicationController.getApplicationForm("2");
+        controller.getApplicationForm("2");
     }
 
     @Test
@@ -360,7 +379,7 @@ public class SubmitApplicationFormControllerTest {
         expect(stageDurationMock.getUnit()).andReturn(DurationUnitEnum.DAYS);
         expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
         replay(stageDurationServiceMock, stageDurationMock);
-        applicationController.assignValidationDueDate(applicationForm);
+        controller.assignValidationDueDate(applicationForm);
         Date oneDayMore = new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/14");
         Assert.assertEquals(String.format("Dates are not the same [%s] [%s]", oneDayMore, applicationForm.getDueDate()), oneDayMore,
                 applicationForm.getDueDate());
@@ -374,7 +393,7 @@ public class SubmitApplicationFormControllerTest {
         expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
 
         replay(stageDurationServiceMock, stageDurationMock);
-        applicationController.assignValidationDueDate(applicationForm);
+        controller.assignValidationDueDate(applicationForm);
         verify(stageDurationServiceMock, stageDurationMock);
 
         Date dayAfterTomorrow = com.zuehlke.pgadmissions.utils.DateUtils.addWorkingDaysInMinutes(new Date(), 1440);
@@ -382,27 +401,4 @@ public class SubmitApplicationFormControllerTest {
                 DateUtils.isSameDay(dayAfterTomorrow, applicationForm.getDueDate()));
     }
 
-    @Before
-    public void setUp() {
-        applicationsServiceMock = createMock(ApplicationsService.class);
-        userServiceMock = createMock(UserService.class);
-        applicationFormValidatorMock = createMock(ApplicationFormValidator.class);
-        stageDurationServiceMock = createMock(StageDurationService.class);
-        eventFactoryMock = createMock(EventFactory.class);
-        actionsProviderMock = createMock(ActionsProvider.class);
-        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
-        programsService = createMock(ProgramsService.class);
-
-        applicationController = new SubmitApplicationFormController(applicationsServiceMock, userServiceMock, applicationFormValidatorMock,
-                stageDurationServiceMock, eventFactoryMock, actionsProviderMock, applicationFormUserRoleServiceMock, programsService);
-        httpServletRequestMock = new MockHttpServletRequest();
-
-        student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-                .role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
-        admin = new RegisteredUserBuilder().id(2).username("Francishek").email("franek@gmail.com").firstName("Franek").lastName("Pieczka")
-                .role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
-
-        expect(userServiceMock.getCurrentUser()).andReturn(student).anyTimes();
-        replay(userServiceMock);
-    }
 }

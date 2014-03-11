@@ -108,10 +108,6 @@ public class Program extends Advert {
         this.administrators.addAll(administrators);
     }
 
-    public boolean isApprover(final RegisteredUser user) {
-        return HibernateUtils.containsEntity(getApprovers(), user);
-    }
-
     public boolean isAdministrator(final RegisteredUser user) {
         return HibernateUtils.containsEntity(getAdministrators(), user);
     }

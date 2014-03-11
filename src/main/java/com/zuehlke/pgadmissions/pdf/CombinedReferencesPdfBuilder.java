@@ -35,10 +35,10 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
             document.add(table);
             document.add(addSectionSeparators());
 
-            if (referenceComment.getReferee() != null && BooleanUtils.isTrue(referenceComment.getReferee().isDeclined())) {
+            if (BooleanUtils.isTrue(referenceComment.getDeclined())) {
                 document.add(new Paragraph("Comment:\nDeclined to provide a reference."));
             } else {
-                document.add(new Paragraph("Comment:\n" + referenceComment.getComment()));
+                document.add(new Paragraph("Comment:\n" + referenceComment.getContent()));
             }
 
             PdfContentByte cb = writer.getDirectContent();

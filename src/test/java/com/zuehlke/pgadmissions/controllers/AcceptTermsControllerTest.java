@@ -74,7 +74,7 @@ public class AcceptTermsControllerTest {
 	}
 	@Test
 	public void shouldGetAcceptedTermsView() {
-		assertEquals("/private/pgStudents/form/components/terms_and_conditions", acceptTermsController.getAcceptedTermsView(new ApplicationForm()));
+		assertEquals("/private/pgStudents/form/components/terms_and_conditions", acceptTermsController.getAcceptedTermsView());
 	}
 
 	@Before

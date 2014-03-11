@@ -52,7 +52,6 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SourceOfInterestTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -67,7 +66,6 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
@@ -99,6 +97,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private boolean printLanguageQualificationAdmissionsNote = false;
 
     private Boolean isOverseasStudent;
+
+    private RegisteredUser primarySupervisor;
 
     private static class NoActiveProgrameInstanceFoundException extends RuntimeException {
         private final ProgrammeOccurrenceTp occurrenceTp;
@@ -150,6 +150,11 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     public SubmitAdmissionsApplicationRequestBuilderV2 isOverseasStudent(Boolean isOverseasStudent) {
         this.isOverseasStudent = isOverseasStudent;
+        return this;
+    }
+
+    public SubmitAdmissionsApplicationRequestBuilderV2 primarySupervisor(RegisteredUser primarySupervisor) {
+        this.primarySupervisor = primarySupervisor;
         return this;
     }
 
@@ -512,15 +517,11 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private NameTp buildAgreedSupervisorName() {
-        if (applicationForm.getLatestApprovalRound() != null) {
-            ApprovalRound approvalRound = applicationForm.getLatestApprovalRound();
-            Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
-            if (primarySupervisor != null) {
-                NameTp nameTp = xmlFactory.createNameTp();
-                nameTp.setForename1(primarySupervisor.getUser().getFirstName());
-                nameTp.setSurname(primarySupervisor.getUser().getLastName());
-                return nameTp;
-            }
+        if (primarySupervisor != null) {
+            NameTp nameTp = xmlFactory.createNameTp();
+            nameTp.setForename1(primarySupervisor.getFirstName());
+            nameTp.setSurname(primarySupervisor.getLastName());
+            return nameTp;
         }
         return null;
     }

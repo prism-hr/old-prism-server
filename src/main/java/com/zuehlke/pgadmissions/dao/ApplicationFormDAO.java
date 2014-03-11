@@ -16,11 +16,13 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Repository
@@ -159,6 +161,10 @@ public class ApplicationFormDAO {
         }
 
         return null;
+    }
+
+    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ApplicationFormAction completeStageAction) {
+        return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class).uniqueResult();
     }
 
 }

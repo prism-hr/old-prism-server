@@ -6,10 +6,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Supervisor;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class OfferRecommendedCommentBuilder {
 
@@ -24,8 +23,7 @@ public class OfferRecommendedCommentBuilder {
     private Date recommendedStartDate;
     private Boolean recommendedConditionsAvailable;
     private String recommendedConditions;
-    private CommentType commentType;
-    private List<Supervisor> supervisors = Lists.newArrayList();
+    private List<CommentAssignedUser> assignedUsers = Lists.newArrayList();
 
     public OfferRecommendedCommentBuilder createdTimeStamp(Date createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
@@ -72,27 +70,21 @@ public class OfferRecommendedCommentBuilder {
         return this;
     }
 
-    public OfferRecommendedCommentBuilder commentType(CommentType commentType) {
-        this.commentType = commentType;
-        return this;
-    }
-
     public OfferRecommendedCommentBuilder user(RegisteredUser user) {
         this.user = user;
         return this;
     }
     
-    public OfferRecommendedCommentBuilder supervisors(Supervisor... supervisors) {
-        this.supervisors.addAll(Arrays.asList(supervisors));
+    public OfferRecommendedCommentBuilder assignedUsers(CommentAssignedUser... assignedUsers) {
+        this.assignedUsers.addAll(Arrays.asList(assignedUsers));
         return this;
     }
 
     public OfferRecommendedComment build() {
         OfferRecommendedComment supervisionConfirmationComment = new OfferRecommendedComment();
         supervisionConfirmationComment.setApplication(applicationForm);
-        supervisionConfirmationComment.setComment(comment);
-        supervisionConfirmationComment.setType(commentType);
-        supervisionConfirmationComment.setDate(createdTimeStamp);
+        supervisionConfirmationComment.setContent(comment);
+        supervisionConfirmationComment.setCreatedTimestamp(createdTimeStamp);
         supervisionConfirmationComment.setId(id);
         supervisionConfirmationComment.setUser(user);
         supervisionConfirmationComment.setProjectTitle(projectTitle);
@@ -100,7 +92,7 @@ public class OfferRecommendedCommentBuilder {
         supervisionConfirmationComment.setRecommendedStartDate(recommendedStartDate);
         supervisionConfirmationComment.setRecommendedConditionsAvailable(recommendedConditionsAvailable);
         supervisionConfirmationComment.setRecommendedConditions(recommendedConditions);
-        supervisionConfirmationComment.setSupervisors(supervisors);
+        supervisionConfirmationComment.getAssignedUsers().addAll(assignedUsers);
         return supervisionConfirmationComment;
     }
 }

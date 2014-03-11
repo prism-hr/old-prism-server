@@ -10,20 +10,16 @@ import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
-import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Rejection;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class ApplicationFormBuilder {
@@ -42,7 +38,6 @@ public class ApplicationFormBuilder {
     private Date batchDeadline;
     private Date dueDate;
     private Boolean acceptedTerms;
-    private List<Event> events = new ArrayList<Event>();
     private List<Qualification> qualifications = new ArrayList<Qualification>();
     private List<Referee> referees = new ArrayList<Referee>();
     private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
@@ -53,20 +48,14 @@ public class ApplicationFormBuilder {
     private AdditionalInformation info;
     private Date lastUpdated;
     private Date rejectNotificationDate;
-    private List<ApprovalRound> approvalRounds = new ArrayList<ApprovalRound>();
-    private List<Interview> interviews = new ArrayList<Interview>();
-    private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
-    private Interview latestInterview;
-    private ReviewRound latestReviewRound;
-    private ApprovalRound latestApprovalRound;
     private Rejection rejection;
-    private RegisteredUser applicationAdministrator;
     private String applicationNumber;
     private String uclBookingReferenceNumber;
     private String ipAddress;
-    private Boolean isEditableByApplicant = true;
     private BigDecimal averageRating;
     private Boolean useCustomReferenceQuestions = false;
+    private ApplicationFormStatus nextStatus;
+    private ApplicationFormStatus previousStatus;
 
     public ApplicationFormBuilder ipAddress(String ipAddress) {
         this.ipAddress = ipAddress;
@@ -83,42 +72,8 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder applicationAdministrator(RegisteredUser applicationAdministrator) {
-        this.applicationAdministrator = applicationAdministrator;
-        return this;
-    }
-
     public ApplicationFormBuilder rejection(Rejection rejection) {
         this.rejection = rejection;
-        return this;
-    }
-
-    public ApplicationFormBuilder latestReviewRound(ReviewRound latestReviewRound) {
-        this.latestReviewRound = latestReviewRound;
-        return this;
-    }
-
-    public ApplicationFormBuilder latestInterview(Interview latestInterview) {
-        this.latestInterview = latestInterview;
-        return this;
-    }
-
-    public ApplicationFormBuilder latestApprovalRound(ApprovalRound latestApprovalRound) {
-        this.latestApprovalRound = latestApprovalRound;
-        return this;
-    }
-
-    public ApplicationFormBuilder reviewRounds(ReviewRound... reviewRounds) {
-        for (ReviewRound reviewRound : reviewRounds) {
-            this.reviewRounds.add(reviewRound);
-        }
-        return this;
-    }
-
-    public ApplicationFormBuilder approvalRounds(ApprovalRound... approvalRounds) {
-        for (ApprovalRound approvalRound : approvalRounds) {
-            this.approvalRounds.add(approvalRound);
-        }
         return this;
     }
 
@@ -132,15 +87,18 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder interviews(Interview... interviews) {
-        for (Interview interview : interviews) {
-            this.interviews.add(interview);
-        }
-        return this;
-    }
-
     public ApplicationFormBuilder status(ApplicationFormStatus status) {
         this.status = status;
+        return this;
+    }
+    
+    public ApplicationFormBuilder nextStatus(ApplicationFormStatus nextStatus) {
+        this.nextStatus = nextStatus;
+        return this;
+    }
+    
+    public ApplicationFormBuilder previousStatus(ApplicationFormStatus previousStatus) {
+        this.previousStatus = previousStatus;
         return this;
     }
 
@@ -197,13 +155,6 @@ public class ApplicationFormBuilder {
     public ApplicationFormBuilder qualification(Qualification... qualifications) {
         for (Qualification qual : qualifications) {
             this.qualifications.add(qual);
-        }
-        return this;
-    }
-
-    public ApplicationFormBuilder events(Event... events) {
-        for (Event event : events) {
-            this.events.add(event);
         }
         return this;
     }
@@ -278,16 +229,11 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder isEditableByApplicant(Boolean isEditableByApplicant) {
-        this.isEditableByApplicant = isEditableByApplicant;
-        return this;
-    }
-
     public ApplicationFormBuilder averageRating(BigDecimal averageRating) {
         this.averageRating = averageRating;
         return this;
     }
-    
+
     public ApplicationFormBuilder useCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
         this.useCustomReferenceQuestions = useCustomReferenceQuestions;
         return this;
@@ -310,27 +256,20 @@ public class ApplicationFormBuilder {
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
         application.setAdvert(advert);
-        application.setEvents(events);
         application.setProjectTitle(projectTitle);
         application.setStatus(status);
+        application.setNextStatus(nextStatus);
+        application.setPreviousStatus(previousStatus);
         application.setAdditionalInformation(info);
         application.setLastUpdated(lastUpdated);
         application.setAcceptedTermsOnSubmission(acceptedTerms);
         application.getApplicationComments().addAll(comments);
-        application.getInterviews().addAll(interviews);
-        application.getApprovalRounds().addAll(approvalRounds);
-        application.setLatestInterview(latestInterview);
-        application.setReviewRounds(reviewRounds);
-        application.setLatestApprovalRound(latestApprovalRound);
-        application.setLatestReviewRound(latestReviewRound);
         application.setRejection(rejection);
-        application.setApplicationAdministrator(applicationAdministrator);
         application.setApplicationNumber(applicationNumber);
         application.setBatchDeadline(batchDeadline);
         application.setRejectNotificationDate(rejectNotificationDate);
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         application.getEmploymentPositions().addAll(employmentPositions);
-        application.setIsEditableByApplicant(isEditableByApplicant);
         application.setAverageRating(averageRating);
         application.setUseCustomReferenceQuestions(useCustomReferenceQuestions);
 

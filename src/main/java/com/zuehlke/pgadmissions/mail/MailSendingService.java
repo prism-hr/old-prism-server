@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.EXPORT_ERR
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERROR;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_CONFIRMATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
@@ -30,9 +29,6 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.InterviewParticipant;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -42,6 +38,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 public class MailSendingService extends AbstractMailSendingService {
+    // TODO fix tests
 
     private static final Logger log = LoggerFactory.getLogger(MailSendingService.class);
 
@@ -97,10 +94,10 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
-                            admissionsOfferServiceLevel, form.getOutcomeOfStage() });
+                            admissionsOfferServiceLevel, form.getPreviousStatus() });
 
             Map<String, Object> model = modelBuilder.build();
-            
+
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
                 model.put("reason", form.getRejection().getRejectionReason());
                 if (form.getRejection().isIncludeProspectusLink()) {
@@ -127,7 +124,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
-                            admissionsOfferServiceLevel, form.getOutcomeOfStage() });
+                            admissionsOfferServiceLevel, form.getPreviousStatus() });
 
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -138,7 +135,7 @@ public class MailSendingService extends AbstractMailSendingService {
             }
 
             Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
-                    form.getOutcomeOfStage().displayValue() };
+                    form.getPreviousStatus().displayValue() };
             String subject = resolveMessage(REJECTED_NOTIFICATION, args);
 
             message = buildMessage(applicant, subject, model, REJECTED_NOTIFICATION);
@@ -156,7 +153,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
-                            admissionsOfferServiceLevel, form.getOutcomeOfStage() });
+                            admissionsOfferServiceLevel, form.getPreviousStatus() });
 
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -166,7 +163,7 @@ public class MailSendingService extends AbstractMailSendingService {
                 }
             }
 
-            String subject = resolveMessage(MOVED_TO_APPROVED_NOTIFICATION, form, form.getOutcomeOfStage());
+            String subject = resolveMessage(MOVED_TO_APPROVED_NOTIFICATION, form, form.getPreviousStatus());
 
             message = buildMessage(applicant, subject, model, MOVED_TO_APPROVED_NOTIFICATION);
             sendEmail(message);
@@ -175,17 +172,16 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewConfirmationToInterviewers(List<Interviewer> interviewers) {
+    public void sendInterviewConfirmationToInterviewers(ApplicationForm applicationForm, List<RegisteredUser> interviewers) {
         PrismEmailMessage message = null;
-        for (Interviewer interviewer : interviewers) {
+        for (RegisteredUser interviewer : interviewers) {
             try {
-                ApplicationForm applicationForm = interviewer.getInterview().getApplication();
                 String subject = resolveMessage(INTERVIEWER_NOTIFICATION, applicationForm);
                 List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "interviewer", "application", "applicant", "host" },
                         new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), interviewer, applicationForm, applicationForm.getApplicant(),
                                 getHostName() });
-                message = buildMessage(interviewer.getUser(), subject, modelBuilder.build(), INTERVIEWER_NOTIFICATION);
+                message = buildMessage(interviewer, subject, modelBuilder.build(), INTERVIEWER_NOTIFICATION);
                 sendEmail(message);
             } catch (Exception e) {
                 log.error("Error while sending interview confirmation email to interviewer: {}", e);
@@ -196,12 +192,12 @@ public class MailSendingService extends AbstractMailSendingService {
     public void sendInterviewConfirmationToApplicant(ApplicationForm applicationForm) {
         PrismEmailMessage message = null;
         try {
-            String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, applicationForm, applicationForm.getOutcomeOfStage());
+            String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, applicationForm, applicationForm.getPreviousStatus());
             List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), applicationForm, applicationForm.getApplicant(),
-                            configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, applicationForm.getOutcomeOfStage() });
+                            configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, applicationForm.getPreviousStatus() });
 
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(applicationForm.getStatus())) {
@@ -219,41 +215,19 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewVoteNotificationToInterviewerParticipants(Interview interview) {
-        ApplicationForm application = interview.getApplication();
-
-        String subject = resolveMessage(INTERVIEW_VOTE_NOTIFICATION, application);
-
-        PrismEmailMessage message = null;
-        for (InterviewParticipant participant : interview.getParticipants()) {
-            try {
-                List<RegisteredUser> admins = application.getProgram().getAdministrators();
-                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
-                        getAdminsEmailsCommaSeparatedAsString(admins), participant, application, getHostName() });
-                message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_NOTIFICATION);
-                sendEmail(message);
-                participant.setLastNotified(new Date());
-            } catch (Exception e) {
-                log.error("Error while sending interview vote notification email to interview participant: " + participant.getUser().getEmail(), e);
-            }
-        }
-    }
-
-    public void sendInterviewVoteConfirmationToAdministrators(InterviewParticipant participant) {
-        Interview interview = participant.getInterview();
-        ApplicationForm application = interview.getApplication();
+    public void sendInterviewVoteConfirmationToAdministrators(ApplicationForm application, RegisteredUser user) {
         Collection<RegisteredUser> administrators = getApplicationOrProgramAdministrators(application);
 
         PrismEmailMessage message = null;
         String subject = resolveMessage(INTERVIEW_VOTE_CONFIRMATION, application);
         for (RegisteredUser administrator : administrators) {
-            if (administrator.getId() == participant.getUser().getId()) {
+            if (administrator.getId() == user.getId()) {
                 continue; // administrator has voted himself, no need to notify
                           // him
             }
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "administrator", "application", "participant", "host" }, new Object[] {
-                        administrator, application, participant, getHostName() });
+                        administrator, application, user, getHostName() });
                 message = buildMessage(administrator, subject, modelBuilder.build(), INTERVIEW_VOTE_CONFIRMATION);
                 sendEmail(message);
             } catch (Exception e) {

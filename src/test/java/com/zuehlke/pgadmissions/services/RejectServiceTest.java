@@ -25,14 +25,12 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -51,10 +49,6 @@ public class RejectServiceTest {
     @InjectIntoByType
 	private ApplicationFormDAO applicationDaoMock;
 
-    @Mock
-    @InjectIntoByType
-    private EventFactory eventFactoryMock;
-    
     @Mock
     @InjectIntoByType
     private MailSendingService mailServiceMock;
@@ -96,8 +90,6 @@ public class RejectServiceTest {
 		applicationDaoMock.save(application);
 		expectLastCall();
 		
-		StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
-		expect(eventFactoryMock.createEvent(ApplicationFormStatus.REJECTED)).andReturn(event);
 		mailServiceMock.sendRejectionConfirmationToApplicant(application);
 		applicationFormUserRoleService.deleteApplicationActions(application);
 		
@@ -107,8 +99,6 @@ public class RejectServiceTest {
 		
 		assertEquals(ApplicationFormStatus.REJECTED, application.getStatus());
 		assertEquals(rejection,application.getRejection());
-		assertEquals(1, application.getEvents().size());
-		assertEquals(event, application.getEvents().get(0));
 	}
 
 	@Test

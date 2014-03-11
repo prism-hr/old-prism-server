@@ -1,13 +1,10 @@
 package com.zuehlke.pgadmissions.dto;
 
-
 public class InterviewConfirmDTO {
 
     private Integer timeslotId;
 
-    private String furtherDetails;
-
-    private String furtherInterviewerDetails;
+    private String interviewInstructions;
 
     private String locationUrl;
 
@@ -19,20 +16,12 @@ public class InterviewConfirmDTO {
         this.timeslotId = timeslotId;
     }
 
-    public String getFurtherDetails() {
-        return furtherDetails;
+    public String getInterviewInstructions() {
+        return interviewInstructions;
     }
 
-    public void setFurtherDetails(String furtherDetails) {
-        this.furtherDetails = furtherDetails;
-    }
-
-    public String getFurtherInterviewerDetails() {
-        return furtherInterviewerDetails;
-    }
-
-    public void setFurtherInterviewerDetails(String furtherInterviewerDetails) {
-        this.furtherInterviewerDetails = furtherInterviewerDetails;
+    public void setInterviewInstructions(String interviewInstructions) {
+        this.interviewInstructions = interviewInstructions;
     }
 
     public String getLocationUrl() {

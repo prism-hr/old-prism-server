@@ -9,12 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.Reviewer;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Service
 @Transactional
@@ -34,45 +33,36 @@ public class CommentService {
     public void save(Comment comment) {
         commentDAO.save(comment);
     }
-
-    public Comment getReviewById(int id) {
-        return commentDAO.get(id);
+    
+    public List<Comment> getVisibleComments(RegisteredUser user, ApplicationForm applicationForm) {
+        return commentDAO.getVisibleComments(user, applicationForm);
     }
-
-    public List<ReviewComment> getReviewCommentsDueNotification() {
-        return commentDAO.getReviewCommentsDueNotification();
-    }
-
-    public List<InterviewComment> getInterviewCommentsDueNotification() {
-        return commentDAO.getInterviewCommentsDueNotification();
-    }
-
-    public List<Comment> getAllComments() {
-        return commentDAO.getAllComments();
-    }
-
+    
     public void declineReview(RegisteredUser user, ApplicationForm application) {
-        Reviewer currentReviewer = user.getReviewerForCurrentUserFromLatestReviewRound(application);
-        if (!commentDAO.getReviewCommentsForReviewerAndApplication(currentReviewer, application).isEmpty()) {
-            return;
-        }
+        // check if user has already responded 
+//        if (!commentDAO.getReviewCommentsForReviewerAndApplication(user, application).isEmpty()) {
+//            return;
+//        }
 
-        ReviewComment reviewComment = getNewReviewComment();
+        ReviewComment reviewComment = new ReviewComment();
         reviewComment.setApplication(application);
         reviewComment.setUser(user);
-        reviewComment.setDecline(true);
-        reviewComment.setType(CommentType.REVIEW);
-        reviewComment.setComment(StringUtils.EMPTY);
-        reviewComment.setReviewer(currentReviewer);
+        reviewComment.setDeclined(true);
+        reviewComment.setContent(StringUtils.EMPTY);
         
         save(reviewComment);
     }
 
-    public Comment getNewGenericComment() {
-        return new Comment();
+    public List<CommentAssignedUser> getNotDecliningSupervisorsFromLatestApprovalStage(ApplicationForm application) {
+        return commentDAO.getNotDecliningSupervisorsFromLatestApprovalStage(application);
     }
 
-    public ReviewComment getNewReviewComment() {
-        return new ReviewComment();
+    public CommentAssignedUser assignUser(AssignSupervisorsComment approvalComment, RegisteredUser user, boolean isPrimary) {
+        CommentAssignedUser assignedUser = new CommentAssignedUser();
+        assignedUser.setUser(user);
+        assignedUser.setPrimary(isPrimary);
+        approvalComment.getAssignedUsers().add(assignedUser);
+        return assignedUser;
     }
+
 }

@@ -18,50 +18,44 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 
 @Controller
 @RequestMapping("/review")
 public class MoveToReviewController {
+    // TODO change reviewRound to assignReviewersComment, fix tests
 
     public static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
     public static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
-    protected final ApplicationsService applicationsService;
-    protected final UserService userService;
-    protected final ReviewService reviewService;
-    protected final ActionsProvider actionsProvider;
-
-    private final ReviewRoundValidator reviewRoundValidator;
-    private final MoveToReviewReviewerPropertyEditor reviewerPropertyEditor;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    MoveToReviewController() {
-        this(null, null, null, null, null, null, null);
-    }
+    
+    @Autowired
+    private ApplicationsService applicationsService;
 
     @Autowired
-    public MoveToReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService,
-            ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor,
-            final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
-        this.applicationsService = applicationsService;
-        this.userService = userService;
-        this.reviewService = reviewService;
-        this.actionsProvider = actionsProvider;
-        this.reviewRoundValidator = reviewRoundValidator;
-        this.reviewerPropertyEditor = reviewerPropertyEditor;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-    }
+    private UserService userService;
+
+    @Autowired
+    private ReviewService reviewService;
+
+    @Autowired
+    private ActionsProvider actionsProvider;
+
+    @Autowired
+    private CommentAssignedUserPropertyEditor assignedUserPropertyEditor;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToReview")
     public String getReviewRoundDetailsPage(ModelMap modelMap) {
@@ -77,54 +71,56 @@ public class MoveToReviewController {
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToReview(@RequestParam String applicationId, 
-    		@Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, 
-    		BindingResult bindingResult) {
+    public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") AssignReviewersComment assignReviewersComment, BindingResult bindingResult) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        
-        RegisteredUser initiator = getUser();
-        
+
+        RegisteredUser user = getUser();
+
         actionsProvider.validateAction(applicationForm, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
         if (bindingResult.hasErrors()) {
             return REVIEWERS_SECTION_NAME;
         }
 
-        reviewService.moveApplicationToReview(applicationForm, reviewRound, initiator);
+        assignReviewersComment.setUser(user);
+        assignReviewersComment.setApplication(applicationForm);
+        reviewService.moveApplicationToReview(applicationForm, assignReviewersComment);
 
         return "/private/common/ajax_OK";
     }
-    
-    @ModelAttribute("usersInterestedInApplication") 
-    public List<RegisteredUser> getUsersInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
-    }
-    
-    @ModelAttribute("usersPotentiallyInterestedInApplication") 
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication (@RequestParam String applicationId) {
-    	return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
+
+    @ModelAttribute("usersInterestedInApplication")
+    public List<RegisteredUser> getUsersInterestedInApplication(@RequestParam String applicationId) {
+        // FIXME isReviewerInReviewRound method has been removed from RegisteredUser class, provide this information in other way (by moving the method into
+        // aservice, or this method can return a map)
+        return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
 
-    @ModelAttribute("reviewRound")
-    public ReviewRound getReviewRound(@RequestParam String applicationId) {
-        ReviewRound reviewRound = new ReviewRound();
-        
+    @ModelAttribute("usersPotentiallyInterestedInApplication")
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
+        return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
+    }
+
+    @ModelAttribute("assignReviewersComment")
+    public AssignReviewersComment getAssignReviewersComment(@RequestParam String applicationId) {
+        AssignReviewersComment assignReviewersComment = new AssignReviewersComment();
+
         List<RegisteredUser> usersInterestedInApplication = getUsersInterestedInApplication(applicationId);
-        
+
         if (usersInterestedInApplication != null) {
-	        for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
-	        	Reviewer reviewer = new Reviewer();
-	        	reviewer.setUser(registeredUser);
-	        	reviewRound.getReviewers().add(reviewer);
-	        }
+            for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
+                CommentAssignedUser reviewer = new CommentAssignedUser();
+                reviewer.setUser(registeredUser);
+                assignReviewersComment.getAssignedUsers().add(reviewer);
+            }
         }
-        
-        return reviewRound;
+
+        return assignReviewersComment;
     }
 
     @InitBinder(value = "reviewRound")
     public void registerReviewRoundValidator(WebDataBinder binder) {
-        binder.setValidator(reviewRoundValidator);
-        binder.registerCustomEditor(Reviewer.class, reviewerPropertyEditor);
+//        binder.setValidator(reviewRoundValidator);
+        binder.registerCustomEditor(CommentAssignedUser.class, assignedUserPropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
     }
 

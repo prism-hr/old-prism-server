@@ -61,6 +61,7 @@ import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 @Controller
 @RequestMapping("/editApplicationFormAsProgrammeAdmin")
 public class EditApplicationFormAsProgrammeAdminController {
+    // TODO fix tests
 
     private static final Logger log = LoggerFactory.getLogger(EditApplicationFormAsProgrammeAdminController.class);
 
@@ -68,63 +69,51 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     private static final String VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME = "/private/staff/admin/application/components/references_details_programme_admin";
 
-    protected final UserService userService;
-
-    protected final ApplicationsService applicationsService;
-
-    protected final DocumentPropertyEditor documentPropertyEditor;
-
-    protected final RefereeService refereeService;
-
-    protected final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;
-
-    protected final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
-
-    protected final EncryptionHelper encryptionHelper;
-
-    protected final DomicileService domicileService;
-
-    protected final DomicilePropertyEditor domicilePropertyEditor;
-
-    protected final MessageSource messageSource;
-
-    protected final ScoringDefinitionParser scoringDefinitionParser;
-
-    protected final ScoresPropertyEditor scoresPropertyEditor;
-
-    protected final ScoreFactory scoreFactory;
-
-    protected final ApplicationFormUserRoleService applicationFormUserRoleService;
-    
-    protected final ActionsProvider actionsProvider;
-
-    public EditApplicationFormAsProgrammeAdminController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-    }
+    @Autowired
+    protected UserService userService;
 
     @Autowired
-    public EditApplicationFormAsProgrammeAdminController(final UserService userService, final ApplicationsService applicationsService,
-            final DocumentPropertyEditor documentPropertyEditor, final RefereeService refereeService,
-            final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
-            final EncryptionHelper encryptionHelper, final MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser,
-            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, DomicileService domicileService,
-            DomicilePropertyEditor domicilePropertyEditor, ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
-        this.userService = userService;
-        this.applicationsService = applicationsService;
-        this.documentPropertyEditor = documentPropertyEditor;
-        this.refereeService = refereeService;
-        this.refereesAdminEditDTOValidator = refereesAdminEditDTOValidator;
-        this.encryptionHelper = encryptionHelper;
-        this.sendToPorticoDataDTOEditor = sendToPorticoDataDTOEditor;
-        this.messageSource = messageSource;
-        this.scoringDefinitionParser = scoringDefinitionParser;
-        this.scoresPropertyEditor = scoresPropertyEditor;
-        this.scoreFactory = scoreFactory;
-        this.domicileService = domicileService;
-        this.domicilePropertyEditor = domicilePropertyEditor;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.actionsProvider = actionsProvider;
-    }
+    protected ApplicationsService applicationsService;
+
+    @Autowired
+    protected DocumentPropertyEditor documentPropertyEditor;
+
+    @Autowired
+    protected RefereeService refereeService;
+    
+    @Autowired
+    protected RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;
+    
+    
+    @Autowired
+    protected SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
+
+    @Autowired
+    protected EncryptionHelper encryptionHelper;
+
+    @Autowired
+    protected DomicileService domicileService;
+
+    @Autowired
+    protected DomicilePropertyEditor domicilePropertyEditor;
+
+    @Autowired
+    protected MessageSource messageSource;
+
+    @Autowired
+    protected ScoringDefinitionParser scoringDefinitionParser;
+
+    @Autowired
+    protected ScoresPropertyEditor scoresPropertyEditor;
+    
+    @Autowired
+    protected ScoreFactory scoreFactory;
+
+    @Autowired
+    protected ApplicationFormUserRoleService applicationFormUserRoleService;
+    
+    @Autowired
+    protected ActionsProvider actionsProvider;
 
     @InitBinder(value = "sendToPorticoData")
     public void registerSendToPorticoData(WebDataBinder binder) {
@@ -205,12 +194,15 @@ public class EditApplicationFormAsProgrammeAdminController {
 
             
             ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
-            Referee referee = newComment.getReferee();
-            applicationsService.refresh(applicationForm);
-            refereeService.refresh(referee);
+            
+            // TODO obtain referee (can be created new one)
+            Referee referee = null;
+//            Referee referee = newComment.getReferee();
+//            applicationsService.refresh(applicationForm);
+//            refereeService.refresh(referee);
 
             applicationsService.save(applicationForm);
-            applicationFormUserRoleService.referencePosted(referee);
+            applicationFormUserRoleService.referencePosted(newComment);
             applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
             String newRefereeId = encryptionHelper.encrypt(referee.getId());

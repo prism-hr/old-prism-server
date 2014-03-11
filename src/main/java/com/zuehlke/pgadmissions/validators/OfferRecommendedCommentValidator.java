@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 public class OfferRecommendedCommentValidator extends AbstractValidator {
 
     @Autowired
-    private SupervisorsValidator supervisorsValidator;
+    private CommentAssignedUserValidator assignedUserValidator;
     
     @Override
     public boolean supports(Class<?> clazz) {
@@ -25,7 +25,7 @@ public class OfferRecommendedCommentValidator extends AbstractValidator {
     public void addExtraValidation(Object target, Errors errors) {
         OfferRecommendedComment comment = (OfferRecommendedComment) target;
         
-        ValidationUtils.invokeValidator(supervisorsValidator, comment, errors);
+        ValidationUtils.invokeValidator(assignedUserValidator, comment, errors);
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectTitle", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "projectAbstract", EMPTY_FIELD_ERROR_MESSAGE);
@@ -44,8 +44,8 @@ public class OfferRecommendedCommentValidator extends AbstractValidator {
         }
     }
 
-    public void setSupervisorsValidator(SupervisorsValidator supervisorsValidator) {
-        this.supervisorsValidator = supervisorsValidator;
+    public void setSupervisorsValidator(CommentAssignedUserValidator supervisorsValidator) {
+        this.assignedUserValidator = supervisorsValidator;
     }
     
 }

@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdmitterCommentValidator;
 
@@ -65,9 +64,6 @@ public class AdmitterCommentController {
 
     @Autowired
     private MailSendingService mailService;
-
-    @Autowired
-    private EventFactory eventFactory;
 
     @ModelAttribute("user")
     public RegisteredUser getUser() {
@@ -131,10 +127,9 @@ public class AdmitterCommentController {
         }
 
         comment.setUser(user);
-        comment.setDate(new Date());
+        comment.setCreatedTimestamp(new Date());
         comment.setApplication(application);
         
-        application.getEvents().add(eventFactory.createEvent(comment));
         commentService.save(comment);
         applicationsService.save(application);
         applicationFormUserRoleService.admitterCommentPosted(comment);

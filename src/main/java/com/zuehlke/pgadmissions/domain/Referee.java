@@ -203,6 +203,7 @@ public class Referee implements FormSectionObject, Serializable {
 	}
 
 	public void setLastNotified(Date lastNotified) {
+	    // TODO reimplement that using new actions
 		this.lastNotified = lastNotified;
 	}
 

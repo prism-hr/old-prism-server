@@ -3,29 +3,20 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.CompleteReviewComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewEvaluationComment;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class ReviewEvaluationCommentBuilder {
 
 	private RegisteredUser user;
 	private ApplicationForm application;
-	private CommentType type;
 	private Date date;	
 	private String comment;	
 	private Integer id;
 	private ApplicationFormStatus nextStatus;
-	private ReviewRound reviewRound;
 	private RegisteredUser delegateAdministrator;
 
-	public ReviewEvaluationCommentBuilder reviewRound(ReviewRound reviewRound){
-		this.reviewRound = reviewRound;
-		return this;
-	}
-	
 	public ReviewEvaluationCommentBuilder nextStatus(ApplicationFormStatus nextStatus){
 		this.nextStatus = nextStatus;
 		return this;
@@ -42,11 +33,6 @@ public class ReviewEvaluationCommentBuilder {
 		return this;
 	}
 		
-	public ReviewEvaluationCommentBuilder type(CommentType type){
-		this.type = type;
-		return this;
-	}
-	
 	public ReviewEvaluationCommentBuilder date(Date date){
 		this.date = date;
 		return this;
@@ -67,16 +53,14 @@ public class ReviewEvaluationCommentBuilder {
 	    return this;
 	}
 	
-	public ReviewEvaluationComment build(){
-		ReviewEvaluationComment reviewEaluationComment = new ReviewEvaluationComment();
+	public CompleteReviewComment build(){
+		CompleteReviewComment reviewEaluationComment = new CompleteReviewComment();
 		reviewEaluationComment.setApplication(application);
-		reviewEaluationComment.setComment(comment);
-		reviewEaluationComment.setDate(date);
+		reviewEaluationComment.setContent(comment);
+		reviewEaluationComment.setCreatedTimestamp(date);
 		reviewEaluationComment.setId(id);
-		reviewEaluationComment.setType(type);
 		reviewEaluationComment.setUser(user);
 		reviewEaluationComment.setNextStatus(nextStatus);
-		reviewEaluationComment.setReviewRound(reviewRound);
 		reviewEaluationComment.setDelegateAdministrator(delegateAdministrator);
 		return reviewEaluationComment;
 	}

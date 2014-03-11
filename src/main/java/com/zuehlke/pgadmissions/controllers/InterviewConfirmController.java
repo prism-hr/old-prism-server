@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.validators.InterviewConfirmDTOValidator;
 @Controller
 @RequestMapping(value = { "/interviewConfirm" })
 public class InterviewConfirmController {
+    // TODO interview details combined into one field (fix in ftl), fix tests
 
     private static final String INTERVIEW_CONFIRM_PAGE = "private/staff/interviewers/interview_confirm";
 
@@ -101,10 +102,12 @@ public class InterviewConfirmController {
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
         
+        AssignInterviewersComment latestComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.ASSIGN_INTERVIEWERS);
+        
         InterviewConfirmDTO interviewConfirmDTO = new InterviewConfirmDTO();
-        interviewConfirmDTO.setFurtherDetails(applicationForm.getLatestInterview().getFurtherDetails());
-        interviewConfirmDTO.setFurtherInterviewerDetails(applicationForm.getLatestInterview().getFurtherInterviewerDetails());
-        interviewConfirmDTO.setLocationUrl(applicationForm.getLatestInterview().getLocationURL());
+        
+        interviewConfirmDTO.setInterviewInstructions(latestComment.getAppointmentInstructions());
+        interviewConfirmDTO.setLocationUrl(latestComment.getLocationUrl());
         modelMap.put("interviewConfirmDTO", interviewConfirmDTO);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_CONFIRM_PAGE;
@@ -121,8 +124,7 @@ public class InterviewConfirmController {
             return INTERVIEW_CONFIRM_PAGE;
         }
         
-        Interview interview = applicationForm.getLatestInterview();
-        interviewService.confirmInterview(user, interview, interviewConfirmDTO);
+        interviewService.confirmInterview(user, applicationForm, interviewConfirmDTO);
         applicationsService.save(applicationForm);
         
         return "redirect:/applications?messageCode=interview.confirm&application=" + applicationForm.getApplicationNumber();

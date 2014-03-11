@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFo
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -47,32 +46,27 @@ public class SubmitApplicationFormController {
     private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "/private/pgStudents/form/main_application_page";
     private static final String VIEW_APPLICATION_STAFF_VIEW_NAME = "/private/staff/application/main_application_page";
     private static final String VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME = "/private/staff/application/main_application_page_without_headers";
-    private final ApplicationFormValidator applicationFormValidator;
-    private final StageDurationService stageDurationService;
-    private final ApplicationsService applicationService;
-    private final EventFactory eventFactory;
-    private final UserService userService;
-    private final ActionsProvider actionsProvider; 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-    private final ProgramsService programsService;
-
-    public SubmitApplicationFormController() {
-        this(null, null, null, null, null, null, null, null);
-    }
+    
+    @Autowired
+    private ApplicationFormValidator applicationFormValidator;
 
     @Autowired
-    public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
-            StageDurationService stageDurationService, EventFactory eventFactory, ActionsProvider actionsProvider, 
-            ApplicationFormUserRoleService applicationFormUserRoleService, ProgramsService programsService) {
-        this.applicationService = applicationService;
-        this.userService = userService;
-        this.applicationFormValidator = applicationFormValidator;
-        this.stageDurationService = stageDurationService;
-        this.eventFactory = eventFactory;
-        this.actionsProvider = actionsProvider;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.programsService = programsService;
-    }
+    private StageDurationService stageDurationService;
+
+    @Autowired
+    private ApplicationsService applicationService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ActionsProvider actionsProvider; 
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    @Autowired
+    private ProgramsService programsService;
 
     @RequestMapping(method = RequestMethod.POST)
     public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result, HttpServletRequest request) {
@@ -93,10 +87,10 @@ public class SubmitApplicationFormController {
             log.error("Error while setting ip address of: " + request.getRemoteAddr(), e);
         }
         
+        // TODO make following logic transactional (move into service) and create new SubmitApplicationComent, fix tests
         applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
         applicationForm.setSubmittedDate(DateUtils.truncateToDay(new Date()));
         assignValidationDueDate(applicationForm);
-        applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
         assignBatchDeadline(applicationForm);
         applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
         applicationFormUserRoleService.applicationSubmitted(applicationForm);

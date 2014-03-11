@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.validators;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertTrue;
 import junit.framework.Assert;
 
@@ -11,12 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
-import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.OfferRecommendedCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -29,7 +31,7 @@ public class OfferRecommendedCommentValidatorTest {
 
     private OfferRecommendedCommentValidator offerRecommendedCommentValidator;
 
-    private SupervisorsValidator supervisorsValidator;
+    private CommentAssignedUserValidator assignedUserValidatorMock;
 
     @Test
     public void shouldSupportOfferRecommendedComment() {
@@ -41,6 +43,8 @@ public class OfferRecommendedCommentValidatorTest {
         comment.setProjectTitle(null);
 
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "offerRecommendedComment");
+        configureAndReplayAssignedUserValidator(mappingResult);
+
         offerRecommendedCommentValidator.validate(comment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("text.field.empty", mappingResult.getFieldError("projectTitle").getCode());
@@ -51,6 +55,8 @@ public class OfferRecommendedCommentValidatorTest {
         comment.setProjectAbstract(null);
 
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "offerRecommendedComment");
+        configureAndReplayAssignedUserValidator(mappingResult);
+        
         offerRecommendedCommentValidator.validate(comment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("text.field.empty", mappingResult.getFieldError("projectAbstract").getCode());
@@ -61,6 +67,8 @@ public class OfferRecommendedCommentValidatorTest {
         comment.setRecommendedConditions(null);
 
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "offerRecommendedComment");
+        configureAndReplayAssignedUserValidator(mappingResult);
+        
         offerRecommendedCommentValidator.validate(comment, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("text.field.empty", mappingResult.getFieldError("recommendedConditions").getCode());
@@ -69,19 +77,26 @@ public class OfferRecommendedCommentValidatorTest {
     @Test
     public void shouldAcceptComment() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(comment, "offerRecommendedComment");
+        configureAndReplayAssignedUserValidator(mappingResult);
+        
         offerRecommendedCommentValidator.validate(comment, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
     }
 
     @Before
     public void setup() {
-        Supervisor supervisor1 = new SupervisorBuilder().id(4).build();
-        Supervisor supervisor2 = new SupervisorBuilder().id(5).isPrimary(true).build();
         comment = new OfferRecommendedCommentBuilder().projectTitle("title").projectAbstract("abstract").recommendedConditionsAvailable(true)
-                .recommendedStartDate(DateTime.now().plusDays(1).toDate()).recommendedConditions("conditions").supervisors(supervisor1, supervisor2).build();
+                .recommendedStartDate(DateTime.now().plusDays(1).toDate()).recommendedConditions("conditions").build();
         offerRecommendedCommentValidator = new OfferRecommendedCommentValidator();
         offerRecommendedCommentValidator.setValidator((javax.validation.Validator) validator);
-        supervisorsValidator = new SupervisorsValidator();
-        offerRecommendedCommentValidator.setSupervisorsValidator(supervisorsValidator);
+        assignedUserValidatorMock = createMock(CommentAssignedUserValidator.class);
+        offerRecommendedCommentValidator.setSupervisorsValidator(assignedUserValidatorMock);
+    }
+
+    private void configureAndReplayAssignedUserValidator(Errors errors) {
+        expect(assignedUserValidatorMock.supports(OfferRecommendedComment.class)).andReturn(true);
+        assignedUserValidatorMock.validate(comment, errors);
+
+        replay(assignedUserValidatorMock);
     }
 }

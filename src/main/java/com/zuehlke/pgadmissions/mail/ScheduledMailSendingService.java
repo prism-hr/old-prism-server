@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.mail;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 
@@ -23,12 +22,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.InterviewParticipant;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -37,40 +34,36 @@ import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 public class ScheduledMailSendingService extends AbstractMailSendingService {
+    // TODO fix tests
 
     private final Logger log = LoggerFactory.getLogger(ScheduledMailSendingService.class);
 
     private final RefereeDAO refereeDAO;
 
-    private final UserDAO userDAO;
-
     private final ApplicationContext applicationContext;
-
-    private final InterviewParticipantDAO interviewParticipantDAO;
 
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     private final OpportunitiesService opportunitiesService;
 
     public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
     public ScheduledMailSendingService(final MailSender mailSender, final ApplicationFormDAO applicationFormDAO,
             final ConfigurationService configurationService, final RefereeDAO refereeDAO, final UserDAO userDAO, final RoleDAO roleDAO,
             final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host, final ApplicationContext applicationContext,
-            InterviewParticipantDAO interviewParticipantDAO, final ApplicationFormUserRoleService applicationFormUserRoleService,
+            final ApplicationFormUserRoleService applicationFormUserRoleService,
             final OpportunitiesService opportunitiesService) {
         super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
         this.refereeDAO = refereeDAO;
-        this.userDAO = userDAO;
         this.applicationContext = applicationContext;
-        this.interviewParticipantDAO = interviewParticipantDAO;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.opportunitiesService = opportunitiesService;
     }
@@ -225,32 +218,33 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional
     public void sendInterviewParticipantVoteReminder() {
         log.trace("Sending interview scheduling reminder to users");
-        List<Integer> participantIds = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-        for (Integer participantId : participantIds) {
-            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participantId);
-        }
+        // TODO get participants due to reminder using query to ApplicationFormUserRole
+//        List<Integer> participantIds = interviewParticipantDAO.getInterviewParticipantsDueReminder();
+//        for (Integer participantId : participantIds) {
+//            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participantId);
+//        }
         log.trace("Sending interview scheduling reminder to users");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendInterviewParticipantVoteReminder(Integer participantId) {
-        final InterviewParticipant participant = interviewParticipantDAO.getParticipantById(participantId);
-        try {
-            PrismEmailMessage message;
-            ApplicationForm application = participant.getInterview().getApplication();
-            String subject = resolveMessage(INTERVIEW_VOTE_REMINDER, application);
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
-                    adminsEmails, participant, application, getHostName() });
-
-            message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_REMINDER);
-            sendEmail(message);
-            participant.setLastNotified(new Date());
-            interviewParticipantDAO.save(participant);
-        } catch (Exception e) {
-            log.error("Error while sending interview vote reminder email to participant:", e);
-            return false;
-        }
+    public boolean sendInterviewParticipantVoteReminder(Integer userId) {
+//        final RegisteredUser user = userService.getUser(userId);
+//        try {
+//            PrismEmailMessage message;
+//            ApplicationForm application = participant.getInterview().getApplication();
+//            String subject = resolveMessage(INTERVIEW_VOTE_REMINDER, application);
+//            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
+//            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
+//                    adminsEmails, participant, application, getHostName() });
+//
+//            message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_REMINDER);
+//            sendEmail(message);
+//            participant.setLastNotified(new Date());
+//            interviewParticipantDAO.save(participant);
+//        } catch (Exception e) {
+//            log.error("Error while sending interview vote reminder email to participant:", e);
+//            return false;
+//        }
         return true;
     }
 

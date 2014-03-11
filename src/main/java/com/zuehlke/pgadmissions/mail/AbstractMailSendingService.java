@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.mail;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -114,9 +113,10 @@ public abstract class AbstractMailSendingService {
     }
 
     protected Collection<RegisteredUser> getApplicationOrProgramAdministrators(final ApplicationForm application) {
-        if (application.getApplicationAdministrator() != null) {
-            return Collections.singleton(application.getApplicationAdministrator());
-        }
+        // FIXME reimplement using service
+//        if (application.getApplicationAdministrator() != null) {
+//            return Collections.singleton(application.getApplicationAdministrator());
+//        }
         return getProgramAdministrators(application);
     }
 

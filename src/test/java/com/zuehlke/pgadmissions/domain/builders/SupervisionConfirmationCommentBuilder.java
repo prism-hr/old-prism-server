@@ -5,8 +5,6 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
-import com.zuehlke.pgadmissions.domain.Supervisor;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class SupervisionConfirmationCommentBuilder {
 
@@ -16,21 +14,14 @@ public class SupervisionConfirmationCommentBuilder {
     private Date createdTimeStamp;
     private RegisteredUser user;
 
-    private Supervisor supervisor;
     private String projectTitle;
     private String projectAbstract;
     private Date recommendedStartDate;
     private Boolean recommendedConditionsAvailable;
     private String recommendedConditions;
-    private CommentType commentType;
 
     public SupervisionConfirmationCommentBuilder createdTimeStamp(Date createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
-        return this;
-    }
-    
-    public SupervisionConfirmationCommentBuilder supervisor(Supervisor supervisor) {
-        this.supervisor = supervisor;
         return this;
     }
 
@@ -74,11 +65,6 @@ public class SupervisionConfirmationCommentBuilder {
         return this;
     }
 
-    public SupervisionConfirmationCommentBuilder commentType(CommentType commentType) {
-        this.commentType = commentType;
-        return this;
-    }
-
     public SupervisionConfirmationCommentBuilder user(RegisteredUser user) {
         this.user = user;
         return this;
@@ -87,12 +73,10 @@ public class SupervisionConfirmationCommentBuilder {
     public SupervisionConfirmationComment build() {
         SupervisionConfirmationComment supervisionConfirmationComment = new SupervisionConfirmationComment();
         supervisionConfirmationComment.setApplication(applicationForm);
-        supervisionConfirmationComment.setComment(comment);
-        supervisionConfirmationComment.setType(commentType);
-        supervisionConfirmationComment.setDate(createdTimeStamp);
+        supervisionConfirmationComment.setContent(comment);
+        supervisionConfirmationComment.setCreatedTimestamp(createdTimeStamp);
         supervisionConfirmationComment.setId(id);
         supervisionConfirmationComment.setUser(user);
-        supervisionConfirmationComment.setSupervisor(supervisor);
         supervisionConfirmationComment.setProjectTitle(projectTitle);
         supervisionConfirmationComment.setProjectAbstract(projectAbstract);
         supervisionConfirmationComment.setRecommendedStartDate(recommendedStartDate);

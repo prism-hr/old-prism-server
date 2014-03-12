@@ -529,6 +529,9 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
         SourceOfInterestTp interestTp = xmlFactory.createSourceOfInterestTp();
         SourcesOfInterest sourcesOfInterest = programmeDetails.getSourcesOfInterest();
+        if(sourcesOfInterest == null) {
+            return null;
+        }
         interestTp.setCode(sourcesOfInterest.getCode());
         interestTp.setName(sourcesOfInterest.getName());
         if (sourcesOfInterest.isFreeText()) {

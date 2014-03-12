@@ -154,9 +154,7 @@ public class ProgramsService {
         }
 
         if (program.getProgramFeed() == null) {
-            // custom program
             if (program.getInstitution() == null || !Objects.equal(program.getInstitution().getCode(), opportunityRequest.getInstitutionCode())) {
-                // assigning new institution to the program (also changing program code)
                 QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
                         opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
                 program.setInstitution(institution);
@@ -231,7 +229,7 @@ public class ProgramsService {
     }
 
     public Advert getValidProgramProjectAdvert(String programCode, Integer advertId) {
-        Advert advert = null;
+        Advert advert = null;   
         if (advertId != null) {
             advert = programDAO.getAcceptingApplicationsById(advertId);
         }

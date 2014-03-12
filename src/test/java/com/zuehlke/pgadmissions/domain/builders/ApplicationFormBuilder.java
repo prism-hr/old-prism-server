@@ -18,7 +18,9 @@ import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -37,6 +39,8 @@ public class ApplicationFormBuilder {
     private RegisteredUser applicant;
     private String projectTitle;
     private Advert advert;
+    private Program program;
+    private Project project;
     private Date appDate;
     private Date submittedDate;
     private Date batchDeadline;
@@ -194,6 +198,16 @@ public class ApplicationFormBuilder {
         return this;
     }
 
+    public ApplicationFormBuilder program(Program program) {
+        this.program = program;
+        return this;
+    }
+    
+    public ApplicationFormBuilder project(Project project) {
+        this.project = project;
+        return this;
+    }
+    
     public ApplicationFormBuilder qualification(Qualification... qualifications) {
         for (Qualification qual : qualifications) {
             this.qualifications.add(qual);
@@ -310,6 +324,8 @@ public class ApplicationFormBuilder {
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
         application.setAdvert(advert);
+        application.setProgram(program);
+        application.setProject(project);
         application.setEvents(events);
         application.setProjectTitle(projectTitle);
         application.setStatus(status);

@@ -514,18 +514,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return program;
     }
     
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-    
     public Project getProject() {
         return project;
     }
     
-    public void setProject(Project project) {
-        this.project = project;
-    }  
-
     public String getProjectTitle() {
         Project project = getProject();
         if (project != null) {

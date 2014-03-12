@@ -108,8 +108,7 @@ public class ImportService {
             ImportedObject domainObject = importElement.createDomainObject(currentData, changes);
             changes.add((T) domainObject);
             j++;
-        }
-        
+        }       
         return changes;
     }
 

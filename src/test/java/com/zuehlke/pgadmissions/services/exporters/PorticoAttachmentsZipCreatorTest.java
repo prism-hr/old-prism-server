@@ -85,7 +85,7 @@ public class PorticoAttachmentsZipCreatorTest {
         EasyMock.replay(mockSecurityContextHolder, mockSecurityContext, authenticationMock, registeredUserMock);
         
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        attachmentsZipCreator = new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder) {
+        attachmentsZipCreator = new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder, "test@test.com") {
             @Override
             protected String getRandomFilename() {
                 String randomFilename = UUID.randomUUID() + ".pdf";
@@ -142,7 +142,7 @@ public class PorticoAttachmentsZipCreatorTest {
         combinedReferenceBuilder = new CombinedReferencesPdfBuilder();
         transcriptBuilder = new Transcript1PdfBuilder();
         
-        attachmentsZipCreator = new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder);
+        attachmentsZipCreator = new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder, "test@test.com");
         
         expectedValues.put("bookingReferenceNumber", "P123456");
 

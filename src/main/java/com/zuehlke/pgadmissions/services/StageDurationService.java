@@ -17,6 +17,11 @@ public class StageDurationService {
         this(null);
     }
     
+    @Transactional
+    public void save(StageDuration stageDuration) {
+        durationDAO.save(stageDuration);
+    }
+    
     @Autowired
     public StageDurationService(StageDurationDAO durationDAO) {
         this.durationDAO = durationDAO;
@@ -27,8 +32,4 @@ public class StageDurationService {
         return durationDAO.getByStatus(stage);
     }
 
-    @Transactional
-    public void save(StageDuration stageDuration) {
-        durationDAO.save(stageDuration);
-    }
 }

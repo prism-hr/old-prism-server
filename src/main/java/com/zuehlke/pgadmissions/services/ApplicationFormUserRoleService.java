@@ -289,6 +289,7 @@ public class ApplicationFormUserRoleService {
             }
             
         }
+        
         assignToAdministrators(application, ApplicationFormAction.COMPLETE_INTERVIEW_STAGE, application.getDueDate(), true);
     }
 

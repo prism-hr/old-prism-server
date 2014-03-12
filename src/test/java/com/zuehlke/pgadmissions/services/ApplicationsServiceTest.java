@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ApplicationsServiceTest {
@@ -52,32 +51,15 @@ public class ApplicationsServiceTest {
 
     @Mock
     @InjectIntoByType
-    private MailSendingService mailServiceMock;
-
-    @Mock
-    @InjectIntoByType
     private ProgramDAO programDAOMock;
 
     @Mock
     @InjectIntoByType
     private CountriesDAO countriesDAOMock;
-    
+
     @Mock
     @InjectIntoByType
     private DomicileDAO domicileDAOMock;
-
-    @Test
-    public void shouldSendSubmissionsConfirmationToApplicant() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).build();
-
-        mailServiceMock.sendSubmissionConfirmationToApplicant(application);
-
-        applicationFormDAOMock.save(application);
-
-        replay();
-        applicationsService.sendSubmissionConfirmationToApplicant(application);
-        verify();
-    }
 
     @Test
     public void shouldGetApplicationById() {
@@ -109,8 +91,6 @@ public class ApplicationsServiceTest {
         Assert.assertNull(form.getBatchDeadline());
     }
 
- 
-
     @Test
     public void shouldGetBatchDeadlineForApplication() {
         Program program = new ProgramBuilder().code("KLOP").id(1).build();
@@ -125,12 +105,12 @@ public class ApplicationsServiceTest {
 
         assertEquals(deadlineTruncated, returnedDeadline);
     }
-    
+
     @Test
     public void shouldTransFormUKCountriesAndDomiciles() {
         Country validCountry = new CountryBuilder().code("XK").enabled(true).build();
         Domicile validDomicile = new DomicileBuilder().code("XK").enabled(true).build();
-        
+
         Country invalidCountry = new CountryBuilder().code("XF").enabled(true).build();
         Domicile invalidDomicile1 = new DomicileBuilder().code("XF").enabled(true).build();
         Domicile invalidDomicile2 = new DomicileBuilder().code("XI").enabled(true).build();
@@ -144,31 +124,30 @@ public class ApplicationsServiceTest {
         EmploymentPosition position2 = new EmploymentPositionBuilder().domicile(invalidDomicile2).toEmploymentPosition();
         Referee referee1 = new RefereeBuilder().addressDomicile(invalidDomicile3).build();
         Referee referee2 = new RefereeBuilder().addressDomicile(invalidDomicile4).build();
-        
-        ApplicationForm application = new ApplicationFormBuilder().personalDetails(personalDetails).contactAddress(address)
-                .currentAddress(address).qualifications(qualification1, qualification2).employmentPositions(position1, position2)
-                .referees(referee1, referee2).build();
-        
+
+        ApplicationForm application = new ApplicationFormBuilder().personalDetails(personalDetails).contactAddress(address).currentAddress(address)
+                .qualifications(qualification1, qualification2).employmentPositions(position1, position2).referees(referee1, referee2).build();
+
         EasyMock.expect(countriesDAOMock.getEnabledCountryByCode("XK")).andReturn(validCountry);
         EasyMock.expect(domicileDAOMock.getEnabledDomicileByCode("XK")).andReturn(validDomicile);
-        
+
         replay();
         applicationsService.transformUKCountriesAndDomiciles(application);
         verify();
-        
+
         assertEquals(application.getPersonalDetails().getCountry().getCode(), validCountry.getCode());
         assertEquals(application.getPersonalDetails().getResidenceCountry().getCode(), validDomicile.getCode());
         assertEquals(application.getCurrentAddress().getDomicile().getCode(), validDomicile.getCode());
         assertEquals(application.getContactAddress().getDomicile().getCode(), validDomicile.getCode());
-        
+
         for (Qualification qualification : application.getQualifications()) {
             assertEquals(qualification.getInstitutionCountry().getCode(), validDomicile.getCode());
         }
-        
+
         for (EmploymentPosition position : application.getEmploymentPositions()) {
             assertEquals(position.getEmployerAddress().getDomicile().getCode(), validDomicile.getCode());
         }
-        
+
         for (Referee referee : application.getReferees()) {
             assertEquals(referee.getAddressLocation().getDomicile().getCode(), validDomicile.getCode());
         }

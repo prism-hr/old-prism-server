@@ -16,6 +16,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramFeedBuilder;

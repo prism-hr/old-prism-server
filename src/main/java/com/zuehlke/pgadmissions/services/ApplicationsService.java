@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,13 +28,10 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service("applicationsService")
 @Transactional
 public class ApplicationsService {
-
-    private final Logger log = LoggerFactory.getLogger(ApplicationsService.class);
 
     public static final int APPLICATION_BLOCK_SIZE = 50;
 
@@ -45,9 +40,6 @@ public class ApplicationsService {
 
     @Autowired
     private ApplicationFormListDAO applicationFormListDAO;
-
-    @Autowired
-    private MailSendingService mailService;
 
     @Autowired
     private ProgramDAO programDAO;
@@ -88,15 +80,6 @@ public class ApplicationsService {
 
     public List<ApplicationForm> getAllVisibleAndMatchedApplicationsForReport(final RegisteredUser user, final ApplicationsFiltering filtering, final ReportFormat reportType) {
         return applicationFormListDAO.getVisibleApplicationsForReport(user, filtering);
-    }
-
-    public void sendSubmissionConfirmationToApplicant(final ApplicationForm applicationForm) {
-        try {
-            mailService.sendSubmissionConfirmationToApplicant(applicationForm);
-            applicationFormDAO.save(applicationForm);
-        } catch (Exception e) {
-            log.warn("{}", e);
-        }
     }
 
     public void fastTrackApplication(final String applicationNumber) {

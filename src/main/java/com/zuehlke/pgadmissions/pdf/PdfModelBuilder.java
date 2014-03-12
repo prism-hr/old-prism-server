@@ -177,13 +177,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
             addSupportingDocuments(form, pdfDocument, pdfWriter);
 
-        } catch (MalformedURLException e) {
-            log.error(e.getMessage(), e);
-            throw new PdfDocumentBuilderException(e.getMessage(), e);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            throw new PdfDocumentBuilderException(e.getMessage(), e);
-        } catch (DocumentException e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new PdfDocumentBuilderException(e.getMessage(), e);
         }

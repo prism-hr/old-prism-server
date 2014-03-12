@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.pdf;
 import java.io.OutputStream;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.Document;
@@ -19,9 +20,9 @@ import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 @Component
 public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
 
-    public CombinedReferencesPdfBuilder() {
-    }
-
+    @Value("${email.address.to}")
+    private String emailAddressTo;
+    
     public void build(final ReferenceComment referenceComment, final OutputStream outputStream) {
         try {
             Document document = new Document(PageSize.A4, 50, 50, 100, 50);
@@ -52,7 +53,11 @@ public class CombinedReferencesPdfBuilder extends AbstractPdfModelBuilder {
                     }
                 } catch (IllegalArgumentException e) {
                     document.newPage();
-                    document.add(new Paragraph("The reference document provided was corrupted."));    
+                    document.add(new Paragraph(
+                            "We are sorry but we were unable to read and merge the contents of this document. " +
+                                    "Please contact us at " + emailAddressTo + " to obtain an original copy, " +
+                                    "quoting our application reference number: " + referenceComment.getApplication().getApplicationNumber() + " " +
+                                    "and document identifier: " + in.getId().toString() + "."));    
                 }
             }
             document.newPage();

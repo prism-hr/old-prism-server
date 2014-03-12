@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.net.UnknownHostException;
-import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -22,20 +21,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgramsService;
-import com.zuehlke.pgadmissions.services.StageDurationService;
+import com.zuehlke.pgadmissions.services.SubmitApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
 @Controller
@@ -43,15 +37,13 @@ import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 public class SubmitApplicationFormController {
 
     private final Logger log = LoggerFactory.getLogger(SubmitApplicationFormController.class);
+
     private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "/private/pgStudents/form/main_application_page";
     private static final String VIEW_APPLICATION_STAFF_VIEW_NAME = "/private/staff/application/main_application_page";
     private static final String VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME = "/private/staff/application/main_application_page_without_headers";
-    
-    @Autowired
-    private ApplicationFormValidator applicationFormValidator;
 
     @Autowired
-    private StageDurationService stageDurationService;
+    private ApplicationFormValidator applicationFormValidator;
 
     @Autowired
     private ApplicationsService applicationService;
@@ -60,7 +52,7 @@ public class SubmitApplicationFormController {
     private UserService userService;
 
     @Autowired
-    private ActionsProvider actionsProvider; 
+    private ActionsProvider actionsProvider;
 
     @Autowired
     private ApplicationFormUserRoleService applicationFormUserRoleService;
@@ -68,11 +60,13 @@ public class SubmitApplicationFormController {
     @Autowired
     private ProgramsService programsService;
 
+    @Autowired
+    private SubmitApplicationFormService submitApplicationFormService;
+
     @RequestMapping(method = RequestMethod.POST)
     public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result, HttpServletRequest request) {
-        if (!getCurrentUser().getId().equals(applicationForm.getApplicant().getId())) {
-            throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
-        }
+        RegisteredUser user = userService.getCurrentUser();
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMPLETE_APPLICATION);
 
         if (result.hasErrors()) {
             if (result.getFieldError("program") != null) {
@@ -86,30 +80,9 @@ public class SubmitApplicationFormController {
         } catch (UnknownHostException e) {
             log.error("Error while setting ip address of: " + request.getRemoteAddr(), e);
         }
-        
-        // TODO make following logic transactional (move into service) and create new SubmitApplicationComent, fix tests
-        applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
-        applicationForm.setSubmittedDate(DateUtils.truncateToDay(new Date()));
-        assignValidationDueDate(applicationForm);
-        assignBatchDeadline(applicationForm);
-        applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
-        applicationFormUserRoleService.applicationSubmitted(applicationForm);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+
+        submitApplicationFormService.submitApplication(applicationForm);
         return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
-    }
-
-    public void assignValidationDueDate(ApplicationForm applicationForm) {
-        StageDuration validationDuration = stageDurationService.getByStatus(ApplicationFormStatus.VALIDATION);
-        Date dueDate = DateUtils.addWorkingDaysInMinutes(applicationForm.getSubmittedDate(), validationDuration.getDurationInMinutes());
-        applicationForm.setDueDate(dueDate);
-    }
-
-    public void assignBatchDeadline(ApplicationForm applicationForm) {
-        if (applicationForm.getProject() != null) {
-            applicationForm.setBatchDeadline(applicationForm.getProject().getClosingDate());
-        } else {
-            applicationForm.setBatchDeadline(applicationService.getBatchDeadlineForApplication(applicationForm));
-        }
     }
 
     @InitBinder("applicationForm")
@@ -120,9 +93,9 @@ public class SubmitApplicationFormController {
     @RequestMapping(method = RequestMethod.GET)
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = getCurrentUser();
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.VIEW);      
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.VIEW);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
-        
+
         if (user.canEditAsApplicant(applicationForm)) {
             programsService.getValidProgramProjectAdvert(applicationForm.getProgram().getCode(), applicationForm.getAdvert().getId());
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;

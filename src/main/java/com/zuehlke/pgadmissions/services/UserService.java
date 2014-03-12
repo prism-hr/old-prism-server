@@ -235,9 +235,9 @@ public class UserService {
             throw new IllegalStateException(String.format("user with email: %s already exists!", email));
         }
 
-        List<Authority> authList = new ArrayList<Authority>(Arrays.asList(authorities));
+        List<Authority> authList = Arrays.asList(authorities);
 
-        newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authList);
+        newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authorities);
         userDAO.save(newUser);
         
         if (authList.contains(Authority.SUPERADMINISTRATOR)) {

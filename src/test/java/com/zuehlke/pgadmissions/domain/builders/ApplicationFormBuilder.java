@@ -272,7 +272,6 @@ public class ApplicationFormBuilder {
         application.setAdvert(advert);
         application.setProgram(program);
         application.setProject(project);
-        application.setEvents(events);
         application.setProjectTitle(projectTitle);
         application.setStatus(status);
         application.setNextStatus(nextStatus);

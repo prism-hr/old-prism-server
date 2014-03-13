@@ -95,4 +95,9 @@ public class ApplicationFormTransferService {
         return applicationFormTransferDAO.getByApplicationForm(form);
     }
     
+    @Transactional
+    public void requeueApplicationTransfer(ApplicationForm application) {
+        applicationFormTransferDAO.requeueApplicationTransfer(application);
+    }
+    
 }

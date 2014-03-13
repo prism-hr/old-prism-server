@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 /**
@@ -41,7 +42,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
  */
 @Service
 public class PorticoExportService {
-    
+
     private final Logger log = LoggerFactory.getLogger(PorticoExportService.class);
 
     private final WebServiceTemplate webServiceTemplate;
@@ -51,15 +52,17 @@ public class PorticoExportService {
     private SftpAttachmentsSendingService sftpAttachmentsSendingService;
 
     private final ApplicationsService applicationsService;
-    
+
     private final ApplicationFormTransferService applicationFormTransferService;
-    
+
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+
     private final ApplicationContext context;
-    
+
     private static final String PRISM_EXCEPTION = "There was an internal PRISM exception [applicationNumber=%s]";
 
     private static final String WS_CALL_FAILED_NETWORK = "The web service is unreachable because of network issues [applicationNumber=%s]";
-    
+
     private static final String WS_CALL_FAILED_REFUSED = "The web service refused our request [applicationNumber=%s]";
 
     private static final String SFTP_CALL_FAILED_UNEXPECTED = "There was an error creating the ZIP file for PORTICO [applicationNumber=%s]";
@@ -69,23 +72,20 @@ public class PorticoExportService {
     private static final String SFTP_CALL_FAILED_NETWORK = "The SFTP service is unreachable because of network issues [applicationNumber=%s]";
 
     private static final String SFTP_CALL_FAILED_DIRECTORY = "The SFTP target directory is not accessible [applicationNumber=%s]";
-    
+
     public PorticoExportService() {
-        this(null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public PorticoExportService(
-            WebServiceTemplate webServiceTemplate,
-            ApplicationsService applicationsService,
-            CommentDAO commentDAO,
-            SftpAttachmentsSendingService sftpAttachmentsSendingService,
-            ApplicationFormTransferService applicationFormTransferService,
-            ApplicationContext context) {
+    public PorticoExportService(WebServiceTemplate webServiceTemplate, ApplicationsService applicationsService, CommentDAO commentDAO,
+            SftpAttachmentsSendingService sftpAttachmentsSendingService, ApplicationFormTransferService applicationFormTransferService,
+            ApplicationFormUserRoleService applicationFormUserRoleService, ApplicationContext context) {
         this.webServiceTemplate = webServiceTemplate;
         this.commentDAO = commentDAO;
         this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
         this.applicationFormTransferService = applicationFormTransferService;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.applicationsService = applicationsService;
         this.context = context;
     }
@@ -96,7 +96,8 @@ public class PorticoExportService {
         sendToPortico(form, transfer, new DeafListener());
     }
 
-    public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws PorticoExportServiceException {
+    public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener)
+            throws PorticoExportServiceException {
         try {
             log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getApplicationNumber()));
             PorticoExportService proxy = context.getBean(this.getClass());
@@ -106,17 +107,11 @@ public class PorticoExportService {
         } catch (PorticoExportServiceException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error sending application to PORTICO", e);
-            applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.CANCELLED);
-            ApplicationFormTransferError transferError = applicationFormTransferService
-                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(e)
-                            .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
-                            .problemClassification(ApplicationFormTransferErrorType.PRISM_EXCEPTION)
-                            .transfer(transfer));
-            throw new PorticoExportServiceException(String.format(PRISM_EXCEPTION, form.getApplicationNumber()), e, transferError);
+            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.CANCELLED, PRISM_EXCEPTION,
+                    ApplicationFormTransferErrorHandlingDecision.GIVE_UP, ApplicationFormTransferErrorType.PRISM_EXCEPTION);
         }
     }
-    
+
     public void setPorticoAttachmentsZipCreator(final PorticoAttachmentsZipCreator zipCreator) {
         sftpAttachmentsSendingService.setPorticoAttachmentsZipCreator(zipCreator);
     }
@@ -126,66 +121,54 @@ public class PorticoExportService {
     }
 
     // ooooooooooooooooooooooooooooooo PRIVATE oooooooooooooooooooooooooooooooo
-    
+
     @Transactional
-    public void sendWebServiceRequest(final ApplicationForm formObj, final ApplicationFormTransfer transferObj, final TransferListener listener) throws PorticoExportServiceException {
+    public void sendWebServiceRequest(final ApplicationForm formObj, final ApplicationFormTransfer transferObj, final TransferListener listener)
+            throws PorticoExportServiceException {
         ApplicationForm form = applicationsService.getApplicationById(formObj.getId());
         ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         ValidationComment validationComment = commentDAO.getValidationCommentForApplication(form);
         Boolean isOverseasStudent = validationComment == null ? true : validationComment.getHomeOrOverseas().equals(HomeOrOverseas.OVERSEAS);
         final ByteArrayOutputStream requestMessageBuffer = new ByteArrayOutputStream(5000);
-        
+
         AdmissionsApplicationResponse response = null;
         try {
-            SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV2(
-                    new ObjectFactory()).applicationForm(form).isOverseasStudent(isOverseasStudent).build();
-            
+            SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()).applicationForm(form)
+                    .isOverseasStudent(isOverseasStudent).build();
+
             listener.webServiceCallStarted(request, form);
-            
+
             log.info(String.format("Calling PORTICO web service [applicationNumber=%s]", form.getApplicationNumber()));
-            
+
             response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request, new WebServiceMessageCallback() {
                 public void doWithMessage(WebServiceMessage webServiceMessage) throws IOException, TransformerException {
                     webServiceMessage.writeTo(requestMessageBuffer);
-                }});
-            
+                }
+            });
+
             log.trace(String.format("Sent web service request [applicationNumber=%s, request=%s]", form.getApplicationNumber(), requestMessageBuffer.toString()));
-            
-            log.trace(String.format("Received response from web service [applicationNumber=%s, applicantId=%s, applicationId=%s]", 
-                    form.getApplicationNumber(), response.getReference().getApplicantID(), response.getReference().getApplicationID()));
-            
+            log.trace(String.format("Received response from web service [applicationNumber=%s, applicantId=%s, applicationId=%s]", form.getApplicationNumber(),
+                    response.getReference().getApplicantID(), response.getReference().getApplicationID()));
             applicationFormTransferService.updateApplicationFormPorticoIds(form, response);
             applicationFormTransferService.updateTransferPorticoIds(transfer, response);
             applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING);
+            applicationFormUserRoleService.applicationExportResent(form);
             log.info(String.format("Finished PORTICO web service [applicationNumber=%s]", form.getApplicationNumber()));
             listener.webServiceCallCompleted(response, form);
         } catch (WebServiceIOException e) {
             // Network problems
-            ApplicationFormTransferError transferError = applicationFormTransferService
-                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(e)
-                            .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.RETRY)
-                            .problemClassification(ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE)
-                            .requestCopy(requestMessageBuffer.toString()).transfer(transfer));
-            listener.webServiceCallFailed(e, transferError, form);
-            log.error(String.format(WS_CALL_FAILED_NETWORK, form.getApplicationNumber()), e); 
-            throw new PorticoExportServiceException(String.format(WS_CALL_FAILED_NETWORK, form.getApplicationNumber()), e, transferError);
+            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, WS_CALL_FAILED_NETWORK,
+                    ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE);
         } catch (SoapFaultClientException e) {
             // Web service refused our request. Probably with some validation errors
-            ApplicationFormTransferError transferError = applicationFormTransferService
-                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(e)
-                            .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
-                            .problemClassification(ApplicationFormTransferErrorType.WEBSERVICE_SOAP_FAULT)
-                            .responseCopy(e.getWebServiceMessage()).requestCopy(requestMessageBuffer.toString())
-                            .transfer(transfer));
-            applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.REJECTED_BY_WEBSERVICE);
-            listener.webServiceCallFailed(e, transferError, form);
-            log.error(String.format(WS_CALL_FAILED_REFUSED, form.getApplicationNumber()), e);
-            throw new PorticoExportServiceException(String.format(WS_CALL_FAILED_REFUSED, form.getApplicationNumber()), e, transferError);
+            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.REJECTED_BY_WEBSERVICE, WS_CALL_FAILED_REFUSED,
+                    ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.WEBSERVICE_SOAP_FAULT);
         }
     }
 
     @Transactional
-    public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transferObj, final TransferListener listener) throws PorticoExportServiceException {
+    public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transferObj, final TransferListener listener)
+            throws PorticoExportServiceException {
         ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         try {
             listener.sftpTransferStarted(form);
@@ -194,64 +177,32 @@ public class PorticoExportService {
             applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.COMPLETED);
             log.info(String.format("Finished PORTICO SFTP service [applicationNumber=%s, zipFileName=%s]", form.getApplicationNumber(), zipFileName));
             listener.sftpTransferCompleted(zipFileName, transfer);
-        } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack couldNotCreateAttachmentsPack) {
+        } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack e) {
             // There was an error building our ZIP archive
-            ApplicationFormTransferError transferError = applicationFormTransferService
-                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(couldNotCreateAttachmentsPack)
-                    .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
-                    .problemClassification(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION)
-                    .transfer(transfer));
-            applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.CANCELLED);
-            listener.sftpTransferFailed(couldNotCreateAttachmentsPack, transferError, form);
-            log.error(String.format(SFTP_CALL_FAILED_UNEXPECTED, form.getApplicationNumber()), couldNotCreateAttachmentsPack);
-            throw new PorticoExportServiceException(String.format(SFTP_CALL_FAILED_UNEXPECTED, form.getApplicationNumber()), couldNotCreateAttachmentsPack, transferError);
-        } catch (SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong locallyDefinedSshConfigurationIsWrong) {
+            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.CANCELLED, SFTP_CALL_FAILED_UNEXPECTED,
+                    ApplicationFormTransferErrorHandlingDecision.GIVE_UP, ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION);
+        } catch (SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong e) {
             // There is an issue with our configuration
-            ApplicationFormTransferError transferError = applicationFormTransferService
-                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(locallyDefinedSshConfigurationIsWrong)
-                    .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION)
-                    .problemClassification(ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION)
-                    .transfer(transfer));
-            applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
-            listener.sftpTransferFailed(locallyDefinedSshConfigurationIsWrong, transferError, form);
-            log.error(String.format(SFTP_CALL_FAILED_CONFIGURATION, form.getApplicationNumber()), locallyDefinedSshConfigurationIsWrong);
-            throw new PorticoExportServiceException(String.format(SFTP_CALL_FAILED_CONFIGURATION, form.getApplicationNumber()), locallyDefinedSshConfigurationIsWrong, transferError);
-        } catch (SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost couldNotOpenSshConnectionToRemoteHost) {
+            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.CANCELLED, SFTP_CALL_FAILED_CONFIGURATION,
+                    ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION,
+                    ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION);
+        } catch (SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost e) {
             // Network issues
-            ApplicationFormTransferError transferError = applicationFormTransferService
-                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(couldNotOpenSshConnectionToRemoteHost)
-                    .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.RETRY)
-                    .problemClassification(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE)
-                    .transfer(transfer));
-            listener.sftpTransferFailed(couldNotOpenSshConnectionToRemoteHost, transferError, form);
-            log.error(String.format(SFTP_CALL_FAILED_NETWORK, form.getApplicationNumber()), couldNotOpenSshConnectionToRemoteHost);
-            throw new PorticoExportServiceException(String.format(SFTP_CALL_FAILED_NETWORK, form.getApplicationNumber()), couldNotOpenSshConnectionToRemoteHost, transferError);
-        } catch (SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible sftpTargetDirectoryNotAccessible) {
+            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING, SFTP_CALL_FAILED_NETWORK,
+                    ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE);
+        } catch (SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible e) {
             // The target directory is not available. Configuration issue
-            ApplicationFormTransferError transferError = applicationFormTransferService
-                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(sftpTargetDirectoryNotAccessible)
-                    .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION)
-                    .problemClassification(ApplicationFormTransferErrorType.SFTP_DIRECTORY_NOT_AVAILABLE)
-                    .transfer(transfer));
-            listener.sftpTransferFailed(sftpTargetDirectoryNotAccessible, transferError, form);
-            log.error(String.format(SFTP_CALL_FAILED_DIRECTORY, form.getApplicationNumber()), sftpTargetDirectoryNotAccessible);
-            throw new PorticoExportServiceException(String.format(SFTP_CALL_FAILED_DIRECTORY, form.getApplicationNumber()), sftpTargetDirectoryNotAccessible, transferError);
-        } catch (SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError sftpTransmissionFailedOrProtocolError) {
+            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING, SFTP_CALL_FAILED_DIRECTORY,
+                    ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION, ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE);
+        } catch (SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError e) {
             // We couldn't establish a SFTP connection for some reason
-            ApplicationFormTransferError transferError = applicationFormTransferService
-                    .createTransferError(new ApplicationFormTransferErrorBuilder().diagnosticInfo(sftpTransmissionFailedOrProtocolError)
-                    .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.RETRY)
-                    .problemClassification(ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE)
-                    .transfer(transfer));
-            listener.sftpTransferFailed(sftpTransmissionFailedOrProtocolError, transferError, form);
-            log.error(String.format(SFTP_CALL_FAILED_NETWORK, form.getApplicationNumber()), sftpTransmissionFailedOrProtocolError);
-            throw new PorticoExportServiceException(String.format(SFTP_CALL_FAILED_NETWORK, form.getApplicationNumber()), sftpTransmissionFailedOrProtocolError, transferError);
+            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING, SFTP_CALL_FAILED_NETWORK,
+                    ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.SFTP_DIRECTORY_NOT_AVAILABLE);
         }
     }
-    
+
     /*
-     * In case we send an incomplete application we still want to send the referees which 
-     * might have responded with a comment and or a document.
+     * In case we send an incomplete application we still want to send the referees which might have responded with a comment and or a document.
      */
     @Transactional
     protected void prepareApplicationForm(final ApplicationForm form) {
@@ -264,7 +215,7 @@ public class PorticoExportService {
                     if (refereesToSend.size() == 2) {
                         break;
                     }
-                    
+
                     if (BooleanUtils.isTrue(referee.getSendToUCL())) {
                         refereesToSend.put(referee.getId(), referee);
                     } else if (referee.hasProvidedReference()) {
@@ -272,13 +223,13 @@ public class PorticoExportService {
                         refereesToSend.put(referee.getId(), referee);
                     }
                 }
-                
+
                 // select x more referees until we've got 2
                 for (Referee referee : form.getReferees()) {
                     if (refereesToSend.size() == 2) {
                         break;
                     }
-                    
+
                     if (!refereesToSend.containsKey(referee.getId())) {
                         referee.setSendToUCL(true);
                         refereesToSend.put(referee.getId(), referee);
@@ -293,5 +244,18 @@ public class PorticoExportService {
     public ApplicationFormTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
         return applicationFormTransferService.createOrReturnExistingApplicationFormTransfer(form);
     }
-    
+
+    private void processApplicationTransferError(TransferListener listener, ApplicationForm application, ApplicationFormTransfer transfer, Exception exception,
+            ApplicationTransferStatus newStatus, String logMessage, ApplicationFormTransferErrorHandlingDecision handlingDecision,
+            ApplicationFormTransferErrorType errorType) throws PorticoExportServiceException {
+        ApplicationFormTransferError transferError = applicationFormTransferService.createTransferError(new ApplicationFormTransferErrorBuilder()
+                .diagnosticInfo(exception).errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
+                .problemClassification(ApplicationFormTransferErrorType.PRISM_EXCEPTION).transfer(transfer));
+        applicationFormTransferService.updateTransferStatus(transfer, newStatus);
+        listener.webServiceCallFailed(exception, transferError, application);
+        applicationFormUserRoleService.applicationExportFailed(application);
+        log.error(String.format(logMessage, application.getApplicationNumber()), exception);
+        throw new PorticoExportServiceException(String.format(logMessage, application.getApplicationNumber()), exception, transferError);
+    }
+
 }

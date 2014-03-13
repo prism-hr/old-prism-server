@@ -512,7 +512,8 @@ function updateProgramSection(map) {
     $("#programAdvertProgramType").val(map["programType"]);
     $("[name=programAdvertAtasRequired][value=" + map["atasRequired"] + "]").prop("checked", true);
 
-    $("#programAdvertInstitutionCountry").selectpicker('val', map["institutionCountryCode"]);
+    $("#programAdvertInstitutionCountry").val(map["institutionCountryCode"]);
+    $("#programAdvertInstitutionCountry").selectpicker('refresh');
     getInstitutionData(function() {
         $("#programAdvertInstitution").val(map["institutionCode"]);
     });

@@ -29,11 +29,11 @@
             
             
             <div class="row">
-                <label for="otherQualificationTypeName" id="lbl-otherQualificationTypeName" class="plain-label grey-label">Other Qualification Type Name<em>*</em></label>
+                <label for="qualificationTypeName" id="lbl-qualificationTypeName" class="plain-label grey-label">Other Qualification Type Name<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.type.other'/>"></span>
                 <div class="field">
-                    <input class="full" readonly disabled="disabled" type="text" name="otherQualificationTypeName" id="otherQualificationTypeName" value="${(personalDetails.languageQualification.otherQualificationTypeName?html)!}" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled" />
-                    <@spring.bind "personalDetails.languageQualification.otherQualificationTypeName" />
+                    <input class="full" readonly disabled="disabled" type="text" name="qualificationTypeName" id="qualificationTypeName" value="${(personalDetails.languageQualification.qualificationTypeName?html)!}" <#if applicationForm.isDecided() || applicationForm.isWithdrawn() || (personalDetails.languageQualificationAvailable?? && !personalDetails.languageQualificationAvailable) >disabled="disabled"</#if> readonly="readonly" disabled="disabled" />
+                    <@spring.bind "personalDetails.languageQualification.qualificationTypeName" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                             <i class="icon-warning-sign"></i>${error} 
@@ -44,15 +44,15 @@
 
             
             <div class="row">
-                <label id="lbl-dateOfExamination" class="plain-label grey-label" for="dateOfExamination">Date of Examination<em>*</em></label>
+                <label id="lbl-examDate" class="plain-label grey-label" for="examDate">Date of Examination<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.date'/>"></span>
                 <div class="field">
                     <#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>
-                        <input class="half date" type="text" readonly value="${(personalDetails.languageQualification.dateOfExamination?string('dd MMM yyyy'))!}" name="dateOfExamination" id="dateOfExamination" readonly="readonly" disabled="disabled"/>                      
+                        <input class="half date" type="text" readonly value="${(personalDetails.languageQualification.examDate?string('dd MMM yyyy'))!}" name="examDate" id="examDate" readonly="readonly" disabled="disabled"/>                      
                     <#else>
-                        <input class="full" readonly type="text" disabled="disabled" value="${(personalDetails.languageQualification.dateOfExamination?string('dd MMM yyyy'))!}" name="dateOfExamination" id="dateOfExamination" />
+                        <input class="full" readonly type="text" disabled="disabled" value="${(personalDetails.languageQualification.examDate?string('dd MMM yyyy'))!}" name="examDate" id="examDate" />
                     </#if>  
-                     <@spring.bind "personalDetails.languageQualification.dateOfExamination" />
+                     <@spring.bind "personalDetails.languageQualification.examDate" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                             <i class="icon-warning-sign"></i>${error} 
@@ -210,12 +210,13 @@
 
             
             <div class="row">
-                <label id="lbl-examTakenOnline" class="plain-label grey-label">Did you sit the exam online?<em>*</em></label>
+                <label id="lbl-examOnline" class="plain-label grey-label">Did you sit the exam online?<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.exam.online'/>"></span>
                 <div class="field">
+                    <#assign languageQualifications = personalDetails.languageQualification>
                     <label class="grey-label">
-                        <input type="radio" name="examTakenOnline" id="examTakenOnlineYes" value="true" readonly disabled="disabled"
-                        <#if personalDetails.languageQualification.isExamTakenOnlineSet() && personalDetails.languageQualification.getExamTakenOnline()>
+                        <input type="radio" name="examOnline" id="examOnlineYes" value="true" readonly disabled="disabled"
+                        <#if languageQualifications.examOnline?? && languageQualifications.examOnline>
                             checked="checked"
                         </#if>
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -223,15 +224,15 @@
                         </#if>/> Yes
                     </label>                            
                     <label class="grey-label">
-                        <input type="radio" name="examTakenOnline" id="examTakenOnlineNo" value="false" readonly disabled="disabled"
-                        <#if personalDetails.languageQualification.isExamTakenOnlineSet() && !personalDetails.languageQualification.getExamTakenOnline()>
+                        <input type="radio" name="examOnline" id="examOnlineNo" value="false" readonly disabled="disabled"
+                        <#if languageQualifications.examOnline?? && !languageQualifications.examOnline>
                             checked="checked"
                         </#if>
                         <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                             disabled="disabled"
                         </#if>/> No
                     </label>
-                    <@spring.bind "personalDetails.languageQualification.examTakenOnline" />
+                    <@spring.bind "personalDetails.languageQualification.examOnline" />
                     <#list spring.status.errorMessages as error>
                         <div class="alert alert-error">
                                     <i class="icon-warning-sign"></i>${error} 

@@ -495,10 +495,10 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.addCell(newTableCell(qualification.getQualificationType().getDisplayValue(), SMALL_FONT));
 
             table.addCell(newTableCell("Other Qualification Type Name", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getOtherQualificationTypeName(), SMALL_FONT));
+            table.addCell(newTableCell(qualification.getQualificationTypeName(), SMALL_FONT));
 
             table.addCell(newTableCell("Date of Examination", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(dateFormat.format(qualification.getDateOfExamination()), SMALL_FONT));
+            table.addCell(newTableCell(dateFormat.format(qualification.getExamDate()), SMALL_FONT));
 
             table.addCell(newTableCell("Overall Score", SMALL_BOLD_FONT));
             table.addCell(newTableCell(qualification.getOverallScore(), SMALL_FONT));
@@ -516,15 +516,8 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.addCell(newTableCell(qualification.getListeningScore(), SMALL_FONT));
 
             table.addCell(newTableCell("Did you sit the exam online?", SMALL_BOLD_FONT));
-            if (qualification.getExamTakenOnline() == null) {
-                table.addCell(newTableCell(null, SMALL_FONT));
-            } else {
-                if (BooleanUtils.isTrue(qualification.getExamTakenOnline())) {
-                    table.addCell(newTableCell("Yes", SMALL_FONT));
-                } else {
-                    table.addCell(newTableCell("No", SMALL_FONT));
-                }
-            }
+
+            table.addCell(newTableCell(BooleanUtils.toString(qualification.getExamOnline(), "Yes", "No"), SMALL_FONT));
 
             table.addCell(newTableCell("Certificate (PDF)", SMALL_BOLD_FONT));
             if (includeAttachments) {

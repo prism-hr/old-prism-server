@@ -238,7 +238,7 @@ public class PersonalDetailsControllerTest {
     @Test
     public void shouldSavePersonalDetailsAndRedirectIfNoErrors() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
-        LanguageQualification languageQualification = new LanguageQualificationBuilder().id(2).build();
+        LanguageQualification languageQualification = new LanguageQualificationBuilder().build();
         PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(applicationForm).languageQualificationAvailable(false).build();
         personalDetails.setLanguageQualification(languageQualification);
         BindingResult personalDetailsErrors = new BeanPropertyBindingResult(personalDetails, "personalDetails");

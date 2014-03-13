@@ -305,20 +305,20 @@ public class PersonalDetailsValidatorTest {
     @Test
     public void shouldRejectLanguageQualificationIfOtherIsSelectedAnNoTitle() {
         personalDetails.getLanguageQualification().setQualificationType(LanguageQualificationEnum.OTHER);
-        personalDetails.getLanguageQualification().setOtherQualificationTypeName(null);
+        personalDetails.getLanguageQualification().setQualificationTypeName(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("languageQualification.otherQualificationTypeName").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("languageQualification.qualificationTypeName").getCode());
     }
 
     @Test
     public void shouldRejectLanguageQualificationIfExamDateIsInTheFuture() {
-        personalDetails.getLanguageQualification().setDateOfExamination(DateUtils.addWeeks(new Date(), 5));
+        personalDetails.getLanguageQualification().setExamDate(DateUtils.addWeeks(new Date(), 5));
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("languageQualification.dateOfExamination").getCode());
+        Assert.assertEquals("date.field.notpast", mappingResult.getFieldError("languageQualification.examDate").getCode());
     }
 
     @Test
@@ -692,8 +692,8 @@ public class PersonalDetailsValidatorTest {
                                 .passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
                                 .passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
                 .languageQualification(
-                        new LanguageQualificationBuilder().id(1).dateOfExamination(new Date()).examTakenOnline(false)
-                                .languageQualification(LanguageQualificationEnum.OTHER).otherQualificationTypeName("foobar").listeningScore("1")
+                        new LanguageQualificationBuilder().examDate(new Date()).examOnline(false)
+                                .languageQualification(LanguageQualificationEnum.OTHER).qualificationTypeName("foobar").listeningScore("1")
                                 .overallScore("1").readingScore("1").writingScore("1").speakingScore("1")
                                 .languageQualificationDocument(new DocumentBuilder().build()).build()).build();
 

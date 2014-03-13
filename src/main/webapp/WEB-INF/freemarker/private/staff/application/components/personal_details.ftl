@@ -105,12 +105,12 @@
           
           <div class="admin_row">
             <span class="admin_row_label">Other Qualification Type Name</span>
-            <div class="field">${(languageQualification.otherQualificationTypeName?html)!"Not Provided"}</div>
+            <div class="field">${(languageQualification.qualificationTypeName?html)!"Not Provided"}</div>
           </div>
           
           <div class="admin_row">
             <span class="admin_row_label">Date of Examination</span>
-            <div class="field">${(languageQualification.dateOfExamination?string('dd MMM yyyy'))!"Not Provided"}</div>
+            <div class="field">${(languageQualification.examDate?string('dd MMM yyyy'))!"Not Provided"}</div>
           </div>
 
           <div class="admin_row">
@@ -140,7 +140,7 @@
           
           <div class="admin_row">
             <span class="admin_row_label">Did you sit the exam online?</span>
-            <div class="field"><#if languageQualification.examTakenOnline>Yes<#else>No</#if></div>
+            <div class="field"><#if languageQualification.examOnline>Yes<#else>No</#if></div>
          </div>
          
          <div class="admin_row">

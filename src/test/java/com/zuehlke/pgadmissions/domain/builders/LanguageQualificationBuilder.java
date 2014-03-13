@@ -4,20 +4,15 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
-import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
 public class LanguageQualificationBuilder {
 
-    private PersonalDetails personalDetails = null;
-    
     private LanguageQualificationEnum qualificationType;
     
-    private Integer id;
-    
-    private String otherQualificationTypeName;
+    private String qualificationTypeName;
 
-    private Date dateOfExamination;
+    private Date examDate;
 
     private String overallScore;
 
@@ -29,7 +24,7 @@ public class LanguageQualificationBuilder {
 
     private String listeningScore;
 
-    private Boolean examTakenOnline;
+    private Boolean examOnline;
     
     private Document qualificationDocument;
     
@@ -38,18 +33,8 @@ public class LanguageQualificationBuilder {
         return this;
     }
     
-    public LanguageQualificationBuilder personalDetails(PersonalDetails details) {
-        this.personalDetails = details;
-        return this;
-    }
-    
-    public LanguageQualificationBuilder examTakenOnline(Boolean online) {
-        this.examTakenOnline = online;
-        return this;
-    }
-    
-    public LanguageQualificationBuilder id(Integer id) {
-        this.id = id;
+    public LanguageQualificationBuilder examOnline(Boolean online) {
+        this.examOnline = online;
         return this;
     }
     
@@ -58,13 +43,13 @@ public class LanguageQualificationBuilder {
         return this;
     }
     
-    public LanguageQualificationBuilder otherQualificationTypeName(String name) {
-        this.otherQualificationTypeName = name;
+    public LanguageQualificationBuilder qualificationTypeName(String name) {
+        this.qualificationTypeName = name;
         return this;
     }
     
-    public LanguageQualificationBuilder dateOfExamination(Date date) {
-        this.dateOfExamination = date;
+    public LanguageQualificationBuilder examDate(Date date) {
+        this.examDate = date;
         return this;
     }
     
@@ -95,13 +80,11 @@ public class LanguageQualificationBuilder {
     
     public LanguageQualification build() {
         LanguageQualification qualification = new LanguageQualification();
-        qualification.setDateOfExamination(dateOfExamination);
-        qualification.setExamTakenOnline(examTakenOnline);
-        qualification.setId(id);
+        qualification.setExamDate(examDate);
+        qualification.setExamOnline(examOnline);
         qualification.setListeningScore(listeningScore);
-        qualification.setOtherQualificationTypeName(otherQualificationTypeName);
+        qualification.setQualificationTypeName(qualificationTypeName);
         qualification.setOverallScore(overallScore);
-        qualification.setPersonalDetails(personalDetails);
         qualification.setQualificationType(qualificationType);
         qualification.setReadingScore(readingScore);
         qualification.setSpeakingScore(speakingcore);

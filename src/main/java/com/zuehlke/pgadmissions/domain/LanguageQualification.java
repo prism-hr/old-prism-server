@@ -5,73 +5,54 @@ import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL_LANGUAGE_QUALIFICATIONS")
+@Embeddable
 public class LanguageQualification implements Serializable {
 
     private static final long serialVersionUID = -4188769453233574918L;
 
-    @Id
-    @GeneratedValue
-    private Integer id;
+    @Column(name = "language_qualification_type")
+    @Enumerated(EnumType.STRING)
+    private LanguageQualificationEnum qualificationType;
+
+    @Column(name = "language_qualification_type_name")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
+    private String qualificationTypeName;
+
+    @Column(name = "language_exam_date")
+    private Date examDate;
+
+    @Column(name = "language_overall_score")
+    private String overallScore;
+
+    @Column(name = "language_reading_score")
+    private String readingScore;
+
+    @Column(name = "language_writing_score")
+    private String writingScore;
+
+    @Column(name = "language_speaking_score")
+    private String speakingScore;
+
+    @Column(name = "language_listening_score")
+    private String listeningScore;
+
+    @Column(name = "language_exam_online")
+    private Boolean examOnline;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "language_qualification_document_id")
     private Document languageQualificationDocument;
-
-    @OneToOne(mappedBy = "languageQualification")
-    private PersonalDetails personalDetails;
-
-    @Column(name = "qualification_type")
-    @Enumerated(EnumType.STRING)
-    LanguageQualificationEnum qualificationType;
-
-    @Column(name = "other_qualification_type_name")
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
-    private String otherQualificationTypeName;
-
-    @Column(name = "date_of_examination")
-    private Date dateOfExamination;
-
-    @Column(name = "overall_score")
-    private String overallScore;
-
-    @Column(name = "reading_score")
-    private String readingScore;
-
-    @Column(name = "writing_score")
-    private String writingScore;
-
-    @Column(name = "speaking_score")
-    private String speakingScore;
-
-    @Column(name = "listening_score")
-    private String listeningScore;
-
-    @Column(name = "exam_taken_online")
-    private Boolean examTakenOnline;
-
-    public LanguageQualification() {
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
 
     public LanguageQualificationEnum getQualificationType() {
         return qualificationType;
@@ -81,20 +62,20 @@ public class LanguageQualification implements Serializable {
         this.qualificationType = qualificationType;
     }
 
-    public String getOtherQualificationTypeName() {
-        return otherQualificationTypeName;
+    public String getQualificationTypeName() {
+        return qualificationTypeName;
     }
 
-    public void setOtherQualificationTypeName(String otherQualificationTypeName) {
-        this.otherQualificationTypeName = otherQualificationTypeName;
+    public void setQualificationTypeName(String qualificationTypeName) {
+        this.qualificationTypeName = qualificationTypeName;
     }
 
-    public Date getDateOfExamination() {
-        return dateOfExamination;
+    public Date getExamDate() {
+        return examDate;
     }
 
-    public void setDateOfExamination(Date dateOfExamination) {
-        this.dateOfExamination = dateOfExamination;
+    public void setExamDate(Date examDate) {
+        this.examDate = examDate;
     }
 
     public String getOverallScore() {
@@ -125,8 +106,8 @@ public class LanguageQualification implements Serializable {
         return speakingScore;
     }
 
-    public void setSpeakingScore(String speakingcore) {
-        this.speakingScore = speakingcore;
+    public void setSpeakingScore(String speakingScore) {
+        this.speakingScore = speakingScore;
     }
 
     public String getListeningScore() {
@@ -137,25 +118,12 @@ public class LanguageQualification implements Serializable {
         this.listeningScore = listeningScore;
     }
 
-    // freemarker convinience method
-    public boolean isExamTakenOnlineSet() {
-        return (examTakenOnline != null);
+    public Boolean getExamOnline() {
+        return examOnline;
     }
 
-    public Boolean getExamTakenOnline() {
-        return examTakenOnline;
-    }
-
-    public void setExamTakenOnline(Boolean examTakenOnline) {
-        this.examTakenOnline = examTakenOnline;
-    }
-
-    public PersonalDetails getPersonalDetails() {
-        return personalDetails;
-    }
-
-    public void setPersonalDetails(PersonalDetails personalDetails) {
-        this.personalDetails = personalDetails;
+    public void setExamOnline(Boolean examOnline) {
+        this.examOnline = examOnline;
     }
 
     public Document getLanguageQualificationDocument() {
@@ -172,9 +140,8 @@ public class LanguageQualification implements Serializable {
     @Override
     public String toString() {
         return String
-                .format("LanguageQualification [personalDetails=%s, qualificationType=%s, otherQualificationTypeName=%s, dateOfExamination=%s, overallScore=%s, readingScore=%s, writingScore=%s, speakingcore=%s, listeningScore=%s, examTakenOnline=%s]",
-                        personalDetails, qualificationType, otherQualificationTypeName, dateOfExamination, overallScore, readingScore, writingScore,
-                        speakingScore, listeningScore, examTakenOnline);
+                .format("LanguageQualification [qualificationType=%s, qualificationTypeName=%s, examDate=%s, overallScore=%s, readingScore=%s, writingScore=%s, speakingcore=%s, listeningScore=%s, examOnline=%s]",
+                        qualificationType, qualificationTypeName, examDate, overallScore, readingScore, writingScore, speakingScore, listeningScore, examOnline);
     }
 
 }

@@ -155,8 +155,8 @@ public class ValidApplicationFormBuilder {
                                 .passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
                 .languageQualificationAvailable(true)
                 .languageQualification(
-                        new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false)
-                                .languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar")
+                        new LanguageQualificationBuilder().examDate(new Date()).examOnline(false)
+                                .languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").qualificationTypeName("FooBar")
                                 .overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
                                 .languageQualificationDocument(languageQualificationDocument).build()).phoneNumber("+44 (0) 123 123 1234")
                 .residenceDomicile(domicile).title(Title.MR).build();

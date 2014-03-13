@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -13,18 +14,11 @@ import javax.persistence.TemporalType;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL_PASSPORT")
+@Embeddable
 public class PassportInformation implements Serializable {
 
     private static final long serialVersionUID = -1147171760649226325L;
     
-    @Id
-    @GeneratedValue
-    private Integer id;
-    
-    @OneToOne(mappedBy = "passportInformation")
-    private PersonalDetails personalDetails;
-
     @ESAPIConstraint(rule = "LettersAndNumbersOnly", maxLength = 35, message = "{text.field.nonlettersandnumbers}")
     @Column(name = "passport_number")
     private String passportNumber;
@@ -41,17 +35,6 @@ public class PassportInformation implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date passportExpiryDate;
         
-    public PassportInformation() {
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-    
     public String getPassportNumber() {
         return passportNumber;
     }
@@ -84,11 +67,4 @@ public class PassportInformation implements Serializable {
         this.passportExpiryDate = passportExpiryDate;
     }
     
-    public PersonalDetails getPersonalDetails() {
-        return personalDetails;
-    }
-
-    public void setPersonalDetails(PersonalDetails personalDetails) {
-        this.personalDetails = personalDetails;
-    }
 }

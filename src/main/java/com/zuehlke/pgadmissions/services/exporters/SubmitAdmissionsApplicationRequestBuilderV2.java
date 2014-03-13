@@ -681,14 +681,14 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         LanguageQualification languageQualification = personalDetails.getLanguageQualification();
         if (languageQualification != null) {
             EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
-            englishLanguageTp.setDateTaken(buildXmlDate(languageQualification.getDateOfExamination()));
+            englishLanguageTp.setDateTaken(buildXmlDate(languageQualification.getExamDate()));
 
             if (languageQualification.getQualificationType() == LanguageQualificationEnum.OTHER) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
-                englishLanguageTp.setOtherLanguageExam(languageQualification.getOtherQualificationTypeName());
+                englishLanguageTp.setOtherLanguageExam(languageQualification.getQualificationTypeName());
             } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.TOEFL) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
-                if (languageQualification.getExamTakenOnline()) {
+                if (languageQualification.getExamOnline()) {
                     englishLanguageTp.setMethod("TOEFL_INTERNET");
                 } else {
                     englishLanguageTp.setMethod("TOEFL_PAPER");

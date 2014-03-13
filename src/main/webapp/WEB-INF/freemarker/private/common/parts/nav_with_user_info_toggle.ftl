@@ -62,7 +62,7 @@
                 		</a>
                 	</li>
                 </#if>
-                <#if !loggedInUser.isInRole("APPLICANT")>
+                <#if !loggedInUser.isOnlyApplicant()>
 	              	<li
 	              		<#if activeTab=="prospectus">
 	              			class="current"

@@ -586,6 +586,10 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
     public boolean isSupervisorOfApplicationForm(final ApplicationForm form) {
         return isSupervisorOfApplicationForm(form, this);
     }
+    
+    public boolean isOnlyApplicant() {
+        return isOnlyApplicant(this);
+    }
 
     public void setAccountNonExpired(final boolean accountNonExpired) {
         this.accountNonExpired = accountNonExpired;

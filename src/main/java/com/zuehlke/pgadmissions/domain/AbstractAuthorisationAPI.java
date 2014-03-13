@@ -278,7 +278,7 @@ public abstract class AbstractAuthorisationAPI {
             }
             return true;
         }
-        return isApplicant;
+        return false;
     }
 
     public boolean isAdminInProgramme(final Program programme, final RegisteredUser user) {

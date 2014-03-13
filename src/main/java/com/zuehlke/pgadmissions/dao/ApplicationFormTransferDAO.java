@@ -82,5 +82,14 @@ public class ApplicationFormTransferDAO {
     public List<ApplicationFormTransfer> getAllTransfers() {
         return (List<ApplicationFormTransfer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).list();
     }
+    
+    public void requeueApplicationTransfer(final ApplicationForm application) {
+        ApplicationFormTransfer transfer = application.getApplicationFormTransfer();
+        if (transfer != null) {
+            transfer.setTransferStartTimepoint(new Date());
+            transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
+            save(transfer);
+        }
+    }
 
 }

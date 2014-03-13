@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
@@ -18,12 +19,17 @@ import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationEx
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
+import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 
 public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResolver {
 
     private final Logger log = LoggerFactory.getLogger(PgadmissionsExceptionResolver.class);
 
     private final Map<Class<? extends PgadmissionsException>, PgadmissionExceptionHandler<? extends PgadmissionsException>> handlerMap = new LinkedHashMap<Class<? extends PgadmissionsException>, PgadmissionsExceptionResolver.PgadmissionExceptionHandler<? extends PgadmissionsException>>();;
+
+    @Autowired
+    private UserService userService;
 
     public PgadmissionsExceptionResolver() {
         initializeHandlerMap();
@@ -36,7 +42,7 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
             return handlePgadmissionsException((PgadmissionsException) ex, request);
         }
 
-        log.error("Unexpected exception catched during request processing ", ex);
+        log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request, userService.getCurrentUser()), ex);
         return new ModelAndView("redirect:error");
     }
 
@@ -85,15 +91,17 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         addHandler(CannotUpdateApplicationException.class, new PgadmissionExceptionHandler<CannotUpdateApplicationException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotUpdateApplicationException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot update application", "The application can no longer be updated: " + ex.getApplicationNumber());
+                return new AlertDefinition(AlertType.INFO, "Cannot update application", "The application can no longer be updated: "
+                        + ex.getApplicationNumber());
             }
         });
         addHandler(CannotApplyException.class, new PgadmissionExceptionHandler<CannotApplyException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotApplyException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot apply", "The opportunity that you attempted to apply for is no longer accepting applications");
+                return new AlertDefinition(AlertType.INFO, "Cannot apply",
+                        "The opportunity that you attempted to apply for is no longer accepting applications");
             }
         });
     }
-    
+
 }

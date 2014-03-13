@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV2;
-import com.zuehlke.pgadmissions.utils.StacktraceDump;
+import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testUclIntegrationContext.xml")
@@ -98,7 +98,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
                     AdmissionsApplicationResponse response = (AdmissionsApplicationResponse) webServiceTemplate.marshalSendAndReceive(request);
                     marshaller.marshal(response, new StreamResult(new File("response_success_" + idx + ".txt")));
                 } catch (WebServiceIOException e) {
-                    String forException = StacktraceDump.printRootCauseStackTrace(e);
+                    String forException = DiagnosticInfoPrintUtils.printRootCauseStackTrace(e);
                     IOUtils.write(forException, new FileOutputStream(new File("response_error_" + idx + ".txt")));
                 } catch (SoapFaultClientException e) {
                     ByteArrayOutputStream responseMessageBuffer = new ByteArrayOutputStream(5000);
@@ -110,7 +110,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
                     responseMessageBuffer.writeTo(new FileOutputStream(new File("response_error_" + idx + ".txt")));
                 }
             } catch (Throwable e) {
-                System.err.println(StacktraceDump.printRootCauseStackTrace(e));
+                System.err.println(DiagnosticInfoPrintUtils.printRootCauseStackTrace(e));
             }
         }
         

@@ -10,6 +10,8 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,8 @@ import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService
 
 @Component
 public class PorticoAttachmentsZipCreator {
+    
+    private Logger log = LoggerFactory.getLogger(PorticoAttachmentsZipCreator.class);
 
     private final PdfDocumentBuilder pdfDocumentBuilder;
     
@@ -204,10 +208,8 @@ public class PorticoAttachmentsZipCreator {
         try {
             return document.getContent();
         } catch (Exception e) {
-            return ("We are sorry but we were unable to read and merge the contents of this document. " +
-                    "Please contact us at " + emailAddressTo + " to obtain an original copy, " +
-                    "quoting our application reference number: " + application.getApplicationNumber() + " " +
-                    "and document identifier: " + document.getId().toString() + ".").getBytes();
+            log.error("Couldnt read document", e);
+            return getAlternativeMergedFileContents(application);
         }
     }
     

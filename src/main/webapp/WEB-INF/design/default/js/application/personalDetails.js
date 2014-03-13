@@ -193,7 +193,7 @@ $(document).ready(function() {
 	bindDatePicker('#dateOfBirth');
 	bindDatePicker('#passportExpiryDate');
 	bindDatePicker('#passportIssueDate');
-	bindDatePicker('#dateOfExamination');
+	bindDatePicker('#examDate');
 	addToolTips();
 	watchUpload($('#languageQualificationDocument'),
 			ajaxLanguageQualificationDocumentDelete);
@@ -232,9 +232,9 @@ $(document).ready(function() {
 		$(
 				'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
 				.val("");
-		$("#examTakenOnlineNo").removeAttr(
+		$("#examOnlineNo").removeAttr(
 				"checked");
-		$("#examTakenOnlineYes").removeAttr(
+		$("#examOnlineYes").removeAttr(
 				"checked");
 
 		$(
@@ -242,7 +242,7 @@ $(document).ready(function() {
 				.remove();
 
 		$(
-				"#otherQualificationTypeName, #dateOfExamination")
+				"#qualificationTypeName, #examDate")
 				.val("");
 
 		ajaxLanguageQualificationDocumentDelete();
@@ -351,11 +351,11 @@ function enablePassportInformation() {
 
 function enableLanguageQualifications() {
 	$(
-			"#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
+			"#qualificationType, #examDate, #examOnlineYes, #examOnlineNo, #languageQualificationDocument")
 			.removeAttr("disabled", "disabled");
-			$('#examTakenOnlineYes, #examTakenOnlineNo').parent().removeClass("grey-label");
+			$('#examOnlineYes, #examOnlineNo').parent().removeClass("grey-label");
 	$(
-			"#qualificationType, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
+			"#qualificationType, #examOnlineYes, #examOnlineNo, #languageQualificationDocument")
 			.removeAttr("readonly", "readonly");
 	
 	$(
@@ -372,10 +372,10 @@ function enableLanguageQualifications() {
 			.removeAttr("readonly", "readonly");
 
 	$(
-			"#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications")
+			"#lbl-qualificationType, #lbl-examDate, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications")
 			.removeClass("grey-label");
 	$(
-			"#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications")
+			"#lbl-qualificationType, #lbl-examDate, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications")
 			.parent().find('.hint').removeClass("grey");
 
 	if ($("#languageQualificationsTable tr").length <= 0) {
@@ -388,11 +388,11 @@ function enableLanguageQualifications() {
 
 function disableLanguageQualifications() {
 	$(
-			"#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
+			"#qualificationType, #examDate, #examOnlineYes, #examOnlineNo, #languageQualificationDocument")
 			.attr("disabled", "disabled");
-			$('#examTakenOnlineYes, #examTakenOnlineNo').parent().addClass("grey-label");
+			$('#examOnlineYes, #examOnlineNo').parent().addClass("grey-label");
 	$(
-			"#qualificationType, #dateOfExamination, #examTakenOnlineYes, #examTakenOnlineNo, #languageQualificationDocument")
+			"#qualificationType, #examDate, #examOnlineYes, #examOnlineNo, #languageQualificationDocument")
 			.attr("readonly", "readonly");
 
 	$(
@@ -410,10 +410,10 @@ function disableLanguageQualifications() {
 			.attr("readonly", "readonly");
 
 	$(
-			"#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications")
+			"#lbl-qualificationType, #lbl-examDate, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications")
 			.addClass("grey-label");
 	$(
-			"#lbl-qualificationType, #lbl-dateOfExamination, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examTakenOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications")
+			"#lbl-qualificationType, #lbl-examDate, #lbl-overallScore, #lbl-readingScore, #lbl-writingScore, #lbl-speakingScore, #lbl-listeningScore, #lbl-examOnline, #lbl-languageQualificationDocument, #lbl-englishLanguageQualifications")
 			.parent().find('.hint').addClass("grey");
 
 	$("#addLanguageQualificationButton").hide();
@@ -425,10 +425,10 @@ function disableLanguageQualifications() {
 }
 
 function clearLanguageQualification() {
-	$("#qualificationType, #otherQualificationTypeName, #dateOfExamination")
+	$("#qualificationType, #qualificationTypeName, #examDate")
 			.val("");
-	$("#examTakenOnlineNo").removeAttr("checked");
-	$("#examTakenOnlineYes").removeAttr("checked");
+	$("#examOnlineNo").removeAttr("checked");
+	$("#examOnlineYes").removeAttr("checked");
 
 	$(
 			'#overallScoreFree, #readingScoreFree, #writingScoreFree, #speakingScoreFree, #listeningScoreFree')
@@ -449,16 +449,16 @@ function clearLanguageQualification() {
 }
 
 function disableOtherLanguageQualification() {
-	$('#otherQualificationTypeName').attr("disabled", "disabled");
-	$('#otherQualificationTypeName').attr("readonly", "readonly");
-	$('#lbl-otherQualificationTypeName').addClass("grey-label").parent().find(
+	$('#qualificationTypeName').attr("disabled", "disabled");
+	$('#qualificationTypeName').attr("readonly", "readonly");
+	$('#lbl-qualificationTypeName').addClass("grey-label").parent().find(
 			'.hint').addClass("grey");
 }
 
 function enableOtherLanguageQualification() {
-	$('#otherQualificationTypeName').removeAttr("disabled");
-	$('#otherQualificationTypeName').removeAttr("readonly");
-	$('#lbl-otherQualificationTypeName').removeClass("grey-label").parent()
+	$('#qualificationTypeName').removeAttr("disabled");
+	$('#qualificationTypeName').removeAttr("readonly");
+	$('#lbl-qualificationTypeName').removeClass("grey-label").parent()
 			.find('.hint').removeClass("grey");
 }
 
@@ -516,9 +516,9 @@ function postPersonalDetailsData(message) {
 		acceptedTheTerms = true;
 	}
 
-	var examTakenOnline = "";
-	if ($("input[name='examTakenOnline']:checked").length > 0) {
-		examTakenOnline = $("input[name='examTakenOnline']:checked").val();
+	var examOnline = "";
+	if ($("input[name='examOnline']:checked").length > 0) {
+		examOnline = $("input[name='examOnline']:checked").val();
 	}
 	var documentLanguageQualification;
 	if ( $('#document_LANGUAGE_QUALIFICATION').length == 0) {
@@ -552,16 +552,16 @@ function postPersonalDetailsData(message) {
 				'#languageQualificationId').val(),
 		'languageQualification.qualificationType' : $('#qualificationType')
 				.val(),
-		'languageQualification.otherQualificationTypeName' : $(
-				'#otherQualificationTypeName').val(),
-		'languageQualification.dateOfExamination' : $('#dateOfExamination')
+		'languageQualification.qualificationTypeName' : $(
+				'#qualificationTypeName').val(),
+		'languageQualification.examDate' : $('#examDate')
 				.val(),
 		'languageQualification.overallScore' : selectValue('overallScore'),
 		'languageQualification.readingScore' : selectValue('readingScore'),
 		'languageQualification.writingScore' : selectValue('writingScore'),
 		'languageQualification.speakingScore' : selectValue('speakingScore'),
 		'languageQualification.listeningScore' : selectValue('listeningScore'),
-		'languageQualification.examTakenOnline' : examTakenOnline,
+		'languageQualification.examOnline' : examOnline,
 		'languageQualification.languageQualificationDocument' : documentLanguageQualification,
 		message : message,
 		acceptedTerms : acceptedTheTerms,

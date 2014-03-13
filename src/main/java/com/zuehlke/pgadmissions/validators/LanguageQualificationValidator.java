@@ -1,15 +1,17 @@
 package com.zuehlke.pgadmissions.validators;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Component
 public class LanguageQualificationValidator extends AbstractValidator {
@@ -17,29 +19,31 @@ public class LanguageQualificationValidator extends AbstractValidator {
     @Override
     protected void addExtraValidation(Object target, Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", EMPTY_DROPDOWN_ERROR_MESSAGE);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfExamination", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "examDate", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "overallScore", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "readingScore", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "writingScore", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "speakingScore", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "listeningScore", EMPTY_FIELD_ERROR_MESSAGE);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "examTakenOnline", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "examOnline", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "languageQualificationDocument", "file.upload.empty");
-        
+
         LanguageQualification qualification = (LanguageQualification) target;
         if (qualification == null) {
             return;
         }
-       
-        Date examDate = qualification.getDateOfExamination();
-        if (examDate != null && examDate.after(new Date()) && !DateUtils.isToday(qualification.getDateOfExamination())) {
-            errors.rejectValue("dateOfExamination", "date.field.notpast");
+
+        Date examDate = qualification.getExamDate();
+
+        Date today = new DateTime().withTimeAtStartOfDay().toDate();
+        if (examDate != null && DateUtils.truncate(examDate, Calendar.DATE).after(today)) {
+            errors.rejectValue("examDate", "date.field.notpast");
         }
-        
+
         if (qualification.getQualificationType() == LanguageQualificationEnum.OTHER) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "otherQualificationTypeName", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationTypeName", EMPTY_FIELD_ERROR_MESSAGE);
         }
-        
+
         if (qualification.getQualificationType() == LanguageQualificationEnum.TOEFL) {
             if (StringUtils.isNotBlank(qualification.getOverallScore())) {
                 try {
@@ -51,7 +55,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("overallScore", "languageQualification.overallScore.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getListeningScore())) {
                 try {
                     Integer score = Integer.valueOf(qualification.getListeningScore());
@@ -62,7 +66,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("listeningScore", "languageQualification.score.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getReadingScore())) {
                 try {
                     Integer score = Integer.valueOf(qualification.getReadingScore());
@@ -73,7 +77,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("readingScore", "languageQualification.score.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getSpeakingScore())) {
                 try {
                     Integer score = Integer.valueOf(qualification.getSpeakingScore());
@@ -84,7 +88,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("speakingScore", "languageQualification.score.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getWritingScore())) {
                 try {
                     Integer score = Integer.valueOf(qualification.getWritingScore());
@@ -106,7 +110,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("overallScore", "languageQualification.general.score.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getListeningScore())) {
                 try {
                     Double score = Double.valueOf(qualification.getListeningScore());
@@ -117,7 +121,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("listeningScore", "languageQualification.general.score.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getReadingScore())) {
                 try {
                     Double score = Double.valueOf(qualification.getReadingScore());
@@ -128,7 +132,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("readingScore", "languageQualification.general.score.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getSpeakingScore())) {
                 try {
                     Double score = Double.valueOf(qualification.getSpeakingScore());
@@ -139,7 +143,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("speakingScore", "languageQualification.general.score.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getWritingScore())) {
                 try {
                     Double score = Double.valueOf(qualification.getWritingScore());
@@ -161,7 +165,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("overallScore", "languageQualification.general.score.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getListeningScore())) {
                 try {
                     Integer score = Integer.valueOf(qualification.getListeningScore());
@@ -172,7 +176,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("listeningScore", "languageQualification.general.score.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getReadingScore())) {
                 try {
                     Integer score = Integer.valueOf(qualification.getReadingScore());
@@ -183,7 +187,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("readingScore", "languageQualification.general.score.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getSpeakingScore())) {
                 try {
                     Integer score = Integer.valueOf(qualification.getSpeakingScore());
@@ -194,7 +198,7 @@ public class LanguageQualificationValidator extends AbstractValidator {
                     errors.rejectValue("speakingScore", "languageQualification.general.score.notvalid");
                 }
             }
-            
+
             if (StringUtils.isNotBlank(qualification.getWritingScore())) {
                 try {
                     Integer score = Integer.valueOf(qualification.getWritingScore());

@@ -143,7 +143,6 @@ public class ApplicationFormCopyHelper {
             LanguageQualification languageQualification = new LanguageQualification();
             copyLanguageQualification(languageQualification, previousLanguageQualification);
             to.setLanguageQualification(languageQualification);
-            languageQualification.setPersonalDetails(to);
         }
 
         to.setResidenceCountry(getEnabledImportedObject(from.getResidenceCountry()));
@@ -155,7 +154,6 @@ public class ApplicationFormCopyHelper {
             PassportInformation passportInformation = new PassportInformation();
             copyPassportInformation(passportInformation, previousPassportInformation);
             to.setPassportInformation(passportInformation);
-            passportInformation.setPersonalDetails(to);
         }
 
         to.setPhoneNumber(from.getPhoneNumber());
@@ -173,14 +171,14 @@ public class ApplicationFormCopyHelper {
 
     private void copyLanguageQualification(LanguageQualification to, LanguageQualification from) {
         to.setQualificationType(from.getQualificationType());
-        to.setOtherQualificationTypeName(from.getOtherQualificationTypeName());
-        to.setDateOfExamination(from.getDateOfExamination());
+        to.setQualificationTypeName(from.getQualificationTypeName());
+        to.setExamDate(from.getExamDate());
         to.setOverallScore(from.getOverallScore());
         to.setReadingScore(from.getReadingScore());
         to.setWritingScore(from.getWritingScore());
         to.setSpeakingScore(from.getSpeakingScore());
         to.setListeningScore(from.getListeningScore());
-        to.setExamTakenOnline(from.getExamTakenOnline());
+        to.setExamOnline(from.getExamOnline());
         to.setLanguageQualificationDocument(copyDocument(from.getLanguageQualificationDocument()));
     }
 

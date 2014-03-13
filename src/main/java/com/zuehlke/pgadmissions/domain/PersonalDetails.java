@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -51,8 +51,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @Column(name = "language_qualification_available")
     private Boolean languageQualificationAvailable;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "language_qualification_id")
+    @Embedded
     @Valid
     private LanguageQualification languageQualification;
 
@@ -62,8 +61,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @Column(name = "passport_available")
     private Boolean passportAvailable;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "passport_information_id")
+    @Embedded
     @Valid
     private PassportInformation passportInformation;
 

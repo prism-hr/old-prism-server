@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
@@ -48,10 +49,12 @@ public class DocumentDAO {
 	}
 
 	private void removeFromLanguageQualification(Document document) {
-		LanguageQualification qualification = (LanguageQualification) sessionFactory.getCurrentSession().createCriteria(LanguageQualification.class).add(Restrictions.eq("languageQualificationDocument", document)).uniqueResult();
-		if (qualification != null) {
-			qualification.setLanguageQualificationDocument(null);
-			sessionFactory.getCurrentSession().save(qualification);
+		PersonalDetails details = (PersonalDetails) sessionFactory.getCurrentSession().createCriteria(PersonalDetails.class)
+		        .add(Restrictions.eq("languageQualification.languageQualificationDocument", document))
+		        .uniqueResult();
+		if (details != null) {
+			details.getLanguageQualification().setLanguageQualificationDocument(null);
+			sessionFactory.getCurrentSession().save(details);
 		}
 	}
 	

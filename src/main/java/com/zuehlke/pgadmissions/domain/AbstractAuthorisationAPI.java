@@ -271,9 +271,12 @@ public abstract class AbstractAuthorisationAPI {
             for (Authority authority : AuthorityGroup.getAllApplicationAuthorities()) {
                 if (user.isInRole(authority)) {
                     authorityCount++;
+                    if (authorityCount > 1) {
+                        return false;
+                    }
                 }
             }
-            return authorityCount == 1 && BooleanUtils.isTrue(isApplicant);
+            return true;
         }
         return isApplicant;
     }

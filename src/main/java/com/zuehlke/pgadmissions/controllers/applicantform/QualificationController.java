@@ -6,11 +6,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
@@ -32,10 +32,9 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -53,170 +52,175 @@ import com.zuehlke.pgadmissions.validators.QualificationValidator;
 @RequestMapping("/update")
 @Controller
 public class QualificationController {
-	public static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/qualification_details";
-	private final QualificationService qualificationService;
-	private final ApplicationsService applicationService;
-	private final DatePropertyEditor datePropertyEditor;
-	private final LanguageService languageService;
-	private final LanguagePropertyEditor languagePropertyEditor;
-	private final DomicilePropertyEditor domicilePropertyEditor;
-	private final QualificationValidator qualificationValidator;
-	private final DomicileDAO domicileDAO;
-	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
-	private final DocumentPropertyEditor documentPropertyEditor;
-	private final UserService userService;
-	private final EncryptionHelper encryptionHelper;
-    private final QualificationTypeDAO qualificationTypeDAO;
-    private final QualificationTypePropertyEditor qualificationTypePropertyEditor;
-    private final QualificationInstitutionDAO qualificationInstitutionDAO;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-    private final FullTextSearchService searchService;
-    
-	public QualificationController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-	}
+
+    public static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/qualification_details";
 
     @Autowired
-    public QualificationController(ApplicationsService applicationsService,
-            ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor,
-            DomicileDAO domicileDAO, LanguageService languageService, LanguagePropertyEditor languagePropertyEditor,
-            DomicilePropertyEditor domicilePropertyEditor, QualificationValidator qualificationValidator,
-            QualificationService qualificationService, DocumentPropertyEditor documentPropertyEditor,
-            UserService userService, EncryptionHelper encryptionHelper, QualificationTypeDAO qualificationTypeDAO,
-            QualificationTypePropertyEditor qualificationTypePropertyEditor, 
-            QualificationInstitutionDAO qualificationInstitutionDAO,
-            final ApplicationFormUserRoleService applicationFormUserRoleService,
-            final FullTextSearchService searchService) {
-		this.applicationService = applicationsService;
-		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
-		this.datePropertyEditor = datePropertyEditor;
-		this.domicileDAO = domicileDAO;
-		this.languageService = languageService;
-		this.languagePropertyEditor = languagePropertyEditor;
-		this.domicilePropertyEditor = domicilePropertyEditor;
-		this.qualificationValidator = qualificationValidator;
-		this.qualificationService = qualificationService;
-		this.documentPropertyEditor = documentPropertyEditor;
-		this.userService = userService;
-		this.encryptionHelper = encryptionHelper;
-        this.qualificationTypeDAO = qualificationTypeDAO;
-        this.qualificationTypePropertyEditor = qualificationTypePropertyEditor;
-        this.qualificationInstitutionDAO = qualificationInstitutionDAO;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.searchService = searchService;
-	}
-	
-	@InitBinder(value="qualification")
-	public void registerPropertyEditors(WebDataBinder binder) {
-		binder.setValidator(qualificationValidator);
-		binder.registerCustomEditor(String.class, newStringTrimmerEditor());
-		binder.registerCustomEditor(Date.class, datePropertyEditor);
-		binder.registerCustomEditor(Language.class, languagePropertyEditor);
-		binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
-		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
-		binder.registerCustomEditor(QualificationType.class, qualificationTypePropertyEditor);
-		binder.registerCustomEditor(Document.class, documentPropertyEditor);
-	}
+    private QualificationService qualificationService;
+
+    @Autowired
+    private ApplicationsService applicationService;
+
+    @Autowired
+    private DatePropertyEditor datePropertyEditor;
+
+    @Autowired
+    private LanguageService languageService;
+
+    @Autowired
+    private LanguagePropertyEditor languagePropertyEditor;
+
+    @Autowired
+    private DomicilePropertyEditor domicilePropertyEditor;
+
+    @Autowired
+    private QualificationValidator qualificationValidator;
+
+    @Autowired
+    private DomicileDAO domicileDAO;
+
+    @Autowired
+    private ApplicationFormPropertyEditor applicationFormPropertyEditor;
+
+    @Autowired
+    private DocumentPropertyEditor documentPropertyEditor;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private QualificationTypeDAO qualificationTypeDAO;
+
+    @Autowired
+    private QualificationTypePropertyEditor qualificationTypePropertyEditor;
+
+    @Autowired
+    private QualificationInstitutionDAO qualificationInstitutionDAO;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    @Autowired
+    private FullTextSearchService searchService;
+
+    @InitBinder(value = "qualification")
+    public void registerPropertyEditors(WebDataBinder binder) {
+        binder.setValidator(qualificationValidator);
+        binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+        binder.registerCustomEditor(Date.class, datePropertyEditor);
+        binder.registerCustomEditor(Language.class, languagePropertyEditor);
+        binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
+        binder.registerCustomEditor(QualificationType.class, qualificationTypePropertyEditor);
+        binder.registerCustomEditor(Document.class, documentPropertyEditor);
+    }
 
     public StringTrimmerEditor newStringTrimmerEditor() {
         return new StringTrimmerEditor(true);
     }
-	
-	@RequestMapping(value = "/getQualification", method = RequestMethod.GET)
-	public String getQualificationView() {
-		return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
-	}
-	
-	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-	public String editQualification(@Valid Qualification qualification, BindingResult result, Model model) {
-        if (qualification.getApplication().isDecided()) {
-            throw new CannotUpdateApplicationException(qualification.getApplication().getApplicationNumber());
+
+    @RequestMapping(value = "/getQualification", method = RequestMethod.GET)
+    public String getQualificationView(@RequestParam String applicationId, @RequestParam(required = false) Integer qualificationId, ModelMap modelMap) {
+        RegisteredUser currentUser = userService.getCurrentUser();
+        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        Qualification qualification;
+        if (qualificationId != null) {
+            qualification = getQualification(application, qualificationId, currentUser);
+        } else {
+            qualification = new Qualification();
         }
-        
+        modelMap.put("qualification", qualification);
+        if (qualification.getInstitutionCountry() != null) {
+            modelMap.put("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(qualification.getInstitutionCountry().getCode()));
+        }
+        return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
+    }
+
+    @RequestMapping(value = "/editQualification", method = RequestMethod.POST)
+    public String editQualification(@RequestParam(required = false) Integer qualificationId, @Valid Qualification qualification, BindingResult result,
+            ModelMap modelMap) {
+        RegisteredUser currentUser = userService.getCurrentUser();
+        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        if (!currentUser.canEditAsApplicant(application)) {
+            throw new CannotUpdateApplicationException(application.getApplicationNumber());
+        }
+        if (qualificationId != null) {
+            getQualification(application, qualificationId, currentUser);
+        }
+
         if (result.hasErrors()) {
+            qualification.setId(qualificationId);
+            modelMap.put("qualification", qualification);
             if (qualification.getInstitutionCountry() != null) {
-                model.addAttribute("institutions", qualificationInstitutionDAO
-                        .getEnabledInstitutionsByDomicileCode(qualification.getInstitutionCountry().getCode()));
+                modelMap.put("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(qualification.getInstitutionCountry().getCode()));
             }
             return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
         }
 
-        ApplicationForm applicationForm = qualification.getApplication();
-        
-        qualificationService.save(qualification);
-        applicationService.save(applicationForm);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
-		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
-	}
-	
-    @RequestMapping(value="/qualification/title/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+        qualificationService.save(application, qualificationId, qualification);
+        applicationFormUserRoleService.insertApplicationUpdate(application, currentUser, ApplicationUpdateScope.ALL_USERS);
+        return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
+    }
+
+    private Qualification getQualification(ApplicationForm application, Integer qualificationId, RegisteredUser currentUser) {
+        Qualification qualification = qualificationService.getQualificationById(qualificationId);
+        // check if given qualification belongs to given application
+        Preconditions.checkNotNull(qualification);
+        Preconditions.checkArgument(application.getId().equals(qualification.getApplication().getId()));
+        return qualification;
+    }
+
+    @RequestMapping(value = "/qualification/title/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String provideSuggestionsForQualificationTitle(@PathVariable final String searchTerm) {
-    	Gson gson = new Gson();
-    	return gson.toJson(searchService.getMatchingQualificationsWithTitlesLike(searchTerm));
+        Gson gson = new Gson();
+        return gson.toJson(searchService.getMatchingQualificationsWithTitlesLike(searchTerm));
     }
-    
-    @RequestMapping(value="/qualification/subject/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+
+    @RequestMapping(value = "/qualification/subject/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String provideSuggestionsForQualificationSubject(@PathVariable final String searchTerm) {
-    	Gson gson = new Gson();
-    	return gson.toJson(searchService.getMatchingQualificationsWithSubjectsLike(searchTerm));
+        Gson gson = new Gson();
+        return gson.toJson(searchService.getMatchingQualificationsWithSubjectsLike(searchTerm));
     }
-    
-    @RequestMapping(value="/qualification/grade/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+
+    @RequestMapping(value = "/qualification/grade/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String provideSuggestionsForQualificationGrade(@PathVariable final String searchTerm) {
-    	Gson gson = new Gson();
-    	return gson.toJson(searchService.getMatchingQualificationsWithGradesLike(searchTerm));
+        Gson gson = new Gson();
+        return gson.toJson(searchService.getMatchingQualificationsWithGradesLike(searchTerm));
     }
 
-	@ModelAttribute
-	public Qualification getQualification(@RequestParam(value="qualificationId", required=false) String encryptedQualificationId, Model model) {
-		if (StringUtils.isBlank(encryptedQualificationId)) {
-			return new Qualification();
-		}
-		
-		Qualification qualification = qualificationService.getQualificationById(encryptionHelper.decryptToInteger(encryptedQualificationId));
-		if (qualification == null) {
-			throw new ResourceNotFoundException();
-		}
-		
-		model.addAttribute("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(qualification.getInstitutionCountry().getCode()));
-		return qualification;
-	}
+    @ModelAttribute("institutions")
+    public List<QualificationInstitution> getEmptyQualificationInstitution() {
+        return Collections.emptyList();
+    }
 
-	@ModelAttribute("institutions")
-	public List<QualificationInstitution> getEmptyQualificationInstitution() {
-	    return Collections.emptyList();
-	}
-	
-	@ModelAttribute("languages")
-	public List<Language> getAllEnabledLanguages() {
-		return languageService.getAllEnabledLanguages();
-	}
+    @ModelAttribute("languages")
+    public List<Language> getAllEnabledLanguages() {
+        return languageService.getAllEnabledLanguages();
+    }
 
-	@ModelAttribute("countries")
-	public List<Domicile> getAllEnabledDomiciles() {
-		return domicileDAO.getAllEnabledDomicilesExceptAlternateValues();
-	}
-	
-	@ModelAttribute("types")
-	public List<QualificationType> getAllEnabledQualificationTypes() {
-	    return qualificationTypeDAO.getAllEnabledQualificationTypes();
-	}
-	
-	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
-		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-		if(application == null) {
-			throw new ResourceNotFoundException();
-		}
-		return application;
-	}
+    @ModelAttribute("countries")
+    public List<Domicile> getAllEnabledDomiciles() {
+        return domicileDAO.getAllEnabledDomicilesExceptAlternateValues();
+    }
 
-	@ModelAttribute("message")
-	public String getMessage(@RequestParam(required=false)String message) {		
-		return message;
-	}
-	
+    @ModelAttribute("types")
+    public List<QualificationType> getAllEnabledQualificationTypes() {
+        return qualificationTypeDAO.getAllEnabledQualificationTypes();
+    }
+
+    @ModelAttribute("applicationForm")
+    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+        RegisteredUser user = userService.getCurrentUser();
+        ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
+        Preconditions.checkNotNull(application);
+        if (!user.canEditAsApplicant(application)) {
+            throw new CannotUpdateApplicationException(application.getApplicationNumber());
+        }
+        return application;
+    }
+
+
 }

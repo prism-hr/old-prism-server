@@ -5,7 +5,7 @@
     <groupId>com.zuehlke</groupId>
     <artifactId>pgadmissions</artifactId>
     <packaging>war</packaging>
-    <version>3.0.9</version>
+    <version>3.0.10-SNAPSHOT</version>
 
     <properties>
         <spring.version>3.2.6.RELEASE</spring.version>
@@ -22,7 +22,7 @@
 
     <scm>
         <connection>scm:hg:http://mercurial.alumeni.co.uk/mercurial/pgadmissions/</connection>
-        <tag>pgadmissions-3.0.9</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencies>

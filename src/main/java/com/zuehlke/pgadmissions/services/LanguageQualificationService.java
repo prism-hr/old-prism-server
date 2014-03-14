@@ -34,7 +34,4 @@ public class LanguageQualificationService {
         languageQualificationDAO.save(languageQualification);
     }
     
-    public void deleteAttachedDocument(LanguageQualification languageQualification) {
-        languageQualificationDAO.deleteAttachedDocument(languageQualification);
-    }
 }

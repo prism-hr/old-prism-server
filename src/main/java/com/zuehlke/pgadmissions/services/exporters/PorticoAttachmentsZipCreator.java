@@ -122,13 +122,14 @@ public class PorticoAttachmentsZipCreator {
             throws IOException, CouldNotCreateAttachmentsPack {
         LanguageQualification languageQualification = applicationForm.getPersonalDetails().getLanguageQualification();
         if (languageQualification != null) {
+            Document document = languageQualification.getLanguageQualificationDocument();
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(getFileContents(languageQualification.getLanguageQualificationDocument(), applicationForm));
+            zos.write(getFileContents(document, applicationForm));
             zos.closeEntry();
             contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", filename);
-            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", languageQualification.getLanguageQualificationDocument()
-                    .getFileName());
+            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document != null ? document
+                    .getFileName() : "englishCertificate.pdf");
         }
     }
 
@@ -219,10 +220,10 @@ public class PorticoAttachmentsZipCreator {
                 return document.getContent();
             } catch (Exception e) {
                 log.error("Couldnt read document", e);
-                return getAlternativeMergedFileContents(application);
             }
+        } else {
+            log.error("Attempted to merge null document for portico export");
         }
-        log.error("Attempted to merge null document for portico export");
         return getAlternativeMergedFileContents(application);
     }
 

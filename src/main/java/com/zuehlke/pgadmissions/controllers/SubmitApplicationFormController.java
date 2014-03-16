@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
@@ -50,21 +51,23 @@ public class SubmitApplicationFormController {
     private final ApplicationFormValidator applicationFormValidator;
     private final StageDurationService stageDurationService;
     private final ApplicationsService applicationService;
+    private final ApplicationFormTransferService applicationFormTransferService;
     private final EventFactory eventFactory;
     private final UserService userService;
-    private final ActionsProvider actionsProvider; 
+    private final ActionsProvider actionsProvider;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
     private final ProgramsService programsService;
 
     public SubmitApplicationFormController() {
-        this(null, null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public SubmitApplicationFormController(ApplicationsService applicationService, UserService userService, ApplicationFormValidator applicationFormValidator,
-            StageDurationService stageDurationService, EventFactory eventFactory, ActionsProvider actionsProvider, 
-            ApplicationFormUserRoleService applicationFormUserRoleService, ProgramsService programsService) {
+    public SubmitApplicationFormController(ApplicationsService applicationService, ApplicationFormTransferService applicationFormTransferService,
+            UserService userService, ApplicationFormValidator applicationFormValidator, StageDurationService stageDurationService, EventFactory eventFactory,
+            ActionsProvider actionsProvider, ApplicationFormUserRoleService applicationFormUserRoleService, ProgramsService programsService) {
         this.applicationService = applicationService;
+        this.applicationFormTransferService = applicationFormTransferService;
         this.userService = userService;
         this.applicationFormValidator = applicationFormValidator;
         this.stageDurationService = stageDurationService;
@@ -76,7 +79,10 @@ public class SubmitApplicationFormController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result, HttpServletRequest request) {
-        if (!getCurrentUser().getId().equals(applicationForm.getApplicant().getId())) {
+        RegisteredUser user = getCurrentUser();
+        Boolean isApplicant = user.getId().equals(applicationForm.getApplicant().getId());
+        if (!(BooleanUtils.isTrue(isApplicant) || BooleanUtils.isTrue(actionsProvider.checkActionAvailable(applicationForm, user,
+                ApplicationFormAction.CORRECT_APPLICATION)))) {
             throw new InsufficientApplicationFormPrivilegesException(applicationForm.getApplicationNumber());
         }
 
@@ -92,16 +98,23 @@ public class SubmitApplicationFormController {
         } catch (UnknownHostException e) {
             log.error("Error while setting ip address of: " + request.getRemoteAddr(), e);
         }
-        
-        applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
-        applicationForm.setSubmittedDate(DateUtils.truncateToDay(new Date()));
-        assignValidationDueDate(applicationForm);
-        applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
-        assignBatchDeadline(applicationForm);
-        applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
-        applicationFormUserRoleService.applicationSubmitted(applicationForm);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
-        return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
+
+        String messageCode;
+        if (BooleanUtils.isTrue(isApplicant)) {
+            messageCode = "application.submitted";
+            applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
+            applicationForm.setSubmittedDate(DateUtils.truncateToDay(new Date()));
+            assignValidationDueDate(applicationForm);
+            applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
+            assignBatchDeadline(applicationForm);
+            applicationService.sendSubmissionConfirmationToApplicant(applicationForm);
+            applicationFormUserRoleService.applicationSubmitted(applicationForm);
+            applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        } else {
+            messageCode = "application.corrected";
+            applicationFormTransferService.requeueApplicationTransfer(applicationForm);
+        }
+        return "redirect:/applications?messageCode=" + messageCode + "&application=" + applicationForm.getApplicationNumber();
     }
 
     public void assignValidationDueDate(ApplicationForm applicationForm) {
@@ -126,10 +139,11 @@ public class SubmitApplicationFormController {
     @RequestMapping(method = RequestMethod.GET)
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = getCurrentUser();
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.VIEW);      
+        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.VIEW);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
-        
-        if (user.canEditAsApplicant(applicationForm)) {
+
+        if (user.canEditAsApplicant(applicationForm)
+                || BooleanUtils.isTrue(actionsProvider.checkActionAvailable(applicationForm, user, ApplicationFormAction.CORRECT_APPLICATION))) {
             programsService.getValidProgramProjectAdvert(applicationForm.getProgram().getCode(), applicationForm.getAdvert().getId());
             return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
         }
@@ -161,12 +175,7 @@ public class SubmitApplicationFormController {
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionsProvider.getApplicationDescriptorForUser(applicationForm, getCurrentUser());
     }
 
-    @ModelAttribute("user")
-    public RegisteredUser getUser() {
-        return getCurrentUser();
-    }
 }

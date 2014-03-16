@@ -14,6 +14,8 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationR
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ReferenceTp;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
+import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
@@ -22,74 +24,83 @@ import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 public class ApplicationFormTransferServiceTest {
 
     private ApplicationFormTransferErrorDAO applicationFormTransferErrorDAOMock;
-    
+
     private ApplicationFormTransferDAO applicationFormTransferDAOMock;
-    
+
+    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+
+    private CommentDAO commentDAOMock;
+
+    private UserDAO userDAOMock;
+
     private ApplicationFormTransferService service;
-    
+
     @Before
     public void prepare() {
         applicationFormTransferDAOMock = EasyMock.createMock(ApplicationFormTransferDAO.class);
         applicationFormTransferErrorDAOMock = EasyMock.createMock(ApplicationFormTransferErrorDAO.class);
-        service = new ApplicationFormTransferService(applicationFormTransferErrorDAOMock, applicationFormTransferDAOMock);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        commentDAOMock = EasyMock.createMock(CommentDAO.class);
+        userDAOMock = EasyMock.createMock(UserDAO.class);
+        service = new ApplicationFormTransferService(applicationFormTransferErrorDAOMock, applicationFormTransferDAOMock, applicationFormUserRoleServiceMock,
+                commentDAOMock, userDAOMock);
     }
 
     @Test
     public void shouldUpdateTransferStatus() {
         DateTime dateInThePast = new DateTime(1984, 9, 29, 8, 0);
-        ApplicationFormTransfer transfer = new ApplicationFormTransferBuilder()
-            .status(ApplicationTransferStatus.CANCELLED)
-            .transferStartTimepoint(dateInThePast.toDate()).build();
-        
+        ApplicationFormTransfer transfer = new ApplicationFormTransferBuilder().status(ApplicationTransferStatus.CANCELLED)
+                .transferStartTimepoint(dateInThePast.toDate()).build();
+
         service.updateTransferStatus(transfer, ApplicationTransferStatus.COMPLETED);
-        
+
         assertEquals(ApplicationTransferStatus.COMPLETED, transfer.getStatus());
         assertTrue(DateUtils.isToday(transfer.getTransferFinishTimepoint()));
     }
-    
+
     @Test
     public void shouldUpdateTransferPorticoIds() {
         ApplicationForm form = new ValidApplicationFormBuilder().build();
         form.setUclBookingReferenceNumber("");
         form.getApplicant().setUclUserId("");
-        
+
         AdmissionsApplicationResponse response = new AdmissionsApplicationResponse();
         ReferenceTp referenceTp = new ReferenceTp();
         referenceTp.setApplicantID("applicantId");
         referenceTp.setApplicationID("applicationId");
         response.setReference(referenceTp);
-        
+
         service.updateApplicationFormPorticoIds(form, response);
-        
+
         assertEquals("applicationId", form.getUclBookingReferenceNumber());
         assertEquals("applicantId", form.getApplicant().getUclUserId());
     }
-    
+
     @Test
     public void shouldCreateTransferError() {
-        ApplicationFormTransfer transfer = new ApplicationFormTransferBuilder()
-                .status(ApplicationTransferStatus.CANCELLED).transferStartTimepoint(new Date()).build();
+        ApplicationFormTransfer transfer = new ApplicationFormTransferBuilder().status(ApplicationTransferStatus.CANCELLED).transferStartTimepoint(new Date())
+                .build();
 
         ApplicationFormTransferErrorBuilder builder = new ApplicationFormTransferErrorBuilder()
                 .errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.RETRY)
-                .problemClassification(ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE).requestCopy("")
-                .transfer(transfer);
-        
+                .problemClassification(ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE).requestCopy("").transfer(transfer);
+
         ApplicationFormTransferError expectedError = builder.build();
-        
+
         applicationFormTransferErrorDAOMock.save(EasyMock.isA(ApplicationFormTransferError.class));
-        
+
         EasyMock.replay(applicationFormTransferErrorDAOMock);
-        
+
         ApplicationFormTransferError actualError = service.createTransferError(builder);
-        
+
         EasyMock.verify(applicationFormTransferErrorDAOMock);
-        
+
         assertEquals(expectedError.getDiagnosticInfo(), actualError.getDiagnosticInfo());
         assertEquals(expectedError.getErrorHandlingStrategy(), actualError.getErrorHandlingStrategy());
         assertEquals(expectedError.getId(), actualError.getId());
@@ -99,37 +110,38 @@ public class ApplicationFormTransferServiceTest {
         assertEquals(expectedError.getTimepoint(), actualError.getTimepoint());
         assertEquals(expectedError.getTransfer(), actualError.getTransfer());
     }
-    
+
     @Test
     public void shouldReturnExistingApplicationFormTransferObject() {
-        ApplicationFormTransfer transfer = new ApplicationFormTransferBuilder().status(ApplicationTransferStatus.CANCELLED).transferStartTimepoint(new Date()).build();
+        ApplicationFormTransfer transfer = new ApplicationFormTransferBuilder().status(ApplicationTransferStatus.CANCELLED).transferStartTimepoint(new Date())
+                .build();
         ApplicationForm form = new ValidApplicationFormBuilder().build();
 
         EasyMock.expect(applicationFormTransferDAOMock.getByApplicationForm(form)).andReturn(transfer);
-        
+
         EasyMock.replay(applicationFormTransferDAOMock);
-        
+
         assertEquals(transfer, service.createOrReturnExistingApplicationFormTransfer(form));
-        
+
         EasyMock.verify(applicationFormTransferDAOMock);
     }
-    
+
     @Test
     public void shouldCreateNewApplicationFormTransfer() {
         ApplicationForm form = new ValidApplicationFormBuilder().build();
 
         EasyMock.expect(applicationFormTransferDAOMock.getByApplicationForm(form)).andReturn(null);
         applicationFormTransferDAOMock.save(EasyMock.isA(ApplicationFormTransfer.class));
-        
+
         EasyMock.replay(applicationFormTransferDAOMock);
-        
+
         ApplicationFormTransfer actualTransfer = service.createOrReturnExistingApplicationFormTransfer(form);
-        
+
         assertEquals(form, actualTransfer.getApplicationForm());
         assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, actualTransfer.getStatus());
         assertTrue(DateUtils.isToday(actualTransfer.getTransferStartTimepoint()));
-        
+
         EasyMock.verify(applicationFormTransferDAOMock);
     }
-    
+
 }

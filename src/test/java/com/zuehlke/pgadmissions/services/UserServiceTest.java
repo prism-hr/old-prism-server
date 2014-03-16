@@ -114,7 +114,7 @@ public class UserServiceTest {
         Authority auth = Authority.ADMINISTRATOR;
         Role role = new RoleBuilder().build();
         EasyMock.expect(roleDAOMock.getRoleByAuthority(auth)).andReturn(role);
-        EasyMock.expect(userDAOMock.getUsersInRole(role)).andReturn(Arrays.asList(userOne, userTwo));
+        EasyMock.expect(userDAOMock.getUsersInRole(role.getId())).andReturn(Arrays.asList(userOne, userTwo));
 
         EasyMockUnitils.replay();
         List<RegisteredUser> users = userService.getUsersInRole(auth);

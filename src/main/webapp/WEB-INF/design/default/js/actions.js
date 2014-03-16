@@ -26,6 +26,7 @@ $(document).ready(function() {
             switch ($(this).val()) {
             case 'VIEW':
             case 'VIEW_EDIT':
+            case 'CORRECT_APPLICATION':
                 window.location.href = "/pgadmissions/application?view=view&applicationId="+ id;
                 break;
             case 'COMMENT':

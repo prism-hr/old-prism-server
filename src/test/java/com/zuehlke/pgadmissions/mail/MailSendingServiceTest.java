@@ -144,7 +144,7 @@ public class MailSendingServiceTest {
         expectLastCall().times(2);
 
         replay(mockMailSender);
-        service.sendExportErrorMessage(asList(user1, user2), messageCode, timestamp);
+        service.sendExportErrorMessage(asList(user1, user2), messageCode, timestamp, null);
         verify(mockMailSender);
 
         PrismEmailMessage message = messageCaptor.getValues().get(0);

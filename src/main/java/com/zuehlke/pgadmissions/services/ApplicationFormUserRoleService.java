@@ -321,6 +321,10 @@ public class ApplicationFormUserRoleService {
     }
     
     public void applicationExportFailed(ApplicationForm application) {
+        for (RegisteredUser user : userDAO.getAdmitters()) {
+            createApplicationFormUserRole(application, user, Authority.SUPERADMINISTRATOR, false, 
+                    new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CORRECT_APPLICATION), new Date(), false, true));
+        }
         for (RegisteredUser user : userDAO.getSuperadministrators()) {
             createApplicationFormUserRole(application, user, Authority.SUPERADMINISTRATOR, false, 
                     new ApplicationFormActionRequired(actionDAO.getActionById(ApplicationFormAction.CORRECT_APPLICATION), new Date(), false, true));
@@ -328,6 +332,7 @@ public class ApplicationFormUserRoleService {
     }
     
     public void applicationExportResent(ApplicationForm application) {
+        deleteRoleAction(application, Authority.ADMITTER, ApplicationFormAction.CORRECT_APPLICATION);
         deleteRoleAction(application, Authority.SUPERADMINISTRATOR, ApplicationFormAction.CORRECT_APPLICATION);
     }
     

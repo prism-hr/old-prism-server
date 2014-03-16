@@ -143,18 +143,8 @@
 							</#if> 
 							
               							          
-		          <#if timelineObject.comments?? || timelineObject.projectTitle??>
+		          <#if timelineObject.comments??>
 		          <ul>
-		          	<#if timelineObject.projectTitle??>
-                  <li>                          
-                    <div class="box">
-                       <p class="project_title"><span data-desc="Project title and description" aria-describedby="ui-tooltip-2"></span>
-                        	<b>${timelineObject.projectTitle}</b><br>
-                        	<i>${timelineObject.projectDescription}</i>
-                       </p>
-                    </div>
-                  </li>
-		          	</#if>
 		          
 		            <#list timelineObject.comments as comment>
 			            <#if comment.type == 'GENERIC' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION' || comment.type == 'VALIDATION' || comment.type == 'INTERVIEW_VOTE' || comment.type == 'INTERVIEW_SCHEDULE'>                                                    
@@ -178,79 +168,84 @@
 			            <#elseif comment.type == 'APPROVAL_EVALUATION'  || comment.type == 'REQUEST_RESTART' || comment.type == 'OFFER_RECOMMENDED_COMMENT'>
 			            	<#assign role = "approver"/>
 		            	<#elseif comment.type = 'SUPERVISION_CONFIRMATION'>
-                    <#assign role = "supervisor"/>                                
-                  <#elseif comment.type == 'STATE_CHANGE_SUGGESTION'>
-                    <#assign role = "interviewer"/> 
+                   			<#assign role = "supervisor"/>                                
+                  		<#elseif comment.type == 'STATE_CHANGE_SUGGESTION'>
+                    		<#assign role = "interviewer"/>
+                    	<#elseif comment.type == 'APPLICATION_TRANSFER_COMMENT'>
+                    		<#if user.isInRole("SUPERADMINISTRATOR") || user.isInRole("ADMITTER")>
+                    			<#assign role = "administrator"/>
+                    		</#if>
 			            </#if>
 			            
 			            <#if comment.type == 'SUPERVISION_CONFIRMATION'>
-		                <#include "timeline_snippets/supervision_confirmation_comment.ftl"/>
+		                	<#include "timeline_snippets/supervision_confirmation_comment.ftl"/>
 			            <#elseif comment.type == 'APPROVAL' || comment.type == 'OFFER_RECOMMENDED_COMMENT'>
-		                <#include "timeline_snippets/project_description_comments.ftl"/>
-                  <#elseif comment.type == 'INTERVIEW_SCHEDULE'>
-                    <#include "timeline_snippets/interview_schedule_comment.ftl"/>
-	                <#else>
-                    
-			         <li>                          
-  			              <div class="box">
-  			                <div class="title">
-  			                  <span class="icon-role ${role}" data-desc="${(comment.getTooltipMessage(role)?html)!}"></span>
-  			                  <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span> <span class="commented">commented:</span>
-  			                  <span class="datetime" data-desc="Date">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
-  			                </div>
-                            <!-- Request restart -->
-  			                <#if comment.type == 'REQUEST_RESTART'>
-                                <div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>
-                                <p class="restart"><span/><b>Restart of approval stage requested.</b></p>
-							<#elseif comment.comment?starts_with("Referred to")>
-                                <p class="referral"><span data-desc="Referral"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
-          				    <#elseif comment.comment?trim?length &gt; 0>
-                                <div class="textContainer">
-                                	<p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
-                                </div>
-                            </#if>
-  							<!-- General comment box file-->			
-                            <#if comment.documents?? && comment.documents?size &gt; 0>
-                                <ul class="uploads">                
-                                <#list comment.documents as document>
-                                    <li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
-                                </#list>
-                                </ul>
-                            </#if>
-                            <#if (comment.type == "VALIDATION" || 
-								comment.type == "REVIEW_EVALUATION" ||  
-								comment.type == "INTERVIEW_EVALUATION" || 
-								comment.type == "APPROVAL_EVALUATION") &&
-								comment.delegateAdministrator?has_content>
-                                <p class="delegate"><span data-desc="delegate"></span><em>Delegated next stage administration to
-                                	${(comment.delegateAdministrator.firstName?html)!} ${(comment.delegateAdministrator.lastName?html)!} (${(comment.delegateAdministrator.email?html)!})</em>.</p>
-                            </#if>
-                            <!-- To move to validation questions-->	
-  			                <#if comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT'>
-  			                	<#include "timeline_snippets/validation_comment.ftl"/>
-  			                <#elseif comment.type == 'REVIEW'>
-  			                	<#include "timeline_snippets/review_comment.ftl"/>
-  			                <#elseif comment.type == 'INTERVIEW'>
-  			                	<#include "timeline_snippets/interview_comment.ftl"/>
-	                	  	<#elseif comment.type == 'INTERVIEW_VOTE'>
-		                		<#assign interviewVoteParticipant=comment.interviewParticipant>
-		                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
-		                		<#if interviewVoteParticipant.responded>
-                                    <#if interviewVoteParticipant.acceptedTimeslots?has_content>
-                                        <h3 class="answer yes"><span aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</h3> 
-                                    <#else>
-                                        <h3 class="answer no"><span aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
-                                    </#if>
-	                		</#if>
-	                		<#elseif comment.type == 'STATE_CHANGE_SUGGESTION'>
-	                			<h3 class="recommend">
-								  	<span class="icon-hand-right"></span>Recommends that the application be moved to the ${comment.nextStatus.displayValue()} stage.
-                		       	</h3>
-  			                </#if>
-  			              </div>
-  			            </li>
-  			           
-    			            
+		                	<#include "timeline_snippets/project_description_comments.ftl"/>
+                  		<#elseif comment.type == 'INTERVIEW_SCHEDULE'>
+                    		<#include "timeline_snippets/interview_schedule_comment.ftl"/>
+                    	<#elseif comment.type == 'APPLICATION_TRANSFER_COMMENT'>
+                    		<#if user.isInRole("SUPERADMINISTRATOR") || user.isInRole("ADMITTER")>
+                    			<#include "timeline_snippets/application_transfer_comment.ftl"/>
+                    		</#if>
+	                	<#else>
+					    	<li>                          
+		  			        	<div class="box">
+		  			            	<div class="title">
+		  			                	<span class="icon-role ${role}" data-desc="${(comment.getTooltipMessage(role)?html)!}"></span>
+		  			                  	<span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span> <span class="commented">commented:</span>
+		  			                  	<span class="datetime" data-desc="Date">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
+		  			                </div>
+		                            <!-- Request restart -->
+		  			                <#if comment.type == 'REQUEST_RESTART'>
+		                                <div class="textContainer"><p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p></div>
+		                                <p class="restart"><span/><b>Restart of approval stage requested.</b></p>
+									<#elseif comment.comment?starts_with("Referred to")>
+		                                <p class="referral"><span data-desc="Referral"></span><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
+		          				    <#elseif comment.comment?trim?length &gt; 0>
+		                                <div class="textContainer">
+		                                	<p><em>${(comment.comment?html?replace("\n", "<br>"))!}</em></p>
+		                                </div>
+		                            </#if>
+		  							<!-- General comment box file-->			
+		                            <#if comment.documents?? && comment.documents?size &gt; 0>
+		                                <ul class="uploads">                
+		                                <#list comment.documents as document>
+		                                    <li><a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a></li>
+		                                </#list>
+		                                </ul>
+		                            </#if>
+		                            <#if (comment.type == "VALIDATION" || 
+										comment.type == "REVIEW_EVALUATION" ||  
+										comment.type == "INTERVIEW_EVALUATION" || 
+										comment.type == "APPROVAL_EVALUATION") &&
+										comment.delegateAdministrator?has_content>
+		                                <p class="delegate"><span data-desc="delegate"></span><em>Delegated next stage administration to
+		                                	${(comment.delegateAdministrator.firstName?html)!} ${(comment.delegateAdministrator.lastName?html)!} (${(comment.delegateAdministrator.email?html)!})</em>.</p>
+		                            </#if>
+		                            <!-- To move to validation questions-->	
+		  			                <#if comment.type == 'VALIDATION' || comment.type == 'ADMITTER_COMMENT'>
+		  			                	<#include "timeline_snippets/validation_comment.ftl"/>
+		  			                <#elseif comment.type == 'REVIEW'>
+		  			                	<#include "timeline_snippets/review_comment.ftl"/>
+		  			                <#elseif comment.type == 'INTERVIEW'>
+		  			                	<#include "timeline_snippets/interview_comment.ftl"/>
+			                	  	<#elseif comment.type == 'INTERVIEW_VOTE'>
+				                		<#assign interviewVoteParticipant=comment.interviewParticipant>
+				                		<#assign interviewVoteParticipantAsUser=interviewVoteParticipant.user>
+				                		<#if interviewVoteParticipant.responded>
+		                                    <#if interviewVoteParticipant.acceptedTimeslots?has_content>
+		                                        <h3 class="answer yes"><span aria-describedby="ui-tooltip-150"></span>Confirmed interview preferences.</h3> 
+		                                    <#else>
+		                                        <h3 class="answer no"><span aria-describedby="ui-tooltip-150"/></span>Is unable to make interview.</h3>
+		                                    </#if>
+			                		</#if>
+			                		<#elseif comment.type == 'STATE_CHANGE_SUGGESTION'>
+			                			<h3 class="recommend">
+										  	<span class="icon-hand-right"></span>Recommends that the application be moved to the ${comment.nextStatus.displayValue()} stage.
+		                		       	</h3>
+		  			                </#if>
+		  			        	</div>
+		  			    	</li>
 			            </#if>
 		            </#list>                       
 		          </ul>

@@ -197,7 +197,7 @@ public class PorticoAttachmentsZipCreator {
         }
         zos.closeEntry();
         contentsProperties.put("mergedApplication.1.serverFilename", serverfilename);
-        contentsProperties.put("mergedApplication.1.applicationFilename", applicationFilename);        
+        contentsProperties.put("mergedApplication.1.applicationFilename", applicationFilename);
     }
     
     protected String getRandomFilename() {
@@ -205,12 +205,16 @@ public class PorticoAttachmentsZipCreator {
     }
     
     private byte[] getFileContents(Document document, ApplicationForm application) {
-        try {
-            return document.getContent();
-        } catch (Exception e) {
-            log.error("Couldnt read document", e);
-            return getAlternativeMergedFileContents(application);
+        if (document != null) {
+            try {
+                return document.getContent();
+            } catch (Exception e) {
+                log.error("Couldnt read document", e);
+                return getAlternativeMergedFileContents(application);
+            }
         }
+        log.error("Attempted to merge null document for portico export");
+        return getAlternativeMergedFileContents(application);
     }
     
     private byte[] getAlternativeMergedFileContents(ApplicationForm application) {

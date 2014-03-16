@@ -158,7 +158,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         List<Integer> testUserIds = Arrays.asList(userOne.getId(), userTwo.getId());
 
         int roleOneHitCounter = 0;
-        for (RegisteredUser user : userDAO.getUsersInRole(roleOne)) {
+        for (RegisteredUser user : userDAO.getUsersInRole(roleOne.getId())) {
             if (testUserIds.contains(user.getId())) {
                 roleOneHitCounter++;
             }
@@ -166,7 +166,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         assertEquals(2, roleOneHitCounter);
 
         int roleTwoHitCounter = 0;
-        for (RegisteredUser user : userDAO.getUsersInRole(roleTwo)) {
+        for (RegisteredUser user : userDAO.getUsersInRole(roleTwo.getId())) {
             if (testUserIds.contains(user.getId())) {
                 roleTwoHitCounter++;
             }
@@ -188,7 +188,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         Role superAdminRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
 
-        int numberOfExistingSuperAdminUsers = userDAO.getUsersInRole(superAdminRole).size();
+        int numberOfExistingSuperAdminUsers = userDAO.getUsersInRole(superAdminRole.getId()).size();
 
         RegisteredUser superAdminOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();

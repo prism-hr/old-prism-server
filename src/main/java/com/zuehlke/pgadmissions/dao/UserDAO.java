@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
@@ -71,11 +70,11 @@ public class UserDAO {
         return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<RegisteredUser> getUsersInRole(Role role) {
-        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles").add(Restrictions.eq("id", role.getId()))
+    public List<RegisteredUser> getUsersInRole(Authority ...authorities) {
+        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles").add(Restrictions.in("id", authorities))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
-
+    
     public RegisteredUser getUserByActivationCode(String activationCode) {
         return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("activationCode", activationCode))
                 .uniqueResult();
@@ -95,9 +94,6 @@ public class UserDAO {
     public List<RegisteredUser> getUsersForProgram(Program program) {
         final Map<Integer, RegisteredUser> users = new HashMap<Integer, RegisteredUser>();
 
-        Criteria superAdminRoleCriteria = sessionFactory.getCurrentSession().createCriteria(Role.class)
-                .add(Restrictions.eq("id", Authority.SUPERADMINISTRATOR));
-
         Criteria programsOfWhichAdministratorCriteria = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
                 .createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId()));
 
@@ -107,7 +103,7 @@ public class UserDAO {
         Criteria programsOfWhichViewer = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichViewer")
                 .add(Restrictions.eq("id", program.getId()));
 
-        CollectionUtils.forAllDo(getUsersInRole((Role) superAdminRoleCriteria.uniqueResult()), new Closure() {
+        CollectionUtils.forAllDo(getUsersInRole(Authority.SUPERADMINISTRATOR), new Closure() {
             @Override
             public void execute(Object target) {
                 RegisteredUser user = (RegisteredUser) target;

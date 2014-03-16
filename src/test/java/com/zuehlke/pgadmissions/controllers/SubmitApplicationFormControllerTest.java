@@ -58,12 +58,14 @@ import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
 public class SubmitApplicationFormControllerTest {
 
     private SubmitApplicationFormController applicationController;
     private ApplicationsService applicationsServiceMock;
+    private ApplicationFormTransferService applicationFormTransferServiceMock;
     private ApplicationFormValidator applicationFormValidatorMock;
     private StageDurationService stageDurationServiceMock;
     private EventFactory eventFactoryMock;
@@ -385,6 +387,7 @@ public class SubmitApplicationFormControllerTest {
     @Before
     public void setUp() {
         applicationsServiceMock = createMock(ApplicationsService.class);
+        applicationFormTransferServiceMock = createMock(ApplicationFormTransferService.class);
         userServiceMock = createMock(UserService.class);
         applicationFormValidatorMock = createMock(ApplicationFormValidator.class);
         stageDurationServiceMock = createMock(StageDurationService.class);
@@ -393,7 +396,7 @@ public class SubmitApplicationFormControllerTest {
         applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
         programsService = createMock(ProgramsService.class);
 
-        applicationController = new SubmitApplicationFormController(applicationsServiceMock, userServiceMock, applicationFormValidatorMock,
+        applicationController = new SubmitApplicationFormController(applicationsServiceMock, applicationFormTransferServiceMock, userServiceMock, applicationFormValidatorMock,
                 stageDurationServiceMock, eventFactoryMock, actionsProviderMock, applicationFormUserRoleServiceMock, programsService);
         httpServletRequestMock = new MockHttpServletRequest();
 

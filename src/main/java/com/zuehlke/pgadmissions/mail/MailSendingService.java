@@ -100,7 +100,7 @@ public class MailSendingService extends AbstractMailSendingService {
                             admissionsOfferServiceLevel, form.getOutcomeOfStage() });
 
             Map<String, Object> model = modelBuilder.build();
-            
+
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
                 model.put("reason", form.getRejection().getRejectionReason());
                 if (form.getRejection().isIncludeProspectusLink()) {
@@ -267,7 +267,7 @@ public class MailSendingService extends AbstractMailSendingService {
         PrismEmailMessage message = null;
         String subject = resolveMessage(OPPORTUNITY_REQUEST_OUTCOME);
         try {
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] {"user", "comment", "host" }, new Object[] {user, comment, getHostName() });
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "comment", "host" }, new Object[] { user, comment, getHostName() });
             message = buildMessage(user, subject, modelBuilder.build(), OPPORTUNITY_REQUEST_OUTCOME);
             sendEmail(message);
         } catch (Exception e) {
@@ -275,17 +275,17 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendExportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
+    public void sendExportErrorMessage(List<RegisteredUser> recipients, String messageCode, Date timestamp, ApplicationForm application) {
         PrismEmailMessage message = null;
         if (messageCode == null) {
             log.error("Error while sending export error message: messageCode is null");
             return;
         }
         String subject = resolveMessage(EXPORT_ERROR);
-        for (RegisteredUser user : superadmins) {
+        for (RegisteredUser user : recipients) {
             try {
-                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageCode,
-                        timestamp, getHostName() });
+                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host", "application" }, new Object[] { user,
+                        messageCode, timestamp, getHostName(), application });
                 message = buildMessage(user, subject, modelBuilder.build(), EXPORT_ERROR);
                 sendEmail(message);
             } catch (Exception e) {
@@ -294,14 +294,14 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendImportErrorMessage(List<RegisteredUser> superadmins, String messageCode, Date timestamp) {
+    public void sendImportErrorMessage(List<RegisteredUser> recipients, String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
         if (messageCode == null) {
             log.error("Error while sending import error message: messageCode is null");
             return;
         }
         String subject = resolveMessage(IMPORT_ERROR);
-        for (RegisteredUser user : superadmins) {
+        for (RegisteredUser user : recipients) {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageCode,
                         timestamp, getHostName() });

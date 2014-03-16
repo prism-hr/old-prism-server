@@ -61,8 +61,8 @@ public class UserService {
         return userDAO.get(id);
     }
 
-    public List<RegisteredUser> getUsersInRole(Authority auth) {
-        return userDAO.getUsersInRole(roleDAO.getRoleByAuthority(auth));
+    public List<RegisteredUser> getUsersInRole(Authority ... authorities) {
+        return userDAO.getUsersInRole(authorities);
     }
 
     public void save(RegisteredUser user) {

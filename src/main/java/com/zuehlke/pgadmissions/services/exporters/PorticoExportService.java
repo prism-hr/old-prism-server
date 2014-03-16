@@ -23,9 +23,10 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationR
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
+import com.zuehlke.pgadmissions.domain.ApplicationTransferComment;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -34,7 +35,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 /**
@@ -48,14 +48,14 @@ public class PorticoExportService {
     private final WebServiceTemplate webServiceTemplate;
 
     private final CommentDAO commentDAO;
+    
+    private final UserDAO userDAO;
 
     private SftpAttachmentsSendingService sftpAttachmentsSendingService;
 
     private final ApplicationsService applicationsService;
 
     private final ApplicationFormTransferService applicationFormTransferService;
-
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
     private final ApplicationContext context;
 
@@ -78,14 +78,14 @@ public class PorticoExportService {
     }
 
     @Autowired
-    public PorticoExportService(WebServiceTemplate webServiceTemplate, ApplicationsService applicationsService, CommentDAO commentDAO,
+    public PorticoExportService(WebServiceTemplate webServiceTemplate, ApplicationsService applicationsService, CommentDAO commentDAO, UserDAO userDAO,
             SftpAttachmentsSendingService sftpAttachmentsSendingService, ApplicationFormTransferService applicationFormTransferService,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ApplicationContext context) {
+            ApplicationContext context) {
         this.webServiceTemplate = webServiceTemplate;
         this.commentDAO = commentDAO;
+        this.userDAO = userDAO;
         this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
         this.applicationFormTransferService = applicationFormTransferService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
         this.applicationsService = applicationsService;
         this.context = context;
     }
@@ -104,11 +104,12 @@ public class PorticoExportService {
             proxy.prepareApplicationForm(form);
             proxy.sendWebServiceRequest(form, transfer, listener);
             proxy.uploadDocuments(form, transfer, listener);
+            commentDAO.save(new ApplicationTransferComment(form, userDAO.getSuperadministrators().get(0)));
         } catch (PorticoExportServiceException e) {
             throw e;
         } catch (Exception e) {
-            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.CANCELLED, PRISM_EXCEPTION,
-                    ApplicationFormTransferErrorHandlingDecision.GIVE_UP, ApplicationFormTransferErrorType.PRISM_EXCEPTION);
+            applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.CANCELLED, PRISM_EXCEPTION,
+                    ApplicationFormTransferErrorHandlingDecision.GIVE_UP, ApplicationFormTransferErrorType.PRISM_EXCEPTION, log);
         }
     }
 
@@ -152,17 +153,16 @@ public class PorticoExportService {
             applicationFormTransferService.updateApplicationFormPorticoIds(form, response);
             applicationFormTransferService.updateTransferPorticoIds(transfer, response);
             applicationFormTransferService.updateTransferStatus(transfer, ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING);
-            applicationFormUserRoleService.applicationExportResent(form);
             log.info(String.format("Finished PORTICO web service [applicationNumber=%s]", form.getApplicationNumber()));
             listener.webServiceCallCompleted(response, form);
         } catch (WebServiceIOException e) {
             // Network problems
-            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, WS_CALL_FAILED_NETWORK,
-                    ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE);
+            applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL,
+                    WS_CALL_FAILED_NETWORK, ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE, log);
         } catch (SoapFaultClientException e) {
             // Web service refused our request. Probably with some validation errors
-            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.REJECTED_BY_WEBSERVICE, WS_CALL_FAILED_REFUSED,
-                    ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.WEBSERVICE_SOAP_FAULT);
+            applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.REJECTED_BY_WEBSERVICE,
+                    WS_CALL_FAILED_REFUSED, ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.WEBSERVICE_SOAP_FAULT, log);
         }
     }
 
@@ -179,25 +179,30 @@ public class PorticoExportService {
             listener.sftpTransferCompleted(zipFileName, transfer);
         } catch (SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack e) {
             // There was an error building our ZIP archive
-            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.CANCELLED, SFTP_CALL_FAILED_UNEXPECTED,
-                    ApplicationFormTransferErrorHandlingDecision.GIVE_UP, ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION);
+            applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.CANCELLED,
+                    SFTP_CALL_FAILED_UNEXPECTED, ApplicationFormTransferErrorHandlingDecision.GIVE_UP,
+                    ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION, log);
         } catch (SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong e) {
             // There is an issue with our configuration
-            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.CANCELLED, SFTP_CALL_FAILED_CONFIGURATION,
-                    ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION,
-                    ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION);
+            applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.CANCELLED,
+                    SFTP_CALL_FAILED_CONFIGURATION, ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION,
+                    ApplicationFormTransferErrorType.SFTP_UNEXPECTED_EXCEPTION, log);
         } catch (SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost e) {
             // Network issues
-            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING, SFTP_CALL_FAILED_NETWORK,
-                    ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE);
+            applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e,
+                    ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING, SFTP_CALL_FAILED_NETWORK, ApplicationFormTransferErrorHandlingDecision.RETRY,
+                    ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE, log);
         } catch (SftpAttachmentsSendingService.SftpTargetDirectoryNotAccessible e) {
             // The target directory is not available. Configuration issue
-            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING, SFTP_CALL_FAILED_DIRECTORY,
-                    ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION, ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE);
+            applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e,
+                    ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING, SFTP_CALL_FAILED_DIRECTORY,
+                    ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION,
+                    ApplicationFormTransferErrorType.SFTP_HOST_UNREACHABLE, log);
         } catch (SftpAttachmentsSendingService.SftpTransmissionFailedOrProtocolError e) {
             // We couldn't establish a SFTP connection for some reason
-            processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING, SFTP_CALL_FAILED_NETWORK,
-                    ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.SFTP_DIRECTORY_NOT_AVAILABLE);
+            applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e,
+                    ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING, SFTP_CALL_FAILED_NETWORK, ApplicationFormTransferErrorHandlingDecision.RETRY,
+                    ApplicationFormTransferErrorType.SFTP_DIRECTORY_NOT_AVAILABLE, log);
         }
     }
 
@@ -243,19 +248,6 @@ public class PorticoExportService {
 
     public ApplicationFormTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
         return applicationFormTransferService.createOrReturnExistingApplicationFormTransfer(form);
-    }
-
-    private void processApplicationTransferError(TransferListener listener, ApplicationForm application, ApplicationFormTransfer transfer, Exception exception,
-            ApplicationTransferStatus newStatus, String logMessage, ApplicationFormTransferErrorHandlingDecision handlingDecision,
-            ApplicationFormTransferErrorType errorType) throws PorticoExportServiceException {
-        ApplicationFormTransferError transferError = applicationFormTransferService.createTransferError(new ApplicationFormTransferErrorBuilder()
-                .diagnosticInfo(exception).errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
-                .problemClassification(ApplicationFormTransferErrorType.PRISM_EXCEPTION).transfer(transfer));
-        applicationFormTransferService.updateTransferStatus(transfer, newStatus);
-        listener.webServiceCallFailed(exception, transferError, application);
-        applicationFormUserRoleService.applicationExportFailed(application);
-        log.error(String.format(logMessage, application.getApplicationNumber()), exception);
-        throw new PorticoExportServiceException(String.format(logMessage, application.getApplicationNumber()), exception, transferError);
     }
 
 }

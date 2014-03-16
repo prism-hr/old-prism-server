@@ -116,7 +116,7 @@ public class PorticoQueueListenerTest {
         expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR))
         	.andReturn(admins);
         
-        mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class));
+        mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class), form);
         
         EasyMock.replay(userServiceMock, porticoExportServiceMock, mailServiceMock, formDAOMock, applicationFormTransferServiceMock, messageMock, throttleServiceMock);
         
@@ -157,8 +157,8 @@ public class PorticoQueueListenerTest {
         expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR))
         	.andReturn(admins).times(2);
         
-        mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class));
-        mailServiceMock.sendExportErrorMessage(eq(admins), eq("There was an issue with the PORTICO interfaces which needs attention by an administrator. PRISM is now not sending any more applications to PORTICO until this issue has been resolved"), isA(Date.class));
+        mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class), form);
+        mailServiceMock.sendExportErrorMessage(eq(admins), eq("There was an issue with the PORTICO interfaces which needs attention by an administrator. PRISM is now not sending any more applications to PORTICO until this issue has been resolved"), isA(Date.class), null);
         
         throttleServiceMock.disablePorticoInterface();
         

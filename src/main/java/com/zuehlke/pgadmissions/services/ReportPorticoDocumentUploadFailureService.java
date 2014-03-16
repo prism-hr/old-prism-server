@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
@@ -60,12 +61,12 @@ public class ReportPorticoDocumentUploadFailureService {
         
         log.warn(errorMessage);
 
-        sendErrorMessageToSuperAdministrators(errorMessage);
+        sendErrorMessageToSuperAdministrators(errorMessage, transferError.getTransfer().getApplicationForm());
     }
 
-    private void sendErrorMessageToSuperAdministrators(final String message) {
+    private void sendErrorMessageToSuperAdministrators(final String message, final ApplicationForm application) {
         try {
-            mailService.sendExportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), message, new Date());
+            mailService.sendExportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), message, new Date(), application);
         } catch (Exception e) {
             log.warn("{}", e);
         }

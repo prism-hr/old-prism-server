@@ -1,7 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.easymock.EasyMock.expect;
+import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -41,11 +45,28 @@ public class QualificationServiceTest {
     }
 
     @Test
-    public void shouldDelegateSaveToDAO() {
-        Qualification qualification = new QualificationBuilder().id(2).build();
+    public void shouldSaveNewQualification() {
+        ApplicationForm applicationForm = new ApplicationForm();
+        Qualification qualification = new Qualification();
         qualificationDAOMock.save(qualification);
+        
         EasyMock.replay(qualificationDAOMock);
-        qualificationService.save(qualification);
+        qualificationService.save(applicationForm, null, qualification);
+        EasyMock.verify(qualificationDAOMock);
+        
+        assertSame(applicationForm, qualification.getApplication());
+        assertThat(applicationForm.getQualifications(), contains(qualification));
+    }
+
+    @Test
+    public void shouldUpdateExistingQualification() {
+        Qualification qualification = new Qualification();
+        Qualification existingQualification = new Qualification();
+        
+        expect(qualificationDAOMock.getQualificationById(43)).andReturn(existingQualification);
+        
+        EasyMock.replay(qualificationDAOMock);
+        qualificationService.save(null, 43, qualification);
         EasyMock.verify(qualificationDAOMock);
     }
 

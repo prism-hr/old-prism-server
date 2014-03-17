@@ -31,15 +31,32 @@ public class QualificationService {
 
     public void delete(Qualification qualification) {
         qualificationDAO.delete(qualification);
-
     }
 
-    public void save(Qualification qualification) {
-        qualificationDAO.save(qualification);
+    public void save(ApplicationForm application, Integer qualificationId, Qualification qualification) {
+        if (qualificationId != null) {
+            Qualification existingQualification = qualificationDAO.getQualificationById(qualificationId);
+            existingQualification.setProofOfAward(qualification.getProofOfAward());
+            existingQualification.setQualificationAwardDate(qualification.getQualificationAwardDate());
+            existingQualification.setQualificationSubject(qualification.getQualificationSubject());
+            existingQualification.setQualificationTitle(qualification.getQualificationTitle());
+            existingQualification.setInstitutionCountry(qualification.getInstitutionCountry());
+            existingQualification.setQualificationInstitution(qualification.getQualificationInstitution());
+            existingQualification.setOtherQualificationInstitution(qualification.getOtherQualificationInstitution());
+            existingQualification.setQualificationInstitutionCode(qualification.getQualificationInstitutionCode());
+            existingQualification.setQualificationLanguage(qualification.getQualificationLanguage());
+            existingQualification.setQualificationType(qualification.getQualificationType());
+            existingQualification.setQualificationGrade(qualification.getQualificationGrade());
+            existingQualification.setQualificationStartDate(qualification.getQualificationStartDate());
+            existingQualification.setCompleted(qualification.getCompleted());
+        } else {
+            qualification.setApplication(application);
+            application.getQualifications().add(qualification);
+            qualificationDAO.save(qualification);
+        }
     }
 
-    public void selectForSendingToPortico(final ApplicationForm applicationForm,
-            final List<Integer> qualificationsSendToPortico) {
+    public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> qualificationsSendToPortico) {
 
         for (Qualification qualification : applicationForm.getQualifications()) {
             qualification = qualificationDAO.getQualificationById(qualification.getId());

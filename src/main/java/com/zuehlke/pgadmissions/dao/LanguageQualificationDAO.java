@@ -36,7 +36,4 @@ public class LanguageQualificationDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(languageQualification);
     }
     
-    public void deleteAttachedDocument(LanguageQualification languageQualification) {
-        sessionFactory.getCurrentSession().delete(languageQualification.getLanguageQualificationDocument());
-    }
 }

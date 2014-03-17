@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping("/acceptTerms")
@@ -18,16 +17,14 @@ public class AcceptTermsController {
 
 	private final ApplicationsService applicationsService;
 	private static final String TERMS_AND_CONDITIONS_VIEW_NAME = "/private/pgStudents/form/components/terms_and_conditions";
-	private final UserService userService;
 
 	public AcceptTermsController() {
-		this(null, null);
+		this(null);
 	}
 
 	@Autowired
-	public AcceptTermsController(ApplicationsService applicationsService, UserService userService) {
+	public AcceptTermsController(ApplicationsService applicationsService) {
 		this.applicationsService = applicationsService;
-		this.userService = userService;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -39,7 +36,7 @@ public class AcceptTermsController {
 	@ModelAttribute
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null || !userService.getCurrentUser().isApplicant(applicationForm)) {
+		if (applicationForm == null) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;

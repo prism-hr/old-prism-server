@@ -227,21 +227,22 @@
 			          </section>
 		          </#if>  
 		
-		          <div class="buttons">
-		            <#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
-		            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
-		              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-		              <button id="saveAndClose" type="button" class="btn btn-large btn-primary">Save &amp; Close</button>
-		            </form>                                      
-		            <#elseif !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>                     
+		          <div class="buttons">                                    
+		            <#if user.canSubmitAsApplicant(applicationForm)>                     
 		            <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
 		              <input type="hidden" id="applicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
 		              <button id="saveAndClose" type="button" class="btn btn-large">Save &amp; Close</button>
 		              <button id="submitAppButton" type="button"  class="btn btn-primary btn-large">Submit</button>
 		            </form>
-		            <#else>
-		            <form>
-		              <button class="btn btn-large btn-primary" id="saveAndClose" type="button">Save &amp; Close</a>
+		          	<#elseif user.canUpdateAsApplicant(applicationForm)>
+		            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
+		              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
+		              <button id="saveAndClose" type="button" class="btn btn-large btn-primary">Save &amp; Close</button>
+		            </form>  
+		            <#elseif user.canEditAsSuperadministrator(applicationForm)>                     
+		            <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
+		              <input type="hidden" id="applicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
+		              <button id="submitAppButton" type="button"  class="btn btn-primary btn-large">Submit Corrections</button>
 		            </form>
 		            </#if>
 		          </div>

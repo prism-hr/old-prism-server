@@ -345,13 +345,13 @@ function loadPersonalDetails(clear){
 			complete: function() {
 				/* Address. */
 			  if (firstTimeLoading == true) {
-			 	 loadAddresSection();
+			 	 loadAddressSection();
 			  }
 			}
 	});
 }
 
-function loadAddresSection(clear){
+function loadAddressSection(clear){
 	$.ajax({
 		 type: 'GET',
 		 statusCode: {
@@ -710,5 +710,5 @@ function loadAdditionalInformationSection(clear){
 		}, complete: function() {
 			firstTimeLoading = false;
 		}
-});
+	});
 }

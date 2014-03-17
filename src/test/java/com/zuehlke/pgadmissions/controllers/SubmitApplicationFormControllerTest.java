@@ -79,7 +79,7 @@ public class SubmitApplicationFormControllerTest {
 
     @Test
     public void shouldReturnCurrentUser() {
-        assertEquals(student, applicationController.getUser());
+        assertEquals(student, applicationController.getCurrentUser());
     }
 
     @Test

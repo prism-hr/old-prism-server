@@ -36,6 +36,7 @@ import com.jcraft.jsch.SftpException;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ReferenceTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
@@ -97,6 +98,8 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
     private SftpAttachmentsSendingService attachmentsSendingService;
 
     private PorticoAttachmentsZipCreator attachmentsZipCreatorMock;
+
+    private ApplicationFormDAO applicationFormDAOMock;
 
     private ApplicationsService applicationsServiceMock;
 
@@ -1098,12 +1101,14 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
         attachmentsZipCreatorMock = EasyMock.createMock(PorticoAttachmentsZipCreator.class);
 
+        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
+
         applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 
         applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
 
-        applicationFormTransferService = new ApplicationFormTransferService(applicationFormTransferErrorDAO, applicationFormTransferDAO,
-                applicationFormUserRoleServiceMock, commentDAOMock, userDAOMock);
+        applicationFormTransferService = new ApplicationFormTransferService(applicationFormDAOMock, applicationFormTransferErrorDAO,
+                applicationFormTransferDAO, applicationFormUserRoleServiceMock, commentDAOMock, userDAOMock);
 
         applicationFormTransferServiceMock = EasyMock.createMock(ApplicationFormTransferService.class);
 

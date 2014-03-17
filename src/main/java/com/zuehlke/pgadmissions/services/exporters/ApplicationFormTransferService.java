@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
@@ -27,6 +28,7 @@ import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 @Service
 public class ApplicationFormTransferService {
 
+    private final ApplicationFormDAO applicationFormDAO;
     private final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO;
     private final ApplicationFormTransferDAO applicationFormTransferDAO;
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
@@ -34,13 +36,14 @@ public class ApplicationFormTransferService {
     private final UserDAO userDAO;
 
     public ApplicationFormTransferService() {
-        this(null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
-    public ApplicationFormTransferService(final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO,
+    public ApplicationFormTransferService(final ApplicationFormDAO applicationFormDAO, final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO,
             final ApplicationFormTransferDAO applicationFormTransferDAO, ApplicationFormUserRoleService applicationFormUserRoleService,
             CommentDAO commentDAO, UserDAO userDAO) {
+        this.applicationFormDAO = applicationFormDAO;
         this.applicationFormTransferErrorDAO = applicationFormTransferErrorDAO;
         this.applicationFormTransferDAO = applicationFormTransferDAO;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
@@ -121,6 +124,8 @@ public class ApplicationFormTransferService {
         updateTransferStatus(transfer, newStatus);
         listener.webServiceCallFailed(exception, transferError, application);
         applicationFormUserRoleService.applicationExportFailed(application);
+        application.setExported(false);
+        applicationFormDAO.save(application);
         commentDAO.save(new ApplicationTransferComment(application, userDAO.getSuperadministrators().get(0), transferError));
         log.error(String.format(logMessage, application.getApplicationNumber()), exception);
         throw new PorticoExportServiceException(String.format(logMessage, application.getApplicationNumber()), exception, transferError);

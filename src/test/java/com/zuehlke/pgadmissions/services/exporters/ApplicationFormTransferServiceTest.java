@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ReferenceTp;
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
@@ -29,6 +30,8 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 
 public class ApplicationFormTransferServiceTest {
 
+    private ApplicationFormDAO applicationFormDAOMock;
+
     private ApplicationFormTransferErrorDAO applicationFormTransferErrorDAOMock;
 
     private ApplicationFormTransferDAO applicationFormTransferDAOMock;
@@ -43,13 +46,14 @@ public class ApplicationFormTransferServiceTest {
 
     @Before
     public void prepare() {
+        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
         applicationFormTransferDAOMock = EasyMock.createMock(ApplicationFormTransferDAO.class);
         applicationFormTransferErrorDAOMock = EasyMock.createMock(ApplicationFormTransferErrorDAO.class);
         applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         commentDAOMock = EasyMock.createMock(CommentDAO.class);
         userDAOMock = EasyMock.createMock(UserDAO.class);
-        service = new ApplicationFormTransferService(applicationFormTransferErrorDAOMock, applicationFormTransferDAOMock, applicationFormUserRoleServiceMock,
-                commentDAOMock, userDAOMock);
+        service = new ApplicationFormTransferService(applicationFormDAOMock, applicationFormTransferErrorDAOMock, applicationFormTransferDAOMock,
+                applicationFormUserRoleServiceMock, commentDAOMock, userDAOMock);
     }
 
     @Test

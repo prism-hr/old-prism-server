@@ -133,11 +133,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advert_id")
     private Advert advert;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
     private Program program;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
@@ -228,6 +228,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "use_custom_reference_questions")
     private Boolean useCustomReferenceQuestions = false;
 
+    @Column(name = "is_exported")
+    private Boolean exported = null;
+
     @OneToOne(mappedBy = "applicationForm", fetch = FetchType.LAZY)
     private ApplicationFormTransfer applicationFormTransfer;
 
@@ -304,10 +307,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean isDecided() {
-        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN) {
-            return true;
-        }
-        return false;
+        return (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN)
+                && BooleanUtils.isTrue(exported);
     }
 
     public boolean isWithdrawn() {
@@ -509,15 +510,15 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             this.project = project;
         }
     }
-    
+
     public Program getProgram() {
         return program;
     }
-    
+
     public Project getProject() {
         return project;
     }
-    
+
     public String getProjectTitle() {
         Project project = getProject();
         if (project != null) {
@@ -1021,6 +1022,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public boolean isUseCustomReferenceQuestions() {
         return useCustomReferenceQuestions;
+    }
+
+    public Boolean isExported() {
+        return exported;
+    }
+
+    public void setExported(Boolean exported) {
+        this.exported = exported;
     }
 
     public void setUseCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {

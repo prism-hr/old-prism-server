@@ -174,15 +174,16 @@
           </#if>
 
 		  
-          <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-					<div id="timelineview">
-						<ul class="tabs">				
-							<li class="current"><a href="#application" id="applicationBtn">Application</a></li>
-							<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
-							<li><a href="#opportunity" id="opportunityBtn">Opportunities</a></li>
-						</ul>
+          		<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
+				<div id="timelineview">
+					<ul class="tabs">				
+						<li class="current"><a href="#application" id="applicationBtn">Application</a></li>
+						<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
+						<li><a href="#opportunity" id="opportunityBtn">Opportunities</a></li>
+					</ul>
+				</div>
 				
-						<div class="tab-page" id="applicationTab">
+				<div class="tab-page" id="applicationTab">
 	
 		          <!-- Programme Details -->
 		          <section id="programmeDetailsSection" class="folding form-rows violet <#if programDetailsError || studyOptionError>error</#if>">                      

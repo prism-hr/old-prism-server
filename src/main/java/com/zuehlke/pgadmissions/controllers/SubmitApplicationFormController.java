@@ -177,5 +177,10 @@ public class SubmitApplicationFormController {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         return actionsProvider.getApplicationDescriptorForUser(applicationForm, getCurrentUser());
     }
+    
+    @ModelAttribute("user")
+    public RegisteredUser getUser() {
+        return getCurrentUser();
+    }
 
 }

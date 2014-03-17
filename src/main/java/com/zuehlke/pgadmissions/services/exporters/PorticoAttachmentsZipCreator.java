@@ -129,7 +129,7 @@ public class PorticoAttachmentsZipCreator {
             zos.closeEntry();
             contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", filename);
             contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document != null ? document
-                    .getFileName() : "englishCertificate.pdf");
+                    .getFileName() : "englishCertificate.txt");
         }
     }
 

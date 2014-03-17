@@ -361,6 +361,7 @@ function bindAddClosingDateButtonAction() {
                 $('#ajaxloader').fadeOut('fast');
             }
         });
+        return false;
     });
 }
 

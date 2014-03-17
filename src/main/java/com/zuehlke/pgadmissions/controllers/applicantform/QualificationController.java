@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -59,7 +60,7 @@ public class QualificationController {
     private QualificationService qualificationService;
 
     @Autowired
-    private ApplicationsService applicationService;
+    private ApplicationsService applicationsService;
 
     @Autowired
     private DatePropertyEditor datePropertyEditor;
@@ -212,15 +213,12 @@ public class QualificationController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        RegisteredUser user = userService.getCurrentUser();
-        ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        Preconditions.checkNotNull(application);
-        if (!user.canEditAsApplicant(application)) {
-            throw new CannotUpdateApplicationException(application.getApplicationNumber());
+    public ApplicationForm getApplicationForm(String applicationId) {
+        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
         }
         return application;
     }
-
 
 }

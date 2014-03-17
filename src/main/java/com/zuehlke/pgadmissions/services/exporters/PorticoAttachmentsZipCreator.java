@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -16,10 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
+import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
@@ -107,14 +112,15 @@ public class PorticoAttachmentsZipCreator {
     }
 
     protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
-        Document cv = applicationForm.getCv();
-        if (cv != null) {
+        Document document = applicationForm.getCv();
+        if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(getFileContents(cv, applicationForm));
+            zos.write(getFileContents(document, applicationForm));
             zos.closeEntry();
             contentsProperties.put("curriculumVitae.1.serverFilename", filename);
-            contentsProperties.put("curriculumVitae.1.applicationFilename", cv.getFileName());
+            contentsProperties.put("curriculumVitae.1.applicationFilename", document != null ? document.getFileName()
+                    : "curriculumVitae.pdf");
         }
     }
 
@@ -128,21 +134,22 @@ public class PorticoAttachmentsZipCreator {
             zos.write(getFileContents(document, applicationForm));
             zos.closeEntry();
             contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", filename);
-            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document != null ? document
-                    .getFileName() : "englishCertificate.pdf");
+            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document != null ? document.getFileName()
+                    : "englishLanguageTestCertificate.pdf");
         }
     }
 
     protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException {
-        Document personalStatement = applicationForm.getPersonalStatement();
-        if (personalStatement != null) {
+        Document document = applicationForm.getPersonalStatement();
+        if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(getFileContents(personalStatement, applicationForm));
+            zos.write(getFileContents(document, applicationForm));
             zos.closeEntry();
             contentsProperties.put("researchProposal.1.serverFilename", filename);
-            contentsProperties.put("researchProposal.1.applicationFilename", personalStatement.getFileName());
+            contentsProperties.put("researchProposal.1.applicationFilename", document != null ? document.getFileName()
+                    : "researchProposal.pdf");
         }
     }
 
@@ -188,7 +195,7 @@ public class PorticoAttachmentsZipCreator {
                     new PdfModelBuilder().includeCriminialConvictions(true).includeDisability(true).includeEthnicity(true).includeAttachments(false), zos,
                     applicationForm);
         } catch (Exception e) {
-            zos.write(getAlternativeMergedFileContents(applicationForm));
+            zos.write(getAlternativeMergedFileContents(applicationForm).getBytes());
         }
         zos.closeEntry();
         contentsProperties.put("applicationForm.1.serverFilename", serverfilename);
@@ -203,7 +210,7 @@ public class PorticoAttachmentsZipCreator {
         try {
             pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), zos, applicationForm);
         } catch (Exception e) {
-            zos.write(getAlternativeMergedFileContents(applicationForm));
+            zos.write(getAlternativeMergedFileContents(applicationForm).getBytes());
         }
         zos.closeEntry();
         contentsProperties.put("mergedApplication.1.serverFilename", serverfilename);
@@ -215,21 +222,30 @@ public class PorticoAttachmentsZipCreator {
     }
 
     private byte[] getFileContents(Document document, ApplicationForm application) {
-        if (document != null) {
-            try {
-                return document.getContent();
-            } catch (Exception e) {
-                log.error("Couldnt read document", e);
+        try {
+            com.itextpdf.text.Document output = new com.itextpdf.text.Document(PageSize.A4, 50, 50, 100, 50);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PdfWriter.getInstance(output, baos);
+            output.open();
+            if (document != null) {
+                try {
+                    return document.getContent();
+                } catch (Exception e) {
+                    log.error("Couldn't read document", e);
+                }
+            } else {
+                log.error("Attempted to merge null document for portico export");
             }
-        } else {
-            log.error("Attempted to merge null document for portico export");
+            output.add(new Paragraph(getAlternativeMergedFileContents(application)));
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw new PdfDocumentBuilderException(e);
         }
-        return getAlternativeMergedFileContents(application);
     }
-
-    private byte[] getAlternativeMergedFileContents(ApplicationForm application) {
+    
+    private String getAlternativeMergedFileContents(ApplicationForm application) {
         return ("We are sorry but we were unable to read and merge the contents of this document. " + "Please contact us at " + emailAddressTo
-                + " to obtain an original copy, " + "quoting our application reference number: " + application.getApplicationNumber() + ".").getBytes();
+                + " to obtain an original copy, " + "quoting our application reference number: " + application.getApplicationNumber() + ".");
     }
 
 }

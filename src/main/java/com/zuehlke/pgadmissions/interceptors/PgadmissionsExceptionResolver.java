@@ -72,34 +72,34 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         addHandler(MissingApplicationFormException.class, new PgadmissionExceptionHandler<MissingApplicationFormException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(MissingApplicationFormException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Missing application", "The application does not exist: " + ex.getApplicationNumber());
+                return new AlertDefinition(AlertType.INFO, "Missing application", "The application does not exist: " + ex.getApplicationNumber() + ".");
             }
         });
         addHandler(InsufficientApplicationFormPrivilegesException.class, new PgadmissionExceptionHandler<InsufficientApplicationFormPrivilegesException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(InsufficientApplicationFormPrivilegesException ex, HttpServletRequest request) {
                 return new AlertDefinition(AlertType.INFO, "Cannot perform action", "You do not have sufficient privileges on this application form: "
-                        + ex.getApplicationNumber());
+                        + ex.getApplicationNumber() + ".");
             }
         });
         addHandler(ActionNoLongerRequiredException.class, new PgadmissionExceptionHandler<ActionNoLongerRequiredException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(ActionNoLongerRequiredException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "You cannot perform this action", "Check that the action has not been performed already");
+                return new AlertDefinition(AlertType.INFO, "You cannot perform this action", "Check that the action has not been performed already.");
             }
         });
         addHandler(CannotUpdateApplicationException.class, new PgadmissionExceptionHandler<CannotUpdateApplicationException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotUpdateApplicationException ex, HttpServletRequest request) {
                 return new AlertDefinition(AlertType.INFO, "Cannot update application", "The application can no longer be updated: "
-                        + ex.getApplicationNumber());
+                        + ex.getApplicationNumber() + ".");
             }
         });
         addHandler(CannotApplyException.class, new PgadmissionExceptionHandler<CannotApplyException>() {
             @Override
             public AlertDefinition handlePgadmissionsException(CannotApplyException ex, HttpServletRequest request) {
                 return new AlertDefinition(AlertType.INFO, "Cannot apply",
-                        "The opportunity that you attempted to apply for is no longer accepting applications");
+                        "The opportunity that you attempted to apply for is no longer accepting applications.");
             }
         });
     }

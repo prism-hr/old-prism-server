@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -139,7 +140,11 @@ public class SubmitApplicationFormController {
     @RequestMapping(method = RequestMethod.GET)
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = getCurrentUser();
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.VIEW);
+        if (!(actionsProvider.checkActionAvailable(applicationForm, user, ApplicationFormAction.CORRECT_APPLICATION) || actionsProvider.checkActionAvailable(
+                applicationForm, user, ApplicationFormAction.VIEW))) {
+            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
+        }
+        
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
 
         if (user.canEditAsApplicant(applicationForm)
@@ -177,7 +182,7 @@ public class SubmitApplicationFormController {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         return actionsProvider.getApplicationDescriptorForUser(applicationForm, getCurrentUser());
     }
-    
+
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return getCurrentUser();

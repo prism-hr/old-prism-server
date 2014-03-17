@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Arrays;
+
+import org.apache.commons.lang.BooleanUtils;
+
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -35,8 +39,8 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
         if (isInRole(user, Authority.ADMINISTRATOR) && isProgrammeAdministrator(form, user)) {
             return true;
         }
-        
-        if(isProjectAdministrator(form, user)){
+
+        if (isProjectAdministrator(form, user)) {
             return true;
         }
 
@@ -85,8 +89,23 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
         return false;
     }
 
+    public boolean canSubmitApplicationAsApplicant(final ApplicationForm form, final RegisteredUser user) {
+        return user.getId() == form.getApplicant().getId() && !form.isSubmitted();
+    }
+
+    public boolean canUpdateApplicationAsApplicant(final ApplicationForm form, final RegisteredUser user) {
+        return user.getId() == form.getApplicant().getId()
+                && Arrays.asList(ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW).contains(form.getStatus());
+    }
+
     public boolean canEditApplicationAsApplicant(final ApplicationForm form, final RegisteredUser user) {
         return user.getId() == form.getApplicant().getId() && !form.isTerminated() && form.getIsEditableByApplicant();
+    }
+
+    public boolean canEditApplicationAsSuperadministrator(final ApplicationForm form, final RegisteredUser user) {
+        return user.isInRole(Authority.SUPERADMINISTRATOR)
+                && Arrays.asList(ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.WITHDRAWN).contains(form.getStatus())
+                && BooleanUtils.isFalse(form.isExported());
     }
 
     public boolean canEditApplicationAsAdministrator(final ApplicationForm form, final RegisteredUser user) {
@@ -109,7 +128,7 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
         if (isProjectAdministrator(form, user)) {
             return true;
         }
-        
+
         if (isProgrammeAdministrator(form, user)) {
             return true;
         }

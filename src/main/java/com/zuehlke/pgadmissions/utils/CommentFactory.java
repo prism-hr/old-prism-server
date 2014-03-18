@@ -40,7 +40,7 @@ public class CommentFactory {
             comment = new Comment();
         }
         comment.setComment(strComment);
-        comment.setDocuments(documents);
+        comment.getDocuments().addAll(documents);
         comment.setUser(user);
         comment.setApplication(applicationForm);
         return comment;

@@ -77,11 +77,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Enumerated(EnumType.STRING)
     @Column(name = "next_status")
-    private ApplicationFormStatus nextStatus = null;
+    private ApplicationFormStatus nextStatus;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status_when_withdrawn")
-    private ApplicationFormStatus statusWhenWithdrawn = null;
+    private ApplicationFormStatus statusWhenWithdrawn;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "current_address_id")
@@ -95,7 +95,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cv_id")
-    private Document cv = null;
+    private Document cv;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "personal_statement_id")
+    private Document personalStatement;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "due_date")
@@ -103,10 +107,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Column(name = "accepted_terms")
     private Boolean acceptedTermsOnSubmission;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "personal_statement_id")
-    private Document personalStatement;
+    
 
     @Column(name = "app_date_time", insertable = false)
     @Generated(GenerationTime.INSERT)
@@ -125,7 +126,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "applicant_id")
-    private RegisteredUser applicant = null;
+    private RegisteredUser applicant;
 
     @Column(name = "project_title")
     private String projectTitle;
@@ -395,9 +396,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setCv(Document cv) {
-        if (cv != null) {
-            cv.setIsReferenced(true);
-        }
         this.cv = cv;
     }
 
@@ -406,9 +404,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public void setPersonalStatement(Document personalStatement) {
-        if (personalStatement != null) {
-            personalStatement.setIsReferenced(true);
-        }
         this.personalStatement = personalStatement;
     }
 

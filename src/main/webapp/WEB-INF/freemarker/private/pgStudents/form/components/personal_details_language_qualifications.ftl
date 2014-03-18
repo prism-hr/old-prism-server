@@ -27,7 +27,6 @@
                 </div>
             </div>
             
-            
             <div class="row">
                 <label for="qualificationTypeName" id="lbl-qualificationTypeName" class="plain-label grey-label">Other Qualification Type Name<em>*</em></label>
                 <span class="hint grey" data-desc="<@spring.message 'personalDetails.languageQualification.type.other'/>"></span>

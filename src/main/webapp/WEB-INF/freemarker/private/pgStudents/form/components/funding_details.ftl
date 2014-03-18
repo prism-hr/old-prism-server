@@ -92,13 +92,12 @@
       <div class="row">
         <label class="plain-label" for="fundingDescription">Description<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'fundingDetails.award.description'/>"></span>
-        <div class="field"> <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-          <textarea id="fundingDescription" name="fundingDescription" class="max" cols="70" rows="6">${(funding.description?html)!}
-</textarea>
-          <#else>
-          <textarea id="fundingDescription" name="fundingDescription" class="full" readonly>${(funding.description?html)!}
-</textarea>
-          </#if>
+        <div class="field">
+        <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+          <textarea id="fundingDescription" name="fundingDescription" class="max" cols="70" rows="6">${(funding.description?html)!}</textarea>
+        <#else>
+          <textarea id="fundingDescription" name="fundingDescription" class="full" readonly>${(funding.description?html)!}</textarea>
+        </#if>
           <@spring.bind "funding.description" />
           <#list spring.status.errorMessages as error>
           <div class="alert alert-error"> <i class="icon-warning-sign"></i>

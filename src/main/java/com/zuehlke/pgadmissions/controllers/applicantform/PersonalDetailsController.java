@@ -5,11 +5,11 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
@@ -32,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -61,7 +61,6 @@ import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 public class PersonalDetailsController {
 
     private static final String STUDENTS_FORM_PERSONAL_DETAILS_VIEW = "/private/pgStudents/form/components/personal_details";
-    private static final String STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW = "/private/pgStudents/form/components/personal_details_language_qualifications";
 
     private final ApplicationsService applicationsService;
     private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
@@ -121,6 +120,37 @@ public class PersonalDetailsController {
         this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
+    @RequestMapping(value = "/getPersonalDetails", method = RequestMethod.GET)
+    public String getPersonalDetailsView(@RequestParam String applicationId, ModelMap modelMap) {
+        ApplicationForm applicationForm = getApplicationForm(applicationId);
+
+        PersonalDetails personalDetails = Objects.firstNonNull(applicationForm.getPersonalDetails(), new PersonalDetails());
+        RegisteredUser updatedUser = applicationForm.getApplicant();
+
+        if (personalDetails.getLanguageQualification() == null) {
+            personalDetails.setLanguageQualification(new LanguageQualification());
+        }
+
+        modelMap.put("personalDetails", personalDetails);
+        modelMap.put("updatedUser", updatedUser);
+
+        return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+    }
+
+    @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
+    public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult,
+            @ModelAttribute("updatedUser") @Valid RegisteredUser updatedUser, BindingResult userResult, Model model,
+            @ModelAttribute("applicationForm") ApplicationForm application) {
+        if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {
+            return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+        }
+
+        personalDetailsService.save(application.getId(), personalDetails, updatedUser);
+        applicationFormUserRoleService.insertApplicationUpdate(application, getUser(), ApplicationUpdateScope.ALL_USERS);
+
+        return "redirect:/update/getPersonalDetails?applicationId=" + personalDetails.getApplication().getApplicationNumber();
+    }
+
     @InitBinder(value = "personalDetails")
     public void registerPropertyEditorsForPersonalDetails(WebDataBinder binder) {
         binder.setValidator(personalDetailsValidator);
@@ -141,73 +171,6 @@ public class PersonalDetailsController {
     public void registerUserValidator(WebDataBinder binder) {
         binder.setValidator(personalDetailsUserValidator);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-    }
-
-    @RequestMapping(value = "/getPersonalDetails", method = RequestMethod.GET)
-    public String getPersonalDetailsView(@RequestParam String applicationId, Model model) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-
-        PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        if (personalDetails == null) {
-            personalDetails = new PersonalDetails();
-            applicationForm.setPersonalDetails(personalDetails);
-        }
-
-        if (personalDetails.getLanguageQualification() == null) {
-            personalDetails.setLanguageQualification(new LanguageQualification());
-        }
-
-        model.addAttribute("personalDetails", personalDetails);
-        model.addAttribute("applicationForm", applicationForm);
-
-        return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
-    }
-
-    @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
-    public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult,
-            @ModelAttribute("updatedUser") @Valid RegisteredUser updatedUser, BindingResult userResult, Model model,
-            @ModelAttribute("applicationForm") ApplicationForm application) {
-        if (application.isDecided()) {
-            throw new CannotUpdateApplicationException(application.getApplicationNumber());
-        }
-
-        if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {
-            return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
-        }
-
-        userService.updateCurrentUser(updatedUser);
-
-        personalDetailsService.save(application, personalDetails);
-
-        applicationFormUserRoleService.insertApplicationUpdate(application, getUser(), ApplicationUpdateScope.ALL_USERS);
-
-        return "redirect:/update/getPersonalDetails?applicationId=" + personalDetails.getApplication().getApplicationNumber();
-    }
-
-    @RequestMapping(value = "/deleteLanguageQualificationsDocument", method = RequestMethod.POST)
-    public String deleteLanguageQualificationsDocument(@RequestParam String documentId, Model model) {
-        if (StringUtils.isNotBlank(documentId)) {
-            documentService.delete(documentService.getDocumentById(encryptionHelper.decryptToInteger(documentId)));
-        }
-
-        return STUDENTS_FORM_PERSONAL_DETAILS_LANGUAGE_QUALIFICATION_VIEW;
-    }
-
-    private RegisteredUser getCurrentUser() {
-        return userService.getCurrentUser();
-    }
-
-    @ModelAttribute(value = "updatedUser")
-    public RegisteredUser getUpdatedUser() {
-        RegisteredUser registeredUser = new RegisteredUser();
-        RegisteredUser currentUser = getUser();
-        registeredUser.setFirstName(currentUser.getFirstName());
-        registeredUser.setFirstName2(currentUser.getFirstName2());
-        registeredUser.setFirstName3(currentUser.getFirstName3());
-        registeredUser.setLastName(currentUser.getLastName());
-        registeredUser.setEmail(currentUser.getEmail());
-        registeredUser.setPassword(currentUser.getPassword());
-        return registeredUser;
     }
 
     @ModelAttribute("languages")
@@ -270,7 +233,7 @@ public class PersonalDetailsController {
 
     @ModelAttribute("user")
     public RegisteredUser getUser() {
-        return getCurrentUser();
+        return userService.getCurrentUser();
     }
 
     @ModelAttribute("errorCode")

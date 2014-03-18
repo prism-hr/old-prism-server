@@ -307,7 +307,10 @@ public class StateTransitionController {
     	stateChangeComment.setApplication(applicationForm);
     	stateChangeComment.setUser(registeredUser);
     	stateChangeComment.setComment(stateChangeDTO.getComment());
-    	stateChangeComment.setDocuments(stateChangeDTO.getDocuments());
+    	stateChangeComment.getDocuments().addAll(stateChangeDTO.getDocuments());
+    	for(Document document : stateChangeComment.getDocuments()) {
+    	    document.setIsReferenced(true);
+    	}
     	
     	ApplicationFormStatus nextStatus = stateChangeDTO.getNextStatus();
     	stateChangeComment.setNextStatus(nextStatus);

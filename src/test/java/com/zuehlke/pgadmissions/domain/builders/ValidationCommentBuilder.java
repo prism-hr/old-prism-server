@@ -101,7 +101,7 @@ public class ValidationCommentBuilder {
         validationComment.setType(type);
         validationComment.setUser(user);
         validationComment.setNextStatus(nextStatus);
-        validationComment.setDocuments(documents);
+        validationComment.getDocuments().addAll(documents);
         validationComment.setFastTrackApplication(fastTrackApplication);
         return validationComment;
     }

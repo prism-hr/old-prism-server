@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
+import com.zuehlke.pgadmissions.dto.DocumentsSectionDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service("applicationsService")
@@ -58,6 +59,9 @@ public class ApplicationsService {
 
     @Autowired
     private DomicileDAO domicileDAO;
+    
+    @Autowired
+    private DocumentService documentService;
 
     public Date getBatchDeadlineForApplication(ApplicationForm form) {
         return programDAO.getNextClosingDate(form.getProgram());
@@ -73,6 +77,14 @@ public class ApplicationsService {
 
     public void save(ApplicationForm application) {
         applicationFormDAO.save(application);
+    }
+    
+    public void saveDocumentsSection(int applicationId, DocumentsSectionDTO documentsSectionDTO) {
+        ApplicationForm application = applicationFormDAO.get(applicationId);
+        documentService.documentReferentialityChanged(application.getPersonalStatement(), documentsSectionDTO.getPersonalStatement());
+        documentService.documentReferentialityChanged(application.getCv(), documentsSectionDTO.getCv());
+        application.setPersonalStatement(documentsSectionDTO.getPersonalStatement());
+        application.setCv(documentsSectionDTO.getCv());
     }
 
     public List<ApplicationDescriptor> getAllVisibleAndMatchedApplicationsForList(final RegisteredUser user, final ApplicationsFiltering filtering) {

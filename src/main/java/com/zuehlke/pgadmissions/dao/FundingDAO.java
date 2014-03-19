@@ -30,8 +30,7 @@ public class FundingDAO {
 		return (Funding) sessionFactory.getCurrentSession().get(Funding.class, id);
 	}
 
-	public void saveOrUpdate(Funding funding) {
+	public void save(Funding funding) {
 		sessionFactory.getCurrentSession().saveOrUpdate(funding);
 	}
-	
 }

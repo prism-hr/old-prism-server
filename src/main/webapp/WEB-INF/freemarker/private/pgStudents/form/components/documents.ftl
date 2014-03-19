@@ -20,35 +20,36 @@
     	<div class="row"> 
       <label class="plain-label" for="psDocument">Personal Statement (PDF)<em>*</em></label> 
       <span class="hint" data-desc="<@spring.message 'supportingDocuments.personalStatement'/>"></span>
-        <div class="field<#if documentsSectionDTO.personalStatement??> uploaded</#if>" id="psUploadFields"> 
+        <div class="field<#if applicationForm.personalStatement?? && applicationForm.personalStatement.fileName??> uploaded</#if>" id="psUploadFields"> 
        		
             <div class="fileupload fileupload-new" data-provides="fileupload">
                 <div class="input-append">
                   <div class="uneditable-input span4" > <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span> </div>
                   <span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>
-                  <input id="psDocument" class="full" data-type="PERSONAL_STATEMENT" data-reference="Personal Statement" type="file" name="file" value="" /> 
+                  <input id="psDocument" class="full" data-type="PERSONAL_STATEMENT" data-reference="Personal Statement" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/> 
                 </span> </div>
               </div>
         
         
         <ul id="psUploadedDocument" class="uploaded-files">
-          <#if documentsSectionDTO.personalStatement??>
-            <#assign ps = documentsSectionDTO.personalStatement>
-            <li class="done">
-            	<span class="uploaded-file" name="supportingDocumentSpan">
-                <input type="hidden" class="file" id="document_PERSONAL_STATEMENT" value="${(encrypter.encrypt(ps.id))!}"/>
-                <input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
-                <a id="psLink" class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(ps.id))!}'/>">
-                ${(ps.fileName?html)!}
-                </a> 
-                <a id="deletePs" data-desc="Change Personal Statement" class="btn btn-danger delete"><i class="icon-trash icon-large"></i> Delete</a> 
-                </span>
-            </li>
+          <#if applicationForm.personalStatement??>
+              <li class="done">
+              	<span class="uploaded-file" name="supportingDocumentSpan">
+                  <input type="hidden" class="file" id="document_PERSONAL_STATEMENT" value="${(encrypter.encrypt(applicationForm.personalStatement.id))!}"/>
+                  <input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
+                  <a id="psLink" class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.personalStatement.id))!}'/>">
+                  ${(applicationForm.personalStatement.fileName?html)!}
+                  </a> 
+                  <#if applicationForm.personalStatement?? && !applicationForm.isDecided() && !applicationForm.isWithdrawn()> 
+                  <a id="deletePs" data-desc="Change Personal Statement" class="btn btn-danger delete"><i class="icon-trash icon-large"></i> Delete</a> 
+                  </#if> 
+                  </span>
+              </li>
           </#if>
       </ul>
 
       
-          <@spring.bind "documentsSectionDTO.personalStatement" />
+          <@spring.bind "applicationForm.personalStatement" />
           <#list spring.status.errorMessages as error>
               <div class="alert alert-error"> 
                 <i class="icon-warning-sign"></i>
@@ -60,39 +61,33 @@
       </div>
 
         <div class="row">
-          <label class="plain-label" for="cvDocument">CV / Resume (PDF)</label>
-          <span class="hint" data-desc="<@spring.message 'supportingDocuments.cv'/>"></span>
-          <div class="field<#if documentsSectionDTO.cv??> uploaded</#if>" id="cvUploadFields">
-          	<div class="fileupload fileupload-new" data-provides="fileupload">
-              <div class="input-append">
-                <div class="uneditable-input span4" > <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span> </div>
-                <span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>
-                  <input id="cvDocument" class="full" type="file" data-type="CV" data-reference="CV" name="file" value=""/>
-                </span>
+        <label class="plain-label" for="cvDocument">CV / Resume (PDF)</label>
+        <span class="hint" data-desc="<@spring.message 'supportingDocuments.cv'/>"></span>
+            <div class="field<#if applicationForm.cv??> uploaded</#if>" id="cvUploadFields">
+            	<div class="fileupload fileupload-new" data-provides="fileupload">
+                <div class="input-append">
+                  <div class="uneditable-input span4" > <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span> </div>
+                  <span class="btn btn-file"><span class="fileupload-new">Select file</span><span class="fileupload-exists">Change</span>
+                  <input id="cvDocument" class="full" type="file" data-type="CV" data-reference="CV" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>
+                </span> </div>
               </div>
-            </div>
             
             <ul id="cvUploadedDocument" class="uploaded-files">
-              <#if documentsSectionDTO.cv??>
-                <#assign cv = documentsSectionDTO.cv>
-                <li class="done">
-                  <span class="uploaded-file" name="supportingDocumentSpan">
-                    <input type="hidden" class="file" id="document_CV" value="${(encrypter.encrypt(cv.id))!}"/>
-                    <a id="cvLink" class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(cv.id))!}'/>">
-                    ${(cv.fileName)!}
-                    </a>
-                    <a id="deleteCv" data-desc="Change CV" class="btn btn-danger delete"><i class="icon-trash icon-large"></i> Delete</a>
-                  </span>
-                </li>
+              <#if applicationForm.cv??>
+              <li class="done"> <span class="uploaded-file" name="supportingDocumentSpan">
+                <input type="hidden" class="file" id="document_CV" value="${(encrypter.encrypt(applicationForm.cv.id))!}"/>
+                <a id="cvLink" class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.cv.id))!}'/>">
+                ${(applicationForm.cv.fileName)!}
+                </a> <#if  applicationForm.cv??  !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <a id="deleteCv" data-desc="Change CV" class="btn btn-danger delete"><i class="icon-trash icon-large"></i> Delete</a> </#if> </span> </li>
               </#if>
             </ul>
-            <@spring.bind "documentsSectionDTO.cv" />
+            <@spring.bind "applicationForm.cv" />
             <#list spring.status.errorMessages as error>
-              <div class="alert alert-error"> <i class="icon-warning-sign"></i>
-                ${error}
-              </div>
+            <div class="alert alert-error"> <i class="icon-warning-sign"></i>
+              ${error}
+            </div>
             </#list>
-          </div>
+            </div>
             
         </div>
     </div>

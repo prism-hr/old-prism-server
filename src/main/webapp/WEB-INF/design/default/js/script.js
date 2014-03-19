@@ -403,7 +403,7 @@ function fixedTip($object, text) {
 // ------------------------------------------------------------------------------
 // Set up a div.field container with a file INPUT field for AJAX uploading.
 // ------------------------------------------------------------------------------
-function watchUpload($field) {
+function watchUpload($field, $deleteFunction) {
     var $container = $field.closest('div.field');
 
 	var $uploadedDocuments = $container.find('ul.uploaded-files');
@@ -418,6 +418,12 @@ function watchUpload($field) {
         
 		var $hidden = $container.find('input.file');
 		
+        if (!$deleteFunction) {
+            deleteUploadedFile($hidden);
+        } else {
+            $deleteFunction();
+        }
+
         $uploadedDocuments.find('li:last-child').remove();
 		$uploadedDocuments.hide();
 
@@ -433,9 +439,37 @@ function watchUpload($field) {
 
 		var input = $(this).find('input[type="file"]');
 
+        var $hidden = $container.find('input.file');
+
+        if (!$deleteFunction) {
+            deleteUploadedFile($hidden);
+        } else {
+            $deleteFunction();
+        }
+		
         doUpload($(input));
         $field.removeAttr("readonly");
     });
+}
+
+// ------------------------------------------------------------------------------
+// Delete an uploaded file referenced by a hidden field.
+// ------------------------------------------------------------------------------
+function deleteUploadedFile($hidden_field) {
+    if ($hidden_field && $hidden_field.val() != '') {
+        $.ajax({
+            type : 'POST',
+            statusCode : {
+                401 : function() {
+                    window.location.reload();
+                }
+            },
+            url : "/pgadmissions/delete/asyncdelete",
+            data : {
+                documentId : $hidden_field.val()
+            }
+        });
+    }
 }
 
 // ------------------------------------------------------------------------------
@@ -525,6 +559,7 @@ function watchUploadComment($field, $uploadedDocuments) {
 	
 	// Delete File
     $uploadedDocuments.on('click', '.delete', function() {
+        deleteUploadedFileComment($(this).attr("id"));
 		$(this).closest('li').remove();
     });
 	
@@ -533,6 +568,26 @@ function watchUploadComment($field, $uploadedDocuments) {
         var input = $(this).find('input[type="file"]');
         doUploadComment($(input), $uploadedDocuments);
     });
+}
+
+// ------------------------------------------------------------------------------
+// Delete an uploaded file referenced by a hidden field.
+// ------------------------------------------------------------------------------
+function deleteUploadedFileComment(id) {
+    if (id) {
+        $.ajax({
+            type : 'POST',
+            statusCode : {
+                401 : function() {
+                    window.location.reload();
+                }
+            },
+            url : "/pgadmissions/delete/asyncdelete",
+            data : {
+                documentId : id
+            }
+        });
+    }
 }
 
 // ------------------------------------------------------------------------------

@@ -371,7 +371,7 @@ function appendClosingDateRow(closingDate) {
 
 function closingDateTd(closingDate) {
     var date = new Date(closingDate.closingDate);
-    return $.datepicker.formatDate('d M yy', date);
+    date = $.datepicker.formatDate('d M yy', date);
     var studyPlaces = "";
     if (closingDate.studyPlaces > 0) {
         studyPlaces = " (" + closingDate.studyPlaces + " Places)";

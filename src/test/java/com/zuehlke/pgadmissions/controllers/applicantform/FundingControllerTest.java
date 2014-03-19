@@ -1,25 +1,17 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.unitils.easymock.EasyMockUnitils.replay;
+import static org.junit.Assert.assertNull;
 
 import java.util.Date;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.unitils.UnitilsJUnit4TestClassRunner;
-import org.unitils.easymock.annotation.Mock;
-import org.unitils.inject.annotation.InjectIntoByType;
-import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -27,9 +19,13 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -40,132 +36,170 @@ import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
 
-@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class FundingControllerTest {
 
-    @Mock
-    @InjectIntoByType
-    private DatePropertyEditor datePropertyEditorMock;
+	private RegisteredUser currentUser;
 
-    @Mock
-    @InjectIntoByType
-    private ApplicationsService applicationsServiceMock;
+	private DatePropertyEditor datePropertyEditorMock;
+	private ApplicationsService applicationsServiceMock;
+	private FundingValidator fundingValidatorMock;
 
-    @Mock
-    @InjectIntoByType
-    private FundingValidator fundingValidatorMock;
+	private FundingService fundingServiceMock;
+	private FundingController controller;
+	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
 
-    @Mock
-    @InjectIntoByType
-    private FundingService fundingServiceMock;
+	private DocumentPropertyEditor documentPropertyEditorMock;
 
-    @Mock
-    @InjectIntoByType
-    private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
+	private UserService userServiceMock;
 
-    @Mock
-    @InjectIntoByType
-    private DocumentPropertyEditor documentPropertyEditorMock;
+	private EncryptionHelper encryptionHelperMock;
+	
+	private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
-    @Mock
-    @InjectIntoByType
-    private UserService userServiceMock;
+	@Test(expected = CannotUpdateApplicationException.class)
+	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
+		Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build())
+				.build();
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		EasyMock.replay(fundingServiceMock, errors);
+		controller.editFunding(funding, errors);
+		EasyMock.verify(fundingServiceMock);
 
-    @Mock
-    @InjectIntoByType
-    private EncryptionHelper encryptionHelperMock;
+	}
 
-    @Mock
-    @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+	@Test
+	public void shouldReturnFundingView() {
+		assertEquals("/private/pgStudents/form/components/funding_details", controller.getFundingView());
+	}
 
-    @TestedObject
-    private FundingController controller;
+	@Test
+	public void shouldReturnAllFundingTypes() {
 
-    @Test
-    public void shouldReturnFundingViewForEdit() {
-        Funding funding = new Funding();
-        ModelMap modelMap = new ModelMap();
+		FundingType[] fundingTypes = controller.getFundingTypes();
+		assertArrayEquals(fundingTypes, FundingType.values());
+	}
 
-        expect(encryptionHelperMock.decryptToInteger("24")).andReturn(24);
-        expect(fundingServiceMock.getFundingById(24)).andReturn(funding);
+	@Test
+	public void shouldReturnApplicationForm() {
+		currentUser = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
+	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+		EasyMock.replay(applicationsServiceMock, currentUser);
+		ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
+		assertEquals(applicationForm, returnedApplicationForm);
+	}
 
-        replay();
-        assertEquals("/private/pgStudents/form/components/funding_details", controller.getFundingView("24", modelMap));
-        assertSame(funding, modelMap.get("funding"));
-    }
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+		EasyMock.replay(applicationsServiceMock);
+		controller.getApplicationForm("1");
+	}
 
-    @Test
-    public void shouldSaveQulificationAndRedirectIfNoErrors() {
-        RegisteredUser user = new RegisteredUser();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
-        Funding funding = new FundingBuilder().id(1).application(applicationForm).build();
-        BindingResult bindingResult = new BeanPropertyBindingResult(funding, "funding");
-        ModelMap modelMap = new ModelMap();
-        
-        modelMap.put("applicationForm", applicationForm);
-        
-        
-        expect(encryptionHelperMock.decryptToInteger("24")).andReturn(24);
-        fundingServiceMock.save(5, 24, funding);
-        applicationsServiceMock.save(applicationForm);
-        expect(userServiceMock.getCurrentUser()).andReturn(user);
-        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
-        
-        replay();
-        String view = controller.editFunding("24", funding, bindingResult, modelMap);
-        
-        assertEquals("redirect:/update/getFunding?applicationId=ABC", view);
-    }
+	@Test
+	public void shouldBindPropertyEditors() {
+		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+		binderMock.setValidator(fundingValidatorMock);
+		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
+		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
+		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
+		binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+		EasyMock.replay(binderMock);
+		controller.registerPropertyEditors(binderMock);
+		EasyMock.verify(binderMock);
+	}
 
-    @Test
-    public void shouldNotSaveAndReturnToViewIfErrors() {
-        Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().id(5).build()).build();
-        BindingResult bindingResult = new BeanPropertyBindingResult(funding, "funding");
-        bindingResult.reject("dupa");
+	@Test
+	public void shouldGetFundingFromServiceIfIdProvided() {
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
+		
+		Funding funding = new FundingBuilder().id(1).build();
+		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(funding);
+		EasyMock.replay(fundingServiceMock, encryptionHelperMock);
+		Funding returnedFunding = controller.getFunding("encryptedId");
+		assertEquals(funding, returnedFunding);
+	}
 
-        replay();
-        String view = controller.editFunding(null, null, bindingResult, null);
-        assertEquals("/private/pgStudents/form/components/funding_details", view);
-    }
+	@Test
+	public void shouldReturnNewFundingIfIdIsNull() {
+		Funding returnedFunding = controller.getFunding(null);
+		assertNull(returnedFunding.getId());
+	}
+	
+	@Test	
+	public void shouldReturnNewFundingIfIdIsBlank() {
+		Funding returnedFunding = controller.getFunding("");
+		assertNull(returnedFunding.getId());
+	}
+	
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfFundingDoesNotExist() {
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
+		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(null);
+		EasyMock.replay(fundingServiceMock, encryptionHelperMock);
+		controller.getFunding("encryptedId");
 
-    @Test
-    public void shouldReturnAllFundingTypes() {
-        FundingType[] fundingTypes = controller.getFundingTypes();
-        assertArrayEquals(fundingTypes, FundingType.values());
-    }
+	}
 
-    @Test
-    public void shouldReturnApplicationForm() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+	@Test
+	public void shouldReturnMessage() {
+		assertEquals("bob", controller.getMessage("bob"));
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+	}
 
-        replay();
-        ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
-        assertEquals(applicationForm, returnedApplicationForm);
-    }
+	@Test
+	public void shouldSaveQulificationAndRedirectIfNoErrors() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
+		Funding funding = new FundingBuilder().id(1).application(applicationForm).build();
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errors.hasErrors()).andReturn(false);
+		fundingServiceMock.save(funding);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(fundingServiceMock, applicationsServiceMock, errors);
+		String view = controller.editFunding(funding, errors);
+		EasyMock.verify(fundingServiceMock, applicationsServiceMock);
+		assertEquals("redirect:/update/getFunding?applicationId=ABC", view);
+	}
 
-    @Test(expected = ResourceNotFoundException.class)
-    public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+	@Test
+	public void shouldNotSaveAndReturnToViewIfErrors() {
+		Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().id(5).build()).build();
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errors.hasErrors()).andReturn(true);
 
-        replay();
-        controller.getApplicationForm("1");
-    }
+		EasyMock.replay(fundingServiceMock, errors);
+		String view = controller.editFunding(funding, errors);
+		EasyMock.verify(fundingServiceMock);
+		assertEquals("/private/pgStudents/form/components/funding_details", view);
+	}
 
-    @Test
-    public void shouldBindPropertyEditors() {
-        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+	@Before
+	public void setUp() {
+		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 
-        binderMock.setValidator(fundingValidatorMock);
-        binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
-        binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
-        binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
-        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
+		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
 
-        replay();
-        controller.registerPropertyEditors(binderMock);
-    }
+		fundingValidatorMock = EasyMock.createMock(FundingValidator.class);
+		fundingServiceMock = EasyMock.createMock(FundingService.class);
+
+		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+		userServiceMock = EasyMock.createMock(UserService.class);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+
+		controller = new FundingController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, fundingValidatorMock,
+				fundingServiceMock, documentPropertyEditorMock, userServiceMock, encryptionHelperMock, applicationFormUserRoleServiceMock);
+
+		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
+
+	}
 
 }

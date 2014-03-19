@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -130,6 +131,9 @@ public class LanguageQualification implements Serializable {
     }
 
     public void setLanguageQualificationDocument(Document languageQualificationDocument) {
+        if (languageQualificationDocument != null) {
+            languageQualificationDocument.setIsReferenced(true);
+        }
         this.languageQualificationDocument = languageQualificationDocument;
     }
 

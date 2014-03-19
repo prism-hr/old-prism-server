@@ -195,7 +195,8 @@ $(document).ready(function() {
 	bindDatePicker('#passportIssueDate');
 	bindDatePicker('#examDate');
 	addToolTips();
-	watchUpload($('#languageQualificationDocument'));
+	watchUpload($('#languageQualificationDocument'),
+			ajaxLanguageQualificationDocumentDelete);
 
 	// -------------------------------------------------------------------------------
 	// Language Qualification Type Change
@@ -244,10 +245,50 @@ $(document).ready(function() {
 				"#qualificationTypeName, #examDate")
 				.val("");
 
+		ajaxLanguageQualificationDocumentDelete();
 		deleteQualificationDocumentFile();
 	});
 
 });
+
+function ajaxLanguageQualificationDocumentDelete() {
+	if ($('#document_LANGUAGE_QUALIFICATION')
+			&& $('#document_LANGUAGE_QUALIFICATION').val()
+			&& $('#document_LANGUAGE_QUALIFICATION').val() != '') {
+		$.ajax({
+			type : 'POST',
+			statusCode : {
+				401 : function() {
+					window.location.reload();
+				},
+				500 : function() {
+					window.location.href = "/pgadmissions/error";
+				},
+				404 : function() {
+					window.location.href = "/pgadmissions/404";
+				},
+				400 : function() {
+					window.location.href = "/pgadmissions/400";
+				},
+				403 : function() {
+					window.location.href = "/pgadmissions/404";
+				}
+			},
+			url : "/pgadmissions/update/deleteLanguageQualificationsDocument",
+			data : {
+				applicationId : $('#applicationId').val(),
+				documentId : $('#document_LANGUAGE_QUALIFICATION').val(),
+				cacheBreaker : new Date().getTime()
+			},
+			success : function(data) {
+			},
+			complete : function() {
+			}
+		});
+		$("#languageQualificationDocument").val("");
+	}
+
+}
 
 function selectValue(elementName) {
 	var selectedType = $('#qualificationType').val();
@@ -403,6 +444,7 @@ function clearLanguageQualification() {
 			'#overallScoreSelect, #readingScoreSelect, #writingScoreSelect, #speakingScoreSelect, #listeningScoreSelect')
 			.hide();
 
+	ajaxLanguageQualificationDocumentDelete();
 	deleteQualificationDocumentFile();
 }
 

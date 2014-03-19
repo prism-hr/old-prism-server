@@ -57,7 +57,7 @@ public class FileDownloadController {
     public void downloadReferenceDocument(@RequestParam("referenceId") String encryptedReferenceId, HttpServletResponse response) throws IOException {
         ReferenceComment reference = referenceService.getReferenceById(encryptionHelper.decryptToInteger(encryptedReferenceId));
         RegisteredUser currentUser = userService.getCurrentUser();
-        if (reference == null || !currentUser.canSeeReference(reference)) {
+        if (reference == null || reference.getDocuments() == null || !currentUser.canSeeReference(reference)) {
             throw new ResourceNotFoundException();
         }
         Document document = reference.getDocuments().get(0);

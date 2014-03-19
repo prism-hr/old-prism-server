@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -45,8 +46,7 @@ public class RefereeService {
 
     @Autowired
     public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils, UserService userService, RoleDAO roleDAO, CommentService commentService,
-            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper, ApplicantRatingService applicantRatingService,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper, ApplicantRatingService applicantRatingService, ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.refereeDAO = refereeDAO;
         this.encryptionUtils = encryptionUtils;
         this.userService = userService;
@@ -87,7 +87,7 @@ public class RefereeService {
         if (userExists(user) && !isUserReferee(user)) {
             user.getRoles().add(refereeRole);
             if (user.getActivationCode() == null) {
-                user.setActivationCode(encryptionUtils.generateUUID());
+            	user.setActivationCode(encryptionUtils.generateUUID());
             }
         }
         if (!userExists(user)) {
@@ -176,16 +176,10 @@ public class RefereeService {
         reference.getScores().addAll(refereesAdminEditDTO.getScores());
 
         Document document = refereesAdminEditDTO.getReferenceDocument();
-
-        for (Document existingDocument : reference.getDocuments()) {
-            existingDocument.setIsReferenced(false);
-        }
-
         if (document != null) {
-            document.setIsReferenced(true);
-            reference.getDocuments().add(document);
+            reference.setDocuments(Collections.singletonList(document));
         }
-
+        
         applicantRatingService.computeAverageRating(applicationForm);
 
         return reference;
@@ -213,7 +207,7 @@ public class RefereeService {
         if (applicationForm.getReferencesToSendToPortico().size() < 2) {
             referee.setSendToUCL(true);
         }
-
+        
         applicationFormUserRoleService.referencePosted(referee);
 
         saveReferenceAndSendMailNotifications(referee);
@@ -249,8 +243,7 @@ public class RefereeService {
 
         Document document = refereesAdminEditDTO.getReferenceDocument();
         if (document != null) {
-            document.setIsReferenced(true);
-            referenceComment.getDocuments().add(document);
+            referenceComment.setDocuments(Collections.singletonList(document));
         }
         return referenceComment;
     }

@@ -1,136 +1,137 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.unitils.easymock.EasyMockUnitils.replay;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.unitils.UnitilsJUnit4TestClassRunner;
-import org.unitils.easymock.annotation.Mock;
-import org.unitils.inject.annotation.InjectIntoByType;
-import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.dto.DocumentsSectionDTO;
+import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.DocumentSectionValidator;
 
-@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class DocumentsControllerTest {
 
-    @Mock
-    @InjectIntoByType
+    private RegisteredUser currentUser;
+
     private ApplicationsService applicationsServiceMock;
 
-    @Mock
-    @InjectIntoByType
     private DocumentSectionValidator documentSectionValidatorMock;
 
-    @Mock
-    @InjectIntoByType
+    private DocumentsController controller;
+
     private DocumentPropertyEditor documentPropertyEditorMock;
 
-    @Mock
-    @InjectIntoByType
     private UserService userServiceMock;
 
-    @Mock
-    @InjectIntoByType
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
-    @TestedObject
-    private DocumentsController controller;
+    @Before
+    public void setUp() {
+        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        documentSectionValidatorMock = EasyMock.createMock(DocumentSectionValidator.class);
+        documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+        userServiceMock = EasyMock.createMock(UserService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        controller = new DocumentsController(applicationsServiceMock, userServiceMock, documentSectionValidatorMock, documentPropertyEditorMock,
+                applicationFormUserRoleServiceMock);
+        currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        EasyMock.replay(userServiceMock);
+    }
+
+    @Test(expected = CannotUpdateApplicationException.class)
+    public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.APPROVED).build();
+        BindingResult errors = EasyMock.createMock(BindingResult.class);
+        EasyMock.replay(applicationsServiceMock, errors);
+        controller.editDocuments(applicationForm, errors);
+        EasyMock.verify(applicationsServiceMock);
+    }
 
     @Test
     public void shouldReturnApplicationFormView() {
-        ModelMap modelMap = new ModelMap();
-        ApplicationForm application = new ApplicationFormBuilder().cv(new Document()).personalStatement(new Document()).build();
-        modelMap.put("applicationForm", application);
-
-        assertEquals("/private/pgStudents/form/components/documents", controller.getDocumentsView(modelMap));
-
-        assertNotNull(modelMap.get("documentsSectionDTO"));
+        assertEquals("/private/pgStudents/form/components/documents", controller.getDocumentsView());
     }
 
     @Test
     public void shouldReturnApplicationForm() {
-        ApplicationForm applicationForm = new ApplicationForm();
+        currentUser = EasyMock.createMock(RegisteredUser.class);
 
+        EasyMock.reset(userServiceMock);
+        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+        EasyMock.replay(userServiceMock);
+
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-
-        replay();
+        EasyMock.replay(applicationsServiceMock, currentUser);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
-
-        assertSame(applicationForm, returnedApplicationForm);
+        assertEquals(applicationForm, returnedApplicationForm);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
-
-        replay();
+        EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("1");
     }
 
     @Test
     public void shouldBindPropertyEditors() {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-
         binderMock.setValidator(documentSectionValidatorMock);
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
-
-        replay();
+        EasyMock.replay(binderMock);
         controller.registerPropertyEditors(binderMock);
+        EasyMock.verify(binderMock);
+    }
 
+    @Test
+    public void shouldReturnMessage() {
+        assertEquals("bob", controller.getMessage("bob"));
     }
 
     @Test
     public void shouldSaveAppplicationFormAndRedirectIfNoErrors() {
-        RegisteredUser currentUser = new RegisteredUser();
-        DocumentsSectionDTO documentsSectionDTO = new DocumentsSectionDTO();
-        BindingResult bindingResult = new BeanPropertyBindingResult(documentsSectionDTO, "documentsSectionDTO");
-        ApplicationForm application = new ApplicationFormBuilder().id(666).applicationNumber("ABC").build();
-        ModelMap modelMap = new ModelMap();
-        modelMap.put("applicationForm", application);
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").personalStatement(new DocumentBuilder().build()).build();
+        BindingResult errors = EasyMock.createMock(BindingResult.class);
+        EasyMock.expect(errors.hasErrors()).andReturn(false);
+        applicationsServiceMock.save(applicationForm);
+        EasyMock.replay(applicationsServiceMock, errors);
 
-        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        applicationsServiceMock.saveDocumentsSection(666, documentsSectionDTO);
-        applicationFormUserRoleServiceMock.insertApplicationUpdate(application, currentUser, ApplicationUpdateScope.ALL_USERS);
+        String view = controller.editDocuments(applicationForm, errors);
 
-        replay();
-        String view = controller.editDocuments(documentsSectionDTO, bindingResult, modelMap);
-
+        EasyMock.verify(applicationsServiceMock);
         assertEquals("redirect:/update/getDocuments?applicationId=ABC", view);
     }
 
     @Test
     public void shouldNotSaveAndReturnToViewIfErrors() {
-        DocumentsSectionDTO documentsSectionDTO = new DocumentsSectionDTO();
-        BindingResult bindingResult = new BeanPropertyBindingResult(documentsSectionDTO, "documentsSectionDTO");
-        ModelMap modelMap = new ModelMap();
-        
-        bindingResult.rejectValue("personalStatement", "file.upload.empty");
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
+        BindingResult errors = EasyMock.createMock(BindingResult.class);
+        errors.rejectValue("personalStatement", "file.upload.empty");
+        EasyMock.expect(errors.hasErrors()).andReturn(true);
+        EasyMock.replay(applicationsServiceMock, errors);
 
-        replay();
-        String view = controller.editDocuments(documentsSectionDTO, bindingResult, modelMap);
+        String view = controller.editDocuments(applicationForm, errors);
 
+        EasyMock.verify(applicationsServiceMock);
         assertEquals("/private/pgStudents/form/components/documents", view);
-        assertSame(documentsSectionDTO, modelMap.get("documentsSectionDTO"));
     }
 }

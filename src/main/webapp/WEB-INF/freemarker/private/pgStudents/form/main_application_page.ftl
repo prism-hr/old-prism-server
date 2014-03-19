@@ -8,6 +8,11 @@
   <#assign formDisplayState = "open"/>
 </#if>
 
+<#if message?has_content>
+  <#assign globalMsg = true/>
+<#else>
+  <#assign globalMsg = false/>
+</#if>
 <!---- validation errors -->
  <@spring.bind "applicationForm.programmeDetails" />
 <#if spring.status.errorMessages?has_content >

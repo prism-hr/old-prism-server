@@ -129,6 +129,11 @@ public class Comment implements Comparable<Comment>, Serializable {
     }
 
     public void setDocuments(List<Document> documents) {
+        if (documents != null) {
+            for (Document document : documents) {
+                document.setIsReferenced(true);
+            }
+        }
         this.documents = documents;
     }
 

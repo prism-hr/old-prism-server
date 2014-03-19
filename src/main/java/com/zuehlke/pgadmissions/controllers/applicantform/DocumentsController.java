@@ -1,12 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import static org.springframework.beans.BeanUtils.copyProperties;
-
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -17,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.dto.DocumentsSectionDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
+import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -32,46 +27,53 @@ import com.zuehlke.pgadmissions.validators.DocumentSectionValidator;
 public class DocumentsController {
 
     private static final String STUDENTS_FORM_DOCUMENTS_VIEW = "/private/pgStudents/form/components/documents";
+    
+    private final ApplicationsService applicationsService;
+    
+    private final DocumentSectionValidator documentSectionValidator;
+    
+    private final DocumentPropertyEditor documentPropertyEditor;
+    
+    private final UserService userService;
+    
+    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    public DocumentsController() {
+        this(null, null, null, null, null);
+    }
 
     @Autowired
-    private ApplicationsService applicationsService;
-
-    @Autowired
-    private DocumentSectionValidator documentSectionValidator;
-
-    @Autowired
-    private DocumentPropertyEditor documentPropertyEditor;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    @Autowired
-    private ApplicationFormPropertyEditor applicationFormPropertyEditor;
+    public DocumentsController(ApplicationsService applicationsService, UserService userService,
+            DocumentSectionValidator documentSectionValidator, DocumentPropertyEditor documentPropertyEditor, final ApplicationFormUserRoleService applicationFormUserRoleService) {
+        this.applicationsService = applicationsService;
+        this.userService = userService;
+        this.documentSectionValidator = documentSectionValidator;
+        this.documentPropertyEditor = documentPropertyEditor;
+        this.applicationFormUserRoleService = applicationFormUserRoleService;
+    }
 
     @RequestMapping(value = "/editDocuments", method = RequestMethod.POST)
-    public String editDocuments(@Valid DocumentsSectionDTO documentsSectionDTO,
-            BindingResult result, ModelMap modelMap) {
-
+    public String editDocuments(ApplicationForm applicationForm, BindingResult result) {
+        
+        if (applicationForm.isDecided()) {
+            throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
+        }
+        
+        if (applicationForm.getPersonalStatement() == null) {
+            result.rejectValue("personalStatement", "file.upload.empty");
+        }
         
         if (result.hasErrors()) {
-            modelMap.put("documentsSectionDTO", documentsSectionDTO);
             return STUDENTS_FORM_DOCUMENTS_VIEW;
         }
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        applicationsService.saveDocumentsSection(applicationForm.getId(), documentsSectionDTO);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        
+        applicationsService.save(applicationForm);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
         return "redirect:/update/getDocuments?applicationId=" + applicationForm.getApplicationNumber();
     }
 
     @RequestMapping(value = "/getDocuments", method = RequestMethod.GET)
-    public String getDocumentsView(ModelMap modelMap) {
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-        DocumentsSectionDTO documentsSectionDTO = new DocumentsSectionDTO();
-        copyProperties(application, documentsSectionDTO, DocumentsSectionDTO.class);
-        modelMap.put("documentsSectionDTO", documentsSectionDTO);
+    public String getDocumentsView() {
         return STUDENTS_FORM_DOCUMENTS_VIEW;
     }
 
@@ -83,12 +85,20 @@ public class DocumentsController {
         }
         return application;
     }
-    
-    @InitBinder("documentsSectionDTO")
+
+    @InitBinder(value = "applicationForm")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(documentSectionValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
-        binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+
     }
 
+    @ModelAttribute("message")
+    public String getMessage(@RequestParam(required = false) String message) {
+        return message;
+    }
+
+    private RegisteredUser getCurrentUser() {
+        return userService.getCurrentUser();
+    }
 }

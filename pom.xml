@@ -22,7 +22,7 @@
 
     <scm>
         <connection>scm:hg:http://mercurial.alumeni.co.uk/mercurial/pgadmissions/</connection>
-        <tag>pgadmissions-3.0.11</tag>
+        <tag>pgadmissions-3.0.10</tag>
     </scm>
 
     <dependencies>

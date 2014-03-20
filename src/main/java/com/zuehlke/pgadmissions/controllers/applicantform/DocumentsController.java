@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -34,10 +31,6 @@ public class DocumentsController {
     
     private final DocumentPropertyEditor documentPropertyEditor;
     
-    private final UserService userService;
-    
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
     public DocumentsController() {
         this(null, null, null, null, null);
     }
@@ -46,19 +39,12 @@ public class DocumentsController {
     public DocumentsController(ApplicationsService applicationsService, UserService userService,
             DocumentSectionValidator documentSectionValidator, DocumentPropertyEditor documentPropertyEditor, final ApplicationFormUserRoleService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
-        this.userService = userService;
         this.documentSectionValidator = documentSectionValidator;
         this.documentPropertyEditor = documentPropertyEditor;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
     @RequestMapping(value = "/editDocuments", method = RequestMethod.POST)
-    public String editDocuments(ApplicationForm applicationForm, BindingResult result) {
-        
-        if (applicationForm.isDecided()) {
-            throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
-        }
-        
+    public String editDocuments(@ModelAttribute ApplicationForm applicationForm, BindingResult result) {
         if (applicationForm.getPersonalStatement() == null) {
             result.rejectValue("personalStatement", "file.upload.empty");
         }
@@ -67,23 +53,19 @@ public class DocumentsController {
             return STUDENTS_FORM_DOCUMENTS_VIEW;
         }
         
-        applicationsService.save(applicationForm);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        
         return "redirect:/update/getDocuments?applicationId=" + applicationForm.getApplicationNumber();
     }
 
     @RequestMapping(value = "/getDocuments", method = RequestMethod.GET)
-    public String getDocumentsView() {
+    public String getDocumentsView(@ModelAttribute ApplicationForm applicationForm) {
         return STUDENTS_FORM_DOCUMENTS_VIEW;
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new ResourceNotFoundException();
-        }
-        return application;
+    public ApplicationForm getApplicationForm(String applicationId) {
+        return applicationsService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
+                ApplicationFormAction.CORRECT_APPLICATION);
     }
 
     @InitBinder(value = "applicationForm")
@@ -98,7 +80,4 @@ public class DocumentsController {
         return message;
     }
 
-    private RegisteredUser getCurrentUser() {
-        return userService.getCurrentUser();
-    }
 }

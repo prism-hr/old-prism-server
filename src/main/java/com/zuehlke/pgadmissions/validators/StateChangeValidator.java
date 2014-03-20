@@ -38,7 +38,7 @@ public class StateChangeValidator extends AbstractValidator {
         ApplicationFormStatus nextStatus = stateChangeDTO.getNextStatus();
         boolean stateChangeRequiresFastTrack = !(ApplicationFormStatus.APPROVED.equals(nextStatus) || ApplicationFormStatus.REJECTED.equals(nextStatus)) &&
         		BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights());
-        boolean fastrackValueMissing = stateChangeDTO.getFastTrackApplication() == null && stateChangeDTO.getApplicationForm().getBatchDeadline() != null;        
+        boolean fastrackValueMissing = stateChangeDTO.getFastTrackApplication() == null && stateChangeDTO.getApplicationForm().getClosingDate() != null;        
         
         if(stateChangeRequiresFastTrack && fastrackValueMissing){
             errors.rejectValue("fastTrackApplication", EMPTY_DROPDOWN_ERROR_MESSAGE);

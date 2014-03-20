@@ -130,7 +130,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
         EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("refereeId");
-        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(8)).andReturn(referee);
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
         EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(referenceComment);
         refereeServiceMock.refresh(referee);
@@ -208,7 +208,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         Referee referee = new RefereeBuilder().application(applicationForm).id(8).build();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
-        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(8)).andReturn(referee);
 
         refereeServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoDataDTO.getRefereesSendToPortico());
 
@@ -246,7 +246,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
         EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("refereeId");
-        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(8)).andReturn(referee);
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
         EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(referenceComment);
         refereeServiceMock.refresh(referee);
@@ -286,7 +286,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         Model model = new ExtendedModelMap();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(8);
-        EasyMock.expect(refereeServiceMock.getRefereeById(8)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(8)).andReturn(referee);
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
 
         EasyMock.replay(encryptionHelperMock, refereeServiceMock, refereesAdminEditDTOValidatorMock);

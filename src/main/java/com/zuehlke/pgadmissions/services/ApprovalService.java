@@ -186,7 +186,7 @@ public class ApprovalService {
         approvalRound.setApplication(form);
         approvalRoundDAO.save(approvalRound);
 
-        StageDuration approveStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.APPROVAL);
+        StageDuration approveStageDuration = stageDurationService.getById(ApplicationFormStatus.APPROVAL);
         DateTime dueDate = DateUtils.addWorkingDaysInMinutes(new DateTime(), approveStageDuration.getDurationInMinutes());
         form.setDueDate(dueDate.toDate());
 

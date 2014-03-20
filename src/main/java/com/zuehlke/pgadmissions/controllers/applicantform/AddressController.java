@@ -18,16 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DomicileService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.AddressUtils;
 import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
 
@@ -36,47 +31,32 @@ import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
 public class AddressController {
 
     private static final String APPLICATION_ADDRESS_VIEW = "/private/pgStudents/form/components/address_details";
-    private final ApplicationsService applicationService;
-    private final AddressSectionDTOValidator addressSectionDTOValidator;
-    private final DomicileService domicileService;
-    private final UserService userService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-    private final DomicilePropertyEditor domicilePropertyEditor;
-
-    public AddressController() {
-        this(null, null, null, null, null, null);
-    }
-
+    
     @Autowired
-    public AddressController(ApplicationsService applicationService, UserService userService, DomicileService domicileService,
-            DomicilePropertyEditor domicilePropertyEditor, AddressSectionDTOValidator addressSectionDTOValidator,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
-        this.applicationService = applicationService;
-        this.userService = userService;
-        this.domicileService = domicileService;
-        this.domicilePropertyEditor = domicilePropertyEditor;
-        this.addressSectionDTOValidator = addressSectionDTOValidator;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-    }
+    private ApplicationsService applicationsService;
+    
+    @Autowired
+    private AddressSectionDTOValidator addressSectionDTOValidator;
+    
+    @Autowired
+    private DomicileService domicileService;
+    
+    @Autowired
+    private DomicilePropertyEditor domicilePropertyEditor;
 
     @RequestMapping(value = "/editAddress", method = RequestMethod.POST)
     public String editAddresses(@Valid AddressSectionDTO addressSectionDTO, BindingResult result, @ModelAttribute ApplicationForm applicationForm) {
- 
-        if (applicationForm.isDecided()) {
-            throw new CannotUpdateApplicationException(applicationForm.getApplicationNumber());
-        }
-        
         if (result.hasErrors()) {
             return APPLICATION_ADDRESS_VIEW;
         }
-        
+
         Address contactAddress = applicationForm.getContactAddress();
-        
+
         if (contactAddress == null) {
             contactAddress = new Address();
             applicationForm.setContactAddress(contactAddress);
         }
-        
+
         contactAddress.setDomicile(addressSectionDTO.getContactAddressDomicile());
         contactAddress.setAddress1(addressSectionDTO.getContactAddress1());
         contactAddress.setAddress2(addressSectionDTO.getContactAddress2());
@@ -85,12 +65,12 @@ public class AddressController {
         contactAddress.setAddress5(addressSectionDTO.getContactAddress5());
 
         Address currentAddress = applicationForm.getCurrentAddress();
-        
+
         if (currentAddress == null) {
             currentAddress = new Address();
             applicationForm.setCurrentAddress(currentAddress);
         }
-        
+
         currentAddress.setDomicile(addressSectionDTO.getCurrentAddressDomicile());
         currentAddress.setAddress1(addressSectionDTO.getCurrentAddress1());
         currentAddress.setAddress2(addressSectionDTO.getCurrentAddress2());
@@ -98,14 +78,12 @@ public class AddressController {
         currentAddress.setAddress4(addressSectionDTO.getCurrentAddress4());
         currentAddress.setAddress5(addressSectionDTO.getCurrentAddress5());
 
-        applicationService.save(applicationForm);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
-
+        applicationsService.saveAddressSection(applicationForm);
         return "redirect:/update/getAddress?applicationId=" + applicationForm.getApplicationNumber();
     }
 
     @RequestMapping(value = "/getAddress", method = RequestMethod.GET)
-    public String getAddressView() {
+    public String getAddressView(@ModelAttribute ApplicationForm applicationForm) {
         return APPLICATION_ADDRESS_VIEW;
     }
 
@@ -121,21 +99,14 @@ public class AddressController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new ResourceNotFoundException();
-        }
-        return application;
+    public ApplicationForm getApplicationForm(String applicationId) {
+        return applicationsService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
+                ApplicationFormAction.CORRECT_APPLICATION);
     }
 
     @ModelAttribute("message")
     public String getMessage(@RequestParam(required = false) String message) {
         return message;
-    }
-
-    private RegisteredUser getCurrentUser() {
-        return userService.getCurrentUser();
     }
 
     @ModelAttribute("addressSectionDTO")

@@ -31,8 +31,6 @@ import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
@@ -79,16 +77,11 @@ public class ProgrammeDetailsController {
     }
 
     @RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
-    public String editProgrammeDetails(@Valid ProgrammeDetails programmeDetails, BindingResult result, Model model) {
-        if (programmeDetails.getApplication().isDecided()) {
-            throw new CannotUpdateApplicationException(programmeDetails.getApplication().getApplicationNumber());
-        }
-
+    public String editProgrammeDetails(@ModelAttribute ApplicationForm applicationForm, @Valid ProgrammeDetails programmeDetails, BindingResult result,
+            Model model) {
         if (result.hasErrors()) {
             return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
         }
-
-        ApplicationForm applicationForm = programmeDetails.getApplication();
 
         programmeDetails.setStudyOptionCode(programmeDetailsService.getStudyOptionCodeForProgram(applicationForm.getProgram(),
                 programmeDetails.getStudyOption()));
@@ -126,7 +119,7 @@ public class ProgrammeDetailsController {
     }
 
     @RequestMapping(value = "/getProgrammeDetails", method = RequestMethod.GET)
-    public String getProgrammeDetailsView() {
+    public String getProgrammeDetailsView(@ModelAttribute ApplicationForm applicationForm) {
         return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
     }
 
@@ -142,11 +135,7 @@ public class ProgrammeDetailsController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new ResourceNotFoundException();
-        }
-        return application;
+        return applicationsService.getEditableApplicationForm(applicationId);
     }
 
     @ModelAttribute("message")

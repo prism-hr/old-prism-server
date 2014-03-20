@@ -4,12 +4,12 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EncryptionHelper {
 
-	private byte[] linebreak = {}; // Remove Base64 encoder default
-									// linebreak
-
+	private byte[] linebreak = {};
 
 	public String encrypt(String plainText) {
 		if(plainText == null){
@@ -49,4 +49,5 @@ public class EncryptionHelper {
 	public Integer decryptToInteger(String encrypted) {
 		return Integer.parseInt(decrypt(encrypted));
 	}
+	
 }

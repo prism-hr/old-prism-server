@@ -93,6 +93,7 @@ public class ApplicationFormCreationService {
         applicationForm.setApplicant(applicant);
         applicationForm.setAdvert(advert);
         applicationForm.setApplicationNumber(applicationNumber);
+        
 
         applicationFormDAO.save(applicationForm);
 

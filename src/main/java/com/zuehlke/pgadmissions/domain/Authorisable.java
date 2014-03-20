@@ -98,22 +98,15 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
                 && Arrays.asList(ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW).contains(form.getStatus());
     }
 
-    public boolean canEditApplicationAsApplicant(final ApplicationForm form, final RegisteredUser user) {
-        return user.getId() == form.getApplicant().getId() && !form.isTerminated() && form.getIsEditableByApplicant();
-    }
-
-    public boolean canEditApplicationAsSuperadministrator(final ApplicationForm form, final RegisteredUser user) {
+    public boolean canUpdateApplicationAsSuperadministrator(final ApplicationForm form, final RegisteredUser user) {
         return user.isInRole(Authority.SUPERADMINISTRATOR)
                 && Arrays.asList(ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.WITHDRAWN).contains(form.getStatus())
                 && BooleanUtils.isFalse(form.isExported());
     }
 
-    public boolean canEditApplicationAsAdministrator(final ApplicationForm form, final RegisteredUser user) {
-        boolean hasPermissionToEdit = user.isInRole(Authority.SUPERADMINISTRATOR) //
-                || user.isApplicationAdministrator(form) || user.isAdminInProgramme(form.getProgram());
-        boolean reviewOrInterview = form.isInReviewStage() || form.isInInterviewStage();
-
-        return hasPermissionToEdit && reviewOrInterview;
+    public boolean canUpdateApplicationAsAdministrator(final ApplicationForm form, final RegisteredUser user) {
+        return (user.isInRole(Authority.SUPERADMINISTRATOR) || user.isAdminInProgramme(form.getProgram()))
+                && Arrays.asList(ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW).contains(form.getStatus());
     }
 
     public boolean hasAdminRightsOnApplication(final ApplicationForm form, final RegisteredUser user) {

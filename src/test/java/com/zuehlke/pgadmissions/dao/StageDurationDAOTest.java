@@ -21,7 +21,7 @@ public class StageDurationDAOTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 					
 		StageDurationDAO stageDurationDAO = new StageDurationDAO(sessionFactory);
-		StageDuration interviewStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.INTERVIEW);
+		StageDuration interviewStageDuration = stageDurationDAO.getById(ApplicationFormStatus.INTERVIEW);
 		assertEquals(stageDuration.getStage(), interviewStageDuration.getStage());
 		assertEquals(stageDuration.getDuration(), interviewStageDuration.getDuration());
 		assertEquals(stageDuration.getUnit(), interviewStageDuration.getUnit());
@@ -42,7 +42,7 @@ public class StageDurationDAOTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 		
 		StageDurationDAO stageDurationDAO = new StageDurationDAO(sessionFactory);
-		StageDuration interviewStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.INTERVIEW);
+		StageDuration interviewStageDuration = stageDurationDAO.getById(ApplicationFormStatus.INTERVIEW);
 		assertEquals(updatedStageDuration.getStage(), interviewStageDuration.getStage());
 		assertEquals(updatedStageDuration.getDuration(), interviewStageDuration.getDuration());
 		assertEquals(updatedStageDuration.getUnit(), interviewStageDuration.getUnit());

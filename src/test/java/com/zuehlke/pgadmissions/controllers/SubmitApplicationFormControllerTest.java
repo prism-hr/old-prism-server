@@ -252,7 +252,7 @@ public class SubmitApplicationFormControllerTest {
         expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
 
         StageDuration validationDuration = new StageDurationBuilder().duration(1).stage(ApplicationFormStatus.VALIDATION).unit(DurationUnitEnum.WEEKS).build();
-        expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(validationDuration);
+        expect(stageDurationServiceMock.getById(ApplicationFormStatus.VALIDATION)).andReturn(validationDuration);
         applicationFormUserRoleServiceMock.applicationSubmitted(applicationForm);
         applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
@@ -282,7 +282,7 @@ public class SubmitApplicationFormControllerTest {
         stageDuration.setUnit(DurationUnitEnum.DAYS);
         Date batchDeadline = new DateTime(2012, 1, 1, 0, 0).toDate();
         expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
-        expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
+        expect(stageDurationServiceMock.getById(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
         applicationFormUserRoleServiceMock.applicationSubmitted(applicationForm);
         applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
@@ -304,7 +304,7 @@ public class SubmitApplicationFormControllerTest {
         stageDuration.setUnit(DurationUnitEnum.DAYS);
         Date batchDeadline = new DateTime(2012, 1, 1, 0, 0).toDate();
         expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
-        expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
+        expect(stageDurationServiceMock.getById(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
         applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
 
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock);
@@ -358,7 +358,7 @@ public class SubmitApplicationFormControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED)
                 .submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/12")).build();
         StageDuration stageDurationMock = createMock(StageDuration.class);
-        expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
+        expect(stageDurationServiceMock.getById(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
         expect(stageDurationMock.getUnit()).andReturn(DurationUnitEnum.DAYS);
         expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
         replay(stageDurationServiceMock, stageDurationMock);
@@ -372,7 +372,7 @@ public class SubmitApplicationFormControllerTest {
     public void shouldSetValidationDateToCurrentDatePlusValidationStageIntervalWorkingDayIfBatchDeadlineIsNotSet() throws ParseException {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).build();
         StageDuration stageDurationMock = createMock(StageDuration.class);
-        expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
+        expect(stageDurationServiceMock.getById(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
         expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
 
         replay(stageDurationServiceMock, stageDurationMock);

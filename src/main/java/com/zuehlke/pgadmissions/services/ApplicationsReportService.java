@@ -189,7 +189,7 @@ public class ApplicationsReportService {
 
         for (ApplicationForm app : applications) {
 
-            if (!app.isSubmitted() || app.getStatusWhenWithdrawn() == ApplicationFormStatus.UNSUBMITTED || app.getPersonalDetails() == null) {
+            if (!app.isSubmitted() || app.getLastStatus() == ApplicationFormStatus.UNSUBMITTED || app.getPersonalDetails() == null) {
                 continue;
             }
 

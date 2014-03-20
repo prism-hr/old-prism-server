@@ -77,4 +77,5 @@ public class AdditionalInformation implements FormSectionObject, Serializable {
 	public void setAcceptedTerms(boolean acceptedTerms) {
 		this.acceptedTerms = acceptedTerms;
 	}
+	
 }

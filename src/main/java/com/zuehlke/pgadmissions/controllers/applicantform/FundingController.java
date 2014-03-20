@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -39,11 +38,9 @@ import com.zuehlke.pgadmissions.validators.FundingValidator;
 public class FundingController {
 
 	private static final String STUDENT_FUNDING_DETAILS_VIEW = "/private/pgStudents/form/components/funding_details";
-	private final ApplicationsService applicationService;
+	private final ApplicationsService applicationsService;
 	private final PropertyEditor datePropertyEditor;
-
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
-
 	private final FundingValidator fundingValidator;
 	private final FundingService fundingService;
 	private final DocumentPropertyEditor documentPropertyEditor;
@@ -59,8 +56,7 @@ public class FundingController {
 	public FundingController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
 			DatePropertyEditor datePropertyEditor, FundingValidator fundingValidator, FundingService fundingService,
 			DocumentPropertyEditor documentPropertyEditor, UserService userService, EncryptionHelper encryptionHelper, ApplicationFormUserRoleService applicationFormUserRoleService) {
-		this.applicationService = applicationsService;
-
+		this.applicationsService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
 		this.fundingValidator = fundingValidator;
@@ -85,26 +81,20 @@ public class FundingController {
 	 }
 
 	@RequestMapping(value = "/editFunding", method = RequestMethod.POST)
-	public String editFunding(@Valid Funding funding, BindingResult result) {
-		if(funding.getApplication().isDecided()){
-			throw new CannotUpdateApplicationException(funding.getApplication().getApplicationNumber());
-		}
-		
+	public String editFunding(@ModelAttribute ApplicationForm applicationForm, @Valid Funding funding, BindingResult result) {	
 		if(result.hasErrors()){
 			return STUDENT_FUNDING_DETAILS_VIEW;
 		}
-		
-        ApplicationForm applicationForm = funding.getApplication();
         
 		fundingService.save(funding);
-		applicationService.save(applicationForm);
+		applicationsService.save(applicationForm);
 		applicationFormUserRoleService.insertApplicationUpdate(applicationForm, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber();
 	}
 
 
 	@RequestMapping(value = "/getFunding", method = RequestMethod.GET)
-	public String getFundingView() {
+	public String getFundingView(@ModelAttribute ApplicationForm applicationForm) {
 		return STUDENT_FUNDING_DETAILS_VIEW;
 	}
 
@@ -127,11 +117,7 @@ public class FundingController {
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
-		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-		if(application == null){
-			throw new ResourceNotFoundException();
-		}
-		return application;
+		return applicationsService.getEditableApplicationForm(applicationId);
 	}
 
 	@ModelAttribute("message")

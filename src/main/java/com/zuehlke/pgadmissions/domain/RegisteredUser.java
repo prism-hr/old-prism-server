@@ -198,16 +198,12 @@ public class RegisteredUser extends Authorisable implements UserDetails, Compara
         return canUpdateApplicationAsApplicant(applicationForm, this);
     }
 
-    public boolean canEditAsApplicant(ApplicationForm applicationForm) {
-        return canEditApplicationAsApplicant(applicationForm, this);
+    public boolean canUpdateAsAdministrator(ApplicationForm applicationForm) {
+        return canUpdateApplicationAsAdministrator(applicationForm, this);
     }
     
-    public boolean canEditAsSuperadministrator(ApplicationForm applicationForm) {
-        return canEditApplicationAsSuperadministrator(applicationForm, this);
-    }
-
-    public boolean canEditAsAdministrator(ApplicationForm applicationForm) {
-        return canEditApplicationAsAdministrator(applicationForm, this);
+    public boolean canUpdateAsSuperadministrator(ApplicationForm applicationForm) {
+        return canUpdateApplicationAsSuperadministrator(applicationForm, this);
     }
 
     public boolean canSeeReference(final ReferenceComment reference) {

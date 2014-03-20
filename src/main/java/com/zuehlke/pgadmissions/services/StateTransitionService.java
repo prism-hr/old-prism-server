@@ -7,69 +7,77 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Service
 public class StateTransitionService {
-
-    private final StateTransitionViewResolver viewResolver;
-
-    public StateTransitionService() {
-        this(null);
-    }
     
+    private static final Integer REJECTION_REASON_WHEN_PROGAMME_EXPIRED = 7;
+    private static final String REJECTION_VIEW = "redirect:/rejectApplication?applicationId=";
+    private static final String OFFER_RECOMMENDATION_VIEW = "redirect:/offerRecommendation?applicationId=";
+    private static final String APPROVAL_VIEW = "redirect:/approval/moveToApproval?action=firstLoad&applicationId=";
+    private static final String INTERVIEW_VIEW = "redirect:/interview/moveToInterview?applicationId=";
+    private static final String REVIEW_VIEW = "redirect:/review/moveToReview?applicationId=";
+    private static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
+
     @Autowired
-    public StateTransitionService(final StateTransitionViewResolver viewResolver) {
-        this.viewResolver = viewResolver;
+    private StateService stateService;
+
+    @Autowired
+    private PermissionsService permissionsService;
+
+    public String resolveView(ApplicationForm applicationForm) {
+        return resolveView(applicationForm, null);
     }
-    
-    public String resolveView(final ApplicationForm form) {
-    	return viewResolver.resolveView(form);
-    }
-    
-    public String resolveView(final ApplicationForm form, final String action) {
-        return viewResolver.resolveView(form, action);
-    }
-    
-    public List<ApplicationFormStatus> getAvailableNextStati(final ApplicationFormStatus status) {
-        ArrayList<ApplicationFormStatus> nextStatuses = new ArrayList<ApplicationFormStatus>();
-        switch (status) {
-        case APPROVAL:
-            nextStatuses.add(ApplicationFormStatus.REVIEW);
-            nextStatuses.add(ApplicationFormStatus.INTERVIEW);
-            nextStatuses.add(ApplicationFormStatus.APPROVAL);
-            nextStatuses.add(ApplicationFormStatus.APPROVED);
-            nextStatuses.add(ApplicationFormStatus.REJECTED);
-            break;
-        case APPROVED:
-            break;
-        case INTERVIEW:
-            nextStatuses.add(ApplicationFormStatus.REVIEW);
-            nextStatuses.add(ApplicationFormStatus.INTERVIEW);
-            nextStatuses.add(ApplicationFormStatus.APPROVAL);
-            nextStatuses.add(ApplicationFormStatus.REJECTED);
-            break;
-        case REJECTED:
-            break;
-        case REVIEW:
-            nextStatuses.add(ApplicationFormStatus.REVIEW);
-            nextStatuses.add(ApplicationFormStatus.INTERVIEW);
-            nextStatuses.add(ApplicationFormStatus.APPROVAL);
-            nextStatuses.add(ApplicationFormStatus.REJECTED);
-            break;
-        case UNSUBMITTED:
-            break;
-        case VALIDATION:
-            nextStatuses.add(ApplicationFormStatus.REVIEW);
-            nextStatuses.add(ApplicationFormStatus.INTERVIEW);
-            nextStatuses.add(ApplicationFormStatus.APPROVAL);
-            nextStatuses.add(ApplicationFormStatus.REJECTED);
-            break;
-        case WITHDRAWN:
-            break;
-        default:
-            break;
+
+    public String resolveView(ApplicationForm application, String action) {
+
+        if (!application.getProgram().isEnabled()) {
+            return REJECTION_VIEW + application.getApplicationNumber() + 
+                    "&rejectionId=" + REJECTION_REASON_WHEN_PROGAMME_EXPIRED.toString() + "&rejectionIdForced=true";
+        } else if (action != null && action.equals("abort")) {
+            return STATE_TRANSITION_VIEW;
+        } else {
+            ApplicationFormStatus nextStatus = application.getNextStatus().getId();
+            if (nextStatus != null) {
+                switch (nextStatus) {
+                case REVIEW:
+                    return REVIEW_VIEW + application.getApplicationNumber();
+                case INTERVIEW:
+                    return INTERVIEW_VIEW + application.getApplicationNumber();
+                case APPROVAL:
+                    return APPROVAL_VIEW + application.getApplicationNumber();
+                case REJECTED:
+                    return REJECTION_VIEW + application.getApplicationNumber();
+                case APPROVED:
+                    return OFFER_RECOMMENDATION_VIEW + application.getApplicationNumber();
+                default:
+                }
+            }
+            return STATE_TRANSITION_VIEW;
         }
-        return nextStatuses;
+        
+    }   
+
+    public List<ApplicationFormStatus> getAssignableNextStati(final ApplicationForm application, final RegisteredUser user) {
+        ApplicationFormStatus status = application.getStatus().getId();
+        boolean canAdministerApplication = permissionsService.canAdministerApplication(application, user);
+        boolean canApproveApplication = permissionsService.canApproveApplication(application, user);
+        List<ApplicationFormStatus> nextStati = new ArrayList<ApplicationFormStatus>();
+
+        if (stateService.getAllStatesThatApplicationsCanBeAssignedFrom().contains(status) && (canAdministerApplication || canApproveApplication)) {
+            List<ApplicationFormStatus> assignableNextStati = stateService.getAllStatesThatApplicationsCanBeAssignedTo();
+
+            for (ApplicationFormStatus assignableNextStatus : assignableNextStati) {
+                if ((canApproveApplication || (assignableNextStatus != ApplicationFormStatus.APPROVAL && canAdministerApplication))
+                        && assignableNextStatus != application.getNextStatus().getId()) {
+                    nextStati.add(assignableNextStatus);
+                }
+            }
+        }
+
+        return nextStati;
     }
+    
 }

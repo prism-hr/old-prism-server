@@ -34,8 +34,6 @@ import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -121,12 +119,11 @@ public class QualificationController {
     }
 
     @RequestMapping(value = "/getQualification", method = RequestMethod.GET)
-    public String getQualificationView(@RequestParam String applicationId, @RequestParam(required = false) Integer qualificationId, ModelMap modelMap) {
+    public String getQualificationView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer qualificationId, ModelMap modelMap) {
         RegisteredUser currentUser = userService.getCurrentUser();
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         Qualification qualification;
         if (qualificationId != null) {
-            qualification = getQualification(application, qualificationId, currentUser);
+            qualification = getQualification(applicationForm, qualificationId, currentUser);
         } else {
             qualification = new Qualification();
         }
@@ -139,14 +136,10 @@ public class QualificationController {
 
     @RequestMapping(value = "/editQualification", method = RequestMethod.POST)
     public String editQualification(@RequestParam(required = false) Integer qualificationId, @Valid Qualification qualification, BindingResult result,
-            ModelMap modelMap) {
+            ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser currentUser = userService.getCurrentUser();
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-        if (!currentUser.canEditAsApplicant(application)) {
-            throw new CannotUpdateApplicationException(application.getApplicationNumber());
-        }
         if (qualificationId != null) {
-            getQualification(application, qualificationId, currentUser);
+            getQualification(applicationForm, qualificationId, currentUser);
         }
 
         if (result.hasErrors()) {
@@ -158,8 +151,8 @@ public class QualificationController {
             return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
         }
 
-        qualificationService.save(application, qualificationId, qualification);
-        applicationFormUserRoleService.insertApplicationUpdate(application, currentUser, ApplicationUpdateScope.ALL_USERS);
+        qualificationService.save(applicationForm, qualificationId, qualification);
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, currentUser, ApplicationUpdateScope.ALL_USERS);
         return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
     }
 
@@ -214,11 +207,7 @@ public class QualificationController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(String applicationId) {
-        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
-        return application;
+        return applicationsService.getEditableApplicationForm(applicationId);
     }
 
 }

@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
@@ -29,42 +30,80 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Transactional
 public class RefereeService {
 
-    private final RefereeDAO refereeDAO;
-    private final UserService userService;
-    private final RoleDAO roleDAO;
-    private final CommentService commentService;
-    private final EventFactory eventFactory;
-    private final ApplicationFormDAO applicationFormDAO;
-    private final EncryptionUtils encryptionUtils;
-    private final EncryptionHelper encryptionHelper;
-    private final ApplicantRatingService applicantRatingService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    public RefereeService() {
-        this(null, null, null, null, null, null, null, null, null, null);
-    }
+    @Autowired
+    private RefereeDAO refereeDAO;
 
     @Autowired
-    public RefereeService(RefereeDAO refereeDAO, EncryptionUtils encryptionUtils, UserService userService, RoleDAO roleDAO, CommentService commentService,
-            EventFactory eventFactory, ApplicationFormDAO applicationFormDAO, EncryptionHelper encryptionHelper, ApplicantRatingService applicantRatingService, ApplicationFormUserRoleService applicationFormUserRoleService) {
-        this.refereeDAO = refereeDAO;
-        this.encryptionUtils = encryptionUtils;
-        this.userService = userService;
-        this.roleDAO = roleDAO;
-        this.commentService = commentService;
-        this.eventFactory = eventFactory;
-        this.applicationFormDAO = applicationFormDAO;
-        this.encryptionHelper = encryptionHelper;
-        this.applicantRatingService = applicantRatingService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-    }
+    private UserService userService;
 
-    public Referee getRefereeById(Integer id) {
+    @Autowired
+    private RoleDAO roleDAO;
+
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private EventFactory eventFactory;
+
+    @Autowired
+    private ApplicationFormDAO applicationFormDAO;
+
+    @Autowired
+    private EncryptionUtils encryptionUtils;
+
+    @Autowired
+    private EncryptionHelper encryptionHelper;
+    
+    @Autowired
+    private ApplicationsService applicationsService;
+
+    @Autowired
+    private ApplicantRatingService applicantRatingService;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    public Referee getById(Integer id) {
         return refereeDAO.getRefereeById(id);
     }
 
     public void save(Referee referee) {
         refereeDAO.save(referee);
+    }
+
+    /**
+     * Why are we doing this instead of hibernate save or update?
+     * @param referee
+     * @param newReferee
+     * @Author Alastair Knowles
+     */
+    public void saveOrUpdate(Referee referee, Referee newReferee) {
+        ApplicationForm application = newReferee.getApplication();
+        
+        if (referee == null) {
+            referee = newReferee;
+        } else {
+            referee.setFirstname(newReferee.getFirstname());
+            referee.setLastname(newReferee.getLastname());
+            if (referee.getEmail() != newReferee.getEmail()) {
+                delete(referee);
+            }
+            referee.setEmail(newReferee.getEmail());
+            referee.setJobEmployer(newReferee.getJobEmployer());
+            referee.setJobTitle(newReferee.getJobTitle());
+            referee.setAddressLocation(newReferee.getAddressLocation());
+            referee.setPhoneNumber(newReferee.getPhoneNumber());
+            referee.setMessenger(newReferee.getMessenger());
+        }
+
+        if (!application.getStatus().isSubmitted()) {
+            save(referee);
+        } else if (application.getStatus().isModifiable()) {
+            processRefereeAndGetAsUser(referee);
+        }
+        
+        applicationsService.save(application);
+        applicationFormUserRoleService.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
     }
 
     public void refresh(Referee referee) {
@@ -87,7 +126,7 @@ public class RefereeService {
         if (userExists(user) && !isUserReferee(user)) {
             user.getRoles().add(refereeRole);
             if (user.getActivationCode() == null) {
-            	user.setActivationCode(encryptionUtils.generateUUID());
+                user.setActivationCode(encryptionUtils.generateUUID());
             }
         }
         if (!userExists(user)) {
@@ -95,6 +134,7 @@ public class RefereeService {
         }
         referee.setUser(user);
         save(referee);
+        applicationFormUserRoleService.createRefereeRole(referee);
         return user;
     }
 
@@ -128,8 +168,10 @@ public class RefereeService {
     }
 
     public void delete(Referee referee) {
-        if (referee.getUser() != null) {
+        RegisteredUser refereeUser = referee.getUser();
+        if (refereeUser != null) {
             referee.getUser().getReferees().remove(referee);
+            applicationFormUserRoleService.deleteApplicationRole(referee.getApplication(), refereeUser, Authority.REFEREE);
         }
         refereeDAO.delete(referee);
     }
@@ -165,7 +207,7 @@ public class RefereeService {
 
     public ReferenceComment editReferenceComment(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
-        Referee referee = getRefereeById(refereeId);
+        Referee referee = getById(refereeId);
         ReferenceComment reference = referee.getReference();
 
         reference.setComment(refereesAdminEditDTO.getComment());
@@ -179,7 +221,7 @@ public class RefereeService {
         if (document != null) {
             reference.setDocuments(Collections.singletonList(document));
         }
-        
+
         applicantRatingService.computeAverageRating(applicationForm);
 
         return reference;
@@ -191,7 +233,7 @@ public class RefereeService {
             referee = createReferee(refereesAdminEditDTO, applicationForm);
         } else {
             Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
-            referee = getRefereeById(refereeId);
+            referee = getById(refereeId);
         }
 
         if (referee.getUser() == null) {
@@ -207,7 +249,7 @@ public class RefereeService {
         if (applicationForm.getReferencesToSendToPortico().size() < 2) {
             referee.setSendToUCL(true);
         }
-        
+
         applicationFormUserRoleService.referencePosted(referee);
 
         saveReferenceAndSendMailNotifications(referee);

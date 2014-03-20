@@ -76,7 +76,7 @@ public class RefereeControllerTest {
         Referee referee = new Referee();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
         
         EasyMock.replay(refereeServiceMock, encryptionHelperMock);
         assertEquals("/private/pgStudents/form/components/references_details", controller.getRefereeView("enc", modelMap));
@@ -134,7 +134,7 @@ public class RefereeControllerTest {
         Referee referee = new RefereeBuilder().id(1).build();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
         EasyMock.replay(refereeServiceMock, encryptionHelperMock);
 
         Referee returnedReferee = controller.getReferee("enc");
@@ -151,7 +151,7 @@ public class RefereeControllerTest {
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfRefereeDoesNotExist() {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("encrypted")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(null);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(null);
         EasyMock.replay(refereeServiceMock, encryptionHelperMock);
 
         controller.getReferee("encrypted");
@@ -172,7 +172,7 @@ public class RefereeControllerTest {
 
         EasyMock.expect(errors.hasErrors()).andReturn(false);
         EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
         refereeServiceMock.save(referee);
         applicationsServiceMock.save(applicationForm);
 
@@ -194,7 +194,7 @@ public class RefereeControllerTest {
 
         EasyMock.expect(errors.hasErrors()).andReturn(false);
         EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
         refereeServiceMock.processRefereesRoles(application.getReferees());
 
         EasyMock.replay(refereeServiceMock, errors, encryptionHelperMock);
@@ -214,7 +214,7 @@ public class RefereeControllerTest {
 
         EasyMock.expect(errors.hasErrors()).andReturn(true);
         EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
 
         EasyMock.replay(refereeServiceMock, errors, encryptionHelperMock);
         String view = controller.editReferee("enc", referee, errors, modelMap);

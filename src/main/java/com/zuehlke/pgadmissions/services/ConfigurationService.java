@@ -86,7 +86,7 @@ public class ConfigurationService {
     @Transactional
     public void saveConfigurations(ServiceLevelsDTO serviceLevelsDTO) {
         for (StageDuration stageDuration : serviceLevelsDTO.getStagesDuration()) {
-            StageDuration oldDuration = stageDurationDAO.getByStatus(stageDuration.getStage());
+            StageDuration oldDuration = stageDurationDAO.getById(stageDuration.getStage());
             if (oldDuration != null) {
                 oldDuration.setUnit(stageDuration.getUnit());
                 oldDuration.setDuration(stageDuration.getDuration());
@@ -161,7 +161,7 @@ public class ConfigurationService {
         Map<ApplicationFormStatus, StageDuration> stageDurations = new HashMap<ApplicationFormStatus, StageDuration>();
         ApplicationFormStatus[] configurableStages = getConfigurableStages();
         for (ApplicationFormStatus applicationFormStatus : configurableStages) {
-            stageDurations.put(applicationFormStatus, stageDurationDAO.getByStatus(applicationFormStatus));
+            stageDurations.put(applicationFormStatus, stageDurationDAO.getById(applicationFormStatus));
         }
         return stageDurations;
     }

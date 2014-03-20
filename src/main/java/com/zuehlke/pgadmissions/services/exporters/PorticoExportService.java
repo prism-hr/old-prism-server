@@ -244,7 +244,6 @@ public class PorticoExportService {
                 }
             }
         }
-        applicationsService.transformUKCountriesAndDomiciles(form);
         applicationsService.save(form);
     }
 

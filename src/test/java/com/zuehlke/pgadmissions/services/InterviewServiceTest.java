@@ -98,7 +98,7 @@ public class InterviewServiceTest {
         StageDuration duration = new StageDurationBuilder().duration(1).unit(DurationUnitEnum.DAYS).build();
         RegisteredUser user = new RegisteredUser();
 
-        expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
+        expect(stageDurationServiceMock.getById(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
 
         applicationFormDAOMock.save(applicationForm);
         InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).build();
@@ -138,7 +138,7 @@ public class InterviewServiceTest {
 
         StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
 
-        EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
+        EasyMock.expect(stageDurationServiceMock.getById(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
 
         applicationFormDAOMock.save(applicationForm);
         InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).build();
@@ -177,7 +177,7 @@ public class InterviewServiceTest {
 
         interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
-        EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
+        EasyMock.expect(stageDurationServiceMock.getById(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
         EasyMock.expect(commentFactoryMock.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!", "loc")).andReturn(
                 interviewScheduleComment);
         commentServiceMock.save(interviewScheduleComment);
@@ -204,7 +204,7 @@ public class InterviewServiceTest {
 
         interviewDAOMock.save(interview);
         applicationFormDAOMock.save(applicationForm);
-        EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
+        EasyMock.expect(stageDurationServiceMock.getById(ApplicationFormStatus.INTERVIEW)).andReturn(duration);
         EasyMock.expect(commentFactoryMock.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!", "loc")).andReturn(
                 interviewScheduleComment);
         commentServiceMock.save(interviewScheduleComment);
@@ -289,7 +289,7 @@ public class InterviewServiceTest {
         interviewConfirmDTO.setLocationUrl("loc");
         InterviewScheduleComment interviewScheduleComment = new InterviewScheduleComment();
 
-        EasyMock.expect(stageDurationServiceMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(interviewStageDuration);
+        EasyMock.expect(stageDurationServiceMock.getById(ApplicationFormStatus.INTERVIEW)).andReturn(interviewStageDuration);
         EasyMock.expect(commentFactoryMock.createInterviewScheduleComment(user, applicationForm, "applicant!", "interviewer!", "loc")).andReturn(
                 interviewScheduleComment);
         commentServiceMock.save(interviewScheduleComment);

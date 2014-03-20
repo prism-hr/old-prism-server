@@ -60,7 +60,7 @@ public class ReviewService {
 	    
 		application.setLatestReviewRound(reviewRound);
 		reviewRound.setApplication(application);
-		StageDuration reviewStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.REVIEW);
+		StageDuration reviewStageDuration = stageDurationService.getById(ApplicationFormStatus.REVIEW);
 		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, reviewStageDuration.getDurationInMinutes());
         application.setDueDate(dueDate.toDate());
         boolean sendReferenceRequest = application.getStatus() == ApplicationFormStatus.VALIDATION;

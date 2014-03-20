@@ -117,7 +117,7 @@ public class ApprovalServiceTest {
         StateChangeComment stateChangeComment = new StateChangeComment();
         ApplicationForm applicationForm = new ApplicationFormBuilder().comments(stateChangeComment).status(ApplicationFormStatus.VALIDATION).id(1).build();
         applyValidSendToPorticoData(applicationForm);
-        expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
+        expect(stageDurationDAOMock.getById(ApplicationFormStatus.APPROVAL)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(approvalRound);
         applicationFormDAOMock.save(applicationForm);
@@ -155,7 +155,7 @@ public class ApprovalServiceTest {
         RegisteredUser user = new RegisteredUserBuilder().id(8).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
         applyValidSendToPorticoData(applicationForm);
-        expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
+        expect(stageDurationDAOMock.getById(ApplicationFormStatus.APPROVAL)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(approvalRound);
         applicationFormDAOMock.save(applicationForm);
@@ -193,7 +193,7 @@ public class ApprovalServiceTest {
         ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).id(1).build();
         applyValidSendToPorticoData(applicationForm);
-        expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
+        expect(stageDurationDAOMock.getById(ApplicationFormStatus.APPROVAL)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(approvalRound);
         applicationFormDAOMock.save(applicationForm);
@@ -260,7 +260,7 @@ public class ApprovalServiceTest {
         for (Qualification qualifications : applicationForm.getQualifications()) {
             qualifications.setSendToUCL(false);
         }
-        expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
+        expect(stageDurationDAOMock.getById(ApplicationFormStatus.APPROVAL)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         approvalRoundDAOMock.save(approvalRound);
         applicationFormDAOMock.save(applicationForm);

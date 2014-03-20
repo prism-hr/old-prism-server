@@ -24,9 +24,11 @@ $(document).ready(function() {
         
 		$('#ajaxloader').show();
             switch ($(this).val()) {
-            case 'VIEW':
-            case 'VIEW_EDIT':
+            case 'COMPLETE_APPLICATION':
             case 'CORRECT_APPLICATION':
+            case 'EDIT_AS_ADMINISTRATOR':
+            case 'EDIT_AS_APPLICANT':
+            case 'VIEW':
                 window.location.href = "/pgadmissions/application?view=view&applicationId="+ id;
                 break;
             case 'COMMENT':

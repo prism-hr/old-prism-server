@@ -207,6 +207,7 @@ public class ApplicationFormCopyHelper {
         to.setContentType(from.getContentType());
         to.setFileName(from.getFileName());
         to.setContent(from.getContent());
+        to.setIsReferenced(true);
 
         documentDAO.save(to);
 

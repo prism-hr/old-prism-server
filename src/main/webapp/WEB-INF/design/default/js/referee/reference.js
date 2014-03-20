@@ -26,7 +26,6 @@ $(document).ready(function()
 		
 		if (this.files[0].size < 10485760)
 		{
-			referenceDelete();
 			$('#referenceDocumentProgress').html("uploading file...");
 			$('#referenceDocument').attr("readonly", "readonly");
 			referenceUpload();
@@ -49,39 +48,6 @@ $(document).ready(function()
 	});
 	
 });
-
-
-function referenceDelete()
-{
-	if ($('#document_REFERENCE') && $('#document_REFERENCE').val() && $('#document_REFERENCE').val() != '')
-	{
-		$.ajax({
-			type: 'POST',
-			 statusCode: {
-				  401: function() {
-					  window.location.reload();
-				  },
-				  500: function() {
-					  window.location.href = "/pgadmissions/error";
-				  },
-				  404: function() {
-					  window.location.href = "/pgadmissions/404";
-				  },
-				  400: function() {
-					  window.location.href = "/pgadmissions/400";
-				  },				  
-				  403: function() {
-					  window.location.href = "/pgadmissions/404";
-				  }
-			  },
-			  url:"/pgadmissions/delete/asyncdelete",
-			data:{
-				documentId: $('#document_REFERENCE').val()				
-			}				
-		});
-
-	}
-}
 
 function referenceUpload()
 {	

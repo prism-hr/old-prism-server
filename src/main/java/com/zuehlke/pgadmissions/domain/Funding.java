@@ -116,9 +116,6 @@ public class Funding implements FormSectionObject, Serializable {
 	}
 	
 	public void setDocument(Document document) {
-	    if (document != null) {
-	        document.setIsReferenced(true);
-	    }
 		this.document = document;
 	}
 

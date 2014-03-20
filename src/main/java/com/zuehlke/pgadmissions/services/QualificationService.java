@@ -14,16 +14,11 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 @Transactional
 public class QualificationService {
 
-    private final QualificationDAO qualificationDAO;
-
-    public QualificationService() {
-        this(null);
-    }
+    @Autowired
+    private QualificationDAO qualificationDAO;
 
     @Autowired
-    public QualificationService(final QualificationDAO qualificationDAO) {
-        this.qualificationDAO = qualificationDAO;
-    }
+    private DocumentService documentService;
 
     public Qualification getQualificationById(Integer id) {
         return qualificationDAO.getQualificationById(id);
@@ -36,6 +31,9 @@ public class QualificationService {
     public void save(ApplicationForm application, Integer qualificationId, Qualification qualification) {
         if (qualificationId != null) {
             Qualification existingQualification = qualificationDAO.getQualificationById(qualificationId);
+
+            documentService.documentReferentialityChanged(existingQualification.getProofOfAward(), qualification.getProofOfAward());
+
             existingQualification.setProofOfAward(qualification.getProofOfAward());
             existingQualification.setQualificationAwardDate(qualification.getQualificationAwardDate());
             existingQualification.setQualificationSubject(qualification.getQualificationSubject());

@@ -84,7 +84,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
         referee.setId(1);
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("lala")).andReturn(123);
-        EasyMock.expect(refereeServiceMock.getRefereeById(123)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(123)).andReturn(referee);
         refereeServiceMock.delete(referee);
         EasyMock.replay(refereeServiceMock, encryptionHelperMock);
 

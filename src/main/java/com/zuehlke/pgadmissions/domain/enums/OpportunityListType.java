@@ -24,7 +24,7 @@ public enum OpportunityListType {
     }
     
     public static Boolean shouldBeRandomisedForDisplay(OpportunityListType feedKey) {
-        return Arrays.asList(OPPORTUNITIESBYFEEDID, OPPORTUNITIESBYUSERUPI, OPPORTUNITIESBYUSERUSERNAME).contains(feedKey);
+        return feedKey == null || Arrays.asList(OPPORTUNITIESBYFEEDID, OPPORTUNITIESBYUSERUPI, OPPORTUNITIESBYUSERUSERNAME).contains(feedKey);
     }
     
 }

@@ -144,7 +144,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute ApplicationForm applicationForm) {
-    	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.VIEW_EDIT);
+    	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.EDIT_AS_ADMINISTRATOR);
     	applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
@@ -186,7 +186,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
         if (!"newReferee".equals(editedRefereeId)) {
             Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
-            Referee referee = refereeService.getRefereeById(decryptedId);
+            Referee referee = refereeService.getById(decryptedId);
             if (referee.getReference() != null) {
                 return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
             }

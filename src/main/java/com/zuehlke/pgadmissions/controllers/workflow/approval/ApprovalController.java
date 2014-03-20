@@ -253,7 +253,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
         if (!"newReferee".equals(editedRefereeId)) {
             Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
-            Referee referee = refereeService.getRefereeById(decryptedId);
+            Referee referee = refereeService.getById(decryptedId);
             if (referee.getReference() != null) {
                 return REFERENCE_SECTION;
             }

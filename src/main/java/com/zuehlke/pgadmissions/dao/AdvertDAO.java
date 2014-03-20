@@ -171,6 +171,7 @@ public class AdvertDAO {
     }
     
     private List<AdvertDTO> getProgramAdvertDTOs(Criteria programQuery, ProjectionList programProjectionList, Date baselineDate, Integer selectedAdvertId) {
+        deleteExpiredClosingDates();
         return (List<AdvertDTO>) programQuery
                 .setProjection(programProjectionList.add(Projections.groupProperty("program.id"), "id")
                         .add(Projections.property("program.title"), "title")
@@ -202,7 +203,7 @@ public class AdvertDAO {
                         .add(Projections.property("project.studyDuration"), "studyDuration")
                         .add(Projections.property("project.funding"), "funding")
                         .add(Projections.property("program.code"), "programCode")
-                        .add(Projections.min("project.closingDate"), "closingDate")
+                        .add(Projections.property("project.closingDate"), "closingDate")
                         .add(Projections.property("primarySupervisor.firstName"), "primarySupervisorFirstName")
                         .add(Projections.property("primarySupervisor.lastName"), "primarySupervisorLastName")
                         .add(Projections.property("primarySupervisor.email"), "primarySupervisorEmail")
@@ -211,12 +212,8 @@ public class AdvertDAO {
                         .add(Projections.property("secondarySupervisor.lastName"), "secondarySupervisorLastName"))
                 .createAlias("project.primarySupervisor", "primarySupervisor", JoinType.INNER_JOIN)
                 .createAlias("project.secondarySupervisor", "secondarySupervisor", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("program.closingDates", "closingDate", JoinType.LEFT_OUTER_JOIN)
                 .add(Restrictions.eq("project.enabled", true))
                 .add(Restrictions.eq("project.active", true))
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.isNull("closingDate.id"))
-                        .add(Restrictions.ge("closingDate.closingDate", baselineDate)))
                 .add(Restrictions.ne("project.id", selectedAdvertId))
                 .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list();
     }
@@ -255,6 +252,10 @@ public class AdvertDAO {
                 .setInteger(0, Integer.parseInt(feedKeyValue))
                 .setBigDecimal(1, RECOMMENDED_ADVERT_FEED_THRESHOLD)
             .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list();
+    }
+    
+    private void deleteExpiredClosingDates() {
+        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_EXPIRED_CLOSING_DATES();").executeUpdate();
     }
 
 }

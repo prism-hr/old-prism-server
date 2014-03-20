@@ -129,7 +129,7 @@ public class InterviewService {
 
     private void assignInterviewDueDate(final Interview interview, ApplicationForm applicationForm) {
         DateTime baseDate = interview.getTakenPlace() || !interview.isScheduled() ? new DateTime() : new DateTime(interview.getInterviewDueDate());
-        StageDuration duration = stageDurationService.getByStatus(ApplicationFormStatus.INTERVIEW);
+        StageDuration duration = stageDurationService.getById(ApplicationFormStatus.INTERVIEW);
         Date dueDate = DateUtils.addWorkingDaysInMinutes(DateUtils.truncateToDay(baseDate.toDate()), duration.getDurationInMinutes());
         applicationForm.setDueDate(dueDate);
     }

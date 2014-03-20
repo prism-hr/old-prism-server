@@ -392,7 +392,7 @@ public class ApprovalControllerTest {
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(12);
         EasyMock.expect(encryptionHelperMock.encrypt(12)).andReturn("refereeId");
-        EasyMock.expect(refereeServiceMock.getRefereeById(12)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(12)).andReturn(referee);
 
         EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(referenceComment);
         refereeServiceMock.refresh(referee);
@@ -435,7 +435,7 @@ public class ApprovalControllerTest {
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("refereeId")).andReturn(12);
         EasyMock.expect(encryptionHelperMock.encrypt(12)).andReturn("refereeId");
-        EasyMock.expect(refereeServiceMock.getRefereeById(12)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(12)).andReturn(referee);
         refereesAdminEditDTOValidatorMock.validate(refereesAdminEditDTO, result);
         EasyMock.expectLastCall();
         EasyMock.expect(refereeServiceMock.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO)).andReturn(referenceComment);

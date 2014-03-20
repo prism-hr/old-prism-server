@@ -15,8 +15,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -39,7 +37,6 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
@@ -59,10 +56,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "application_number")
     private String applicationNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "app_administrator_id")
-    private RegisteredUser applicationAdministrator;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "rejection_id")
     private Rejection rejection;
@@ -71,17 +64,17 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "application_form_id")
     private List<Event> events = new ArrayList<Event>();
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
+    @OneToMany
+    @JoinColumn(name = "status")
+    private State status;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "next_status")
-    private ApplicationFormStatus nextStatus = null;
+    @OneToMany
+    @JoinColumn(name = "next_status")
+    private State nextStatus = null;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status_when_withdrawn")
-    private ApplicationFormStatus statusWhenWithdrawn = null;
+    @OneToMany
+    @JoinColumn(name = "last_status")
+    private State lastStatus = null;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "current_address_id")
@@ -116,8 +109,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "submitted_on_timestamp")
     private Date submittedDate;
 
-    @Column(name = "batch_deadline")
-    private Date batchDeadline;
+    @Column(name = "closing_date")
+    private Date closingDate = null;
 
     @Column(name = "last_updated")
     @Temporal(value = TemporalType.TIMESTAMP)
@@ -267,18 +260,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.applicationTimestamp = applicationTimestamp;
     }
 
-    public boolean isModifiable() {
-        if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN
-                || !getIsEditableByApplicant()) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isSubmitted() {
-        return status != ApplicationFormStatus.UNSUBMITTED;
-    }
-
     public InterviewEvaluationComment getLastInterviewEvaluationComment() {
         for (int i = applicationComments.size() - 1; i >= 0; i--) {
             if (applicationComments.get(i) instanceof InterviewEvaluationComment) {
@@ -304,19 +285,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             }
         }
         return false;
-    }
-
-    public boolean isDecided() {
-        return (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN)
-                && BooleanUtils.isTrue(exported);
-    }
-
-    public boolean isWithdrawn() {
-        return status == ApplicationFormStatus.WITHDRAWN;
-    }
-
-    public boolean isTerminated() {
-        return isDecided() || isWithdrawn();
     }
 
     public List<Comment> getApplicationComments() {
@@ -488,8 +456,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         return dueDate;
     }
 
-    public void setDueDate(Date validationDueDate) {
-        this.dueDate = validationDueDate;
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
     }
 
     public Advert getAdvert() {
@@ -532,38 +500,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.projectTitle = projectTitle;
     }
 
-    public ApplicationFormStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ApplicationFormStatus status) {
-        if (status == ApplicationFormStatus.WITHDRAWN) {
-            this.statusWhenWithdrawn = this.status;
-        }
-
-        this.status = status;
-        this.nextStatus = null;
-
-        if (Arrays.asList(ApplicationFormStatus.UNSUBMITTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW, ApplicationFormStatus.INTERVIEW)
-                .contains(status)) {
-            this.isEditableByApplicant = true;
-        } else {
-            this.isEditableByApplicant = false;
-        }
-
-    }
-
-    public ApplicationFormStatus getNextStatus() {
-        return nextStatus;
-    }
-
-    public void setNextStatus(ApplicationFormStatus nextStatus) {
-        this.nextStatus = nextStatus;
-    }
-
-    public ApplicationFormStatus getStatusWhenWithdrawn() {
-        return statusWhenWithdrawn;
-    }
 
     public Date getRejectNotificationDate() {
         return rejectNotificationDate;
@@ -571,22 +507,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public void setRejectNotificationDate(Date rejectNotificationDate) {
         this.rejectNotificationDate = rejectNotificationDate;
-    }
-
-    public boolean isInValidationStage() {
-        return status == ApplicationFormStatus.VALIDATION;
-    }
-
-    public boolean isInReviewStage() {
-        return status == ApplicationFormStatus.REVIEW;
-    }
-
-    public boolean isInInterviewStage() {
-        return status == ApplicationFormStatus.INTERVIEW;
-    }
-
-    public boolean isInApprovalStage() {
-        return status == ApplicationFormStatus.APPROVAL;
     }
 
     public boolean hasAcceptedTheTerms() {
@@ -609,18 +529,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.acceptedTermsOnSubmission = acceptedTerms;
     }
 
-    public boolean isInState(String strStatus) {
-        try {
-            return status == ApplicationFormStatus.valueOf(strStatus);
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    public boolean isInState(ApplicationFormStatus enumStatus) {
-        return status == enumStatus;
-    }
-
     public List<Event> getEvents() {
         return events;
     }
@@ -628,6 +536,42 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     public void setEvents(List<Event> events) {
         this.events.clear();
         this.events.addAll(events);
+    }
+
+    public State getStatus() {
+        return status;
+    }
+
+    public void setStatus(State status) {
+        this.status = status;
+    }
+
+    public State getNextStatus() {
+        return nextStatus;
+    }
+
+    public void setNextStatus(State nextStatus) {
+        this.nextStatus = nextStatus;
+    }
+
+    public State getLastStatus() {
+        return lastStatus;
+    }
+
+    public void setLastStatus(State lastStatus) {
+        this.lastStatus = lastStatus;
+    }
+
+    public Boolean getExported() {
+        return exported;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     @Override
@@ -717,14 +661,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.latestApprovalRound = latestApprovalRound;
     }
 
-    public RegisteredUser getApplicationAdministrator() {
-        return applicationAdministrator;
-    }
-
-    public void setApplicationAdministrator(RegisteredUser applicationAdministrator) {
-        this.applicationAdministrator = applicationAdministrator;
-    }
-
     public String getApplicationNumber() {
         return applicationNumber;
     }
@@ -741,12 +677,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.uclBookingReferenceNumber = uclBookingReferenceNumber;
     }
 
-    public Date getBatchDeadline() {
-        return batchDeadline;
+    public Date getClosingDate() {
+        return closingDate;
     }
 
-    public void setBatchDeadline(Date batchDeadline) {
-        this.batchDeadline = batchDeadline;
+    public void setClosingDate(Date closingDate) {
+        this.closingDate = closingDate;
     }
 
     public boolean isAcceptedTerms() {
@@ -804,59 +740,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public void setApplicationFormTransfer(ApplicationFormTransfer applicationFormTransfer) {
         this.applicationFormTransfer = applicationFormTransfer;
-    }
-
-    public ApplicationFormStatus getOutcomeOfStage() {
-        if (ApplicationFormStatus.REVIEW == status) {
-            return resolveOutcomeOfStageForReviewStatus();
-        }
-        if (ApplicationFormStatus.INTERVIEW == status) {
-            return resolveOutcomeOfStageForInterviewStatus();
-        }
-        if (ApplicationFormStatus.APPROVAL == status) {
-            return resolveOutcomeOfStageForApprovalStatus();
-        }
-        if (!approvalRounds.isEmpty()) {
-            return ApplicationFormStatus.APPROVAL;
-        }
-        if (!interviews.isEmpty()) {
-            return ApplicationFormStatus.INTERVIEW;
-        }
-        if (!reviewRounds.isEmpty()) {
-            return ApplicationFormStatus.REVIEW;
-        }
-        return ApplicationFormStatus.VALIDATION;
-    }
-
-    private ApplicationFormStatus resolveOutcomeOfStageForApprovalStatus() {
-        if (approvalRounds.size() > 1) {
-            return ApplicationFormStatus.APPROVAL;
-        }
-        if (!interviews.isEmpty()) {
-            return ApplicationFormStatus.INTERVIEW;
-        }
-        if (!reviewRounds.isEmpty()) {
-            return ApplicationFormStatus.REVIEW;
-        }
-        return ApplicationFormStatus.VALIDATION;
-    }
-
-    private ApplicationFormStatus resolveOutcomeOfStageForInterviewStatus() {
-        if (interviews.size() > 1) {
-            return ApplicationFormStatus.INTERVIEW;
-        }
-        if (!reviewRounds.isEmpty()) {
-            return ApplicationFormStatus.REVIEW;
-        }
-        return ApplicationFormStatus.VALIDATION;
-    }
-
-    private ApplicationFormStatus resolveOutcomeOfStageForReviewStatus() {
-        if (reviewRounds.size() > 1) {
-            return ApplicationFormStatus.REVIEW;
-        }
-
-        return ApplicationFormStatus.VALIDATION;
     }
 
     public List<Document> getQualificationsToSendToPortico() {
@@ -936,10 +819,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
             return true;
         }
         return false;
-    }
-
-    public boolean isNotInState(ApplicationFormStatus status) {
-        return !isInState(status);
     }
 
     public boolean hasConfirmElegibilityComment() {

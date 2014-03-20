@@ -95,7 +95,7 @@ public class StateChangeDTO {
     }
 
     public Boolean hasFastTrackOption() {
-        if (applicationForm.getBatchDeadline() == null) {
+        if (applicationForm.getClosingDate() == null) {
             return false;
         }
         return true;

@@ -19,7 +19,8 @@ public class WithdrawService {
     @Autowired
     private EventFactory eventFactory;
     
-    @Autowired ApplicationFormUserRoleService applicationFormUserRoleService;
+    @Autowired 
+    ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @Transactional
     public void withdrawApplication(final ApplicationForm application) {
@@ -31,7 +32,7 @@ public class WithdrawService {
 
     @Transactional
     public void sendToPortico(final ApplicationForm form) {
-        if (form.getStatusWhenWithdrawn() != ApplicationFormStatus.UNSUBMITTED && form.getProgram().getProgramFeed() != null) {
+        if (form.getLastStatus() != ApplicationFormStatus.UNSUBMITTED && form.getProgram().getProgramFeed() != null) {
             porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
         }
     }

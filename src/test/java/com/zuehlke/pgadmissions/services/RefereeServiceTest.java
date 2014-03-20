@@ -358,7 +358,7 @@ public class RefereeServiceTest {
         EasyMock.expect(refereeDAOMock.getRefereeById(23)).andReturn(referee);
         EasyMock.replay(referee, refereeDAOMock);
 
-        Assert.assertEquals(referee, refereeService.getRefereeById(23));
+        Assert.assertEquals(referee, refereeService.getById(23));
     }
 
     @Test

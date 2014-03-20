@@ -32,8 +32,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
@@ -166,21 +164,14 @@ public class PersonalDetailsController {
     @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
     public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult,
             @ModelAttribute("updatedUser") @Valid RegisteredUser updatedUser, BindingResult userResult, Model model,
-            @ModelAttribute("applicationForm") ApplicationForm application) {
-        if (application.isDecided()) {
-            throw new CannotUpdateApplicationException(application.getApplicationNumber());
-        }
-
+            @ModelAttribute ApplicationForm application) {
         if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {
             return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
         }
-
+        
         userService.updateCurrentUser(updatedUser);
-
         personalDetailsService.save(application, personalDetails);
-
         applicationFormUserRoleService.insertApplicationUpdate(application, getUser(), ApplicationUpdateScope.ALL_USERS);
-
         return "redirect:/update/getPersonalDetails?applicationId=" + personalDetails.getApplication().getApplicationNumber();
     }
 
@@ -251,11 +242,7 @@ public class PersonalDetailsController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(String applicationId) {
-        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
-        return application;
+        return applicationsService.getEditableApplicationForm(applicationId);
     }
 
     @ModelAttribute("languageQualificationTypes")

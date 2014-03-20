@@ -1,36 +1,40 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Arrays;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
-import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
+import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
-@Service("applicationsService")
+@Service
 @Transactional
 public class ApplicationsService {
 
@@ -51,17 +55,28 @@ public class ApplicationsService {
     private ProgramDAO programDAO;
 
     @Autowired
-    private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
-
-    @Autowired
     private CountriesDAO countriesDAO;
 
     @Autowired
     private DomicileDAO domicileDAO;
-
-    public Date getBatchDeadlineForApplication(ApplicationForm form) {
-        return programDAO.getNextClosingDate(form.getProgram());
-    }
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private ActionsProvider actionsProvider;
+    
+    @Autowired
+    private StateService stateService;
+    
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    
+    @Autowired
+    private EventFactory eventFactory;
+    
+    @Autowired
+    private AdditionalInformationService additionalInformationService;
 
     public ApplicationForm getApplicationById(Integer id) {
         return applicationFormDAO.get(id);
@@ -79,7 +94,7 @@ public class ApplicationsService {
         List<ApplicationDescriptor> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
         for (ApplicationDescriptor application : applications) {
             application.getActionDefinitions().addAll(
-                    applicationFormUserRoleDAO.selectUserActions(user.getId(), application.getApplicationFormId(), application.getApplicationFormStatus()));
+                    applicationFormUserRoleService.selectUserActions(user.getId(), application.getApplicationFormId()));
         }
         return applications;
     }
@@ -97,11 +112,6 @@ public class ApplicationsService {
         }
     }
 
-    public void fastTrackApplication(final String applicationNumber) {
-        ApplicationForm form = applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
-        form.setBatchDeadline(null);
-    }
-
     public void refresh(final ApplicationForm applicationForm) {
         applicationFormDAO.refresh(applicationForm);
     }
@@ -113,56 +123,111 @@ public class ApplicationsService {
     public List<ApplicationForm> getApplicationsForProject(final Project project) {
         return applicationFormDAO.getApplicationsByProject(project);
     }
-
-    /**
-     * Temporary bodge to help applications with countries or domiciles that are
-     * UK municipalities to pass the web service validation.
-     * 
-     * @author Alastair Knowles
-     * @param form
-     */
-    public void transformUKCountriesAndDomiciles(final ApplicationForm form) {
-        String ukCode = "XK";
-        Country ukCountry = countriesDAO.getEnabledCountryByCode(ukCode);
-        Domicile ukDomicile = domicileDAO.getEnabledDomicileByCode(ukCode);
-        List<String> ukTransforms = Arrays.asList("XF", "XI", "XH", "8826");
-        Country countryOfBirth = form.getPersonalDetails().getCountry();
-        if (ukCountry != null) {
-            if (ukTransforms.contains(countryOfBirth.getCode())) {
-                form.getPersonalDetails().setCountry(ukCountry);
+    
+    public void submitApplication(ApplicationForm application, HttpServletRequest request) {
+        setApplicantIpAddress(application, request);
+        setApplicationFormStatus(application, ApplicationFormStatus.VALIDATION);
+        sendSubmissionConfirmationToApplicant(application);
+        applicationFormUserRoleService.applicationSubmitted(application);
+        applicationFormUserRoleService.insertApplicationUpdate(application, application.getApplicant(), ApplicationUpdateScope.ALL_USERS);
+    }
+    
+    public void setApplicationFormStatus(ApplicationForm application, ApplicationFormStatus newStatus) {
+        application.setLastStatus(application.getStatus());
+        application.setStatus(stateService.getById(newStatus));
+        application.setNextStatus(null);
+        
+        switch (newStatus) {
+        case UNSUBMITTED:
+            application.setDueDate(getApplicationFormDueDate(application));
+            application.setClosingDate(getApplicationFormClosingDate(application));
+        case VALIDATION:
+            application.setSubmittedDate(new LocalDate().toDate());
+            application.setDueDate(getApplicationFormDueDate(application));
+            application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
+        case INTERVIEW:
+            application.setDueDate(getApplicationFormDueDate(application));
+            application.setClosingDate(null);
+        case APPROVAL:
+            application.setDueDate(getApplicationFormDueDate(application));
+            application.setClosingDate(null);
+        case REVIEW:
+            application.setDueDate(getApplicationFormDueDate(application));
+            if (application.getLastStatus().getId() == newStatus) {
+                application.setClosingDate(null);
+            }
+        case APPROVED:
+        case REJECTED:
+        case WITHDRAWN:
+            application.setDueDate(null);
+            application.setClosingDate(null);
+        }
+        
+    }
+    
+    public ApplicationForm getSecuredApplicationForm(final String applicationId, final ApplicationFormAction... actions) {
+        ApplicationForm application = getApplicationByApplicationNumber(applicationId);
+        if (application == null) {
+            throw new MissingApplicationFormException(applicationId);
+        }
+        RegisteredUser user = userService.getCurrentUser();
+        for (ApplicationFormAction action : actions) {
+            if (actionsProvider.checkActionAvailable(application, user, action)) {
+                return application;
             }
         }
-        if (ukDomicile != null) {
-            Domicile countryOfResidence = form.getPersonalDetails().getResidenceCountry();
-            if (ukTransforms.contains(countryOfResidence.getCode())) {
-                form.getPersonalDetails().setResidenceCountry(ukDomicile);
+        throw new ActionNoLongerRequiredException(application.getApplicationNumber());
+    }
+    
+    public void saveAdditionalInformationSection(ApplicationForm application, AdditionalInformation additionalInformation) {
+        application.setAdditionalInformation(additionalInformation);
+        additionalInformationService.save(additionalInformation);
+        save(application);
+        registerApplicationUpdate(application);
+    }
+    
+    public void saveAddressSection(ApplicationForm application) {
+        save(application);
+        registerApplicationUpdate(application);
+    }
+    
+    public void saveDocumentSection(ApplicationForm application) {
+        save(application);
+        registerApplicationUpdate(application);
+    }
+    
+    private void registerApplicationUpdate(ApplicationForm application) {
+        applicationFormUserRoleService.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+    }
+    
+    private Date getApplicationFormClosingDate(ApplicationForm application) {
+        if (application.getProject() != null) {
+            return application.getProject().getClosingDate();
+        } 
+        return programDAO.getNextClosingDate(application.getProgram());
+    }
+    
+    private Date getApplicationFormDueDate(ApplicationForm application) {
+        LocalDate baselineDate = new LocalDate();
+        Date closingDate = application.getClosingDate();
+        State status = application.getStatus();
+        if (status.getId() == ApplicationFormStatus.REVIEW && closingDate != null) {
+            if (closingDate.after(baselineDate.toDate())) {
+                baselineDate = new LocalDate(closingDate);
             }
-            Domicile countryOfCurrentAddress = form.getCurrentAddress().getDomicile();
-            if (ukTransforms.contains(countryOfCurrentAddress.getCode())) {
-                form.getCurrentAddress().setDomicile(ukDomicile);
-            }
-            Domicile countryOfContactAddress = form.getContactAddress().getDomicile();
-            if (ukTransforms.contains(countryOfContactAddress.getCode())) {
-                form.getContactAddress().setDomicile(ukDomicile);
-            }
-            for (Qualification qualification : form.getQualifications()) {
-                Domicile countryOfInstitution = qualification.getInstitutionCountry();
-                if (ukTransforms.contains(countryOfInstitution.getCode())) {
-                    qualification.setInstitutionCountry(ukDomicile);
-                }
-            }
-            for (EmploymentPosition position : form.getEmploymentPositions()) {
-                Domicile countryOfEmployer = position.getEmployerAddress().getDomicile();
-                if (ukTransforms.contains(countryOfEmployer.getCode())) {
-                    position.getEmployerAddress().setDomicile(ukDomicile);
-                }
-            }
-            for (Referee referee : form.getReferees()) {
-                Domicile countryOfReferee = referee.getAddressLocation().getDomicile();
-                if (ukTransforms.contains(countryOfReferee.getCode())) {
-                    referee.getAddressLocation().setDomicile(ukDomicile);
-                }
-            }
+        }
+        Integer daysToAdd = status.getDurationInDays();
+        if (daysToAdd != null) {
+            application.setDueDate(baselineDate.plusDays(daysToAdd).toDate());
+        }
+        return null;
+    }
+    
+    private void setApplicantIpAddress (ApplicationForm application, HttpServletRequest request) {
+        try {
+            application.setIpAddressAsString(request.getRemoteAddr());
+        } catch (UnknownHostException e) {
+            log.error("Error while setting ip address of: " + request.getRemoteAddr(), e);
         }
     }
 

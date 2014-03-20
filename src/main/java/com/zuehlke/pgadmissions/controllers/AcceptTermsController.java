@@ -8,15 +8,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
 @RequestMapping("/acceptTerms")
 public class AcceptTermsController {
 
-	private final ApplicationsService applicationsService;
 	private static final String TERMS_AND_CONDITIONS_VIEW_NAME = "/private/pgStudents/form/components/terms_and_conditions";
+	
+	@Autowired
+	private final ApplicationsService applicationsService;
 
 	public AcceptTermsController() {
 		this(null);
@@ -35,11 +37,8 @@ public class AcceptTermsController {
 
 	@ModelAttribute
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
-		if (applicationForm == null) {
-			throw new ResourceNotFoundException();
-		}
-		return applicationForm;
+        return applicationsService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
+                ApplicationFormAction.CORRECT_APPLICATION);
 
 	}
 

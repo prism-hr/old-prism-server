@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.mail;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -111,13 +110,6 @@ public abstract class AbstractMailSendingService {
 
     protected Collection<RegisteredUser> getProgramAdministrators(final ApplicationForm application) {
         return application.getProgram().getAdministrators();
-    }
-
-    protected Collection<RegisteredUser> getApplicationOrProgramAdministrators(final ApplicationForm application) {
-        if (application.getApplicationAdministrator() != null) {
-            return Collections.singleton(application.getApplicationAdministrator());
-        }
-        return getProgramAdministrators(application);
     }
 
     protected PrismEmailMessage buildMessage(RegisteredUser recipient, String subject, Map<String, Object> model, EmailTemplateName templateName) {

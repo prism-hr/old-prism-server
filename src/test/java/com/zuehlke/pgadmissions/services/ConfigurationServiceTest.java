@@ -110,7 +110,7 @@ public class ConfigurationServiceTest {
         serviceLevelsDTO.setReminderIntervals(Lists.newArrayList(reminderInterval));
         serviceLevelsDTO.setNotificationsDuration(notificationsDuration);
 
-        EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(oldValidationDuration);
+        EasyMock.expect(stageDurationDAOMock.getById(ApplicationFormStatus.VALIDATION)).andReturn(oldValidationDuration);
         EasyMock.expect(reminderIntervalDAOMock.getReminderInterval(ReminderType.INTERVIEW_SCHEDULE)).andReturn(oldReminderInterval);
         EasyMock.expect(notificationsDurationDAOMock.getNotificationsDuration()).andReturn(oldNotificationsDuration);
 
@@ -270,10 +270,10 @@ public class ConfigurationServiceTest {
         StageDuration stageDurationTwo = new StageDurationBuilder().stage(ApplicationFormStatus.REVIEW).build();
         StageDuration stageDurationThree = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).build();
         StageDuration stageDurationFour = new StageDurationBuilder().stage(ApplicationFormStatus.APPROVAL).build();
-        EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationOne);
-        EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(stageDurationTwo);
-        EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.INTERVIEW)).andReturn(stageDurationThree);
-        EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(stageDurationFour);
+        EasyMock.expect(stageDurationDAOMock.getById(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationOne);
+        EasyMock.expect(stageDurationDAOMock.getById(ApplicationFormStatus.REVIEW)).andReturn(stageDurationTwo);
+        EasyMock.expect(stageDurationDAOMock.getById(ApplicationFormStatus.INTERVIEW)).andReturn(stageDurationThree);
+        EasyMock.expect(stageDurationDAOMock.getById(ApplicationFormStatus.APPROVAL)).andReturn(stageDurationFour);
         EasyMock.replay(stageDurationDAOMock);
         Map<ApplicationFormStatus, StageDuration> durations = service.getStageDurations();
         assertEquals(stageDurationOne, durations.get(ApplicationFormStatus.VALIDATION));

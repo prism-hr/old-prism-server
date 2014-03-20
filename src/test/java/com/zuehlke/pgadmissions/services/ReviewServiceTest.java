@@ -114,7 +114,7 @@ public class ReviewServiceTest {
         Referee referee = new RefereeBuilder().build();
         StateChangeComment stateChangeComment = new StateChangeComment();
         ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).comments(stateChangeComment).status(ApplicationFormStatus.VALIDATION).id(1).build();
-        EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
+        EasyMock.expect(stageDurationDAOMock.getById(ApplicationFormStatus.REVIEW)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         
         applicationFormDAOMock.save(applicationForm);
@@ -147,7 +147,7 @@ public class ReviewServiceTest {
         StateChangeComment changeComment = new StateChangeComment();
         ReviewRound reviewRound = new ReviewRoundBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).comments(changeComment).build();
-        EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
+        EasyMock.expect(stageDurationDAOMock.getById(ApplicationFormStatus.REVIEW)).andReturn(
                 new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
         reviewRoundDAOMock.save(reviewRound);
         

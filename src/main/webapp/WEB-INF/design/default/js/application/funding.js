@@ -257,37 +257,6 @@ function postFundingData(message)
 	});
 }
 
-
-function fundingDocumentDelete(){
-	
-	if ($('#document_SUPPORTING_FUNDING') && $('#document_SUPPORTING_FUNDING').val() && $('#document_SUPPORTING_FUNDING').val() != '') {
-		$.ajax({
-			type: 'POST',
-			 statusCode: {
-				  401: function() {
-					  window.location.reload();
-				  },
-				  500: function() {
-					  window.location.href = "/pgadmissions/error";
-				  },
-				  404: function() {
-					  window.location.href = "/pgadmissions/404";
-				  },
-				  400: function() {
-					  window.location.href = "/pgadmissions/400";
-				  },				  
-				  403: function() {
-					  window.location.href = "/pgadmissions/404";
-				  }
-			  },
-			url:"/pgadmissions/delete/asyncdelete",
-			data:{
-				documentId: $('#document_SUPPORTING_FUNDING').val()
-			}				
-		});
-	}
-}
-
 function fundingDocumentUpload()
 {	
 	

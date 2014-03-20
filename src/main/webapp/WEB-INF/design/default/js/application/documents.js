@@ -73,10 +73,6 @@ $(document).ready(function()
 	});
 	addToolTips();
 
-  // Generic file upload solution...
-	watchUpload($('#cvDocument'), cvDelete);
-	watchUpload($('#psDocument'), psDelete);
-
 });
 
 
@@ -115,6 +111,7 @@ function postDocumentData(message)
 		url:"/pgadmissions/update/editDocuments",
 		data:{ 	
 			applicationId:  $('#applicationId').val(),	
+			application:  $('#applicationId').val(),	
 			cv: $('#document_CV').val(),
 			personalStatement: $('#document_PERSONAL_STATEMENT').val(),
 			message: message,
@@ -145,45 +142,6 @@ function postDocumentData(message)
 // --------------------------------------------------------------------------------
 // 
 // --------------------------------------------------------------------------------
-function cvDelete()
-{
-	if ($('#document_CV') && $('#document_CV').val() && $('#document_CV').val() != '')
-	{
-		$.ajax({
-			type: 'POST',
-			 statusCode: {
-				  401: function()
-					{
-					  window.location.reload();
-				  },
-				  500: function() {
-					  window.location.href = "/pgadmissions/error";
-				  },
-				  404: function() {
-					  window.location.href = "/pgadmissions/404";
-				  },
-				  400: function() {
-					  window.location.href = "/pgadmissions/400";
-				  },				  
-				  403: function() {
-					  window.location.href = "/pgadmissions/404";
-				  }
-			  },
-			url:"/pgadmissions/delete/deleteCV",
-			data: {
-				application: $('#applicationId').val()
-			},
-			success: function(data){
-				$('#cvLink').remove();
-				$('#deleteCv').remove();
-			}
-		});
-	}
-}
-
-// --------------------------------------------------------------------------------
-// 
-// --------------------------------------------------------------------------------
 function cvUpload()
 {	
 	$("#cvDocumentProgress").ajaxStart(function(){
@@ -208,45 +166,6 @@ function cvUpload()
 			$('#cvUploadedDocument').show();
 		}
 	});
-}
-
-// --------------------------------------------------------------------------------
-// 
-// --------------------------------------------------------------------------------
-function psDelete()
-{
-	if ($('#document_PERSONAL_STATEMENT') && $('#document_PERSONAL_STATEMENT').val() && $('#document_PERSONAL_STATEMENT').val() != '')
-	{
-		$.ajax({
-			type: 'POST',
-			 statusCode: {
-				  401: function()
-					{
-					  window.location.reload();
-				  },
-				  500: function() {
-					  window.location.href = "/pgadmissions/error";
-				  },
-				  404: function() {
-					  window.location.href = "/pgadmissions/404";
-				  },
-				  400: function() {
-					  window.location.href = "/pgadmissions/400";
-				  },				  
-				  403: function() {
-					  window.location.href = "/pgadmissions/404";
-				  }
-			  },
-			url: "/pgadmissions/delete/deletePersonalStatement",
-			data: {
-				application: $('#applicationId').val()
-			},
-			success: function(data){
-				$('#psLink').remove();
-				$('#deletePs').remove();
-			}
-		});
-	}
 }
 
 // --------------------------------------------------------------------------------

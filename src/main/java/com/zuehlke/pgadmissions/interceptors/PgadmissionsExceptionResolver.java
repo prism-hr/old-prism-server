@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
@@ -41,8 +42,13 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
             log.debug("Exception catched during request processing ", ex);
             return handlePgadmissionsException((PgadmissionsException) ex, request);
         }
-
-        log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request, userService.getCurrentUser()), ex);
+        RegisteredUser currentUser = null;
+        try {
+            currentUser = userService.getCurrentUser();
+        } catch (Exception e) {
+            log.error("Couldn't read current user because of " + e.getClass() + ": " + e.getMessage());
+        }
+        log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request, currentUser), ex);
         return new ModelAndView("redirect:error");
     }
 

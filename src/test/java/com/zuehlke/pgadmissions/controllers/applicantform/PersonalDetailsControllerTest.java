@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -31,17 +35,14 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -95,39 +96,23 @@ public class PersonalDetailsControllerTest {
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
 
-    @Test(expected = CannotUpdateApplicationException.class)
-    public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).build();
-        PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(application).build();
-        EasyMock.replay(userServiceMock);
-        controller.editPersonalDetails(personalDetails, null, null, null, modelMock, application);
-        EasyMock.verify(userServiceMock);
-    }
-
     @Test
     public void shouldReturnPersonalDetailsView() {
-        currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
-        EasyMock.reset(userServiceMock);
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        EasyMock.replay(userServiceMock);
-
+        RegisteredUser applicant = new RegisteredUser();
         PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).personalDetails(personalDetails).build();
-        EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).personalDetails(personalDetails).applicant(applicant).build();
+
+        ModelMap modelMap = new ModelMap();
+
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
-        EasyMock.replay(applicationsServiceMock, currentUser);
 
-        EasyMock.expect(modelMock.addAttribute(EasyMock.eq("languageQualification"), EasyMock.isA(LanguageQualification.class))).andReturn(modelMock);
-        EasyMock.expect(modelMock.addAttribute(EasyMock.eq("personalDetails"), EasyMock.isA(PersonalDetails.class))).andReturn(modelMock);
-        EasyMock.expect(modelMock.addAttribute(EasyMock.eq("applicationForm"), EasyMock.isA(ApplicationForm.class))).andReturn(modelMock);
+        replay(applicationsServiceMock);
+        assertEquals("/private/pgStudents/form/components/personal_details", controller.getPersonalDetailsView("1", modelMap));
+        verify(applicationsServiceMock);
 
-        EasyMock.replay(modelMock);
-
-        assertEquals("/private/pgStudents/form/components/personal_details", controller.getPersonalDetailsView("1", modelMock));
+        assertSame(personalDetails, modelMap.get("personalDetails"));
+        assertSame(applicant, modelMap.get("updatedUser"));
         assertNotNull(personalDetails.getLanguageQualification());
-
     }
 
     @Test
@@ -237,6 +222,7 @@ public class PersonalDetailsControllerTest {
 
     @Test
     public void shouldSavePersonalDetailsAndRedirectIfNoErrors() {
+        RegisteredUser applicant = new RegisteredUser();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
         LanguageQualification languageQualification = new LanguageQualificationBuilder().build();
         PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(applicationForm).languageQualificationAvailable(false).build();
@@ -246,12 +232,11 @@ public class PersonalDetailsControllerTest {
         RegisteredUser updatedUser = new RegisteredUserBuilder().firstName("Jakub").firstName2("Marcin").firstName3("Jozef").lastName("Fibinger").build();
         BindingResult updatedUserErrors = new BeanPropertyBindingResult(updatedUser, "updatedUser");
 
-        userServiceMock.updateCurrentUser(updatedUser);
-        personalDetailsServiceMock.save(applicationForm, personalDetails);
-        EasyMock.replay(applicationsServiceMock, userServiceMock);
+        personalDetailsServiceMock.save(5, personalDetails, applicant);
+        EasyMock.replay(applicationsServiceMock);
         String view = controller.editPersonalDetails(personalDetails, personalDetailsErrors, updatedUser, updatedUserErrors, modelMock, applicationForm);
 
-        EasyMock.verify(applicationsServiceMock, userServiceMock);
+        EasyMock.verify(applicationsServiceMock);
         assertEquals("redirect:/update/getPersonalDetails?applicationId=ABC", view);
     }
 
@@ -285,29 +270,6 @@ public class PersonalDetailsControllerTest {
         String view = controller.editPersonalDetails(personalDetails, personalDetailsErrors, updatedUser, updatedUserErrors, modelMock, application);
         EasyMock.verify(userServiceMock);
         assertEquals("/private/pgStudents/form/components/personal_details", view);
-    }
-
-    @Test
-    public void shouldDeleteLanguageQualificationsDocument() {
-        BindingResult resultMock = EasyMock.createMock(BindingResult.class);
-        currentUser = EasyMock.createMock(RegisteredUser.class);
-        Model modelMock = EasyMock.createMock(Model.class);
-
-        Document document = new DocumentBuilder().id(33).build();
-
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        EasyMock.expect(encryptionHelperMock.decryptToInteger("docId")).andReturn(8);
-        EasyMock.expect(documentServiceMock.getDocumentById(8)).andReturn(document);
-
-        documentServiceMock.delete(document);
-
-        EasyMock.replay(documentServiceMock, encryptionHelperMock, userServiceMock, currentUser, modelMock, resultMock);
-
-        String resultView = controller.deleteLanguageQualificationsDocument("docId", modelMock);
-        assertEquals("/private/pgStudents/form/components/personal_details_language_qualifications", resultView);
-
-        EasyMock.verify(documentServiceMock, encryptionHelperMock, userServiceMock, currentUser, modelMock, resultMock);
     }
 
     @Before

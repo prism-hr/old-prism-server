@@ -69,6 +69,13 @@ public class SourcesOfInterest implements SelfReferringImportedObject, Serializa
         return code;
     }
 
+    public String getEnabledCode() {
+        if (!enabled && enabledObject != null) {
+            return enabledObject.getEnabledCode();
+        }
+        return code;
+    }
+
     public void setCode(String code) {
         this.code = code;
     }
@@ -92,8 +99,7 @@ public class SourcesOfInterest implements SelfReferringImportedObject, Serializa
     public void setDisabledDate(Date disabledDate) {
         // ignore
     }
-    
-    
+
     public boolean isFreeText() {
         return getCode().equalsIgnoreCase("OTHER") || getCode().equalsIgnoreCase("NEWS_AD") || getCode().equalsIgnoreCase("OTH_ACAD ")
                 || getCode().equalsIgnoreCase("OTH_WEB");

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 
 /**
  * A small API which facilitates the writing of complex authorisation rules.
@@ -186,14 +185,13 @@ public abstract class AbstractAuthorisationAPI {
     }
 
     public boolean isApplicationAdministrator(final ApplicationForm form, final RegisteredUser user) {
-    	List<Comment> comments = form.getApplicationComments();
-    	for (Comment comment : comments) {
-    		if (comment instanceof StateChangeComment &&
-    				areEqual(((StateChangeComment) comment).getDelegateAdministrator(), user)) {
-    			return true;
-    		}
-    	}
-    	return false;    
+        List<Comment> comments = form.getApplicationComments();
+        for (Comment comment : comments) {
+            if (comment instanceof StateChangeComment && areEqual(((StateChangeComment) comment).getDelegateAdministrator(), user)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isApplicant(final ApplicationForm form, final RegisteredUser user) {
@@ -201,7 +199,7 @@ public abstract class AbstractAuthorisationAPI {
     }
 
     public boolean isProjectAdministrator(final ApplicationForm form, final RegisteredUser user) {
-    	Project project = form.getProject();
+        Project project = form.getProject();
         return project != null && (areEqual(user, project.getContactUser()) || areEqual(user, project.getPrimarySupervisor()));
     }
 
@@ -257,9 +255,10 @@ public abstract class AbstractAuthorisationAPI {
     public boolean isReviewerInLatestReviewRoundOfApplication(final ApplicationForm form, final RegisteredUser user) {
         return isReviewerInReviewRound(form.getLatestReviewRound(), user);
     }
-    
+
     /**
      * Short term hack until we get a proper mechanism in place to property secure the prospectus tab
+     * 
      * @param user
      * @author Alastair Knowles
      * @return true/false
@@ -268,7 +267,7 @@ public abstract class AbstractAuthorisationAPI {
         Boolean isApplicant = user.isInRole(Authority.APPLICANT);
         if (BooleanUtils.isTrue(isApplicant)) {
             Integer authorityCount = 0;
-            for (Authority authority : AuthorityGroup.getAllApplicationAuthorities()) {
+            for (Authority authority : Authority.values()) {
                 if (user.isInRole(authority)) {
                     authorityCount++;
                     if (authorityCount > 1) {

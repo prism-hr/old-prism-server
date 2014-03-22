@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -40,7 +40,7 @@ public class ConfirmSupervisionController {
 
     private static final String CONFIRM_SUPERVISION_PAGE = "/private/staff/supervisors/confirm_supervision_page";
 
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
 
     private final UserService userService;
 
@@ -61,7 +61,7 @@ public class ConfirmSupervisionController {
     }
 
     @Autowired
-    public ConfirmSupervisionController(ApplicationsService applicationsService, UserService userService, ApprovalService approvalService,
+    public ConfirmSupervisionController(ApplicationFormService applicationsService, UserService userService, ApprovalService approvalService,
             DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator,
             ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, ProgramInstanceService programInstanceService) {
         this.applicationsService = applicationsService;

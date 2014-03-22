@@ -20,8 +20,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
+import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
+import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
@@ -32,33 +33,28 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.QualificationService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 
 @RequestMapping("/update")
 @Controller
 public class QualificationController {
 
-    public static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/qualification_details";
-
     @Autowired
     private QualificationService qualificationService;
 
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Autowired
     private DatePropertyEditor datePropertyEditor;
@@ -85,9 +81,6 @@ public class QualificationController {
     private DocumentPropertyEditor documentPropertyEditor;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private QualificationTypeDAO qualificationTypeDAO;
 
     @Autowired
@@ -95,9 +88,6 @@ public class QualificationController {
 
     @Autowired
     private QualificationInstitutionDAO qualificationInstitutionDAO;
-
-    @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @Autowired
     private FullTextSearchService searchService;
@@ -119,49 +109,25 @@ public class QualificationController {
     }
 
     @RequestMapping(value = "/getQualification", method = RequestMethod.GET)
-    public String getQualificationView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer qualificationId, ModelMap modelMap) {
-        RegisteredUser currentUser = userService.getCurrentUser();
-        Qualification qualification;
-        if (qualificationId != null) {
-            qualification = getQualification(applicationForm, qualificationId, currentUser);
-        } else {
-            qualification = new Qualification();
-        }
-        modelMap.put("qualification", qualification);
-        if (qualification.getInstitutionCountry() != null) {
-            modelMap.put("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(qualification.getInstitutionCountry().getCode()));
-        }
-        return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
+    public String getQualificationView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer qualificationId,
+            ModelMap modelMap) {
+       return returnView(modelMap, qualificationService.getOrCreate(qualificationId));
     }
 
     @RequestMapping(value = "/editQualification", method = RequestMethod.POST)
     public String editQualification(@RequestParam(required = false) Integer qualificationId, @Valid Qualification qualification, BindingResult result,
             ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
-        RegisteredUser currentUser = userService.getCurrentUser();
-        if (qualificationId != null) {
-            getQualification(applicationForm, qualificationId, currentUser);
-        }
-
         if (result.hasErrors()) {
-            qualification.setId(qualificationId);
-            modelMap.put("qualification", qualification);
-            if (qualification.getInstitutionCountry() != null) {
-                modelMap.put("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(qualification.getInstitutionCountry().getCode()));
-            }
-            return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
+            return returnView(modelMap, qualification);
         }
-
-        qualificationService.save(applicationForm, qualificationId, qualification);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, currentUser, ApplicationUpdateScope.ALL_USERS);
-        return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
+        qualificationService.saveOrUpdate(applicationForm, qualificationId, qualification);
+        return RedirectLocation.UPDATE_APPLICATION_QUALIFICATION + qualification.getApplication().getApplicationNumber();
     }
 
-    private Qualification getQualification(ApplicationForm application, Integer qualificationId, RegisteredUser currentUser) {
-        Qualification qualification = qualificationService.getQualificationById(qualificationId);
-        // check if given qualification belongs to given application
-        Preconditions.checkNotNull(qualification);
-        Preconditions.checkArgument(application.getId().equals(qualification.getApplication().getId()));
-        return qualification;
+    @RequestMapping(value = "/deleteQualification", method = RequestMethod.POST)
+    public String deleteQualification(@RequestParam("id") Integer qualificationId, @ModelAttribute ApplicationForm applicationForm) {
+        qualificationService.delete(qualificationId);
+        return RedirectLocation.UPDATE_APPLICATION_QUALIFICATION + applicationForm.getApplicationNumber() + "&message=deleted";
     }
 
     @RequestMapping(value = "/qualification/title/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
@@ -207,7 +173,16 @@ public class QualificationController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(String applicationId) {
-        return applicationsService.getEditableApplicationForm(applicationId);
+        return applicationsService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
+                ApplicationFormAction.CORRECT_APPLICATION);
+    }
+    
+    private String returnView(ModelMap modelMap, Qualification qualification) {
+        modelMap.put("qualification", qualification);
+        if (qualification.getInstitutionCountry() != null) {
+            modelMap.put("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(qualification.getInstitutionCountry().getCode()));
+        }
+        return TemplateLocation.APPLICATION_APPLICANT_ADDITIONAL_INFORMATION;
     }
 
 }

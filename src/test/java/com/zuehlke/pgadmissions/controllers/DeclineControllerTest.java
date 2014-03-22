@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class DeclineControllerTest {
 	
 	private DeclineController controller;
-	private ApplicationsService applicationServiceMock;
+	private ApplicationFormService applicationServiceMock;
 	private UserService userServiceMock;
 	private CommentService commentServiceMock;
 	private RefereeService refereeServiceMock;
@@ -211,7 +211,7 @@ public class DeclineControllerTest {
 	
 	@Before
 	public void setUp() {
-		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationServiceMock = EasyMock.createMock(ApplicationFormService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		commentServiceMock = EasyMock.createMock(CommentService.class);
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);

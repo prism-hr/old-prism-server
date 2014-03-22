@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalEvaluationComment;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -35,13 +36,16 @@ public class CommentService {
     private CommentDAO commentDAO;
     
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
     
     @Autowired 
     private ApplicationFormUserRoleService applicationFormUserRoleService;
     
     @Autowired 
     private UserService userService;
+    
+    @Autowired
+    private StateDAO stateDAO;
 
     public void save(Comment comment) {
         commentDAO.save(comment);
@@ -91,7 +95,7 @@ public class CommentService {
     public void postStateChangeComment(StateChangeDTO stateChangeDTO) {
         ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
         RegisteredUser registeredUser = stateChangeDTO.getRegisteredUser();
-        ApplicationFormStatus status = applicationForm.getStatus();
+        ApplicationFormStatus status = applicationForm.getStatus().getId();
         StateChangeComment stateChangeComment = null;
         
         switch (status) {
@@ -151,7 +155,7 @@ public class CommentService {
             }
         }
         
-        applicationForm.setNextStatus(nextStatus);
+        applicationForm.setNextStatus(stateDAO.getById(nextStatus));
         save(stateChangeComment);
         applicationsService.save(applicationForm);
         applicationsService.refresh(applicationForm);

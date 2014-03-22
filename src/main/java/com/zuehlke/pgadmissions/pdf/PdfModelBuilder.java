@@ -265,28 +265,28 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         addClosingDateToTable(table, form);
 
         table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
-        if (form.getProgrammeDetails().getStartDate() != null) {
-            table.addCell(newTableCell(dateFormat.format(form.getProgrammeDetails().getStartDate()), SMALL_FONT));
+        if (form.getProgramDetails().getStartDate() != null) {
+            table.addCell(newTableCell(dateFormat.format(form.getProgramDetails().getStartDate()), SMALL_FONT));
         } else {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }
 
         table.addCell(newTableCell("How did you find us?", SMALL_BOLD_FONT));
-        if (form.getProgrammeDetails().getSourcesOfInterest() != null) {
-            table.addCell(newTableCell(form.getProgrammeDetails().getSourcesOfInterest().getName(), SMALL_FONT));
+        if (form.getProgramDetails().getSourcesOfInterest() != null) {
+            table.addCell(newTableCell(form.getProgramDetails().getSourcesOfInterest().getName(), SMALL_FONT));
         } else {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }
 
-        if (form.getProgrammeDetails().getSourcesOfInterest() != null && form.getProgrammeDetails().getSourcesOfInterest().isFreeText()) {
+        if (form.getProgramDetails().getSourcesOfInterest() != null && form.getProgramDetails().getSourcesOfInterest().isFreeText()) {
             table.addCell(newTableCell("Please explain", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(form.getProgrammeDetails().getSourcesOfInterestText(), SMALL_FONT));
+            table.addCell(newTableCell(form.getProgramDetails().getSourcesOfInterestText(), SMALL_FONT));
         }
 
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getProgrammeDetails().getSuggestedSupervisors().isEmpty()) {
+        if (form.getProgramDetails().getSuggestedSupervisors().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Supervisor", SMALL_BOLD_FONT));
@@ -295,7 +295,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(addSectionSeparators());
         } else {
             int counter = 1;
-            for (SuggestedSupervisor supervisor : form.getProgrammeDetails().getSuggestedSupervisors()) {
+            for (SuggestedSupervisor supervisor : form.getProgramDetails().getSuggestedSupervisors()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Supervisor (" + counter++ + ")", SMALL_BOLD_FONT);

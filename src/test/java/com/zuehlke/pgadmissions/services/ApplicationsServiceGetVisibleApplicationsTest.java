@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -63,7 +63,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 
 public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRollbackTestCase {
 
-    private static final int APPLICATION_BLOCK_SIZE = ApplicationsService.APPLICATION_BLOCK_SIZE;
+    private static final int APPLICATION_BLOCK_SIZE = ApplicationFormService.APPLICATION_BLOCK_SIZE;
 
     private RegisteredUser applicant;
 
@@ -75,7 +75,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     private Program program;
 
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     private RoleDAO roleDAO;
 
@@ -95,7 +95,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
 
-        applicationsService = new ApplicationsService();
+        applicationsService = new ApplicationFormService();
         InjectionUtils.injectInto(applicationFormListDAO, applicationsService, "applicationFormListDAO");
         InjectionUtils.injectInto(applicationFormDAO, applicationsService, "applicationFormDAO");
         InjectionUtils.injectInto(applicationFormUserRoleDAO, applicationsService, "applicationFormUserRoleDAO");
@@ -818,7 +818,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         SuggestedSupervisor supervisor = new SuggestedSupervisorBuilder().aware(true).email("threepwood@monkeyisland.com").firstname("Guybrush")
                 .lastname("Threepwood").build();
         SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().name("foo").code("foo").build();
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("Test").studyOption("Half").startDate(new Date()).projectName("Test")
+        ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("Test").studyOption("Half").startDate(new Date()).projectName("Test")
                 .sourcesOfInterest(sourcesOfInterest).suggestedSupervisors(supervisor).build();
         ApplicationForm formWithSupervisor = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).applicant(applicant)
                 .programmeDetails(programmeDetails).advert(program).build();
@@ -836,7 +836,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
         assertEquals(1, applications.size());
-        assertEquals(supervisor.getLastname(), applicationFormDAO.get(applications.get(0).getApplicationFormId()).getProgrammeDetails()
+        assertEquals(supervisor.getLastname(), applicationFormDAO.get(applications.get(0).getApplicationFormId()).getProgramDetails()
                 .getSuggestedSupervisors().get(0).getLastname());
     }
 

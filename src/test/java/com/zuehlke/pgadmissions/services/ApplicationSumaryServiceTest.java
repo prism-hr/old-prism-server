@@ -84,7 +84,7 @@ public class ApplicationSumaryServiceTest {
 
     private EncryptionHelper encryptionHelperMock;
 
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
 
     private ActionsProvider actionsProviderMock;
 
@@ -98,7 +98,7 @@ public class ApplicationSumaryServiceTest {
         applicationDescriptorMock = createMock(ApplicationDescriptor.class);
         userServiceMock = createMock(UserService.class);
         encryptionHelperMock = createMock(EncryptionHelper.class);
-        applicationsServiceMock = createMock(ApplicationsService.class);
+        applicationsServiceMock = createMock(ApplicationFormService.class);
         actionsProviderMock = createMock(ActionsProvider.class);
         service = new ApplicationSummaryService(applicationsServiceMock, userServiceMock, encryptionHelperMock, actionsProviderMock);
     }

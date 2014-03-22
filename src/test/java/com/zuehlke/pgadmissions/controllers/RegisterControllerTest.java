@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ApplicationFormCreationService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.ApplicationQueryStringParser;
@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 
 public class RegisterControllerTest {
 
-    private RegisterController registerController;
+    private RegistrationController registerController;
 
     private UserService userServiceMock;
 
@@ -52,7 +52,7 @@ public class RegisterControllerTest {
 
     private ApplicationFormCreationService applicationFormCreationServiceMock;
 
-    private ProgramsService programServiceMock;
+    private ProgramService programServiceMock;
 
     private ApplicationQueryStringParser qureyStringParserMock;
 
@@ -66,10 +66,10 @@ public class RegisterControllerTest {
         userServiceMock = EasyMock.createMock(UserService.class);
         registrationServiceMock = EasyMock.createMock(RegistrationService.class);
         applicationFormCreationServiceMock = EasyMock.createMock(ApplicationFormCreationService.class);
-        programServiceMock = EasyMock.createMock(ProgramsService.class);
+        programServiceMock = EasyMock.createMock(ProgramService.class);
         qureyStringParserMock = EasyMock.createMock(ApplicationQueryStringParser.class);
         encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
-        registerController = new RegisterController(regusterFormValidatorMock, userServiceMock, registrationServiceMock, applicationFormCreationServiceMock,
+        registerController = new RegistrationController(regusterFormValidatorMock, userServiceMock, registrationServiceMock, applicationFormCreationServiceMock,
                 programServiceMock, qureyStringParserMock, encryptionHelper);
         mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED, true);

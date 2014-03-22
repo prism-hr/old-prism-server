@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 
@@ -81,8 +81,8 @@ public class ProgrammeDetailsBuilder {
 		return this;
 	}
 	
-	public ProgrammeDetails build() {
-		ProgrammeDetails programmeDetails = new ProgrammeDetails();
+	public ProgramDetails build() {
+		ProgramDetails programmeDetails = new ProgramDetails();
 		programmeDetails.setId(id);
 		programmeDetails.setApplication(applicationForm);
 		programmeDetails.setProjectName(projectName);

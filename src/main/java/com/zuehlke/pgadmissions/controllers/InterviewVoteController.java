@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewParticipantValidator;
@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.validators.InterviewParticipantValidator;
 public class InterviewVoteController {
 
     private static final String INTERVIEW_VOTE_PAGE = "private/staff/interviewers/interview_vote";
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
     private final UserService userService;
     private final InterviewService interviewService;
     private final InterviewParticipantValidator interviewParticipantValidator;
@@ -46,7 +46,7 @@ public class InterviewVoteController {
     }
 
     @Autowired
-    public InterviewVoteController(ApplicationsService applicationsService, UserService userService,
+    public InterviewVoteController(ApplicationFormService applicationsService, UserService userService,
             InterviewParticipantValidator interviewParticipantValidator, InterviewService interviewService,
             AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor, ActionsProvider actionsProvider,
             ApplicationFormUserRoleService applicationFormUserRoleService) {

@@ -37,7 +37,7 @@ public class ApplicationSummaryService {
 
     private static final String DATE_FORMAT = "dd MMM yyyy";
 
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
 
     private final UserService userService;
 
@@ -50,7 +50,7 @@ public class ApplicationSummaryService {
     }
 
     @Autowired
-    public ApplicationSummaryService(final ApplicationsService applicationsService, final UserService userService, final EncryptionHelper encryptionHelper,
+    public ApplicationSummaryService(final ApplicationFormService applicationsService, final UserService userService, final EncryptionHelper encryptionHelper,
             final ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;

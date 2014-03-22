@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
@@ -55,7 +55,7 @@ public class ApplicationFormValidatorTest {
 
     private ProgramInstanceDAO programInstanceDAOMock;
 
-    private ProgrammeDetailsValidator programmeDetailsValidatorMock;
+    private ProgramDetailsValidator programmeDetailsValidatorMock;
 
     private PersonalDetailsValidator personalDetailsValidatorMock;
 
@@ -65,7 +65,7 @@ public class ApplicationFormValidatorTest {
 
     private ProgramInstance programInstance;
 
-    private ProgrammeDetails programmeDetails;
+    private ProgramDetails programmeDetails;
 
     private Program program;
 
@@ -182,7 +182,7 @@ public class ApplicationFormValidatorTest {
 
     @Test
     public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
-        ProgrammeDetails programmeDetail = applicationForm.getProgrammeDetails();
+        ProgramDetails programmeDetail = applicationForm.getProgramDetails();
         programmeDetail.setStudyOption("Part-time");
         programmeDetail.setStudyOptionCode("31");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "programmeDetails.studyOption");
@@ -203,7 +203,7 @@ public class ApplicationFormValidatorTest {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldRejectIfNoCurrentProgrammeInstancesExist() {
-        ProgrammeDetails programmeDetail = applicationForm.getProgrammeDetails();
+        ProgramDetails programmeDetail = applicationForm.getProgramDetails();
         programmeDetail.setStudyOption("Part-time");
         programmeDetail.setStudyOptionCode("31");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "program");
@@ -250,7 +250,7 @@ public class ApplicationFormValidatorTest {
                 .personalStatement(new Document()).build();
 
         programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
-        programmeDetailsValidatorMock = EasyMock.createMock(ProgrammeDetailsValidator.class);
+        programmeDetailsValidatorMock = EasyMock.createMock(ProgramDetailsValidator.class);
         personalDetailsValidatorMock = EasyMock.createMock(PersonalDetailsValidator.class);
         addressValidatorMock = EasyMock.createMock(AddressValidator.class);
         additionalInformationValidatorMock = EasyMock.createMock(AdditionalInformationValidator.class);

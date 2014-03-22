@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.TimelineObject;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.TimelineService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -26,7 +26,7 @@ public class CommentTimelineController {
 	private static final String COMMENTS_VIEW = "private/staff/admin/comment/timeline";
 
 	private final UserService userService;
-	private final ApplicationsService applicationService;
+	private final ApplicationFormService applicationService;
 	private final TimelineService timelineService;
 
 	CommentTimelineController() {
@@ -34,7 +34,7 @@ public class CommentTimelineController {
 	}
 
 	@Autowired
-	public CommentTimelineController(ApplicationsService applicationsService, UserService userService, TimelineService timelineService) {
+	public CommentTimelineController(ApplicationFormService applicationsService, UserService userService, TimelineService timelineService) {
 		this.applicationService = applicationsService;
 		this.userService = userService;
 		this.timelineService = timelineService;

@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.validators.DocumentValidator;
 @RequestMapping("/documents")
 public class FileUploadController {
 
-	private final ApplicationsService applicationService;
+	private final ApplicationFormService applicationService;
 	
 	private final DocumentValidator documentValidator;
 	
@@ -43,7 +43,7 @@ public class FileUploadController {
 	}
 
 	@Autowired		
-	public FileUploadController(ApplicationsService applicationService, DocumentValidator documentValidator, 
+	public FileUploadController(ApplicationFormService applicationService, DocumentValidator documentValidator, 
 	        DocumentService documentService, UserService userService) {
 		this.applicationService = applicationService;
 		this.documentValidator = documentValidator;

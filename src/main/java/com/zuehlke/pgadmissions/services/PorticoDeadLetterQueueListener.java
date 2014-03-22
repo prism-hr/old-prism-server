@@ -13,14 +13,14 @@ public class PorticoDeadLetterQueueListener implements MessageListener {
 
     private final Logger log = LoggerFactory.getLogger(PorticoDeadLetterQueueListener.class);
     
-    private final PorticoQueueService queueService;
+    private final ExportQueueService queueService;
     
     public PorticoDeadLetterQueueListener() {
         this(null);
     }
     
     @Autowired
-    public PorticoDeadLetterQueueListener(final PorticoQueueService queueService) {
+    public PorticoDeadLetterQueueListener(final ExportQueueService queueService) {
         this.queueService = queueService;
     }
 

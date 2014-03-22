@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.SuperadminUserDTOValidator;
 import com.zuehlke.pgadmissions.validators.UserDTOValidator;
@@ -40,7 +40,7 @@ public class ManageUsersController {
 
     private static final String NEW_USER_VIEW_NAME = "private/staff/superAdmin/create_new_user_in_role_page";
 
-    private final ProgramsService programsService;
+    private final ProgramService programsService;
 
     private final UserService userService;
 
@@ -61,7 +61,7 @@ public class ManageUsersController {
     }
 
     @Autowired
-    public ManageUsersController(ProgramsService programsService, UserService userService, ProgramPropertyEditor programPropertyEditor,
+    public ManageUsersController(ProgramService programsService, UserService userService, ProgramPropertyEditor programPropertyEditor,
             UserDTOValidator newUserDTOValidator, EncryptionHelper encryptionHelper, final SuperadminUserDTOValidator userDTOValidator,
             final PersonPropertyEditor registryPropertyEditor, final ConfigurationService configurationService) {
         this.programsService = programsService;

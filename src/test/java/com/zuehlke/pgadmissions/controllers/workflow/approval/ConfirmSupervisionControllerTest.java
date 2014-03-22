@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -29,7 +29,7 @@ public class ConfirmSupervisionControllerTest {
 
     private ConfirmSupervisionController controller;
 
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
 
     private ApprovalService approvalServiceMock;
 
@@ -112,7 +112,7 @@ public class ConfirmSupervisionControllerTest {
 
     @Before
     public void setUp() {
-        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationServiceMock = EasyMock.createMock(ApplicationFormService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         approvalServiceMock = EasyMock.createMock(ApprovalService.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);

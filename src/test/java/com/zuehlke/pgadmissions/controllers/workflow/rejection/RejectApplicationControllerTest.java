@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.RejectService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RejectionValidator;
@@ -47,7 +47,7 @@ public class RejectApplicationControllerTest {
     private RejectApplicationController controllerUT;
 
     private ApplicationForm application;
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
     private RejectService rejectServiceMock;
 
     private RegisteredUser admin;
@@ -74,7 +74,7 @@ public class RejectApplicationControllerTest {
                 .build();
 
         rejectServiceMock = EasyMock.createMock(RejectService.class);
-        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationServiceMock = EasyMock.createMock(ApplicationFormService.class);
         rejectReasonPropertyEditorMock = EasyMock.createMock(RejectReasonPropertyEditor.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();

@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewConfirmDTOValidator;
@@ -34,7 +34,7 @@ public class InterviewConfirmController {
 
     private static final String INTERVIEW_CONFIRM_PAGE = "private/staff/interviewers/interview_confirm";
 
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
 
     private final UserService userService;
 
@@ -52,7 +52,7 @@ public class InterviewConfirmController {
     }
 
     @Autowired
-    public InterviewConfirmController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
+    public InterviewConfirmController(ApplicationFormService applicationsService, UserService userService, InterviewService interviewService,
                     final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider,
                     InterviewConfirmDTOValidator interviewConfirmDTOValidator) {
         this.applicationsService = applicationsService;

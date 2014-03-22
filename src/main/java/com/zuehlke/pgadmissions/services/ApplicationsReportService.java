@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -66,7 +66,7 @@ public class ApplicationsReportService {
 
     private static Logger logger = LoggerFactory.getLogger(ClassName.class.getName());
 
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
 
     private final ApplicantRatingService applicantRatingService;
 
@@ -77,7 +77,7 @@ public class ApplicationsReportService {
     }
 
     @Autowired
-    public ApplicationsReportService(@Value("${application.host}") String host, ApplicationsService applicationsService, ApplicantRatingService applicantRatingService) {
+    public ApplicationsReportService(@Value("${application.host}") String host, ApplicationFormService applicationsService, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
         this.applicantRatingService = applicantRatingService;
         this.host = host;
@@ -198,7 +198,7 @@ public class ApplicationsReportService {
                 PersonalDetails personalDetails = app.getPersonalDetails();
                 String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
                 Program program = app.getProgram();
-                ProgrammeDetails programmeDetails = app.getProgrammeDetails();
+                ProgramDetails programmeDetails = app.getProgramDetails();
                 ValidationComment validationComment = getLatestvalidationComment(app);
                 int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
                 int[] referenceEndorsements = getNumberOfPositiveAndNegativeReferenceEndorsements(app);
@@ -366,7 +366,7 @@ public class ApplicationsReportService {
 
     }
 
-    private String getSuggestedSupervisors(ProgrammeDetails programmeDetails) {
+    private String getSuggestedSupervisors(ProgramDetails programmeDetails) {
         List<SuggestedSupervisor> supervisors = programmeDetails.getSuggestedSupervisors();
         String supervisorsString = Joiner.on(", ").join(Iterables.transform(supervisors, new Function<SuggestedSupervisor, String>() {
             public String apply(SuggestedSupervisor supervisor) {
@@ -552,7 +552,7 @@ public class ApplicationsReportService {
     }
 
     private String getAcademicYear(ApplicationForm app) {
-        Date startDate = app.getProgrammeDetails().getStartDate();
+        Date startDate = app.getProgramDetails().getStartDate();
         if (startDate != null) {
             for (ProgramInstance instance : app.getProgram().getInstances()) {
                 if (instance.isDateWithinBounds(startDate)) {

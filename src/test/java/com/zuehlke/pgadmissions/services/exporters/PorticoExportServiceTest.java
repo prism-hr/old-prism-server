@@ -59,7 +59,7 @@ import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.LocallyDefinedSshConfigurationIsWrong;
@@ -101,7 +101,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
     private ApplicationFormDAO applicationFormDAOMock;
 
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
 
     private ApplicationFormTransferService applicationFormTransferService;
 
@@ -1103,7 +1103,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
         applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 
         applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
 
@@ -1116,7 +1116,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
         userDAOMock = EasyMock.createMock(UserDAO.class);
 
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 
         applicationContextMock = EasyMock.createMock(ApplicationContext.class);
 

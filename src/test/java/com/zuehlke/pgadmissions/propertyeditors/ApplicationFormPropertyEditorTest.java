@@ -9,11 +9,11 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 
 public class ApplicationFormPropertyEditorTest {
 
-	private ApplicationsService applicationsServiceMock;
+	private ApplicationFormService applicationsServiceMock;
 	private ApplicationFormPropertyEditor editor;
 
 
@@ -50,7 +50,7 @@ public class ApplicationFormPropertyEditorTest {
 	
 	@Before
 	public void setup(){
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 		editor = new ApplicationFormPropertyEditor(applicationsServiceMock);
 	}
 }

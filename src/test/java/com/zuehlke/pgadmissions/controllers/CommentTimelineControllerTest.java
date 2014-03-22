@@ -21,13 +21,13 @@ import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.TimelineObject;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.TimelineService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class CommentTimelineControllerTest {
 
-	private ApplicationsService applicationsServiceMock;
+	private ApplicationFormService applicationsServiceMock;
 	private UserService userServiceMock;
 	private CommentTimelineController controller;
 	private TimelineService timelineServiceMock;
@@ -113,7 +113,7 @@ public class CommentTimelineControllerTest {
 	@Before
 	public void setUp() {
 
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		timelineServiceMock = EasyMock.createMock(TimelineService.class);
 		controller = new CommentTimelineController(applicationsServiceMock, userServiceMock, timelineServiceMock);

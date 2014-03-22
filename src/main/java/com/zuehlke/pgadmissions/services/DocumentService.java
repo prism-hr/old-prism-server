@@ -27,7 +27,7 @@ public class DocumentService {
         documentDAO.deleteOrphanDocuments();
     }
 
-    public void documentReferentialityChanged(Document oldDocument, Document newDocument) {
+    public void replaceDocument(Document oldDocument, Document newDocument) {
         if (oldDocument != null) {
             oldDocument.setIsReferenced(false);
         }

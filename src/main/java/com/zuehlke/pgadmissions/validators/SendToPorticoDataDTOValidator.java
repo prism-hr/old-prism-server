@@ -10,21 +10,21 @@ import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
 @Component
 public class SendToPorticoDataDTOValidator extends AbstractValidator {
 
-	private final ApplicationsService applicationFormService;
+	private final ApplicationFormService applicationFormService;
 	
     private final QualificationService qualificationService;
 
     private final RefereeService refereeService;
 
     @Autowired
-    public SendToPorticoDataDTOValidator(ApplicationsService applicationFormService, QualificationService qualificationService, 
+    public SendToPorticoDataDTOValidator(ApplicationFormService applicationFormService, QualificationService qualificationService, 
     		RefereeService refereeService) {
     	this.applicationFormService = applicationFormService;
         this.qualificationService = qualificationService;
@@ -52,7 +52,7 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
         	ApplicationForm applicationForm = applicationFormService.getApplicationByApplicationNumber(dto.getApplicationNumber()); 
         	
             for (int i = 0; i < qualifications.size(); i++) {
-            	if (qualificationService.getQualificationById(qualifications.get(i)).getProofOfAward() == null) {
+            	if (qualificationService.getById(qualifications.get(i)).getProofOfAward() == null) {
             		qualifications.remove(i);
             	}
             }

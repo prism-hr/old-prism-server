@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -430,7 +430,7 @@ public class ApprovalServiceTest {
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("bob").advert(project)
                 .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build())
-                .programmeDetails(new ProgrammeDetails()).build();
+                .programmeDetails(new ProgramDetails()).build();
 
         final ProgramInstance programInstance = new ProgramInstance();
         programInstance.setId(1);
@@ -478,7 +478,7 @@ public class ApprovalServiceTest {
         programInstance.setApplicationStartDate(nowDate);
         programInstance.setApplicationDeadline(deadlineDate);
 
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(testDate).studyOption("1", "full").build();
+        ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(testDate).studyOption("1", "full").build();
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).advert(program).applicationNumber("bob").programmeDetails(programmeDetails)
                 .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, suprvisorTwo).build()).build();
@@ -505,7 +505,7 @@ public class ApprovalServiceTest {
 
         Date startDate = new Date();
 
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+        ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
 
         Date nowDate = new Date();
         Date testDate = DateUtils.addMonths(nowDate, 1);

@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 public class ApplicationFormBuilder {
 
     private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
-    private ProgrammeDetails programmeDetails;
+    private ProgramDetails programmeDetails;
     private PersonalDetails personalDetails;
     private Address currentAddress;
     private Address contactAddress;
@@ -159,7 +159,7 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder programmeDetails(ProgrammeDetails programmeDetails) {
+    public ApplicationFormBuilder programmeDetails(ProgramDetails programmeDetails) {
         this.programmeDetails = programmeDetails;
         return this;
     }
@@ -301,7 +301,7 @@ public class ApplicationFormBuilder {
         application.setReferees(referees);
         application.setApplicationTimestamp(appDate);
         application.getQualifications().addAll(qualifications);
-        application.setProgrammeDetails(programmeDetails);
+        application.setProgramDetails(programmeDetails);
         application.getFundings().addAll(fundings);
         application.setCv(cv);
         application.setPersonalStatement(personalStatement);

@@ -8,19 +8,19 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Component
 public class ProgramTypePropertyEditor extends PropertyEditorSupport {
 
-    private final ProgramsService programsService;
+    private final ProgramService programsService;
 
     public ProgramTypePropertyEditor() {
         this(null);
     }
 
     @Autowired
-    public ProgramTypePropertyEditor(ProgramsService programsService) {
+    public ProgramTypePropertyEditor(ProgramService programsService) {
         this.programsService = programsService;
     }
 

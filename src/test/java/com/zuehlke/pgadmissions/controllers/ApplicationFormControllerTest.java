@@ -12,15 +12,15 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.services.ApplicationFormCreationService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class ApplicationFormControllerTest {
 
-    private ApplicationFormController applicationController;
+    private CreateApplicationFormController applicationController;
     private ApplicationFormCreationService applicationFormCreationServiceMock;
     private UserService userServiceMock;
-    private ProgramsService programsServiceMock;
+    private ProgramService programsServiceMock;
 
     @Test(expected = CannotApplyException.class)
     public void shouldThrowCannotApplyErrorIfProgramOrProjectDoNotExist() throws ParseException {
@@ -55,8 +55,8 @@ public class ApplicationFormControllerTest {
     public void setUp() {
         applicationFormCreationServiceMock = EasyMock.createMock(ApplicationFormCreationService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        programsServiceMock = EasyMock.createMock(ProgramsService.class);
-        applicationController = new ApplicationFormController(applicationFormCreationServiceMock, programsServiceMock, userServiceMock);
+        programsServiceMock = EasyMock.createMock(ProgramService.class);
+        applicationController = new CreateApplicationFormController(applicationFormCreationServiceMock, programsServiceMock, userServiceMock);
     }
 
 }

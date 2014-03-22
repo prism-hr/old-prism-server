@@ -4,33 +4,60 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.EmploymentPositionDAO;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
 @Service
 @Transactional
 public class EmploymentPositionService {
 
-	private final EmploymentPositionDAO employmentPositionDAO;
+    @Autowired
+    private ApplicationFormService applicationsService;
+    
+    @Autowired
+	private EmploymentPositionDAO employmentPositionDAO;
+
+    @Autowired
+    private ApplicationFormCopyHelper applicationFormCopyHelper;
+
+	public EmploymentPosition getById(Integer id) {
+		return employmentPositionDAO.getById(id);
+	}
+
+	public EmploymentPosition getOrCreate(Integer employmentPositionId) {
+        if (employmentPositionId == null) {
+            return new EmploymentPosition();
+        }
+        EmploymentPosition employmentPosition = getById(employmentPositionId);
+        if (employmentPosition == null) {
+            throw new ResourceNotFoundException();
+        }
+        return employmentPosition;
+    }
 	
-	public EmploymentPositionService(){
-		this(null);
-	}
+	public void saveOrUpdate(ApplicationForm application, Integer employmentPositionId, EmploymentPosition employmentPosition) { 
+	    EmploymentPosition persistentEmploymentPosition;
+        if (employmentPositionId != null) {
+            persistentEmploymentPosition = employmentPositionDAO.getById(employmentPositionId);
+            if (persistentEmploymentPosition == null) {
+                throw new ResourceNotFoundException();
+            }
+        } else {
+            persistentEmploymentPosition = new EmploymentPosition();
+            persistentEmploymentPosition.setApplication(application);
+            employmentPositionDAO.save(persistentEmploymentPosition);
+        }
+        applicationFormCopyHelper.copyEmploymentPosition(persistentEmploymentPosition, employmentPosition);
+        applicationsService.saveOrUpdateApplicationFormSection(application);
+    }
 
-	@Autowired
-	public EmploymentPositionService(EmploymentPositionDAO employmentPositionDAO) {
-		this.employmentPositionDAO = employmentPositionDAO;
+	public void delete(Integer employmentPositionId) {
+	    EmploymentPosition employmentPosition = getById(employmentPositionId);
+		employmentPositionDAO.delete(employmentPosition);
+	    applicationsService.saveOrUpdateApplicationFormSection(employmentPosition.getApplication());
 	}
-
-	public EmploymentPosition getEmploymentPositionById(Integer id) {
-		return employmentPositionDAO.getEmploymentPositionById(id);
-	}
-
-	public void save(EmploymentPosition employmentPosition) {
-		employmentPositionDAO.save(employmentPosition);		
-	}
-
-	public void delete(EmploymentPosition employmentPosition) {
-		employmentPositionDAO.delete(employmentPosition);		
-	}
+	
 }

@@ -56,7 +56,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -65,7 +65,7 @@ import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 public class EditApplicationFormAsProgrammeAdminControllerTest {
 
     private EditApplicationFormAsProgrammeAdminController controller;
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
     private UserService userServiceMock;
     private EncryptionHelper encryptionHelperMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
@@ -84,7 +84,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
     @Before
     public void setUp() {
         documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
-        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationServiceMock = EasyMock.createMock(ApplicationFormService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
         refereeServiceMock = EasyMock.createMock(RefereeService.class);

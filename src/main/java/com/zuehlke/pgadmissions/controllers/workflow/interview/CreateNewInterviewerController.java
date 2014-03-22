@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
@@ -30,7 +30,7 @@ public class CreateNewInterviewerController {
     private static final String CREATE_INTERVIEWER_SECTION = "/private/staff/interviewers/create_interviewer_section";
     private static final String JSON_VIEW = "/private/staff/reviewer/reviewer_json";
     private final UserService userService;
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
     private final NewUserByAdminValidator interviewerValidator;
 
     CreateNewInterviewerController() {
@@ -38,7 +38,7 @@ public class CreateNewInterviewerController {
     }
 
     @Autowired
-    public CreateNewInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator interviewerValidator) {
+    public CreateNewInterviewerController(ApplicationFormService applicationsService, UserService userService, NewUserByAdminValidator interviewerValidator) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewerValidator = interviewerValidator;

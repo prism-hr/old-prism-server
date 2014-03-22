@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -44,7 +44,7 @@ public class RefereeControllerTest {
     private RegisteredUser currentUser;
     private RefereeService refereeServiceMock;
     private RefereeController controller;
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private DomicilePropertyEditor domicilePropertyEditor;
     private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
     private RefereeValidator refereeValidatorMock;
@@ -226,7 +226,7 @@ public class RefereeControllerTest {
     public void setUp() {
 
         refereeServiceMock = EasyMock.createMock(RefereeService.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         domicilePropertyEditor = EasyMock.createMock(DomicilePropertyEditor.class);
         applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);

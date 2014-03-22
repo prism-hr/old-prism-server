@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -24,6 +25,14 @@ public class PersonalDetailsService {
     
     @Autowired
     private ApplicationContext applicationContext;
+    
+    public PersonalDetails getOrCreate(ApplicationForm application) {
+        PersonalDetails personalDetails = application.getPersonalDetails();
+        if (personalDetails == null) {
+            personalDetails = new PersonalDetails();
+        }
+        return additionalInformation;
+    }
 
     public void save(int applicationId, PersonalDetails newPersonalDetails, RegisteredUser newApplicant) {
         PersonalDetailsService thisBean = applicationContext.getBean(PersonalDetailsService.class);
@@ -39,7 +48,7 @@ public class PersonalDetailsService {
                 .getLanguageQualificationDocument();
         Document newQualificationDocument = newPersonalDetails.getLanguageQualification() == null ? null : newPersonalDetails.getLanguageQualification()
                 .getLanguageQualificationDocument();
-        documentService.documentReferentialityChanged(oldQualificationDocument, newQualificationDocument);
+        documentService.replaceDocument(oldQualificationDocument, newQualificationDocument);
         
         thisBean.copyPersonalDetails(personalDetails, newPersonalDetails);
         thisBean.copyApplicantData(application.getApplicant(), newApplicant);

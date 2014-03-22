@@ -47,10 +47,10 @@ public class FundingServiceTest {
 	public void shouldDelegateGetFundingToDAO(){
 		Funding funding = new FundingBuilder().id(2).build();
 		
-		EasyMock.expect(fundingDAOMock.getFundingById(2)).andReturn(funding);
+		EasyMock.expect(fundingDAOMock.getById(2)).andReturn(funding);
 		
 		replay();
-		Funding returnedFunding = service.getFundingById(2);
+		Funding returnedFunding = service.getById(2);
 		
 		assertEquals(funding, returnedFunding);
 	}
@@ -72,9 +72,9 @@ public class FundingServiceTest {
 		Funding funding = new FundingBuilder().id(2).document(newDocument).build();
 		
 		expect(applicationFormDAOMock.get(55)).andReturn(applicationForm);
-		documentServiceMock.documentReferentialityChanged(null, newDocument);
+		documentServiceMock.replaceDocument(null, newDocument);
 		Capture<Funding> fundingCapture = new Capture<Funding>();
-		fundingDAOMock.saveOrUpdate(capture(fundingCapture));
+		fundingDAOMock.save(capture(fundingCapture));
 		
 		replay();
 		service.save(55, null, funding);
@@ -91,9 +91,9 @@ public class FundingServiceTest {
 	    Funding funding = new FundingBuilder().id(66).document(newDocument).application(applicationForm).build();
 	    
 	    expect(applicationFormDAOMock.get(55)).andReturn(applicationForm);
-	    expect(fundingDAOMock.getFundingById(66)).andReturn(funding);
-	    documentServiceMock.documentReferentialityChanged(null, newDocument);
-	    fundingDAOMock.saveOrUpdate(funding);
+	    expect(fundingDAOMock.getById(66)).andReturn(funding);
+	    documentServiceMock.replaceDocument(null, newDocument);
+	    fundingDAOMock.save(funding);
 	    
 	    replay();
 	    service.save(55, 66, funding);

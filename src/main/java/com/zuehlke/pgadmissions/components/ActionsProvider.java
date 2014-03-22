@@ -29,17 +29,17 @@ public class ActionsProvider {
         applicationDescriptor.setNeedsToSeeUpdateFlag(applicationFormUserRoleDAO.getRaisesUpdateFlagByUserAndApplicationForm(user, application));
         return applicationDescriptor;
     }
-    
+
     public void validateAction(final ApplicationForm application, final RegisteredUser user, final ApplicationFormAction action) {
         if (!checkActionAvailable(application, user, action)) {
             throw new ActionNoLongerRequiredException(application.getApplicationNumber());
         }
     }
-    
+
     public boolean checkActionAvailable(final ApplicationForm application, final RegisteredUser user, final ApplicationFormAction action) {
         return !applicationFormUserRoleDAO.selectUserActionById(application.getId(), user.getId(), action).isEmpty();
     }
-    
+
     public ApplicationFormAction getPrecedentAction(final ApplicationForm application, final RegisteredUser user, final ActionType actionType) {
         List<ActionDefinition> precedentAction = applicationFormUserRoleDAO.selectUserActionByActionType(application.getId(), user.getId(), actionType);
         if (precedentAction.isEmpty()) {

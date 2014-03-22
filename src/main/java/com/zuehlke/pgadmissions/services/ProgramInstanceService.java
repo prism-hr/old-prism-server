@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 
 @Service
@@ -39,7 +39,7 @@ public class ProgramInstanceService {
         Date maxProgrammeEndDate = null;
         Date today = new Date();
 
-        ProgrammeDetails details = applicationForm.getProgrammeDetails();
+        ProgramDetails details = applicationForm.getProgramDetails();
 
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
             boolean isProgrammeEnabled = applicationForm.getAdvert().isEnabled();
@@ -66,7 +66,7 @@ public class ProgramInstanceService {
 
     public Date getEarliestPossibleStartDate(ApplicationForm applicationForm) {
         Date result = null;
-        ProgrammeDetails details = applicationForm.getProgrammeDetails();
+        ProgramDetails details = applicationForm.getProgramDetails();
         Date today = new Date();
         Date todayPlusConsiderationPeriod = DateUtils.addMonths(today, CONSIDERATION_PERIOD_MONTHS);
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
@@ -88,14 +88,14 @@ public class ProgramInstanceService {
     }
 
     public boolean isPrefferedStartDateWithinBounds(ApplicationForm applicationForm) {
-        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgrammeDetails(), applicationForm.getProgrammeDetails().getStartDate());
+        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), applicationForm.getProgramDetails().getStartDate());
     }
 
     public boolean isPrefferedStartDateWithinBounds(ApplicationForm applicationForm, Date startDate) {
-        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgrammeDetails(), startDate);
+        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), startDate);
     }
 
-    private boolean isPreferredStartDateWithinBounds(ApplicationForm applicationForm, ProgrammeDetails programDetails, Date startDate) {
+    private boolean isPreferredStartDateWithinBounds(ApplicationForm applicationForm, ProgramDetails programDetails, Date startDate) {
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
             boolean afterStartDate = startDate.after(instance.getApplicationStartDate());
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());

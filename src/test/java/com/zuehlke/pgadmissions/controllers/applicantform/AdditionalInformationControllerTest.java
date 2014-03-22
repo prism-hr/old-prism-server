@@ -26,14 +26,14 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 
 public class AdditionalInformationControllerTest {
     private RegisteredUser currentUser;
     private AdditionalInfoService addInfoServiceMock;
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
     private AdditionalInformationValidator validatorMock;
     private ApplicationFormPropertyEditor applFormPropertyEditorMock;
     private BooleanPropertyEditor booleanPropertyEditorMock;
@@ -44,7 +44,7 @@ public class AdditionalInformationControllerTest {
     @Before
     public void setUp() {
         addInfoServiceMock = EasyMock.createMock(AdditionalInfoService.class);
-        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationServiceMock = EasyMock.createMock(ApplicationFormService.class);
         applFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
         booleanPropertyEditorMock = EasyMock.createMock(BooleanPropertyEditor.class);
         userServiceMock = EasyMock.createMock(UserService.class);

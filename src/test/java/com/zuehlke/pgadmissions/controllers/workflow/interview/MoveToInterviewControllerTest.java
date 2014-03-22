@@ -38,13 +38,13 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewValidator;
 
 public class MoveToInterviewControllerTest {
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
     private UserService userServiceMock;
     private RegisteredUser currentUserMock;
     private MoveToInterviewController controller;
@@ -186,7 +186,7 @@ public class MoveToInterviewControllerTest {
 
     @Before
     public void setUp() {
-        applicationServiceMock = createMock(ApplicationsService.class);
+        applicationServiceMock = createMock(ApplicationFormService.class);
         userServiceMock = createMock(UserService.class);
         currentUserMock = createMock(RegisteredUser.class);
         interviewValidatorMock = createMock(InterviewValidator.class);

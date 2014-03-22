@@ -27,20 +27,20 @@ import com.zuehlke.pgadmissions.dto.DocumentsSectionDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.DocumentSectionValidator;
+import com.zuehlke.pgadmissions.validators.ApplicationFormDocumentValidator;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class DocumentsControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
 
     @Mock
     @InjectIntoByType
-    private DocumentSectionValidator documentSectionValidatorMock;
+    private ApplicationFormDocumentValidator documentSectionValidatorMock;
 
     @Mock
     @InjectIntoByType

@@ -59,7 +59,7 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 
 		Integer id = funding.getId();
 		FundingDAO fundingDAO = new FundingDAO(sessionFactory);
-		Funding reloadedFunding = fundingDAO.getFundingById(id);
+		Funding reloadedFunding = fundingDAO.getById(id);
 		assertEquals(funding, reloadedFunding);
 	}
 
@@ -74,7 +74,7 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432")
 				.build();
 		FundingDAO fundingDAO = new FundingDAO(sessionFactory);
-		fundingDAO.saveOrUpdate(funding);
+		fundingDAO.save(funding);
 
 		flushAndClearSession();
 		Funding returnedFunding = (Funding) sessionFactory.getCurrentSession().get(Funding.class, funding.getId());

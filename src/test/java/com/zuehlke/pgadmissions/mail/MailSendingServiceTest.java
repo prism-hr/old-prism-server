@@ -47,7 +47,7 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
@@ -221,7 +221,7 @@ public class MailSendingServiceTest {
         model.put("adminsEmails", adminMails);
         model.put("applicant", form.getApplicant());
         model.put("application", form);
-        model.put("programme", form.getProgrammeDetails());
+        model.put("programme", form.getProgramDetails());
         model.put("host", HOST);
 
         String subjectToReturn = SAMPLE_APPLICANT_NAME + " " + SAMPLE_APPLICANT_SURNAME + " " + "Application " + SAMPLE_APPLICATION_NUMBER + " for UCL "
@@ -267,7 +267,7 @@ public class MailSendingServiceTest {
         model.put("adminsEmails", adminMails);
         model.put("applicant", form.getApplicant());
         model.put("application", form);
-        model.put("programme", form.getProgrammeDetails());
+        model.put("programme", form.getProgramDetails());
         model.put("host", HOST);
 
         expect(mockMailSender.resolveSubject(REFEREE_NOTIFICATION, SAMPLE_APPLICATION_NUMBER, SAMPLE_PROGRAM_TITLE)).andReturn(
@@ -980,7 +980,7 @@ public class MailSendingServiceTest {
         RegisteredUser admin1 = new RegisteredUserBuilder().id(2).email(SAMPLE_ADMIN1_EMAIL_ADDRESS).build();
         RegisteredUser admin2 = new RegisteredUserBuilder().id(3).email(SAMPLE_ADMIN2_EMAIL_ADDRESS).build();
         Program program = new ProgramBuilder().id(4).title(SAMPLE_PROGRAM_TITLE).administrators(admin1, admin2).build();
-        ProgrammeDetails programDetails = new ProgrammeDetailsBuilder().id(5).build();
+        ProgramDetails programDetails = new ProgrammeDetailsBuilder().id(5).build();
         RejectReason reason = new RejectReasonBuilder().text(SAMPLE_REJECTION_REASON).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).status(ApplicationFormStatus.APPROVED)
                 .rejection(new RejectionBuilder().rejectionReason(reason).includeProspectusLink(false).build()).applicant(applicant)

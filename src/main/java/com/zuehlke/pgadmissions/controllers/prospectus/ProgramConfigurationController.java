@@ -46,7 +46,7 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 import com.zuehlke.pgadmissions.utils.GsonExclusionStrategies;
@@ -65,7 +65,7 @@ public class ProgramConfigurationController {
     private UserService userService;
 
     @Autowired
-    private ProgramsService programsService;
+    private ProgramService programsService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;

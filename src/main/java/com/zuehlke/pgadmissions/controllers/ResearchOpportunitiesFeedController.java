@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.ResearchOpportunitiesFeedService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
@@ -31,7 +31,7 @@ public class ResearchOpportunitiesFeedController {
 
     private final UserService userService;
     
-    private final ProgramsService programsService; 
+    private final ProgramService programsService; 
     
     private final ResearchOpportunitiesFeedService feedService;
     
@@ -44,7 +44,7 @@ public class ResearchOpportunitiesFeedController {
     }
     
     @Autowired
-    public ResearchOpportunitiesFeedController(final UserService userService, final ProgramsService programsService,
+    public ResearchOpportunitiesFeedController(final UserService userService, final ProgramService programsService,
             final ResearchOpportunitiesFeedService feedService, final MessageSource messageSource) {
         this.userService = userService;
         this.programsService = programsService;

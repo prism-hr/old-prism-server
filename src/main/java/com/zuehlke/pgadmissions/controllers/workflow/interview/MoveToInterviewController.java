@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.TimeZoneList;
@@ -42,7 +42,7 @@ public class MoveToInterviewController {
 
     private static final String INTERVIEWERS_SECTION = "/private/staff/interviewers/interviewer_section";
     private static final String INTERVIEW_PAGE = "/private/staff/interviewers/interview_details";
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
     private final UserService userService;
     private final InterviewValidator interviewValidator;
     private final InterviewerPropertyEditor interviewerPropertyEditor;
@@ -57,7 +57,7 @@ public class MoveToInterviewController {
     }
 
     @Autowired
-    public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
+    public MoveToInterviewController(ApplicationFormService applicationsService, UserService userService, InterviewService interviewService,
             InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
             InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, ActionsProvider actionsProvider,
             ApplicationFormUserRoleService applicationFormUserRoleService) {

@@ -80,9 +80,18 @@ public class FileDownloadController {
         if (applicationFormTransferError == null) {
             throw new ResourceNotFoundException();
         }
-
         sendDocument(response, applicationFormTransferError.getTransfer().getApplicationForm().getApplicationNumber() + "_transfer_error.txt",
                 TEXT_CONTENT_TYPE, applicationFormTransferError.getDiagnosticInfo().getBytes());
+    }
+    
+    @RequestMapping(value = "/transferSoapRequest", method = RequestMethod.GET)
+    public void downloadTransferSoapRequest(@RequestParam("transferErrorId") Long transferErrorId, HttpServletResponse response) throws IOException {
+        ApplicationFormTransferError applicationFormTransferError = applicationFormTransferService.getErrorById(transferErrorId);
+        if (applicationFormTransferError == null) {
+            throw new ResourceNotFoundException();
+        }
+        sendDocument(response, applicationFormTransferError.getTransfer().getApplicationForm().getApplicationNumber() + "_transfer_request.txt",
+                TEXT_CONTENT_TYPE, applicationFormTransferError.getRequestCopy().getBytes());
     }
 
     private void sendDocument(HttpServletResponse response, String fileName, String fileContentType, byte[] fileContent) throws IOException {

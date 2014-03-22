@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
@@ -65,7 +65,7 @@ public class ValidApplicationFormBuilder {
     protected QualificationInstitution institution;
     protected Program program;
     protected SourcesOfInterest interest;
-    protected ProgrammeDetails programDetails;
+    protected ProgramDetails programDetails;
     protected QualificationType qualificationType;
     protected Qualification qualification1;
     protected Qualification qualification2;

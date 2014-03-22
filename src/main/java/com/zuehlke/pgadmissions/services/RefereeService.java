@@ -55,7 +55,7 @@ public class RefereeService {
     private EncryptionHelper encryptionHelper;
     
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Autowired
     private ApplicantRatingService applicantRatingService;
@@ -194,7 +194,6 @@ public class RefereeService {
     }
 
     public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> refereesSendToPortico) {
-
         for (Referee referee : applicationForm.getReferees()) {
             referee.setSendToUCL(false);
         }
@@ -209,7 +208,6 @@ public class RefereeService {
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
         Referee referee = getById(refereeId);
         ReferenceComment reference = referee.getReference();
-
         reference.setComment(refereesAdminEditDTO.getComment());
         reference.setSuitableForUCL(refereesAdminEditDTO.getSuitableForUCL());
         reference.setSuitableForProgramme(refereesAdminEditDTO.getSuitableForProgramme());
@@ -223,7 +221,6 @@ public class RefereeService {
         }
 
         applicantRatingService.computeAverageRating(applicationForm);
-
         return reference;
     }
 
@@ -242,7 +239,6 @@ public class RefereeService {
 
         ReferenceComment referenceComment = createReferenceComment(refereesAdminEditDTO, referee, applicationForm);
         applicationForm.getApplicationComments().add(referenceComment);
-
         commentService.save(referenceComment);
         applicantRatingService.computeAverageRating(applicationForm);
 
@@ -251,7 +247,6 @@ public class RefereeService {
         }
 
         applicationFormUserRoleService.referencePosted(referee);
-
         saveReferenceAndSendMailNotifications(referee);
         return referenceComment;
     }

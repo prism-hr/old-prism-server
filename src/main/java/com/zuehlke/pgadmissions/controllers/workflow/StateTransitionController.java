@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredExc
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
@@ -57,7 +58,7 @@ public class StateTransitionController {
     protected static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
 
     @Autowired
-    protected ApplicationsService applicationsService;
+    protected ApplicationFormService applicationFormService;
 
     @Autowired
     protected UserService userService;
@@ -203,7 +204,7 @@ public class StateTransitionController {
         }
 
         if (BooleanUtils.isTrue(stateChangeDTO.getFastTrackApplication())) {
-            applicationsService.S
+            applicationsFormService;
         }
         
         commentService.postStateChangeComment(stateChangeDTO);
@@ -224,7 +225,7 @@ public class StateTransitionController {
     }
 
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+        ApplicationForm applicationForm = applicationFormService.getApplicationByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }

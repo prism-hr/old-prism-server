@@ -48,7 +48,7 @@ public class PorticoQueueListenerTest {
     
     private UserService userServiceMock;
     
-    private PorticoQueueListener listener;
+    private ExportQueueListener listener;
     
     @Before
     public void prepare() {
@@ -59,7 +59,7 @@ public class PorticoQueueListenerTest {
         throttleServiceMock = EasyMock.createMock(ThrottleService.class);
         mailServiceMock = EasyMock.createMock(MailSendingService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        listener = new PorticoQueueListener(porticoExportServiceMock, formDAOMock, applicationFormTransferServiceMock, throttleServiceMock, mailServiceMock, userServiceMock);
+        listener = new ExportQueueListener(porticoExportServiceMock, formDAOMock, applicationFormTransferServiceMock, throttleServiceMock, mailServiceMock, userServiceMock);
     }
     
     @Test
@@ -123,7 +123,7 @@ public class PorticoQueueListenerTest {
         try {
             listener.onMessage(messageMock);
             Assert.fail("A TriggerJmsRetryException should have been thrown");
-        }  catch (PorticoQueueListener.TriggerJmsRetryException e) {
+        }  catch (ExportQueueListener.TriggerJmsRetryException e) {
             assertEquals(uclExportServiceException.getMessage(), e.getMessage());
         }
         

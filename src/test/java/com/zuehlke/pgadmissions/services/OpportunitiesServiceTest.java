@@ -50,7 +50,7 @@ public class OpportunitiesServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ProgramsService programsService;
+    private ProgramService programsService;
 
     @Mock
     @InjectIntoByType

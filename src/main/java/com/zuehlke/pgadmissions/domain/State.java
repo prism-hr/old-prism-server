@@ -39,6 +39,9 @@ public class State {
     
     @Column(name="is_completed")
     private Boolean completed;
+    
+    @Column(name="is_under_consideration")
+    private Boolean underConsideration;
 	
 	public ApplicationFormStatus getId() {
 		return id;
@@ -125,6 +128,14 @@ public class State {
 
     public void setCompleted(Boolean completed) {
         this.completed = completed;
+    }
+
+    public Boolean getUnderConsideration() {
+        return underConsideration;
+    }
+
+    public void setUnderConsideration(Boolean underConsideration) {
+        this.underConsideration = underConsideration;
     }
     
 }

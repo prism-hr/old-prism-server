@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewParticipantValidator;
@@ -28,7 +28,7 @@ public class InterviewVoteControllerTest {
 
     private InterviewVoteController controller;
 
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
 
     private UserService userServiceMock;
 
@@ -106,7 +106,7 @@ public class InterviewVoteControllerTest {
 
     @Before
     public void prepare() {
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         interviewServiceMock = EasyMock.createMock(InterviewService.class);
         interviewParticipantValidatorMock = EasyMock.createMock(InterviewParticipantValidator.class);

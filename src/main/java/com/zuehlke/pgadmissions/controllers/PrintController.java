@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -35,7 +35,7 @@ public class PrintController {
 
     private final Logger log = LoggerFactory.getLogger(PrintController.class);
     
-	private final ApplicationsService applicationSevice;
+	private final ApplicationFormService applicationSevice;
 	
 	private final PdfDocumentBuilder pdfDocumentBuilder;
 	
@@ -46,7 +46,7 @@ public class PrintController {
 	}
 
 	@Autowired
-	public PrintController(final ApplicationsService applicationSevice, final PdfDocumentBuilder builder, final UserService userService) {
+	public PrintController(final ApplicationFormService applicationSevice, final PdfDocumentBuilder builder, final UserService userService) {
 		this.applicationSevice = applicationSevice;
 		this.pdfDocumentBuilder = builder;
 		this.userService = userService;

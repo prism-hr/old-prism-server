@@ -8,32 +8,20 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Service
+@Transactional
 public class WithdrawService {
 
     @Autowired
-    private ApplicationsService applicationService;
-
-    @Autowired
-    private PorticoQueueService porticoQueueService;
-
-    @Autowired
-    private EventFactory eventFactory;
-    
-    @Autowired 
-    ApplicationFormUserRoleService applicationFormUserRoleService;
+    private ApplicationFormService applicationFormService;
 
     @Transactional
     public void withdrawApplication(final ApplicationForm application) {
-        application.setStatus(ApplicationFormStatus.WITHDRAWN);
-        application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
-        applicationService.save(application);
-        applicationFormUserRoleService.deleteApplicationActions(application);
+        applicationFormService.setApplicationFormStatus(application, ApplicationFormStatus.WITHDRAWN);
     }
 
     @Transactional
-    public void sendToPortico(final ApplicationForm form) {
-        if (form.getLastStatus() != ApplicationFormStatus.UNSUBMITTED && form.getProgram().getProgramFeed() != null) {
-            porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
-        }
+    public void sendToPortico(final ApplicationForm application) {
+        applicationFormService.queueApplicationForExport(application);
     }
+    
 }

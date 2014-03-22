@@ -45,10 +45,10 @@ public class QualificationServiceTest {
     public void shouldDelegateGetQualificationToDAO() {
         Qualification qualification = new QualificationBuilder().id(2).build();
 
-        expect(qualificationDAOMock.getQualificationById(2)).andReturn(qualification);
+        expect(qualificationDAOMock.getById(2)).andReturn(qualification);
 
         replay();
-        Qualification returnedQualification = service.getQualificationById(2);
+        Qualification returnedQualification = service.getById(2);
 
         assertEquals(qualification, returnedQualification);
     }
@@ -69,7 +69,7 @@ public class QualificationServiceTest {
         qualificationDAOMock.save(qualification);
 
         replay();
-        service.save(applicationForm, null, qualification);
+        service.saveOrUpdate(applicationForm, null, qualification);
 
         assertSame(applicationForm, qualification.getApplication());
         assertThat(applicationForm.getQualifications(), contains(qualification));
@@ -83,11 +83,11 @@ public class QualificationServiceTest {
         Qualification existingQualification = new QualificationBuilder().proofOfAward(existingDocument).build();
         Qualification qualification = new QualificationBuilder().proofOfAward(document).build();
 
-        documentServiceMock.documentReferentialityChanged(existingDocument, document);
-        expect(qualificationDAOMock.getQualificationById(43)).andReturn(existingQualification);
+        documentServiceMock.replaceDocument(existingDocument, document);
+        expect(qualificationDAOMock.getById(43)).andReturn(existingQualification);
 
         replay();
-        service.save(null, 43, qualification);
+        service.saveOrUpdate(null, 43, qualification);
     }
 
     @Test
@@ -99,13 +99,13 @@ public class QualificationServiceTest {
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().qualifications(qualification1, qualification2, qualification3, qualification4).build();
 
-        EasyMock.expect(qualificationDAOMock.getQualificationById(3)).andReturn(qualification3);
-        EasyMock.expect(qualificationDAOMock.getQualificationById(4)).andReturn(qualification4);
+        EasyMock.expect(qualificationDAOMock.getById(3)).andReturn(qualification3);
+        EasyMock.expect(qualificationDAOMock.getById(4)).andReturn(qualification4);
 
-        EasyMock.expect(qualificationDAOMock.getQualificationById(1)).andReturn(qualification1);
-        EasyMock.expect(qualificationDAOMock.getQualificationById(2)).andReturn(qualification2);
-        EasyMock.expect(qualificationDAOMock.getQualificationById(3)).andReturn(qualification3);
-        EasyMock.expect(qualificationDAOMock.getQualificationById(4)).andReturn(qualification4);
+        EasyMock.expect(qualificationDAOMock.getById(1)).andReturn(qualification1);
+        EasyMock.expect(qualificationDAOMock.getById(2)).andReturn(qualification2);
+        EasyMock.expect(qualificationDAOMock.getById(3)).andReturn(qualification3);
+        EasyMock.expect(qualificationDAOMock.getById(4)).andReturn(qualification4);
 
         replay();
         service.selectForSendingToPortico(applicationForm, Arrays.asList(new Integer[] { 3, 4 }));
@@ -125,10 +125,10 @@ public class QualificationServiceTest {
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().qualifications(qualification1, qualification2, qualification3, qualification4).build();
 
-        EasyMock.expect(qualificationDAOMock.getQualificationById(1)).andReturn(qualification1);
-        EasyMock.expect(qualificationDAOMock.getQualificationById(2)).andReturn(qualification2);
-        EasyMock.expect(qualificationDAOMock.getQualificationById(3)).andReturn(qualification3);
-        EasyMock.expect(qualificationDAOMock.getQualificationById(4)).andReturn(qualification4);
+        EasyMock.expect(qualificationDAOMock.getById(1)).andReturn(qualification1);
+        EasyMock.expect(qualificationDAOMock.getById(2)).andReturn(qualification2);
+        EasyMock.expect(qualificationDAOMock.getById(3)).andReturn(qualification3);
+        EasyMock.expect(qualificationDAOMock.getById(4)).andReturn(qualification4);
 
         replay();
         service.selectForSendingToPortico(applicationForm, Collections.<Integer> emptyList());

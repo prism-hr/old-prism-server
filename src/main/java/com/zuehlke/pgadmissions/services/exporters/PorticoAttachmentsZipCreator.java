@@ -22,7 +22,6 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
@@ -36,26 +35,17 @@ public class PorticoAttachmentsZipCreator {
 
     private Logger log = LoggerFactory.getLogger(PorticoAttachmentsZipCreator.class);
 
-    private final PdfDocumentBuilder pdfDocumentBuilder;
-
-    private final CombinedReferencesPdfBuilder combinedReferenceBuilder;
-
-    private final Transcript1PdfBuilder transcriptBuilder;
-
-    private final String emailAddressTo;
-
-    public PorticoAttachmentsZipCreator() {
-        this(null, null, null, null);
-    }
+    @Autowired
+    private PdfDocumentBuilder pdfDocumentBuilder;
 
     @Autowired
-    public PorticoAttachmentsZipCreator(final PdfDocumentBuilder pdfDocumentBuilder, final CombinedReferencesPdfBuilder combinedReferenceBuilder,
-            final Transcript1PdfBuilder transcriptBuilder, @Value("${email.address.to}") final String emailAddressTo) {
-        this.pdfDocumentBuilder = pdfDocumentBuilder;
-        this.combinedReferenceBuilder = combinedReferenceBuilder;
-        this.transcriptBuilder = transcriptBuilder;
-        this.emailAddressTo = emailAddressTo;
-    }
+    private CombinedReferencesPdfBuilder combinedReferenceBuilder;
+
+    @Autowired
+    private Transcript1PdfBuilder transcriptBuilder;
+
+    @Value("${email.address.to}")
+    private String emailAddressTo;
 
     public void writeZipEntries(ApplicationForm applicationForm, String referenceNumber, OutputStream sftpOs) throws IOException, CouldNotCreateAttachmentsPack {
         Properties contentsProperties = new Properties();
@@ -112,7 +102,7 @@ public class PorticoAttachmentsZipCreator {
     }
 
     protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
-        Document document = applicationForm.getCv();
+        Document document = applicationForm.getApplicationFormDocument().getCv();
         if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
@@ -126,9 +116,8 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
-        LanguageQualification languageQualification = applicationForm.getPersonalDetails().getLanguageQualification();
-        if (languageQualification != null) {
-            Document document = languageQualification.getLanguageQualificationDocument();
+        Document document = applicationForm.getPersonalDetails().getLanguageQualificationDocument();
+        if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
             zos.write(getFileContents(document, applicationForm));
@@ -141,7 +130,7 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException {
-        Document document = applicationForm.getPersonalStatement();
+        Document document = applicationForm.getApplicationFormDocument().getPersonalStatement();
         if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));

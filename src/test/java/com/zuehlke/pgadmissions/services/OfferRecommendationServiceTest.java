@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -76,7 +76,7 @@ public class OfferRecommendationServiceTest {
 
     @Mock
     @InjectIntoByType
-    private PorticoQueueService approvedSenderServiceMock;
+    private ExportQueueService approvedSenderServiceMock;
     
     @Mock
     @InjectIntoByType
@@ -91,7 +91,7 @@ public class OfferRecommendationServiceTest {
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 
         Date startDate = new Date();
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+        ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
         ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
                 .enabled(true).studyOption("1", "full").build();
         Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
@@ -134,7 +134,7 @@ public class OfferRecommendationServiceTest {
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 
         Date startDate = DateUtils.addDays(new Date(), 1);
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
+        ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
         ProgramInstance instanceDisabled = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 4))
                 .enabled(false).studyOption("1", "full").build();
         ProgramInstance instanceEnabled = new ProgramInstanceBuilder().applicationStartDate(DateUtils.addDays(startDate, 3))

@@ -44,7 +44,7 @@ import com.zuehlke.pgadmissions.mail.MailSendingService;
 public class ApplicationsServiceTest {
 
     @TestedObject
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Mock
     @InjectIntoByType

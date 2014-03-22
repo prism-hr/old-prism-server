@@ -15,4 +15,5 @@ public class AdditionalInformationDAO {
 	public void save(AdditionalInformation additionalInformation) {
 		sessionFactory.getCurrentSession().saveOrUpdate(additionalInformation);
 	}
+	
 }

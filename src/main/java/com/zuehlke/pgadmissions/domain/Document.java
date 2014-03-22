@@ -28,110 +28,110 @@ import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 @Entity(name = "DOCUMENT")
 public class Document implements Serializable {
 
-	private static final long serialVersionUID = -6396463075916267580L;
+    private static final long serialVersionUID = -6396463075916267580L;
 
-	@Id
-	@GeneratedValue
-	private Integer id;
-	
-	@Transient
-	private MultipartFile fileData;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "uploaded_by_id")
-	private RegisteredUser uploadedBy;
-	
-	@OneToOne(fetch = FetchType.LAZY, mappedBy="proofOfAward")	
-	private Qualification qualification;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uploaded_by_id")
+    private RegisteredUser uploadedBy;
 
-	@Column(name = "uploaded_time_stamp", insertable = false)
-	@Generated(GenerationTime.INSERT)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateUploaded;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "proofOfAward")
+    private Qualification qualification;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "document_type")	
-	private DocumentType type;
+    @Column(name = "uploaded_time_stamp", insertable = false)
+    @Generated(GenerationTime.INSERT)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateUploaded;
 
-	@Column(name = "content_type")
-	private String contentType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "document_type")
+    private DocumentType type;
 
-	@Column(name = "file_name")
-	private String fileName;
+    @Column(name = "content_type")
+    private String contentType;
 
-	@Column(name = "file_content")
-	@Type(type ="binary")
-	private byte[] content;
-	
-	@Column(name = "is_referenced")
+    @Column(name = "file_name")
+    private String fileName;
+
+    @Column(name = "file_content")
+    @Type(type = "binary")
+    private byte[] content;
+
+    @Column(name = "is_referenced")
     private Boolean isReferenced;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Transient
+    private MultipartFile fileData;
 
-	public Integer getId() {
-		return id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getFileName() {
-		return fileName;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    public String getFileName() {
+        return fileName;
+    }
 
-	public byte[] getContent() {
-		return content;
-	}
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
-	public void setContent(byte[] content) {
-	    if (content != null) {
-	        this.content = Arrays.copyOf(content, content.length);
-	    }
-	}
+    public byte[] getContent() {
+        return content;
+    }
 
-	public String getContentType() {
-		return contentType;
-	}
+    public void setContent(byte[] content) {
+        if (content != null) {
+            this.content = Arrays.copyOf(content, content.length);
+        }
+    }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+    public String getContentType() {
+        return contentType;
+    }
 
-	public DocumentType getType() {
-		return type;
-	}
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 
-	public void setType(DocumentType type) {
-		this.type = type;
-	}
+    public DocumentType getType() {
+        return type;
+    }
 
-	public Date getDateUploaded() {
-		return dateUploaded;
-	}
+    public void setType(DocumentType type) {
+        this.type = type;
+    }
 
-	public void setDateUploaded(Date dateUploaded) {
-		this.dateUploaded = dateUploaded;
-	}
+    public Date getDateUploaded() {
+        return dateUploaded;
+    }
 
-	public RegisteredUser getUploadedBy() {
-		return uploadedBy;
-	}
+    public void setDateUploaded(Date dateUploaded) {
+        this.dateUploaded = dateUploaded;
+    }
 
-	public void setUploadedBy(RegisteredUser uploadedBy) {
-		this.uploadedBy = uploadedBy;
-	}
+    public RegisteredUser getUploadedBy() {
+        return uploadedBy;
+    }
 
-	public Qualification getQualification() {
-		return qualification;
-	}
+    public void setUploadedBy(RegisteredUser uploadedBy) {
+        this.uploadedBy = uploadedBy;
+    }
 
-	public void setQualification(Qualification qualification) {
-		this.qualification = qualification;
-	}
-	  
+    public Qualification getQualification() {
+        return qualification;
+    }
+
+    public void setQualification(Qualification qualification) {
+        this.qualification = qualification;
+    }
+
     public MultipartFile getFileData() {
         return fileData;
     }
@@ -147,5 +147,5 @@ public class Document implements Serializable {
     public void setIsReferenced(Boolean isReferenced) {
         this.isReferenced = isReferenced;
     }
-    
+
 }

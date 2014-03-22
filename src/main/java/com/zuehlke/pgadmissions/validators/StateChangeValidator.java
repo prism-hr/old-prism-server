@@ -23,7 +23,7 @@ public class StateChangeValidator extends AbstractValidator {
     	
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
     	
-        if (stateChangeDTO.getApplicationForm().getStatus() == ApplicationFormStatus.VALIDATION) {
+        if (stateChangeDTO.getApplicationForm().getStatus().getId() == ApplicationFormStatus.VALIDATION) {
             if (stateChangeDTO.getQualifiedForPhd() == null) {
                 errors.rejectValue("qualifiedForPhd", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }

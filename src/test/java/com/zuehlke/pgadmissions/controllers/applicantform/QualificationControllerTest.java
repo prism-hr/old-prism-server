@@ -46,7 +46,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.QualificationService;
@@ -74,7 +74,7 @@ public class QualificationControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
 
     @Mock
     @InjectIntoByType
@@ -163,7 +163,7 @@ public class QualificationControllerTest {
         modelMap.put("applicationForm", applicationForm);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-        qualificationServiceMock.save(applicationForm, null, qualification);
+        qualificationServiceMock.saveOrUpdate(applicationForm, null, qualification);
         applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, applicant, ApplicationUpdateScope.ALL_USERS);
 
         replay();

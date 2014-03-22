@@ -51,14 +51,14 @@ import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
 public class InterviewCommentControllerTest {
 
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private UserService userServiceMock;
     private InterviewCommentController controller;
     private FeedbackCommentValidator reviewFeedbackValidatorMock;
@@ -223,7 +223,7 @@ public class InterviewCommentControllerTest {
 
     @Before
     public void setUp() {
-        applicationsServiceMock = createMock(ApplicationsService.class);
+        applicationsServiceMock = createMock(ApplicationFormService.class);
         userServiceMock = createMock(UserService.class);
         reviewFeedbackValidatorMock = createMock(FeedbackCommentValidator.class);
         commentServiceMock = createMock(CommentService.class);

@@ -23,7 +23,7 @@ public class DocumentSectionValidatorTest {
     @Autowired
     private Validator validator;
 
-    private DocumentSectionValidator documentSectionValidator;
+    private ApplicationFormDocumentValidator documentSectionValidator;
 
     private DocumentsSectionDTO documentsSectionDTO;
 
@@ -48,7 +48,7 @@ public class DocumentSectionValidatorTest {
         documentsSectionDTO.setCv(new DocumentBuilder().type(DocumentType.CV).build());
         documentsSectionDTO.setPersonalStatement(new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).build());
 
-        documentSectionValidator = new DocumentSectionValidator();
+        documentSectionValidator = new ApplicationFormDocumentValidator();
         documentSectionValidator.setValidator((javax.validation.Validator) validator);
     }
 }

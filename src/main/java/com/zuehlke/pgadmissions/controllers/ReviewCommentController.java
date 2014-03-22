@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
@@ -48,7 +48,7 @@ public class ReviewCommentController {
 
     private static final Logger log = LoggerFactory.getLogger(ReviewCommentController.class);
     private static final String REVIEW_FEEDBACK_PAGE = "private/staff/reviewer/feedback/reviewcomment";
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
     private final UserService userService;
     private final FeedbackCommentValidator reviewFeedbackValidator;
     private final CommentService commentService;
@@ -65,7 +65,7 @@ public class ReviewCommentController {
     }
 
     @Autowired
-    public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+    public ReviewCommentController(ApplicationFormService applicationsService, UserService userService, CommentService commentService,
             FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
             ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormUserRoleService ApplicationFormUserRoleService, ActionsProvider actionsProvider,
             ApplicantRatingService applicantRatingService) {

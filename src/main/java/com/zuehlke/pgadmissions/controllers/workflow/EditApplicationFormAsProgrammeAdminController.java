@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -70,7 +70,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     protected final UserService userService;
 
-    protected final ApplicationsService applicationsService;
+    protected final ApplicationFormService applicationsService;
 
     protected final DocumentPropertyEditor documentPropertyEditor;
 
@@ -103,7 +103,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     }
 
     @Autowired
-    public EditApplicationFormAsProgrammeAdminController(final UserService userService, final ApplicationsService applicationsService,
+    public EditApplicationFormAsProgrammeAdminController(final UserService userService, final ApplicationFormService applicationsService,
             final DocumentPropertyEditor documentPropertyEditor, final RefereeService refereeService,
             final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
             final EncryptionHelper encryptionHelper, final MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser,

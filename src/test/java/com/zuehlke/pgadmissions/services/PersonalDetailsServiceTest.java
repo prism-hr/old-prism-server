@@ -62,7 +62,7 @@ public class PersonalDetailsServiceTest {
 
         expect(applicationContext.getBean(PersonalDetailsService.class)).andReturn(thisBeanMock);
         expect(applicationFormDAOMock.get(84)).andReturn(applicationForm);
-        documentService.documentReferentialityChanged(oldQualificationDocument, newQualificationDocument);
+        documentService.replaceDocument(oldQualificationDocument, newQualificationDocument);
         thisBeanMock.copyPersonalDetails(personalDetails, newPersonalDetails);
         thisBeanMock.copyApplicantData(applicant, newApplicant);
         applicationFormDAOMock.save(applicationForm);

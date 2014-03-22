@@ -64,31 +64,27 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "application_form_id")
     private List<Event> events = new ArrayList<Event>();
 
-    @OneToMany
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status")
     private State status;
 
-    @OneToMany
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "next_status")
     private State nextStatus = null;
 
-    @OneToMany
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "last_status")
     private State lastStatus = null;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "current_address_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_form_address_id")
     @Valid
-    private Address currentAddress;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "contact_address_id")
+    private ApplicationFormAddress applicationFormAddress;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_form_document_id")
     @Valid
-    private Address contactAddress;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cv_id")
-    private Document cv = null;
+    private ApplicationFormDocument applicationFormDocument;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "due_date")
@@ -96,10 +92,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     @Column(name = "accepted_terms")
     private Boolean acceptedTermsOnSubmission;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "personal_statement_id")
-    private Document personalStatement;
 
     @Column(name = "app_date_time", insertable = false)
     @Generated(GenerationTime.INSERT)
@@ -142,42 +134,42 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "programme_details_id")
     @Valid
-    private ProgrammeDetails programmeDetails;
+    private ProgramDetails programDetails;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "application_form_id")
     private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_id")
     private List<ApprovalRound> approvalRounds = new ArrayList<ApprovalRound>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdDate desc")
     @JoinColumn(name = "application_form_id")
     private List<Interview> interviews = new ArrayList<Interview>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("date")
     @JoinColumn(name = "application_form_id")
     private List<Comment> applicationComments = new ArrayList<Comment>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_id")
     @Valid
     private List<Qualification> qualifications = new ArrayList<Qualification>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_id")
     @Valid
     private List<Funding> fundings = new ArrayList<Funding>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_id")
     @Valid
     private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_id")
     @Valid
     private List<Referee> referees = new ArrayList<Referee>();
@@ -212,7 +204,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "is_editable_by_applicant")
     private Boolean isEditableByApplicant = true;
 
-    @OneToMany(mappedBy = "applicationForm")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "applicationForm")
     private List<ApplicationFormUserRole> applicationFormUserRoles = new ArrayList<ApplicationFormUserRole>();
 
     @Column(name = "avg_rating", precision = 3, scale = 2)
@@ -224,7 +216,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @Column(name = "is_exported")
     private Boolean exported = null;
 
-    @OneToOne(mappedBy = "applicationForm", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "applicationForm")
     private ApplicationFormTransfer applicationFormTransfer;
 
     public List<Qualification> getQualifications() {
@@ -335,12 +327,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.personalDetails = personalDetails;
     }
 
-    public ProgrammeDetails getProgrammeDetails() {
-        return programmeDetails;
+    public ProgramDetails getProgramDetails() {
+        return programDetails;
     }
 
-    public void setProgrammeDetails(ProgrammeDetails programmeDetails) {
-        this.programmeDetails = programmeDetails;
+    public void setProgramDetails(ProgramDetails programDetails) {
+        this.programDetails = programDetails;
     }
 
     public AdditionalInformation getAdditionalInformation() {
@@ -357,44 +349,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public void setSubmittedDate(Date submittedOn) {
         this.submittedDate = submittedOn;
-    }
-
-    public Document getCv() {
-        return cv;
-    }
-
-    public void setCv(Document cv) {
-        if (cv != null) {
-            cv.setIsReferenced(true);
-        }
-        this.cv = cv;
-    }
-
-    public Document getPersonalStatement() {
-        return personalStatement;
-    }
-
-    public void setPersonalStatement(Document personalStatement) {
-        if (personalStatement != null) {
-            personalStatement.setIsReferenced(true);
-        }
-        this.personalStatement = personalStatement;
-    }
-
-    public Address getCurrentAddress() {
-        return currentAddress;
-    }
-
-    public void setCurrentAddress(Address currentAddress) {
-        this.currentAddress = currentAddress;
-    }
-
-    public Address getContactAddress() {
-        return contactAddress;
-    }
-
-    public void setContactAddress(Address contactAddress) {
-        this.contactAddress = contactAddress;
     }
 
     public List<Comment> getVisibleComments(RegisteredUser user) {
@@ -430,7 +384,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     }
 
     public boolean shouldOpenFirstSection() {
-        return isNull(programmeDetails, personalDetails, currentAddress, contactAddress, personalStatement, cv, additionalInformation)
+        return isNull(programDetails, personalDetails, applicationFormAddress, applicationFormDocument, additionalInformation)
                 && isEmpty(fundings, referees, employmentPositions, qualifications);
     }
 
@@ -500,7 +454,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
         this.projectTitle = projectTitle;
     }
 
-
     public Date getRejectNotificationDate() {
         return rejectNotificationDate;
     }
@@ -560,6 +513,22 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
 
     public void setLastStatus(State lastStatus) {
         this.lastStatus = lastStatus;
+    }
+
+    public ApplicationFormAddress getApplicationFormAddress() {
+        return applicationFormAddress;
+    }
+
+    public void setApplicationFormAddress(ApplicationFormAddress applicationFormAddress) {
+        this.applicationFormAddress = applicationFormAddress;
+    }
+
+    public ApplicationFormDocument getApplicationFormDocument() {
+        return applicationFormDocument;
+    }
+
+    public void setApplicationFormDocument(ApplicationFormDocument applicationFormDocument) {
+        this.applicationFormDocument = applicationFormDocument;
     }
 
     public Boolean getExported() {

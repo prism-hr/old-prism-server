@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 public class MoveToReviewControllerTest {
 
     private MoveToReviewController controller;
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
     private UserService userServiceMock;
     private ReviewService reviewServiceMock;
     private BindingResult bindingResultMock;
@@ -187,7 +187,7 @@ public class MoveToReviewControllerTest {
 
     @Before
     public void setUp() {
-        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationServiceMock = EasyMock.createMock(ApplicationFormService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         currentUserMock = EasyMock.createMock(RegisteredUser.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();

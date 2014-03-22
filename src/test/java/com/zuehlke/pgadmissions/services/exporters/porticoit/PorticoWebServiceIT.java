@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
 
@@ -65,7 +65,7 @@ public class PorticoWebServiceIT {
     private WebServiceTemplate webServiceTemplate;
 
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Autowired
     private PorticoExportService uclExportService;

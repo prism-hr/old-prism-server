@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.QualificationService;
@@ -34,12 +34,12 @@ public class DeleteApplicationFormEntitiesControllerTest {
     private EncryptionHelper encryptionHelperMock;
     private UserService userServiceMock;
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
 
     @Test
     public void shoulGetQualificationFromServiceAndDelete() {
         Qualification qual = new QualificationBuilder().application(applicationForm).id(1).build();
-        EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(qual);
+        EasyMock.expect(qualificationServiceMock.getById(1)).andReturn(qual);
         qualificationServiceMock.delete(qual);
         EasyMock.replay(qualificationServiceMock, encryptionHelperMock);
         String viewName = controller.deleteQualification(1);
@@ -52,7 +52,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
         Funding funding = new FundingBuilder().id(1).application(applicationForm).build();
 
-        EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(funding);
+        EasyMock.expect(fundingServiceMock.getById(1)).andReturn(funding);
         fundingServiceMock.delete(funding);
         EasyMock.replay(fundingServiceMock, encryptionHelperMock);
         String viewName = controller.deleteFunding("encryptedId");
@@ -67,7 +67,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
         EmploymentPosition employment = new EmploymentPosition();
         employment.setApplication(applicationForm);
         employment.setId(1);
-        EasyMock.expect(employmentServiceMock.getEmploymentPositionById(1)).andReturn(employment);
+        EasyMock.expect(employmentServiceMock.getById(1)).andReturn(employment);
         employmentServiceMock.delete(employment);
         EasyMock.replay(employmentServiceMock, encryptionHelperMock);
 
@@ -104,7 +104,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
         applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationServiceMock = EasyMock.createMock(ApplicationFormService.class);
         controller = new DeleteApplicationFormEntitiesController(qualificationServiceMock, employmentServiceMock, fundingServiceMock, refereeServiceMock,
                 encryptionHelperMock, applicationServiceMock, userServiceMock, applicationFormUserRoleServiceMock);
     }

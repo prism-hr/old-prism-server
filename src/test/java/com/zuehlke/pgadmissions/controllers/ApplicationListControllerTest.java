@@ -52,7 +52,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEdito
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 
@@ -60,7 +60,7 @@ public class ApplicationListControllerTest {
 
     private ApplicationListController controller;
     private RegisteredUser user;
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private ApplicationsReportService applicationsReportServiceMock;
     private UserService userServiceMock;
     private ApplicationsFiltersPropertyEditor filtersPropertyEditorMock;
@@ -282,7 +282,7 @@ public class ApplicationListControllerTest {
     public void setUp() {
         user = new RegisteredUserBuilder().id(1).build();
         userServiceMock = EasyMock.createMock(UserService.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         applicationsReportServiceMock = EasyMock.createMock(ApplicationsReportService.class);
         filtersPropertyEditorMock = createMock(ApplicationsFiltersPropertyEditor.class);
         applicationSummaryServiceMock = createMock(ApplicationSummaryService.class);

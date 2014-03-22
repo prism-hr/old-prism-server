@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -29,7 +28,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -48,7 +47,7 @@ public class RefereeController {
     private DomicileService domicileService;
 
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Autowired
     private DomicilePropertyEditor domicilePropertyEditor;
@@ -64,6 +63,17 @@ public class RefereeController {
 
     @Autowired
     private FullTextSearchService searchService;
+    
+    @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
+    public String getRefereeView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String refereeId, ModelMap modelMap) {
+        Referee referee = getReferee(refereeId);
+        if (referee == null) {
+            referee = new Referee();
+        }
+
+        modelMap.put("referee", referee);
+        return STUDENTS_FORM_REFEREES_VIEW;
+    }
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
     public String editReferee(String refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap,
@@ -84,6 +94,15 @@ public class RefereeController {
         refereeService.saveOrUpdate(referee, newReferee);
 
         return "redirect:/update/getReferee?applicationId=" + applicationForm.getApplicationNumber();
+    }
+    
+    @RequestMapping(value = "/deleteReferee", method = RequestMethod.POST)
+    public String deleteReferee(@RequestParam("id") String encrypedRefereeId) {
+        Integer id = encryptionHelper.decryptToInteger(encrypedRefereeId);
+        Referee referee = refereeService.getById(id);
+        refereeService.delete(referee);
+        updateLastAccessAndLastModified(userService.getCurrentUser(), referee.getApplication());
+        return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getApplicationNumber() + "&message=deleted";
     }
 
     @RequestMapping(value = "/referee/employer/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
@@ -137,17 +156,6 @@ public class RefereeController {
             throw new ResourceNotFoundException();
         }
         return referee;
-    }
-
-    @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
-    public String getRefereeView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String refereeId, ModelMap modelMap) {
-        Referee referee = getReferee(refereeId);
-        if (referee == null) {
-            referee = new Referee();
-        }
-
-        modelMap.put("referee", referee);
-        return STUDENTS_FORM_REFEREES_VIEW;
     }
 
 }

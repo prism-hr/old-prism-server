@@ -30,7 +30,7 @@ public class PermissionsService {
     private OpportunityRequestDAO opportunityRequestDAO;
 
     @Autowired
-    private ProgramsService programsService;
+    private ProgramService programsService;
 
     public boolean canSeeOpportunityRequests() {
         RegisteredUser user = getCurrentUser();

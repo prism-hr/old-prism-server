@@ -21,13 +21,13 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ResearchOpportunitiesFeedBuilder;
 import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.ResearchOpportunitiesFeedService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class ResearchOpportunitiesFeedControllerTest {
 
-    private ProgramsService programsServiceMock;
+    private ProgramService programsServiceMock;
     
     private ResearchOpportunitiesFeedService feedServiceMock;
     
@@ -42,7 +42,7 @@ public class ResearchOpportunitiesFeedControllerTest {
     @Before
     public void prepare() {
         currentUser = new RegisteredUserBuilder().build();
-        programsServiceMock = EasyMock.createMock(ProgramsService.class);
+        programsServiceMock = EasyMock.createMock(ProgramService.class);
         feedServiceMock = EasyMock.createMock(ResearchOpportunitiesFeedService.class);
         messageSourceMock = EasyMock.createNiceMock(MessageSource.class);
         userServiceMock = EasyMock.createMock(UserService.class);

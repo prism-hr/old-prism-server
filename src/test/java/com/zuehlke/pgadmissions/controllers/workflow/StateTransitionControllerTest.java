@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 public class StateTransitionControllerTest {
 
     private StateTransitionController controller;
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
     private UserService userServiceMock;
     private CommentFactory commentFactoryMock;
     private CommentService commentServiceMock;
@@ -155,7 +155,7 @@ public class StateTransitionControllerTest {
         documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
         stateChangeValidatorMock = EasyMock.createMock(StateChangeValidator.class);
         approvalServiceMock = EasyMock.createMock(ApprovalService.class);
-        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationServiceMock = EasyMock.createMock(ApplicationFormService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         commentFactoryMock = EasyMock.createMock(CommentFactory.class);
         commentServiceMock = EasyMock.createMock(CommentService.class);

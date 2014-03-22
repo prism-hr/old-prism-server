@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
 public class AddressControllerTest {
 
     private RegisteredUser currentUser;
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private AddressSectionDTOValidator addressSectionValidatorMock;
     private AddressController controller;
 
@@ -281,7 +281,7 @@ public class AddressControllerTest {
     public void setUp() {
         domicilePropertyEditor = EasyMock.createMock(DomicilePropertyEditor.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 
         addressSectionValidatorMock = EasyMock.createMock(AddressSectionDTOValidator.class);
         userServiceMock = EasyMock.createMock(UserService.class);

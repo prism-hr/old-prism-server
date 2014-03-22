@@ -69,7 +69,7 @@ public class MailSendingService extends AbstractMailSendingService {
         try {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "referee", "adminsEmails", "applicant", "application", "programme", "host" },
-                    new Object[] { referee, adminsEmails, application.getApplicant(), application, application.getProgrammeDetails(), host });
+                    new Object[] { referee, adminsEmails, application.getApplicant(), application, application.getProgramDetails(), host });
             String subject = resolveMessage(REFEREE_NOTIFICATION, application);
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_NOTIFICATION);
             sendEmail(message);

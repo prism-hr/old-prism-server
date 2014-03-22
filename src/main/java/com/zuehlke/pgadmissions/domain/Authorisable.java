@@ -90,7 +90,7 @@ public abstract class Authorisable extends AbstractAuthorisationAPI {
     }
 
     public boolean canSubmitApplicationAsApplicant(final ApplicationForm form, final RegisteredUser user) {
-        return user.getId() == form.getApplicant().getId() && !form.isSubmitted();
+        return user.getId() == form.getApplicant().getId() && !form.getStatus().isSubmitted();
     }
 
     public boolean canUpdateApplicationAsApplicant(final ApplicationForm form, final RegisteredUser user) {

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 
 /**
  * A small API which facilitates the writing of complex authorisation rules.
@@ -268,7 +267,7 @@ public abstract class AbstractAuthorisationAPI {
         Boolean isApplicant = user.isInRole(Authority.APPLICANT);
         if (BooleanUtils.isTrue(isApplicant)) {
             Integer authorityCount = 0;
-            for (Authority authority : AuthorityGroup.getAllApplicationAuthorities()) {
+            for (Authority authority : Authority.values()) {
                 if (user.isInRole(authority)) {
                     authorityCount++;
                     if (authorityCount > 1) {

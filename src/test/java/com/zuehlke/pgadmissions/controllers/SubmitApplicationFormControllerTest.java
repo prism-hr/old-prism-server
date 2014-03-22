@@ -53,9 +53,9 @@ import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.EventFactory;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.StageDurationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
@@ -64,7 +64,7 @@ import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 public class SubmitApplicationFormControllerTest {
 
     private SubmitApplicationFormController applicationController;
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private ApplicationFormTransferService applicationFormTransferServiceMock;
     private ApplicationFormValidator applicationFormValidatorMock;
     private StageDurationService stageDurationServiceMock;
@@ -73,7 +73,7 @@ public class SubmitApplicationFormControllerTest {
     private MockHttpServletRequest httpServletRequestMock;
     private ActionsProvider actionsProviderMock;
     private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
-    private ProgramsService programsService;
+    private ProgramService programsService;
     private RegisteredUser student;
     private RegisteredUser admin;
 
@@ -386,7 +386,7 @@ public class SubmitApplicationFormControllerTest {
 
     @Before
     public void setUp() {
-        applicationsServiceMock = createMock(ApplicationsService.class);
+        applicationsServiceMock = createMock(ApplicationFormService.class);
         applicationFormTransferServiceMock = createMock(ApplicationFormTransferService.class);
         userServiceMock = createMock(UserService.class);
         applicationFormValidatorMock = createMock(ApplicationFormValidator.class);
@@ -394,7 +394,7 @@ public class SubmitApplicationFormControllerTest {
         eventFactoryMock = createMock(EventFactory.class);
         actionsProviderMock = createMock(ActionsProvider.class);
         applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
-        programsService = createMock(ProgramsService.class);
+        programsService = createMock(ProgramService.class);
 
         applicationController = new SubmitApplicationFormController(applicationsServiceMock, applicationFormTransferServiceMock, userServiceMock, applicationFormValidatorMock,
                 stageDurationServiceMock, eventFactoryMock, actionsProviderMock, applicationFormUserRoleServiceMock, programsService);

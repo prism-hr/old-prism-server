@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
@@ -50,9 +50,9 @@ public class ProgrammeDetailsValidatorTest {
     @Autowired  
     private Validator validator;
     
-	private ProgrammeDetailsValidator programmeDetailsValidator;
+	private ProgramDetailsValidator programmeDetailsValidator;
     
-	private ProgrammeDetails programmeDetail;
+	private ProgramDetails programmeDetail;
 	
 	private ProgramInstance programInstance;
 	
@@ -64,7 +64,7 @@ public class ProgrammeDetailsValidatorTest {
 
 	@Test
 	public void shouldSupportProgrammeDetails() {
-		assertTrue(programmeDetailsValidator.supports(ProgrammeDetails.class));
+		assertTrue(programmeDetailsValidator.supports(ProgramDetails.class));
 	}
 	
 	@Test
@@ -401,7 +401,7 @@ public class ProgrammeDetailsValidatorTest {
 		
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
 		
-		programmeDetailsValidator = new ProgrammeDetailsValidator(programInstanceDAOMock);
+		programmeDetailsValidator = new ProgramDetailsValidator(programInstanceDAOMock);
 		programmeDetailsValidator.setValidator((javax.validation.Validator) validator);
 	}
 }

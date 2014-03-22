@@ -66,7 +66,7 @@ public class ProgramsServiceTest {
     private ProgramInstanceService programInstanceService;
 
     @TestedObject
-    private ProgramsService programsService;
+    private ProgramService programsService;
 
     @Test
     public void shouldGetAllPrograms() {
@@ -227,13 +227,13 @@ public class ProgramsServiceTest {
     @Test
     public void shouldCreateNewCustomProgram() {
         Domicile domicile = new Domicile();
-        ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
+        ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
 
         RegisteredUser requestAuthor = new RegisteredUser();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, domicile).otherInstitution("other_name").build();
         QualificationInstitution institution = new QualificationInstitutionBuilder().build();
 
-        expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
+        expect(applicationContext.getBean(ProgramService.class)).andReturn(thisBean);
         expect(qualificationInstitutionService.getOrCreateCustomInstitution("AGH", domicile, "other_name")).andReturn(institution);
         Capture<Program> programCapture = new Capture<Program>();
         expect(thisBean.generateNextProgramCode(institution)).andReturn("AAA_00000");
@@ -253,13 +253,13 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldGetCustomProgram() {
-        ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
+        ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
         Program program = new ProgramBuilder().institution(new QualificationInstitutionBuilder().code("any_inst").build()).build();
         RegisteredUser requestAuthor = new RegisteredUser();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, null).institutionCode("any_inst")
                 .atasRequired(true).sourceProgram(program).acceptingApplications(true).build();
 
-        expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
+        expect(applicationContext.getBean(ProgramService.class)).andReturn(thisBean);
         expect(thisBean.getContactUserForProgram(program, requestAuthor)).andReturn(requestAuthor);
         expect(programDAOMock.merge(program)).andReturn(program);
         programDAOMock.save(program);

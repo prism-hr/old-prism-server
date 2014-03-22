@@ -16,7 +16,7 @@ public class StageDurationDAOTest extends AutomaticRollbackTestCase{
 	public void shouldReturnInterviewStageDuration(){
 		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(12).unit(DurationUnitEnum.DAYS).build();
 		
-		sessionFactory.getCurrentSession().saveOrUpdate(stageDuration);
+		sessionFactory.getCurrentSession().save(stageDuration);
 		
 		flushAndClearSession();
 					
@@ -31,13 +31,13 @@ public class StageDurationDAOTest extends AutomaticRollbackTestCase{
 	public void shouldUpdateDurationStageForSameStage(){
 		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(12).unit(DurationUnitEnum.DAYS).build();
 		
-		sessionFactory.getCurrentSession().saveOrUpdate(stageDuration);
+		sessionFactory.getCurrentSession().save(stageDuration);
 		
 		flushAndClearSession();
 		
 		StageDuration updatedStageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(8).unit(DurationUnitEnum.DAYS).build();
 		
-		sessionFactory.getCurrentSession().saveOrUpdate(updatedStageDuration);
+		sessionFactory.getCurrentSession().save(updatedStageDuration);
 		
 		flushAndClearSession();
 		

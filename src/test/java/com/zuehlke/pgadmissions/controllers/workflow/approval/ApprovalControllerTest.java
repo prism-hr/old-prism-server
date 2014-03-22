@@ -75,7 +75,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.QualificationService;
@@ -88,7 +88,7 @@ import com.zuehlke.pgadmissions.validators.SendToPorticoDataDTOValidator;
 
 public class ApprovalControllerTest {
 
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
     private UserService userServiceMock;
     private RegisteredUser currentUserMock;
     private ApprovalController controller;
@@ -511,7 +511,7 @@ public class ApprovalControllerTest {
 
     @Before
     public void setUp() {
-        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationServiceMock = EasyMock.createMock(ApplicationFormService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         currentUserMock = EasyMock.createMock(RegisteredUser.class);
         approvalRoundValidatorMock = EasyMock.createMock(ApprovalRoundValidator.class);

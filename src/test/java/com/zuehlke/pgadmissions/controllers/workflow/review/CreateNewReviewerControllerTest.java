@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
@@ -32,7 +32,7 @@ public class CreateNewReviewerControllerTest {
 	private CreateNewReviewerController controller;
 	private UserService userServiceMock;	
 	private BindingResult bindingResultMock;	
-	private ApplicationsService applicationsServiceMock;
+	private ApplicationFormService applicationsServiceMock;
 	private NewUserByAdminValidator newUserValidatorMock;
 	private RegisteredUser currentUserMock;
 
@@ -145,7 +145,7 @@ public class CreateNewReviewerControllerTest {
 	@Before
 	public void setup() {
 		newUserValidatorMock = EasyMock.createMock(NewUserByAdminValidator.class);
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);

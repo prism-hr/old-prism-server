@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.mail.PrismMailMessageException;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.importers.Importer;
 
@@ -38,12 +38,12 @@ public class XMLDataImportTask {
 
     private final ImportDataReferenceUpdater importDataReferenceUpdater;
     
-    private final ProgramsService programsService;
+    private final ProgramService programsService;
 
     @Autowired
     public XMLDataImportTask(List<Importer> importers, @Value("${xml.data.import.user}") final String user,
             @Value("${xml.data.import.password}") final String password, final MailSendingService mailService, final UserService userService,
-            final ImportDataReferenceUpdater importDataReferenceUpdater, ProgramsService programsService) {
+            final ImportDataReferenceUpdater importDataReferenceUpdater, ProgramService programsService) {
         this.importers = importers;
         this.mailService = mailService;
         this.userService = userService;

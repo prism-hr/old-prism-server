@@ -9,12 +9,12 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 
 public class ProgramPropertyEditorTest {
 	private ProgramPropertyEditor editor;
 
-	private ProgramsService programServiceMock;
+	private ProgramService programServiceMock;
 
 
 	@Test	
@@ -72,7 +72,7 @@ public class ProgramPropertyEditorTest {
 	
 	@Before
 	public void setup(){
-		programServiceMock = EasyMock.createMock(ProgramsService.class);
+		programServiceMock = EasyMock.createMock(ProgramService.class);
 		editor = new ProgramPropertyEditor(programServiceMock);
 	}
 }

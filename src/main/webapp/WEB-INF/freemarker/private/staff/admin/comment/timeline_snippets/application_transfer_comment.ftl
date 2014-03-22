@@ -10,7 +10,9 @@
   			<#if comment.transferSucceeded?? && comment.transferSucceeded?string == 'true'>
   				Application export succeeded.
   			<#else>
-  				Application export failed. Download the <a href='/pgadmissions/download/transferErrorReport?transferErrorId=${comment.applicationFormTransferError.id?c}' target='_blank'>error report</a>.
+  				Application export failed. Download the +
+  					<a href='/pgadmissions/download/transferErrorReport?transferErrorId=${comment.applicationFormTransferError.id?c}' target='_blank'>error report</a> + and 
+  					<a href='/pgadmissions/download/transferSoapRequest?transferErrorId=${comment.applicationFormTransferError.id?c}' target='_blank'>export request</a>.
   			</#if>
   		</h3>
 	</div>

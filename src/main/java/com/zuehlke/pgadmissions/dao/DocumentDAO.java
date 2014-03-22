@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -30,8 +29,7 @@ public class DocumentDAO {
     }
 
     public void deleteOrphanDocuments() {
-        Query query = sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_ORPHAN_DOCUMENTS();");
-        query.executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_ORPHAN_DOCUMENTS();").executeUpdate();
     }
 
 }

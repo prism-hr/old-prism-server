@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
@@ -37,7 +37,7 @@ public class MoveToReviewController {
 
     public static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
     public static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
-    protected final ApplicationsService applicationsService;
+    protected final ApplicationFormService applicationsService;
     protected final UserService userService;
     protected final ReviewService reviewService;
     protected final ActionsProvider actionsProvider;
@@ -51,7 +51,7 @@ public class MoveToReviewController {
     }
 
     @Autowired
-    public MoveToReviewController(ApplicationsService applicationsService, UserService userService, ReviewService reviewService,
+    public MoveToReviewController(ApplicationFormService applicationsService, UserService userService, ReviewService reviewService,
             ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor,
             final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;

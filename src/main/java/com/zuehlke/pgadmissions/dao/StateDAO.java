@@ -42,6 +42,6 @@ public class StateDAO {
         return (List<ApplicationFormStatus>) sessionFactory.getCurrentSession().createCriteria(State.class)
                 .setProjection(Projections.property("id"))
                 .add(Restrictions.eq("canBeAssignedFrom", true)).list();
-    }
+	}
 	
 }

@@ -87,7 +87,6 @@ public class Qualification implements FormSectionObject, Serializable {
 	@ManyToOne
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
-
 	
 	public String getQualificationSubject() {
 		return qualificationSubject;
@@ -231,4 +230,5 @@ public class Qualification implements FormSectionObject, Serializable {
     public void setQualificationTitle(String qualificationTitle) {
         this.qualificationTitle = qualificationTitle;
     }
+    
 }

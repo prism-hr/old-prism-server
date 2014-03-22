@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
@@ -49,9 +49,9 @@ public class EmploymentControllerTest {
 
     private RegisteredUser currentUser;
     private EmploymentPositionService employmentServiceMock;
-    private EmploymentController controller;
+    private EmploymentPositionController controller;
     private LanguageService languageServiceMock;
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private LanguagePropertyEditor languagePropertyEditorMock;
     private DatePropertyEditor datePropertyEditorMock;
     private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
@@ -128,7 +128,7 @@ public class EmploymentControllerTest {
     public void shouldGetEmploymentFromServiceIfIdProvided() {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
         EmploymentPosition employment = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
-        EasyMock.expect(employmentServiceMock.getEmploymentPositionById(1)).andReturn(employment);
+        EasyMock.expect(employmentServiceMock.getById(1)).andReturn(employment);
         EasyMock.replay(employmentServiceMock, encryptionHelperMock);
         EmploymentPosition returnedEmploymentPosition = controller.getEmploymentPosition("bob");
         assertEquals(employment, returnedEmploymentPosition);
@@ -149,7 +149,7 @@ public class EmploymentControllerTest {
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfEmploymentDoesNotExist() {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
-        EasyMock.expect(employmentServiceMock.getEmploymentPositionById(1)).andReturn(null);
+        EasyMock.expect(employmentServiceMock.getById(1)).andReturn(null);
         EasyMock.replay(employmentServiceMock, encryptionHelperMock);
         controller.getEmploymentPosition("bob");
 
@@ -184,7 +184,7 @@ public class EmploymentControllerTest {
         EasyMock.replay(employmentServiceMock, errors);
         String view = controller.editEmployment(employment, errors);
         EasyMock.verify(employmentServiceMock);
-        assertEquals(EmploymentController.STUDENTS_EMPLOYMENT_DETAILS_VIEW, view);
+        assertEquals(EmploymentPositionController.STUDENTS_EMPLOYMENT_DETAILS_VIEW, view);
     }
 
     @Before
@@ -192,7 +192,7 @@ public class EmploymentControllerTest {
 
         employmentServiceMock = EasyMock.createMock(EmploymentPositionService.class);
         languageServiceMock = EasyMock.createMock(LanguageService.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 
         languagePropertyEditorMock = EasyMock.createMock(LanguagePropertyEditor.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
@@ -206,7 +206,7 @@ public class EmploymentControllerTest {
         domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
         fullTextSearchServiceMock = EasyMock.createMock(FullTextSearchService.class);
 
-        controller = new EmploymentController(employmentServiceMock, languageServiceMock, applicationsServiceMock, languagePropertyEditorMock,
+        controller = new EmploymentPositionController(employmentServiceMock, languageServiceMock, applicationsServiceMock, languagePropertyEditorMock,
                 datePropertyEditorMock, applicationFormPropertyEditorMock, employmentValidatorMock, userServiceMock, encryptionHelperMock,
                 applicationFormUserRoleServiceMock, domicileServiceMock, domicilePropertyEditorMock, fullTextSearchServiceMock);
 

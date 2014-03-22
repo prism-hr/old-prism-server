@@ -15,14 +15,14 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class SupervisorPropertyEditorTest {
 
     private UserService userServiceMock;
     private SupervisorPropertyEditor editor;
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private EncryptionHelper encryptionHelper;
 
     @Test
@@ -115,7 +115,7 @@ public class SupervisorPropertyEditorTest {
     @Before
     public void setup() {
         userServiceMock = EasyMock.createMock(UserService.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
         editor = new SupervisorPropertyEditor(userServiceMock, applicationsServiceMock, encryptionHelper);
     }

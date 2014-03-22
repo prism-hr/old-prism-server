@@ -141,7 +141,7 @@ public class ApprovalService {
         ApprovalRound approvalRound = new ApprovalRound();
         ApprovalRound latestApprovalRound = application.getLatestApprovalRound();
         Project project = application.getProject();
-        Date startDate = application.getProgrammeDetails().getStartDate();
+        Date startDate = application.getProgramDetails().getStartDate();
         if (latestApprovalRound != null) {
             for (Supervisor supervisor : latestApprovalRound.getSupervisors()) {
                 if (!supervisor.hasDeclinedSupervision()) {

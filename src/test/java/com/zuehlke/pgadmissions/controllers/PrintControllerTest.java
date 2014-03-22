@@ -23,13 +23,13 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class PrintControllerTest {
 
 	private PrintController controller;
-	private ApplicationsService applicationSevice;
+	private ApplicationFormService applicationSevice;
 	private PdfDocumentBuilder pdfDocumentBuilderMock;
 	private UserService userServiceMock;
 	private RegisteredUser currentUser;
@@ -182,7 +182,7 @@ public class PrintControllerTest {
 	
 	@Before
 	public void setUp() {
-		applicationSevice = EasyMock.createMock(ApplicationsService.class);
+		applicationSevice = EasyMock.createMock(ApplicationFormService.class);
 		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		controller = new PrintController(applicationSevice, pdfDocumentBuilderMock, userServiceMock){

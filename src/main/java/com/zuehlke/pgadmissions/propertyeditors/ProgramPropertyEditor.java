@@ -7,19 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Component
 public class ProgramPropertyEditor extends PropertyEditorSupport {
 
-	private final ProgramsService programsService;
+	private final ProgramService programsService;
 
 	public ProgramPropertyEditor() {
 		this(null);
 	}
 
 	@Autowired
-	public ProgramPropertyEditor(ProgramsService programsService) {
+	public ProgramPropertyEditor(ProgramService programsService) {
 		this.programsService = programsService;
 	}
 

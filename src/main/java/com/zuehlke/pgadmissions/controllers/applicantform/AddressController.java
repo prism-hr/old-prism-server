@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -15,81 +16,55 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.domain.Address;
+import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
+import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormAddressService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
-import com.zuehlke.pgadmissions.utils.AddressUtils;
-import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
+import com.zuehlke.pgadmissions.validators.ApplicationFormAddressValidator;
 
 @RequestMapping("/update")
 @Controller
 public class AddressController {
 
-    private static final String APPLICATION_ADDRESS_VIEW = "/private/pgStudents/form/components/address_details";
-    
     @Autowired
-    private ApplicationsService applicationsService;
-    
+    private ApplicationFormService applicationFormService;
+
     @Autowired
-    private AddressSectionDTOValidator addressSectionDTOValidator;
-    
+    private ApplicationFormAddressService applicationFormAddressService;
+
+    @Autowired
+    private ApplicationFormAddressValidator applicationFormAddressValidator;
+
     @Autowired
     private DomicileService domicileService;
-    
+
     @Autowired
     private DomicilePropertyEditor domicilePropertyEditor;
 
-    @RequestMapping(value = "/editAddress", method = RequestMethod.POST)
-    public String editAddresses(@Valid AddressSectionDTO addressSectionDTO, BindingResult result, @ModelAttribute ApplicationForm applicationForm) {
-        if (result.hasErrors()) {
-            return APPLICATION_ADDRESS_VIEW;
-        }
-
-        Address contactAddress = applicationForm.getContactAddress();
-
-        if (contactAddress == null) {
-            contactAddress = new Address();
-            applicationForm.setContactAddress(contactAddress);
-        }
-
-        contactAddress.setDomicile(addressSectionDTO.getContactAddressDomicile());
-        contactAddress.setAddress1(addressSectionDTO.getContactAddress1());
-        contactAddress.setAddress2(addressSectionDTO.getContactAddress2());
-        contactAddress.setAddress3(addressSectionDTO.getContactAddress3());
-        contactAddress.setAddress4(addressSectionDTO.getContactAddress4());
-        contactAddress.setAddress5(addressSectionDTO.getContactAddress5());
-
-        Address currentAddress = applicationForm.getCurrentAddress();
-
-        if (currentAddress == null) {
-            currentAddress = new Address();
-            applicationForm.setCurrentAddress(currentAddress);
-        }
-
-        currentAddress.setDomicile(addressSectionDTO.getCurrentAddressDomicile());
-        currentAddress.setAddress1(addressSectionDTO.getCurrentAddress1());
-        currentAddress.setAddress2(addressSectionDTO.getCurrentAddress2());
-        currentAddress.setAddress3(addressSectionDTO.getCurrentAddress3());
-        currentAddress.setAddress4(addressSectionDTO.getCurrentAddress4());
-        currentAddress.setAddress5(addressSectionDTO.getCurrentAddress5());
-
-        applicationsService.saveAddressSection(applicationForm);
-        return "redirect:/update/getAddress?applicationId=" + applicationForm.getApplicationNumber();
+    @RequestMapping(value = "/getAddress", method = RequestMethod.GET)
+    public String getAddressView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
+        return returnView(modelMap, applicationFormAddressService.getOrCreate(applicationForm));
     }
 
-    @RequestMapping(value = "/getAddress", method = RequestMethod.GET)
-    public String getAddressView(@ModelAttribute ApplicationForm applicationForm) {
-        return APPLICATION_ADDRESS_VIEW;
+    @RequestMapping(value = "/editAddress", method = RequestMethod.POST)
+    public String editAddresses(@Valid ApplicationFormAddress applicationFormAddress, BindingResult result, @ModelAttribute ApplicationForm applicationForm,
+            ModelMap modelMap) {
+        if (result.hasErrors()) {
+            return returnView(modelMap, applicationFormAddress);
+        }
+        applicationFormAddressService.saveOrUpdate(applicationForm, applicationFormAddress);
+        return RedirectLocation.UPDATE_APPLICATION_ADDRESS + applicationForm.getApplicationNumber();
     }
 
     @InitBinder(value = "addressSectionDTO")
     public void registerPropertyEditors(WebDataBinder binder) {
-        binder.setValidator(addressSectionDTOValidator);
+        binder.setValidator(applicationFormAddressValidator);
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(String.class, newStringTrimmerEditor());
     }
@@ -100,7 +75,7 @@ public class AddressController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(String applicationId) {
-        return applicationsService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
+        return applicationFormService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
                 ApplicationFormAction.CORRECT_APPLICATION);
     }
 
@@ -109,39 +84,14 @@ public class AddressController {
         return message;
     }
 
-    @ModelAttribute("addressSectionDTO")
-    public AddressSectionDTO getAddressDTO(String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        AddressSectionDTO sectionDTO = new AddressSectionDTO();
-        sectionDTO.setApplication(applicationForm);
-        Address contactAddress = applicationForm.getContactAddress();
-        if (contactAddress != null) {
-            sectionDTO.setContactAddressDomicile(contactAddress.getDomicile());
-            sectionDTO.setContactAddress1(contactAddress.getAddress1());
-            sectionDTO.setContactAddress2(contactAddress.getAddress2());
-            sectionDTO.setContactAddress3(contactAddress.getAddress3());
-            sectionDTO.setContactAddress4(contactAddress.getAddress4());
-            sectionDTO.setContactAddress5(contactAddress.getAddress5());
-        }
-
-        Address currentAddress = applicationForm.getCurrentAddress();
-        if (currentAddress != null) {
-            sectionDTO.setCurrentAddressDomicile(currentAddress.getDomicile());
-            sectionDTO.setCurrentAddress1(currentAddress.getAddress1());
-            sectionDTO.setCurrentAddress2(currentAddress.getAddress2());
-            sectionDTO.setCurrentAddress3(currentAddress.getAddress3());
-            sectionDTO.setCurrentAddress4(currentAddress.getAddress4());
-            sectionDTO.setCurrentAddress5(currentAddress.getAddress5());
-        }
-        if (AddressUtils.addressesEqual(contactAddress, currentAddress)) {
-            sectionDTO.setSameAddress(true);
-        }
-        return sectionDTO;
-    }
-
     @ModelAttribute("domiciles")
     public List<Domicile> getAllEnabledDomiciles() {
         return domicileService.getAllEnabledDomiciles();
+    }
+
+    private String returnView(ModelMap modelMap, ApplicationFormAddress applicationFormAddress) {
+        modelMap.put("applicationFormAddress", applicationFormAddress);
+        return TemplateLocation.APPLICATION_APPLICANT_ADDRESS;
     }
 
 }

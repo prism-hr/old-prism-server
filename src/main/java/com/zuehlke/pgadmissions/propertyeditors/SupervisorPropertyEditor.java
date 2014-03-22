@@ -10,14 +10,14 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class SupervisorPropertyEditor extends PropertyEditorSupport {
 
 	private final UserService userService;
-	private final ApplicationsService applicationsService;
+	private final ApplicationFormService applicationsService;
 	private final EncryptionHelper encryptionHelper;
 
 	public SupervisorPropertyEditor() {
@@ -25,7 +25,7 @@ public class SupervisorPropertyEditor extends PropertyEditorSupport {
 	}
 
 	@Autowired
-	public SupervisorPropertyEditor(UserService userService, ApplicationsService applicationsService,//
+	public SupervisorPropertyEditor(UserService userService, ApplicationFormService applicationsService,//
 			EncryptionHelper encryptionHelper) {
 		this.userService = userService;
 		this.applicationsService = applicationsService;

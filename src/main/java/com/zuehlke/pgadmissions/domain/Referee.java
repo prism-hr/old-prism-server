@@ -207,7 +207,7 @@ public class Referee implements FormSectionObject, Serializable {
 	}
 
 	public boolean isEditable() {
-		return !hasProvidedReference() && !declined && (application == null || application.isModifiable());
+		return !hasProvidedReference() && !declined && (application == null || application.getStatus().isModifiable());
 	}
 
 	public boolean hasResponded() {

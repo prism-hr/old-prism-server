@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
@@ -49,7 +49,7 @@ public class FundingControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
 
     @Mock
     @InjectIntoByType
@@ -88,7 +88,7 @@ public class FundingControllerTest {
         ModelMap modelMap = new ModelMap();
 
         expect(encryptionHelperMock.decryptToInteger("24")).andReturn(24);
-        expect(fundingServiceMock.getFundingById(24)).andReturn(funding);
+        expect(fundingServiceMock.getById(24)).andReturn(funding);
 
         replay();
         assertEquals("/private/pgStudents/form/components/funding_details", controller.getFundingView("24", modelMap));

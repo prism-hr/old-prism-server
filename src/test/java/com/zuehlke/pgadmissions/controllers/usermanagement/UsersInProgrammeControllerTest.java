@@ -17,12 +17,12 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class UsersInProgrammeControllerTest {
 	private UserService userServiceMock;
-	private ProgramsService programsServiceMock;
+	private ProgramService programsServiceMock;
 	private RegisteredUser currentUserMock;
 	private UsersInProgrammeController controller;
 
@@ -130,7 +130,7 @@ public class UsersInProgrammeControllerTest {
 	@Before
 	public void setUp(){
 		userServiceMock = EasyMock.createMock(UserService.class);
-		programsServiceMock = EasyMock.createMock(ProgramsService.class);
+		programsServiceMock = EasyMock.createMock(ProgramService.class);
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);		
 		controller = new UsersInProgrammeController(userServiceMock, programsServiceMock);
 	}

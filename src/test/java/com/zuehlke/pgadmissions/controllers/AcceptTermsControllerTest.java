@@ -14,12 +14,12 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 
 public class AcceptTermsControllerTest {
 
 	private AcceptTermsController acceptTermsController;
-	private ApplicationsService applicationsServiceMock;
+	private ApplicationFormService applicationsServiceMock;
 	private RegisteredUser student;
 
 	@Test
@@ -72,7 +72,7 @@ public class AcceptTermsControllerTest {
 	@Before
 	public void setUp() {
 
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 		acceptTermsController = new AcceptTermsController(applicationsServiceMock);
 
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

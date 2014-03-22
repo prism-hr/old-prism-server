@@ -32,7 +32,7 @@ public class RejectService {
 	private EventFactory eventFactory;
 	
 	@Autowired
-	private PorticoQueueService porticoQueueService;
+	private ExportQueueService porticoQueueService;
 	
 	@Autowired
 	private MailSendingService mailService;

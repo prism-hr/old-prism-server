@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectDTOBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -36,7 +36,7 @@ public class ProjectConverterTest {
 	private static final String PRIMARY_SUPERVISOR_EMAIL = "primary@email.com";
 	private ProjectConverter converter;
 	private UserService userService;
-	private ProgramsService programService;
+	private ProgramService programService;
 	private Person administratorPerson;
 	private Person primarySupervisorPerson;
 	private Person secondarySupervisorPerson;
@@ -154,7 +154,7 @@ public class ProjectConverterTest {
 	}
 
 	private void setupProgramService() {
-		programService = EasyMock.createMock(ProgramsService.class);
+		programService = EasyMock.createMock(ProgramService.class);
 		expect(programService.getById(PROJECT_ID)).andReturn(project);
 		EasyMock.replay(programService);
 	}

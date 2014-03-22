@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -51,7 +51,7 @@ public class ReferenceController {
 
     private static final Logger log = LoggerFactory.getLogger(ReferenceController.class);
     private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
     private final DocumentPropertyEditor documentPropertyEditor;
     private final FeedbackCommentValidator referenceValidator;
     private final RefereeService refereeService;
@@ -69,7 +69,7 @@ public class ReferenceController {
     }
 
     @Autowired
-    public ReferenceController(ApplicationsService applicationsService, RefereeService refereeService, UserService userService,
+    public ReferenceController(ApplicationFormService applicationsService, RefereeService refereeService, UserService userService,
             DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
             ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
             final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, ApplicantRatingService applicantRatingService) {

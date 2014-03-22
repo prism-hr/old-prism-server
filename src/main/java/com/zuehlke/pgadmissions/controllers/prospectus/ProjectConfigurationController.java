@@ -46,7 +46,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
 import com.zuehlke.pgadmissions.validators.ProjectDTOValidator;
@@ -59,7 +59,7 @@ public class ProjectConfigurationController {
 
     private final UserService userService;
 
-    private final ProgramsService programsService;
+    private final ProgramService programsService;
 
     private final ApplicationContext applicationContext;
 
@@ -84,7 +84,7 @@ public class ProjectConfigurationController {
     }
 
     @Autowired
-    public ProjectConfigurationController(UserService userService, ProgramsService programsService, ApplicationContext applicationContext,
+    public ProjectConfigurationController(UserService userService, ProgramService programsService, ApplicationContext applicationContext,
             ProjectDTOValidator projectDTOValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
             PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer,
             DurationOfStudyPropertyEditor durationOfStudyPropertyEditor) {

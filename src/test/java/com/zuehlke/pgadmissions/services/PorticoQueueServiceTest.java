@@ -36,7 +36,7 @@ public class PorticoQueueServiceTest {
     
     private ApplicationFormTransferService formTransferServiceMock;
 
-    private PorticoQueueService porticoQueueService;
+    private ExportQueueService porticoQueueService;
     
     private ApplicationForm form;
     
@@ -50,7 +50,7 @@ public class PorticoQueueServiceTest {
         throttleServiceMock = EasyMock.createMock(ThrottleService.class);
         exportServiceMock = EasyMock.createMock(PorticoExportService.class);
         formTransferServiceMock = EasyMock.createMock(ApplicationFormTransferService.class);
-        porticoQueueService = new PorticoQueueService();
+        porticoQueueService = new ExportQueueService();
         porticoQueueService.setExportService(exportServiceMock);
         porticoQueueService.setFormTransferService(formTransferServiceMock);
         porticoQueueService.setThrottleService(throttleServiceMock);
@@ -79,7 +79,7 @@ public class PorticoQueueServiceTest {
     
     @Test
     public void shouldSendApprovedApplicationsToTheQueueWhichPreviouslyHaveNotBeenSent() {
-        porticoQueueService = new PorticoQueueService() {
+        porticoQueueService = new ExportQueueService() {
             @Override
             public void sendToPortico(final ApplicationForm form) {
                 assertEquals(ApplicationFormStatus.APPROVED, form.getStatus());
@@ -111,7 +111,7 @@ public class PorticoQueueServiceTest {
     @Test
     public void shouldSendRejectedOrWithdrawnApplicationsToTheQueueWhichPreviouslyHaveNotBeenSent() {
         final List<ApplicationForm> applications = Lists.newArrayList();
-        porticoQueueService = new PorticoQueueService() {
+        porticoQueueService = new ExportQueueService() {
             @Override
             public void sendToPortico(final ApplicationForm form) {
                 applications.add(form);
@@ -146,7 +146,7 @@ public class PorticoQueueServiceTest {
     
     @Test
     public void shouldStopSendingApplicationsIfTheMaximumNumberOfApplicationsHaveBeenReached() {
-        porticoQueueService = new PorticoQueueService() {
+        porticoQueueService = new ExportQueueService() {
             @Override
             public void sendToPortico(final ApplicationForm form) {
                 numberOfSentApplications++;
@@ -189,7 +189,7 @@ public class PorticoQueueServiceTest {
     
     @Test
     public void shouldSendAllRejectedOrWithdrawnApplicationsToTheQueueWithoutBatching() {
-    	porticoQueueService = new PorticoQueueService() {
+    	porticoQueueService = new ExportQueueService() {
     		@Override
     		public void sendToPortico(final ApplicationForm form) {
     			numberOfSentApplications++;

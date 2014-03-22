@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEdito
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -50,7 +50,7 @@ public class ApplicationListController {
     private static final String APPLICATION_LIST_PAGE_VIEW_NAME = "private/my_applications_page";
     private static final String APPLICATION_LIST_SECTION_VIEW_NAME = "private/my_applications_section";
 
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
 
     private final ApplicationsReportService applicationsReportService;
 
@@ -67,7 +67,7 @@ public class ApplicationListController {
     }
 
     @Autowired
-    public ApplicationListController(ApplicationsService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
+    public ApplicationListController(ApplicationFormService applicationsService, ApplicationsReportService applicationsReportService, UserService userService,
             ApplicationsFiltersPropertyEditor filtersPropertyEditor, final ApplicationSummaryService applicationSummaryService,
             ApplicationsFilteringService filteringService) {
         this.applicationsService = applicationsService;

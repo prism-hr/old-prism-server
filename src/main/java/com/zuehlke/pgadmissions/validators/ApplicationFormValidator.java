@@ -6,42 +6,36 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 
 @Component
 public class ApplicationFormValidator extends AbstractValidator {
 
-    private final ProgramInstanceDAO programInstanceDAO;
-
-    private final ProgrammeDetailsValidator programmeDetailsValidator;
-
-    private final PersonalDetailsValidator personalDetailsValidator;
-
-    private final AddressValidator addressValidator;
-
-    private final AdditionalInformationValidator additionalInformationValidator;
-
-    ApplicationFormValidator() {
-        this(null, null, null, null, null);
-    }
+    @Autowired
+    private ProgramInstanceDAO programInstanceDAO;
 
     @Autowired
-    public ApplicationFormValidator(ProgramInstanceDAO programInstanceDAO, ProgrammeDetailsValidator programmeDetailsValidator,
-            PersonalDetailsValidator personalDetailsValidator, AddressValidator addressValidator, AdditionalInformationValidator additionalInformationValidator) {
-        this.programInstanceDAO = programInstanceDAO;
-        this.programmeDetailsValidator = programmeDetailsValidator;
-        this.personalDetailsValidator = personalDetailsValidator;
-        this.addressValidator = addressValidator;
-        this.additionalInformationValidator = additionalInformationValidator;
-    }
+    private ProgramDetailsValidator programDetailsValidator;
+
+    @Autowired
+    private PersonalDetailsValidator personalDetailsValidator;
+
+    @Autowired
+    private ApplicationFormAddressValidator applicationFormAddressValidator;
+
+    @Autowired
+    private AdditionalInformationValidator additionalInformationValidator;
+    
+    @Autowired
+    private ApplicationFormDocumentValidator applicationFormDocumentValidator;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -51,33 +45,31 @@ public class ApplicationFormValidator extends AbstractValidator {
     @Override
     public void addExtraValidation(Object target, Errors errors) {
         ApplicationForm applicationForm = (ApplicationForm) target;
-        ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
+        ProgramDetails programDetails = applicationForm.getProgramDetails();
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        Address currentAddress = applicationForm.getCurrentAddress();
-        Address contactAddress = applicationForm.getContactAddress();
+        ApplicationFormAddress applicationFormAddress = applicationForm.getApplicationFormAddress();
         AdditionalInformation additionalInformation = applicationForm.getAdditionalInformation();
+        ApplicationFormDocument applicationFormDocument = applicationForm.getApplicationFormDocument();
 
-        if (!programmeDetailsValidator.isValid(programmeDetails)) {
-            errors.rejectValue("programmeDetails", "user.programmeDetails.incomplete");
+        if (!programDetailsValidator.isValid(programDetails)) {
+            errors.rejectValue("programDetails", "user.programDetails.incomplete");
         }
 
         if (!personalDetailsValidator.isValid(personalDetails)) {
             errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
         }
 
-        if (!addressValidator.isValid(currentAddress)) {
-            errors.rejectValue("currentAddress", "user.addresses.notempty");
-        }
-
-        if (!addressValidator.isValid(contactAddress)) {
-            errors.rejectValue("contactAddress", "user.addresses.notempty");
+        if (!applicationFormAddressValidator.isValid(applicationFormAddress)) {
+            errors.rejectValue("applicationFormAddress", "user.addresses.notempty");
         }
 
         if (!additionalInformationValidator.isValid(additionalInformation)) {
             errors.rejectValue("additionalInformation", "user.additionalInformation.incomplete");
         }
-
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalStatement", "documents.section.invalid");
+        
+        if (!applicationFormDocumentValidator.isValid(applicationFormDocument)) {
+            errors.rejectValue("applicationFormDocument", "documents.section.invalid");
+        }
         
         if (applicationForm.getReferees().size() < 3) {
             errors.rejectValue("referees", "user.referees.notvalid");
@@ -85,19 +77,19 @@ public class ApplicationFormValidator extends AbstractValidator {
         if (BooleanUtils.isNotTrue(applicationForm.getAcceptedTermsOnSubmission())) {
             errors.rejectValue("acceptedTermsOnSubmission", EMPTY_FIELD_ERROR_MESSAGE);
         }
-        if (programmeDetails != null && programmeDetails.getStudyOption() != null) {
+        if (programDetails != null && programDetails.getStudyOption() != null) {
             List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(applicationForm.getProgram(),
-                    programmeDetails.getStudyOption());
+                    programDetails.getStudyOption());
             if (programInstances == null || programInstances.isEmpty()) {
                 List<ProgramInstance> allActiveProgramInstances = programInstanceDAO.getActiveProgramInstances(applicationForm.getProgram());
                 if (allActiveProgramInstances == null || allActiveProgramInstances.isEmpty()) {
                     errors.rejectValue("program", "application.program.invalid");
                 } else {
-                    // program is active, but not with selected study option
-                    errors.rejectValue("programmeDetails.studyOption", "programmeDetails.studyOption.invalid");
+                    errors.rejectValue("programDetails.studyOption", "programDetails.studyOption.invalid");
                 }
 
             }
         }
     }
+    
 }

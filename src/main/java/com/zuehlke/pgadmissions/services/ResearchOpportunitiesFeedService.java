@@ -39,7 +39,7 @@ public class ResearchOpportunitiesFeedService {
 
     private final ResearchOpportunitiesFeedDAO dao;
 
-    private final ProgramsService programService;
+    private final ProgramService programService;
 
     private final FreeMarkerConfigurer freeMarkerConfigurer;
 
@@ -50,7 +50,7 @@ public class ResearchOpportunitiesFeedService {
     }
 
     @Autowired
-    public ResearchOpportunitiesFeedService(final ResearchOpportunitiesFeedDAO dao, final ProgramsService programService, final UserService userService,
+    public ResearchOpportunitiesFeedService(final ResearchOpportunitiesFeedDAO dao, final ProgramService programService, final UserService userService,
             final FreeMarkerConfigurer freeMarkerConfigurer, @Value("${application.host}") final String host) {
         this.dao = dao;
         this.programService = programService;

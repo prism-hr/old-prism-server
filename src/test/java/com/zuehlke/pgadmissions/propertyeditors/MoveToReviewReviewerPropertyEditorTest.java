@@ -13,14 +13,14 @@ import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class MoveToReviewReviewerPropertyEditorTest {
 
 	private UserService userServiceMock;
 	private MoveToReviewReviewerPropertyEditor editor;
-	private ApplicationsService applicationsServiceMock;
+	private ApplicationFormService applicationsServiceMock;
 	private EncryptionHelper encryptionHelperMock;
 
 
@@ -93,7 +93,7 @@ public class MoveToReviewReviewerPropertyEditorTest {
 	@Before
 	public void setup(){
 		userServiceMock = EasyMock.createMock(UserService.class);
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
 		editor = new MoveToReviewReviewerPropertyEditor(userServiceMock, applicationsServiceMock,encryptionHelperMock);
 	}

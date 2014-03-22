@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.zuehlke.pgadmissions.services.PorticoQueueService;
+import com.zuehlke.pgadmissions.services.ExportQueueService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 
 @Service
@@ -16,14 +16,14 @@ public class PorticoThrottleTask {
     
     private final ThrottleService throttleService;
 
-    private PorticoQueueService queueService;
+    private ExportQueueService queueService;
     
     public PorticoThrottleTask() {
         this(null, null);
     }
     
     @Autowired
-    public PorticoThrottleTask(final ThrottleService throttleService, final PorticoQueueService queueService) {
+    public PorticoThrottleTask(final ThrottleService throttleService, final ExportQueueService queueService) {
         this.throttleService = throttleService;
         this.queueService = queueService;
     }

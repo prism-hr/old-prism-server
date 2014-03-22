@@ -88,7 +88,7 @@ public class ApplicationFormUserRoleService {
             createApplicationFormUserRole(applicationForm, approver, Authority.APPROVER, false);
         }
 
-        for (SuggestedSupervisor suggestedSupervisor : applicationForm.getProgrammeDetails().getSuggestedSupervisors()) {
+        for (SuggestedSupervisor suggestedSupervisor : applicationForm.getProgramDetails().getSuggestedSupervisors()) {
             String supervisorEmail = suggestedSupervisor.getEmail();
             RegisteredUser userToSaveAsSuggestedSupervisor = userDAO.getUserByEmailIncludingDisabledAccounts(supervisorEmail);
 
@@ -166,7 +166,7 @@ public class ApplicationFormUserRoleService {
             }
         }
 
-        else if (application.getStatus() == ApplicationFormStatus.APPROVAL && nextStatus != null) {
+        else if (application.getStatus().getId() == ApplicationFormStatus.APPROVAL && nextStatus != null) {
             for (RegisteredUser approver : approvers) {
                 createApplicationFormUserRole(application, approver, Authority.APPROVER, false,
                         new ApplicationFormActionRequired(actionDAO.getById(INITIATE_STAGE_MAP.get(nextStatus)), new Date(), false, true),

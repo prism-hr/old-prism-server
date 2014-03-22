@@ -53,7 +53,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -61,7 +61,7 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
 public class ReferenceControllerTest {
 
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private ReferenceController controller;
     private RegisteredUser currentUser;
     private DocumentPropertyEditor documentPropertyEditor;
@@ -221,7 +221,7 @@ public class ReferenceControllerTest {
     public void setUp() {
         currentUser = createMock(RegisteredUser.class);
         commentServiceMock = createMock(CommentService.class);
-        applicationsServiceMock = createMock(ApplicationsService.class);
+        applicationsServiceMock = createMock(ApplicationFormService.class);
         documentPropertyEditor = createMock(DocumentPropertyEditor.class);
         referenceValidator = createMock(FeedbackCommentValidator.class);
         refereeServiceMock = createMock(RefereeService.class);

@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.OfferRecommendationService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -45,7 +45,7 @@ public class OfferRecommendationController {
 
     private final UserService userService;
 
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
 
     private final ApplicationFormUserRoleService applicationFormUserRoleService;
 
@@ -68,7 +68,7 @@ public class OfferRecommendationController {
     }
 
     @Autowired
-    public OfferRecommendationController(ApplicationsService applicationsService, UserService userService, ActionsProvider actionsProvider,
+    public OfferRecommendationController(ApplicationFormService applicationsService, UserService userService, ActionsProvider actionsProvider,
             ApplicationFormUserRoleService applicationFormUserRoleService, OfferRecommendationService offerRecommendedService,
             OfferRecommendedCommentValidator offerRecommendedCommentValidator, DatePropertyEditor datePropertyEditor,
             ProgramInstanceService programInstanceService, SupervisorPropertyEditor supervisorPropertyEditor, ApprovalRoundDAO approvalRoundDAO) {

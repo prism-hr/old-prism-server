@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.OfferRecommendationService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -39,7 +39,7 @@ public class OfferRecommendationControllerTest {
 
     private OfferRecommendationController controller;
 
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
 
     private UserService userServiceMock;
 
@@ -165,7 +165,7 @@ public class OfferRecommendationControllerTest {
 
     @Before
     public void prepare() {
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);

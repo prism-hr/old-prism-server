@@ -20,7 +20,7 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
@@ -40,18 +40,18 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ProgramDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
+import com.zuehlke.pgadmissions.validators.ProgramDetailsValidator;
 
 public class ProgrammeDetailsControllerTest {
     private RegisteredUser currentUser;
     private DatePropertyEditor datePropertyEditorMock;
-    private ApplicationsService applicationsServiceMock;
-    private ProgrammeDetailsValidator programmeDetailsValidatorMock;
-    private ProgrammeDetailsService programmeDetailsServiceMock;
-    private ProgrammeDetailsController controller;
+    private ApplicationFormService applicationsServiceMock;
+    private ProgramDetailsValidator programmeDetailsValidatorMock;
+    private ProgramDetailsService programmeDetailsServiceMock;
+    private ProgramDetailsController controller;
     private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
     private SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditorMock;
 
@@ -61,7 +61,7 @@ public class ProgrammeDetailsControllerTest {
 
     @Test(expected = CannotUpdateApplicationException.class)
     public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1)
+        ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().id(1)
                 .applicationForm(new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.APPROVED).build()).build();
         BindingResult errors = EasyMock.createMock(BindingResult.class);
 
@@ -84,7 +84,7 @@ public class ProgrammeDetailsControllerTest {
         final String applicationNumber = "1";
         Program program = new ProgramBuilder().id(7).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).advert(program).build();
-        controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
+        controller = new ProgramDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
                 supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock,
                 sourcesOfInterestPropertyEditorMock, applicationFormUserRoleServiceMock) {
 
@@ -156,9 +156,9 @@ public class ProgrammeDetailsControllerTest {
     @Test
     public void shouldGetProgrammeDetailsFromApplicationForm() {
 
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).build();
+        ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-        applicationForm.setProgrammeDetails(programmeDetails);
+        applicationForm.setProgramDetails(programmeDetails);
         EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
         currentUser = EasyMock.createMock(RegisteredUser.class);
         EasyMock.reset(userServiceMock);
@@ -167,7 +167,7 @@ public class ProgrammeDetailsControllerTest {
         EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.replay(applicationsServiceMock, currentUser);
 
-        ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
+        ProgramDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
         assertEquals(programmeDetails, returnedProgrammeDetails);
     }
 
@@ -181,7 +181,7 @@ public class ProgrammeDetailsControllerTest {
         EasyMock.replay(userServiceMock);
         EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.replay(applicationsServiceMock, currentUser);
-        ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
+        ProgramDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
         assertNull(returnedProgrammeDetails.getId());
     }
 
@@ -194,7 +194,7 @@ public class ProgrammeDetailsControllerTest {
     @Test
     public void shouldSaveProgrammeDetailsAndApplicationAndRedirectIfNoErrors() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").build();
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(applicationForm).build();
+        ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(applicationForm).build();
         BindingResult errors = EasyMock.createMock(BindingResult.class);
         Model model = new ExtendedModelMap();
         model.addAttribute("user", currentUser);
@@ -213,7 +213,7 @@ public class ProgrammeDetailsControllerTest {
 
     @Test
     public void shouldNotSaveAndReturnToViewIfErrors() {
-        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().id(5).build()).build();
+        ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().id(5).build()).build();
         BindingResult errors = EasyMock.createMock(BindingResult.class);
         Model model = new ExtendedModelMap();
         model.addAttribute("user", currentUser);
@@ -229,18 +229,18 @@ public class ProgrammeDetailsControllerTest {
 
     @Before
     public void setUp() {
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-        programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
+        programmeDetailsServiceMock = EasyMock.createMock(ProgramDetailsService.class);
         applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
         supervisorJSONPropertyEditorMock = EasyMock.createMock(SuggestedSupervisorJSONPropertyEditor.class);
-        programmeDetailsValidatorMock = EasyMock.createMock(ProgrammeDetailsValidator.class);
-        programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
+        programmeDetailsValidatorMock = EasyMock.createMock(ProgramDetailsValidator.class);
+        programmeDetailsServiceMock = EasyMock.createMock(ProgramDetailsService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
         sourcesOfInterestPropertyEditorMock = EasyMock.createMock(SourcesOfInterestPropertyEditor.class);
 
-        controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
+        controller = new ProgramDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
                 supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock, userServiceMock,
                 sourcesOfInterestPropertyEditorMock, applicationFormUserRoleServiceMock);
 

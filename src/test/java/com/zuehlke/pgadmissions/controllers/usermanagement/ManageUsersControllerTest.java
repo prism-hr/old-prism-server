@@ -33,14 +33,14 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.SuperadminUserDTOValidator;
 import com.zuehlke.pgadmissions.validators.UserDTOValidator;
 
 public class ManageUsersControllerTest {
 
-    private ProgramsService programServiceMock;
+    private ProgramService programServiceMock;
     private ManageUsersController controller;
     private UserService userServiceMock;
     private RegisteredUser currentUserMock;
@@ -524,7 +524,7 @@ public class ManageUsersControllerTest {
     public void setUp() {
 
         userServiceMock = EasyMock.createMock(UserService.class);
-        programServiceMock = EasyMock.createMock(ProgramsService.class);
+        programServiceMock = EasyMock.createMock(ProgramService.class);
         currentUserMock = EasyMock.createMock(RegisteredUser.class);
         programPropertyEditorMock = EasyMock.createMock(ProgramPropertyEditor.class);
         newUserDTOValidatorMock = EasyMock.createMock(UserDTOValidator.class);

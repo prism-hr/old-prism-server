@@ -4,10 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
@@ -17,7 +15,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPLICATION_FORM_ADDITIONAL_INFO")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AdditionalInformation implements FormSectionObject, Serializable {
+public class AdditionalInformation implements Serializable {
     
 	private static final long serialVersionUID = -1761742614792933388L;
 	
@@ -27,9 +25,6 @@ public class AdditionalInformation implements FormSectionObject, Serializable {
 	
 	@Transient
 	private boolean acceptedTerms;
-
-	@OneToOne(mappedBy = "additionalInformation", fetch = FetchType.LAZY)
-	private ApplicationForm application;
 
 	@Column(name = "has_convictions")
 	private Boolean convictions;
@@ -44,14 +39,6 @@ public class AdditionalInformation implements FormSectionObject, Serializable {
 
 	public Integer getId() {
 		return id;
-	}
-
-	public ApplicationForm getApplication() {
-		return application;
-	}
-
-	public void setApplication(ApplicationForm application) {
-		this.application = application;
 	}
 
 	public Boolean getConvictions() {

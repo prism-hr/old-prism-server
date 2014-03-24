@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -23,13 +24,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
+import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -38,6 +43,7 @@ import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyE
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ProgramDetailsService;
+import com.zuehlke.pgadmissions.services.SourcesOfInterestService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 import com.zuehlke.pgadmissions.validators.ProgramDetailsValidator;
@@ -45,97 +51,70 @@ import com.zuehlke.pgadmissions.validators.ProgramDetailsValidator;
 @RequestMapping("/update")
 @Controller
 public class ProgramDetailsController {
-    private static final String STUDENTS_FORM_PROGRAMME_DETAILS_VIEW = "/private/pgStudents/form/components/programme_details";
-    private final ApplicationFormService applicationsService;
-    private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
-    private final DatePropertyEditor datePropertyEditor;
-    private final ProgramDetailsValidator programmeDetailsValidator;
-    private final ProgramDetailsService programmeDetailsService;
-    private final SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
-    private final SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor;
-    private final UserService userService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    ProgramDetailsController() {
-        this(null, null, null, null, null, null, null, null, null);
-    }
 
     @Autowired
-    public ProgramDetailsController(ApplicationFormService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
-            DatePropertyEditor datePropertyEditor, SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor,
-            ProgramDetailsValidator programmeDetailsValidator, ProgramDetailsService programmeDetailsService, UserService userService,
-            SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor, final ApplicationFormUserRoleService applicationFormUserRoleService) {
-        this.applicationsService = applicationsService;
-        this.applicationFormPropertyEditor = applicationFormPropertyEditor;
-        this.datePropertyEditor = datePropertyEditor;
-        this.supervisorJSONPropertyEditor = supervisorJSONPropertyEditor;
-        this.programmeDetailsValidator = programmeDetailsValidator;
-        this.programmeDetailsService = programmeDetailsService;
-        this.userService = userService;
-        this.sourcesOfInterestPropertyEditor = sourcesOfInterestPropertyEditor;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
+    private ApplicationFormService applicationFormService;
+
+    @Autowired
+    private ApplicationFormPropertyEditor applicationFormPropertyEditor;
+
+    @Autowired
+    private DatePropertyEditor datePropertyEditor;
+
+    @Autowired
+    private ProgramDetailsValidator programmeDetailsValidator;
+
+    @Autowired
+    private ProgramDetailsService programDetailsService;
+    
+    @Autowired
+    private SourcesOfInterestService sourcesOfInterestService;
+
+    @Autowired
+    private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
+
+    @Autowired
+    private SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor;
+
+    @RequestMapping(value = "/getProgrammeDetails", method = RequestMethod.GET)
+    public String getProgrammeDetailsView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
+        return returnView(modelMap, applicationForm.getProgramDetails());
     }
 
     @RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
-    public String editProgrammeDetails(@ModelAttribute ApplicationForm applicationForm, @Valid ProgramDetails programmeDetails, BindingResult result,
-            Model model) {
+    public String editProgrammeDetails(@ModelAttribute ApplicationForm applicationForm, @Valid ProgramDetails programDetails, BindingResult result,
+            ModelMap modelMap) {
         if (result.hasErrors()) {
-            return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
+            return returnView(modelMap, programDetails);
         }
-
-        programmeDetails.setStudyOptionCode(programmeDetailsService.getStudyOptionCodeForProgram(applicationForm.getProgram(),
+        programDetails.
+        
+        programmeDetails.setStudyOptionCode(programDetailsService.getStudyOptionCodeForProgram(applicationForm.getProgram(),
                 programmeDetails.getStudyOption()));
-        programmeDetailsService.save(programmeDetails);
-        applicationsService.save(applicationForm);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
-        return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getApplicationNumber();
+        programDetailsService.save(programmeDetails);
+        return RedirectLocation.UPDATE_APPLICATION_PROGRAM_DETAIL + applicationForm.getApplicationNumber();
     }
 
     @RequestMapping(value = "/getProgrammeStartDate", method = RequestMethod.GET)
     @ResponseBody
-    public String getProgrammeDetailsView(@RequestParam String applicationId, @RequestParam String studyOption) {
-        if (StringUtils.isBlank(studyOption) || StringUtils.isBlank(applicationId)) {
-            return StringUtils.EMPTY;
-        }
-
-        List<ProgramInstance> availableProgramInstances = programmeDetailsService.getActiveProgramInstancesOrderedByApplicationStartDate(
-                getApplicationForm(applicationId).getProgram(), studyOption);
-
-        String convertedDate = StringUtils.EMPTY;
-        DateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
-        Date today = new Date();
-
-        for (ProgramInstance instance : availableProgramInstances) {
-            try {
-                if (com.zuehlke.pgadmissions.utils.DateUtils.isToday(instance.getApplicationStartDate()) || instance.getApplicationStartDate().after(today)) {
-                    convertedDate = format.format(instance.getApplicationStartDate());
-                    break;
-                }
-            } catch (Exception e) {
-                // do nothing
-            }
-        }
-        return convertedDate;
-    }
-
-    @RequestMapping(value = "/getProgrammeDetails", method = RequestMethod.GET)
     public String getProgrammeDetailsView(@ModelAttribute ApplicationForm applicationForm) {
-        return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
+        return programDetailsService.getDefaultStartDateForDisplay(applicationForm);
     }
 
     @ModelAttribute("studyOptions")
     public List<StudyOption> getStudyOptions(@RequestParam String applicationId) {
-        return programmeDetailsService.getAvailableStudyOptions(getApplicationForm(applicationId).getProgram());
+        return programDetailsService.getAvailableStudyOptions(getApplicationForm(applicationId).getProgram());
     }
 
     @ModelAttribute("sourcesOfInterests")
     public List<SourcesOfInterest> getSourcesOfInterests() {
-        return programmeDetailsService.getAllEnabledSourcesOfInterest();
+        return sourcesOfInterestService.getAllEnabledSourcesOfInterest();
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        return applicationsService.getEditableApplicationForm(applicationId);
+    public ApplicationForm getApplicationForm(String applicationId) {
+        return applicationFormService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
+                ApplicationFormAction.CORRECT_APPLICATION);
     }
 
     @ModelAttribute("message")
@@ -163,9 +142,9 @@ public class ProgramDetailsController {
         return firstNonNull(HibernateUtils.unproxy(applicationForm.getProgramDetails()), new ProgramDetails());
     }
 
-    @ModelAttribute("user")
-    private RegisteredUser getCurrentUser() {
-        return userService.getCurrentUser();
+    private String returnView(ModelMap modelMap, ProgramDetails programDetails) {
+        modelMap.put("programDetails", programDetails);
+        return TemplateLocation.APPLICATION_APPLICANT_PROGRAM_DETAIL;
     }
 
 }

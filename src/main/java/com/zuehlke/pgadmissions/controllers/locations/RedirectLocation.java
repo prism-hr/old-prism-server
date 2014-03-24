@@ -17,6 +17,9 @@ public class RedirectLocation {
     public static final String UPDATE_APPLICATION_QUALIFICATION = UPDATE_APPLICATION_SECTION + "getQualification?" + APPLICATION_ID;
     public static final String UPDATE_APPLICATION_FUNDING = UPDATE_APPLICATION_SECTION + "getFunding?" + APPLICATION_ID;
     public static final String UPDATE_APPLICATION_ACCEPTED_TERMS = UPDATE_APPLICATION + "?view=view&" + APPLICATION_ID;
+    public static final String UPDATE_APPLICATION_DOCUMENT = UPDATE_APPLICATION_SECTION + "getDocuments?" + APPLICATION_ID;
+    public static final String UPDATE_APPLICATION_PERSONAL_DETAIL = UPDATE_APPLICATION_SECTION + "getPersonalDetails?" + APPLICATION_ID;
+    public static final String UPDATE_APPLICATION_PROGRAM_DETAIL = UPDATE_APPLICATION_SECTION + "getProgramDetails?" + APPLICATION_ID;
 
     public static final String CREATE_APPLICATION = UPDATE_APPLICATION + "?applicationId=";
     public static final String UPDATE_APPLICATION_AS_STAFF = "editApplicationFormAsProgrammeAdmin?" + APPLICATION_ID;

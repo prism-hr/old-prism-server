@@ -76,7 +76,7 @@ public class ApplicationSummaryService {
         result.put("name", form.getApplicant().getDisplayName());
         result.put("phoneNumber", form.getPersonalDetails() == null   ? "" : form.getPersonalDetails().getPhoneNumber());
         result.put("email", form.getApplicant().getEmail());
-        result.put("applicationStatus", form.getStatus().displayValue());
+        result.put("applicationStatus", form.getStatus().getId().displayValue());
     }
 
     private void addQualifications(final ApplicationForm form, final Map<String, String> result) {
@@ -172,7 +172,7 @@ public class ApplicationSummaryService {
     }
 
     private void addPersonalStatement(ApplicationForm form, Map<String, String> result) {
-        Document personalStatement = form.getPersonalStatement();
+        Document personalStatement = form.getApplciatiogetPersonalStatement();
         if (personalStatement != null) {
             result.put("personalStatementProvided", "true");
             result.put("personalStatementId", encryptionHelper.encrypt(personalStatement.getId()));

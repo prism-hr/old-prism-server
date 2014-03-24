@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -25,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.QualificationInstitution;
@@ -230,6 +233,16 @@ public class ProgramDAO {
         Query query = sessionFactory.getCurrentSession()
                 .createSQLQuery("CALL SP_DELETE_INACTIVE_ADVERTS();");
         query.executeUpdate();
+    }
+    
+    public Date getDefaultStartDate(Program program, String studyOption) {
+        Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
+        return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
+                .setProjection(Projections.min("applicationDeadline"))
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true))
+                .add(Restrictions.eq("studyOption", studyOption))
+                .add(Restrictions.ge("applicationDeadline", today)).uniqueResult();
     }
     
 }

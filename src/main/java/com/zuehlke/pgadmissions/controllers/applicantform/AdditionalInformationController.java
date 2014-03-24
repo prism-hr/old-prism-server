@@ -43,6 +43,11 @@ public class AdditionalInformationController {
 
     @Autowired
     private BooleanPropertyEditor booleanPropertyEditor;
+    
+    @RequestMapping(value = "/getAdditionalInformation", method = RequestMethod.GET)
+    public String getAdditionalInformationView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
+        return returnView(modelMap, additionalInformationService.getOrCreate(applicationForm));
+    }
 
     @RequestMapping(value = "/editAdditionalInformation", method = RequestMethod.POST)
     public String editAdditionalInformation(@Valid AdditionalInformation additionalInformation, BindingResult result,
@@ -52,11 +57,6 @@ public class AdditionalInformationController {
         }
         additionalInformationService.saveOrUpdate(applicationForm, additionalInformation);
         return RedirectLocation.UPDATE_APPLICATION_ADDITIONAL_INFORMATION + applicationForm.getApplicationNumber();
-    }
-
-    @RequestMapping(value = "/getAdditionalInformation", method = RequestMethod.GET)
-    public String getAdditionalInformationView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
-        return returnView(modelMap, additionalInformationService.getOrCreate(applicationForm));
     }
 
     @ModelAttribute("message")

@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="APPLICATION_FORM_EMPLOYMENT_POSITION")
-public class EmploymentPosition implements FormSectionObject, Serializable {
+public class EmploymentPosition implements Serializable, FormSectionObject {
 
 	private static final long serialVersionUID = 4492119755495402951L;
 

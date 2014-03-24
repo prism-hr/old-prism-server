@@ -188,7 +188,7 @@ public class ApplicationFormValidatorTest {
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "programmeDetails.studyOption");
 
         EasyMock.reset(programInstanceDAOMock);
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+        EasyMock.expect(programInstanceDAOMock.getActiveProgramInstancesByStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 null);
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance));
 
@@ -209,7 +209,7 @@ public class ApplicationFormValidatorTest {
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "program");
 
         EasyMock.reset(programInstanceDAOMock);
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+        EasyMock.expect(programInstanceDAOMock.getActiveProgramInstancesByStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 Collections.EMPTY_LIST);
         EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Collections.EMPTY_LIST);
 
@@ -260,7 +260,7 @@ public class ApplicationFormValidatorTest {
         expect(addressValidatorMock.isValid(currentAddress)).andReturn(true);
         expect(addressValidatorMock.isValid(contactAddress)).andReturn(true);
         expect(additionalInformationValidatorMock.isValid(additionalInformation)).andReturn(true);
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetails.getStudyOption())).andReturn(
+        EasyMock.expect(programInstanceDAOMock.getActiveProgramInstancesByStudyOption(program, programmeDetails.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
 
         applicationFormValidator = new ApplicationFormValidator(programInstanceDAOMock, programmeDetailsValidatorMock, personalDetailsValidatorMock,

@@ -43,9 +43,6 @@ public class Role implements GrantedAuthority, Serializable {
     
     @Override
     public String getAuthority() {
-        if (id == null) {
-            return null;
-        }
         return id.toString();
     }
     
@@ -79,7 +76,6 @@ public class Role implements GrantedAuthority, Serializable {
             return false;
         }
         final Role other = (Role) obj;
-
         return Objects.equal(id, other.getId());
     }
     

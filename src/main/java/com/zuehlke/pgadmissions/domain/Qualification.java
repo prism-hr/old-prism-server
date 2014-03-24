@@ -19,7 +19,7 @@ import org.apache.commons.lang.BooleanUtils;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="APPLICATION_FORM_QUALIFICATION")
-public class Qualification implements FormSectionObject, Serializable {
+public class Qualification implements Serializable, FormSectionObject {
 
 	private static final long serialVersionUID = -8949535622435302565L;
 	

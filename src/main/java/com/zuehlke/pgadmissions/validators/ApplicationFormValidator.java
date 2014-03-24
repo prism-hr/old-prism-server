@@ -33,7 +33,7 @@ public class ApplicationFormValidator extends AbstractValidator {
 
     @Autowired
     private AdditionalInformationValidator additionalInformationValidator;
-    
+
     @Autowired
     private ApplicationFormDocumentValidator applicationFormDocumentValidator;
 
@@ -66,30 +66,34 @@ public class ApplicationFormValidator extends AbstractValidator {
         if (!additionalInformationValidator.isValid(additionalInformation)) {
             errors.rejectValue("additionalInformation", "user.additionalInformation.incomplete");
         }
-        
+
         if (!applicationFormDocumentValidator.isValid(applicationFormDocument)) {
             errors.rejectValue("applicationFormDocument", "documents.section.invalid");
         }
-        
+
         if (applicationForm.getReferees().size() < 3) {
             errors.rejectValue("referees", "user.referees.notvalid");
         }
+
         if (BooleanUtils.isNotTrue(applicationForm.getAcceptedTermsOnSubmission())) {
             errors.rejectValue("acceptedTermsOnSubmission", EMPTY_FIELD_ERROR_MESSAGE);
         }
+
+        if (!applicationForm.getProgram().isEnabled()) {
+            errors.rejectValue("program", "application.program.invalid");
+        }
+
+        if (!applicationForm.getProject().isEnabled()) {
+            applicationForm.setProject(null);
+        }
+
         if (programDetails != null && programDetails.getStudyOption() != null) {
-            List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(applicationForm.getProgram(),
+            List<ProgramInstance> programInstances = programInstanceDAO.getActiveProgramInstancesByStudyOption(applicationForm.getProgram(),
                     programDetails.getStudyOption());
             if (programInstances == null || programInstances.isEmpty()) {
-                List<ProgramInstance> allActiveProgramInstances = programInstanceDAO.getActiveProgramInstances(applicationForm.getProgram());
-                if (allActiveProgramInstances == null || allActiveProgramInstances.isEmpty()) {
-                    errors.rejectValue("program", "application.program.invalid");
-                } else {
-                    errors.rejectValue("programDetails.studyOption", "programDetails.studyOption.invalid");
-                }
-
+                errors.rejectValue("programDetails.studyOption", "programDetails.studyOption.invalid");
             }
         }
     }
-    
+
 }

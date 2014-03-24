@@ -21,7 +21,7 @@ import javax.validation.Valid;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPLICATION_FORM_PROGRAMME_DETAIL")
-public class ProgramDetails implements FormSectionObject, Serializable {
+public class ProgramDetails implements Serializable, FormSectionObject {
 
     private static final long serialVersionUID = -5997103825068065955L;
 

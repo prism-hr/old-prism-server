@@ -13,6 +13,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 
 @Entity(name = "ACTION")
@@ -36,6 +37,10 @@ public class Action implements Serializable {
     @Column(name = "notification")
     @Enumerated(EnumType.STRING)
     private NotificationMethod notification = null;
+    
+    @Column(name = "update_visibility")
+    @Enumerated(EnumType.ORDINAL)
+    private ApplicationUpdateScope updateVisibility = null;
     
     public ApplicationFormAction getId() {
         return id;
@@ -67,6 +72,14 @@ public class Action implements Serializable {
 
     public void setNotification(NotificationMethod notification) {
         this.notification = notification;
+    }
+
+    public ApplicationUpdateScope getUpdateVisibility() {
+        return updateVisibility;
+    }
+
+    public void setUpdateVisibility(ApplicationUpdateScope updateVisibility) {
+        this.updateVisibility = updateVisibility;
     }
 
 }

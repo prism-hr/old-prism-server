@@ -64,7 +64,7 @@ public class FundingController {
     @RequestMapping(value = "/getFunding", method = RequestMethod.GET)
     public String getFundingView(@RequestParam(value = "fundingId", required = false) Integer fundingId, @ModelAttribute ApplicationForm applicationForm,
             ModelMap modelMap) {
-        return returnView(modelMap, fundingService.getById(fundingId));
+        return returnView(modelMap, fundingService.getOrCreate(fundingId));
     }
 
     @RequestMapping(value = "/editFunding", method = RequestMethod.POST)

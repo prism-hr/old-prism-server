@@ -25,6 +25,7 @@ public class TemplateLocation {
     public static final String APPLICATION_APPLICANT_QUALIFICATION = APPLICATION_APPLICANT_COMPONENT + "qualification_details";
     public static final String APPLICATION_APPLICANT_FUNDING = APPLICATION_APPLICANT_COMPONENT + "funding_details";
     public static final String APPLICATION_APPLICANT_PERSONAL_DETAIL = APPLICATION_APPLICANT_COMPONENT + "personal_details";
+    public static final String APPLICATION_APPLICANT_PROGRAM_DETAIL = APPLICATION_APPLICANT_COMPONENT + "program_details";
     
     public static final String APPLICATION_STAFF = PRIVATE + "staff/application";
     public static final String APPLICATION_STAFF_FORM = APPLICATION_STAFF + FORM;

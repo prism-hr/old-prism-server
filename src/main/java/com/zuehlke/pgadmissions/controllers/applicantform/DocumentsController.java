@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
@@ -54,8 +55,8 @@ public class DocumentsController {
         if (result.hasErrors()) {
             return returnView(modelMap, applicationFormDocument);
         }
-        applicationFormService.saveOrUpdateApplicationFormSection(applicationForm);
-        return "redirect:/update/getDocuments?applicationId=" + applicationForm.getApplicationNumber();
+        applicationFormDocumentService.saveOrUpdate(applicationForm, applicationFormDocument);
+        return RedirectLocation.UPDATE_APPLICATION_DOCUMENT + applicationForm.getApplicationNumber();
     }
 
     @ModelAttribute("applicationForm")

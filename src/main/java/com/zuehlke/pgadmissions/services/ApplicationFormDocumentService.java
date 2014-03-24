@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
-import com.zuehlke.pgadmissions.dao.ApplicationFormDocumentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 
@@ -14,10 +13,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 public class ApplicationFormDocumentService {
 
     @Autowired
-    private ApplicationFormService applicationsService;
-    
-    @Autowired
-	private ApplicationFormDocumentDAO applicationFormDocumentDAO;
+    private ApplicationFormService applicationFormService;
     
     @Autowired
     private ApplicationFormCopyHelper applicationFormCopyHelper;
@@ -34,11 +30,12 @@ public class ApplicationFormDocumentService {
 	    ApplicationFormDocument persistentApplicationFormDocument = application.getApplicationFormDocument();
         if (persistentApplicationFormDocument == null) {
             persistentApplicationFormDocument = new ApplicationFormDocument();
-            applicationFormDocumentDAO.save(persistentApplicationFormDocument);
+            persistentApplicationFormDocument.setApplication(application);
             application.setApplicationFormDocument(persistentApplicationFormDocument);
+            applicationFormService.save(application);
         }
-        applicationFormCopyHelper.copyApplicationFormDocument(persistentApplicationFormDocument, applicationFormDocument, true);
-        applicationsService.saveOrUpdateApplicationFormSection(application);
+        applicationFormCopyHelper.copyApplicationFormDocument(persistentApplicationFormDocument, applicationFormDocument, false);
+        applicationFormService.saveOrUpdateApplicationFormSection(application);
 	}
 	
 }

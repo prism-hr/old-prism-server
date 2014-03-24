@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -10,37 +13,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
-import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
-import com.zuehlke.pgadmissions.dao.SourcesOfInterestDAO;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
-import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 
 @Service
 @Transactional
 public class ProgramDetailsService {
-
-	private final ProgrammeDetailDAO programmeDetailDAO;
-	private final ProgramInstanceDAO programInstanceDAO;
-	private final SourcesOfInterestDAO sourcesOfInterestDAO;
-
-	public ProgramDetailsService() {
-		this(null, null, null);
-	}
-
-	@Autowired
-	public ProgramDetailsService(ProgrammeDetailDAO programmeDetailDAO, 
-	        ProgramInstanceDAO programInstanceDAO, SourcesOfInterestDAO sourcesOfInterestDAO) {
-		this.programmeDetailDAO = programmeDetailDAO;
-		this.programInstanceDAO = programInstanceDAO;
-		this.sourcesOfInterestDAO = sourcesOfInterestDAO;
-	}
-
-	public void save(ProgramDetails pd) {
-		programmeDetailDAO.save(pd);
-	}
+    
+    @Autowired
+	private ProgramInstanceDAO programInstanceDAO;
+    
+    @Autowired 
+    private ApplicationFormService applicationFormService;
+    
+    
+    public ProgramDetails getOrCreate(ApplicationForm application) {
+        ProgramDetails programDetails = application.getProgramDetails();
+        if (programDetails == null) {
+            programDetails = new ProgramDetails();
+        }
+        return programDetails;
+    }
 	
 	public List<StudyOption> getAvailableStudyOptions(Program program) {
 		HashSet<StudyOption> options = new HashSet<StudyOption>();
@@ -60,12 +56,14 @@ public class ProgramDetailsService {
         }
         return null;
     }
-
-	public List<ProgramInstance> getActiveProgramInstancesOrderedByApplicationStartDate(Program program, String studyOption) {
-	    return programInstanceDAO.getActiveProgramInstancesOrderedByApplicationStartDate(program, studyOption);
-	}
-	
-    public List<SourcesOfInterest> getAllEnabledSourcesOfInterest() {
-        return sourcesOfInterestDAO.getAllEnabledSourcesOfInterest();
+    
+    public String getDefaultStartDateForDisplay(ApplicationForm application) {
+        Date defaultStartDate = applicationFormService.getDefaultStartDate(application);
+        if (defaultStartDate != null) {
+            DateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
+            return format.format(defaultStartDate);
+        }
+        return StringUtils.EMPTY;
     }
+ 	
 }

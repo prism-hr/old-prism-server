@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers.applicantform;
+package com.zuehlke.pgadmissions.controllers;
 
 import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
@@ -104,4 +104,5 @@ public class QualificationInstitutionsController {
         returnMap.put("otherInstitutions", institutions);
         return gson.toJson(returnMap);
     }
+    
 }

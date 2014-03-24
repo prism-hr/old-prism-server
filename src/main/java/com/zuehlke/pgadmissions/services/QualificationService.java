@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 public class QualificationService {
     
     @Autowired
-    ApplicationFormService applicationsService;
+    ApplicationFormService applicationFormService;
 
     @Autowired
     ApplicationFormCopyHelper applicationFormCopyHelper;
@@ -33,33 +33,26 @@ public class QualificationService {
         if (qualificationId == null) {
             return new Qualification();
         }
-        Qualification qualification = getById(qualificationId);
-        if (qualification == null) {
-            throw new ResourceNotFoundException();
-        }
-        return qualification;
+        return getSecuredInstance(qualificationId);
     }
 
     public void saveOrUpdate(ApplicationForm application, Integer qualificationId, Qualification qualification) {
         Qualification persistentQualification;
-        if (qualificationId != null) {
-            persistentQualification = qualificationDAO.getById(qualificationId);
-            if (persistentQualification == null) {
-                throw new ResourceNotFoundException();
-            }
-        } else {
+        if (qualificationId == null) {
             persistentQualification = new Qualification();
             persistentQualification.setApplication(application);
-            qualificationDAO.save(persistentQualification);
+            application.getQualifications().add(persistentQualification);
+        } else {
+            persistentQualification = getSecuredInstance(qualificationId);
         }
         applicationFormCopyHelper.copyQualification(persistentQualification, qualification, true);
-        applicationsService.saveOrUpdateApplicationFormSection(application);
+        applicationFormService.saveOrUpdateApplicationFormSection(application);
     }
     
     public void delete(Integer qualificationId) {
         Qualification qualification = getById(qualificationId);
         qualificationDAO.delete(qualification);
-        applicationsService.saveOrUpdateApplicationFormSection(qualification.getApplication());
+        applicationFormService.saveOrUpdateApplicationFormSection(qualification.getApplication());
     }
 
     public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> qualificationsSendToPortico) {
@@ -71,6 +64,14 @@ public class QualificationService {
             Qualification qualification = qualificationDAO.getById(qualificationId);
             qualification.setSendToUCL(true);
         }
+    }
+    
+    private Qualification getSecuredInstance(Integer qualificationId) {
+        Qualification qualification = getById(qualificationId);
+        if (qualification == null) {
+            throw new ResourceNotFoundException();
+        }
+        return qualification;
     }
 
 }

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
-import com.zuehlke.pgadmissions.dao.AdditionalInformationDAO;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 
@@ -14,10 +13,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 public class AdditionalInformationService {
 
     @Autowired
-    private ApplicationFormService applicationsService;
-    
-    @Autowired
-	private AdditionalInformationDAO additionalInformationDAO;
+    private ApplicationFormService applicationFormService;
     
     @Autowired
     ApplicationFormCopyHelper applicationFormCopyHelper;
@@ -34,11 +30,12 @@ public class AdditionalInformationService {
 	    AdditionalInformation persistentAdditionalInformation = application.getAdditionalInformation();
 	    if (persistentAdditionalInformation == null) {
 	        persistentAdditionalInformation = new AdditionalInformation();
-	        additionalInformationDAO.save(additionalInformation);
-	        application.setAdditionalInformation(additionalInformation);
+	        persistentAdditionalInformation.setApplication(application);
+	        application.setAdditionalInformation(persistentAdditionalInformation);
+	        applicationFormService.save(application);
 	    }
 	    applicationFormCopyHelper.copyAdditionalInformation(persistentAdditionalInformation, additionalInformation);
-	    applicationsService.saveOrUpdateApplicationFormSection(application);
+	    applicationFormService.saveOrUpdateApplicationFormSection(application);
 	}
 	
 }

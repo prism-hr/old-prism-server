@@ -133,7 +133,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
         ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
 
-        List<ProgramInstance> matchedInstances = dao.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(progOne, "Full-time");
+        List<ProgramInstance> matchedInstances = dao.getActiveProgramInstancesByStudyOption(progOne, "Full-time");
         assertTrue(listContainsId(programInstanceOne, matchedInstances));
         assertFalse(listContainsId(programInstanceTwo, matchedInstances));
     }
@@ -152,7 +152,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
         ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
 
-        List<ProgramInstance> matchedInstances = dao.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, "Full-time");
+        List<ProgramInstance> matchedInstances = dao.getActiveProgramInstancesByStudyOption(program, "Full-time");
         assertTrue(listContainsId(programInstance, matchedInstances));
     }
 
@@ -170,7 +170,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
         ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
 
-        List<ProgramInstance> matchedInstances = dao.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, "Full-time");
+        List<ProgramInstance> matchedInstances = dao.getActiveProgramInstancesByStudyOption(program, "Full-time");
         assertFalse(matchedInstances.contains(programInstance));
     }
 
@@ -187,7 +187,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
         ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
 
-        List<ProgramInstance> matchedInstances = dao.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, "Full-time");
+        List<ProgramInstance> matchedInstances = dao.getActiveProgramInstancesByStudyOption(program, "Full-time");
         assertFalse(matchedInstances.contains(programInstance));
     }
 

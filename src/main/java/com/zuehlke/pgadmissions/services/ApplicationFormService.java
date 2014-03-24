@@ -2,12 +2,15 @@ package com.zuehlke.pgadmissions.services;
 
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +21,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
+import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.State;
@@ -59,9 +65,6 @@ public class ApplicationFormService {
     private MailSendingService mailService;
 
     @Autowired
-    private ProgramDAO programDAO;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -87,6 +90,9 @@ public class ApplicationFormService {
     
     @Autowired
     private ExportQueueService exportQueueService;
+    
+    @Autowired
+    private ActionDAO actionDAO;
 
     public ApplicationForm getApplicationById(Integer id) {
         return applicationFormDAO.get(id);
@@ -211,14 +217,8 @@ public class ApplicationFormService {
 
     public void saveOrUpdateApplicationFormSection(ApplicationForm application) {
         RegisteredUser currentUser = userService.getCurrentUser();
-        ApplicationFormAction action = actionsProvider.getPrecedentAction(application, currentUser, ActionType.VIEW_EDIT);
-        ApplicationUpdateScope updateScope;
-        if (Arrays.asList(ApplicationFormAction.COMPLETE_APPLICATION, ApplicationFormAction.EDIT_AS_APPLICANT).contains(action)) {
-            updateScope = ApplicationUpdateScope.ALL_USERS;
-        } else {
-            updateScope = ApplicationUpdateScope.INTERNAL;
-        }
-        applicationFormUserRoleService.insertApplicationUpdate(application, userService.getCurrentUser(), updateScope);
+        Action action = actionDAO.getById(actionsProvider.getPrecedentAction(application, currentUser, ActionType.VIEW_EDIT));
+        applicationFormUserRoleService.insertApplicationUpdate(application, userService.getCurrentUser(), action.getUpdateVisibility());
     }
     
     public void openApplicationFormForUpdate(ApplicationForm application, RegisteredUser user) {
@@ -235,7 +235,16 @@ public class ApplicationFormService {
             exportQueueService.createOrReturnExistingApplicationFormTransfer(application);
         }
     }
-
+    
+    public Date getDefaultStartDate(ApplicationForm application) {
+        Program program = application.getProgram();
+        String studyOption = application.getProgramDetails().getStudyOption();
+        if (program != null && studyOption != null) {
+            return programService.getDefaultStartDate(program, studyOption);
+        }
+        return null;
+    }
+    
     private void fillWithDataFromPreviousApplication(ApplicationForm applicationForm) {
         RegisteredUser user = userService.getCurrentUser();
         if (user != null) {
@@ -257,7 +266,7 @@ public class ApplicationFormService {
         programDetails.setProgrammeName(applicationForm.getAdvert().getProgram().getTitle());
         applicationForm.setProgramDetails(programDetails);
         programDetails.setApplication(applicationForm);
-        programDetailsService.save(programDetails);
+        programDetailsService.saveOrUpdate(programDetails);
         return applicationForm;
     }
 
@@ -299,7 +308,7 @@ public class ApplicationFormService {
         if (application.getProject() != null) {
             return application.getProject().getClosingDate();
         }
-        return programDAO.getNextClosingDate(application.getProgram());
+        return programService.getNextClosingDate(application.getProgram());
     }
 
     private Date getApplicationFormDueDate(ApplicationForm application) {

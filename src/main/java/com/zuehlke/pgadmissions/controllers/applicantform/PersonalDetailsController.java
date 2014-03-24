@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -18,25 +17,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
-import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -45,16 +40,13 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EthnicityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.DisabilityService;
-import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EthnicityService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsUserValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 
@@ -62,86 +54,70 @@ import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 @RequestMapping("/update")
 public class PersonalDetailsController {
 
-    private final ApplicationFormService applicationsService;
-    private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
-    private final DatePropertyEditor datePropertyEditor;
-    private final CountryService countryService;
-    private final EthnicityService ethnicityService;
-    private final DisabilityService disabilityService;
-    private final LanguageService languageService;
-    private final LanguagePropertyEditor languagePropertyEditor;
-    private final CountryPropertyEditor countryPropertyEditor;
-    private final DisabilityPropertyEditor disabilityPropertyEditor;
-    private final EthnicityPropertyEditor ethnicityPropertyEditor;
-    private final PersonalDetailsValidator personalDetailsValidator;
-    private final DomicileService domicileService;
-    private final DomicilePropertyEditor domicilePropertyEditor;
-    private final DocumentPropertyEditor documentPropertyEditor;
-    private final PersonalDetailsUserValidator personalDetailsUserValidator;
-    private final PersonalDetailsService personalDetailsService;
-
-    public PersonalDetailsController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-    }
-
     @Autowired
-    public PersonalDetailsController(ApplicationFormService applicationsService, UserService userService,
-            ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor, CountryService countryService,
-            EthnicityService ethnicityService, DisabilityService disabilityService, LanguageService languageService,
-            LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, DisabilityPropertyEditor disabilityPropertyEditor,
-            EthnicityPropertyEditor ethnicityPropertyEditor, PersonalDetailsValidator personalDetailsValidator, DomicileService domicileService,
-            DomicilePropertyEditor domicilePropertyEditor, DocumentPropertyEditor documentPropertyEditor, DocumentService documentService,
-            EncryptionHelper encryptionHelper, PersonalDetailsUserValidator personalDetailsUserValidator, PersonalDetailsService personalDetailsService,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
-        this.applicationsService = applicationsService;
-        this.applicationFormPropertyEditor = applicationFormPropertyEditor;
-        this.datePropertyEditor = datePropertyEditor;
-        this.countryService = countryService;
-        this.ethnicityService = ethnicityService;
-        this.disabilityService = disabilityService;
-        this.languageService = languageService;
-        this.languagePropertyEditor = languagePropertyEditor;
-        this.countryPropertyEditor = countryPropertyEditor;
-        this.ethnicityPropertyEditor = ethnicityPropertyEditor;
-        this.disabilityPropertyEditor = disabilityPropertyEditor;
-        this.personalDetailsValidator = personalDetailsValidator;
-        this.domicileService = domicileService;
-        this.domicilePropertyEditor = domicilePropertyEditor;
-        this.documentPropertyEditor = documentPropertyEditor;
-        this.personalDetailsUserValidator = personalDetailsUserValidator;
-        this.personalDetailsService = personalDetailsService;
-    }
+    private ApplicationFormService applicationFormService;
+    
+    @Autowired
+    private ApplicationFormPropertyEditor applicationFormPropertyEditor;
+    
+    @Autowired
+    private DatePropertyEditor datePropertyEditor;
+    
+    @Autowired
+    private CountryService countryService;
+    
+    @Autowired
+    private DomicileService domicileService;
+    
+    @Autowired
+    private EthnicityService ethnicityService;
+    
+    @Autowired
+    private DisabilityService disabilityService;
+    
+    @Autowired
+    private LanguageService languageService;
+    
+    @Autowired
+    private LanguagePropertyEditor languagePropertyEditor;
+    
+    @Autowired
+    private CountryPropertyEditor countryPropertyEditor;
+    
+    @Autowired
+    private DisabilityPropertyEditor disabilityPropertyEditor;
+    
+    @Autowired
+    private EthnicityPropertyEditor ethnicityPropertyEditor;
+    
+    @Autowired
+    private PersonalDetailsValidator personalDetailsValidator;
+    
+    @Autowired
+    private DomicilePropertyEditor domicilePropertyEditor;
+    
+    @Autowired
+    private DocumentPropertyEditor documentPropertyEditor;
+    
+    @Autowired
+    private PersonalDetailsUserValidator personalDetailsUserValidator;
+    
+    @Autowired
+    private PersonalDetailsService personalDetailsService;
 
     @RequestMapping(value = "/getPersonalDetails", method = RequestMethod.GET)
     public String getPersonalDetailsView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
-        AdditionalInformation additionalInformation = application.getAdditionalInformation();
-        if (additionalInformation == null) {
-            additionalInformation = new AdditionalInformation();
-        }
-        return additionalInformation;
-        
-        
-        PersonalDetails personalDetails = Objects.firstNonNull(applicationForm.getPersonalDetails(), new PersonalDetails());
-        RegisteredUser updatedUser = applicationForm.getApplicant();
-
-        if (personalDetails.getLanguageQualification() == null) {
-            personalDetails.setLanguageQualification(new LanguageQualification());
-        }
-
-        modelMap.put("personalDetails", personalDetails);
-        modelMap.put("updatedUser", updatedUser);
-
-        return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+        return returnView(modelMap, personalDetailsService.getOrCreate(applicationForm), applicationForm.getApplicant());
     }
 
     @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
     public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult, @Valid RegisteredUser updatedUser,
             BindingResult userResult, ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
         if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {
-            return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
+            returnView(modelMap, personalDetails, updatedUser);
         }
-        personalDetailsService.save(application.getId(), personalDetails, updatedUser);
-        return "redirect:/update/getPersonalDetails?applicationId=" + personalDetails.getApplication().getApplicationNumber();
+        personalDetailsService.saveOrUpdate(applicationForm, personalDetails, updatedUser);
+        return RedirectLocation.UPDATE_APPLICATION_PERSONAL_DETAIL + applicationForm.getApplicationNumber();
     }
 
     @InitBinder(value = "personalDetails")
@@ -203,7 +179,7 @@ public class PersonalDetailsController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(String applicationId) {
-        return applicationsService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
+        return applicationFormService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
                 ApplicationFormAction.CORRECT_APPLICATION);
     }
 
@@ -222,9 +198,10 @@ public class PersonalDetailsController {
         return errorCode;
     }
 
-    private String returnView(ModelMap modelMap, PersonalDetails personalDetails) {
-        modelMap.put("applicationFormDocument", personalDetails);
-        return TemplateLocation.APPLICATION_APPLICANT_FUNDING;
+    private String returnView(ModelMap modelMap, PersonalDetails personalDetails, RegisteredUser updatedUser) {
+        modelMap.put("personalDetails", personalDetails);
+        modelMap.put("updatedUser", updatedUser);
+        return TemplateLocation.APPLICATION_APPLICANT_PERSONAL_DETAIL;
     }
     
 }

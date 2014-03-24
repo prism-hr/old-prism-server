@@ -76,12 +76,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, FormSection
     @JoinColumn(name = "last_status")
     private State lastStatus = null;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_address_id")
     @Valid
     private ApplicationFormAddress applicationFormAddress;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_document_id")
     @Valid
     private ApplicationFormDocument applicationFormDocument;

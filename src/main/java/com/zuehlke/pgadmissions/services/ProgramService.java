@@ -48,7 +48,6 @@ public class ProgramService {
 
     public List<Program> getAllEnabledPrograms() {
         return programDAO.getAllEnabledPrograms();
-
     }
 
     public Advert getById(Integer advertId) {
@@ -256,8 +255,16 @@ public class ProgramService {
     public void deleteInactiveAdverts() {
         programDAO.deleteInactiveAdverts();
     }
-
-    protected RegisteredUser getContactUserForProgram(Program program, RegisteredUser candidateUser) {
+    
+    public Date getDefaultStartDate(Program program, String studyOption) {
+        return programDAO.getDefaultStartDate(program, studyOption);
+    }
+    
+    public Date getNextClosingDate(Program program) {
+        return programDAO.getNextClosingDate(program);
+    }
+    
+    private RegisteredUser getContactUserForProgram(Program program, RegisteredUser candidateUser) {
         List<RegisteredUser> administrators = program.getAdministrators();
         if (!administrators.isEmpty()) {
             if (administrators.contains(candidateUser)) {

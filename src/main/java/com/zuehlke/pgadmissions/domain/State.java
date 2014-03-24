@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 public class State {
     
     private static int SECONDS_IN_DAY = 86400;
-    private static int DAYS_IN_WEEK = 7;
+    private static int SECONDS_IN_WEEK = SECONDS_IN_DAY * 7;
     
 	@Id
     @Column(name="id")
@@ -60,11 +60,11 @@ public class State {
 	}
 	
     public AbstractMap.SimpleEntry<Integer, DurationUnitEnum> getDisplayDuration() {
-        Integer durationInDays = duration/SECONDS_IN_DAY;
-        if (durationInDays >= DAYS_IN_WEEK) {
-            return new AbstractMap.SimpleEntry<Integer, DurationUnitEnum>(durationInDays/DAYS_IN_WEEK, DurationUnitEnum.WEEKS);
+        int weekDurationRemainder = duration % SECONDS_IN_WEEK;
+        if (weekDurationRemainder == 0) {
+            return new AbstractMap.SimpleEntry<Integer, DurationUnitEnum>(duration/SECONDS_IN_WEEK, DurationUnitEnum.WEEKS);
         }
-        return new AbstractMap.SimpleEntry<Integer, DurationUnitEnum>(durationInDays, DurationUnitEnum.DAYS);
+        return new AbstractMap.SimpleEntry<Integer, DurationUnitEnum>(duration/SECONDS_IN_DAY, DurationUnitEnum.DAYS);
     }
 	
 	public void setDuration(Integer duration) {
@@ -72,9 +72,10 @@ public class State {
 	}
 	
     public void setDisplayDuration(Integer duration, DurationUnitEnum unit){
-        this.duration = duration * SECONDS_IN_DAY;
-        if (unit == DurationUnitEnum.WEEKS) {
-            this.duration = this.duration * DAYS_IN_WEEK;
+        if (unit == DurationUnitEnum.DAYS) {
+            this.duration = duration * SECONDS_IN_DAY;
+        } else {
+            this.duration = duration * SECONDS_IN_WEEK;
         }
     }
 	

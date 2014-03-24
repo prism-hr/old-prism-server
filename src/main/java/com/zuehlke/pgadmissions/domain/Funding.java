@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name="APPLICATION_FORM_FUNDING")
-public class Funding implements FormSectionObject, Serializable {
+public class Funding implements Serializable, FormSectionObject {
 
 	private static final long serialVersionUID = -3074034984017639671L;
 	

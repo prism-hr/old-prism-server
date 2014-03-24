@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 public class EmploymentPositionService {
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationFormService applicationFormService;
     
     @Autowired
 	private EmploymentPositionDAO employmentPositionDAO;
@@ -31,33 +31,35 @@ public class EmploymentPositionService {
         if (employmentPositionId == null) {
             return new EmploymentPosition();
         }
-        EmploymentPosition employmentPosition = getById(employmentPositionId);
-        if (employmentPosition == null) {
-            throw new ResourceNotFoundException();
-        }
-        return employmentPosition;
+        return getSecuredInstance(employmentPositionId);
     }
 	
 	public void saveOrUpdate(ApplicationForm application, Integer employmentPositionId, EmploymentPosition employmentPosition) { 
 	    EmploymentPosition persistentEmploymentPosition;
-        if (employmentPositionId != null) {
-            persistentEmploymentPosition = employmentPositionDAO.getById(employmentPositionId);
-            if (persistentEmploymentPosition == null) {
-                throw new ResourceNotFoundException();
-            }
-        } else {
+        if (employmentPositionId == null) {
             persistentEmploymentPosition = new EmploymentPosition();
             persistentEmploymentPosition.setApplication(application);
-            employmentPositionDAO.save(persistentEmploymentPosition);
+            application.getEmploymentPositions().add(persistentEmploymentPosition);
+            applicationFormService.save(application);
+        } else {
+            persistentEmploymentPosition = getSecuredInstance(employmentPositionId);
         }
-        applicationFormCopyHelper.copyEmploymentPosition(persistentEmploymentPosition, employmentPosition);
-        applicationsService.saveOrUpdateApplicationFormSection(application);
+        applicationFormCopyHelper.copyEmploymentPosition(persistentEmploymentPosition, employmentPosition, false);
+        applicationFormService.saveOrUpdateApplicationFormSection(application);
     }
 
 	public void delete(Integer employmentPositionId) {
 	    EmploymentPosition employmentPosition = getById(employmentPositionId);
 		employmentPositionDAO.delete(employmentPosition);
-	    applicationsService.saveOrUpdateApplicationFormSection(employmentPosition.getApplication());
+	    applicationFormService.saveOrUpdateApplicationFormSection(employmentPosition.getApplication());
+	}
+	
+	private EmploymentPosition getSecuredInstance(Integer employmentPositionId) {
+	    EmploymentPosition employmentPosition = getById(employmentPositionId);
+        if (employmentPosition == null) {
+            throw new ResourceNotFoundException();
+        }
+        return employmentPosition;
 	}
 	
 }

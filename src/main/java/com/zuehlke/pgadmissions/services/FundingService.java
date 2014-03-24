@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 public class FundingService {
 
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationFormService applicationFormService;
     
     @Autowired
     private FundingDAO fundingDAO;
@@ -31,33 +31,35 @@ public class FundingService {
         if (fundingId == null) {
             return new Funding();
         }
-        Funding funding = getById(fundingId);
-        if (funding == null) {
-            throw new ResourceNotFoundException();
-        }
-        return funding;
+        return getSecuredInstance(fundingId);
     }
     
     public void saveOrUpdate(ApplicationForm application, Integer fundingId, Funding funding) { 
         Funding persistentFunding;
-        if (fundingId != null) {
-            persistentFunding = fundingDAO.getById(fundingId);
-            if (persistentFunding == null) {
-                throw new ResourceNotFoundException();
-            }
-        } else {
+        if (fundingId == null) {
             persistentFunding = new Funding();
             persistentFunding.setApplication(application);
-            fundingDAO.save(persistentFunding);
+            application.getFundings().add(persistentFunding);
+            applicationFormService.save(application);
+        } else {
+            persistentFunding = getSecuredInstance(fundingId);
         }
         applicationFormCopyHelper.copyFunding(persistentFunding, funding, true);
-        applicationsService.saveOrUpdateApplicationFormSection(application);
+        applicationFormService.saveOrUpdateApplicationFormSection(application);
     }
     
     public void delete(Integer fundingId) {
         Funding funding = getById(fundingId);
         fundingDAO.delete(funding);
-        applicationsService.saveOrUpdateApplicationFormSection(funding.getApplication());
+        applicationFormService.saveOrUpdateApplicationFormSection(funding.getApplication());
+    }
+    
+    private Funding getSecuredInstance(Integer fundingId) {
+        Funding funding = getById(fundingId);
+        if (funding == null) {
+            throw new ResourceNotFoundException();
+        }
+        return funding;
     }
     
 }

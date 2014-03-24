@@ -21,7 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPLICATION_FORM_REFEREE")
-public class Referee implements FormSectionObject, Serializable {
+public class Referee implements Serializable, FormSectionObject {
 
 	private static final long serialVersionUID = 4591043630090924738L;
 

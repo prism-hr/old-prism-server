@@ -45,6 +45,10 @@ public class SwitchAndLinkUserAccountDTOValidator extends AbstractValidator {
         
         if (currentAccount != null && StringUtils.isNotBlank(userDTO.getEmail())) {
             RegisteredUser secondAccount = userService.getUserByEmail(userDTO.getEmail());
+            if(currentAccount.getEmail().equals(userDTO.getEmail())){
+                errors.rejectValue("email", "account.link.same.email");
+            }
+            
             if (secondAccount == null && ESAPI.validator().isValidInput("Email", userDTO.getEmail(), "Email", 255, true)) {
                 errors.rejectValue("email", "account.not.exists");
             }

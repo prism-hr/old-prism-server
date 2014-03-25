@@ -39,7 +39,7 @@ WHILE iter <= relation_count DO
 	where r.id = iter;
 	
 	SET @find_keys_to_change_statement = CONCAT('SELECT count(*) INTO @rows_matched FROM ', @table_name, ' WHERE ', @column_name, ' = ', remove_row_id);
-	SET @change_keys_statement = CONCAT('UPDATE IGNORE ', @table_name, ' SET ', @column_name, ' = ', merge_into_id, ' WHERE ', @column_name, ' = ', remove_row_id);
+	SET @change_keys_statement = CONCAT('UPDATE ', @table_name, ' SET ', @column_name, ' = ', merge_into_id, ' WHERE ', @column_name, ' = ', remove_row_id);
 	
 	PREPARE find_keys_to_change FROM @find_keys_to_change_statement;
 	PREPARE change_keys FROM @change_keys_statement;
@@ -49,9 +49,9 @@ WHILE iter <= relation_count DO
 	
 	SET @rows_updated = (SELECT ROW_COUNT());
 	
-	IF @rows_updated != @rows_matched THEN
-		SIGNAL SQLSTATE 'HY000';
-	END IF;
+	-- IF @rows_updated != @rows_matched THEN
+	-- 	SIGNAL SQLSTATE 'HY000';
+	-- END IF;
 
 	set iter = iter + 1;
 END WHILE;

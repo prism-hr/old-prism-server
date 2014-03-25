@@ -4,7 +4,7 @@ $(document).ready(function() {
 	
 	$('#applicationBtn').click(function(){
 		// Set the current tab.
-		$('#timelineTabview ul.tabs li').removeClass('current');
+		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		$('#opportunityTab').hide();
 		$('#timelineTab').hide();
@@ -16,7 +16,7 @@ $(document).ready(function() {
 	
 	$('#opportunityBtn').click(function(){
 		// Set the current tab.
-		$('#timelineTabview ul.tabs li').removeClass('current');
+		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		$('#applicationTab').hide();
 		$('#timelineTab').hide();
@@ -77,7 +77,7 @@ $(document).ready(function() {
 	$('#timelineBtn').click(function()
 	{
 		// Set the current tab.
-		$('#timelineTabview ul.tabs li').removeClass('current');
+		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		$('#applicationTab').hide();
 		$('#opportunityTab').hide();

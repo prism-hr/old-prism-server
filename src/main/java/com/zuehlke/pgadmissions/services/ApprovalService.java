@@ -46,7 +46,7 @@ public class ApprovalService {
 
     private final MailSendingService mailSendingService;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     private final ProgramInstanceService programInstanceService;
 
@@ -57,7 +57,7 @@ public class ApprovalService {
     @Autowired
     public ApprovalService(UserService userService, ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO,
             StageDurationService stageDurationService, EventFactory eventFactory, CommentDAO commentDAO, MailSendingService mailSendingService,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ProgramInstanceService programInstanceService) {
+            WorkflowService applicationFormUserRoleService, ProgramInstanceService programInstanceService) {
         this.userService = userService;
         this.applicationDAO = applicationDAO;
         this.approvalRoundDAO = approvalRoundDAO;

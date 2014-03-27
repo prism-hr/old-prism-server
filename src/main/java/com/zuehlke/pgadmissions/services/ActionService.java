@@ -37,15 +37,23 @@ public class ActionService {
     }
 
     public boolean checkActionAvailable(final ApplicationForm application, final RegisteredUser user, final ApplicationFormAction action) {
-        return !actionDAO.selectUserActionById(application.getId(), user.getId(), action).isEmpty();
+        return !actionDAO.getUserActionById(application.getId(), user.getId(), action).isEmpty();
     }
 
     public ApplicationFormAction getPrecedentAction(final ApplicationForm application, final RegisteredUser user, final ActionType actionType) {
-        List<ActionDefinition> precedentAction = actionDAO.selectUserActionByActionType(application.getId(), user.getId(), actionType);
+        List<ActionDefinition> precedentAction = actionDAO.getUserActionByActionType(application.getId(), user.getId(), actionType);
         if (precedentAction.isEmpty()) {
             throw new ActionNoLongerRequiredException(application.getApplicationNumber());
         }
         return precedentAction.get(0).getAction();
+    }
+    
+    public List<ActionDefinition> getUserActions(Integer applicationFormId, Integer registeredUserId) {
+        return actionDAO.getUserActions(applicationFormId, registeredUserId);
+    }
+    
+    public void deleteApplicationActions(ApplicationForm application) {
+        this.actionDAO.deleteApplicationActions(application);
     }
     
 }

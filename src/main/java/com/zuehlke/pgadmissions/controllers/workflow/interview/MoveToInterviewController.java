@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -50,7 +50,7 @@ public class MoveToInterviewController {
     private final DatePropertyEditor datePropertyEditor;
     private final InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor;
     private final ActionsProvider actionsProvider;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     MoveToInterviewController() {
         this(null, null, null, null, null, null, null, null, null);
@@ -60,7 +60,7 @@ public class MoveToInterviewController {
     public MoveToInterviewController(ApplicationFormService applicationsService, UserService userService, InterviewService interviewService,
             InterviewValidator interviewValidator, InterviewerPropertyEditor interviewerPropertyEditor, DatePropertyEditor datePropertyEditor,
             InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor, ActionsProvider actionsProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            WorkflowService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;

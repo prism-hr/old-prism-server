@@ -492,8 +492,8 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         return ipAddress;
     }
 
-    public void setIpAddress(byte[] ipAddress) {
-        this.ipAddress = ipAddress;
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress.getBytes();
     }
 
     public String getUclBookingReferenceNumber() {

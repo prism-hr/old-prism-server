@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -39,7 +39,7 @@ public class ConfirmSupervisionControllerTest {
 
     private ConfirmSupervisionDTOValidator confirmSupervisionDTOValidatorMock;
 
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     private ActionsProvider actionsProviderMock;
 
@@ -117,7 +117,7 @@ public class ConfirmSupervisionControllerTest {
         approvalServiceMock = EasyMock.createMock(ApprovalService.class);
         datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
         confirmSupervisionDTOValidatorMock = EasyMock.createMock(ConfirmSupervisionDTOValidator.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
         controller = new ConfirmSupervisionController(applicationServiceMock, userServiceMock, approvalServiceMock, datePropertyEditorMock,

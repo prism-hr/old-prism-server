@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationEx
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
@@ -39,7 +39,7 @@ public class AdditionalInformationControllerTest {
     private BooleanPropertyEditor booleanPropertyEditorMock;
     private AdditionalInformationController controller;
     private UserService userServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Before
     public void setUp() {
@@ -49,7 +49,7 @@ public class AdditionalInformationControllerTest {
         booleanPropertyEditorMock = EasyMock.createMock(BooleanPropertyEditor.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         validatorMock = EasyMock.createMock(AdditionalInformationValidator.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         controller = new AdditionalInformationController(applicationServiceMock, userServiceMock, applFormPropertyEditorMock,//
                 booleanPropertyEditorMock, addInfoServiceMock, validatorMock, applicationFormUserRoleServiceMock);
 

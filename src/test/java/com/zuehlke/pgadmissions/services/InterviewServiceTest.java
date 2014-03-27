@@ -65,7 +65,7 @@ public class InterviewServiceTest {
     private InterviewVoteCommentDAO interviewVoteCommentDAOMock;
     private CommentFactory commentFactoryMock;
     private CommentService commentServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldGetInterviewById() {
@@ -323,7 +323,7 @@ public class InterviewServiceTest {
         stageDurationServiceMock = createMock(StageDurationService.class);
         commentServiceMock = createMock(CommentService.class);
         commentFactoryMock = createMock(CommentFactory.class);
-        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = createMock(WorkflowService.class);
 
         interviewService = new InterviewService(interviewDAOMock, applicationFormDAOMock, eventFactoryMock, interviewerDAOMock, interviewParticipantDAOMock,
                 mailServiceMock, interviewVoteCommentDAOMock, stageDurationServiceMock, commentServiceMock, commentFactoryMock, applicationFormUserRoleServiceMock) {

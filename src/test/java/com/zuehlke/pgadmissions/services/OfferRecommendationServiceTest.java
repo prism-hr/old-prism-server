@@ -80,7 +80,7 @@ public class OfferRecommendationServiceTest {
     
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     @TestedObject
     private OfferRecommendationService service;

@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -50,7 +50,7 @@ public class ConfirmSupervisionController {
 
     private final ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     private final ActionsProvider actionsProvider;
 
@@ -63,7 +63,7 @@ public class ConfirmSupervisionController {
     @Autowired
     public ConfirmSupervisionController(ApplicationFormService applicationsService, UserService userService, ApprovalService approvalService,
             DatePropertyEditor datePropertyEditor, ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, ProgramInstanceService programInstanceService) {
+            WorkflowService applicationFormUserRoleService, ActionsProvider actionsProvider, ProgramInstanceService programInstanceService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.approvalService = approvalService;

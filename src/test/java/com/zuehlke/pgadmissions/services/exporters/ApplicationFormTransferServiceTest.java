@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 public class ApplicationFormTransferServiceTest {
@@ -36,7 +36,7 @@ public class ApplicationFormTransferServiceTest {
 
     private ApplicationFormTransferDAO applicationFormTransferDAOMock;
 
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     private CommentDAO commentDAOMock;
 
@@ -49,7 +49,7 @@ public class ApplicationFormTransferServiceTest {
         applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
         applicationFormTransferDAOMock = EasyMock.createMock(ApplicationFormTransferDAO.class);
         applicationFormTransferErrorDAOMock = EasyMock.createMock(ApplicationFormTransferErrorDAO.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         commentDAOMock = EasyMock.createMock(CommentDAO.class);
         userDAOMock = EasyMock.createMock(UserDAO.class);
         service = new ApplicationFormTransferService(applicationFormDAOMock, applicationFormTransferErrorDAOMock, applicationFormTransferDAOMock,

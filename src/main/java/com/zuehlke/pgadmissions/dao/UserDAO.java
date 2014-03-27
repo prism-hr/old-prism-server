@@ -61,9 +61,17 @@ public class UserDAO {
         session.flush();
     }
 
-    public RegisteredUser get(Integer id) {
+    public RegisteredUser getById(Integer id) {
         return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
                 .add(Restrictions.eq("id", id)).uniqueResult();
+    }
+    
+    public RegisteredUser getPrimaryById(Integer id) {
+        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+                .createAlias("primaryAccount", "registeredUser", JoinType.INNER_JOIN)
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.eq("id", id))
+                        .add(Restrictions.eq("registeredUser.id", id))).uniqueResult();
     }
 
     public RegisteredUser getUserByUsername(String username) {

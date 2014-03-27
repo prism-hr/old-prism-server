@@ -47,7 +47,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 @Transactional
-public class ApplicationFormUserRoleService {
+public class WorkflowService {
 
     private static final HashMap<ApplicationFormStatus, ApplicationFormAction> INITIATE_STAGE_MAP;
     static {
@@ -340,6 +340,10 @@ public class ApplicationFormUserRoleService {
         deleteRoleAction(application, Authority.ADMITTER, ApplicationFormAction.CORRECT_APPLICATION);
         deleteRoleAction(application, Authority.SUPERADMINISTRATOR, ApplicationFormAction.CORRECT_APPLICATION);
     }
+    
+    public Boolean getRaisesUrgentFlagByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
+        return applicationFormUserRoleDAO.getRaisesUrgentFlagByUserAndApplicationForm(user, applicationForm);
+    }
 
     public List<RegisteredUser> getUsersInterestedInApplication(ApplicationForm applicationForm) {
         return userDAO.getUsersInterestedInApplication(applicationForm);
@@ -348,11 +352,7 @@ public class ApplicationFormUserRoleService {
     public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
         return userDAO.getUsersPotentiallyInterestedInApplication(applicationForm);
     }
-
-    public void deleteApplicationActions(ApplicationForm applicationForm) {
-        applicationFormUserRoleDAO.deleteApplicationActions(applicationForm);
-    }
-
+    
     public void deleteApplicationUpdate(ApplicationForm applicationForm, RegisteredUser registeredUser) {
         applicationFormUserRoleDAO.deleteApplicationUpdate(applicationForm, registeredUser);
     }
@@ -363,18 +363,6 @@ public class ApplicationFormUserRoleService {
     
     public void deleteProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {
         applicationFormUserRoleDAO.deleteProgramRole(registeredUser, program, authority);
-    }
-
-    private void deleteRoleAction(ApplicationForm applicationForm, Authority authority, ApplicationFormAction action) {
-        applicationFormUserRoleDAO.deleteRoleAction(applicationForm, authority, action);
-    }
-
-    private void deleteStateActions(ApplicationForm applicationForm) {
-        applicationFormUserRoleDAO.deleteStateActions(applicationForm);
-    }
-
-    private void deleteUserAction(ApplicationForm applicationForm, RegisteredUser registeredUser, Authority authority, ApplicationFormAction action) {
-        applicationFormUserRoleDAO.deleteUserAction(applicationForm, registeredUser, authority, action);
     }
 
     public void deleteUserRole(RegisteredUser registeredUser, Authority authority) {
@@ -395,18 +383,6 @@ public class ApplicationFormUserRoleService {
         applicationFormUserRoleDAO.insertUserRole(registeredUser, authority);
     }
 
-    public List<ActionDefinition> selectUserActions(Integer registeredUserId, Integer applicationFormId) {
-        return applicationFormUserRoleDAO.selectUserActions(registeredUserId, applicationFormId);
-    }
-
-    public List<ActionDefinition> selectUserActionById(Integer registeredUserId, Integer applicationFormId, ApplicationFormAction action) {
-        return applicationFormUserRoleDAO.selectUserActionById(registeredUserId, applicationFormId, action);
-    }
-
-    public List<ActionDefinition> selectUserActionByActionType(Integer registeredUserId, Integer applicationFormId, ActionType actionType) {
-        return applicationFormUserRoleDAO.selectUserActionByActionType(registeredUserId, applicationFormId, actionType);
-    }
-
     public void updateUrgentApplications() {
         applicationFormUserRoleDAO.updateUrgentApplications();
     }
@@ -424,7 +400,7 @@ public class ApplicationFormUserRoleService {
         if (registeredUser.isApplicant(applicationForm)) {
             authority = Authority.APPLICANT;
         }
-        deleteUserAction(applicationForm, registeredUser, authority, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
+        actionDAO.deleteUserAction(applicationForm, registeredUser, authority, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
     }
 
     private void updateApplicationDueDate(ApplicationForm applicationForm) {

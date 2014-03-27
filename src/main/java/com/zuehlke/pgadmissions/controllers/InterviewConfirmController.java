@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -40,7 +40,7 @@ public class InterviewConfirmController {
 
     private final InterviewService interviewService;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     private final ActionsProvider actionsProvider;
 
@@ -53,7 +53,7 @@ public class InterviewConfirmController {
 
     @Autowired
     public InterviewConfirmController(ApplicationFormService applicationsService, UserService userService, InterviewService interviewService,
-                    final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider,
+                    final WorkflowService applicationFormUserRoleService, ActionsProvider actionsProvider,
                     InterviewConfirmDTOValidator interviewConfirmDTOValidator) {
         this.applicationsService = applicationsService;
         this.userService = userService;

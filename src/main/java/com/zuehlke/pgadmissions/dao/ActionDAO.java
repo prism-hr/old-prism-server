@@ -41,16 +41,16 @@ public class ActionDAO {
                 .add(Restrictions.eq("actionType", actionType)).list();
     }
     
-    public List<ActionDefinition> selectUserActions(Integer applicationFormId, Integer registeredUserId) {
-        return selectUserActionsBase(applicationFormId, registeredUserId, null, null);
+    public List<ActionDefinition> getUserActions(Integer applicationFormId, Integer registeredUserId) {
+        return getUserActionsAbstract(applicationFormId, registeredUserId, null, null);
     }
     
-    public List<ActionDefinition> selectUserActionById(Integer applicationFormId, Integer registeredUserId, ApplicationFormAction action) {
-        return selectUserActionsBase(applicationFormId, registeredUserId, action, null);
+    public List<ActionDefinition> getUserActionById(Integer applicationFormId, Integer registeredUserId, ApplicationFormAction action) {
+        return getUserActionsAbstract(applicationFormId, registeredUserId, action, null);
     }
     
-    public List<ActionDefinition> selectUserActionByActionType(Integer applicationFormId, Integer registeredUserId, ActionType actionType) {
-        return selectUserActionsBase(applicationFormId, registeredUserId, null, actionType);
+    public List<ActionDefinition> getUserActionByActionType(Integer applicationFormId, Integer registeredUserId, ActionType actionType) {
+        return getUserActionsAbstract(applicationFormId, registeredUserId, null, actionType);
     }
     
     public void deleteApplicationActions(ApplicationForm applicationForm) {
@@ -78,7 +78,7 @@ public class ActionDAO {
                 .setString(3, action.toString()).executeUpdate();
     }
     
-    private List<ActionDefinition> selectUserActionsBase(Integer applicationFormId, Integer registeredUserId, ApplicationFormAction action, ActionType actionType) {
+    private List<ActionDefinition> getUserActionsAbstract(Integer applicationFormId, Integer registeredUserId, ApplicationFormAction action, ActionType actionType) {
         Properties customDTOProperties = new Properties();
         customDTOProperties.put("enumClass", ApplicationFormAction.class.getCanonicalName());
         customDTOProperties.put("type", "12");

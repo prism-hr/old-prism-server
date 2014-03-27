@@ -29,7 +29,7 @@ public class ReviewService {
 	private final EventFactory eventFactory;
 	private final ReviewerDAO reviewerDAO;
 	private final MailSendingService mailService;
-	private final ApplicationFormUserRoleService applicationFormUserRoleService;
+	private final WorkflowService applicationFormUserRoleService;
 
 	public ReviewService() {
 		this(null, null, null, null, null, null, null);
@@ -38,7 +38,7 @@ public class ReviewService {
 	@Autowired
     public ReviewService(ApplicationFormDAO applicationDAO, ReviewRoundDAO reviewRoundDAO,
             StageDurationService stageDurationService, EventFactory eventFactory, ReviewerDAO reviewerDAO,
-            MailSendingService mailService, ApplicationFormUserRoleService applicationFormUserRoleService) {
+            MailSendingService mailService, WorkflowService applicationFormUserRoleService) {
 		this.applicationDAO = applicationDAO;
 		this.reviewRoundDAO = reviewRoundDAO;
 		this.stageDurationService = stageDurationService;

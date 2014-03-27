@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,12 @@ public class RoleService {
         }
         applicationFormUserRole.setRaisesUrgentFlag(raisesUrgentFlag);
         return applicationFormUserRole;
+    }
+    
+    public ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Authority authority,
+            Boolean interestedInApplicant, ApplicationFormActionRequired ...actions) {
+        HashSet<ApplicationFormActionRequired> actionSet = new HashSet<ApplicationFormActionRequired>(Arrays.asList(actions));
+        return createApplicationFormUserRole(applicationForm, user, authority, interestedInApplicant, actionSet);
     }
     
     public boolean checkUserHasRole(RegisteredUser user, Authority authority) {

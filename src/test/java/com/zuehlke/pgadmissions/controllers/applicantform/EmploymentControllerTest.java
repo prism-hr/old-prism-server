@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
@@ -58,7 +58,7 @@ public class EmploymentControllerTest {
     private EmploymentPositionValidator employmentValidatorMock;
     private UserService userServiceMock;
     private EncryptionHelper encryptionHelperMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
     private DomicileService domicileServiceMock;
     private DomicilePropertyEditor domicilePropertyEditorMock;
     private FullTextSearchService fullTextSearchServiceMock;
@@ -201,7 +201,7 @@ public class EmploymentControllerTest {
         employmentValidatorMock = EasyMock.createMock(EmploymentPositionValidator.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
         domicilePropertyEditorMock = EasyMock.createMock(DomicilePropertyEditor.class);
         fullTextSearchServiceMock = EasyMock.createMock(FullTextSearchService.class);

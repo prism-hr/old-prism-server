@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WithdrawService;
@@ -29,7 +29,7 @@ public class WithdrawController {
 
     private final UserService userService;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     private final ActionsProvider actionsProvider;
 
@@ -39,7 +39,7 @@ public class WithdrawController {
 
     @Autowired
     public WithdrawController(ApplicationFormService applicationService, UserService userService, WithdrawService withdrawService,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
+            WorkflowService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.withdrawService = withdrawService;

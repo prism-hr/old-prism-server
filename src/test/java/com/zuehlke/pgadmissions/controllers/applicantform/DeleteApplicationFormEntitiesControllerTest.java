@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FundingService;
@@ -33,7 +33,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
     private RefereeService refereeServiceMock;
     private EncryptionHelper encryptionHelperMock;
     private UserService userServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
     private ApplicationFormService applicationServiceMock;
 
     @Test
@@ -102,7 +102,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
         fundingServiceMock = EasyMock.createMock(FundingService.class);
         refereeServiceMock = EasyMock.createMock(RefereeService.class);
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         applicationServiceMock = EasyMock.createMock(ApplicationFormService.class);
         controller = new DeleteApplicationFormEntitiesController(qualificationServiceMock, employmentServiceMock, fundingServiceMock, refereeServiceMock,

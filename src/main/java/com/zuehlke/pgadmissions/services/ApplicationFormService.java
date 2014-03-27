@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -14,19 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
-import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -62,44 +61,41 @@ public class ApplicationFormService {
     private UserService userService;
 
     @Autowired
-    private ActionsProvider actionsProvider;
-
-    @Autowired
     private StateService stateService;
 
     @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    @Autowired
     private EventFactory eventFactory;
-    
+
     @Autowired
     private ProgramDetailsService programDetailsService;
-    
+
     @Autowired
     private ApplicationFormCopyHelper applicationFormCopyHelper;
-    
+
     @Autowired
     private ProgramService programService;
-    
+
     @Autowired
     private ExportQueueService exportQueueService;
-    
+
     @Autowired
-    private ActionDAO actionDAO;
+    private ActionService actionService;
+
+    @Autowired
+    private RoleService roleService;
 
     public ApplicationForm getById(Integer id) {
-        return applicationFormDAO.get(id);
+        return applicationFormDAO.getById(id);
     }
 
     public void save(ApplicationForm application) {
         applicationFormDAO.save(application);
     }
-    
+
     public void refresh(final ApplicationForm applicationForm) {
         applicationFormDAO.refresh(applicationForm);
     }
-    
+
     public ApplicationForm getByApplicationNumber(String applicationNumber) {
         return applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
     }
@@ -107,13 +103,12 @@ public class ApplicationFormService {
     public List<ApplicationDescriptor> getApplicationsForList(final RegisteredUser user, final ApplicationsFiltering filtering) {
         List<ApplicationDescriptor> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
         for (ApplicationDescriptor application : applications) {
-            application.getActionDefinitions().addAll(applicationFormUserRoleService.selectUserActions(user.getId(), application.getApplicationFormId()));
+            application.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getApplicationFormId()));
         }
         return applications;
     }
 
-    public List<ApplicationForm> getApplicationsForReport(final RegisteredUser user, final ApplicationsFiltering filtering,
-            final ReportFormat reportType) {
+    public List<ApplicationForm> getApplicationsForReport(final RegisteredUser user, final ApplicationsFiltering filtering, final ReportFormat reportType) {
         return applicationFormListDAO.getVisibleApplicationsForReport(user, filtering);
     }
 
@@ -129,8 +124,8 @@ public class ApplicationFormService {
         setApplicantIpAddress(application, request);
         setApplicationStatus(application, ApplicationFormStatus.VALIDATION);
         sendApplicationSubmissionConfirmation(application);
-        applicationFormUserRoleService.applicationSubmitted(application);
-        applicationFormUserRoleService.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        workflowService.applicationSubmitted(application);
+        applicationFormDAO.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
     }
 
     public void setApplicationStatus(ApplicationForm application, ApplicationFormStatus newStatus) {
@@ -163,11 +158,11 @@ public class ApplicationFormService {
             application.setDueDate(null);
             application.setClosingDate(null);
             application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
-            applicationFormUserRoleService.deleteApplicationActions(application);
+            actionService.deleteApplicationActions(application);
         }
-        
+
     }
-    
+
     public ApplicationForm getOrCreateApplication(final RegisteredUser applicant, final String programCode, final Integer advertId) {
         Advert advert = programService.getValidProgramProjectAdvert(programCode, advertId);
         userService.addRoleToUser(applicant, Authority.APPLICANT);
@@ -178,7 +173,7 @@ public class ApplicationFormService {
         applicationForm = createApplication(applicant, advert);
         autoPopulateApplication(applicationForm);
         AddSuggestedSupervisorsFromProject(applicationForm);
-        applicationFormUserRoleService.applicationCreated(applicationForm);
+        workflowService.applicationCreated(applicationForm);
         log.info("New application form created: " + applicationForm.getApplicationNumber());
         return applicationForm;
     }
@@ -187,10 +182,10 @@ public class ApplicationFormService {
         ApplicationForm application = getByApplicationNumber(applicationId);
         if (application == null) {
             throw new MissingApplicationFormException(applicationId);
-        }   
+        }
         RegisteredUser user = userService.getCurrentUser();
         for (ApplicationFormAction action : actions) {
-            if (actionsProvider.checkActionAvailable(application, user, action)) {
+            if (actionService.checkActionAvailable(application, user, action)) {
                 return application;
             }
         }
@@ -199,25 +194,25 @@ public class ApplicationFormService {
 
     public void saveOrUpdateApplicationSection(ApplicationForm application) {
         RegisteredUser currentUser = userService.getCurrentUser();
-        Action action = actionDAO.getById(actionsProvider.getPrecedentAction(application, currentUser, ActionType.VIEW_EDIT));
-        applicationFormUserRoleService.insertApplicationUpdate(application, userService.getCurrentUser(), action.getUpdateVisibility());
+        Action action = actionService.getById(actionService.getPrecedentAction(application, currentUser, ActionType.VIEW_EDIT));
+        applicationFormDAO.insertApplicationUpdate(application, userService.getCurrentUser(), action.getUpdateVisibility());
     }
-    
+
     public void openApplicationForEdit(ApplicationForm application, RegisteredUser user) {
         programService.getValidProgramProjectAdvert(application.getProgram().getCode(), application.getAdvert().getId());
         openApplicationForView(application, user);
     }
-    
+
     public void openApplicationForView(ApplicationForm application, RegisteredUser user) {
-        applicationFormUserRoleService.deleteApplicationUpdate(application, user);
+        applicationFormDAO.deleteApplicationUpdate(application, user);
     }
-    
+
     public void queueApplicationForExport(ApplicationForm application) {
         if (application.getLastStatus().isSubmitted() && application.getProgram().getProgramFeed() != null) {
             exportQueueService.createOrReturnExistingApplicationFormTransfer(application);
         }
     }
-    
+
     public Date getDefaultStartDateForApplication(ApplicationForm application) {
         Program program = application.getProgram();
         StudyOption studyOption = application.getProgramDetails().getStudyOption();
@@ -226,15 +221,23 @@ public class ApplicationFormService {
         }
         return null;
     }
-    
+
+    public void applicationCreated(ApplicationForm application) {
+        RegisteredUser applicant = application.getApplicant();
+        ApplicationFormActionRequired completeApplicationAction = new ApplicationFormActionRequired(application, applicant,
+                roleService.getById(Authority.APPLICANT), actionService.getById(ApplicationFormAction.COMPLETE_APPLICATION), application.getDueDate(), true,
+                false);
+        roleService.createApplicationFormUserRole(application, applicant, Authority.APPLICANT, false, completeApplicationAction);
+    }
+
     public ApplicationDescriptor getApplicationDescriptorForUser(final ApplicationForm application, final RegisteredUser user) {
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
-        applicationDescriptor.getActionDefinitions().addAll(applicationFormUserRoleDAO.selectUserActions(user.getId(), application.getId()));
-        applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormUserRoleDAO.getRaisesUrgentFlagByUserAndApplicationForm(user, application));
-        applicationDescriptor.setNeedsToSeeUpdateFlag(applicationFormUserRoleDAO.getRaisesUpdateFlagByUserAndApplicationForm(user, application));
+        applicationDescriptor.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getId()));
+        applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormDAO.getRaisesUrgentFlagForUser(application, user));
+        applicationDescriptor.setNeedsToSeeUpdateFlag(applicationFormDAO.getRaisesUpdateFlagForUser(application, user));
         return applicationDescriptor;
     }
-    
+
     private void autoPopulateApplication(ApplicationForm applicationForm) {
         RegisteredUser user = userService.getCurrentUser();
         if (user != null) {
@@ -276,7 +279,7 @@ public class ApplicationFormService {
             }
         }
     }
-    
+
     private SuggestedSupervisor createSuggestedSupervisor(RegisteredUser user) {
         SuggestedSupervisor supervisor = new SuggestedSupervisor();
         supervisor.setEmail(user.getEmail());
@@ -285,7 +288,7 @@ public class ApplicationFormService {
         supervisor.setAware(true);
         return supervisor;
     }
-    
+
     private Date getClosingDateForApplication(ApplicationForm application) {
         if (application.getProject() != null) {
             return application.getProject().getClosingDate();
@@ -310,13 +313,12 @@ public class ApplicationFormService {
     }
 
     private void setApplicantIpAddress(ApplicationForm application, HttpServletRequest request) {
-        try {
-            application.setIpAddressAsString(request.getRemoteAddr());
-        } catch (UnknownHostException e) {
-            log.error("Error while setting ip address of: " + request.getRemoteAddr(), e);
+        String ipAddress = request.getRemoteAddr();
+        if (ipAddress != null) {
+            application.setIpAddress(ipAddress);
         }
     }
-    
+
     private void sendApplicationSubmissionConfirmation(final ApplicationForm applicationForm) {
         try {
             mailService.sendSubmissionConfirmationToApplicant(applicationForm);

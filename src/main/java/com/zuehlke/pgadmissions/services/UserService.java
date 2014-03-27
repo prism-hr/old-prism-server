@@ -51,11 +51,7 @@ public class UserService {
     private MailSendingService mailService;
 
     @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    public RegisteredUser getUser(Integer id) {
-        return userDAO.get(id);
-    }
+    private WorkflowService applicationFormUserRoleService;
 
     public List<RegisteredUser> getUsersInRole(Authority ... authorities) {
         return userDAO.getUsersInRole(authorities);
@@ -67,12 +63,11 @@ public class UserService {
     
     public RegisteredUser getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            return null;
+        if (authentication != null) {
+            RegisteredUser currentUser = (RegisteredUser) authentication.getDetails();
+            return userDAO.getPrimaryById(currentUser.getId());
         }
-        RegisteredUser currentUser = (RegisteredUser) authentication.getDetails();
-        RegisteredUser user = userDAO.get(currentUser.getId());
-        return user;
+        return null;
     }
 
     public List<RegisteredUser> getAllUsers() {

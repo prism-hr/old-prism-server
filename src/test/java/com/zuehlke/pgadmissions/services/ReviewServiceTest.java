@@ -50,7 +50,7 @@ public class ReviewServiceTest {
     private Reviewer reviewer;
     private EventFactory eventFactoryMock;
     private MailSendingService mailServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Before
     public void setUp() {
@@ -62,7 +62,7 @@ public class ReviewServiceTest {
         stageDurationDAOMock = EasyMock.createMock(StageDurationService.class);
         eventFactoryMock = EasyMock.createMock(EventFactory.class);
         mailServiceMock = EasyMock.createMock(MailSendingService.class);
-        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = createMock(WorkflowService.class);
 
         reviewService = new ReviewService(applicationFormDAOMock, reviewRoundDAOMock, stageDurationDAOMock, eventFactoryMock, reviewerDAO, mailServiceMock,
                 applicationFormUserRoleServiceMock) {

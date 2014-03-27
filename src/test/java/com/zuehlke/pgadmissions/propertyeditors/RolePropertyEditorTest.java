@@ -21,7 +21,7 @@ public class RolePropertyEditorTest {
 	@Test	
 	public void shouldLoadByAuthorityAndSetAsValue(){
 		Role role = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
-		EasyMock.expect(roleServiceMock.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(role);
+		EasyMock.expect(roleServiceMock.getById(Authority.ADMINISTRATOR)).andReturn(role);
 		EasyMock.replay(roleServiceMock);
 		
 		editor.setAsText("ADMINISTRATOR");

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,8 +13,10 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
@@ -27,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
@@ -272,6 +276,43 @@ public class UserDAO {
                 .add(Restrictions.eq("applicationForm", application))
                 .add(Restrictions.ne("applicationRole.id", Authority.SUPERADMINISTRATOR))
                 .add(Restrictions.eq("action.id", ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
+    }
+    
+    public List<RegisteredUser> getUsersInterestedInApplication(ApplicationForm applicationForm) {
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.projectionList().add(Projections.groupProperty("user"), "user"))
+                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("applicationForm", applicationForm))
+                .add(Restrictions.eq("interestedInApplicant", true))
+                .add(Restrictions
+                        .disjunction()
+                        .add(Restrictions.eq("registeredUser.enabled", true))
+                        .add(Restrictions.conjunction().add(Restrictions.eq("registeredUser.enabled", false))
+                                .add(Restrictions.in("role.id", Arrays.asList(Authority.SUGGESTEDSUPERVISOR)))))
+                .addOrder(Order.asc("registeredUser.lastName"))
+                .addOrder(Order.asc("registeredUser.firstName")).addOrder(Order.asc("registeredUser.id")).list();
+    }
+
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
+        DetachedCriteria usersInterestedInApplicant = DetachedCriteria.forClass(ApplicationFormUserRole.class)
+                .setProjection(Projections.projectionList()
+                        .add(Projections.groupProperty("user")))
+                .add(Restrictions.eq("applicationForm", applicationForm))
+                .add(Restrictions.eq("interestedInApplicant", true));
+
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.projectionList().add(Projections.groupProperty("user"), "user"))
+                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("program.id", applicationForm.getProgram().getId()))
+                .add(Restrictions.in("role.id", AuthorityGroup.getAllInternalRecruiterAuthorities()))
+                .add(Restrictions.isNull("registeredUser.primaryAccount"))
+                .add(Restrictions.eq("registeredUser.enabled", true))
+                .add(Property.forName("user").notIn(usersInterestedInApplicant))
+                .addOrder(Order.asc("registeredUser.lastName"))
+                .addOrder(Order.asc("registeredUser.firstName"))
+                .addOrder(Order.asc("registeredUser.id")).list();
     }
     
     private Date getBaselineDate(Date seedDate) {

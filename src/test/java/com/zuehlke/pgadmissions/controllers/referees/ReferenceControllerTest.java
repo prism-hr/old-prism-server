@@ -79,7 +79,7 @@ public class ReferenceControllerTest {
     @Test
     public void shouldReturnApplicationForm() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         replay(applicationsServiceMock, currentUser, userServiceMock);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
         verify(applicationsServiceMock, currentUser, userServiceMock);
@@ -89,7 +89,7 @@ public class ReferenceControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+        expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(null);
         replay(applicationsServiceMock);
         controller.getApplicationForm("1");
     }
@@ -123,7 +123,7 @@ public class ReferenceControllerTest {
         ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee).anyTimes();
         expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
         expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
@@ -148,7 +148,7 @@ public class ReferenceControllerTest {
         final Referee referee = new RefereeBuilder().id(8).build();
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee).anyTimes();
         expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
 

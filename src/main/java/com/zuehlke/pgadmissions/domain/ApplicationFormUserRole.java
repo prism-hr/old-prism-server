@@ -1,24 +1,25 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+
+import com.google.common.base.Objects;
 
 @Entity(name = "APPLICATION_FORM_USER_ROLE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -26,73 +27,42 @@ public class ApplicationFormUserRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue
-    private Integer id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_form_id")
-    private ApplicationForm applicationForm;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "registered_user_id")
-    private RegisteredUser user;
-
-    @ManyToOne
-    @JoinColumn(name = "application_role_id")
-    private Role role;
+    @EmbeddedId
+    private ApplicationFormUserRolePrimaryKey id;
 
     @Column(name = "is_interested_in_applicant")
     private Boolean interestedInApplicant = false;
-    
-    @Column(name = "update_timestamp")
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date updateTimestamp;
-    
-    @Column(name = "raises_update_flag")
-    private Boolean raisesUpdateFlag = false;
-    
+
     @Column(name = "raises_urgent_flag")
     private Boolean raisesUrgentFlag = false;
-    
-    @Column(name = "assigned_timestamp")
+
+    @Column(name = "assigned_timestamp", insertable = false, updatable = false)
+    @Generated(GenerationTime.INSERT)
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date assignedTimestamp = new Date();
-    
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_form_user_role_id", nullable = false)
-    private List<ApplicationFormActionRequired> actions = new ArrayList<ApplicationFormActionRequired>();
 
-    public Integer getId() {
+    @OneToMany(mappedBy = "id.applicationFormUserRolePrimaryKey", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private HashSet<ApplicationFormActionRequired> actions = new HashSet<ApplicationFormActionRequired>();
+
+    public ApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Role role, Boolean interestedInApplicant,
+            HashSet<ApplicationFormActionRequired> actions) {
+        setId(applicationForm, user, role);
+        this.interestedInApplicant = interestedInApplicant;
+        this.actions = actions;
+    }
+
+    public ApplicationFormUserRolePrimaryKey getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setId(ApplicationForm applicationForm, RegisteredUser user, Role role) {
+        id.setApplicationForm(applicationForm);
+        id.setUser(user);
+        id.setRole(role);
     }
 
-    public ApplicationForm getApplicationForm() {
-        return applicationForm;
-    }
-
-    public void setApplicationForm(ApplicationForm applicationForm) {
-        this.applicationForm = applicationForm;
-    }
-
-    public RegisteredUser getUser() {
-        return user;
-    }
-
-    public void setUser(RegisteredUser user) {
-        this.user = user;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
+    public Boolean getInterestedInApplicant() {
+        return interestedInApplicant;
     }
 
     public Boolean isInterestedInApplicant() {
@@ -102,23 +72,7 @@ public class ApplicationFormUserRole implements Serializable {
     public void setInterestedInApplicant(Boolean isInterestedInApplicant) {
         this.interestedInApplicant = isInterestedInApplicant;
     }
-    
-    public Date getUpdateTimestamp() {
-        return updateTimestamp;
-    }
-    
-    public void setUpdateTimestamp(Date updateTimestamp) {
-    	this.updateTimestamp = updateTimestamp;
-    }
-    
-    public Boolean getRaisesUpdateFlag() {
-        return raisesUpdateFlag;
-    }
 
-    public void setRaisesUpdateFlag(Boolean raisesUpdateFlag) {
-        this.raisesUpdateFlag = raisesUpdateFlag;
-    }
-    
     public Boolean getRaisesUrgentFlag() {
         return raisesUrgentFlag;
     }
@@ -126,17 +80,88 @@ public class ApplicationFormUserRole implements Serializable {
     public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
-    
+
     public Date getAssignedTimestamp() {
         return assignedTimestamp;
     }
-    
+
     public void setAssignedTimestamp(Date assignedTimestamp) {
         this.assignedTimestamp = assignedTimestamp;
     }
 
-    public List<ApplicationFormActionRequired> getActions() {
+    public HashSet<ApplicationFormActionRequired> getActions() {
         return actions;
     }
-    
+
+    public void setActions(HashSet<ApplicationFormActionRequired> actions) {
+        this.actions = actions;
+    }
+
+    @Embeddable
+    public static class ApplicationFormUserRolePrimaryKey implements Serializable {
+
+        private static final long serialVersionUID = 662732181186688410L;
+
+        @Column(name = "application_form_id")
+        protected ApplicationForm applicationForm;
+
+        @Column(name = "registered_user_id")
+        protected RegisteredUser user;
+
+        @Column(name = "application_role_id")
+        protected Role role;
+
+        public ApplicationFormUserRolePrimaryKey() {
+        }
+
+        public ApplicationFormUserRolePrimaryKey(ApplicationForm applicationForm, RegisteredUser user, Role role) {
+            this.applicationForm = applicationForm;
+            this.user = user;
+            this.role = role;
+        }
+
+        public ApplicationForm getApplicationForm() {
+            return applicationForm;
+        }
+
+        public void setApplicationForm(ApplicationForm applicationForm) {
+            this.applicationForm = applicationForm;
+        }
+
+        public RegisteredUser getUser() {
+            return user;
+        }
+
+        public void setUser(RegisteredUser user) {
+            this.user = user;
+        }
+
+        public Role getRole() {
+            return role;
+        }
+
+        public void setRole(Role role) {
+            this.role = role;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(applicationForm, user, role);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final ApplicationFormUserRolePrimaryKey other = (ApplicationFormUserRolePrimaryKey) obj;
+            return Objects.equal(applicationForm.getId(), other.getApplicationForm().getId()) && Objects.equal(user.getId(), other.getUser().getId())
+                    && Objects.equal(role.getId(), other.getRole().getId());
+        }
+
+    }
+
 }

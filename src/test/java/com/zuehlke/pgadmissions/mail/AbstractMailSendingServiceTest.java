@@ -123,7 +123,7 @@ public class AbstractMailSendingServiceTest {
         final RegisteredUser user = new RegisteredUserBuilder().id(1).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
         Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com").application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).build();
         Role role = new RoleBuilder().build();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.REFEREE)).andReturn(role);
+        EasyMock.expect(roleDAOMock.getById(Authority.REFEREE)).andReturn(role);
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("emailemail@test.com")).andReturn(null);
         
         userDAOMock.save(EasyMock.isA(RegisteredUser.class));

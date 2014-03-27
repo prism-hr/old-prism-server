@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
@@ -15,12 +14,13 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Component
 public class ApplicationFormValidator extends AbstractValidator {
 
     @Autowired
-    private ProgramInstanceDAO programInstanceDAO;
+    private ProgramService programService;
 
     @Autowired
     private ProgramDetailsValidator programDetailsValidator;
@@ -88,7 +88,7 @@ public class ApplicationFormValidator extends AbstractValidator {
         }
 
         if (programDetails != null && programDetails.getStudyOption() != null) {
-            List<ProgramInstance> programInstances = programInstanceDAO.getActiveProgramInstancesByStudyOption(applicationForm.getProgram(),
+            List<ProgramInstance> programInstances = programService.getActiveProgramInstancesForStudyOption(applicationForm.getProgram(),
                     programDetails.getStudyOption());
             if (programInstances == null || programInstances.isEmpty()) {
                 errors.rejectValue("programDetails.studyOption", "programDetails.studyOption.invalid");

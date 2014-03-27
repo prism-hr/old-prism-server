@@ -674,7 +674,7 @@ public class PorticoWebServiceIT {
     @Transactional
     public void approvedUCLPrismApplicationByApplicantWithADuplicateApplicationInTheUCLPorticoSystem() throws PorticoExportServiceException {
         csvEntries.add("Approved UCL Prism application by applicant with a duplicate application in the UCL Portico system");
-        randomApplicationForm = applicationsService.getApplicationByApplicationNumber("RRDCIVSGEO01-2012-000032");
+        randomApplicationForm = applicationsService.getByApplicationNumber("RRDCIVSGEO01-2012-000032");
 
         for (Referee referee : randomApplicationForm.getReferees()) {
             if (referee.getReference() != null) {
@@ -731,7 +731,7 @@ public class PorticoWebServiceIT {
     }
 
     private ApplicationForm randomlyPickApplicationForm() {
-        List<ApplicationForm> allApplicationsByStatus = applicationsService.getAllApplicationsByStatus(ApplicationFormStatus.REVIEW);
+        List<ApplicationForm> allApplicationsByStatus = applicationsService.getApplicationsByStatus(ApplicationFormStatus.REVIEW);
         ApplicationForm applicationForm = null;
         boolean foundEnoughDataForQualifications = false;
         boolean foundEnoughDataForReferees = false;

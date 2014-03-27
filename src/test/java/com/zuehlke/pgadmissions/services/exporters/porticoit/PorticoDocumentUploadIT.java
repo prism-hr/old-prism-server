@@ -722,7 +722,7 @@ public class PorticoDocumentUploadIT {
                     zos.putNextEntry(new ZipEntry(filename));
                     zos.write(FileUtils.readFileToByteArray(validPdf.getFile()));
                     zos.closeEntry();            
-                    contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", languageQualification.getLanguageQualificationDocument().getFileName());
+                    contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", languageQualification.getProofOfAward().getFileName());
                 }
             }
         });
@@ -1256,7 +1256,7 @@ public class PorticoDocumentUploadIT {
                     zos.write(FileUtils.readFileToByteArray(validPdf.getFile()));
                     zos.closeEntry();            
                     contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", StringUtils.EMPTY);
-                    contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", languageQualification.getLanguageQualificationDocument().getFileName());
+                    contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", languageQualification.getProofOfAward().getFileName());
                 }
             }
         });
@@ -1757,7 +1757,7 @@ public class PorticoDocumentUploadIT {
     }
         
     private void sendToPortico() {        
-        List<ApplicationForm> allApplicationsByStatus = applicationsService.getAllApplicationsByStatus(ApplicationFormStatus.REVIEW);
+        List<ApplicationForm> allApplicationsByStatus = applicationsService.getApplicationsByStatus(ApplicationFormStatus.REVIEW);
         
         applicationForm = null; 
         

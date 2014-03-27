@@ -49,7 +49,7 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
 
         if (qualifications != null) {
         	
-        	ApplicationForm applicationForm = applicationFormService.getApplicationByApplicationNumber(dto.getApplicationNumber()); 
+        	ApplicationForm applicationForm = applicationFormService.getByApplicationNumber(dto.getApplicationNumber()); 
         	
             for (int i = 0; i < qualifications.size(); i++) {
             	if (qualificationService.getById(qualifications.get(i)).getProofOfAward() == null) {

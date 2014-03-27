@@ -75,6 +75,9 @@ public class ApplicationFormUserRoleService {
 
     @Autowired
     private EncryptionUtils encryptionUtils;
+    
+    @Autowired 
+    private PermissionsService permissionsService;
 
     public void applicationCreated(ApplicationForm applicationForm) {
         createApplicationFormUserRole(applicationForm, applicationForm.getApplicant(), Authority.APPLICANT, false,
@@ -103,7 +106,7 @@ public class ApplicationFormUserRoleService {
                 userToSaveAsSuggestedSupervisor.setEnabled(false);
                 userToSaveAsSuggestedSupervisor.setCredentialsNonExpired(true);
                 userToSaveAsSuggestedSupervisor.setActivationCode(encryptionUtils.generateUUID());
-                userToSaveAsSuggestedSupervisor.getRoles().add(roleDAO.getRoleByAuthority(Authority.SUGGESTEDSUPERVISOR));
+                userToSaveAsSuggestedSupervisor.getRoles().add(roleDAO.getById(Authority.SUGGESTEDSUPERVISOR));
                 userDAO.save(userToSaveAsSuggestedSupervisor);
             }
 
@@ -339,11 +342,11 @@ public class ApplicationFormUserRoleService {
     }
 
     public List<RegisteredUser> getUsersInterestedInApplication(ApplicationForm applicationForm) {
-        return applicationFormUserRoleDAO.getUsersInterestedInApplication(applicationForm);
+        return userDAO.getUsersInterestedInApplication(applicationForm);
     }
 
     public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
-        return applicationFormUserRoleDAO.getUsersPotentiallyInterestedInApplication(applicationForm);
+        return userDAO.getUsersPotentiallyInterestedInApplication(applicationForm);
     }
 
     public void deleteApplicationActions(ApplicationForm applicationForm) {
@@ -428,50 +431,6 @@ public class ApplicationFormUserRoleService {
         Date newDueDate = new Date();
         applicationForm.setDueDate(newDueDate);
         updateApplicationDueDate(applicationForm, newDueDate);
-    }
-
-    private ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Authority authority,
-            Boolean interestedInApplicant, ApplicationFormActionRequired... actions) {
-
-        ApplicationFormUserRole applicationFormUserRole = applicationFormUserRoleDAO
-                .getByApplicationFormAndUserAndAuthorities(applicationForm, user, authority).get(0);
-        Role role = roleDAO.getRoleByAuthority(authority);
-
-        if (applicationFormUserRole == null) {
-            applicationFormUserRole = new ApplicationFormUserRole();
-            applicationFormUserRole.setApplicationForm(applicationForm);
-            applicationFormUserRole.setRole(role);
-            applicationFormUserRole.setUser(user);
-
-            Date updateTimestamp = applicationFormUserRoleDAO.getUpdateTimestampByApplicationFormAndAuthorityUpdateVisility(applicationForm,
-                    role.getUpdateVisibility());
-
-            if (updateTimestamp != null) {
-                applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
-                applicationFormUserRole.setRaisesUpdateFlag(true);
-            }
-
-        }
-        
-        List<ApplicationFormActionRequired> currentActions = applicationFormUserRole.getActions();
-        for (ApplicationFormActionRequired action : actions) {
-            deleteUserAction(applicationForm, user, authority, action.getAction().getId());
-            currentActions.add(action);
-        }
-
-        applicationFormUserRole.setInterestedInApplicant(interestedInApplicant);
-
-        Boolean raisesUrgentFlag = false;
-        for (ApplicationFormActionRequired action : actions) {
-            applicationFormUserRole.getActions().add(action);
-            if (BooleanUtils.isFalse(raisesUrgentFlag) && BooleanUtils.isTrue(action.getRaisesUrgentFlag())) {
-                raisesUrgentFlag = true;
-            }
-        }
-
-        applicationFormUserRole.setRaisesUrgentFlag(raisesUrgentFlag);
-        applicationFormUserRoleDAO.save(applicationFormUserRole);
-        return applicationFormUserRole;
     }
 
     private void assignToAdministrators(ApplicationForm applicationForm, ApplicationFormAction action, Date dueDate, Boolean bindDeadlineToDueDate) {

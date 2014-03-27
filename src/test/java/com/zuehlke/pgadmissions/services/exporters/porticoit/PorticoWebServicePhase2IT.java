@@ -86,7 +86,7 @@ public class PorticoWebServicePhase2IT {
                 "RRDMECSING01-2013-000043", "RRDMECSING01-2013-000044", "RRDMECSING01-2013-000045"));
         
         for (String appNumber : applications) {
-            ApplicationForm form = applicationsService.getApplicationByApplicationNumber(appNumber);
+            ApplicationForm form = applicationsService.getByApplicationNumber(appNumber);
             ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(form);
             selectReferres(form);
             try {

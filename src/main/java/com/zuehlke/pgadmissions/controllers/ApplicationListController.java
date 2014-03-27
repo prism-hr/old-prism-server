@@ -112,7 +112,7 @@ public class ApplicationListController {
         RegisteredUser user = getUser();
         filtering.setBlockCount(blockCount);
         filtering.setUseDisjunction(useDisjunction);
-        List<ApplicationDescriptor> applications = applicationsService.getAllVisibleAndMatchedApplicationsForList(user, filtering);
+        List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(user, filtering);
         model.addAttribute("applications", applications);
         model.addAttribute("latestConsideredFlagIndex", filtering.getLatestConsideredFlagIndex());
         return APPLICATION_LIST_SECTION_VIEW_NAME;
@@ -204,7 +204,7 @@ public class ApplicationListController {
 
     @ModelAttribute("messageApplication")
     public ApplicationForm getApplicationForm(@RequestParam(required = false) String application) {
-        return applicationsService.getApplicationByApplicationNumber(application);
+        return applicationsService.getByApplicationNumber(application);
     }
 
 }

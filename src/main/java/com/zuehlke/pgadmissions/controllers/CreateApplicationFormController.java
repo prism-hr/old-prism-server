@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -23,8 +24,7 @@ public class CreateApplicationFormController {
 
     @RequestMapping(value = "/new", method = { RequestMethod.POST, RequestMethod.GET })
     public ModelAndView createNewApplicationForm(@RequestParam(required = false) String program, @RequestParam(required = false) Integer advert) {
-        return new ModelAndView(RedirectLocation.UPDATE_APPLICATION, "applicationId", applicationFormService.createOrGetUnsubmittedApplicationForm(
-                userService.getCurrentUser(), program, advert).getApplicationNumber());
+        ApplicationForm application = applicationFormService.getOrCreateApplication(userService.getCurrentUser(), program, advert);
+        return new ModelAndView(RedirectLocation.UPDATE_APPLICATION, "applicationId", application.getApplicationNumber());
     }
-
 }

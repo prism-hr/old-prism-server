@@ -42,7 +42,7 @@ public class InterviewConfirmControllerTest {
     @Test
     public void shouldGetApplicationFormFromId() {
         ApplicationForm applicationForm = new ApplicationForm();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 
         EasyMock.replay(applicationsServiceMock);
         ApplicationForm returnedApplication = controller.getApplicationForm("5");
@@ -53,7 +53,7 @@ public class InterviewConfirmControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowExceptionWhenApptlicationIsNull() {
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(null);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("app1")).andReturn(null);
 
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("app1");

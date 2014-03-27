@@ -16,16 +16,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.InterviewParticipantDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.InterviewParticipant;
@@ -35,45 +32,30 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
 public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     private final Logger log = LoggerFactory.getLogger(ScheduledMailSendingService.class);
 
-    private final RefereeDAO refereeDAO;
-
-    private final UserDAO userDAO;
-
-    private final ApplicationContext applicationContext;
-
-    private final InterviewParticipantDAO interviewParticipantDAO;
-
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    private final OpportunitiesService opportunitiesService;
-
-    public ScheduledMailSendingService() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null);
-    }
+    @Autowired
+    private RefereeDAO refereeDAO;
 
     @Autowired
-    public ScheduledMailSendingService(final MailSender mailSender, final ApplicationFormDAO applicationFormDAO,
-            final ConfigurationService configurationService, final RefereeDAO refereeDAO, final UserDAO userDAO, final RoleDAO roleDAO,
-            final EncryptionUtils encryptionUtils, @Value("${application.host}") final String host, final ApplicationContext applicationContext,
-            InterviewParticipantDAO interviewParticipantDAO, final ApplicationFormUserRoleService applicationFormUserRoleService,
-            final OpportunitiesService opportunitiesService) {
-        super(mailSender, applicationFormDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, host);
-        this.refereeDAO = refereeDAO;
-        this.userDAO = userDAO;
-        this.applicationContext = applicationContext;
-        this.interviewParticipantDAO = interviewParticipantDAO;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.opportunitiesService = opportunitiesService;
-    }
+    private UserDAO userDAO;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private InterviewParticipantDAO interviewParticipantDAO;
+
+    @Autowired
+    private ApplicationFormUserRoleService applicationFormUserRoleService;
+
+    @Autowired
+    private OpportunitiesService opportunitiesService;
 
     public void sendDigestsToUsers() {
         ScheduledMailSendingService thisProxy = applicationContext.getBean(this.getClass());

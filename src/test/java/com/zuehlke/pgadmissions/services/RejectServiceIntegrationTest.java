@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
@@ -71,13 +71,13 @@ public class RejectServiceIntegrationTest {
 
         sessionFactory.getCurrentSession().saveOrUpdate(reason1);
 
-        Role approverRole = roleDAO.getRoleByAuthority(Authority.APPROVER);
+        Role approverRole = roleDAO.getById(Authority.APPROVER);
         RegisteredUser approver = new RegisteredUserBuilder().firstName("Some").lastName("Aprove").email("sdfajklsdf@test.com").username("sdfakd")//
                 .role(approverRole)//
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
         userDAO.save(approver);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a5").domicileCode("AE").enabled(true).build();
+        Institution institution = new QualificationInstitutionBuilder().code("code").name("a5").domicileCode("AE").enabled(true).build();
         qualificationInstitutionDAO.save(institution);
         
         Program program = new ProgramBuilder().contactUser(approver).title("alelele").code("blabjk").institution(institution).build();

@@ -28,7 +28,7 @@ public class ApplicationFormPropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(applicationsService.getApplicationByApplicationNumber(strId));
+		setValue(applicationsService.getByApplicationNumber(strId));
 	}
 
 	@Override

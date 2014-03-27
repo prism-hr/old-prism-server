@@ -76,7 +76,7 @@ public class ConfirmSupervisionController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+        ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
         if (application == null) {
             throw new MissingApplicationFormException(applicationId);
         }

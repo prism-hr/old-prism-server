@@ -43,7 +43,7 @@ public class CommentTimelineController {
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String id) {
-		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
+		ApplicationForm applicationForm = applicationService.getByApplicationNumber(id);
 		if (applicationForm == null) {
 			throw new ResourceNotFoundException();
 		}

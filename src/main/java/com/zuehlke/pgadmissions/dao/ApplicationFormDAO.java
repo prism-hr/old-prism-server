@@ -167,10 +167,13 @@ public class ApplicationFormDAO {
         return null;
     }
     
-    public ApplicationForm getPreviousApplicationForApplicantForAdvert(final RegisteredUser applicant, final Advert advert) {
+    public ApplicationForm getInProgressApplication(final RegisteredUser applicant, final Advert advert) {
         return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+                .createAlias("status", "state", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("applicant", applicant))
                 .add(Restrictions.eq("advert", advert))
-                .addOrder(Order.desc("submittedDate"))
+                .add(Restrictions.eq("state.completed", false))
+                .addOrder(Order.desc("createdDate"))
                 .addOrder(Order.desc("id"))
                 .setMaxResults(1).uniqueResult();
     }

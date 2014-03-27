@@ -4,11 +4,9 @@ import java.util.Date;
 
 public interface ProgramInstanceInterface extends CodeObject {
 
-	String getStudyOptionCode();
+	StudyOption getStudyOption();
 
-	String getStudyOption();
-
-	String getAcademic_year();
+	String getAcademicYear();
 
 	Date getApplicationStartDate();
 

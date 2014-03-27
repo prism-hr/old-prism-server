@@ -309,7 +309,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         customQuestions.getQuestion().add(question1);
         ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
         EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
 
@@ -327,7 +327,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).advert(program).build();
 
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
 
         EasyMock.replay(userServiceMock, applicationServiceMock, scoringDefinitionParserMock, scoreFactoryMock);

@@ -37,7 +37,7 @@ public class PersonalDetailsService {
         }
         updateApplicantData(application, updatedUser);
         applicationFormCopyHelper.copyPersonalDetails(persistentPersonalDetails, personalDetails, false);
-        applicationFormService.saveOrUpdateApplicationFormSection(application);
+        applicationFormService.saveOrUpdateApplicationSection(application);
     }
      
     private void updateApplicantData(ApplicationForm application, RegisteredUser updatedUser) {

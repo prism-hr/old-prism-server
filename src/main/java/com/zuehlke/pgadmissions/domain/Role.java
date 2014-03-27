@@ -15,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
 
 @Entity(name = "APPLICATION_ROLE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
@@ -25,6 +26,10 @@ public class Role implements GrantedAuthority, Serializable {
     @Id
     @Enumerated(EnumType.STRING)
     private Authority id;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "application_role_scope_id")
+    private AuthorityScope authorityScope;
     
     @Column(name = "update_visibility")
     @Enumerated(EnumType.ORDINAL)
@@ -46,6 +51,14 @@ public class Role implements GrantedAuthority, Serializable {
         return id.toString();
     }
     
+    public AuthorityScope getAuthorityScope() {
+        return authorityScope;
+    }
+
+    public void setAuthorityScope(AuthorityScope authorityScope) {
+        this.authorityScope = authorityScope;
+    }
+
     public ApplicationUpdateScope getUpdateVisibility() {
         return updateVisibility;
     }

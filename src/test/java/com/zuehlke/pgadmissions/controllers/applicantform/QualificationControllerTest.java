@@ -202,7 +202,7 @@ public class QualificationControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 
         replay();
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
@@ -217,7 +217,7 @@ public class QualificationControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 
         replay();
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");

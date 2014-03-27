@@ -26,7 +26,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -82,8 +82,8 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
                 registeredUserDAO.save(user1);
                 registeredUserDAO.save(similiarToUser1);
 
-                user1.getRoles().add(roleDAO.getRoleByAuthority(Authority.REFEREE));
-                similiarToUser1.getRoles().add(roleDAO.getRoleByAuthority(Authority.INTERVIEWER));
+                user1.getRoles().add(roleDAO.getById(Authority.REFEREE));
+                similiarToUser1.getRoles().add(roleDAO.getById(Authority.INTERVIEWER));
 
                 flushIndexes();
             }
@@ -138,8 +138,8 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
                 user1.getRoles().clear();
                 similiarToUser1.getRoles().clear();
 
-                user1.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
-                similiarToUser1.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
+                user1.getRoles().add(roleDAO.getById(Authority.APPLICANT));
+                similiarToUser1.getRoles().add(roleDAO.getById(Authority.APPLICANT));
 
                 sessionFactory.getCurrentSession().saveOrUpdate(user1);
                 sessionFactory.getCurrentSession().saveOrUpdate(similiarToUser1);
@@ -159,8 +159,8 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
                 user1.getRoles().clear();
                 similiarToUser1.getRoles().clear();
 
-                user1.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
-                similiarToUser1.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
+                user1.getRoles().add(roleDAO.getById(Authority.APPLICANT));
+                similiarToUser1.getRoles().add(roleDAO.getById(Authority.APPLICANT));
 
                 sessionFactory.getCurrentSession().saveOrUpdate(user1);
                 sessionFactory.getCurrentSession().saveOrUpdate(similiarToUser1);
@@ -175,7 +175,7 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
     public void shouldReturnSimilarMatchForInstitutionName() {
         TransactionTemplate template = new TransactionTemplate(transactionManager);
 
-        final QualificationInstitution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
+        final Institution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
 
         template.execute(new TransactionCallbackWithoutResult() {
             @Override

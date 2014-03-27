@@ -59,11 +59,13 @@ public class ViewEditApplicationFormController {
         case COMPLETE_APPLICATION:
         case CORRECT_APPLICATION:
         case EDIT_AS_APPLICANT:
-            applicationFormService.openApplicationFormForUpdate(applicationForm, user);
+            applicationFormService.openApplicationForEdit(applicationForm, user);
             return TemplateLocation.APPLICATION_APPLICANT_FORM;
         case EDIT_AS_ADMINISTRATOR:
             return RedirectLocation.UPDATE_APPLICATION_AS_STAFF + applicationForm.getApplicationNumber();
-        case VIEW:
+        case VIEW_AS_APPLICANT:
+        case VIEW_AS_REFEREE:
+        case VIEW_AS_RECRUITER:
             return getApplicationView(applicationForm, user, request);
         default:
             throw new ResourceNotFoundException();
@@ -74,11 +76,11 @@ public class ViewEditApplicationFormController {
     @ModelAttribute
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         List<ApplicationFormAction> viewActions = actionService.getActionIdByActionType(ActionType.VIEW_EDIT);
-        return applicationFormService.getSecuredApplicationForm(applicationId, viewActions.toArray(new ApplicationFormAction[viewActions.size()]));
+        return applicationFormService.getSecuredApplication(applicationId, viewActions.toArray(new ApplicationFormAction[viewActions.size()]));
     }
 
     private String getApplicationView(ApplicationForm application, RegisteredUser user, HttpServletRequest request) {
-        applicationFormService.openApplicationFormForView(application, user);
+        applicationFormService.openApplicationForView(application, user);
         if (request != null && request.getParameter("embeddedApplication") != null && request.getParameter("embeddedApplication").equals("true")) {
             return TemplateLocation.APPLICATION_STAFF_EMBEDDED_FORM;
         }

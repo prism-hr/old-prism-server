@@ -77,7 +77,7 @@ public class MoveToInterviewControllerTest {
     public void shouldReturnNewInterviewWithEmtpyInterviewersIfNoLatestInterview() {
 
         final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
-        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
+        expect(applicationServiceMock.getByApplicationNumber("abc")).andReturn(application);
 
         replay(applicationServiceMock);
         Interview returnedInterview = controller.getInterview("abc");
@@ -95,7 +95,7 @@ public class MoveToInterviewControllerTest {
 
         expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
         expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-        expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
         replay(applicationServiceMock, currentUserMock);
 
         ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -105,7 +105,7 @@ public class MoveToInterviewControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNotFoundExceptionIfApplicatioDoesNotExist() {
-        expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+        expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(null);
 
         replay(applicationServiceMock);
         controller.getApplicationForm("5");

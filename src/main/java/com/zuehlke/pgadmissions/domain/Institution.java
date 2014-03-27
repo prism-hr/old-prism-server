@@ -29,7 +29,7 @@ import org.hibernate.search.annotations.TokenizerDef;
         @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity(name = "INSTITUTION")
 @Indexed
-public class QualificationInstitution implements Serializable {
+public class Institution implements Serializable {
 
     private static final long serialVersionUID = 2746228908173552617L;
 

@@ -123,7 +123,7 @@ public class RejectApplicationControllerTest {
 
     @Test
     public void shouldReturnApplicationForm() {
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("10")).andReturn(application);
 
         EasyMock.replay(applicationServiceMock);
         ApplicationForm applicationForm = controllerUT.getApplicationForm("10");

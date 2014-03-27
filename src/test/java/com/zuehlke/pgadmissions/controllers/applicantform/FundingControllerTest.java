@@ -139,7 +139,7 @@ public class FundingControllerTest {
     public void shouldReturnApplicationForm() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 
         replay();
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
@@ -148,7 +148,7 @@ public class FundingControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(null);
 
         replay();
         controller.getApplicationForm("1");

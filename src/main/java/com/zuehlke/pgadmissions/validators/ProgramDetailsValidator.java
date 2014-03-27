@@ -13,75 +13,77 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Component
-public class ProgramDetailsValidator extends FormSectionObjectValidator implements Validator  {
+public class ProgramDetailsValidator extends FormSectionObjectValidator implements Validator {
 
     @Autowired
-	private ProgramInstanceDAO programInstanceDAO;
+    private ProgramService programService;
 
-	@Override
-	public boolean supports(Class<?> clazz) {
-		return ProgramDetails.class.isAssignableFrom(clazz);
-	}
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return ProgramDetails.class.isAssignableFrom(clazz);
+    }
 
-	@Override
-	public void addExtraValidation(final Object target, final Errors errors) {
-		super.addExtraValidation(target, errors);
-		
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", EMPTY_FIELD_ERROR_MESSAGE);
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", EMPTY_DROPDOWN_ERROR_MESSAGE);
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", EMPTY_FIELD_ERROR_MESSAGE);
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterest", EMPTY_DROPDOWN_ERROR_MESSAGE);
+    @Override
+    public void addExtraValidation(final Object target, final Errors errors) {
+        super.addExtraValidation(target, errors);
 
-		ProgramDetails programmeDetail = (ProgramDetails) target;
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", EMPTY_FIELD_ERROR_MESSAGE);
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterest", EMPTY_DROPDOWN_ERROR_MESSAGE);
 
-		if (programmeDetail.getSourcesOfInterest() != null && programmeDetail.getSourcesOfInterest().isFreeText()) {
-		    ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterestText", EMPTY_FIELD_ERROR_MESSAGE);
-		}
-		
-		List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(programmeDetail.getApplication().getProgram(), programmeDetail.getStudyOption());
-		if (programInstances == null || programInstances.isEmpty()) {
-			errors.rejectValue("studyOption", "programmeDetails.studyOption.invalid");
-		}
-		
-		if (programInstances != null && !programInstances.isEmpty() && programmeDetail.getStartDate() != null) {
-		    DateTime startDateFirstProgrameInstance = new DateTime(programInstances.get(0).getApplicationStartDate());
-		    DateTime derivedEndDateLastProgrameInstance = new DateTime(programInstances.get(programInstances.size()-1).getApplicationDeadline()).plusYears(1);
-		    DateTime userEnteredPreferredStartDate = new DateTime(programmeDetail.getStartDate());
-		
-		    if (userEnteredPreferredStartDate.isBefore(startDateFirstProgrameInstance) || userEnteredPreferredStartDate.isAfter(derivedEndDateLastProgrameInstance)) {
-		        errors.rejectValue("startDate", "programmeDetails.startDate.invalid", new Object[] {startDateFirstProgrameInstance.toString("dd-MMM-yyyy"), derivedEndDateLastProgrameInstance.toString("dd-MMM-yyyy")}, "");
-		    }
-		} else if(programmeDetail.getStartDate() != null && programmeDetail.getStartDate().before(new Date())) {
+        ProgramDetails programDetail = (ProgramDetails) target;
+
+        if (programDetail.getSourceOfInterest() != null && programDetail.getSourceOfInterest().isFreeText()) {
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sourcesOfInterestText", EMPTY_FIELD_ERROR_MESSAGE);
+        }
+
+        List<ProgramInstance> programInstances = programService.getActiveProgramInstancesForStudyOption(programDetail.getApplication().getProgram(),
+                programDetail.getStudyOption());
+        if (programInstances.isEmpty()) {
+            errors.rejectValue("studyOption", "programmeDetails.studyOption.invalid");
+        }
+
+        if (programDetail.getStartDate() != null) {
+            DateTime earliestStartDate = new DateTime(programInstances.get(0).getApplicationStartDate());
+            DateTime latestStartDate = new DateTime(programInstances.get(programInstances.size() - 1).getApplicationDeadline()).plusYears(1);
+            DateTime preferredStartDate = new DateTime(programDetail.getStartDate());
+
+            if (preferredStartDate.isBefore(earliestStartDate) || preferredStartDate.isAfter(latestStartDate)) {
+                errors.rejectValue("startDate", "programmeDetails.startDate.invalid", new Object[] { earliestStartDate.toString("dd-MMM-yyyy"),
+                        latestStartDate.toString("dd-MMM-yyyy") }, "");
+            }
+        } else if (programDetail.getStartDate() != null && programDetail.getStartDate().before(new Date())) {
             errors.rejectValue("startDate", "date.field.notfuture");
         }
-		
-		Set<String> supervisorEmails = new HashSet<String>();
-		for (SuggestedSupervisor supervisor : programmeDetail.getSuggestedSupervisors()) {
-		    if (StringUtils.isBlank(supervisor.getFirstname())) {
-		        errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
-		    }
-		    
-		    if (StringUtils.isBlank(supervisor.getLastname())) {
-		        errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
-		    }
-		    
-		    if (StringUtils.isBlank(supervisor.getEmail())) {
-		        errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
-		    }
-		    
-		    if (StringUtils.isNotBlank(supervisor.getEmail())) {
-		        if (supervisorEmails.contains(supervisor.getEmail())) {
-		            errors.rejectValue("suggestedSupervisors", "suggestedSupervisors.duplicate.email");
-		        } else {
-		            supervisorEmails.add(supervisor.getEmail());
-		        }
-		    }
-		}
-	}
+
+        Set<String> supervisorEmails = new HashSet<String>();
+        for (SuggestedSupervisor supervisor : programDetail.getSuggestedSupervisors()) {
+            if (StringUtils.isBlank(supervisor.getFirstname())) {
+                errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
+            }
+
+            if (StringUtils.isBlank(supervisor.getLastname())) {
+                errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
+            }
+
+            if (StringUtils.isBlank(supervisor.getEmail())) {
+                errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
+            }
+
+            if (StringUtils.isNotBlank(supervisor.getEmail())) {
+                if (supervisorEmails.contains(supervisor.getEmail())) {
+                    errors.rejectValue("suggestedSupervisors", "suggestedSupervisors.duplicate.email");
+                } else {
+                    supervisorEmails.add(supervisor.getEmail());
+                }
+            }
+        }
+    }
 }

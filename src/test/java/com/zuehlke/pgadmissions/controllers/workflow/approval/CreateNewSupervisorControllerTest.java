@@ -111,7 +111,7 @@ public class CreateNewSupervisorControllerTest {
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUserMock);
 
 		ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -126,7 +126,7 @@ public class CreateNewSupervisorControllerTest {
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isSupervisorOfApplicationForm(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUserMock);
 
 		ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -136,7 +136,7 @@ public class CreateNewSupervisorControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicatioDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
 
 		controller.getApplicationForm("5");

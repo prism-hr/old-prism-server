@@ -145,8 +145,8 @@ public class ConfigurationServiceTest {
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserThree.getEmail())).andReturn(registryUserThree_);
         userDAOMock.save(registryUserThree_);
 
-        expect(roleDAOMock.getRoleByAuthority(Authority.ADMITTER)).andReturn(new Role()).anyTimes();
-        expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new Role()).anyTimes();
+        expect(roleDAOMock.getById(Authority.ADMITTER)).andReturn(new Role()).anyTimes();
+        expect(roleDAOMock.getById(Authority.VIEWER)).andReturn(new Role()).anyTimes();
 
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts(registryUserOne.getEmail())).andReturn(
                 new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.ADMITTER).build()).build());
@@ -188,11 +188,11 @@ public class ConfigurationServiceTest {
         Capture<RegisteredUser> captureRegistryUserOne = new Capture<RegisteredUser>();
         Capture<RegisteredUser> captureRegistryUserTwo = new Capture<RegisteredUser>();
 
-        EasyMock.expect(roleServiceMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).times(2);
-        EasyMock.expect(roleServiceMock.getRoleByAuthority(Authority.ADMITTER)).andReturn(new RoleBuilder().id(Authority.ADMITTER).build()).times(2);
+        EasyMock.expect(roleServiceMock.getById(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).times(2);
+        EasyMock.expect(roleServiceMock.getById(Authority.ADMITTER)).andReturn(new RoleBuilder().id(Authority.ADMITTER).build()).times(2);
 
-        expect(roleDAOMock.getRoleByAuthority(Authority.ADMITTER)).andReturn(new Role()).anyTimes();
-        expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new Role()).anyTimes();
+        expect(roleDAOMock.getById(Authority.ADMITTER)).andReturn(new Role()).anyTimes();
+        expect(roleDAOMock.getById(Authority.VIEWER)).andReturn(new Role()).anyTimes();
 
         userDAOMock.save(EasyMock.capture(captureRegistryUserOne));
         userDAOMock.save(EasyMock.capture(captureRegistryUserTwo));
@@ -249,8 +249,8 @@ public class ConfigurationServiceTest {
         userDAOMock.save(EasyMock.capture(captureRegistryUserOne));
         userDAOMock.save(EasyMock.capture(captureRegistryUserTwo));
 
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMITTER)).andReturn(new RoleBuilder().id(Authority.ADMITTER).build()).anyTimes();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).anyTimes();
+        EasyMock.expect(roleDAOMock.getById(Authority.ADMITTER)).andReturn(new RoleBuilder().id(Authority.ADMITTER).build()).anyTimes();
+        EasyMock.expect(roleDAOMock.getById(Authority.VIEWER)).andReturn(new RoleBuilder().id(Authority.VIEWER).build()).anyTimes();
 
         EasyMock.replay(personDAOMock, userDAOMock, roleServiceMock, roleDAOMock);
 

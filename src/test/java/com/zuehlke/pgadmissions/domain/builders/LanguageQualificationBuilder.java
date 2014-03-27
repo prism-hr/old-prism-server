@@ -83,13 +83,13 @@ public class LanguageQualificationBuilder {
         qualification.setExamDate(examDate);
         qualification.setExamOnline(examOnline);
         qualification.setListeningScore(listeningScore);
-        qualification.setQualificationTypeName(qualificationTypeName);
+        qualification.setQualificationTypeOther(qualificationTypeName);
         qualification.setOverallScore(overallScore);
         qualification.setQualificationType(qualificationType);
         qualification.setReadingScore(readingScore);
         qualification.setSpeakingScore(speakingcore);
         qualification.setWritingScore(writingScore);
-        qualification.setLanguageQualificationDocument(qualificationDocument);
+        qualification.setProofOfAward(qualificationDocument);
         return qualification;
     }
 }

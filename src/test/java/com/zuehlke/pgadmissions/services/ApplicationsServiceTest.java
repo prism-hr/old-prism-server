@@ -75,7 +75,7 @@ public class ApplicationsServiceTest {
         applicationFormDAOMock.save(application);
 
         replay();
-        applicationsService.sendSubmissionConfirmationToApplicant(application);
+        applicationsService.sendSubmissionConfirmation(application);
         verify();
     }
 
@@ -85,7 +85,7 @@ public class ApplicationsServiceTest {
         EasyMock.expect(applicationFormDAOMock.get(234)).andReturn(application);
 
         replay();
-        Assert.assertEquals(application, applicationsService.getApplicationById(234));
+        Assert.assertEquals(application, applicationsService.getById(234));
         verify();
     }
 
@@ -95,7 +95,7 @@ public class ApplicationsServiceTest {
         EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("ABC")).andReturn(application);
 
         replay();
-        Assert.assertEquals(application, applicationsService.getApplicationByApplicationNumber("ABC"));
+        Assert.assertEquals(application, applicationsService.getByApplicationNumber("ABC"));
         verify();
     }
 

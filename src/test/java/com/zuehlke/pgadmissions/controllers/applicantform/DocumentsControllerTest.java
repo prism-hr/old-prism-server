@@ -72,7 +72,7 @@ public class DocumentsControllerTest {
     public void shouldReturnApplicationForm() {
         ApplicationForm applicationForm = new ApplicationForm();
 
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 
         replay();
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
@@ -82,7 +82,7 @@ public class DocumentsControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(null);
 
         replay();
         controller.getApplicationForm("1");

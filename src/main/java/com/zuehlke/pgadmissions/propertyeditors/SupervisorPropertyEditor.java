@@ -54,7 +54,7 @@ public class SupervisorPropertyEditor extends PropertyEditorSupport {
 			throw new IllegalArgumentException("no such user: " + split[1]);
 		}
 
-		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(appId);
+		ApplicationForm applicationForm = applicationsService.getByApplicationNumber(appId);
 		if (applicationForm == null) {
 			throw new IllegalArgumentException("no such applications: " + split[0]);
 		}

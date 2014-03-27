@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
@@ -441,7 +441,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
         approver = new RegisteredUserBuilder().firstName("het").lastName("get").email("het@test.com").username("hed").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a41").domicileCode("AE").enabled(true).build();
+        Institution institution = new QualificationInstitutionBuilder().code("code").name("a41").domicileCode("AE").enabled(true).build();
 
         save(user, reviewerUser, institution, interviewerUser, applicationAdmin, approver);
 

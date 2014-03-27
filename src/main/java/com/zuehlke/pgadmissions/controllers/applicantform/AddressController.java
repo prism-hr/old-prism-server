@@ -75,7 +75,7 @@ public class AddressController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(String applicationId) {
-        return applicationFormService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
+        return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
                 ApplicationFormAction.CORRECT_APPLICATION);
     }
 

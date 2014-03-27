@@ -35,7 +35,7 @@ public class AdditionalInformationService {
 	        applicationFormService.save(application);
 	    }
 	    applicationFormCopyHelper.copyAdditionalInformation(persistentAdditionalInformation, additionalInformation);
-	    applicationFormService.saveOrUpdateApplicationFormSection(application);
+	    applicationFormService.saveOrUpdateApplicationSection(application);
 	}
 	
 }

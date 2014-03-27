@@ -20,7 +20,7 @@ public class ApplicationFormPropertyEditorTest {
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
 		ApplicationForm form = new ApplicationFormBuilder().id(1).build();
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(form);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
 		
 		editor.setAsText("1");

@@ -66,7 +66,7 @@ public class WithdrawController {
 
     @ModelAttribute
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
+        ApplicationForm applicationForm = applicationService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }

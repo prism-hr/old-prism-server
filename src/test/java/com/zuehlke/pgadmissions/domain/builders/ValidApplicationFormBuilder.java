@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -62,7 +62,7 @@ public class ValidApplicationFormBuilder {
     protected PersonalDetails personalDetails;
     protected AdditionalInformation additionalInformation;
     protected ProgramInstance instance;
-    protected QualificationInstitution institution;
+    protected Institution institution;
     protected Program program;
     protected SourcesOfInterest interest;
     protected ProgramDetails programDetails;

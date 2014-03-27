@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
+import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
@@ -39,6 +40,9 @@ public class RejectService {
 	
 	@Autowired
 	private ApplicationFormUserRoleService applicationFormUserRoleService;
+	
+	@Autowired
+	private StateDAO stateDAO;
 
 	public List<RejectReason> getAllRejectionReasons() {
 		return rejectDao.getAllReasons();
@@ -50,7 +54,7 @@ public class RejectService {
 
 	public void moveApplicationToReject(final ApplicationForm form, final Rejection rejection) {
 
-		form.setStatus(ApplicationFormStatus.REJECTED);		
+		form.setStatus(stateDAO.getById(ApplicationFormStatus.REJECTED));		
 		form.setRejection(rejection);
 		form.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.REJECTED));
 		

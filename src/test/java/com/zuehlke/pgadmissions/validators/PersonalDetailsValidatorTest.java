@@ -305,7 +305,7 @@ public class PersonalDetailsValidatorTest {
     @Test
     public void shouldRejectLanguageQualificationIfOtherIsSelectedAnNoTitle() {
         personalDetails.getLanguageQualification().setQualificationType(LanguageQualificationEnum.OTHER);
-        personalDetails.getLanguageQualification().setQualificationTypeName(null);
+        personalDetails.getLanguageQualification().setQualificationTypeOther(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -523,7 +523,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectLanguageQualificationIfNoDocument() {
-        personalDetails.getLanguageQualification().setLanguageQualificationDocument(null);
+        personalDetails.getLanguageQualification().setProofOfAward(null);
 
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);

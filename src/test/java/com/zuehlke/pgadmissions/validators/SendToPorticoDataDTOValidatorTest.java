@@ -148,7 +148,7 @@ public class SendToPorticoDataDTOValidatorTest {
         EasyMock.expect(qualificationServiceMock.getById(2)).andReturn(qualification2).anyTimes();
         EasyMock.expect(refereeServiceMock.getById(11)).andReturn(referee1).anyTimes();
         EasyMock.expect(refereeServiceMock.getById(12)).andReturn(referee2).anyTimes();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("84")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("84")).andReturn(applicationForm);
 
         sendToPorticoDataValidator = new SendToPorticoDataDTOValidator(applicationsServiceMock, qualificationServiceMock, refereeServiceMock);
         sendToPorticoDataValidator.setValidator((javax.validation.Validator) validator);

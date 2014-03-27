@@ -108,7 +108,7 @@ public class ApplicationSumaryServiceTest {
         ApplicationForm form = getSampleApplicationForm();
         form.setStatus(ApplicationFormStatus.WITHDRAWN);
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("APP")).andReturn(form);
 
         replay(applicationsServiceMock);
         assertTrue(service.getSummary("APP").isEmpty());
@@ -120,7 +120,7 @@ public class ApplicationSumaryServiceTest {
         ApplicationForm form = getSampleApplicationForm();
         form.setStatus(ApplicationFormStatus.UNSUBMITTED);
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("APP")).andReturn(form);
 
         replay(applicationsServiceMock);
         assertTrue(service.getSummary("APP").isEmpty());
@@ -131,7 +131,7 @@ public class ApplicationSumaryServiceTest {
     public void shouldReturnSummary() {
         ApplicationForm form = getSampleApplicationForm();
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("APP")).andReturn(form);
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
@@ -173,7 +173,7 @@ public class ApplicationSumaryServiceTest {
 
         form.setQualifications(Collections.EMPTY_LIST);
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("APP")).andReturn(form);
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
@@ -215,7 +215,7 @@ public class ApplicationSumaryServiceTest {
 
         form.setEmploymentPositions(Collections.EMPTY_LIST);
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("APP")).andReturn(form);
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
@@ -257,7 +257,7 @@ public class ApplicationSumaryServiceTest {
 
         form.setFundings(Collections.EMPTY_LIST);
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("APP")).andReturn(form);
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
@@ -298,7 +298,7 @@ public class ApplicationSumaryServiceTest {
 
         form.setCv(null);
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("APP")).andReturn(form);
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
@@ -336,7 +336,7 @@ public class ApplicationSumaryServiceTest {
 
         form.setPersonalStatement(null);
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("APP")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("APP")).andReturn(form);
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 

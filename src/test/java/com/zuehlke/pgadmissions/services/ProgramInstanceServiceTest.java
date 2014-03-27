@@ -344,7 +344,7 @@ public class ProgramInstanceServiceTest {
     private void assertProgramInstance(ProgramInstance programInstance, Program program, DateTime startDate, String academicYear, DateTime deadline,
             StudyOption studyOption) {
         assertEquals(startDate.toDate(), programInstance.getApplicationStartDate());
-        assertEquals(academicYear, programInstance.getAcademic_year());
+        assertEquals(academicYear, programInstance.getAcademicYear());
         assertEquals(deadline.toDate(), programInstance.getApplicationDeadline());
         assertEquals(deadline.minusMonths(1).toDate(), programInstance.getDisabledDate());
         assertTrue(programInstance.getEnabled());

@@ -35,35 +35,6 @@ public class ProgramInstanceService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public boolean isProgrammeStillAvailable(ApplicationForm applicationForm) {
-        Date maxProgrammeEndDate = null;
-        Date today = new Date();
-
-        ProgramDetails details = applicationForm.getProgramDetails();
-
-        for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
-            boolean isProgrammeEnabled = applicationForm.getAdvert().isEnabled();
-            boolean isInstanceEnabled = isActive(instance);
-            boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
-            boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-
-            if (isProgrammeEnabled && isInstanceEnabled && sameStudyOption && sameStudyOptionCode) {
-                Date programmeEndDate = instance.getApplicationDeadline();
-                if (maxProgrammeEndDate == null) {
-                    maxProgrammeEndDate = programmeEndDate;
-                } else if (programmeEndDate.after(maxProgrammeEndDate)) {
-                    maxProgrammeEndDate = programmeEndDate;
-                }
-            }
-        }
-
-        if (maxProgrammeEndDate == null || maxProgrammeEndDate.before(today)) {
-            return false;
-        }
-
-        return true;
-    }
-
     public Date getEarliestPossibleStartDate(ApplicationForm applicationForm) {
         Date result = null;
         ProgramDetails details = applicationForm.getProgramDetails();
@@ -180,7 +151,7 @@ public class ProgramInstanceService {
         programInstance.setEnabled(true);
         programInstance.setIdentifier("CUSTOM");
         programInstance.setStudyOption(studyOption.getName());
-        programInstance.setStudyOptionCode(studyOption.getId());
+        programInstance.setStudyOption(studyOption.getId());
 
         programInstanceDAO.save(programInstance);
         return programInstance;

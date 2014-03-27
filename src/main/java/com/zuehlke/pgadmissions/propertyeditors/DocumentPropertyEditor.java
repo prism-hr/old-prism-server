@@ -25,7 +25,7 @@ public class DocumentPropertyEditor extends PropertyEditorSupport{
 			setValue(null);
 			return;
 		}
-		setValue(documentService.getDocumentById(encryptionHelper.decryptToInteger(strId)));
+		setValue(documentService.getByid(encryptionHelper.decryptToInteger(strId)));
 		
 	}
 

@@ -3,12 +3,15 @@ package com.zuehlke.pgadmissions.services;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service("userService")
@@ -41,12 +43,6 @@ public class UserService {
 
     @Autowired
     private ApplicationsFilteringDAO filteringDAO;
-
-    @Autowired
-    private AuthenticationService authenticationService;
-
-    @Autowired
-    private UserFactory userFactory;
 
     @Autowired
     private EncryptionUtils encryptionUtils;
@@ -67,6 +63,16 @@ public class UserService {
 
     public void save(RegisteredUser user) {
         userDAO.save(user);
+    }
+    
+    public RegisteredUser getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+        RegisteredUser currentUser = (RegisteredUser) authentication.getDetails();
+        RegisteredUser user = userDAO.get(currentUser.getId());
+        return user;
     }
 
     public List<RegisteredUser> getAllUsers() {
@@ -96,14 +102,28 @@ public class UserService {
     public RegisteredUser getUserByEmailDisabledAccountsOnly(String email) {
         return userDAO.getDisabledUserByEmail(email);
     }
-
-    public RegisteredUser getCurrentUser() {
-        return authenticationService.getCurrentUser();
+    
+    public RegisteredUser createNewUser(final String firstname, final String lastname, final String email) {
+        RegisteredUser user = new RegisteredUser();
+        user.setFirstName(firstname);
+        user.setLastName(lastname);
+        user.setUsername(email);
+        user.setEmail(email);
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setEnabled(false);
+        user.setCredentialsNonExpired(true);
+        user.setActivationCode(encryptionUtils.generateUUID());
+        return user;
+    }
+    
+    public RegisteredUser createNewUserInRoles(final String firstname, final String lastname, final String email, Authority... authority) {
+        
     }
 
     public void addRoleToUser(RegisteredUser user, Authority authority) {
         if (!user.getRoles().contains(authority)) {
-            user.getRoles().add(roleDAO.getRoleByAuthority(authority));
+            user.getRoles().add(roleDAO.getById(authority));
             if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
                 applicationFormUserRoleService.insertUserRole(user, authority);
             }
@@ -174,7 +194,7 @@ public class UserService {
 
     private void addToRoleIfRequired(RegisteredUser selectedUser, Authority[] newAuthorities, Authority authority) {
         if (!selectedUser.isInRole(authority) && newAuthoritiesContains(newAuthorities, authority)) {
-            selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
+            selectedUser.getRoles().add(roleDAO.getById(authority));
             if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER).contains(authority)) {
             	applicationFormUserRoleService.insertUserRole(selectedUser, authority);
             }
@@ -183,7 +203,7 @@ public class UserService {
 
     private void addPendingRoleNotificationToUser(RegisteredUser selectedUser, Authority authority, Program program) {
         PendingRoleNotification pendingRoleNotification = new PendingRoleNotification();
-        pendingRoleNotification.setRole(roleDAO.getRoleByAuthority(authority));
+        pendingRoleNotification.setRole(roleDAO.getById(authority));
         pendingRoleNotification.setProgram(program);
         pendingRoleNotification.setAddedByUser(getCurrentUser());
         selectedUser.getPendingRoleNotifications().add(pendingRoleNotification);
@@ -370,7 +390,7 @@ public class UserService {
         return userDAO.getUserByActivationCode(activationCode);
     }
 
-    private boolean listContainsId(Program program, List<Program> programs) {
+    private boolean listContainsId(Program program, HashSet<Program> programs) {
         if (program == null) {
             return false;
         }

@@ -54,7 +54,7 @@ public class DeclineControllerTest {
 	@Test
 	public void shouldGetApplicationFromId() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock);
 		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
@@ -63,7 +63,7 @@ public class DeclineControllerTest {
 	@Test(expected = MissingApplicationFormException.class)
 	public void shouldThrowExceptionIfApplicationNotExists() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+		EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationServiceMock);
 		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);

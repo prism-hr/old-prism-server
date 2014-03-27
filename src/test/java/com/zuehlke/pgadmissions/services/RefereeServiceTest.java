@@ -327,7 +327,7 @@ public class RefereeServiceTest {
             }
         };
         Role role = new RoleBuilder().build();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.REFEREE)).andReturn(role);
+        EasyMock.expect(roleDAOMock.getById(Authority.REFEREE)).andReturn(role);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("emailemail@test.com")).andReturn(null);
         userServiceMock.save(user);
         referee.setUser(user);

@@ -162,4 +162,5 @@ public class CommentService {
         applicationFormUserRoleService.stateChanged(stateChangeComment);
         applicationFormUserRoleService.insertApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);  
     }
+    
 }

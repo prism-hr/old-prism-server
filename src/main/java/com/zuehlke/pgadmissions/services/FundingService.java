@@ -45,13 +45,13 @@ public class FundingService {
             persistentFunding = getSecuredInstance(fundingId);
         }
         applicationFormCopyHelper.copyFunding(persistentFunding, funding, true);
-        applicationFormService.saveOrUpdateApplicationFormSection(application);
+        applicationFormService.saveOrUpdateApplicationSection(application);
     }
     
     public void delete(Integer fundingId) {
         Funding funding = getById(fundingId);
         fundingDAO.delete(funding);
-        applicationFormService.saveOrUpdateApplicationFormSection(funding.getApplication());
+        applicationFormService.saveOrUpdateApplicationSection(funding.getApplication());
     }
     
     private Funding getSecuredInstance(Integer fundingId) {

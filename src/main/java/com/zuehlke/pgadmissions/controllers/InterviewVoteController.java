@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -39,7 +39,7 @@ public class InterviewVoteController {
     private final InterviewParticipantValidator interviewParticipantValidator;
     private final AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor;
     private final ActionsProvider actionsProvider;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     public InterviewVoteController() {
         this(null, null, null, null, null, null, null);
@@ -49,7 +49,7 @@ public class InterviewVoteController {
     public InterviewVoteController(ApplicationFormService applicationsService, UserService userService,
             InterviewParticipantValidator interviewParticipantValidator, InterviewService interviewService,
             AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor, ActionsProvider actionsProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            WorkflowService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.interviewService = interviewService;

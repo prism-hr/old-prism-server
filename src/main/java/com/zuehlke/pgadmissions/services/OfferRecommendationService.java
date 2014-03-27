@@ -50,7 +50,7 @@ public class OfferRecommendationService {
     private ExportQueueService approvedSenderService;
     
     @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     public boolean moveToApproved(ApplicationForm form, OfferRecommendedComment offerRecommendedComment) {
         if (ApplicationFormStatus.APPROVAL != form.getStatus()) {

@@ -41,7 +41,7 @@ public class WithdrawServiceTest {
     
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @TestedObject
     private WithdrawService service;

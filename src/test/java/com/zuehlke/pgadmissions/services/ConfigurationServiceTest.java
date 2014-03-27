@@ -62,7 +62,7 @@ public class ConfigurationServiceTest {
 
     private UserDAO userDAOMock;
 
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     private RoleService roleServiceMock;
 
@@ -309,7 +309,7 @@ public class ConfigurationServiceTest {
         userDAOMock = EasyMock.createMock(UserDAO.class);
         userFactory = new UserFactory(roleServiceMock, new EncryptionUtils());
         roleDAOMock = EasyMock.createMock(RoleDAO.class);
-        applicationFormUserRoleService = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleService = EasyMock.createMock(WorkflowService.class);
         
         service = new ConfigurationService(stageDurationDAOMock, reminderIntervalDAOMock, notificationsDurationDAOMock, personDAOMock, userDAOMock,
                 applicationFormUserRoleService, userFactoryMock, roleDAOMock);

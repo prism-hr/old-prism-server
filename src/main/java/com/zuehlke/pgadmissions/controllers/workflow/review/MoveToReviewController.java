@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.MoveToReviewReviewerPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -44,7 +44,7 @@ public class MoveToReviewController {
 
     private final ReviewRoundValidator reviewRoundValidator;
     private final MoveToReviewReviewerPropertyEditor reviewerPropertyEditor;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     MoveToReviewController() {
         this(null, null, null, null, null, null, null);
@@ -53,7 +53,7 @@ public class MoveToReviewController {
     @Autowired
     public MoveToReviewController(ApplicationFormService applicationsService, UserService userService, ReviewService reviewService,
             ReviewRoundValidator reviewRoundValidator, MoveToReviewReviewerPropertyEditor reviewerPropertyEditor,
-            final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
+            final WorkflowService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.reviewService = reviewService;

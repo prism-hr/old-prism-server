@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
@@ -50,7 +50,7 @@ public class RefereeControllerTest {
     private RefereeValidator refereeValidatorMock;
     private EncryptionHelper encryptionHelperMock;
     private UserService userServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
     private DomicileService domicileServiceMock;
     private FullTextSearchService fullTextSearchServiceMock;
 
@@ -232,7 +232,7 @@ public class RefereeControllerTest {
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         refereeValidatorMock = EasyMock.createMock(RefereeValidator.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
         fullTextSearchServiceMock = EasyMock.createMock(FullTextSearchService.class);
 

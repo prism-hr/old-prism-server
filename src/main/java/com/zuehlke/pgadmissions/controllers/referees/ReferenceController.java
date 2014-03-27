@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -60,7 +60,7 @@ public class ReferenceController {
     private final ScoringDefinitionParser scoringDefinitionParser;
     private final ScoresPropertyEditor scoresPropertyEditor;
     private final ScoreFactory scoreFactory;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
     private final ActionsProvider actionsProvider;
     private final ApplicantRatingService applicantRatingService;
 
@@ -72,7 +72,7 @@ public class ReferenceController {
     public ReferenceController(ApplicationFormService applicationsService, RefereeService refereeService, UserService userService,
             DocumentPropertyEditor documentPropertyEditor, FeedbackCommentValidator referenceValidator, CommentService commentService,
             ScoringDefinitionParser scoringDefinitionParser, ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory,
-            final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider, ApplicantRatingService applicantRatingService) {
+            final WorkflowService applicationFormUserRoleService, ActionsProvider actionsProvider, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
         this.refereeService = refereeService;
         this.userService = userService;

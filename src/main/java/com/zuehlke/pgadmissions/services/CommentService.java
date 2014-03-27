@@ -39,7 +39,7 @@ public class CommentService {
     private ApplicationFormService applicationsService;
     
     @Autowired 
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
     
     @Autowired 
     private UserService userService;

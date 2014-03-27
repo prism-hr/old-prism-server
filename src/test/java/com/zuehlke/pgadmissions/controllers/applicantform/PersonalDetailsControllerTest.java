@@ -53,7 +53,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EthnicityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.DisabilityService;
@@ -93,7 +93,7 @@ public class PersonalDetailsControllerTest {
 
     private Model modelMock;
 
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
 
     @Test
@@ -298,7 +298,7 @@ public class PersonalDetailsControllerTest {
 
         personalDetailsValidatorMock = EasyMock.createMock(PersonalDetailsValidator.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         personalDetailsServiceMock = EasyMock.createMock(PersonalDetailsService.class);
 
         controller = new PersonalDetailsController(applicationsServiceMock, userServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,

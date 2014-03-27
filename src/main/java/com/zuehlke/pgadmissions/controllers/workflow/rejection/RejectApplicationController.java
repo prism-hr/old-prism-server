@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.RejectService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -49,7 +49,7 @@ public class RejectApplicationController {
 
     private final ApplicationFormService applicationsService;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     private final ActionsProvider actionsProvider;
 
@@ -59,7 +59,7 @@ public class RejectApplicationController {
 
     @Autowired
     public RejectApplicationController(ApplicationFormService applicationsService, RejectService rejectService, UserService userService,
-            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, ApplicationFormUserRoleService applicationFormUserRoleService,
+            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, WorkflowService applicationFormUserRoleService,
             ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.rejectService = rejectService;

@@ -50,7 +50,7 @@ public class ApplicationFormCreationServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
     
     @Mock
     @InjectIntoByType

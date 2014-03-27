@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -33,7 +33,7 @@ public class InterviewConfirmControllerTest {
 
     private InterviewConfirmController controller;
 
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     private ActionsProvider actionsProviderMock;
 
@@ -95,7 +95,7 @@ public class InterviewConfirmControllerTest {
         interviewServiceMock = EasyMock.createMock(InterviewService.class);
         applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
         interviewConfirmDTOValidatorMock = EasyMock.createMock(InterviewConfirmDTOValidator.class);
 

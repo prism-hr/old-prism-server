@@ -49,7 +49,7 @@ public class InterviewService {
     private final StageDurationService stageDurationService;
     private final CommentService commentService;
     private final CommentFactory commentFactory;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     public InterviewService() {
         this(null, null, null, null, null, null, null, null, null, null, null);
@@ -59,7 +59,7 @@ public class InterviewService {
     public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory, InterviewerDAO interviewerDAO,
             InterviewParticipantDAO interviewParticipantDAO, MailSendingService mailService, InterviewVoteCommentDAO interviewVoteCommentDAO,
             final StageDurationService stageDurationService, CommentService commentService, CommentFactory commentFactory, 
-            ApplicationFormUserRoleService ApplicationFormUserRoleService) {
+            WorkflowService ApplicationFormUserRoleService) {
         this.interviewDAO = interviewDAO;
         this.applicationFormDAO = applicationFormDAO;
         this.eventFactory = eventFactory;

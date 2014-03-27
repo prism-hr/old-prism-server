@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -55,7 +55,7 @@ public class MoveToInterviewControllerTest {
     private DatePropertyEditor datePropertyEditorMock;
     private InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditorMock;
     private ActionsProvider actionsProviderMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldGetInterviewPage() {
@@ -195,7 +195,7 @@ public class MoveToInterviewControllerTest {
         interviewServiceMock = createMock(InterviewService.class);
         interviewTimeslotsPropertyEditorMock = createMock(InterviewTimeslotsPropertyEditor.class);
         actionsProviderMock = createMock(ActionsProvider.class);
-        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = createMock(WorkflowService.class);
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         replay(userServiceMock);

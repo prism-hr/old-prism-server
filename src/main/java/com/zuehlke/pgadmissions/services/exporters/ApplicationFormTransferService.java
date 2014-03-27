@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlin
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @Service
 public class ApplicationFormTransferService {
@@ -31,7 +31,7 @@ public class ApplicationFormTransferService {
     private final ApplicationFormDAO applicationFormDAO;
     private final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO;
     private final ApplicationFormTransferDAO applicationFormTransferDAO;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
     private final CommentDAO commentDAO;
     private final UserDAO userDAO;
 
@@ -41,7 +41,7 @@ public class ApplicationFormTransferService {
 
     @Autowired
     public ApplicationFormTransferService(final ApplicationFormDAO applicationFormDAO, final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO,
-            final ApplicationFormTransferDAO applicationFormTransferDAO, ApplicationFormUserRoleService applicationFormUserRoleService,
+            final ApplicationFormTransferDAO applicationFormTransferDAO, WorkflowService applicationFormUserRoleService,
             CommentDAO commentDAO, UserDAO userDAO) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormTransferErrorDAO = applicationFormTransferErrorDAO;

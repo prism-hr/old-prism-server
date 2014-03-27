@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -48,7 +48,7 @@ public class GenericCommentController {
 
     private final ActionsProvider actionsProvider;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     public GenericCommentController() {
         this(null, null, null, null, null, null, null);
@@ -57,7 +57,7 @@ public class GenericCommentController {
     @Autowired
     public GenericCommentController(ApplicationFormService applicationsService, UserService userService, CommentService commentService,
             GenericCommentValidator genericCommentValidator, DocumentPropertyEditor documentPropertyEditor, ActionsProvider actionsProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            WorkflowService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;

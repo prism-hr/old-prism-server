@@ -39,7 +39,7 @@ public class RejectService {
 	private MailSendingService mailService;
 	
 	@Autowired
-	private ApplicationFormUserRoleService applicationFormUserRoleService;
+	private WorkflowService applicationFormUserRoleService;
 	
 	@Autowired
 	private StateDAO stateDAO;

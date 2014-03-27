@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -40,7 +40,7 @@ public class InterviewVoteControllerTest {
 
     private ActionsProvider actionsProviderMock;
     
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowExceptionWhenApptlicationIsNull() {
@@ -112,7 +112,7 @@ public class InterviewVoteControllerTest {
         interviewParticipantValidatorMock = EasyMock.createMock(InterviewParticipantValidator.class);
         acceptedTimeslotsPropertyEditorMock = EasyMock.createMock(AcceptedTimeslotsPropertyEditor.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
 
         controller = new InterviewVoteController(applicationsServiceMock, userServiceMock, interviewParticipantValidatorMock, interviewServiceMock,
                 acceptedTimeslotsPropertyEditorMock, actionsProviderMock, applicationFormUserRoleServiceMock);

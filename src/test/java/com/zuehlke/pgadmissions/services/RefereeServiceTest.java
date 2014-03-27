@@ -57,7 +57,7 @@ public class RefereeServiceTest {
     private EncryptionUtils encryptionUtilsMock;
     private EncryptionHelper encryptionHelper;
     private ApplicantRatingService applicantRatingServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Before
     public void setUp() {
@@ -70,7 +70,7 @@ public class RefereeServiceTest {
         encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
         encryptionHelper = createMock(EncryptionHelper.class);
         applicantRatingServiceMock = createMock(ApplicantRatingService.class);
-        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = createMock(WorkflowService.class);
         
         refereeService = new RefereeService(refereeDAOMock, encryptionUtilsMock, userServiceMock, roleDAOMock, commentServiceMock, eventFactoryMock,
                 applicationFormDAOMock, encryptionHelper, applicantRatingServiceMock, applicationFormUserRoleServiceMock);

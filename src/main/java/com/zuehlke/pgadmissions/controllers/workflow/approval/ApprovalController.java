@@ -50,7 +50,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -104,7 +104,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             RefereeService refereeService, EncryptionHelper encryptionHelper, SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
             SendToPorticoDataDTOValidator sendToPorticoDataDTOValidator, DatePropertyEditor datePropertyEditor, DomicileService domicileService,
             DomicilePropertyEditor domicilePropertyEditor, MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser,
-            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ApplicationFormUserRoleService applicationFormUserRoleService,
+            ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, WorkflowService applicationFormUserRoleService,
             ActionsProvider actionsProvider) {
         super(userService, applicationsService, documentPropertyEditor, refereeService, refereesAdminEditDTOValidator, sendToPorticoDataDTOEditor,
                 encryptionHelper, messageSource, scoringDefinitionParser, scoresPropertyEditor, scoreFactory, domicileService, domicilePropertyEditor,

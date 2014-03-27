@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -56,7 +56,7 @@ public class InterviewCommentController {
     private final ScoringDefinitionParser scoringDefinitionParser;
     private final ScoresPropertyEditor scoresPropertyEditor;
     private final ScoreFactory scoreFactory;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
     private final ActionsProvider actionsProvider;
     private final ApplicantRatingService applicantRatingService;
 
@@ -68,7 +68,7 @@ public class InterviewCommentController {
     public InterviewCommentController(ApplicationFormService applicationsService, UserService userService, CommentService commentService,
             FeedbackCommentValidator reviewFeedbackValidator, DocumentPropertyEditor documentPropertyEditor, ScoringDefinitionParser scoringDefinitionParser,
             ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, ActionsProvider actionsProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ApplicantRatingService applicantRatingService) {
+            WorkflowService applicationFormUserRoleService, ApplicantRatingService applicantRatingService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;

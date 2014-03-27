@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @Service
 public class ConfigurationService {
@@ -42,7 +42,7 @@ public class ConfigurationService {
     
     private final RoleDAO roleDAO;
     
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
     
     private final UserFactory userFactory;
     
@@ -54,7 +54,7 @@ public class ConfigurationService {
     @Autowired
     public ConfigurationService(final StageDurationDAO stageDurationDAO,
             final ReminderIntervalDAO reminderIntervalDAO, final NotificationsDurationDAO notificationsDurationDAO,
-            final PersonDAO personDAO, final UserDAO userDAO, final ApplicationFormUserRoleService applicationFormUserRoleService,
+            final PersonDAO personDAO, final UserDAO userDAO, final WorkflowService applicationFormUserRoleService,
             final UserFactory userFactory, final RoleDAO roleDAO) {
         this.stageDurationDAO = stageDurationDAO;
         this.reminderIntervalDAO = reminderIntervalDAO;

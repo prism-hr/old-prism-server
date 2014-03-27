@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -38,7 +38,7 @@ public class GenericCommentControllerTest {
     private CommentService commentServiceMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
     private ActionsProvider actionsProviderMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldGetApplicationFormFromId() {
@@ -151,7 +151,7 @@ public class GenericCommentControllerTest {
         commentServiceMock = EasyMock.createMock(CommentService.class);
         documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
                 documentPropertyEditorMock, actionsProviderMock, applicationFormUserRoleServiceMock);
 

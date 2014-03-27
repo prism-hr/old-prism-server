@@ -52,7 +52,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 import com.zuehlke.pgadmissions.services.ApplicantRatingService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -72,7 +72,7 @@ public class ReferenceControllerTest {
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ScoresPropertyEditor scoresPropertyEditorMock;
     private ScoreFactory scoreFactoryMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
     private ActionsProvider actionsProviderMock;
     private ApplicantRatingService applicantRatingServiceMock;
 
@@ -228,7 +228,7 @@ public class ReferenceControllerTest {
         userServiceMock = createMock(UserService.class);
         scoringDefinitionParserMock = createMock(ScoringDefinitionParser.class);
         scoresPropertyEditorMock = createMock(ScoresPropertyEditor.class);
-        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = createMock(WorkflowService.class);
         scoreFactoryMock = createMock(ScoreFactory.class);
         actionsProviderMock = createMock(ActionsProvider.class);
         applicantRatingServiceMock = createMock(ApplicantRatingService.class);

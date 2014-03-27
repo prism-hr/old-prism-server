@@ -65,7 +65,7 @@ public class RejectServiceTest {
     
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     private ApplicationForm application;
 	

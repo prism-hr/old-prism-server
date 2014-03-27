@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ProgramDetailsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -57,7 +57,7 @@ public class ProgrammeDetailsControllerTest {
 
     private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditorMock;
     private UserService userServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Test(expected = CannotUpdateApplicationException.class)
     public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -237,7 +237,7 @@ public class ProgrammeDetailsControllerTest {
         programmeDetailsValidatorMock = EasyMock.createMock(ProgramDetailsValidator.class);
         programmeDetailsServiceMock = EasyMock.createMock(ProgramDetailsService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         sourcesOfInterestPropertyEditorMock = EasyMock.createMock(SourcesOfInterestPropertyEditor.class);
 
         controller = new ProgramDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,

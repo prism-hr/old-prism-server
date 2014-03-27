@@ -52,7 +52,7 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.EventFactory;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -72,7 +72,7 @@ public class SubmitApplicationFormControllerTest {
     private UserService userServiceMock;
     private MockHttpServletRequest httpServletRequestMock;
     private ActionsProvider actionsProviderMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
     private ProgramService programsService;
     private RegisteredUser student;
     private RegisteredUser admin;
@@ -393,7 +393,7 @@ public class SubmitApplicationFormControllerTest {
         stageDurationServiceMock = createMock(StageDurationService.class);
         eventFactoryMock = createMock(EventFactory.class);
         actionsProviderMock = createMock(ActionsProvider.class);
-        applicationFormUserRoleServiceMock = createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = createMock(WorkflowService.class);
         programsService = createMock(ProgramService.class);
 
         applicationController = new SubmitApplicationFormController(applicationsServiceMock, applicationFormTransferServiceMock, userServiceMock, applicationFormValidatorMock,

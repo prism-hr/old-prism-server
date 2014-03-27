@@ -32,7 +32,7 @@ public class ApplicationFormUserRoleServiceTest {
     private UserDAO userDAOMock;
 
     @TestedObject
-    private ApplicationFormUserRoleService service;
+    private WorkflowService service;
 
     private ApplicationForm application;
 

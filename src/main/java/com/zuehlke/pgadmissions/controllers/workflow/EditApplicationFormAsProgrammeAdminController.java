@@ -50,7 +50,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -94,7 +94,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     protected final ScoreFactory scoreFactory;
 
-    protected final ApplicationFormUserRoleService applicationFormUserRoleService;
+    protected final WorkflowService applicationFormUserRoleService;
     
     protected final ActionsProvider actionsProvider;
 
@@ -108,7 +108,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             final RefereesAdminEditDTOValidator refereesAdminEditDTOValidator, final SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor,
             final EncryptionHelper encryptionHelper, final MessageSource messageSource, ScoringDefinitionParser scoringDefinitionParser,
             ScoresPropertyEditor scoresPropertyEditor, ScoreFactory scoreFactory, DomicileService domicileService,
-            DomicilePropertyEditor domicilePropertyEditor, ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
+            DomicilePropertyEditor domicilePropertyEditor, WorkflowService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         this.userService = userService;
         this.applicationsService = applicationsService;
         this.documentPropertyEditor = documentPropertyEditor;

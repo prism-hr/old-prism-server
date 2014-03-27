@@ -41,7 +41,7 @@ public class CommentTimelineControllerTest {
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser, userServiceMock);
 
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		ApplicationForm returnedApplication = controller.getApplicationForm("5");
 		assertEquals(returnedApplication, applicationForm);
@@ -49,7 +49,7 @@ public class CommentTimelineControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
 		controller.getApplicationForm("5");
 	}

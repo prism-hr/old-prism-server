@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.builders.ProgramFeedBuilder;
 
 public class ProgramFeedDAOTest extends AutomaticRollbackTestCase {
@@ -16,7 +16,7 @@ public class ProgramFeedDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetAllProgramFeeds() {
         BigInteger existingNumberOfProgramFeeds = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from PROGRAM_FEED").uniqueResult();
 
-        QualificationInstitution institution = (QualificationInstitution) sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class).setMaxResults(1).uniqueResult();
+        Institution institution = (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).setMaxResults(1).uniqueResult();
         
         ProgramFeed programFeed1 = new ProgramFeedBuilder().feedUrl("url").institution(institution).build();
         ProgramFeed programFeed2 = new ProgramFeedBuilder().feedUrl("url2").institution(institution).build();

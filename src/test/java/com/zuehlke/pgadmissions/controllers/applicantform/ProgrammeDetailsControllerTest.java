@@ -126,7 +126,7 @@ public class ProgrammeDetailsControllerTest {
         EasyMock.replay(userServiceMock);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
         EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
         assertEquals(applicationForm, returnedApplicationForm);
@@ -134,7 +134,7 @@ public class ProgrammeDetailsControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("1");
     }
@@ -159,7 +159,7 @@ public class ProgrammeDetailsControllerTest {
         ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
         applicationForm.setProgramDetails(programmeDetails);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
         currentUser = EasyMock.createMock(RegisteredUser.class);
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
@@ -174,7 +174,7 @@ public class ProgrammeDetailsControllerTest {
     @Test
     public void shouldReturnNewProgrammeDetailsIfApplicationFormHasNoProgrammeDetails() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
         currentUser = EasyMock.createMock(RegisteredUser.class);
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);

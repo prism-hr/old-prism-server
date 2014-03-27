@@ -272,15 +272,15 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         table.addCell(newTableCell("How did you find us?", SMALL_BOLD_FONT));
-        if (form.getProgramDetails().getSourcesOfInterest() != null) {
-            table.addCell(newTableCell(form.getProgramDetails().getSourcesOfInterest().getName(), SMALL_FONT));
+        if (form.getProgramDetails().getSourceOfInterest() != null) {
+            table.addCell(newTableCell(form.getProgramDetails().getSourceOfInterest().getName(), SMALL_FONT));
         } else {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }
 
-        if (form.getProgramDetails().getSourcesOfInterest() != null && form.getProgramDetails().getSourcesOfInterest().isFreeText()) {
+        if (form.getProgramDetails().getSourceOfInterest() != null && form.getProgramDetails().getSourceOfInterest().isFreeText()) {
             table.addCell(newTableCell("Please explain", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(form.getProgramDetails().getSourcesOfInterestText(), SMALL_FONT));
+            table.addCell(newTableCell(form.getProgramDetails().getSourceOfInterestText(), SMALL_FONT));
         }
 
         pdfDocument.add(table);
@@ -495,7 +495,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.addCell(newTableCell(qualification.getQualificationType().getDisplayValue(), SMALL_FONT));
 
             table.addCell(newTableCell("Other Qualification Type Name", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getQualificationTypeName(), SMALL_FONT));
+            table.addCell(newTableCell(qualification.getQualificationTypeOther(), SMALL_FONT));
 
             table.addCell(newTableCell("Date of Examination", SMALL_BOLD_FONT));
             table.addCell(newTableCell(dateFormat.format(qualification.getExamDate()), SMALL_FONT));
@@ -521,14 +521,14 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
             table.addCell(newTableCell("Certificate (PDF)", SMALL_BOLD_FONT));
             if (includeAttachments) {
-                if (qualification.getLanguageQualificationDocument() != null) {
+                if (qualification.getProofOfAward() != null) {
                     table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                    bookmarkMap.put(appendixCounter++, qualification.getLanguageQualificationDocument());
+                    bookmarkMap.put(appendixCounter++, qualification.getProofOfAward());
                 } else {
                     table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
                 }
             } else {
-                if (qualification.getLanguageQualificationDocument() != null) {
+                if (qualification.getProofOfAward() != null) {
                     table.addCell(newTableCell(PROVIDED, SMALL_FONT));
                 } else {
                     table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));

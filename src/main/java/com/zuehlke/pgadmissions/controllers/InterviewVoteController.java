@@ -61,7 +61,7 @@ public class InterviewVoteController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+        ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }

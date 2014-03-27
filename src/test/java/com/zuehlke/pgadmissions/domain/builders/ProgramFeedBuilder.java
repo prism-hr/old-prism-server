@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 
 public class ProgramFeedBuilder {
 
     private Integer id;
     private String feedUrl;
-    private QualificationInstitution institution;
+    private Institution institution;
 
     public ProgramFeedBuilder id(Integer id) {
         this.id = id;
@@ -19,7 +19,7 @@ public class ProgramFeedBuilder {
         return this;
     }
 
-    public ProgramFeedBuilder institution(QualificationInstitution institution) {
+    public ProgramFeedBuilder institution(Institution institution) {
         this.institution = institution;
         return this;
     }

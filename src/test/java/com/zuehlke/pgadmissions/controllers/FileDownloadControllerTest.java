@@ -41,7 +41,7 @@ public class FileDownloadControllerTest {
     public void shouldGetApplicationFormDocumentFromServiceAndWriteContentToResponse() throws IOException {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
         Document document = new DocumentBuilder().content("aaaa".getBytes()).id(1).build();
-        EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
+        EasyMock.expect(documentServiceMock.getByid(1)).andReturn(document);
         EasyMock.replay(documentServiceMock, encryptionHelperMock);
 
         HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
@@ -74,7 +74,7 @@ public class FileDownloadControllerTest {
     public void shouldThrowResourceNotFoundExceptionIfDocumentTypeIsReference() throws IOException {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
         Document document = new DocumentBuilder().type(DocumentType.REFERENCE).content("aaaa".getBytes()).id(1).build();
-        EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
+        EasyMock.expect(documentServiceMock.getByid(1)).andReturn(document);
         EasyMock.replay(documentServiceMock, encryptionHelperMock);
 
         controller.downloadApplicationDocument("encryptedId", new MockHttpServletResponse());
@@ -85,7 +85,7 @@ public class FileDownloadControllerTest {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
         Document document = new DocumentBuilder().type(DocumentType.PROOF_OF_AWARD).content("aaaa".getBytes()).id(1).build();
 
-        EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
+        EasyMock.expect(documentServiceMock.getByid(1)).andReturn(document);
         EasyMock.replay(documentServiceMock, encryptionHelperMock);
 
         controller.downloadApplicationDocument("encryptedId", new MockHttpServletResponse());

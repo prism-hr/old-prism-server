@@ -14,38 +14,37 @@ import com.zuehlke.pgadmissions.domain.CodeObject;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramInstanceInterface;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
+import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.services.importers.ImportService;
 
 public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportData {
 
     private ProgrammeOccurrence programme;
 
-    public String getName() {
-        return programme.getProgramme().getName();
-    }
-
     public PrismProgrammeAdapter(ProgrammeOccurrence programme) {
         this.programme = programme;
     }
-
+    
     @Override
     public String getCode() {
         return programme.getProgramme().getCode();
     }
-
+    
     @Override
-    public String getStudyOptionCode() {
-        return programme.getModeOfAttendance().getCode();
+    public String getName() {
+        return programme.getProgramme().getName();
     }
 
     @Override
-    public String getStudyOption() {
-        return programme.getModeOfAttendance().getName();
+    public StudyOption getStudyOption() {
+        ModeOfAttendance modeOfAttendance = programme.getModeOfAttendance();
+        return new StudyOption(modeOfAttendance.getCode(), modeOfAttendance.getName());
     }
 
     @Override
-    public String getAcademic_year() {
+    public String getAcademicYear() {
         return programme.getAcademicYear();
     }
 
@@ -80,11 +79,10 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
     @Override
     public ProgramInstance createDomainObject(List<? extends CodeObject> currentData, List<? extends CodeObject> changes) {
         ProgramInstance result = new ProgramInstance();
-        result.setAcademicYear(getAcademic_year());
+        result.setAcademicYear(getAcademicYear());
         result.setApplicationDeadline(getApplicationDeadline());
         result.setApplicationStartDate(getApplicationStartDate());
         result.setStudyOption(getStudyOption());
-        result.setStudyOptionCode(getStudyOptionCode());
         result.setIdentifier(getIdentifier());
         result.setEnabled(true);
         Program program = getProgramme(currentData, changes);
@@ -109,8 +107,8 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
         return program;
     }
 
-    private Program getProgrammeLineary(List<? extends CodeObject> exsistingData) {
-        ProgramInstance programInstance = (ProgramInstance) CollectionUtils.find(exsistingData, new Predicate() {
+    private Program getProgrammeLineary(List<? extends CodeObject> existingData) {
+        ProgramInstance programInstance = (ProgramInstance) CollectionUtils.find(existingData, new Predicate() {
             @Override
             public boolean evaluate(Object object) {
                 ProgramInstance instance = (ProgramInstance) object;
@@ -125,15 +123,16 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
         }
     }
 
-    private Program getProgrammeBinary(List<? extends CodeObject> exsistingData) {
+    private Program getProgrammeBinary(List<? extends CodeObject> existingData) {
         Program program;
-        int i = Collections.binarySearch(exsistingData, this, ImportService.codeComparator);
+        int i = Collections.binarySearch(existingData, this, ImportService.codeComparator);
 
         if (i >= 0) {
-            program = ((ProgramInstance) exsistingData.get(i)).getProgram();
+            program = ((ProgramInstance) existingData.get(i)).getProgram();
         } else {
             program = null;
         }
         return program;
     }
+    
 }

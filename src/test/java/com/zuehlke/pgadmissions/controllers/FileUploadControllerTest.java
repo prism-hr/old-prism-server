@@ -42,7 +42,7 @@ public class FileUploadControllerTest {
 	public void shouldGetApplicationFormFromService() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).build();
 
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 
 		ApplicationForm returnedForm = controller.getApplicationForm("1");
@@ -52,7 +52,7 @@ public class FileUploadControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoNotExist() {
 
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
 		controller.getApplicationForm("5");
 
@@ -62,7 +62,7 @@ public class FileUploadControllerTest {
 	public void shouldThrowCannotUpdateApplicationExceptionIfApplicationFormNotInUnsubmmitedState() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).status(ApplicationFormStatus.APPROVED)
 				.build();
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		controller.getApplicationForm("2");
 	}
@@ -72,7 +72,7 @@ public class FileUploadControllerTest {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(6).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant)
 				.build();
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		controller.getApplicationForm("5");
 

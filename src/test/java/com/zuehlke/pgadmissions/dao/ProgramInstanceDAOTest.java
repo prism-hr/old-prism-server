@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramFeedBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
-    private QualificationInstitution institution;
+    private Institution institution;
 
     @Override
     public void setup() {
@@ -140,7 +140,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnProgramInstanceWithStudyOptionAndDeadlineNotInThePast() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a57").domicileCode("AE").enabled(true).build();
+        Institution institution = new QualificationInstitutionBuilder().code("code").name("a57").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("aaaaa").title("hi").institution(institution).build();
         save(institution, program);
         Date now = Calendar.getInstance().getTime();
@@ -158,7 +158,7 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnProgramInstanceWithStudyOptionAndDeadlineInThePast() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a63").domicileCode("AE").enabled(true).build();
+        Institution institution = new QualificationInstitutionBuilder().code("code").name("a63").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("aaaaa").title("hi").institution(institution).build();
         save(institution, program);
         Date now = Calendar.getInstance().getTime();

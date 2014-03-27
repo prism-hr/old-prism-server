@@ -184,7 +184,7 @@ public class ApplicationFormValidatorTest {
     public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
         ProgramDetails programmeDetail = applicationForm.getProgramDetails();
         programmeDetail.setStudyOption("Part-time");
-        programmeDetail.setStudyOptionCode("31");
+        programmeDetail.setStudyOption("31");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "programmeDetails.studyOption");
 
         EasyMock.reset(programInstanceDAOMock);
@@ -205,7 +205,7 @@ public class ApplicationFormValidatorTest {
     public void shouldRejectIfNoCurrentProgrammeInstancesExist() {
         ProgramDetails programmeDetail = applicationForm.getProgramDetails();
         programmeDetail.setStudyOption("Part-time");
-        programmeDetail.setStudyOptionCode("31");
+        programmeDetail.setStudyOption("31");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "program");
 
         EasyMock.reset(programInstanceDAOMock);

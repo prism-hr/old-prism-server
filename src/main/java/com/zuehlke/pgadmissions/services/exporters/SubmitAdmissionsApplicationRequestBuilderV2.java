@@ -471,7 +471,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                     "No active program found for Program[code=%s], ProgrammeDetails[studyOption=%s]", program.getCode(), programmeDetails.getStudyOption()));
         }
 
-        occurrenceTp.setAcademicYear(buildXmlDateYearOnly(activeInstance.getAcademic_year()));
+        occurrenceTp.setAcademicYear(buildXmlDateYearOnly(activeInstance.getAcademicYear()));
         occurrenceTp.setIdentifier(activeInstance.getIdentifier());
         occurrenceTp.setStartDate(buildXmlDate(activeInstance.getApplicationStartDate()));
         occurrenceTp.setEndDate(buildXmlDate(activeInstance.getApplicationDeadline()));
@@ -525,14 +525,14 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private SourceOfInterestTp buildSourcesOfInterest(CourseApplicationTp applicationTp) {
         ProgramDetails programmeDetails = applicationForm.getProgramDetails();
         SourceOfInterestTp interestTp = xmlFactory.createSourceOfInterestTp();
-        SourcesOfInterest sourcesOfInterest = programmeDetails.getSourcesOfInterest();
+        SourcesOfInterest sourcesOfInterest = programmeDetails.getSourceOfInterest();
         if(sourcesOfInterest == null) {
             return null;
         }
         interestTp.setCode(sourcesOfInterest.getCode());
         interestTp.setName(sourcesOfInterest.getName());
         if (sourcesOfInterest.isFreeText()) {
-            applicationTp.setOtherSourceofInterest(programmeDetails.getSourcesOfInterestText());
+            applicationTp.setOtherSourceofInterest(programmeDetails.getSourceOfInterestText());
         }
         return interestTp;
     }
@@ -681,7 +681,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
             if (personalDetails.getQualificationType() == LanguageQualificationEnum.OTHER) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
-                englishLanguageTp.setOtherLanguageExam(personalDetails.getQualificationTypeName());
+                englishLanguageTp.setOtherLanguageExam(personalDetails.getQualificationTypeOther());
             } else if (personalDetails.getQualificationType() == LanguageQualificationEnum.TOEFL) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
                 if (personalDetails.getExamOnline()) {

@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -130,11 +130,11 @@ public class TestObjectProvider {
                 .setMaxResults(1).uniqueResult();
     }
 
-    public QualificationInstitution getEnabledInstitution() {
+    public Institution getEnabledInstitution() {
         return getInstitution(true);
     }
 
-    public QualificationInstitution getDisabledInstitution() {
+    public Institution getDisabledInstitution() {
         return getInstitution(false);
     }
 
@@ -261,8 +261,8 @@ public class TestObjectProvider {
         return (Project) criteria.setMaxResults(1).uniqueResult();
     }
 
-    public QualificationInstitution getInstitution(Boolean enabled) {
-        return (QualificationInstitution) sessionFactory.getCurrentSession().createCriteria(QualificationInstitution.class)
+    public Institution getInstitution(Boolean enabled) {
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class)
                 .add(Restrictions.eq("enabled", enabled)).setMaxResults(1).uniqueResult();
     }
 

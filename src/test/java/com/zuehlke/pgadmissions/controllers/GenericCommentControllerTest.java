@@ -52,7 +52,7 @@ public class GenericCommentControllerTest {
         EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
         EasyMock.replay(currentUser, userServiceMock);
 
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock);
         ApplicationForm returnedApplication = controller.getApplicationForm("5");
         assertEquals(returnedApplication, applicationForm);

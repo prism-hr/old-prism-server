@@ -35,7 +35,7 @@ public class ApplicationFormDocumentService {
             applicationFormService.save(application);
         }
         applicationFormCopyHelper.copyApplicationFormDocument(persistentApplicationFormDocument, applicationFormDocument, false);
-        applicationFormService.saveOrUpdateApplicationFormSection(application);
+        applicationFormService.saveOrUpdateApplicationSection(application);
 	}
 	
 }

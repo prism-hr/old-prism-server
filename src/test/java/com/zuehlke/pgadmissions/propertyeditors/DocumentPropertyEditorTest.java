@@ -22,7 +22,7 @@ public class DocumentPropertyEditorTest {
 	public void shouldLoadByIdAndSetAsValue(){
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		Document document = new DocumentBuilder().id(1).build();
-		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
+		EasyMock.expect(documentServiceMock.getByid(1)).andReturn(document);
 		EasyMock.replay(encryptionHelperMock, documentServiceMock);
 		
 		editor.setAsText("bob");

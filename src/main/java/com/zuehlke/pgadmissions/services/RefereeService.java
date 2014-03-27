@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -23,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -55,7 +58,7 @@ public class RefereeService {
     private EncryptionHelper encryptionHelper;
     
     @Autowired
-    private ApplicationFormService applicationsService;
+    private ApplicationFormService applicationFormService;
 
     @Autowired
     private ApplicantRatingService applicantRatingService;
@@ -63,21 +66,40 @@ public class RefereeService {
     @Autowired
     private ApplicationFormUserRoleService applicationFormUserRoleService;
 
+    @Autowired
+    private ApplicationFormCopyHelper applicationFormCopyHelper;
+
     public Referee getById(Integer id) {
         return refereeDAO.getRefereeById(id);
     }
 
-    public void save(Referee referee) {
-        refereeDAO.save(referee);
+    public Referee getOrCreate(Integer refereeId) {
+        if (refereeId == null) {
+            return new Referee();
+        }
+        return getSecuredInstance(refereeId);
     }
-
-    /**
-     * Why are we doing this instead of hibernate save or update?
-     * @param referee
-     * @param newReferee
-     * @Author Alastair Knowles
-     */
-    public void saveOrUpdate(Referee referee, Referee newReferee) {
+    
+    public void saveOrUpdate(ApplicationForm application, Integer refereeId, Referee referee) {
+        Referee persistentReferee;
+        if (refereeId == null) {
+            persistentReferee = new Referee();
+            persistentReferee.setApplication(application);
+            application.getReferees().add(persistentReferee);
+            applicationFormService.save(application);
+        } else {
+            persistentReferee = getSecuredInstance(refereeId);
+        }
+        applicationFormCopyHelper.copyReferee(persistentReferee, referee, false);
+        applicationFormService.saveOrUpdateApplicationSection(application);
+        if (application.getStatus().isModifiable()) {
+            processRefereeAndGetAsUser(referee);
+        }
+    }
+        
+        
+        
+        
         ApplicationForm application = newReferee.getApplication();
         
         if (referee == null) {
@@ -99,11 +121,9 @@ public class RefereeService {
         if (!application.getStatus().isSubmitted()) {
             save(referee);
         } else if (application.getStatus().isModifiable()) {
-            processRefereeAndGetAsUser(referee);
+
         }
         
-        applicationsService.save(application);
-        applicationFormUserRoleService.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
     }
 
     public void refresh(Referee referee) {
@@ -122,15 +142,26 @@ public class RefereeService {
 
     public RegisteredUser processRefereeAndGetAsUser(Referee referee) {
         RegisteredUser user = userService.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
-        Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
+        if (user == null) {
+            createAndSaveNewUserWithRefereeRole(referee);
+        } else {
+            
+        }
+        
+        if (user.getActivationCode() == null) {
+            user.setActivationCode(encryptionUtils.generateUUID());
+        }
+        user.getRoles().add(roleDAO.getRoleByAuthority(Authority.REFEREE));
+        
+
         if (userExists(user) && !isUserReferee(user)) {
             user.getRoles().add(refereeRole);
             if (user.getActivationCode() == null) {
-                user.setActivationCode(encryptionUtils.generateUUID());
+                
             }
         }
         if (!userExists(user)) {
-            user = createAndSaveNewUserWithRefereeRole(referee, refereeRole);
+            user = 
         }
         referee.setUser(user);
         save(referee);
@@ -146,14 +177,12 @@ public class RefereeService {
         return user.isInRole(Authority.REFEREE);
     }
 
-    private RegisteredUser createAndSaveNewUserWithRefereeRole(Referee referee, Role refereeRole) {
+    private RegisteredUser createAndSaveNewUserWithRefereeRole(Referee referee) {
         RegisteredUser user = newRegisteredUser();
         user.setEmail(referee.getEmail());
         user.setFirstName(referee.getFirstname());
         user.setLastName(referee.getLastname());
         user.setUsername(referee.getEmail());
-        user.getRoles().add(refereeRole);
-        user.setActivationCode(encryptionUtils.generateUUID());
         user.setEnabled(false);
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
@@ -289,6 +318,14 @@ public class RefereeService {
         ApplicationForm application = referee.getApplication();
         application.getEvents().add(eventFactory.createEvent(referee));
         applicationFormDAO.save(application);
+    }
+    
+    private Referee getSecuredInstance(Integer refereeId) {
+        Referee referee = getById(refereeId);
+        if (referee == null) {
+            throw new ResourceNotFoundException();
+        }
+        return referee;
     }
 
 }

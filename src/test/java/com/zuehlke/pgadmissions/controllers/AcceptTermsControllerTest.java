@@ -37,7 +37,7 @@ public class AcceptTermsControllerTest {
 	public void shouldGetApplicationForm() {
 		String applicationNumber = "abc";
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("abc")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(currentUserMock.isApplicant(applicationForm)).andReturn(true);
@@ -48,7 +48,7 @@ public class AcceptTermsControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfNotApplciationFoud() {
 		String applicationNumber = "abc";		
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("abc")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
 		acceptTermsController.getApplicationForm(applicationNumber);
 	}
@@ -57,7 +57,7 @@ public class AcceptTermsControllerTest {
 	public void shouldThrowResourceNotFoundExceptionIfUserIsNotApplicant() {
 		String applicationNumber = "abc";
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("abc")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(currentUserMock.isApplicant(applicationForm)).andReturn(false);

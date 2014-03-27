@@ -56,7 +56,7 @@ public class RegistrationServiceTest {
     public void shouldHashPasswordsAndSetAccountDataAndAndQueryString() {
         String queryString = "queryString";
         Role role = new RoleBuilder().id(Authority.APPLICANT).build();
-        EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(role);
+        EasyMock.expect(roleDAOMock.getById(Authority.APPLICANT)).andReturn(role);
         EasyMock.replay(roleDAOMock);
 
         RegisteredUser pendingUser = new RegisteredUser();

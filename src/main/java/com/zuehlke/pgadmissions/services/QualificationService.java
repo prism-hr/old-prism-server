@@ -42,17 +42,18 @@ public class QualificationService {
             persistentQualification = new Qualification();
             persistentQualification.setApplication(application);
             application.getQualifications().add(persistentQualification);
+            applicationFormService.save(application);
         } else {
             persistentQualification = getSecuredInstance(qualificationId);
         }
         applicationFormCopyHelper.copyQualification(persistentQualification, qualification, true);
-        applicationFormService.saveOrUpdateApplicationFormSection(application);
+        applicationFormService.saveOrUpdateApplicationSection(application);
     }
     
     public void delete(Integer qualificationId) {
         Qualification qualification = getById(qualificationId);
         qualificationDAO.delete(qualification);
-        applicationFormService.saveOrUpdateApplicationFormSection(qualification.getApplication());
+        applicationFormService.saveOrUpdateApplicationSection(qualification.getApplication());
     }
 
     public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> qualificationsSendToPortico) {

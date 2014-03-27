@@ -119,7 +119,7 @@ public class DeclineController {
 	}
 
 	public ApplicationForm getApplicationForm(String applicationId) {
-		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+		ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
 		if (applicationForm == null) {
 			throw new MissingApplicationFormException(applicationId);
 		}

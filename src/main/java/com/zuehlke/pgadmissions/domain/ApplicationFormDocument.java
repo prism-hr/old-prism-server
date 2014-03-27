@@ -29,7 +29,7 @@ public class ApplicationFormDocument implements Serializable, FormSectionObject 
     private Document cv = null;
     
     @OneToOne(mappedBy = "applicationFormDocument", fetch = FetchType.LAZY)
-    private ApplicationForm application = null;
+    private ApplicationForm application;
     
     @Transient
     private boolean acceptedTerms;

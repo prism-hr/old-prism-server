@@ -33,7 +33,7 @@ public class AssignReviewersReviewerPropertyEditorTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock, encryptionHelperMock);
 		
 		editor.setAsText("2|bob");
@@ -51,7 +51,7 @@ public class AssignReviewersReviewerPropertyEditorTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).latestReviewRound(reviewRound).build();
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock,encryptionHelperMock);
 		
 		editor.setAsText("2|bob");
@@ -87,7 +87,7 @@ public class AssignReviewersReviewerPropertyEditorTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldThrowIllegalArgumentExceptionIfNoApplicationForm(){			
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);		
 		editor.setAsText("2|1");
 	}

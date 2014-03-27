@@ -76,7 +76,7 @@ public class ReviewCommentControllerTest {
     public void shouldGetApplicationFormFromId() {
         ApplicationForm applicationForm = new ApplicationForm();
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 
         replay(applicationsServiceMock);
         ApplicationForm returnedApplication = controller.getApplicationForm("5");
@@ -87,7 +87,7 @@ public class ReviewCommentControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowExceptionIfApplicationFormDoesNotExist() {
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+        expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(null);
         replay(applicationsServiceMock);
         controller.getApplicationForm("5");
     }
@@ -131,7 +131,7 @@ public class ReviewCommentControllerTest {
         ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("app")).andReturn(applicationForm);
+        expect(applicationsServiceMock.getByApplicationNumber("app")).andReturn(applicationForm);
         expect(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm)).andReturn(reviewer);
         expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
         expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
@@ -157,7 +157,7 @@ public class ReviewCommentControllerTest {
         final Reviewer reviewer = new ReviewerBuilder().id(5).build();
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("app")).andReturn(applicationForm);
+        expect(applicationsServiceMock.getByApplicationNumber("app")).andReturn(applicationForm);
         expect(currentUser.getReviewerForCurrentUserFromLatestReviewRound(applicationForm)).andReturn(reviewer);
         expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
 

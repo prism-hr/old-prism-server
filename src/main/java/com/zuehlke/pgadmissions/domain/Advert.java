@@ -21,6 +21,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -174,6 +175,23 @@ public abstract class Advert implements Serializable {
 
     public Boolean getEnabled() {
         return enabled;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Advert other = (Advert) obj;
+        return Objects.equal(id, other.getId());
     }
 
     public abstract Program getProgram();

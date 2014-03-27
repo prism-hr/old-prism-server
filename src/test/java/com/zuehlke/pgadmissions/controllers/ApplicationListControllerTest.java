@@ -148,7 +148,7 @@ public class ApplicationListControllerTest {
         ApplicationsFiltering filtering = new ApplicationsFiltering();
         List<ApplicationDescriptor> applications = new ArrayList<ApplicationDescriptor>();
         
-        expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForList(user, filtering)).andReturn(applications);
+        expect(applicationsServiceMock.getApplicationsForList(user, filtering)).andReturn(applications);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
@@ -202,7 +202,7 @@ public class ApplicationListControllerTest {
     public void shouldGetApplicationFormByNumber() {
         String appNumber = "abc";
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber(appNumber)).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber(appNumber)).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock);
         assertEquals(applicationForm, controller.getApplicationForm(appNumber));
     }

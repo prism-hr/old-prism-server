@@ -91,7 +91,7 @@ public class AdmitterCommentControllerTest {
         ApplicationForm form = new ApplicationFormBuilder().applicationNumber("app_id").id(12).build();
         RegisteredUser currentUser = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.ADMITTER).build()).build();
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("app_id")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("app_id")).andReturn(form);
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 
         replay();
@@ -105,7 +105,7 @@ public class AdmitterCommentControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowExceptionIfApplicationNotFound() {
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("id")).andReturn(null);
+        expect(applicationsServiceMock.getByApplicationNumber("id")).andReturn(null);
 
         replay();
         controller.getApplicationForm("id");
@@ -115,7 +115,7 @@ public class AdmitterCommentControllerTest {
     @Test
     public void shouldReturnApplication() {
         ApplicationForm form = new ApplicationFormBuilder().id(12).build();
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("id")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("id")).andReturn(form);
 
         replay();
         ApplicationForm result = controller.getApplicationForm("id");

@@ -2,8 +2,9 @@ package com.zuehlke.pgadmissions.controllers.locations;
 
 public class TemplateLocation {
     
-    public static final String PUBLIC = "public";
+    public static final String PUBLIC = "public/";
     public static final String PRIVATE = "private/";
+    public static final String COMMON = "common/parts/";
     
     public static final String REGISTER = "register/";
     public static final String FORM = "main_application_page";
@@ -26,10 +27,13 @@ public class TemplateLocation {
     public static final String APPLICATION_APPLICANT_FUNDING = APPLICATION_APPLICANT_COMPONENT + "funding_details";
     public static final String APPLICATION_APPLICANT_PERSONAL_DETAIL = APPLICATION_APPLICANT_COMPONENT + "personal_details";
     public static final String APPLICATION_APPLICANT_PROGRAM_DETAIL = APPLICATION_APPLICANT_COMPONENT + "program_details";
+    public static final String APPLICATION_APPLICANT_REFEREE = APPLICATION_APPLICANT_COMPONENT + "references_details"; 
     
     public static final String APPLICATION_STAFF = PRIVATE + "staff/application";
     public static final String APPLICATION_STAFF_FORM = APPLICATION_STAFF + FORM;
     public static final String APPLICATION_STAFF_EMBEDDED_FORM = APPLICATION_STAFF + EMBEDDED_FORM;
+    
+    public static final String APPLICATION_DOCUMENT = PRIVATE + COMMON + "supportingDocument";
     
     public static final String MY_ACCOUNT_PAGE = PRIVATE + "/my_account";
     public static final String MY_ACCOUNT_SECTION = PRIVATE + "/my_account_section";

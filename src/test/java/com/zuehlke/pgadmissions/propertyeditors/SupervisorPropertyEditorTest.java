@@ -31,7 +31,7 @@ public class SupervisorPropertyEditorTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
         EasyMock.expect(encryptionHelper.decryptToInteger("enc")).andReturn(1);
         EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
         EasyMock.replay(userServiceMock, applicationsServiceMock, encryptionHelper);
 
         editor.setAsText("2|enc");
@@ -49,7 +49,7 @@ public class SupervisorPropertyEditorTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
         EasyMock.expect(encryptionHelper.decryptToInteger("enc")).andReturn(1);
         EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
         EasyMock.replay(userServiceMock, applicationsServiceMock, encryptionHelper);
 
         editor.setAsText("2|enc|primary");
@@ -89,7 +89,7 @@ public class SupervisorPropertyEditorTest {
         RegisteredUser user = new RegisteredUserBuilder().id(1).build();
         EasyMock.expect(encryptionHelper.decryptToInteger("enc")).andReturn(1);
         EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(null);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(null);
         EasyMock.replay(userServiceMock, applicationsServiceMock, encryptionHelper);
         editor.setAsText("2|enc");
     }

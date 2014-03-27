@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
+import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
+import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -65,14 +67,8 @@ public class RefereeController {
     private FullTextSearchService searchService;
     
     @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
-    public String getRefereeView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) String refereeId, ModelMap modelMap) {
-        Referee referee = getReferee(refereeId);
-        if (referee == null) {
-            referee = new Referee();
-        }
-
-        modelMap.put("referee", referee);
-        return STUDENTS_FORM_REFEREES_VIEW;
+    public String getRefereeView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer refereeId, ModelMap modelMap) {
+        return returnView(modelMap, refereeService.getById(refereeId));
     }
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
@@ -126,7 +122,7 @@ public class RefereeController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        return applicationsService.getSecuredApplicationForm(applicationId, ApplicationFormAction.EDIT_AS_APPLICANT, ApplicationFormAction.CORRECT_APPLICATION);
+        return applicationsService.getSecuredApplication(applicationId, ApplicationFormAction.EDIT_AS_APPLICANT, ApplicationFormAction.CORRECT_APPLICATION);
     }
 
     @ModelAttribute("message")
@@ -146,16 +142,9 @@ public class RefereeController {
         return new StringTrimmerEditor(false);
     }
 
-    public Referee getReferee(String refereeId) {
-        if (StringUtils.isBlank(refereeId)) {
-            return null;
-        }
-        Integer id = encryptionHelper.decryptToInteger(refereeId);
-        Referee referee = refereeService.getById(id);
-        if (referee == null) {
-            throw new ResourceNotFoundException();
-        }
-        return referee;
+    private String returnView(ModelMap modelMap, Referee referee) {
+        modelMap.put("referee", referee);
+        return TemplateLocation.APPLICATION_APPLICANT_REFEREE;
     }
-
+    
 }

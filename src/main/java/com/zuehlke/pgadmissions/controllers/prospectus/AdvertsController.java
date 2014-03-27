@@ -47,7 +47,7 @@ public class AdvertsController {
 
     @RequestMapping(value = "/related", method = RequestMethod.GET)
     public String getRelatedOpportunities(@RequestParam String id, ModelMap modelMap) {
-        modelMap.put("applicationForm", applicationsService.getApplicationByApplicationNumber(id));
+        modelMap.put("applicationForm", applicationsService.getByApplicationNumber(id));
         return RELATED_OPPORTUNITIES_VIEW;
     }
 

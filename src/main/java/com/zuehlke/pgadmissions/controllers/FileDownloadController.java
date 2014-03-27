@@ -30,30 +30,24 @@ public class FileDownloadController {
     private static final String PDF_CONTENT_TYPE = "application/pdf";
     private static final String TEXT_CONTENT_TYPE = "plain/text";
 
-    private final ApplicationFormTransferService applicationFormTransferService;
-    private final DocumentService documentService;
-    private final ReferenceService referenceService;
-    private final UserService userService;
-    private final EncryptionHelper encryptionHelper;
-
-    FileDownloadController() {
-        this(null, null, null, null, null);
-    }
-
     @Autowired
-    public FileDownloadController(ApplicationFormTransferService applicationFormTransferService, DocumentService documentService,
-            ReferenceService referenceService, UserService userService, EncryptionHelper encryptionHelper) {
-        this.applicationFormTransferService = applicationFormTransferService;
-        this.documentService = documentService;
-        this.referenceService = referenceService;
-        this.userService = userService;
-        this.encryptionHelper = encryptionHelper;
-
-    }
+    private ApplicationFormTransferService applicationFormTransferService;
+    
+    @Autowired
+    private DocumentService documentService;
+    
+    @Autowired
+    private ReferenceService referenceService;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private EncryptionHelper encryptionHelper;
 
     @RequestMapping(method = RequestMethod.GET)
     public void downloadApplicationDocument(@RequestParam("documentId") String encryptedDocumentId, HttpServletResponse response) throws IOException {
-        Document document = documentService.getDocumentById(encryptionHelper.decryptToInteger(encryptedDocumentId));
+        Document document = documentService.getByid(encryptionHelper.decryptToInteger(encryptedDocumentId));
         if (document == null || DocumentType.REFERENCE == document.getType()) {
             throw new ResourceNotFoundException();
         }

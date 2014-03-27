@@ -90,7 +90,7 @@ public class FundingController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        return applicationFormService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
+        return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
                 ApplicationFormAction.CORRECT_APPLICATION);
     }
 

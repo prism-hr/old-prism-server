@@ -73,7 +73,7 @@ public class StateTransitionControllerTest {
         EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
         EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
         EasyMock.expect(currentUserMock.isInRole(Authority.ADMITTER)).andReturn(false);
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
         EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
         ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -91,7 +91,7 @@ public class StateTransitionControllerTest {
         EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
         EasyMock.expect(currentUserMock.isInRole(Authority.ADMITTER)).andReturn(false);
         EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(false);
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
         EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
         ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -107,7 +107,7 @@ public class StateTransitionControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
         EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
         EasyMock.expect(currentUserMock.isApplicationAdministrator(applicationForm)).andReturn(true);
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
         EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
         ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -117,7 +117,7 @@ public class StateTransitionControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowExceptionIfApplicatioNDoesNotExist() {
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(null);
         EasyMock.replay(applicationServiceMock);
 
         controller.getApplicationForm("5");

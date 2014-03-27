@@ -30,9 +30,9 @@ public class UserFactoryTest {
 		Authority[] authorities = new Authority[]{Authority.REFEREE, Authority.APPLICANT};
 		
 		Role refereeRole = new RoleBuilder().build();
-		EasyMock.expect(roleServiceMock.getRoleByAuthority(Authority.REFEREE)).andReturn(refereeRole);
+		EasyMock.expect(roleServiceMock.getById(Authority.REFEREE)).andReturn(refereeRole);
 		Role applicantRole = new RoleBuilder().build();
-		EasyMock.expect(roleServiceMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(applicantRole);
+		EasyMock.expect(roleServiceMock.getById(Authority.APPLICANT)).andReturn(applicantRole);
 		
 		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("activationCode");
 		EasyMock.replay(roleServiceMock, encryptionUtilsMock);

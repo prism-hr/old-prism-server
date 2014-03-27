@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     private ProgramDAO programDAO;
-    private QualificationInstitution institution;
+    private Institution institution;
     private Project project;
 
     @Override

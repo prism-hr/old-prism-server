@@ -138,10 +138,10 @@ public class ConfigurationService {
         RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(registryContact.getEmail());
         PendingRoleNotification admitterNotification = new PendingRoleNotification();
         admitterNotification.setAddedByUser(requestedBy);
-        admitterNotification.setRole(roleDAO.getRoleByAuthority(Authority.ADMITTER));
+        admitterNotification.setRole(roleDAO.getById(Authority.ADMITTER));
         PendingRoleNotification viewerNotification = new PendingRoleNotification();
         viewerNotification.setAddedByUser(requestedBy);
-        viewerNotification.setRole(roleDAO.getRoleByAuthority(Authority.VIEWER));
+        viewerNotification.setRole(roleDAO.getById(Authority.VIEWER));
         if (user == null) {
             user = userFactory.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(), Authority.VIEWER, Authority.ADMITTER);
             user.getPendingRoleNotifications().add(viewerNotification);
@@ -149,7 +149,7 @@ public class ConfigurationService {
             userDAO.save(user);
             applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);;
         } else if (user != null && user.isNotInRole(Authority.ADMITTER)) {
-            user.getRoles().add(roleDAO.getRoleByAuthority(Authority.ADMITTER));
+            user.getRoles().add(roleDAO.getById(Authority.ADMITTER));
             user.getPendingRoleNotifications().add(admitterNotification);
             userDAO.save(user);
             applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);

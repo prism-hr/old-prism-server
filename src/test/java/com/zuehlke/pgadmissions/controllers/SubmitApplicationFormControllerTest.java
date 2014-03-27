@@ -246,7 +246,7 @@ public class SubmitApplicationFormControllerTest {
         StateChangeEvent event = new StateChangeEventBuilder().id(1).build();
         expect(eventFactoryMock.createEvent(ApplicationFormStatus.VALIDATION)).andReturn(event);
 
-        applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
+        applicationsServiceMock.sendSubmissionConfirmation(applicationForm);
 
         Date batchDeadline = new DateTime(2012, 1, 1, 0, 0).toDate();
         expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
@@ -283,7 +283,7 @@ public class SubmitApplicationFormControllerTest {
         Date batchDeadline = new DateTime(2012, 1, 1, 0, 0).toDate();
         expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
         expect(stageDurationServiceMock.getById(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
-        applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
+        applicationsServiceMock.sendSubmissionConfirmation(applicationForm);
         applicationFormUserRoleServiceMock.applicationSubmitted(applicationForm);
         applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, userServiceMock.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
 
@@ -305,7 +305,7 @@ public class SubmitApplicationFormControllerTest {
         Date batchDeadline = new DateTime(2012, 1, 1, 0, 0).toDate();
         expect(applicationsServiceMock.getBatchDeadlineForApplication(applicationForm)).andReturn(batchDeadline);
         expect(stageDurationServiceMock.getById(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
-        applicationsServiceMock.sendSubmissionConfirmationToApplicant(applicationForm);
+        applicationsServiceMock.sendSubmissionConfirmation(applicationForm);
 
         replay(applicationsServiceMock, errorsMock, stageDurationServiceMock);
         applicationController.submitApplication(applicationForm, errorsMock, httpServletRequestMock);
@@ -327,7 +327,7 @@ public class SubmitApplicationFormControllerTest {
     public void shouldGetApplicationFormFromService() {
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).status(ApplicationFormStatus.UNSUBMITTED).applicant(student).build();
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
+        expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
         replay(applicationsServiceMock);
         ApplicationForm returnedApplicationForm = applicationController.getApplicationForm("2");
         assertEquals(applicationForm, returnedApplicationForm);
@@ -348,7 +348,7 @@ public class SubmitApplicationFormControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNotFoundExceptionIfSubmittedApplicationFormDoesNotExist() {
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(null);
+        expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(null);
         replay(applicationsServiceMock);
         applicationController.getApplicationForm("2");
     }

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
@@ -27,38 +28,34 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public abstract class AbstractMailSendingService {
 
-    protected final ApplicationFormDAO applicationDAO;
+    @Autowired
+    protected ApplicationFormDAO applicationDAO;
+    
+    @Autowired
+    protected ConfigurationService configurationService;
 
-    protected final ConfigurationService configurationService;
+    @Autowired
+    protected UserDAO userDAO;
 
-    protected final UserDAO userDAO;
+    @Autowired
+    protected RoleDAO roleDAO;
 
-    protected final RoleDAO roleDAO;
+    @Autowired
+    protected EncryptionUtils encryptionUtils;
 
-    protected final EncryptionUtils encryptionUtils;
+    @Autowired
+    protected RefereeDAO refereeDAO;
 
-    protected final RefereeDAO refereeDAO;
+    @Autowired
+    @Value("${application.host}")
+    protected String host;
 
-    protected final String host;
-
+    @Autowired
     private MailSender mailSender;
-
-    public AbstractMailSendingService(final MailSender mailSender, final ApplicationFormDAO formDAO, final ConfigurationService configurationService,
-            final UserDAO userDAO, final RoleDAO roleDAO, final RefereeDAO refereeDAO, final EncryptionUtils encryptionUtils,
-            @Value("${application.host}") final String host) {
-        this.mailSender = mailSender;
-        this.applicationDAO = formDAO;
-        this.configurationService = configurationService;
-        this.userDAO = userDAO;
-        this.roleDAO = roleDAO;
-        this.encryptionUtils = encryptionUtils;
-        this.refereeDAO = refereeDAO;
-        this.host = host;
-    }
 
     protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
         RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
-        Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
+        Role refereeRole = roleDAO.getById(Authority.REFEREE);
 
         if (userExists(user) && !isUserReferee(user)) {
             user.getRoles().add(refereeRole);
@@ -94,10 +91,6 @@ public abstract class AbstractMailSendingService {
 
     private boolean userExists(final RegisteredUser user) {
         return user != null;
-    }
-
-    private boolean isUserReferee(final RegisteredUser user) {
-        return user.isInRole(Authority.REFEREE);
     }
 
     protected String getAdminsEmailsCommaSeparatedAsString(final List<RegisteredUser> administrators) {

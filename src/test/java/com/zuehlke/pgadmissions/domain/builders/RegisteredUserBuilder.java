@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -40,7 +40,7 @@ public class RegisteredUserBuilder {
     private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
     private List<Program> programsOfWhichApprover = new ArrayList<Program>();
     private List<Program> programsOfWhichViewer = new ArrayList<Program>();
-    private List<QualificationInstitution> institutions = Lists.newArrayList();
+    private List<Institution> institutions = Lists.newArrayList();
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
     private ApplicationsFiltering filtering;
     private String originalApplicationQueryString;
@@ -82,7 +82,7 @@ public class RegisteredUserBuilder {
         return this;
     }
     
-    public RegisteredUserBuilder institutions(QualificationInstitution... institutions) {
+    public RegisteredUserBuilder institutions(Institution... institutions) {
         this.institutions.addAll(Arrays.asList(institutions));
         return this;
     }

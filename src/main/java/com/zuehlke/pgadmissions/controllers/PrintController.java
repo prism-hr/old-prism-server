@@ -56,7 +56,7 @@ public class PrintController {
 	public void printPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletRequestBindingException {
 		String applicationFormNumber = ServletRequestUtils.getStringParameter(request, "applicationFormId");
 		
-		ApplicationForm form = applicationSevice.getApplicationByApplicationNumber(applicationFormNumber);
+		ApplicationForm form = applicationSevice.getByApplicationNumber(applicationFormNumber);
 		
 		if (form == null) {
 		    throw new ResourceNotFoundException();
@@ -84,7 +84,7 @@ public class PrintController {
 		HashMap<PdfModelBuilder, ApplicationForm> formsToPrint = new HashMap<PdfModelBuilder, ApplicationForm>();
 		
 		for (String applicationId : applicationIds) {
-			ApplicationForm form = applicationSevice.getApplicationByApplicationNumber(applicationId);
+			ApplicationForm form = applicationSevice.getByApplicationNumber(applicationId);
 			
 			if (form == null) {
 			    continue;

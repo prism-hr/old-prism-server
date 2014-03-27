@@ -103,7 +103,7 @@ public class ConfirmSupervisionControllerTest {
     public void shouldReturnApplicationForm() {
         ApplicationForm applicationForm = new ApplicationForm();
 
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("app1")).andReturn(applicationForm);
 
         EasyMock.replay(applicationServiceMock);
         assertEquals(applicationForm, controller.getApplicationForm("app1"));

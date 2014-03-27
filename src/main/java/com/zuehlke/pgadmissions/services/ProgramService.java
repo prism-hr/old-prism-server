@@ -15,12 +15,14 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -59,7 +61,8 @@ public class ProgramService {
     }
 
     public Advert merge(Advert advert) {
-        return programDAO.merge(advert);
+        programDAO.merge(advert);
+        return advert;
     }
 
     public Program getProgramByCode(String code) {
@@ -93,7 +96,7 @@ public class ProgramService {
     }
 
     public List<Project> listProjects(RegisteredUser user, Program program) {
-        if (user.isInRole(user, Authority.SUPERADMINISTRATOR) || user.isAdminInProgramme(program)) {
+        if (user.checkUserHasRole(user, Authority.SUPERADMINISTRATOR) || user.isAdminInProgramme(program)) {
             return programDAO.getProjectsForProgram(program);
         } else {
             return programDAO.getProjectsForProgramOfWhichAuthor(program, user);
@@ -126,7 +129,7 @@ public class ProgramService {
         programDAO.save(program);
     }
 
-    protected String generateNextProgramCode(QualificationInstitution institution) {
+    protected String generateNextProgramCode(Institution institution) {
         Program lastCustomProgram = programDAO.getLastCustomProgram(institution);
         Integer codeNumber;
         if (lastCustomProgram != null) {
@@ -154,7 +157,7 @@ public class ProgramService {
 
         if (program.getProgramFeed() == null) {
             if (program.getInstitution() == null || !Objects.equal(program.getInstitution().getCode(), opportunityRequest.getInstitutionCode())) {
-                QualificationInstitution institution = qualificationInstitutionService.getOrCreateCustomInstitution(opportunityRequest.getInstitutionCode(),
+                Institution institution = qualificationInstitutionService.getOrCreate(opportunityRequest.getInstitutionCode(),
                         opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
                 program.setInstitution(institution);
                 program.setCode(thisBean.generateNextProgramCode(institution));
@@ -177,8 +180,8 @@ public class ProgramService {
         if (!HibernateUtils.containsEntity(user.getInstitutions(), program.getInstitution())) {
             user.getInstitutions().add(program.getInstitution());
         }
-        Role adminRole = roleService.getRoleByAuthority(Authority.ADMINISTRATOR);
-        Role approverRole = roleService.getRoleByAuthority(Authority.APPROVER);
+        Role adminRole = roleService.getById(Authority.ADMINISTRATOR);
+        Role approverRole = roleService.getById(Authority.APPROVER);
         if (!HibernateUtils.containsEntity(user.getRoles(), adminRole)) {
             user.getRoles().add(adminRole);
         }
@@ -217,7 +220,7 @@ public class ProgramService {
             return true;
         }
 
-        for (QualificationInstitution institution : user.getInstitutions()) {
+        for (Institution institution : user.getInstitutions()) {
             if (institution.getCode().equals(opportunityRequest.getInstitutionCode())) {
                 return true;
             }
@@ -256,8 +259,20 @@ public class ProgramService {
         programDAO.deleteInactiveAdverts();
     }
     
-    public Date getDefaultStartDate(Program program, String studyOption) {
+    public Date getDefaultStartDate(Program program, StudyOption studyOption) {
         return programDAO.getDefaultStartDate(program, studyOption);
+    }
+    
+    public List<ProgramInstance> getActiveProgramInstances(Program program) {
+        return programDAO.getActiveProgramInstances(program);
+    }
+    
+    public List<ProgramInstance> getActiveProgramInstancesForStudyOption(Program program, StudyOption studyOption) {
+        return programDAO.getActiveProgramInstancesForStudyOption(program, studyOption);
+    }
+    
+    public List<StudyOption> getAvailableStudyOptions(Program program) {
+        return programDAO.getAvailableStudyOptions(program);
     }
     
     public Date getNextClosingDate(Program program) {

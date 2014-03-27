@@ -21,7 +21,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
@@ -42,12 +42,12 @@ public class QualificationInstitutionServiceTest {
 
     @Test
     public void shouldGetInstitutionByCode() {
-        QualificationInstitution institution = new QualificationInstitution();
+        Institution institution = new Institution();
 
-        expect(qualificationInstitutionDAO.getInstitutionByCode("aa")).andReturn(institution);
+        expect(qualificationInstitutionDAO.getByCode("aa")).andReturn(institution);
 
         replay();
-        QualificationInstitution returned = service.getInstitutionByCode("aa");
+        Institution returned = service.getByCode("aa");
         verify();
 
         assertSame(institution, returned);
@@ -55,7 +55,7 @@ public class QualificationInstitutionServiceTest {
 
     @Test
     public void shouldGenerateNextInstitutionCode() {
-        QualificationInstitution lastCustomInstitution = new QualificationInstitutionBuilder().code("CUST00084").build();
+        Institution lastCustomInstitution = new QualificationInstitutionBuilder().code("CUST00084").build();
 
         expect(qualificationInstitutionDAO.getLastCustomInstitution()).andReturn(lastCustomInstitution);
 
@@ -80,13 +80,13 @@ public class QualificationInstitutionServiceTest {
     @Test
     public void shouldGetExistingInstitution() {
         Domicile domicile = new Domicile();
-        QualificationInstitution institution = new QualificationInstitution();
+        Institution institution = new Institution();
 
         expect(applicationContext.getBean(QualificationInstitutionService.class)).andReturn(null);
-        expect(qualificationInstitutionDAO.getInstitutionByCode("BBB")).andReturn(institution);
+        expect(qualificationInstitutionDAO.getByCode("BBB")).andReturn(institution);
 
         replay();
-        QualificationInstitution returned = service.getOrCreateCustomInstitution("BBB", domicile, "other");
+        Institution returned = service.getOrCreate("BBB", domicile, "other");
         verify();
 
         assertSame(returned, institution);
@@ -100,13 +100,13 @@ public class QualificationInstitutionServiceTest {
                 .otherInstitution("instytucja").build();
 
         expect(applicationContext.getBean(QualificationInstitutionService.class)).andReturn(thisBean);
-        expect(qualificationInstitutionDAO.getInstitutionByDomicileAndName("PL", "instytucja")).andReturn(null);
+        expect(qualificationInstitutionDAO.getByDomicileAndName("PL", "instytucja")).andReturn(null);
         expect(thisBean.generateNextInstitutionCode()).andReturn("00008");
-        Capture<QualificationInstitution> institutionCapture = new Capture<QualificationInstitution>();
+        Capture<Institution> institutionCapture = new Capture<Institution>();
         qualificationInstitutionDAO.save(capture(institutionCapture));
 
         replay();
-        QualificationInstitution returned = service.getOrCreateCustomInstitution("OTHER", country, "instytucja");
+        Institution returned = service.getOrCreate("OTHER", country, "instytucja");
         verify();
 
         assertSame(returned, institutionCapture.getValue());

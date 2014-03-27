@@ -89,10 +89,10 @@ public class ProgrammeDetailsBuilder {
 		programmeDetails.setProgrammeName(programmeName);
 		programmeDetails.setStartDate(startDate);
 		programmeDetails.setStudyOption(studyOption);
-		programmeDetails.setStudyOptionCode(studyOptionCode);
+		programmeDetails.setStudyOption(studyOptionCode);
 		programmeDetails.getSuggestedSupervisors().addAll(suggestedSupervisors);
-		programmeDetails.setSourcesOfInterest(sourcesOfInterest);
-		programmeDetails.setSourcesOfInterestText(sourcesOfInterestText);
+		programmeDetails.setSourceOfInterest(sourcesOfInterest);
+		programmeDetails.setSourceOfInterestText(sourcesOfInterestText);
 		return programmeDetails;
 	}
 }

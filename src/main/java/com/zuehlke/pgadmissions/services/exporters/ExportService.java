@@ -129,7 +129,7 @@ public class ExportService {
     @Transactional
     public void sendWebServiceRequest(final ApplicationForm formObj, final ApplicationFormTransfer transferObj, final TransferListener listener)
             throws PorticoExportServiceException {
-        ApplicationForm form = applicationsService.getApplicationById(formObj.getId());
+        ApplicationForm form = applicationsService.getById(formObj.getId());
         ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         ValidationComment validationComment = commentDAO.getValidationCommentForApplication(form);
         Boolean isOverseasStudent = validationComment == null ? true : validationComment.getHomeOrOverseas().equals(HomeOrOverseas.OVERSEAS);

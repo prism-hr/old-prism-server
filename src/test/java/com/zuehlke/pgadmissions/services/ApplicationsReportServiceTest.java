@@ -83,7 +83,7 @@ public class ApplicationsReportServiceTest {
         List<ApplicationForm> applications = Lists.newArrayList();
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getApplicationsForReport(user, filtering, reportType)).andReturn(applications);
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
@@ -105,7 +105,7 @@ public class ApplicationsReportServiceTest {
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getApplicationsForReport(user, filtering, reportType)).andReturn(applications);
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);
@@ -161,7 +161,7 @@ public class ApplicationsReportServiceTest {
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getApplicationsForReport(user, filtering, reportType)).andReturn(applications);
         EasyMock.expect(applicantRatingServiceMock.getAverageReferenceRating(app1)).andReturn(new BigDecimal("3.33"));
 
         // WHEN
@@ -224,7 +224,7 @@ public class ApplicationsReportServiceTest {
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getApplicationsForReport(user, filtering, reportType)).andReturn(applications);
         EasyMock.expect(applicantRatingServiceMock.getAverageReferenceRating(app1)).andReturn(new BigDecimal("3.33"));
 
         // WHEN
@@ -307,7 +307,7 @@ public class ApplicationsReportServiceTest {
         List<ApplicationForm> applications = Lists.newArrayList(app1);
 
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType)).andReturn(applications);
+        EasyMock.expect(applicationsServiceMock.getApplicationsForReport(user, filtering, reportType)).andReturn(applications);
 
         // WHEN
         EasyMock.replay(applicationsServiceMock);

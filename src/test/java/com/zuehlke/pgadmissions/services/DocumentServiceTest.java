@@ -48,7 +48,7 @@ public class DocumentServiceTest {
         EasyMock.expect(documentDAOMock.getDocumentbyId(1)).andReturn(document);
 
         replay();
-        Document loadedDocument = documentService.getDocumentById(1);
+        Document loadedDocument = documentService.getByid(1);
         assertEquals(document, loadedDocument);
     }
     

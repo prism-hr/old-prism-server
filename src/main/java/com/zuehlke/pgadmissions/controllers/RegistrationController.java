@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -128,8 +129,8 @@ public class RegistrationController {
         if (applyingAdvertId != null) {
             advertId = Integer.parseInt(applyingAdvertId);
         }
-        return RedirectLocation.CREATE_APPLICATION
-                + applicationFormService.createOrGetUnsubmittedApplicationForm(user, params.get("program"), advertId).getApplicationNumber();
+        ApplicationForm application = applicationFormService.getOrCreateApplication(user, params.get("program"), advertId);
+        return RedirectLocation.CREATE_APPLICATION + application.getApplicationNumber();
     }
 
     @RequestMapping(method = RequestMethod.GET)

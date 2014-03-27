@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -111,7 +111,7 @@ public class QualificationController {
     @RequestMapping(value = "/getQualification", method = RequestMethod.GET)
     public String getQualificationView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer qualificationId,
             ModelMap modelMap) {
-       return returnView(modelMap, qualificationService.getOrCreate(qualificationId));
+        return returnView(modelMap, qualificationService.getOrCreate(qualificationId));
     }
 
     @RequestMapping(value = "/editQualification", method = RequestMethod.POST)
@@ -152,7 +152,7 @@ public class QualificationController {
     }
 
     @ModelAttribute("institutions")
-    public List<QualificationInstitution> getEmptyQualificationInstitution() {
+    public List<Institution> getEmptyQualificationInstitution() {
         return Collections.emptyList();
     }
 
@@ -163,7 +163,7 @@ public class QualificationController {
 
     @ModelAttribute("countries")
     public List<Domicile> getAllEnabledDomiciles() {
-        return domicileDAO.getAllEnabledDomicilesExceptAlternateValues();
+        return domicileDAO.getAllEnabledDomiciles();
     }
 
     @ModelAttribute("types")
@@ -173,14 +173,14 @@ public class QualificationController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(String applicationId) {
-        return applicationsService.getSecuredApplicationForm(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
-                ApplicationFormAction.CORRECT_APPLICATION);
+        return applicationsService.getSecuredApplication(applicationId, ApplicationFormAction.COMPLETE_APPLICATION, ApplicationFormAction.CORRECT_APPLICATION);
     }
-    
+
     private String returnView(ModelMap modelMap, Qualification qualification) {
         modelMap.put("qualification", qualification);
-        if (qualification.getInstitutionCountry() != null) {
-            modelMap.put("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(qualification.getInstitutionCountry().getCode()));
+        Institution institution = qualification.getInstitution();
+        if (institution != null) {
+            modelMap.put("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(institution.getDomicileCode()));
         }
         return TemplateLocation.APPLICATION_APPLICANT_ADDITIONAL_INFORMATION;
     }

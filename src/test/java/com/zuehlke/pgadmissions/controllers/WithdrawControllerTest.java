@@ -57,7 +57,7 @@ public class WithdrawControllerTest {
     public void shouldGetApplicationForm() {
         String applicationNumber = "abc";
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("abc")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock);
         EasyMock.reset(userServiceMock);
         RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
@@ -71,7 +71,7 @@ public class WithdrawControllerTest {
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowExceptionIfApplicationNotFound() {
         String applicationNumber = "abc";
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("abc")).andReturn(null);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("abc")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
         withdrawController.getApplicationForm(applicationNumber);
     }

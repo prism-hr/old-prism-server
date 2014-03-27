@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -36,8 +37,7 @@ public class Funding implements Serializable, FormSectionObject {
 	@Enumerated(EnumType.STRING)
 	private FundingType type;
 	
-	@OneToOne(fetch = FetchType.LAZY, orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "document_id")
 	private Document document;
 	

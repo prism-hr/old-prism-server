@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,8 +16,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -71,8 +70,7 @@ public class Referee implements Serializable, FormSectionObject {
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
 	private String jobTitle;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "address_id")
 	@Valid
 	private Address addressLocation;
@@ -167,11 +165,7 @@ public class Referee implements Serializable, FormSectionObject {
 	}
 
 	public void setMessenger(String messenger) {
-		if (StringUtils.isBlank(messenger)) {
-			this.messenger = null;
-		} else {
-			this.messenger = messenger;
-		}
+		this.messenger = messenger;
 	}
 
 	public RegisteredUser getUser() {

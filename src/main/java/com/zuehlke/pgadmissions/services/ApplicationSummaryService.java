@@ -20,6 +20,7 @@ import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -172,27 +173,33 @@ public class ApplicationSummaryService {
     }
 
     private void addPersonalStatement(ApplicationForm form, Map<String, String> result) {
-        Document personalStatement = form.getApplciatiogetPersonalStatement();
-        if (personalStatement != null) {
-            result.put("personalStatementProvided", "true");
-            result.put("personalStatementId", encryptionHelper.encrypt(personalStatement.getId()));
-            result.put("personalStatementFilename", personalStatement.getFileName());
-        } else {
+        ApplicationFormDocument applicationFormDocument = form.getApplicationFormDocument();
+        if (applicationFormDocument == null) {
             result.put("personalStatementProvided", "false");
-        }
-
-        Document cv = form.getCv();
-        if (cv != null) {
-            result.put("cvProvided", "true");
-            result.put("cvId", encryptionHelper.encrypt(cv.getId()));
-            result.put("cvFilename", cv.getFileName());
-        } else {
             result.put("cvProvided", "false");
+        } else {
+            Document personalStatement = applicationFormDocument.getPersonalStatement();
+            if (personalStatement != null) {
+                result.put("personalStatementProvided", "true");
+                result.put("personalStatementId", encryptionHelper.encrypt(personalStatement.getId()));
+                result.put("personalStatementFilename", personalStatement.getFileName());
+            } else {
+                result.put("personalStatementProvided", "false");
+            }
+    
+            Document cv = applicationFormDocument.getCv();
+            if (cv != null) {
+                result.put("cvProvided", "true");
+                result.put("cvId", encryptionHelper.encrypt(cv.getId()));
+                result.put("cvFilename", cv.getFileName());
+            } else {
+                result.put("cvProvided", "false");
+            }
         }
     }
 
     public Map<String, String> getSummary(final String applicationNumber) {
-        ApplicationForm form = applicationsService.getApplicationByApplicationNumber(applicationNumber);
+        ApplicationForm form = applicationsService.getByApplicationNumber(applicationNumber);
 
         if (form.getStatus().equals(ApplicationFormStatus.WITHDRAWN) || form.getStatus().equals(ApplicationFormStatus.UNSUBMITTED)) {
             return Collections.emptyMap();

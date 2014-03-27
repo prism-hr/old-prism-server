@@ -78,7 +78,7 @@ public class OfferRecommendationControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowExceptionWhenApptlicationIsNull() {
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(null);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("app1")).andReturn(null);
 
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("app1");

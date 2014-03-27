@@ -44,13 +44,10 @@ public class ImportService {
                 }
             }
             if (compareResult == 0) {
-                compareResult = o1.getStudyOptionCode().compareTo(o2.getStudyOptionCode());
+                compareResult = o1.getStudyOption().getId().compareTo(o2.getStudyOption().getId());
             }
             if (compareResult == 0) {
-                compareResult = o1.getStudyOption().compareTo(o2.getStudyOption());
-            }
-            if (compareResult == 0) {
-                compareResult = o1.getAcademic_year().compareTo(o2.getAcademic_year());
+                compareResult = o1.getAcademicYear().compareTo(o2.getAcademicYear());
             }
             if (compareResult == 0) {
                 compareResult = o1.getApplicationStartDate().compareTo(o2.getApplicationStartDate());

@@ -166,7 +166,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
             }
         };
 
-        EasyMock.expect(applicationsServiceMock.getApplicationById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
+        EasyMock.expect(applicationsServiceMock.getById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
 
         EasyMock.expect(
                 webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
@@ -253,7 +253,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         EasyMock.expect(commentDAOMock.getValidationCommentForApplication(applicationForm)).andReturn(
                 new ValidationCommentBuilder().homeOrOverseas(HomeOrOverseas.HOME).build());
 
-        EasyMock.expect(applicationsServiceMock.getApplicationById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
+        EasyMock.expect(applicationsServiceMock.getById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
 
         EasyMock.replay(webServiceTemplateMock, applicationsServiceMock, commentDAOMock);
 
@@ -294,7 +294,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
 
         SoapFaultClientException e = new SoapFaultClientException(mockFaultMessage);
 
-        EasyMock.expect(applicationsServiceMock.getApplicationById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
+        EasyMock.expect(applicationsServiceMock.getById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
 
         EasyMock.expect(
                 webServiceTemplateMock.marshalSendAndReceive(EasyMock.anyObject(SubmitAdmissionsApplicationRequest.class),
@@ -363,7 +363,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         EasyMock.expect(commentDAOMock.getValidationCommentForApplication(applicationForm)).andReturn(
                 new ValidationCommentBuilder().homeOrOverseas(HomeOrOverseas.HOME).build());
 
-        EasyMock.expect(applicationsServiceMock.getApplicationById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
+        EasyMock.expect(applicationsServiceMock.getById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
 
         exportService = new PorticoExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,
                 applicationFormTransferService, applicationContextMock) {
@@ -446,7 +446,7 @@ public class PorticoExportServiceTest extends AutomaticRollbackTestCase {
         EasyMock.expect(commentDAOMock.getValidationCommentForApplication(applicationForm)).andReturn(
                 new ValidationCommentBuilder().homeOrOverseas(HomeOrOverseas.OVERSEAS).build());
 
-        EasyMock.expect(applicationsServiceMock.getApplicationById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
+        EasyMock.expect(applicationsServiceMock.getById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
 
         exportService = new PorticoExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,
                 applicationFormTransferService, applicationContextMock) {

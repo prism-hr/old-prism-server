@@ -264,8 +264,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadPendingRoleNotificationsWithUser() throws ParseException {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
-        Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+        Role reviewerRole = roleDAO.getById(Authority.REVIEWER);
+        Role interviewerRole = roleDAO.getById(Authority.INTERVIEWER);
 
         Program program = testObjectProvider.getEnabledProgram();
 

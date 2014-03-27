@@ -141,7 +141,7 @@ public class AdditionalInformationControllerTest {
         EasyMock.replay(userServiceMock);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
         EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("100")).andReturn(applicationForm);
         EasyMock.replay(applicationServiceMock, currentUser);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("100");
         Assert.assertEquals(applicationForm, returnedApplicationForm);

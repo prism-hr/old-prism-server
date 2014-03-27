@@ -45,13 +45,13 @@ public class EmploymentPositionService {
             persistentEmploymentPosition = getSecuredInstance(employmentPositionId);
         }
         applicationFormCopyHelper.copyEmploymentPosition(persistentEmploymentPosition, employmentPosition, false);
-        applicationFormService.saveOrUpdateApplicationFormSection(application);
+        applicationFormService.saveOrUpdateApplicationSection(application);
     }
 
 	public void delete(Integer employmentPositionId) {
 	    EmploymentPosition employmentPosition = getById(employmentPositionId);
 		employmentPositionDAO.delete(employmentPosition);
-	    applicationFormService.saveOrUpdateApplicationFormSection(employmentPosition.getApplication());
+	    applicationFormService.saveOrUpdateApplicationSection(employmentPosition.getApplication());
 	}
 	
 	private EmploymentPosition getSecuredInstance(Integer employmentPositionId) {

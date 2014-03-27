@@ -140,7 +140,7 @@ public class ApprovalControllerTest {
         modelMap.put("approvalRound", application.getLatestApprovalRound());
         modelMap.put("user", currentUserMock);
 
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("abc")).andReturn(application);
         ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");
 
         Assert.assertEquals("/private/staff/supervisors/approval_details", controller.getMoveToApprovalPage(modelMap, null));
@@ -164,7 +164,7 @@ public class ApprovalControllerTest {
     public void shouldGetApplication() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
 
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 
         EasyMock.replay(applicationServiceMock);
         ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -462,7 +462,7 @@ public class ApprovalControllerTest {
         customQuestions.getQuestion().add(question1);
         ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
         EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
 
@@ -480,7 +480,7 @@ public class ApprovalControllerTest {
         final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).advert(program).build();
 
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
 
         EasyMock.replay(applicationServiceMock, scoringDefinitionParserMock, scoreFactoryMock);

@@ -10,7 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.QualificationInstitutionReference;
 
 @Repository
@@ -47,8 +47,8 @@ public class QualificationInstitutionReferenceDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public QualificationInstitution getInstitutionById(Integer id) {
-        return (QualificationInstitution) sessionFactory.getCurrentSession().get(QualificationInstitutionReference.class, id);
+    public Institution getInstitutionById(Integer id) {
+        return (Institution) sessionFactory.getCurrentSession().get(QualificationInstitutionReference.class, id);
     }
 
     public List<QualificationInstitutionReference> getEnabledInstitutionsByCountryCodeFilteredByNameLikeCaseInsensitive(String domicileCode, String term) {

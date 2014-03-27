@@ -192,7 +192,7 @@ public class ApprovalService {
 
         form.getEvents().add(eventFactory.createEvent(approvalRound));
 
-        boolean sendReferenceRequest = form.getStatus() == ApplicationFormStatus.VALIDATION;
+        boolean sendReferenceRequest = form.getStatus().getId() == ApplicationFormStatus.VALIDATION;
 
         form.setStatus(ApplicationFormStatus.APPROVAL);
 
@@ -223,19 +223,6 @@ public class ApprovalService {
         commentDAO.save(approvalComment);
         applicationFormUserRoleService.movedToApprovalStage(approvalRound);
         applicationFormUserRoleService.insertApplicationUpdate(form, initiator, ApplicationUpdateScope.ALL_USERS);
-    }
-
-    private void checkApplicationStatus(ApplicationForm form) {
-        ApplicationFormStatus status = form.getStatus();
-        switch (status) {
-        case VALIDATION:
-        case REVIEW:
-        case INTERVIEW:
-        case APPROVAL:
-            break;
-        default:
-            throw new IllegalStateException(String.format("Application in invalid status: '%s'!", status));
-        }
     }
 
     private void checkSendToPorticoStatus(ApplicationForm form, ApprovalRound approvalRound) {

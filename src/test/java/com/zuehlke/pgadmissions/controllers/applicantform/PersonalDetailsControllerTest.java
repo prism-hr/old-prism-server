@@ -104,7 +104,7 @@ public class PersonalDetailsControllerTest {
 
         ModelMap modelMap = new ModelMap();
 
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 
         replay(applicationsServiceMock);
         assertEquals("/private/pgStudents/form/components/personal_details", controller.getPersonalDetailsView("1", modelMap));
@@ -177,7 +177,7 @@ public class PersonalDetailsControllerTest {
         EasyMock.replay(userServiceMock);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
         EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
         assertEquals(applicationForm, returnedApplicationForm);
@@ -185,7 +185,7 @@ public class PersonalDetailsControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("1");
     }

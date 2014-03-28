@@ -5,7 +5,7 @@
     <groupId>com.zuehlke</groupId>
     <artifactId>pgadmissions</artifactId>
     <packaging>war</packaging>
-    <version>3.0.14</version>
+    <version>3.0.15-SNAPSHOT</version>
 
     <properties>
         <spring.version>3.2.6.RELEASE</spring.version>

@@ -16,12 +16,12 @@ public class StageDurationDAOTest extends AutomaticRollbackTestCase{
 	public void shouldReturnInterviewStageDuration(){
 		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(12).unit(DurationUnitEnum.DAYS).build();
 		
-		sessionFactory.getCurrentSession().saveOrUpdate(stageDuration);
+		sessionFactory.getCurrentSession().save(stageDuration);
 		
 		flushAndClearSession();
 					
 		StageDurationDAO stageDurationDAO = new StageDurationDAO(sessionFactory);
-		StageDuration interviewStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.INTERVIEW);
+		StageDuration interviewStageDuration = stageDurationDAO.getById(ApplicationFormStatus.INTERVIEW);
 		assertEquals(stageDuration.getStage(), interviewStageDuration.getStage());
 		assertEquals(stageDuration.getDuration(), interviewStageDuration.getDuration());
 		assertEquals(stageDuration.getUnit(), interviewStageDuration.getUnit());
@@ -31,18 +31,18 @@ public class StageDurationDAOTest extends AutomaticRollbackTestCase{
 	public void shouldUpdateDurationStageForSameStage(){
 		StageDuration stageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(12).unit(DurationUnitEnum.DAYS).build();
 		
-		sessionFactory.getCurrentSession().saveOrUpdate(stageDuration);
+		sessionFactory.getCurrentSession().save(stageDuration);
 		
 		flushAndClearSession();
 		
 		StageDuration updatedStageDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(8).unit(DurationUnitEnum.DAYS).build();
 		
-		sessionFactory.getCurrentSession().saveOrUpdate(updatedStageDuration);
+		sessionFactory.getCurrentSession().save(updatedStageDuration);
 		
 		flushAndClearSession();
 		
 		StageDurationDAO stageDurationDAO = new StageDurationDAO(sessionFactory);
-		StageDuration interviewStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.INTERVIEW);
+		StageDuration interviewStageDuration = stageDurationDAO.getById(ApplicationFormStatus.INTERVIEW);
 		assertEquals(updatedStageDuration.getStage(), interviewStageDuration.getStage());
 		assertEquals(updatedStageDuration.getDuration(), interviewStageDuration.getDuration());
 		assertEquals(updatedStageDuration.getUnit(), interviewStageDuration.getUnit());

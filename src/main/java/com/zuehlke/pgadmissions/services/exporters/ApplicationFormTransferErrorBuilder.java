@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
-import com.zuehlke.pgadmissions.utils.StacktraceDump;
+import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 
 public class ApplicationFormTransferErrorBuilder {
 
@@ -82,7 +82,7 @@ public class ApplicationFormTransferErrorBuilder {
         error.setTransfer(transfer);
         error.setTimepoint(timepoint);
         error.setProblemClassification(errorType);
-        error.setDiagnosticInfo(StacktraceDump.printRootCauseStackTrace(diagnosticInfo));
+        error.setDiagnosticInfo(DiagnosticInfoPrintUtils.printRootCauseStackTrace(diagnosticInfo));
         error.setErrorHandlingStrategy(errorHandlingStrategy);
         error.setRequestCopy(requestCopy);
         error.setResponseCopy(responseCopy);

@@ -177,13 +177,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
             addSupportingDocuments(form, pdfDocument, pdfWriter);
 
-        } catch (MalformedURLException e) {
-            log.error(e.getMessage(), e);
-            throw new PdfDocumentBuilderException(e.getMessage(), e);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            throw new PdfDocumentBuilderException(e.getMessage(), e);
-        } catch (DocumentException e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new PdfDocumentBuilderException(e.getMessage(), e);
         }
@@ -271,28 +265,28 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         addClosingDateToTable(table, form);
 
         table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
-        if (form.getProgrammeDetails().getStartDate() != null) {
-            table.addCell(newTableCell(dateFormat.format(form.getProgrammeDetails().getStartDate()), SMALL_FONT));
+        if (form.getProgramDetails().getStartDate() != null) {
+            table.addCell(newTableCell(dateFormat.format(form.getProgramDetails().getStartDate()), SMALL_FONT));
         } else {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }
 
         table.addCell(newTableCell("How did you find us?", SMALL_BOLD_FONT));
-        if (form.getProgrammeDetails().getSourcesOfInterest() != null) {
-            table.addCell(newTableCell(form.getProgrammeDetails().getSourcesOfInterest().getName(), SMALL_FONT));
+        if (form.getProgramDetails().getSourceOfInterest() != null) {
+            table.addCell(newTableCell(form.getProgramDetails().getSourceOfInterest().getName(), SMALL_FONT));
         } else {
             table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
         }
 
-        if (form.getProgrammeDetails().getSourcesOfInterest() != null && form.getProgrammeDetails().getSourcesOfInterest().isFreeText()) {
+        if (form.getProgramDetails().getSourceOfInterest() != null && form.getProgramDetails().getSourceOfInterest().isFreeText()) {
             table.addCell(newTableCell("Please explain", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(form.getProgrammeDetails().getSourcesOfInterestText(), SMALL_FONT));
+            table.addCell(newTableCell(form.getProgramDetails().getSourceOfInterestText(), SMALL_FONT));
         }
 
         pdfDocument.add(table);
         pdfDocument.add(addSectionSeparators());
 
-        if (form.getProgrammeDetails().getSuggestedSupervisors().isEmpty()) {
+        if (form.getProgramDetails().getSuggestedSupervisors().isEmpty()) {
             table = new PdfPTable(2);
             table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
             table.addCell(newTableCell("Supervisor", SMALL_BOLD_FONT));
@@ -301,7 +295,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             pdfDocument.add(addSectionSeparators());
         } else {
             int counter = 1;
-            for (SuggestedSupervisor supervisor : form.getProgrammeDetails().getSuggestedSupervisors()) {
+            for (SuggestedSupervisor supervisor : form.getProgramDetails().getSuggestedSupervisors()) {
                 table = new PdfPTable(2);
                 table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
                 PdfPCell headerCell = newTableCell("Supervisor (" + counter++ + ")", SMALL_BOLD_FONT);
@@ -501,10 +495,10 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.addCell(newTableCell(qualification.getQualificationType().getDisplayValue(), SMALL_FONT));
 
             table.addCell(newTableCell("Other Qualification Type Name", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(qualification.getOtherQualificationTypeName(), SMALL_FONT));
+            table.addCell(newTableCell(qualification.getQualificationTypeOther(), SMALL_FONT));
 
             table.addCell(newTableCell("Date of Examination", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(dateFormat.format(qualification.getDateOfExamination()), SMALL_FONT));
+            table.addCell(newTableCell(dateFormat.format(qualification.getExamDate()), SMALL_FONT));
 
             table.addCell(newTableCell("Overall Score", SMALL_BOLD_FONT));
             table.addCell(newTableCell(qualification.getOverallScore(), SMALL_FONT));
@@ -522,26 +516,19 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
             table.addCell(newTableCell(qualification.getListeningScore(), SMALL_FONT));
 
             table.addCell(newTableCell("Did you sit the exam online?", SMALL_BOLD_FONT));
-            if (qualification.getExamTakenOnline() == null) {
-                table.addCell(newTableCell(null, SMALL_FONT));
-            } else {
-                if (BooleanUtils.isTrue(qualification.getExamTakenOnline())) {
-                    table.addCell(newTableCell("Yes", SMALL_FONT));
-                } else {
-                    table.addCell(newTableCell("No", SMALL_FONT));
-                }
-            }
+
+            table.addCell(newTableCell(BooleanUtils.toString(qualification.getExamOnline(), "Yes", "No"), SMALL_FONT));
 
             table.addCell(newTableCell("Certificate (PDF)", SMALL_BOLD_FONT));
             if (includeAttachments) {
-                if (qualification.getLanguageQualificationDocument() != null) {
+                if (qualification.getProofOfAward() != null) {
                     table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                    bookmarkMap.put(appendixCounter++, qualification.getLanguageQualificationDocument());
+                    bookmarkMap.put(appendixCounter++, qualification.getProofOfAward());
                 } else {
                     table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
                 }
             } else {
-                if (qualification.getLanguageQualificationDocument() != null) {
+                if (qualification.getProofOfAward() != null) {
                     table.addCell(newTableCell(PROVIDED, SMALL_FONT));
                 } else {
                     table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));

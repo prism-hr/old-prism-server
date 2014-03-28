@@ -51,25 +51,25 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @Column(name = "language_qualification_available")
     private Boolean languageQualificationAvailable;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "language_qualification_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_form_language_qualification_id")
     @Valid
-    private LanguageQualification languageQualification;
-
+    private LanguageQualification languageQualification = null;
+    
     @Column(name = "requires_visa")
     private Boolean requiresVisa;
 
     @Column(name = "passport_available")
     private Boolean passportAvailable;
-
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "passport_information_id")
+    
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_form_passport")
     @Valid
-    private PassportInformation passportInformation;
-
+    private Passport passport = null;
+    
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "first_nationality")
-    private Language firstNationality = null;
+    private Language firstNationality;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "second_nationality")
@@ -236,6 +236,14 @@ public class PersonalDetails implements FormSectionObject, Serializable {
         this.passportAvailable = passportAvailable;
     }
 
+    public Passport getPassport() {
+        return passport;
+    }
+
+    public void setPassport(Passport passport) {
+        this.passport = passport;
+    }
+
     public boolean isAcceptedTerms() {
         return acceptedTerms;
     }
@@ -251,15 +259,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     public void setLanguageQualificationAvailable(Boolean languageQualificationAvailable) {
         this.languageQualificationAvailable = languageQualificationAvailable;
     }
-
-    public PassportInformation getPassportInformation() {
-        return passportInformation;
-    }
-
-    public void setPassportInformation(PassportInformation passportInformation) {
-        this.passportInformation = passportInformation;
-    }
-
+    
     public LanguageQualification getLanguageQualification() {
         return languageQualification;
     }

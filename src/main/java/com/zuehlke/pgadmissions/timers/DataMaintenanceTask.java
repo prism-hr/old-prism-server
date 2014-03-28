@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 
 @Service
 public class DataMaintenanceTask {
@@ -15,11 +16,15 @@ public class DataMaintenanceTask {
     
     @Autowired
     private DocumentService documentService;
+    
+    @Autowired
+    private ProgramService programService;
 
     @Scheduled(cron = "${data.maintenance.cron}")
     public void maintainData() {
         log.info("Running data maintenance tasks");
         documentService.deleteOrphanDocuments();
+        programService.deleteInactiveAdverts();
         log.info("Completed data maintenance tasks");
     }
 

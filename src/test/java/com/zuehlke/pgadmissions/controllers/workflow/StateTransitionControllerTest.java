@@ -7,8 +7,8 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
@@ -53,10 +53,10 @@ public class StateTransitionControllerTest {
     @Mock
     @InjectIntoByType
     private DocumentPropertyEditor documentPropertyEditorMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Mock
     @InjectIntoByType

@@ -19,9 +19,9 @@ public class EmploymentPositionServiceTest {
 	@Test
 	public void shouldGetEmploymentFromDAO(){
 		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
-		EasyMock.expect(employmentPositionDAOMock.getEmploymentPositionById(1)).andReturn(employmentPosition);
+		EasyMock.expect(employmentPositionDAOMock.getById(1)).andReturn(employmentPosition);
 		EasyMock.replay(employmentPositionDAOMock);
-		EmploymentPosition returnedEmployment = employmentPositionService.getEmploymentPositionById(1);
+		EmploymentPosition returnedEmployment = employmentPositionService.getById(1);
 		assertEquals(employmentPosition, returnedEmployment);
 	}
 	

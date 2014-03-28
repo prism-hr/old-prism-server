@@ -22,8 +22,8 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -126,7 +126,7 @@ public class ConfirmSupervisionControllerTest {
     public void shouldReturnApplicationForm() {
         ApplicationForm applicationForm = new ApplicationForm();
 
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("app1")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("app1")).andReturn(applicationForm);
 
         EasyMock.replay(applicationServiceMock);
         assertEquals(applicationForm, controller.getApplicationForm("app1"));

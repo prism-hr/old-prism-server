@@ -15,9 +15,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
-import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -27,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 public class ApplicationFormBuilder {
 
     private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
-    private ProgrammeDetails programmeDetails;
+    private ProgramDetails programmeDetails;
     private PersonalDetails personalDetails;
     private Address currentAddress;
     private Address contactAddress;
@@ -35,8 +33,6 @@ public class ApplicationFormBuilder {
     private RegisteredUser applicant;
     private String projectTitle;
     private Advert advert;
-    private Program program;
-    private Project project;
     private Date appDate;
     private Date submittedDate;
     private Date batchDeadline;
@@ -121,7 +117,7 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder programmeDetails(ProgrammeDetails programmeDetails) {
+    public ApplicationFormBuilder programmeDetails(ProgramDetails programmeDetails) {
         this.programmeDetails = programmeDetails;
         return this;
     }
@@ -156,16 +152,6 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder program(Program program) {
-        this.program = program;
-        return this;
-    }
-    
-    public ApplicationFormBuilder project(Project project) {
-        this.project = project;
-        return this;
-    }
-    
     public ApplicationFormBuilder qualification(Qualification... qualifications) {
         for (Qualification qual : qualifications) {
             this.qualifications.add(qual);
@@ -261,7 +247,7 @@ public class ApplicationFormBuilder {
         application.setReferees(referees);
         application.setApplicationTimestamp(appDate);
         application.getQualifications().addAll(qualifications);
-        application.setProgrammeDetails(programmeDetails);
+        application.setProgramDetails(programmeDetails);
         application.getFundings().addAll(fundings);
         application.setCv(cv);
         application.setPersonalStatement(personalStatement);
@@ -270,8 +256,6 @@ public class ApplicationFormBuilder {
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
         application.setAdvert(advert);
-        application.setProgram(program);
-        application.setProject(project);
         application.setProjectTitle(projectTitle);
         application.setStatus(status);
         application.setNextStatus(nextStatus);

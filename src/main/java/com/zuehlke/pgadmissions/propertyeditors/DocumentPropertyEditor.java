@@ -13,18 +13,11 @@ import com.zuehlke.pgadmissions.services.DocumentService;
 @Component
 public class DocumentPropertyEditor extends PropertyEditorSupport{
 
-	private final DocumentService documentService;
-	private final EncryptionHelper encryptionHelper;
-	
-	DocumentPropertyEditor(){
-		this(null, null);
-	}
+    @Autowired
+	private DocumentService documentService;
 	
 	@Autowired
-	public DocumentPropertyEditor(DocumentService documentService, EncryptionHelper encryptionHelper) {
-		this.documentService = documentService;
-		this.encryptionHelper = encryptionHelper;	
-	}
+	private EncryptionHelper encryptionHelper;
 	
 	@Override
 	public void setAsText(String strId) throws IllegalArgumentException {
@@ -32,7 +25,7 @@ public class DocumentPropertyEditor extends PropertyEditorSupport{
 			setValue(null);
 			return;
 		}
-		setValue(documentService.getDocumentById(encryptionHelper.decryptToInteger(strId)));
+		setValue(documentService.getByid(encryptionHelper.decryptToInteger(strId)));
 		
 	}
 
@@ -43,4 +36,5 @@ public class DocumentPropertyEditor extends PropertyEditorSupport{
 		}
 		return encryptionHelper.encrypt(((Document)getValue()).getId());
 	}
+	
 }

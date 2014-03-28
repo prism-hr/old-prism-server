@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ProjectDTOValidator;
 
@@ -34,13 +34,13 @@ public class ProjectConfigurationControllerTest {
     ProjectConfigurationController controller;
     private ProjectConverter projectConverter;
     private UserService userService;
-    private ProgramsService programsService;
+    private ProgramService programsService;
     private DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
 
     @Before
     public void setup() throws IOException {
         userService = EasyMock.createMock(UserService.class);
-        programsService = EasyMock.createMock(ProgramsService.class);
+        programsService = EasyMock.createMock(ProgramService.class);
         ApplicationContext applicationContext = EasyMock.createMock(ApplicationContext.class);
         ProjectDTOValidator projectDTOValidator = EasyMock.createMock(ProjectDTOValidator.class);
         DatePropertyEditor datePropertyEditor = EasyMock.createMock(DatePropertyEditor.class);

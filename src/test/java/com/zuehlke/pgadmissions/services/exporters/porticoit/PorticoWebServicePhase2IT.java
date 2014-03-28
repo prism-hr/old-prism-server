@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
 
@@ -49,7 +49,7 @@ public class PorticoWebServicePhase2IT {
     private PorticoExportService uclExportService;
     
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
     
     @Autowired 
     private SessionFactory sessionFactory;
@@ -86,7 +86,7 @@ public class PorticoWebServicePhase2IT {
                 "RRDMECSING01-2013-000043", "RRDMECSING01-2013-000044", "RRDMECSING01-2013-000045"));
         
         for (String appNumber : applications) {
-            ApplicationForm form = applicationsService.getApplicationByApplicationNumber(appNumber);
+            ApplicationForm form = applicationsService.getByApplicationNumber(appNumber);
             ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(form);
             selectReferres(form);
             try {

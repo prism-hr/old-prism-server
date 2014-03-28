@@ -72,6 +72,13 @@ public class QualificationInstitutionReference implements SelfReferringImportedO
         return code;
     }
 
+    public String getEnabledCode() {
+        if (!enabled && enabledObject != null) {
+            return enabledObject.getEnabledCode();
+        }
+        return code;
+    }
+    
     public void setCode(String code) {
         this.code = code;
     }

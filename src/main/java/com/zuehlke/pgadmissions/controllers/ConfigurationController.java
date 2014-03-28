@@ -56,8 +56,8 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
-import com.zuehlke.pgadmissions.services.PorticoQueueService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ExportQueueService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
@@ -84,9 +84,9 @@ public class ConfigurationController {
 
     private final ThrottleService throttleService;
 
-    private final PorticoQueueService queueService;
+    private final ExportQueueService queueService;
 
-    private final ProgramsService programsService;
+    private final ProgramService programsService;
 
     private final ScoringDefinitionParser scoringDefinitionParser;
 
@@ -106,8 +106,8 @@ public class ConfigurationController {
     public ConfigurationController(@Named(value = "stageDurationPropertyEditor") JsonPropertyEditor stageDurationPropertyEditor,
             @Named(value = "reminderIntervalPropertyEditor") JsonPropertyEditor reminderIntervalPropertyEditor,
             @Named(value = "notificationsDurationPropertyEditor") JsonPropertyEditor notificationsDurationPropertyEditor, UserService userService,
-            ConfigurationService configurationService, EmailTemplateService templateService, ThrottleService throttleService, PorticoQueueService queueService,
-            ProgramsService programsService, ScoringDefinitionParser scoringDefinitionParser, ScoreFactory scoreFactory,
+            ConfigurationService configurationService, EmailTemplateService templateService, ThrottleService throttleService, ExportQueueService queueService,
+            ProgramService programsService, ScoringDefinitionParser scoringDefinitionParser, ScoreFactory scoreFactory,
             ScoresPropertyEditor scoresPropertyEditor, FeedbackCommentValidator dummyCommentValidator, ApplicationContext applicationContext) {
         this.stageDurationPropertyEditor = stageDurationPropertyEditor;
         this.reminderIntervalPropertyEditor = reminderIntervalPropertyEditor;

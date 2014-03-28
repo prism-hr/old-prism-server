@@ -22,8 +22,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewConfirmDTOValidator;
@@ -35,13 +35,13 @@ public class InterviewConfirmController {
 
     private static final String INTERVIEW_CONFIRM_PAGE = "private/staff/interviewers/interview_confirm";
 
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
 
     private final UserService userService;
 
     private final InterviewService interviewService;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     private final ActionsProvider actionsProvider;
 
@@ -53,8 +53,8 @@ public class InterviewConfirmController {
     }
 
     @Autowired
-    public InterviewConfirmController(ApplicationsService applicationsService, UserService userService, InterviewService interviewService,
-                    final ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider,
+    public InterviewConfirmController(ApplicationFormService applicationsService, UserService userService, InterviewService interviewService,
+                    final WorkflowService applicationFormUserRoleService, ActionsProvider actionsProvider,
                     InterviewConfirmDTOValidator interviewConfirmDTOValidator) {
         this.applicationsService = applicationsService;
         this.userService = userService;
@@ -66,7 +66,7 @@ public class InterviewConfirmController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+        ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
         if (application == null) {
             throw new MissingApplicationFormException(applicationId);
         }

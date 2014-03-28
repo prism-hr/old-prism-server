@@ -114,7 +114,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldThrowExceptionIfNoActiveProgramFound() {
-        applicationForm.getProgrammeDetails().setStudyOption("AAA");
+        applicationForm.getProgramDetails().setStudyOption("AAA");
         exception.expect(IllegalArgumentException.class);
         requestBuilder.applicationForm(applicationForm).build();
     }
@@ -196,7 +196,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     @Test
     public void shouldBuildValidWebServiceRequestWithTOEFLEssaySection() throws JAXBException, DatatypeConfigurationException {
         final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
-        applicationForm.getProgrammeDetails().setStartDate(dateInThePast.toDate());
+        applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
 
         SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()) {
             @Override
@@ -248,7 +248,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     @Test
     public void shouldBuildValidWebServiceRequest() throws JAXBException, DatatypeConfigurationException {
         final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
-        applicationForm.getProgrammeDetails().setStartDate(dateInThePast.toDate());
+        applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
 
         SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()) {
             @Override
@@ -298,7 +298,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     @Test
     public void shouldBuildValidWebServiceRequestContainingAtasStatement() throws JAXBException, DatatypeConfigurationException {
         final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
-        applicationForm.getProgrammeDetails().setStartDate(dateInThePast.toDate());
+        applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
         OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm)
                 .comment("").projectAbstract("abstract")
                 .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(recommendedStartDate)
@@ -356,7 +356,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     @Test
     public void shouldBuildValidWebServiceRequestNotContainingAtasStatement() throws JAXBException, DatatypeConfigurationException {
         final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
-        applicationForm.getProgrammeDetails().setStartDate(dateInThePast.toDate());
+        applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
         OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm)
                 .comment("").projectAbstract("abstract")
                 .recommendedConditionsAvailable(false).recommendedStartDate(recommendedStartDate).build();
@@ -417,8 +417,8 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         // suggested supervisors
         SuggestedSupervisor suggestedSupervisor1 = new SuggestedSupervisorBuilder().firstname("Eugeniusz").lastname("Kowalski").build();
         SuggestedSupervisor suggestedSupervisor2 = new SuggestedSupervisorBuilder().firstname("Genowefa").lastname("Pigwa").build();
-        applicationForm.getProgrammeDetails().setSuggestedSupervisors(Arrays.asList(suggestedSupervisor1, suggestedSupervisor2));
-        applicationForm.getProgrammeDetails().setStartDate(dateInThePast.toDate());
+        applicationForm.getProgramDetails().setSuggestedSupervisors(Arrays.asList(suggestedSupervisor1, suggestedSupervisor2));
+        applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
 
         // agreed supervisor
         RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").build();

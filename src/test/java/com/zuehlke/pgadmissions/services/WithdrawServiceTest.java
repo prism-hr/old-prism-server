@@ -27,15 +27,15 @@ public class WithdrawServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
 
     @Mock
     @InjectIntoByType
-    private PorticoQueueService porticoQueueServiceMock;
+    private ExportQueueService porticoQueueServiceMock;
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @TestedObject
     private WithdrawService service;

@@ -9,7 +9,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -24,7 +24,7 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 
 	@Before
 	public void prepare() {
-	    QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a54").domicileCode("AE").enabled(true).build();
+	    Institution institution = new QualificationInstitutionBuilder().code("code").name("a54").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("newproject").title("another title").institution(institution).build();
         save(institution, program);
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")

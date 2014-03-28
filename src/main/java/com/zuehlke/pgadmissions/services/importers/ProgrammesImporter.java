@@ -99,6 +99,7 @@ public class ProgrammesImporter implements IProgrammesImporter {
         List<ProgramInstance> changes = importService.merge(currentData, importData);
 
         for (ProgramInstance programInstance : changes) {
+            programDAO.saveStudyOption(programInstance.getStudyOption());
             programInstanceDAO.save(programInstance);
             Program program = programInstance.getProgram();
             if (program.getId() == null) {

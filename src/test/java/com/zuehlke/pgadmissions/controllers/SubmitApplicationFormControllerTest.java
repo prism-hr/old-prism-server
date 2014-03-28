@@ -33,9 +33,10 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.SubmitApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -56,14 +57,14 @@ public class SubmitApplicationFormControllerTest {
     @Mock
     @InjectIntoByType
     private ActionsProvider actionsProviderMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
+    private ProgramService programsService;
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
 
     @Mock
     @InjectIntoByType
-    private ProgramsService programsService;
 
     @Mock
     @InjectIntoByType
@@ -181,7 +182,7 @@ public class SubmitApplicationFormControllerTest {
     @Test
     public void shouldGetApplicationFormFromService() {
         ApplicationForm applicationForm = new ApplicationForm();
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
+        expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
         
         replay();
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("2");
@@ -192,7 +193,7 @@ public class SubmitApplicationFormControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNotFoundExceptionIfSubmittedApplicationFormDoesNotExist() {
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(null);
+        expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(null);
         
         replay();
         controller.getApplicationForm("2");

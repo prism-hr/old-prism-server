@@ -17,19 +17,13 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "APPLICATION_FORM_ADDITIONAL_INFO")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AdditionalInformation implements FormSectionObject, Serializable {
+public class AdditionalInformation implements Serializable, FormSectionObject {
     
 	private static final long serialVersionUID = -1761742614792933388L;
 	
 	@Id
 	@GeneratedValue
 	private Integer id;
-	
-	@Transient
-	private boolean acceptedTerms;
-
-	@OneToOne(mappedBy = "additionalInformation", fetch = FetchType.LAZY)
-	private ApplicationForm application;
 
 	@Column(name = "has_convictions")
 	private Boolean convictions;
@@ -37,6 +31,12 @@ public class AdditionalInformation implements FormSectionObject, Serializable {
 	@Column(name = "convictions_text")
 	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 400)
 	private String convictionsText;
+	
+    @OneToOne(mappedBy = "additionalInformation", fetch = FetchType.LAZY)
+    private ApplicationForm application;
+	
+	@Transient
+    private boolean acceptedTerms;
 
 	public void setId(Integer id) {
 		this.id = id;
@@ -44,14 +44,6 @@ public class AdditionalInformation implements FormSectionObject, Serializable {
 
 	public Integer getId() {
 		return id;
-	}
-
-	public ApplicationForm getApplication() {
-		return application;
-	}
-
-	public void setApplication(ApplicationForm application) {
-		this.application = application;
 	}
 
 	public Boolean getConvictions() {
@@ -70,11 +62,20 @@ public class AdditionalInformation implements FormSectionObject, Serializable {
 		this.convictionsText = convictionsText;
 	}
 
-	public boolean isAcceptedTerms() {
+	public ApplicationForm getApplication() {
+        return application;
+    }
+
+    public void setApplication(ApplicationForm application) {
+        this.application = application;
+    }
+
+    public boolean isAcceptedTerms() {
 		return acceptedTerms;
 	}
 
 	public void setAcceptedTerms(boolean acceptedTerms) {
 		this.acceptedTerms = acceptedTerms;
 	}
+	
 }

@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 
@@ -49,7 +49,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
         RegisteredUser currentUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, 28);
         RegisteredUser otherUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, 15);
         Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
-        QualificationInstitution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
+        Institution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
         Program program = testObjectProvider.getEnabledProgram();
 
         DateTime date = new DateTime(1410, 7, 14, 12, 0);
@@ -76,7 +76,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetOpportunityRequestsForProgram() {
         RegisteredUser user = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, 15);
         Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
-        QualificationInstitution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
+        Institution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
         Program program = testObjectProvider.getEnabledProgram();
 
         DateTime date = new DateTime(1410, 7, 14, 12, 0);

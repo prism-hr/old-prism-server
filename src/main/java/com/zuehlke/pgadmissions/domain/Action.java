@@ -11,7 +11,9 @@ import javax.persistence.Id;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 
 @Entity(name = "ACTION")
@@ -25,10 +27,21 @@ public class Action implements Serializable {
     @Enumerated(EnumType.STRING)
     private ApplicationFormAction id;
     
+    @Column(name = "action_type_id")
+    @Enumerated(EnumType.STRING)
+    private ActionType actionType;
+    
+    @Column(name = "precedence")
+    private Integer precedence = 0;
+    
     @Column(name = "notification")
     @Enumerated(EnumType.STRING)
-    private NotificationMethod notification;
-
+    private NotificationMethod notification = null;
+    
+    @Column(name = "update_visibility")
+    @Enumerated(EnumType.ORDINAL)
+    private ApplicationUpdateScope updateVisibility = null;
+    
     public ApplicationFormAction getId() {
         return id;
     }
@@ -37,12 +50,36 @@ public class Action implements Serializable {
         this.id = id;
     }
 
+    public ActionType getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
+    }
+
+    public Integer getPrecedence() {
+        return precedence;
+    }
+
+    public void setPrecedence(Integer precedence) {
+        this.precedence = precedence;
+    }
+
     public NotificationMethod getNotification() {
         return notification;
     }
 
     public void setNotification(NotificationMethod notification) {
         this.notification = notification;
+    }
+
+    public ApplicationUpdateScope getUpdateVisibility() {
+        return updateVisibility;
+    }
+
+    public void setUpdateVisibility(ApplicationUpdateScope updateVisibility) {
+        this.updateVisibility = updateVisibility;
     }
 
 }

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.SwitchAndLinkUserAccountDTO;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
@@ -34,34 +35,19 @@ import com.zuehlke.pgadmissions.validators.SwitchAndLinkUserAccountDTOValidator;
 @RequestMapping("/myAccount")
 public class AccountController {
 
-    private final Logger logger = LoggerFactory.getLogger(AccountController.class);
-
-    private static final String ACCOUNT_SECTION = "/private/my_account_section";
-
-    private static final String ACCOUNT_PAGE_VIEW_NAME = "/private/my_account";
-
-    private final UserService userService;
-
-    private final AccountValidator accountValidator;
-
-    private final SwitchUserService switchUserService;
-
-    private final SwitchAndLinkUserAccountDTOValidator switchAndLinkAccountDTOValidator;
-
-    public AccountController() {
-        this(null, null, null, null);
-    }
+    private Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     @Autowired
-    public AccountController(UserService userService,
-            AccountValidator accountValidator,
-            SwitchAndLinkUserAccountDTOValidator validator,
-            SwitchUserService switchUserService) {
-        this.userService = userService;
-        this.accountValidator = accountValidator;
-        this.switchAndLinkAccountDTOValidator = validator;
-        this.switchUserService = switchUserService;
-    }
+    private UserService userService;
+
+    @Autowired
+    private AccountValidator accountValidator;
+
+    @Autowired
+    private SwitchUserService switchUserService;
+
+    @Autowired
+    private SwitchAndLinkUserAccountDTOValidator switchAndLinkAccountDTOValidator;
 
     @InitBinder(value = "updatedUser")
     public void registerValidator(WebDataBinder binder) {
@@ -71,13 +57,13 @@ public class AccountController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getMyAccountPage() {
-        return ACCOUNT_PAGE_VIEW_NAME;
+        return TemplateLocation.MY_ACCOUNT_PAGE;
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     public String saveAccountDetails(@Valid @ModelAttribute("updatedUser") RegisteredUser user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ACCOUNT_SECTION;
+            return TemplateLocation.MY_ACCOUNT_SECTION;
         }
         userService.updateCurrentUser(user);
         return "/private/common/ajax_OK";
@@ -103,10 +89,8 @@ public class AccountController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/section")
     public String getMyAccountSection() {
-        return ACCOUNT_SECTION;
+        return TemplateLocation.MY_ACCOUNT_SECTION;
     }
-
-    // Link Accounts
 
     @ModelAttribute("switchAndLinkUserAccountDTO")
     public SwitchAndLinkUserAccountDTO getSwitchAndLinkUserAccountDTO() {
@@ -122,14 +106,14 @@ public class AccountController {
     public String linkAccounts(@Valid @ModelAttribute("switchAndLinkUserAccountDTO") SwitchAndLinkUserAccountDTO userDTO, BindingResult result,
             ModelMap modelMap) {
         if (result.hasErrors()) {
-            return ACCOUNT_SECTION;
+            return TemplateLocation.MY_ACCOUNT_SECTION;
         }
 
         try {
             userService.linkAccounts(userDTO.getEmail());
         } catch (LinkAccountsException e) {
             result.rejectValue("email", "account.not.enabled");
-            return ACCOUNT_SECTION;
+            return TemplateLocation.MY_ACCOUNT_SECTION;
         }
 
         return "/private/common/ajax_OK";
@@ -167,4 +151,5 @@ public class AccountController {
         }
         return "NOK";
     }
+    
 }

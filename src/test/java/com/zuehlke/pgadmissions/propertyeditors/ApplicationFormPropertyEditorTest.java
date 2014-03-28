@@ -9,18 +9,18 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 
 public class ApplicationFormPropertyEditorTest {
 
-	private ApplicationsService applicationsServiceMock;
+	private ApplicationFormService applicationsServiceMock;
 	private ApplicationFormPropertyEditor editor;
 
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
 		ApplicationForm form = new ApplicationFormBuilder().id(1).build();
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(form);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
 		
 		editor.setAsText("1");
@@ -50,7 +50,7 @@ public class ApplicationFormPropertyEditorTest {
 	
 	@Before
 	public void setup(){
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 		editor = new ApplicationFormPropertyEditor(applicationsServiceMock);
 	}
 }

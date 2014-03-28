@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.dao.SourcesOfInterestDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
@@ -24,13 +24,13 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 public class ProgrammeDetailsServiceTest {
 	
 	private ProgrammeDetailDAO programmeDetailDAOMock;
-	private ProgrammeDetailsService programmeService;
+	private ProgramDetailsService programmeService;
 	private ProgramInstanceDAO programInstanceDAOMock;
 	private SourcesOfInterestDAO sourcesOfInterestDAOMock;
 	
 	@Test
 	public void shouldDelegateSaveToDAO() {
-		ProgrammeDetails program = EasyMock.createMock(ProgrammeDetails.class);
+		ProgramDetails program = EasyMock.createMock(ProgramDetails.class);
 		programmeDetailDAOMock.save(program);
 		EasyMock.replay(programmeDetailDAOMock);
 		programmeService.save(program);
@@ -56,6 +56,6 @@ public class ProgrammeDetailsServiceTest {
 		programmeDetailDAOMock = EasyMock.createMock(ProgrammeDetailDAO.class);
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
 		sourcesOfInterestDAOMock = EasyMock.createMock(SourcesOfInterestDAO.class);
-		programmeService = new ProgrammeDetailsService(programmeDetailDAOMock, programInstanceDAOMock, sourcesOfInterestDAOMock);
+		programmeService = new ProgramDetailsService(programmeDetailDAOMock, programInstanceDAOMock, sourcesOfInterestDAOMock);
 	}
 }

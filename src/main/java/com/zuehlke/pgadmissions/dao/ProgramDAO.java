@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -25,10 +27,12 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
@@ -38,16 +42,8 @@ import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 public class ProgramDAO {
     // TODO reimplement getProgramsOfWhichPrevious*() methods
 
-    private final SessionFactory sessionFactory;
-
-    public ProgramDAO() {
-        this(null);
-    }
-
     @Autowired
-    public ProgramDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
     
     public Advert getById(Integer advertId) {
         return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class)
@@ -81,8 +77,12 @@ public class ProgramDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(advert);
     }
     
-    public Advert merge(Advert advert) {
-        return (Advert) sessionFactory.getCurrentSession().merge(advert);
+    public void merge(Advert advert) {
+        sessionFactory.getCurrentSession().merge(advert);
+    }
+    
+    public void saveStudyOption(StudyOption studyOption) {
+        sessionFactory.getCurrentSession().saveOrUpdate(studyOption);
     }
 
     public List<Program> getAllEnabledPrograms() {
@@ -115,7 +115,7 @@ public class ProgramDAO {
         }
     }
 	
-    public Program getLastCustomProgram(QualificationInstitution institution) {
+    public Program getLastCustomProgram(Institution institution) {
         String matcher = String.format("%s_%%", institution.getCode());
         DetachedCriteria maxCustomCode = DetachedCriteria.forClass(Program.class).setProjection(Projections.max("code"))
                 .add(Restrictions.like("code", matcher));
@@ -231,6 +231,47 @@ public class ProgramDAO {
         Query query = sessionFactory.getCurrentSession()
                 .createSQLQuery("CALL SP_DELETE_INACTIVE_ADVERTS();");
         query.executeUpdate();
+    }
+    
+    public Date getDefaultStartDate(Program program, StudyOption studyOption) {
+        Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
+        return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
+                .setProjection(Projections.min("applicationDeadline"))
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true))
+                .add(Restrictions.eq("studyOption", studyOption))
+                .add(Restrictions.ge("applicationDeadline", today)).uniqueResult();
+    }
+    
+    public List<ProgramInstance> getActiveProgramInstances(Program program) {
+        Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
+        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true))
+                .add(Restrictions.ge("applicationDeadline", today))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
+    
+    public List<StudyOption> getAvailableStudyOptions(Program program) {
+        Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
+        return (List<StudyOption>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
+                .setProjection(Projections.groupProperty("studyOption"))
+                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true))
+                .add(Restrictions.ge("applicationDeadline", today))
+                .addOrder(Order.asc("studyOption.displayName")).list();
+    }
+    
+    public List<ProgramInstance> getActiveProgramInstancesForStudyOption(Program program, StudyOption studyOption) {
+        Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
+        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("studyOption", studyOption))
+                .add(Restrictions.eq("enabled", true))
+                .add(Restrictions.ge("applicationDeadline", today))
+                .addOrder(Order.asc("applicationStartDate"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
     
 }

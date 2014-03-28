@@ -48,4 +48,5 @@ public abstract class AbstractPdfModelBuilder extends PdfStyling {
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         return cell;
     }
+    
 }

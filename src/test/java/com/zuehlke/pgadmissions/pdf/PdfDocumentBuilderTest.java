@@ -35,7 +35,7 @@ public class PdfDocumentBuilderTest {
         combinedReferencesPdfBuilder = new CombinedReferencesPdfBuilder();
         transcript1PdfBuilder = new Transcript1PdfBuilder();
         attachmentsZipCreator = new PorticoAttachmentsZipCreator(
-                pdfDocumentBuilder, combinedReferencesPdfBuilder, transcript1PdfBuilder);
+                pdfDocumentBuilder, combinedReferencesPdfBuilder, transcript1PdfBuilder, "test@test.com");
     }
     
     @Test

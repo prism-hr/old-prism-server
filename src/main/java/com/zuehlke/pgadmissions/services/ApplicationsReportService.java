@@ -33,8 +33,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -161,11 +161,11 @@ public class ApplicationsReportService {
 
         data.addColumns(cd);
 
-        List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplicationsForReport(user, filtering, reportType);
+        List<ApplicationForm> applications = applicationsService.getApplicationsForReport(user, filtering, reportType);
 
         for (ApplicationForm app : applications) {
 
-            if (!app.isSubmitted() || app.getPreviousStatus() == ApplicationFormStatus.UNSUBMITTED || app.getPersonalDetails() == null) {
+            if (!app.getStatus().isSubmitted() || app.getLastStatus().getId() == ApplicationFormStatus.UNSUBMITTED || app.getPersonalDetails() == null) {
                 continue;
             }
 
@@ -174,7 +174,7 @@ public class ApplicationsReportService {
                 PersonalDetails personalDetails = app.getPersonalDetails();
                 String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
                 Program program = app.getProgram();
-                ProgrammeDetails programmeDetails = app.getProgrammeDetails();
+                ProgramDetails programmeDetails = app.getProgramDetails();
                 ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(app, ApplicationFormAction.COMPLETE_VALIDATION_STAGE);
                 int[] receivedAndDeclinedReferences = getNumberOfReceivedAndDeclinedReferences(app);
                 int[] referenceEndorsements = getNumberOfPositiveAndNegativeReferenceEndorsements(app);
@@ -201,7 +201,7 @@ public class ApplicationsReportService {
 
                     // overall rating
                     row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
-                    row.addCell(app.getStatus().displayValue());
+                    row.addCell(app.getStatus().getId().displayValue());
 
                     // reference report
                     row.addCell(receivedAndDeclinedReferences[0]);
@@ -227,9 +227,9 @@ public class ApplicationsReportService {
                     row.addCell(program.getCode());
                     row.addCell(program.getTitle());
                     row.addCell(getProjectTitle(app));
-                    row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption() : StringUtils.EMPTY);
-                    row.addCell(programmeDetails.getSourcesOfInterest() != null ? StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterest().getName()) : StringUtils.EMPTY);
-                    row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourcesOfInterestText()));
+                    row.addCell(programmeDetails.getStudyOption() != null ? programmeDetails.getStudyOption().getDisplayName() : StringUtils.EMPTY);
+                    row.addCell(programmeDetails.getSourceOfInterest() != null ? StringUtils.trimToEmpty(programmeDetails.getSourceOfInterest().getName()) : StringUtils.EMPTY);
+                    row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourceOfInterestText()));
                     row.addCell(getSuggestedSupervisors(programmeDetails));
                     row.addCell(getAcademicYear(app));
                     row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
@@ -240,7 +240,7 @@ public class ApplicationsReportService {
                     row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
                     row.addCell(canSeeRating ? String.valueOf(overallPositiveEndorsements) : N_R);
 
-                    row.addCell(app.getStatus().displayValue());
+                    row.addCell(app.getStatus().getId().displayValue());
                     row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
                     row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
                     row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
@@ -273,7 +273,7 @@ public class ApplicationsReportService {
 //                    row.addCell(new NumberValue(app.getApprovalRounds().size()));
                     row.addCell(getPrintablePrimarySupervisor(app));
                     row.addCell(getPrintableSecondarySupervisor(app));
-                    row.addCell(app.getStatus() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
+                    row.addCell(app.getStatus().getId() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
                     row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
                     row.addCell(approveDate != null ? getConditionalType(app) : StringUtils.EMPTY);
                     row.addCell(approveDate != null ? getOfferConditions(app) : StringUtils.EMPTY);
@@ -307,7 +307,7 @@ public class ApplicationsReportService {
         return 666; // FIXME
     }
 
-    private String getSuggestedSupervisors(ProgrammeDetails programmeDetails) {
+    private String getSuggestedSupervisors(ProgramDetails programmeDetails) {
         List<SuggestedSupervisor> supervisors = programmeDetails.getSuggestedSupervisors();
         String supervisorsString = Joiner.on(", ").join(Iterables.transform(supervisors, new Function<SuggestedSupervisor, String>() {
             public String apply(SuggestedSupervisor supervisor) {
@@ -496,11 +496,11 @@ public class ApplicationsReportService {
     }
 
     private String getAcademicYear(ApplicationForm app) {
-        Date startDate = app.getProgrammeDetails().getStartDate();
+        Date startDate = app.getProgramDetails().getStartDate();
         if (startDate != null) {
             for (ProgramInstance instance : app.getProgram().getInstances()) {
                 if (instance.isDateWithinBounds(startDate)) {
-                    return instance.getAcademic_year();
+                    return instance.getAcademicYear();
                 }
             }
         }

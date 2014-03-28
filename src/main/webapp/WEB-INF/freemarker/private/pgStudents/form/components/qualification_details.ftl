@@ -48,9 +48,8 @@
                     Expected:
                     <strong>${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}</strong>
                 </#if> </td>
-              <#assign encQualificationId = encrypter.encrypt(existingQualification.id) />
-              <td><a name="editQualificationLink" id="qualification_${encQualificationId}" class="button-edit button-hint" data-desc="<#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>Edit<#else>Show</#if>">edit</a></td>
-              <td><#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <a name="deleteQualificationButton" data-desc="Delete" id="qualification_${encQualificationId}" class="button-delete button-hint">delete</a> <#else> 
+              <td><a name="editQualificationLink" id="qualification_${existingQualification.id?c}" class="button-edit button-hint" data-desc="<#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>Edit<#else>Show</#if>">edit</a></td>
+              <td><#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> <a name="deleteQualificationButton" data-desc="Delete" id="qualification_${existingQualification.id?c}" class="button-delete button-hint">delete</a> <#else> 
                 &nbsp; 
                 </#if> </td>
             </tr>
@@ -62,7 +61,7 @@
     
   </table>
   </#if>
-  <input type="hidden" id="qualificationId" name="qualificationId" value="<#if qualification?? && qualification.id??>${encrypter.encrypt(qualification.id)}</#if>" />
+  <input type="hidden" id="qualificationId" name="qualificationId" value="<#if qualification?? && qualification.id??>${qualification.id?c}</#if>" />
   <form>
     <#if errorCode?? && errorCode=="true">
     <div class="alert alert-error">

@@ -56,8 +56,8 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
-import com.zuehlke.pgadmissions.services.PorticoQueueService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ExportQueueService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -76,8 +76,8 @@ public class ConfigurationControllerTest {
     private ThrottleService throttleserviceMock;
     private ConfigurationService configurationServiceMock;
     private RegisteredUser admin;
-    private PorticoQueueService queueServiceMock;
-    private ProgramsService programsServiceMock;
+    private ExportQueueService queueServiceMock;
+    private ProgramService programsServiceMock;
     private ScoringDefinitionParser scoringDefinitionParserMock;
     private ApplicationContext applicationContext;
 
@@ -506,9 +506,9 @@ public class ConfigurationControllerTest {
 
         configurationServiceMock = EasyMock.createMock(ConfigurationService.class);
 
-        queueServiceMock = EasyMock.createMock(PorticoQueueService.class);
+        queueServiceMock = EasyMock.createMock(ExportQueueService.class);
 
-        programsServiceMock = EasyMock.createMock(ProgramsService.class);
+        programsServiceMock = EasyMock.createMock(ProgramService.class);
 
         scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
 

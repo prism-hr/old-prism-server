@@ -411,7 +411,7 @@ function fillProjectAdvertForm(data) {
 
 	var linkToApply = data['linkToApply'];
 	var titleSeleted = $("#projectAdvertTitleInput").val();
-	var sharethisvar = 'http://api.addthis.com/oexchange/0.8/offer?url=' + linkToApply + '&title=' + titleSeleted;
+	var sharethisvar = '//api.addthis.com/oexchange/0.8/offer?url=' + linkToApply + '&title=' + titleSeleted;
 
 	$('#projectAdvertLinkToApply').val(linkToApply);
 	$('#projectAdvertButtonToApply').val(data['buttonToApply']);

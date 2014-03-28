@@ -37,7 +37,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     private ResearchOpportunitiesFeedDAO daoMock;
 
-    private ProgramsService programServiceMock;
+    private ProgramService programServiceMock;
 
     private FreeMarkerConfigurer freeMarkerConfigurerMock;
 
@@ -48,7 +48,7 @@ public class ResearchOpportunitiesFeedServiceTest {
     @Before
     public void prepare() {
         daoMock = EasyMock.createMock(ResearchOpportunitiesFeedDAO.class);
-        programServiceMock = EasyMock.createMock(ProgramsService.class);
+        programServiceMock = EasyMock.createMock(ProgramService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         freeMarkerConfigurerMock = EasyMock.createMock(FreeMarkerConfigurer.class);
         service = new ResearchOpportunitiesFeedService(daoMock, programServiceMock, userServiceMock, freeMarkerConfigurerMock, HOST);

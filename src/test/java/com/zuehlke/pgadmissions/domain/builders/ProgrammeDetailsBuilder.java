@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 
@@ -81,18 +81,18 @@ public class ProgrammeDetailsBuilder {
 		return this;
 	}
 	
-	public ProgrammeDetails build() {
-		ProgrammeDetails programmeDetails = new ProgrammeDetails();
+	public ProgramDetails build() {
+		ProgramDetails programmeDetails = new ProgramDetails();
 		programmeDetails.setId(id);
 		programmeDetails.setApplication(applicationForm);
 		programmeDetails.setProjectName(projectName);
 		programmeDetails.setProgrammeName(programmeName);
 		programmeDetails.setStartDate(startDate);
 		programmeDetails.setStudyOption(studyOption);
-		programmeDetails.setStudyOptionCode(studyOptionCode);
+		programmeDetails.setStudyOption(studyOptionCode);
 		programmeDetails.getSuggestedSupervisors().addAll(suggestedSupervisors);
-		programmeDetails.setSourcesOfInterest(sourcesOfInterest);
-		programmeDetails.setSourcesOfInterestText(sourcesOfInterestText);
+		programmeDetails.setSourceOfInterest(sourcesOfInterest);
+		programmeDetails.setSourceOfInterestText(sourcesOfInterestText);
 		return programmeDetails;
 	}
 }

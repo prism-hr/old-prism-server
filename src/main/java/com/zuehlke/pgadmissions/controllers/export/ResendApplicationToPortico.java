@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.services.PorticoQueueService;
+import com.zuehlke.pgadmissions.services.ExportQueueService;
 
 /**
  * This controller allows us to resend applications to PORTICO if we
@@ -27,7 +27,7 @@ public class ResendApplicationToPortico {
 
     private static final String PORTICO_RESEND_ACTIVATION_CODE = "781efa70-96fb-11e2-9e96-0800200c9a66";
 
-    private final PorticoQueueService porticoQueueService;
+    private final ExportQueueService porticoQueueService;
 
     private final ApplicationFormDAO formDAO;
     
@@ -36,7 +36,7 @@ public class ResendApplicationToPortico {
     }
     
     @Autowired
-    public ResendApplicationToPortico(final PorticoQueueService porticoQueueService, final ApplicationFormDAO formDAO) {
+    public ResendApplicationToPortico(final ExportQueueService porticoQueueService, final ApplicationFormDAO formDAO) {
         this.porticoQueueService = porticoQueueService;
         this.formDAO = formDAO;
     }

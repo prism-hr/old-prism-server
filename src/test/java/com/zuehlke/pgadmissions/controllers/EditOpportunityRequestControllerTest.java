@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.ProgramType;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
@@ -110,7 +110,7 @@ public class EditOpportunityRequestControllerTest {
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).build();
         List<OpportunityRequest> requests = Lists.newArrayList();
         ModelMap modelMap = new ModelMap();
-        List<QualificationInstitution> institutions = Lists.newArrayList();
+        List<Institution> institutions = Lists.newArrayList();
 
         expect(permissionsService.canSeeOpportunityRequest(opportunityRequest)).andReturn(true);
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(opportunityRequest);
@@ -176,7 +176,7 @@ public class EditOpportunityRequestControllerTest {
         BindingResult requestBindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
         requestBindingResult.reject("error");
         BindingResult commentBindingResult = new DirectFieldBindingResult(comment, "comment");
-        List<QualificationInstitution> institutions = Lists.newArrayList();
+        List<Institution> institutions = Lists.newArrayList();
         List<OpportunityRequest> requests = Lists.newArrayList();
 
         expect(permissionsService.canPostOpportunityRequestComment(existingRequest, comment)).andReturn(true);

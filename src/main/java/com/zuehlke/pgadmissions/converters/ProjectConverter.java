@@ -8,17 +8,17 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class ProjectConverter {
     
     private final UserService userService;
-    private ProgramsService programService;
+    private ProgramService programService;
 
     @Autowired
-    public ProjectConverter(UserService userService, ProgramsService programService) {
+    public ProjectConverter(UserService userService, ProgramService programService) {
         this.userService = userService;
         this.programService = programService;
     }

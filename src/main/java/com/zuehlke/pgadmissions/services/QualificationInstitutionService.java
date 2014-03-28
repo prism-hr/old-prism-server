@@ -9,48 +9,54 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 
 @Service
 @Transactional
 public class QualificationInstitutionService {
-
+    
     @Autowired
     private QualificationInstitutionDAO qualificationInstitutionDAO;
 
     @Autowired
     private ApplicationContext applicationContext;
 
-    public QualificationInstitution getInstitutionByCode(String institutionCode) {
-        return qualificationInstitutionDAO.getInstitutionByCode(institutionCode);
+    public Institution getByCode(String institutionCode) {
+        return qualificationInstitutionDAO.getByCode(institutionCode);
     }
 
-    public List<QualificationInstitution> getEnabledInstitutionsByDomicileCode(String domicileCode) {
+    public List<Institution> getEnabledInstitutionsByDomicileCode(String domicileCode) {
         return qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(domicileCode);
     }
-
-    public QualificationInstitution getOrCreateCustomInstitution(String institutionCode, Domicile institutionCountry, String otherInstitutionName) {
-        QualificationInstitutionService thisBean = applicationContext.getBean(QualificationInstitutionService.class);
-
-        QualificationInstitution institution;
-        if ("OTHER".equals(institutionCode)) {
-            institution = qualificationInstitutionDAO.getInstitutionByDomicileAndName(institutionCountry.getCode(), otherInstitutionName);
-            if (institution == null) {
-                institution = new QualificationInstitution();
-                institution.setDomicileCode(institutionCountry.getCode());
-                institution.setEnabled(true);
-                institution.setName(otherInstitutionName);
-                institution.setCode(thisBean.generateNextInstitutionCode());
-                qualificationInstitutionDAO.save(institution);
-            }
-        } else {
-            institution = getInstitutionByCode(institutionCode);
-        }
-        return institution;
+    
+    public List<Institution> getEnabledInstitutionsByUserIdAndDomicileCode(Integer userId, String domicileCode) {
+        return qualificationInstitutionDAO.getEnabledInstitutionsByUserIdAndDomicileCode(userId, domicileCode);
+    }
+    
+    public List<Institution> getEnabledInstitutionsByDomicileCodeExludingUserId(Integer userId, String domicileCode) {
+        return qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCodeExludingUserId(userId, domicileCode);
     }
 
-    protected String generateNextInstitutionCode() {
-        QualificationInstitution lastCustomInstitution = qualificationInstitutionDAO.getLastCustomInstitution();
+    public Institution getOrCreate(String institutionCode, Domicile domicile, String institutionName) {
+        Institution persistentInstitution;
+        if ("OTHER".equals(institutionCode)) {
+            persistentInstitution = qualificationInstitutionDAO.getByDomicileAndName(domicile.getCode(), institutionName);
+            if (persistentInstitution == null) {
+                persistentInstitution = new Institution();
+                persistentInstitution.setDomicileCode(domicile.getCode());
+                persistentInstitution.setEnabled(true);
+                persistentInstitution.setName(institutionName);
+                persistentInstitution.setCode(generateNextInstitutionCode());
+                qualificationInstitutionDAO.save(persistentInstitution);
+            }
+        } else {
+            persistentInstitution = getByCode(institutionCode);
+        }
+        return persistentInstitution;
+    }
+
+    private String generateNextInstitutionCode() {
+        Institution lastCustomInstitution = qualificationInstitutionDAO.getLastCustomInstitution();
         Integer codeNumber;
         if (lastCustomInstitution != null) {
             codeNumber = Integer.valueOf(lastCustomInstitution.getCode().substring(4));

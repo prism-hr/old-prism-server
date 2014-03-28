@@ -106,7 +106,7 @@ public class ApprovalService {
         AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
         Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
         Project project = application.getProject();
-        Date startDate = application.getProgrammeDetails().getStartDate();
+        Date startDate = application.getProgramDetails().getStartDate();
         if (latestApprovalComment != null) {
             List<CommentAssignedUser> supervisors = commentService.getNotDecliningSupervisorsFromLatestApprovalStage(application);
             approvalComment.getAssignedUsers().addAll(supervisors);
@@ -143,11 +143,11 @@ public class ApprovalService {
         checkApplicationStatus(form);
         checkSendToPorticoStatus(form);
 
-        StageDuration approveStageDuration = stageDurationService.getByStatus(ApplicationFormStatus.APPROVAL);
+        StageDuration approveStageDuration = stageDurationService.getById(ApplicationFormStatus.APPROVAL);
         DateTime dueDate = DateUtils.addWorkingDaysInMinutes(new DateTime(), approveStageDuration.getDurationInMinutes());
         form.setDueDate(dueDate.toDate());
 
-        boolean sendReferenceRequest = form.getStatus() == ApplicationFormStatus.VALIDATION;
+        boolean sendReferenceRequest = form.getStatus().getId() == ApplicationFormStatus.VALIDATION;
 
         form.setStatus(ApplicationFormStatus.APPROVAL);
 
@@ -176,19 +176,6 @@ public class ApprovalService {
         commentService.save(approvalComment);
         applicationFormUserRoleService.movedToApprovalStage(approvalComment);
         applicationFormUserRoleService.insertApplicationUpdate(form, initiator, ApplicationUpdateScope.ALL_USERS);
-    }
-
-    private void checkApplicationStatus(ApplicationForm form) {
-        ApplicationFormStatus status = form.getStatus();
-        switch (status) {
-        case VALIDATION:
-        case REVIEW:
-        case INTERVIEW:
-        case APPROVAL:
-            break;
-        default:
-            throw new IllegalStateException(String.format("Application in invalid status: '%s'!", status));
-        }
     }
 
     private void checkSendToPorticoStatus(ApplicationForm form) {

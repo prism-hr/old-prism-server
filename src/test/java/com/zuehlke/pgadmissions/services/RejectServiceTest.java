@@ -55,11 +55,11 @@ public class RejectServiceTest {
     
     @Mock
     @InjectIntoByType
-    private PorticoQueueService porticoQueueService;
+    private ExportQueueService porticoQueueService;
     
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     private ApplicationForm application;
 	

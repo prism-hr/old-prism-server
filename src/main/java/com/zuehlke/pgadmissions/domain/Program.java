@@ -39,7 +39,7 @@ public class Program extends Advert {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", nullable = false)
-    private QualificationInstitution institution;
+    private Institution institution;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feed_id")
@@ -153,11 +153,11 @@ public class Program extends Advert {
         this.closingDates = closingDates;
     }
 
-    public QualificationInstitution getInstitution() {
+    public Institution getInstitution() {
         return institution;
     }
 
-    public void setInstitution(QualificationInstitution institution) {
+    public void setInstitution(Institution institution) {
         this.institution = institution;
     }
 

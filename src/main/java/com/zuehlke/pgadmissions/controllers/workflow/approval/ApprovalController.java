@@ -42,7 +42,8 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.validators.ApprovalCommentValidator;
@@ -117,7 +118,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
     @ModelAttribute
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+        ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }
@@ -231,7 +232,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
         if (!"newReferee".equals(editedRefereeId)) {
             Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
-            Referee referee = refereeService.getRefereeById(decryptedId);
+            Referee referee = refereeService.getById(decryptedId);
             if (referee.getReference() != null) {
                 return REFERENCE_SECTION;
             }

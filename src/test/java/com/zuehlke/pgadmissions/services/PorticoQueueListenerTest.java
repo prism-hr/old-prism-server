@@ -48,7 +48,7 @@ public class PorticoQueueListenerTest {
     
     private UserService userServiceMock;
     
-    private PorticoQueueListener listener;
+    private ExportQueueListener listener;
     
     @Before
     public void prepare() {
@@ -59,7 +59,7 @@ public class PorticoQueueListenerTest {
         throttleServiceMock = EasyMock.createMock(ThrottleService.class);
         mailServiceMock = EasyMock.createMock(MailSendingService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        listener = new PorticoQueueListener(porticoExportServiceMock, formDAOMock, applicationFormTransferServiceMock, throttleServiceMock, mailServiceMock, userServiceMock);
+        listener = new ExportQueueListener(porticoExportServiceMock, formDAOMock, applicationFormTransferServiceMock, throttleServiceMock, mailServiceMock, userServiceMock);
     }
     
     @Test
@@ -116,14 +116,14 @@ public class PorticoQueueListenerTest {
         expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR))
         	.andReturn(admins);
         
-        mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class));
+        mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class), form);
         
         EasyMock.replay(userServiceMock, porticoExportServiceMock, mailServiceMock, formDAOMock, applicationFormTransferServiceMock, messageMock, throttleServiceMock);
         
         try {
             listener.onMessage(messageMock);
             Assert.fail("A TriggerJmsRetryException should have been thrown");
-        }  catch (PorticoQueueListener.TriggerJmsRetryException e) {
+        }  catch (ExportQueueListener.TriggerJmsRetryException e) {
             assertEquals(uclExportServiceException.getMessage(), e.getMessage());
         }
         
@@ -157,8 +157,8 @@ public class PorticoQueueListenerTest {
         expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR))
         	.andReturn(admins).times(2);
         
-        mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class));
-        mailServiceMock.sendExportErrorMessage(eq(admins), eq("There was an issue with the PORTICO interfaces which needs attention by an administrator. PRISM is now not sending any more applications to PORTICO until this issue has been resolved"), isA(Date.class));
+        mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class), form);
+        mailServiceMock.sendExportErrorMessage(eq(admins), eq("There was an issue with the PORTICO interfaces which needs attention by an administrator. PRISM is now not sending any more applications to PORTICO until this issue has been resolved"), isA(Date.class), null);
         
         throttleServiceMock.disablePorticoInterface();
         

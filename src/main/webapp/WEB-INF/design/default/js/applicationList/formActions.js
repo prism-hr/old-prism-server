@@ -334,7 +334,7 @@ function getAdvertData(programme_code) {
 function updateAdvertSection(map, application) {
     var linkToApply = map['linkToApply'];
     var titleSeleted = $('.applicant-name :contains('+application+')').parent().parent().find('td.program-title').text();
-    var sharethisvar = 'http://api.addthis.com/oexchange/0.8/offer?url=' + linkToApply + '&title=' + titleSeleted;
+    var sharethisvar = '//api.addthis.com/oexchange/0.8/offer?url=' + linkToApply + '&title=' + titleSeleted;
 
     $("#programAdvertLinkToApply").val(linkToApply);
     $("#modalLinkToApply").val(linkToApply);

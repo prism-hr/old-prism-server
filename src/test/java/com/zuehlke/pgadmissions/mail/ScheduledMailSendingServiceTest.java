@@ -9,7 +9,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -25,7 +25,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
 
     private EncryptionUtils encryptionUtilsMock;
 
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     private OpportunitiesService opportunitiesServiceMock;
 
@@ -39,7 +39,7 @@ public class ScheduledMailSendingServiceTest extends MailSendingServiceTest {
         roleDAOMock = createMock(RoleDAO.class);
         encryptionUtilsMock = createMock(EncryptionUtils.class);
         opportunitiesServiceMock = createMock(OpportunitiesService.class);
-        applicationFormUserRoleService = createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleService = createMock(WorkflowService.class);
         service = new ScheduledMailSendingService(mockMailSender, applicationFormDAOMock, configurationServiceMock, refereeDAOMock, userDAOMock, roleDAOMock,
                 encryptionUtilsMock, HOST, applicationContextMock, applicationFormUserRoleService, opportunitiesServiceMock);
     }

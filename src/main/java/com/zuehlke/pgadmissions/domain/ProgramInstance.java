@@ -33,14 +33,12 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
     @Column(name = "academic_year")
     private String academicYear;
 
-    @Column(name = "study_option")
-    private String studyOption;
-
     @Column(name = "identifier")
     private String identifier;
 
-    @Column(name = "study_code")
-    private String studyOptionCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_option_id")
+    private StudyOption studyOption;
 
     @Column(name = "enabled")
     private Boolean enabled;
@@ -85,7 +83,7 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
         this.applicationStartDate = applicationStartDate;
     }
 
-    public String getAcademic_year() {
+    public String getAcademicYear() {
         return academicYear;
     }
 
@@ -93,20 +91,12 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
         this.academicYear = academicYear;
     }
 
-    public String getStudyOption() {
+    public StudyOption getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(String studyOption) {
+    public void setStudyOption(StudyOption studyOption) {
         this.studyOption = studyOption;
-    }
-
-    public String getStudyOptionCode() {
-        return studyOptionCode;
-    }
-
-    public void setStudyOptionCode(String studyCode) {
-        this.studyOptionCode = studyCode;
     }
 
     @Override

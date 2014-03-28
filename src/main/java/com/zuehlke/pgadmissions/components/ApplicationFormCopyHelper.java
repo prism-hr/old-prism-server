@@ -4,25 +4,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
-import com.zuehlke.pgadmissions.domain.PassportInformation;
+import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SelfReferringImportedObject;
+import com.zuehlke.pgadmissions.services.DocumentService;
 
 @Component
 public class ApplicationFormCopyHelper {
-
-    @Autowired
-    private DocumentDAO documentDAO;
+    
+    @Autowired DocumentService documentService;
 
     @Transactional
     public void copyApplicationFormData(ApplicationForm to, ApplicationForm from) {
@@ -30,42 +32,50 @@ public class ApplicationFormCopyHelper {
             PersonalDetails personalDetails = new PersonalDetails();
             to.setPersonalDetails(personalDetails);
             personalDetails.setApplication(to);
-            copyPersonalDetailsData(to.getPersonalDetails(), from.getPersonalDetails());
+            copyPersonalDetails(to.getPersonalDetails(), from.getPersonalDetails(), true);
         }
-
-        to.setCurrentAddress(copyAddress(from.getCurrentAddress()));
-        to.setContactAddress(copyAddress(from.getContactAddress()));
-
+        
+        if (from.getApplicationFormAddress() != null) {
+            ApplicationFormAddress applicationFormAddress = new ApplicationFormAddress();
+            to.setApplicationFormAddress(applicationFormAddress);
+            applicationFormAddress.setApplication(to);
+            copyApplicationFormAddress(to.getApplicationFormAddress(), from.getApplicationFormAddress(), true);
+        }
+                                                                                                                                                                                                                                                        
         for (Qualification fromQualification : from.getQualifications()) {
             Qualification qualification = new Qualification();
             to.getQualifications().add(qualification);
             qualification.setApplication(to);
-            copyQualification(qualification, fromQualification);
+            copyQualification(qualification, fromQualification, false);
         }
 
         for (EmploymentPosition fromEmployment : from.getEmploymentPositions()) {
             EmploymentPosition employment = new EmploymentPosition();
             to.getEmploymentPositions().add(employment);
             employment.setApplication(to);
-            copyEmploymentPosition(employment, fromEmployment);
+            copyEmploymentPosition(employment, fromEmployment, true);
         }
 
         for (Funding fromFunding : from.getFundings()) {
             Funding funding = new Funding();
             to.getFundings().add(funding);
             funding.setApplication(to);
-            copyFunding(funding, fromFunding);
+            copyFunding(funding, fromFunding, true);
         }
 
         for (Referee fromReferee : from.getReferees()) {
             Referee referee = new Referee();
             to.getReferees().add(referee);
             referee.setApplication(to);
-            copyReferee(referee, fromReferee);
+            copyReferee(referee, fromReferee, true);
         }
 
-        to.setPersonalStatement(copyDocument(from.getPersonalStatement()));
-        to.setCv(copyDocument(from.getCv()));
+        if (from.getApplicationFormDocument() != null) {
+            ApplicationFormDocument applicationFormDocument = new ApplicationFormDocument();
+            to.setApplicationFormDocument(applicationFormDocument);
+            applicationFormDocument.setApplication(to);
+            copyApplicationFormDocument(to.getApplicationFormDocument(), from.getApplicationFormDocument(), true);
+        }
 
         if (from.getAdditionalInformation() != null) {
             AdditionalInformation additionalInformation = new AdditionalInformation();
@@ -74,46 +84,65 @@ public class ApplicationFormCopyHelper {
             copyAdditionalInformation(additionalInformation, from.getAdditionalInformation());
         }
     }
+    
+    public void copyProgramDetails(ProgramDetails to, ProgramDetails from) {
+        to.setStudyOption(from.getStudyOption());
+        to.setStartDate(from.getStartDate());
+        to.setSourceOfInterest(from.getSourceOfInterest());
+        to.setSourceOfInterestText(from.getSourceOfInterestText());
+        to.getSuggestedSupervisors().addAll(from.getSuggestedSupervisors());
+    }
 
-    private void copyAdditionalInformation(AdditionalInformation to, AdditionalInformation from) {
+    public void copyAdditionalInformation(AdditionalInformation to, AdditionalInformation from) {
         to.setConvictions(from.getConvictions());
         to.setConvictionsText(from.getConvictionsText());
     }
 
-    private void copyReferee(Referee to, Referee from) {
+    public void copyReferee(Referee to, Referee from, boolean doPerformDeepCopy) {
         to.setFirstname(from.getFirstname());
         to.setLastname(from.getLastname());
         to.setEmail(from.getEmail());
         to.setJobEmployer(from.getJobEmployer());
         to.setJobTitle(from.getJobTitle());
-        to.setAddressLocation(copyAddress(from.getAddressLocation()));
         to.setPhoneNumber(from.getPhoneNumber());
         to.setMessenger(from.getMessenger());
+        if (doPerformDeepCopy) {
+            to.setAddressLocation(copyAddress(from.getAddressLocation()));
+        } else {
+            to.setAddressLocation(from.getAddressLocation());
+        }
     }
 
-    private void copyFunding(Funding to, Funding from) {
+    public void copyFunding(Funding to, Funding from, boolean doPerformDeepCopy) {
         to.setType(from.getType());
         to.setDescription(from.getDescription());
         to.setValue(from.getValue());
         to.setAwardDate(from.getAwardDate());
-        to.setDocument(copyDocument(from.getDocument()));
+        if (doPerformDeepCopy) {
+            to.setDocument(copyDocument(from.getDocument()));
+        } else {
+            documentService.replaceDocument(from.getDocument(), to.getDocument());
+            to.setDocument(from.getDocument());
+        }
     }
 
-    private void copyEmploymentPosition(EmploymentPosition to, EmploymentPosition from) {
+    public void copyEmploymentPosition(EmploymentPosition to, EmploymentPosition from, boolean doPerformDeepCopy) {
         to.setEmployerName(from.getEmployerName());
-        to.setEmployerAddress(copyAddress(from.getEmployerAddress()));
         to.setPosition(from.getPosition());
         to.setRemit(from.getRemit());
         to.setStartDate(from.getStartDate());
         to.setCurrent(from.isCurrent());
         to.setEndDate(from.getEndDate());
+        if (doPerformDeepCopy) {
+            to.setEmployerAddress(copyAddress(from.getEmployerAddress()));
+        }
+        else {
+            to.setEmployerAddress(from.getEmployerAddress());
+        }
     }
 
-    private void copyQualification(Qualification to, Qualification from) {
-        to.setInstitutionCountry(getEnabledImportedObject(from.getInstitutionCountry()));
-        to.setQualificationInstitution(from.getQualificationInstitution());
-        to.setQualificationInstitutionCode(from.getQualificationInstitutionCode());
-        to.setOtherQualificationInstitution(from.getOtherQualificationInstitution());
+    public void copyQualification(Qualification to, Qualification from, boolean doPerformDeepCopy) {
+        to.setInstitution(from.getInstitution());
         to.setQualificationType(getEnabledImportedObject(from.getQualificationType()));
         to.setQualificationTitle(from.getQualificationTitle());
         to.setQualificationSubject(from.getQualificationSubject());
@@ -122,12 +151,15 @@ public class ApplicationFormCopyHelper {
         to.setCompleted(from.getCompleted());
         to.setQualificationGrade(from.getQualificationGrade());
         to.setQualificationAwardDate(from.getQualificationAwardDate());
-
-        to.setProofOfAward(copyDocument(from.getProofOfAward()));
-
+        if (doPerformDeepCopy) {
+            to.setProofOfAward(copyDocument(from.getProofOfAward()));
+        } else {
+            documentService.replaceDocument(from.getProofOfAward(), to.getProofOfAward());
+            to.setProofOfAward(from.getProofOfAward());
+        }
     }
 
-    private void copyPersonalDetailsData(PersonalDetails to, PersonalDetails from) {
+    public void copyPersonalDetails(PersonalDetails to, PersonalDetails from, boolean doPerformDeepCopy) {
         to.setTitle(from.getTitle());
         to.setGender(from.getGender());
         to.setDateOfBirth(from.getDateOfBirth());
@@ -136,52 +168,53 @@ public class ApplicationFormCopyHelper {
         to.setSecondNationality(getEnabledImportedObject(from.getSecondNationality()));
         to.setEnglishFirstLanguage(from.getEnglishFirstLanguage());
         to.setLanguageQualificationAvailable(from.getLanguageQualificationAvailable());
-
-        LanguageQualification previousLanguageQualification = from.getLanguageQualification();
-
-        if (previousLanguageQualification != null) {
-            LanguageQualification languageQualification = new LanguageQualification();
-            copyLanguageQualification(languageQualification, previousLanguageQualification);
-            to.setLanguageQualification(languageQualification);
-            languageQualification.setPersonalDetails(to);
-        }
-
         to.setResidenceCountry(getEnabledImportedObject(from.getResidenceCountry()));
         to.setRequiresVisa(from.getRequiresVisa());
         to.setPassportAvailable(from.getPassportAvailable());
-
-        PassportInformation previousPassportInformation = from.getPassportInformation();
-        if (previousPassportInformation != null) {
-            PassportInformation passportInformation = new PassportInformation();
-            copyPassportInformation(passportInformation, previousPassportInformation);
-            to.setPassportInformation(passportInformation);
-            passportInformation.setPersonalDetails(to);
-        }
-
         to.setPhoneNumber(from.getPhoneNumber());
         to.setMessenger(from.getMessenger());
         to.setEthnicity(getEnabledImportedObject(from.getEthnicity()));
         to.setDisability(getEnabledImportedObject(from.getDisability()));
+        if (doPerformDeepCopy) {
+            to.setLanguageQualification(copyLanguageQualification(from.getLanguageQualification()));
+            to.setPassport(copyPassport(from.getPassport()));
+        } else {
+            LanguageQualification toQualification = to.getLanguageQualification();
+            LanguageQualification fromQualification = from.getLanguageQualification();
+            Document toQualificationDocument = null;
+            if (toQualification != null) {
+                toQualificationDocument = toQualification.getProofOfAward();
+            }
+            Document fromQualificationDocument = null;
+            if (fromQualification != null) {
+                fromQualificationDocument = fromQualification.getProofOfAward();
+            }
+            documentService.replaceDocument(fromQualificationDocument, toQualificationDocument);
+            to.setLanguageQualification(from.getLanguageQualification());
+            to.setPassport(from.getPassport());
+        }
     }
-
-    private void copyPassportInformation(PassportInformation to, PassportInformation from) {
-        to.setPassportNumber(from.getPassportNumber());
-        to.setNameOnPassport(from.getNameOnPassport());
-        to.setPassportIssueDate(from.getPassportIssueDate());
-        to.setPassportExpiryDate(from.getPassportExpiryDate());
+    
+    public void copyApplicationFormAddress(ApplicationFormAddress to, ApplicationFormAddress from, boolean doPerformDeepCopy) {
+        if (doPerformDeepCopy) {
+            to.setCurrentAddress(copyAddress(from.getCurrentAddress()));
+            to.setContactAddress(copyAddress(from.getContactAddress()));
+        } else {
+            to.setCurrentAddress(from.getCurrentAddress());
+            to.setContactAddress(from.getContactAddress());
+        }
     }
-
-    private void copyLanguageQualification(LanguageQualification to, LanguageQualification from) {
-        to.setQualificationType(from.getQualificationType());
-        to.setOtherQualificationTypeName(from.getOtherQualificationTypeName());
-        to.setDateOfExamination(from.getDateOfExamination());
-        to.setOverallScore(from.getOverallScore());
-        to.setReadingScore(from.getReadingScore());
-        to.setWritingScore(from.getWritingScore());
-        to.setSpeakingScore(from.getSpeakingScore());
-        to.setListeningScore(from.getListeningScore());
-        to.setExamTakenOnline(from.getExamTakenOnline());
-        to.setLanguageQualificationDocument(copyDocument(from.getLanguageQualificationDocument()));
+    
+    public void copyApplicationFormDocument(ApplicationFormDocument to, ApplicationFormDocument from, boolean doPerformDeepCopy) {
+        if (doPerformDeepCopy) {
+            to.setCv(copyDocument(from.getCv()));
+            to.setPersonalStatement(copyDocument(from.getPersonalStatement()));
+        } else {
+            to.setCv(from.getCv());
+            documentService.replaceDocument(from.getCv(), to.getCv());
+            to.setPersonalStatement(from.getPersonalStatement());
+            documentService.replaceDocument(from.getPersonalStatement(), to.getPersonalStatement());
+        }
     }
 
     private Address copyAddress(Address from) {
@@ -195,7 +228,6 @@ public class ApplicationFormCopyHelper {
         to.setAddress4(from.getAddress4());
         to.setAddress5(from.getAddress5());
         to.setDomicile(getEnabledImportedObject(from.getDomicile()));
-
         return to;
     }
 
@@ -209,22 +241,46 @@ public class ApplicationFormCopyHelper {
         to.setContentType(from.getContentType());
         to.setFileName(from.getFileName());
         to.setContent(from.getContent());
-
-        documentDAO.save(to);
-
+        to.setIsReferenced(true);
         return to;
     }
-
+    
+    private LanguageQualification copyLanguageQualification(LanguageQualification from) {
+        if (from == null)  {
+            return null;
+        }
+        LanguageQualification to = new LanguageQualification();
+        to.setQualificationType(from.getQualificationType());
+        to.setQualificationTypeOther(from.getQualificationTypeOther());
+        to.setExamDate(from.getExamDate());
+        to.setOverallScore(from.getOverallScore());
+        to.setReadingScore(from.getReadingScore());
+        to.setWritingScore(from.getWritingScore());
+        to.setSpeakingScore(from.getSpeakingScore());
+        to.setListeningScore(from.getListeningScore());
+        to.setExamOnline(from.getExamOnline());
+        to.setProofOfAward(copyDocument(from.getProofOfAward()));
+        return to;
+    }
+    
+    private Passport copyPassport(Passport from) {
+        if (from == null)  {
+            return null;
+        }
+        Passport to = new Passport();
+        to.setNumber(from.getNumber());
+        to.setName(from.getName());
+        to.setIssueDate(from.getIssueDate());
+        to.setExpiryDate(from.getExpiryDate());
+        return to;
+    }
+    
     @SuppressWarnings("unchecked")
     private <T extends SelfReferringImportedObject> T getEnabledImportedObject(T object) {
         if (object == null || object.getEnabled() || object.getEnabledObject() == null) {
             return object;
         }
         return (T) object.getEnabledObject();
-    }
-
-    void setDocumentDAO(DocumentDAO documentDAO) {
-        this.documentDAO = documentDAO;
     }
 
 }

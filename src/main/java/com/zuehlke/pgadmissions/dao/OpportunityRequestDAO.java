@@ -17,21 +17,17 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
+import com.zuehlke.pgadmissions.services.RoleService;
 
 @SuppressWarnings("unchecked")
 @Repository
 public class OpportunityRequestDAO {
 
-    private final SessionFactory sessionFactory;
-
-    public OpportunityRequestDAO() {
-        this(null);
-    }
-
     @Autowired
-    public OpportunityRequestDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private RoleService roleService;
+    
+    @Autowired
+    private SessionFactory sessionFactory;
 
     public void save(OpportunityRequest opportunityRequest) {
         sessionFactory.getCurrentSession().saveOrUpdate(opportunityRequest);
@@ -53,7 +49,7 @@ public class OpportunityRequestDAO {
                         .add(Restrictions.isNull("sourceProgram"))) //
                 .addOrder(Order.asc("status"));
         
-        if (!user.isInRole(Authority.SUPERADMINISTRATOR)) {
+        if (!roleService.checkUserHasSystemRole(user, Authority.SUPERADMINISTRATOR)) {
             opportunitiesCriteria = opportunitiesCriteria.add(Restrictions.eq("author", user));
         }
         

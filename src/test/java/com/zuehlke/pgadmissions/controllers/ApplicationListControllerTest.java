@@ -52,7 +52,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEdito
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 
@@ -60,7 +60,7 @@ public class ApplicationListControllerTest {
 
     private ApplicationListController controller;
     private RegisteredUser user;
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private ApplicationsReportService applicationsReportServiceMock;
     private UserService userServiceMock;
     private ApplicationsFiltersPropertyEditor filtersPropertyEditorMock;
@@ -148,7 +148,7 @@ public class ApplicationListControllerTest {
         ApplicationsFiltering filtering = new ApplicationsFiltering();
         List<ApplicationDescriptor> applications = new ArrayList<ApplicationDescriptor>();
         
-        expect(applicationsServiceMock.getAllVisibleAndMatchedApplicationsForList(user, filtering)).andReturn(applications);
+        expect(applicationsServiceMock.getApplicationsForList(user, filtering)).andReturn(applications);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
@@ -202,7 +202,7 @@ public class ApplicationListControllerTest {
     public void shouldGetApplicationFormByNumber() {
         String appNumber = "abc";
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber(appNumber)).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber(appNumber)).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock);
         assertEquals(applicationForm, controller.getApplicationForm(appNumber));
     }
@@ -282,7 +282,7 @@ public class ApplicationListControllerTest {
     public void setUp() {
         user = new RegisteredUserBuilder().id(1).build();
         userServiceMock = EasyMock.createMock(UserService.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         applicationsReportServiceMock = EasyMock.createMock(ApplicationsReportService.class);
         filtersPropertyEditorMock = createMock(ApplicationsFiltersPropertyEditor.class);
         applicationSummaryServiceMock = createMock(ApplicationSummaryService.class);

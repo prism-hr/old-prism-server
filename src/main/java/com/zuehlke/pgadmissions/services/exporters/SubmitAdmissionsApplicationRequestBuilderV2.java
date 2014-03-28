@@ -54,13 +54,11 @@ import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
-import com.zuehlke.pgadmissions.domain.PassportInformation;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -210,7 +208,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private DomicileTp buildDomicile() {
         DomicileTp domicileTp = xmlFactory.createDomicileTp();
-        domicileTp.setCode(applicationForm.getPersonalDetails().getResidenceCountry().getCode());
+        domicileTp.setCode(applicationForm.getPersonalDetails().getResidenceCountry().getEnabledCode());
         domicileTp.setName(applicationForm.getPersonalDetails().getResidenceCountry().getName());
         return domicileTp;
     }
@@ -254,7 +252,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             throw new IllegalArgumentException("Candidate should have at least one nationality.");
         }
 
-        nationalityTp.setCode(firstNationality.getCode());
+        nationalityTp.setCode(firstNationality.getEnabledCode());
         nationalityTp.setName(firstNationality.getName());
         return nationalityTp;
     }
@@ -266,7 +264,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         if (secondNationality == null) {
             return null;
         } else {
-            nationalityTp.setCode(secondNationality.getCode());
+            nationalityTp.setCode(secondNationality.getEnabledCode());
             nationalityTp.setName(secondNationality.getName());
             return nationalityTp;
         }
@@ -275,20 +273,19 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private CountryTp buildCountry() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         CountryTp countryTp = xmlFactory.createCountryTp();
-        countryTp.setCode(personalDetails.getCountry().getCode());
+        countryTp.setCode(personalDetails.getCountry().getEnabledCode());
         countryTp.setName(personalDetails.getCountry().getName());
         return countryTp;
     }
 
     private PassportTp buildPassport() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        PassportInformation passportInformation = personalDetails.getPassportInformation();
-        if (passportInformation != null) {
+        if (personalDetails.getPassportAvailable()) {
             PassportTp passportTp = xmlFactory.createPassportTp();
-            passportTp.setName(passportInformation.getNameOnPassport());
-            passportTp.setNumber(passportInformation.getPassportNumber());
-            passportTp.setExpiryDate(buildXmlDate(passportInformation.getPassportExpiryDate()));
-            passportTp.setIssueDate(buildXmlDate(passportInformation.getPassportIssueDate()));
+            passportTp.setName(personalDetails.getNameOnPassport());
+            passportTp.setNumber(personalDetails.getPassportNumber());
+            passportTp.setExpiryDate(buildXmlDate(personalDetails.getPassportExpiryDate()));
+            passportTp.setIssueDate(buildXmlDate(personalDetails.getPassportIssueDate()));
             return passportTp;
         } else {
             PassportTp passportTp = xmlFactory.createPassportTp();
@@ -303,7 +300,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private DisabilityTp buildDisability() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         DisabilityTp disabilityTp = xmlFactory.createDisabilityTp();
-        disabilityTp.setCode(personalDetails.getDisability().getCode());
+        disabilityTp.setCode(personalDetails.getDisability().getEnabledCode());
         disabilityTp.setName(personalDetails.getDisability().getName());
         return disabilityTp;
     }
@@ -311,7 +308,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private EthnicityTp buildEthnicity() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         EthnicityTp ethnicityTp = xmlFactory.createEthnicityTp();
-        ethnicityTp.setCode(personalDetails.getEthnicity().getCode());
+        ethnicityTp.setCode(personalDetails.getEthnicity().getEnabledCode());
         ethnicityTp.setName(personalDetails.getEthnicity().getName());
         return ethnicityTp;
     }
@@ -321,13 +318,13 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
 
         AddressTp addressTp = xmlFactory.createAddressTp();
-        Address currentAddress = applicationForm.getCurrentAddress();
+        Address currentAddress = applicationForm.getApplicationFormAddress().getCurrentAddress();
         addressTp.setAddressLine1(currentAddress.getAddress1());
         addressTp.setAddressLine2(currentAddress.getAddress2());
         addressTp.setAddressLine3(currentAddress.getAddress3());
         addressTp.setAddressLine4(currentAddress.getAddress4());
         addressTp.setPostCode(currentAddress.getAddress5());
-        addressTp.setCountry(currentAddress.getDomicile().getCode());
+        addressTp.setCountry(currentAddress.getDomicile().getEnabledCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
         // in this format before.
@@ -348,7 +345,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private ContactDtlsTp buildCorrespondenceAddress() {
-        Address contactAddress = applicationForm.getContactAddress();
+        Address contactAddress = applicationForm.getApplicationFormAddress().getContactAddress();
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
         AddressTp addressTp = xmlFactory.createAddressTp();
         addressTp.setAddressLine1(contactAddress.getAddress1());
@@ -356,7 +353,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         addressTp.setAddressLine3(contactAddress.getAddress3());
         addressTp.setAddressLine4(contactAddress.getAddress4());
         addressTp.setPostCode(contactAddress.getAddress5());
-        addressTp.setCountry(contactAddress.getDomicile().getCode());
+        addressTp.setCountry(contactAddress.getDomicile().getEnabledCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
         // in this format before.
@@ -377,7 +374,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private CourseApplicationTp buildCourseApplication() {
-        ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
+        ProgramDetails programmeDetails = applicationForm.getProgramDetails();
         CourseApplicationTp applicationTp = xmlFactory.createCourseApplicationTp();
         applicationTp.setStartMonth(new DateTime(programmeDetails.getStartDate()));
         if (!programmeDetails.getSuggestedSupervisors().isEmpty()) {
@@ -401,7 +398,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
         applicationTp.setRefereeList(buildReferee());
 
-        switch (applicationForm.getStatus()) {
+        switch (applicationForm.getStatus().getId()) {
         case WITHDRAWN:
             applicationTp.setApplicationStatus("WITHDRAWN");
             break;
@@ -414,7 +411,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             applicationTp.setDepartmentalDecision("REJECT");
             break;
         default:
-            throw new IllegalArgumentException("Application is in wrong state " + applicationForm.getStatus().displayValue());
+            throw new IllegalArgumentException("Application is in wrong state " + applicationForm.getStatus().getId().displayValue());
         }
 
         try {
@@ -425,7 +422,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             throw new IllegalArgumentException(exp.getMessage(), exp);
         }
 
-        if (printLanguageQualificationAdmissionsNote && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
+        if (printLanguageQualificationAdmissionsNote && applicationForm.getStatus().getId() == ApplicationFormStatus.APPROVED) {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
         }
 
@@ -436,7 +433,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             }
         }
 
-        if (offerRecommendedComment != null && applicationForm.getStatus() == ApplicationFormStatus.APPROVED) {
+        if (offerRecommendedComment != null && applicationForm.getStatus().getId() == ApplicationFormStatus.APPROVED) {
             String departmentalOfferConditions = "Recommended Offer Type: ";
             if (BooleanUtils.isTrue(offerRecommendedComment.getRecommendedConditionsAvailable())) {
                 departmentalOfferConditions += "Conditional\n\nRecommended Conditions: ";
@@ -455,7 +452,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private ProgrammeOccurrenceTp buildProgrammeOccurence() {
         Program program = applicationForm.getProgram();
-        ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
+        ProgramDetails programmeDetails = applicationForm.getProgramDetails();
         ProgrammeOccurrenceTp occurrenceTp = xmlFactory.createProgrammeOccurrenceTp();
         occurrenceTp.setCode(program.getCode());
         occurrenceTp.setModeOfAttendance(buildModeofattendance());
@@ -479,7 +476,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                     "No active program found for Program[code=%s], ProgrammeDetails[studyOption=%s]", program.getCode(), programmeDetails.getStudyOption()));
         }
 
-        occurrenceTp.setAcademicYear(buildXmlDateYearOnly(activeInstance.getAcademic_year()));
+        occurrenceTp.setAcademicYear(buildXmlDateYearOnly(activeInstance.getAcademicYear()));
         occurrenceTp.setIdentifier(activeInstance.getIdentifier());
         occurrenceTp.setStartDate(buildXmlDate(activeInstance.getApplicationStartDate()));
         occurrenceTp.setEndDate(buildXmlDate(activeInstance.getApplicationDeadline()));
@@ -494,7 +491,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private ModeofattendanceTp buildModeofattendance() {
-        ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
+        ProgramDetails programmeDetails = applicationForm.getProgramDetails();
         ModeofattendanceTp modeofattendanceTp = xmlFactory.createModeofattendanceTp();
         modeofattendanceTp.setCode(programmeDetails.getStudyOptionCode());
         modeofattendanceTp.setName(programmeDetails.getStudyOption());
@@ -502,7 +499,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private NameTp buildProposedSupervisorName(int idx) {
-        ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
+        ProgramDetails programmeDetails = applicationForm.getProgramDetails();
         NameTp nameTp = xmlFactory.createNameTp();
         List<SuggestedSupervisor> suggestedSupervisors = programmeDetails.getSuggestedSupervisors();
 
@@ -527,13 +524,16 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private SourceOfInterestTp buildSourcesOfInterest(CourseApplicationTp applicationTp) {
-        ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
+        ProgramDetails programmeDetails = applicationForm.getProgramDetails();
         SourceOfInterestTp interestTp = xmlFactory.createSourceOfInterestTp();
-        SourcesOfInterest sourcesOfInterest = programmeDetails.getSourcesOfInterest();
-        interestTp.setCode(sourcesOfInterest.getCode());
+        SourcesOfInterest sourcesOfInterest = programmeDetails.getSourceOfInterest();
+        if(sourcesOfInterest == null) {
+            return null;
+        }
+        interestTp.setCode(sourcesOfInterest.getEnabledCode());
         interestTp.setName(sourcesOfInterest.getName());
         if (sourcesOfInterest.isFreeText()) {
-            applicationTp.setOtherSourceofInterest(programmeDetails.getSourcesOfInterestText());
+            applicationTp.setOtherSourceofInterest(programmeDetails.getSourceOfInterestText());
         }
         return interestTp;
     }
@@ -554,7 +554,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                 qualificationsTp.setMainSubject(qualification.getQualificationSubject());
 
                 QualificationTp qualificationTp = xmlFactory.createQualificationTp();
-                qualificationTp.setCode(qualification.getQualificationType().getCode());
+                qualificationTp.setCode(qualification.getQualificationType().getEnabledCode());
                 qualificationTp.setName(qualification.getQualificationType().getName());
                 qualificationsTp.setQualification(qualificationTp);
 
@@ -564,7 +564,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                 institutionTp.setName(qualification.getQualificationInstitution());
 
                 CountryTp countryTp = xmlFactory.createCountryTp();
-                countryTp.setCode(qualification.getInstitutionCountry().getCode());
+                countryTp.setCode(qualification.getInstitutionCountry().getEnabledCode());
                 countryTp.setName(qualification.getInstitutionCountry().getName());
                 institutionTp.setCountry(countryTp);
 
@@ -649,7 +649,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             addressTp.setAddressLine3(referee.getAddressLocation().getAddress3());
             addressTp.setAddressLine4(referee.getAddressLocation().getAddress4());
             addressTp.setPostCode(referee.getAddressLocation().getAddress5());
-            addressTp.setCountry(referee.getAddressLocation().getDomicile().getCode());
+            addressTp.setCountry(referee.getAddressLocation().getDomicile().getEnabledCode());
 
             // postCode is mandatory but but PRISM did not collect addresses
             // in this format before.
@@ -675,57 +675,56 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = xmlFactory.createEnglishLanguageQualificationDetailsTp();
-
-        LanguageQualification languageQualification = personalDetails.getLanguageQualification();
-        if (languageQualification != null) {
+        
+        if (personalDetails.getLanguageQualificationAvailable()) {
             EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
-            englishLanguageTp.setDateTaken(buildXmlDate(languageQualification.getDateOfExamination()));
+            englishLanguageTp.setDateTaken(buildXmlDate(personalDetails.getExamDate()));
 
-            if (languageQualification.getQualificationType() == LanguageQualificationEnum.OTHER) {
+            if (personalDetails.getQualificationType() == LanguageQualificationEnum.OTHER) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
-                englishLanguageTp.setOtherLanguageExam(languageQualification.getOtherQualificationTypeName());
-            } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.TOEFL) {
+                englishLanguageTp.setOtherLanguageExam(personalDetails.getQualificationTypeOther());
+            } else if (personalDetails.getQualificationType() == LanguageQualificationEnum.TOEFL) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
-                if (languageQualification.getExamTakenOnline()) {
+                if (personalDetails.getExamOnline()) {
                     englishLanguageTp.setMethod("TOEFL_INTERNET");
                 } else {
                     englishLanguageTp.setMethod("TOEFL_PAPER");
                 }
-            } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.IELTS_ACADEMIC) {
+            } else if (personalDetails.getQualificationType() == LanguageQualificationEnum.IELTS_ACADEMIC) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.IELTS);
             } else {
                 throw new IllegalArgumentException(String.format("QualificationType type [%s] could not be converted",
-                        languageQualification.getQualificationType()));
+                        personalDetails.getQualificationType()));
             }
 
             // The web service does not allow scores in the format "6.0" it only
             // accepts "6" and the like.
             EnglishLanguageScoreTp overallScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             overallScoreTp.setName(LanguageBandScoreTp.OVERALL);
-            overallScoreTp.setScore(languageQualification.getOverallScore().replace(".0", ""));
+            overallScoreTp.setScore(personalDetails.getOverallScore().replace(".0", ""));
 
             EnglishLanguageScoreTp readingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             readingScoreTp.setName(LanguageBandScoreTp.READING);
-            readingScoreTp.setScore(languageQualification.getReadingScore().replace(".0", ""));
+            readingScoreTp.setScore(personalDetails.getReadingScore().replace(".0", ""));
 
             EnglishLanguageScoreTp writingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             writingScoreTp.setName(LanguageBandScoreTp.WRITING);
-            writingScoreTp.setScore(languageQualification.getWritingScore().replace(".0", ""));
+            writingScoreTp.setScore(personalDetails.getWritingScore().replace(".0", ""));
 
             EnglishLanguageScoreTp essayOrSpeakingScoreTp = null;
             if (StringUtils.equalsIgnoreCase("TOEFL_PAPER", englishLanguageTp.getMethod())) {
                 essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
                 essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.ESSAY);
-                essayOrSpeakingScoreTp.setScore(languageQualification.getWritingScore().replace(".0", ""));
+                essayOrSpeakingScoreTp.setScore(personalDetails.getWritingScore().replace(".0", ""));
             } else {
                 essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
                 essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
-                essayOrSpeakingScoreTp.setScore(languageQualification.getSpeakingScore().replace(".0", ""));
+                essayOrSpeakingScoreTp.setScore(personalDetails.getSpeakingScore().replace(".0", ""));
             }
 
             EnglishLanguageScoreTp listeningScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             listeningScoreTp.setName(LanguageBandScoreTp.LISTENING);
-            listeningScoreTp.setScore(languageQualification.getListeningScore().replace(".0", ""));
+            listeningScoreTp.setScore(personalDetails.getListeningScore().replace(".0", ""));
 
             englishLanguageTp.getLanguageScore()
                     .addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayOrSpeakingScoreTp, listeningScoreTp));

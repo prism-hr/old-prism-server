@@ -26,8 +26,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.RejectService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RejectionValidator;
@@ -47,9 +47,9 @@ public class RejectApplicationController {
 
     private final RejectionValidator rejectionValidator;
 
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     private final ActionsProvider actionsProvider;
 
@@ -58,8 +58,8 @@ public class RejectApplicationController {
     }
 
     @Autowired
-    public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
-            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, ApplicationFormUserRoleService applicationFormUserRoleService,
+    public RejectApplicationController(ApplicationFormService applicationsService, RejectService rejectService, UserService userService,
+            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, WorkflowService applicationFormUserRoleService,
             ActionsProvider actionsProvider) {
         this.applicationsService = applicationsService;
         this.rejectService = rejectService;
@@ -103,7 +103,7 @@ public class RejectApplicationController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+        ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
         if (application == null) {
             throw new MissingApplicationFormException(applicationId);
         }

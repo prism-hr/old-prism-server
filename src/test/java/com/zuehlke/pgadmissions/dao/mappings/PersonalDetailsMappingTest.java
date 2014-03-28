@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
-import com.zuehlke.pgadmissions.domain.PassportInformation;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -27,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PassportInformationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -77,30 +75,9 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldSaveAndLoadPersonalDetailsWithPassportInformation() throws Exception {
-        PassportInformation passportInformation = new PassportInformationBuilder().passportNumber("000").nameOnPassport("Kevin Francis Denver")
-                .passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20)).build();
-
-        PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-                .title(Title.BROTHER).gender(Gender.MALE).residenceDomicile(country3).requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
-                .applicationForm(applicationForm).firstNationality(nationality1).build();
-
-        personalDetails.setPassportInformation(passportInformation);
-
-        sessionFactory.getCurrentSession().save(personalDetails);
-
-        flushAndClearSession();
-
-        PersonalDetails reloadedDetails = (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, personalDetails.getId());
-
-        assertNotSame(personalDetails, reloadedDetails);
-        assertEquals(personalDetails.getPassportInformation().getId(), reloadedDetails.getPassportInformation().getId());
-    }
-
-    @Test
     public void shouldSaveAndLoadPersonalDetailsWithLanguageQualification() throws ParseException {
-        LanguageQualification languageQualification = new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false)
-                .languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar").overallScore("1")
+        LanguageQualification languageQualification = new LanguageQualificationBuilder().examDate(new Date()).examOnline(false)
+                .languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").qualificationTypeName("FooBar").overallScore("1")
                 .readingScore("1").speakingScore("1").writingScore("1").build();
 
         PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
@@ -118,8 +95,6 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
         assertNotSame(personalDetails, reloadedDetails);
 
         assertNotNull(reloadedDetails.getLanguageQualification());
-
-        assertNotNull(reloadedDetails.getLanguageQualification().getPersonalDetails());
 
         reloadedDetails.setLanguageQualification(null);
 

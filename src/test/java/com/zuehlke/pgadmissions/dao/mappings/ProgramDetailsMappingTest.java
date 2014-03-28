@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
@@ -23,18 +23,18 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 	    SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").build();
 		SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().id(1).firstname("first").lastname("last").email("email").build();
 
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test1").projectName("project")
+		ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test1").projectName("project")
 				.startDate(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).studyOption("1", "Full-time").sourcesOfInterest(interest)
 				.suggestedSupervisors(suggestedSupervisor).build();
 
 		sessionFactory.getCurrentSession().save(programmeDetails);
 		assertNotNull(programmeDetails.getId());
 		Integer id = programmeDetails.getId();
-		ProgrammeDetails reloadedDetails = (ProgrammeDetails) sessionFactory.getCurrentSession().get(ProgrammeDetails.class, id);
+		ProgramDetails reloadedDetails = (ProgramDetails) sessionFactory.getCurrentSession().get(ProgramDetails.class, id);
 
 		assertSame(programmeDetails, reloadedDetails);
 
-		reloadedDetails = (ProgrammeDetails) sessionFactory.getCurrentSession().get(ProgrammeDetails.class, id);
+		reloadedDetails = (ProgramDetails) sessionFactory.getCurrentSession().get(ProgramDetails.class, id);
 
 		assertEquals(programmeDetails.getId(), reloadedDetails.getId());
 		assertEquals(programmeDetails.getProgrammeName(), reloadedDetails.getProgrammeName());
@@ -48,7 +48,7 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 		
 		sessionFactory.getCurrentSession().saveOrUpdate(suggestedSupervisor);
 
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test2").projectName("project")
+		ProgramDetails programmeDetails = new ProgrammeDetailsBuilder().programmeName("test2").projectName("project")
 				.startDate(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).studyOption("1", "Full-time").sourcesOfInterest(interest)
 				.suggestedSupervisors(suggestedSupervisor).build();
 
@@ -56,9 +56,9 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		assertNotNull(programmeDetails.getId());
 		Integer id = programmeDetails.getId();
-		ProgrammeDetails reloadedDetails = (ProgrammeDetails) sessionFactory.getCurrentSession().get(ProgrammeDetails.class, id);
+		ProgramDetails reloadedDetails = (ProgramDetails) sessionFactory.getCurrentSession().get(ProgramDetails.class, id);
 
-		reloadedDetails = (ProgrammeDetails) sessionFactory.getCurrentSession().get(ProgrammeDetails.class, id);
+		reloadedDetails = (ProgramDetails) sessionFactory.getCurrentSession().get(ProgramDetails.class, id);
 		assertEquals(programmeDetails.getId(), reloadedDetails.getId());
 		assertEquals(programmeDetails.getProgrammeName(), reloadedDetails.getProgrammeName());
 	}

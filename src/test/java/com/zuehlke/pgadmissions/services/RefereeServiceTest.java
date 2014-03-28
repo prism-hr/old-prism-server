@@ -42,7 +42,7 @@ public class RefereeServiceTest {
     
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @TestedObject
     private RefereeService service;

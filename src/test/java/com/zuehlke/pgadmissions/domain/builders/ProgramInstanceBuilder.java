@@ -80,7 +80,7 @@ public class ProgramInstanceBuilder {
         ProgramInstance programInstance = new ProgramInstance();
         programInstance.setApplicationDeadline(applicationDeadline);
         programInstance.setStudyOption(studyOption);
-        programInstance.setStudyOptionCode(studyOptionCode);
+        programInstance.setStudyOption(studyOptionCode);
         programInstance.setId(id);
         programInstance.setIdentifier(identifier);
         programInstance.setProgram(program);

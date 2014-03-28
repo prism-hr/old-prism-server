@@ -11,9 +11,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -50,7 +46,7 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 import com.zuehlke.pgadmissions.utils.GsonExclusionStrategies;
@@ -65,13 +61,11 @@ import freemarker.template.TemplateException;
 @RequestMapping("/prospectus/programme")
 public class ProgramConfigurationController {
 
-    private Logger logger = LoggerFactory.getLogger(ProgramConfigurationController.class);
-
     @Autowired
     private UserService userService;
 
     @Autowired
-    private ProgramsService programsService;
+    private ProgramService programsService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;
@@ -189,13 +183,6 @@ public class ProgramConfigurationController {
             FieldError otherInstitutionError = result.getFieldError("otherInstitution");
             if (otherInstitutionError != null && "institution.did.you.mean".equals(otherInstitutionError.getCode())) {
                 map.put("otherInstitution", ImmutableMap.of("errorCode", "institution.did.you.mean", "institutions", otherInstitutionError.getDefaultMessage()));
-            }
-            try {
-                logger.info("Program configuration binding error: " +
-                        Joiner.on(", ").withKeyValueSeparator(" -> ").useForNull("<null>").join(BeanUtils.describe(opportunityRequest)) + "; "
-                                + Joiner.on(", ").withKeyValueSeparator(" -> ").join(map));
-            } catch (Exception e) {
-                logger.error("", e);
             }
         } else {
             map = Maps.newHashMap();

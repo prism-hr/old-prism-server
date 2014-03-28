@@ -8,19 +8,19 @@ import static org.easymock.EasyMock.verify;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.services.PorticoQueueService;
+import com.zuehlke.pgadmissions.services.ExportQueueService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 
 public class PorticoThrottleTaskTest {
 	
 	private ThrottleService throttleServiceMock;
-	private PorticoQueueService porticoQueueServiceMock;
+	private ExportQueueService porticoQueueServiceMock;
 	private PorticoThrottleTask timer;
 	
 	@Before
 	public void setup() {
 		throttleServiceMock = createMock(ThrottleService.class);
-		porticoQueueServiceMock = createMock(PorticoQueueService.class);
+		porticoQueueServiceMock = createMock(ExportQueueService.class);
 		timer = new PorticoThrottleTask(throttleServiceMock, porticoQueueServiceMock);
 	}
 	

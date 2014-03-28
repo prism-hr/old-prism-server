@@ -43,7 +43,7 @@ import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoAttachmentsZipCreator;
 import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
@@ -64,7 +64,7 @@ public class PorticoDocumentUploadPhase2IT {
     private WebServiceTemplate webServiceTemplate;
     
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
     
     @Autowired
     private PorticoExportService uclExportService;
@@ -106,9 +106,9 @@ public class PorticoDocumentUploadPhase2IT {
     @Transactional
     public void missingResearchProposal1ApplicationFilenameForValidResearchProposal() throws PorticoExportServiceException {
         csvEntries.add("Missing researchProposal.1.applicationFilename for valid research proposal document in the document upload package.");
-        applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCIVSGEO01-2012-000111");
+        applicationForm = applicationsService.getByApplicationNumber("RRDCIVSGEO01-2012-000111");
         addReferres(applicationForm);
-        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder) {
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder, "test@test.com") {
             @Override
             protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
                 Document personalStatement = applicationForm.getPersonalStatement();
@@ -154,9 +154,9 @@ public class PorticoDocumentUploadPhase2IT {
     @Transactional
     public void missingtranscript2applicationFilename() throws PorticoExportServiceException {
         csvEntries.add("Missing transcript.2.applicationFilename with valid corresponding document in the upload package.");
-        applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000329");
+        applicationForm = applicationsService.getByApplicationNumber("RRDCOMSING01-2012-000329");
         addReferres(applicationForm);
-        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder) {
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder, "test@test.com") {
             @Override
             protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
                 List<Document> qualifications = applicationForm.getQualificationsToSendToPortico();
@@ -221,9 +221,9 @@ public class PorticoDocumentUploadPhase2IT {
     @Transactional
     public void noEnglishLanguageTestCertificate1InDocumentUpload() throws PorticoExportServiceException {
         csvEntries.add("No englishLanguageTestCertificate.1 in document upload.");
-        applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000329");
+        applicationForm = applicationsService.getByApplicationNumber("RRDCOMSING01-2012-000329");
         addReferres(applicationForm);
-        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder) {
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder, "test@test.com") {
             @Override
             protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
             }
@@ -261,9 +261,9 @@ public class PorticoDocumentUploadPhase2IT {
     @Transactional
     public void corruptedApplicationForm1InDocumentUploadWithValidCorrespondingEntryInDocumentUploadContentsFile() throws PorticoExportServiceException {
         csvEntries.add("Corrupted applicationForm.1 in document upload with valid corresponding entry in document upload contents file (optional document).");
-        applicationForm = applicationsService.getApplicationByApplicationNumber("RRDSECSING01-2012-000202");
+        applicationForm = applicationsService.getByApplicationNumber("RRDSECSING01-2012-000202");
         addReferres(applicationForm);
-        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder) {
+        uclExportService.setPorticoAttachmentsZipCreator(new PorticoAttachmentsZipCreator(pdfDocumentBuilder, combinedReferenceBuilder, transcriptBuilder, "test@test.com") {
             @Override
             protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
                 String serverfilename = "ApplicationForm" + referenceNumber + ".pdf";
@@ -308,7 +308,7 @@ public class PorticoDocumentUploadPhase2IT {
     @Transactional
     public void validApplicationFormWithBogusInstitutionCode() throws PorticoExportServiceException {
         csvEntries.add("Bogus institution code");
-        applicationForm = applicationsService.getApplicationByApplicationNumber("RRDCOMSING01-2012-000282");
+        applicationForm = applicationsService.getByApplicationNumber("RRDCOMSING01-2012-000282");
         addReferres(applicationForm);
         
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(applicationForm);

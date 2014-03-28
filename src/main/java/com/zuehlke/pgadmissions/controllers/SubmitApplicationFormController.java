@@ -5,9 +5,6 @@ import java.net.UnknownHostException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -19,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
@@ -33,14 +30,11 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
 @Controller
-@RequestMapping(value = { "/submit", "application" })
+@RequestMapping(value = "/submit")
 public class SubmitApplicationFormController {
 
     private final Logger log = LoggerFactory.getLogger(SubmitApplicationFormController.class);
 
-    private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "/private/pgStudents/form/main_application_page";
-    private static final String VIEW_APPLICATION_STAFF_VIEW_NAME = "/private/staff/application/main_application_page";
-    private static final String VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME = "/private/staff/application/main_application_page_without_headers";
 
     @Autowired
     private ApplicationFormValidator applicationFormValidator;
@@ -56,7 +50,6 @@ public class SubmitApplicationFormController {
 
     @Autowired
     private ApplicationFormUserRoleService applicationFormUserRoleService;
-
     @Autowired
     private ProgramsService programsService;
 
@@ -72,68 +65,20 @@ public class SubmitApplicationFormController {
             if (result.getFieldError("program") != null) {
                 throw new CannotApplyException();
             }
-            return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
+            return TemplateLocation.APPLICATION_APPLICANT_FORM;
         }
-
-        try {
-            applicationForm.setIpAddressAsString(request.getRemoteAddr());
-        } catch (UnknownHostException e) {
-            log.error("Error while setting ip address of: " + request.getRemoteAddr(), e);
-        }
-
-        submitApplicationFormService.submitApplication(applicationForm);
-        return "redirect:/applications?messageCode=application.submitted&application=" + applicationForm.getApplicationNumber();
+        applicationFormService.submitApplication(application, request);
+        return "redirect:/applications?messageCode=application.submitted&application=" + application.getApplicationNumber();
     }
 
     @InitBinder("applicationForm")
     public void registerValidator(WebDataBinder binder) {
         binder.setValidator(applicationFormValidator);
     }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
-        RegisteredUser user = getCurrentUser();
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.VIEW);
-        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
-
-        if (user.canEditAsApplicant(applicationForm)) {
-            programsService.getValidProgramProjectAdvert(applicationForm.getProgram().getCode(), applicationForm.getAdvert().getId());
-            return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
-        }
-
-        if (request != null && request.getParameter("embeddedApplication") != null && request.getParameter("embeddedApplication").equals("true")) {
-            return VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME;
-        }
-
-        if (BooleanUtils.isTrue(actionsProvider.checkActionAvailable(applicationForm, user, ApplicationFormAction.VIEW_EDIT))) {
-            return "redirect:/editApplicationFormAsProgrammeAdmin?applicationId=" + applicationForm.getApplicationNumber();
-        }
-
-        return VIEW_APPLICATION_STAFF_VIEW_NAME;
-    }
-
-    protected RegisteredUser getCurrentUser() {
-        return userService.getCurrentUser();
-    }
-
+    
     @ModelAttribute
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (applicationForm == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
-        return applicationForm;
+        return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.COMPLETE_APPLICATION);
     }
-
-    @ModelAttribute("applicationDescriptor")
-    public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
-    }
-
-    @ModelAttribute("user")
-    public RegisteredUser getUser() {
-        return getCurrentUser();
-    }
+    
 }

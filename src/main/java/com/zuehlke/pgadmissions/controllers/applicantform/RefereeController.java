@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -21,22 +20,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
+import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
+import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.RefereeService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
 @RequestMapping("/update")
@@ -44,46 +41,39 @@ import com.zuehlke.pgadmissions.validators.RefereeValidator;
 public class RefereeController {
 
     private static final String STUDENTS_FORM_REFEREES_VIEW = "/private/pgStudents/form/components/references_details";
-    private final RefereeService refereeService;
-    private final DomicileService domicileService;
-    private final ApplicationsService applicationsService;
-    private final DomicilePropertyEditor domicilePropertyEditor;
-    private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
-    private final RefereeValidator refereeValidator;
-    private final EncryptionHelper encryptionHelper;
-    private final UserService userService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-    private final FullTextSearchService searchService;
-
-    public RefereeController() {
-        this(null, null, null, null, null, null, null, null, null, null);
-    }
 
     @Autowired
-    public RefereeController(RefereeService refereeService, UserService userService, ApplicationsService applicationsService,
-            DomicilePropertyEditor domicilePropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator,
-            EncryptionHelper encryptionHelper, final ApplicationFormUserRoleService applicationFormUserRoleService, DomicileService domicileService, 
-            final FullTextSearchService searchService) {
-        this.refereeService = refereeService;
-        this.userService = userService;
-        this.applicationsService = applicationsService;
-        this.domicilePropertyEditor = domicilePropertyEditor;
-        this.applicationFormPropertyEditor = applicationFormPropertyEditor;
-        this.refereeValidator = refereeValidator;
-        this.encryptionHelper = encryptionHelper;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.domicileService = domicileService;
-        this.searchService = searchService;
+    private RefereeService refereeService;
+
+    @Autowired
+    private DomicileService domicileService;
+
+    @Autowired
+    private ApplicationFormService applicationsService;
+
+    @Autowired
+    private DomicilePropertyEditor domicilePropertyEditor;
+
+    @Autowired
+    private ApplicationFormPropertyEditor applicationFormPropertyEditor;
+
+    @Autowired
+    private RefereeValidator refereeValidator;
+
+    @Autowired
+    private EncryptionHelper encryptionHelper;
+
+    @Autowired
+    private FullTextSearchService searchService;
+    
+    @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
+    public String getRefereeView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer refereeId, ModelMap modelMap) {
+        return returnView(modelMap, refereeService.getById(refereeId));
     }
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
-    public String editReferee(String refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap) {
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-
-        if (application.isDecided()) {
-            throw new CannotUpdateApplicationException(application.getApplicationNumber());
-        }
-
+    public String editReferee(String refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap,
+            @ModelAttribute ApplicationForm applicationForm) {
         Referee referee = null;
         if (StringUtils.isNotBlank(refereeId)) {
             referee = getReferee(refereeId);
@@ -97,43 +87,32 @@ public class RefereeController {
             return STUDENTS_FORM_REFEREES_VIEW;
         }
 
-        if (referee == null) {
-            referee = newReferee;
-        } else {
-            referee.setFirstname(newReferee.getFirstname());
-            referee.setLastname(newReferee.getLastname());
-            referee.setEmail(newReferee.getEmail());
-            referee.setJobEmployer(newReferee.getJobEmployer());
-            referee.setJobTitle(newReferee.getJobTitle());
-            referee.setAddressLocation(newReferee.getAddressLocation());
-            referee.setPhoneNumber(newReferee.getPhoneNumber());
-            referee.setMessenger(newReferee.getMessenger());
-        }
+        refereeService.saveOrUpdate(referee, newReferee);
 
-        if (!application.isSubmitted()) {
-            refereeService.save(referee);
-        } else if (application.isModifiable()) {
-            refereeService.processRefereesRoles(Arrays.asList(referee));
-
-        }
-
-        applicationsService.save(application);
-        applicationFormUserRoleService.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
-        return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber();
+        return "redirect:/update/getReferee?applicationId=" + applicationForm.getApplicationNumber();
     }
     
-    @RequestMapping(value="/referee/employer/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/deleteReferee", method = RequestMethod.POST)
+    public String deleteReferee(@RequestParam("id") String encrypedRefereeId) {
+        Integer id = encryptionHelper.decryptToInteger(encrypedRefereeId);
+        Referee referee = refereeService.getById(id);
+        refereeService.delete(referee);
+        updateLastAccessAndLastModified(userService.getCurrentUser(), referee.getApplication());
+        return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getApplicationNumber() + "&message=deleted";
+    }
+
+    @RequestMapping(value = "/referee/employer/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String provideSuggestionsForRefereeJobEmployer(@PathVariable final String searchTerm) {
-    	Gson gson = new Gson();
-    	return gson.toJson(searchService.getMatchingRefereesWithJobEmployersLike(searchTerm));
+        Gson gson = new Gson();
+        return gson.toJson(searchService.getMatchingRefereesWithJobEmployersLike(searchTerm));
     }
-    
-    @RequestMapping(value="/referee/position/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
+
+    @RequestMapping(value = "/referee/position/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String provideSuggestionsForRefereeJobTitle(@PathVariable final String searchTerm) {
-    	Gson gson = new Gson();
-    	return gson.toJson(searchService.getMatchingRefereesWithJobTitlesLike(searchTerm));
+        Gson gson = new Gson();
+        return gson.toJson(searchService.getMatchingRefereesWithJobTitlesLike(searchTerm));
     }
 
     @ModelAttribute("domiciles")
@@ -143,11 +122,7 @@ public class RefereeController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
-        return application;
+        return applicationsService.getSecuredApplication(applicationId, ApplicationFormAction.EDIT_AS_APPLICANT, ApplicationFormAction.CORRECT_APPLICATION);
     }
 
     @ModelAttribute("message")
@@ -167,27 +142,9 @@ public class RefereeController {
         return new StringTrimmerEditor(false);
     }
 
-    public Referee getReferee(String refereeId) {
-        if (StringUtils.isBlank(refereeId)) {
-            return null;
-        }
-        Integer id = encryptionHelper.decryptToInteger(refereeId);
-        Referee referee = refereeService.getRefereeById(id);
-        if (referee == null) {
-            throw new ResourceNotFoundException();
-        }
-        return referee;
-    }
-
-    @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
-    public String getRefereeView(@RequestParam(required = false) String refereeId, ModelMap modelMap) {
-        
-        Referee referee = getReferee(refereeId);
-        if (referee == null) {
-            referee = new Referee();
-        }
+    private String returnView(ModelMap modelMap, Referee referee) {
         modelMap.put("referee", referee);
-        return STUDENTS_FORM_REFEREES_VIEW;
+        return TemplateLocation.APPLICATION_APPLICANT_REFEREE;
     }
-
+    
 }

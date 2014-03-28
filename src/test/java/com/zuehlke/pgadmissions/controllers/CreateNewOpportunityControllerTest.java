@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.ProgramType;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
@@ -176,7 +176,7 @@ public class CreateNewOpportunityControllerTest {
 		Model model = new ExtendedModelMap();
 		HttpServletRequest request = new MockHttpServletRequest();
 
-		ArrayList<QualificationInstitution> institutionsList = Lists.newArrayList();
+		ArrayList<Institution> institutionsList = Lists.newArrayList();
 		expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutionsList);
 
 		replay();

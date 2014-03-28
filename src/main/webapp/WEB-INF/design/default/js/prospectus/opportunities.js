@@ -126,9 +126,9 @@ function renderAdvert(advert){
 			'<a class="addthis_button_linkedin" addthis:url="'+getAdvertUrl(advert)+'" addthis:title="'+advert.title+'" addthis:description="'+addThisDescription+'"></a>'+
 			'<a class="addthis_button_expanded"></a>'+
 			'<a class="addthis_counter addthis_bubble_style"></a>'+
-			'<script type="text/javascript" src="s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51af252068c85125"></script>';
+			'<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51af252068c85125"></script>';
 	} else {
-		popupbuttons = '<a href="api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>';
+		popupbuttons = '<a href="//api.addthis.com/oexchange/0.8/offer?url='+getAdvertUrl(advert)+'&title='+advert.title+'" target="_blank" title="View more services"><img src="//s7.addthis.com/static/btn/v2/lg-share-en.gif" alt="Share"/></a>';
 	}
 	
 	return '<li class="'+ advert.advertType.toLowerCase() +' item '+ selectedClass +'" id="ad-'+advert.id+'">'+

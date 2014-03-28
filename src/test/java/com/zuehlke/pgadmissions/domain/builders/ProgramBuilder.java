@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -40,7 +40,7 @@ public class ProgramBuilder {
     private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
     private List<Project> projects = Lists.newArrayList();
-    private QualificationInstitution institution;
+    private Institution institution;
     private ProgramFeed programFeed;
     private ProgramType programType = ProgramTypeBuilder.aProgramType().build();
     private boolean locked;
@@ -143,7 +143,7 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder institution(QualificationInstitution institution) {
+    public ProgramBuilder institution(Institution institution) {
         this.institution = institution;
         return this;
     }
@@ -196,7 +196,7 @@ public class ProgramBuilder {
         return program;
     }
 
-    public static ProgramBuilder aProgram(QualificationInstitution institution) {
+    public static ProgramBuilder aProgram(Institution institution) {
         return new ProgramBuilder().code("AAA").title("Amazing program!").enabled(true).atasRequired(false).institution(institution);
     }
 }

@@ -24,7 +24,7 @@ import org.springframework.stereotype.Repository;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -394,14 +394,14 @@ public class FullTextSearchDAO {
         if (StringUtils.length(trimmedSearchTerm) >= 3) {
             FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
 
-            QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(QualificationInstitution.class).get();
+            QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(Institution.class).get();
 
-            Criteria filterDomicileCriteria = fullTextSession.createCriteria(QualificationInstitution.class).add(Restrictions.eq("domicileCode", domicileCode));
+            Criteria filterDomicileCriteria = fullTextSession.createCriteria(Institution.class).add(Restrictions.eq("domicileCode", domicileCode));
 
             FullTextQuery fuzzyQuery = fullTextSession.createFullTextQuery(queryBuilder.phrase().onField("name").sentence(trimmedSearchTerm).createQuery(),
-                    QualificationInstitution.class).setCriteriaQuery(filterDomicileCriteria);
+                    Institution.class).setCriteriaQuery(filterDomicileCriteria);
 
-            List<QualificationInstitution> fuzzyQueryResults = fuzzyQuery.list();
+            List<Institution> fuzzyQueryResults = fuzzyQuery.list();
 
             List<String> results = Lists.newArrayListWithCapacity(fuzzyQueryResults.size());
             for (int i = 0; i < fuzzyQueryResults.size(); i++) {

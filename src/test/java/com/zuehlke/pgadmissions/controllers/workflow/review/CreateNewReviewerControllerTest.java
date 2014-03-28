@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
@@ -32,7 +32,7 @@ public class CreateNewReviewerControllerTest {
 	private CreateNewReviewerController controller;
 	private UserService userServiceMock;	
 	private BindingResult bindingResultMock;	
-	private ApplicationsService applicationsServiceMock;
+	private ApplicationFormService applicationsServiceMock;
 	private NewUserByAdminValidator newUserValidatorMock;
 	private RegisteredUser currentUserMock;
 
@@ -110,7 +110,7 @@ public class CreateNewReviewerControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).advert(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUserMock);
 
 		ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -124,7 +124,7 @@ public class CreateNewReviewerControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).advert(program).build();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUserMock);
 
 		ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -134,7 +134,7 @@ public class CreateNewReviewerControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicatioDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
 
 		controller.getApplicationForm("5");
@@ -143,7 +143,7 @@ public class CreateNewReviewerControllerTest {
 	@Before
 	public void setup() {
 		newUserValidatorMock = EasyMock.createMock(NewUserByAdminValidator.class);
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);

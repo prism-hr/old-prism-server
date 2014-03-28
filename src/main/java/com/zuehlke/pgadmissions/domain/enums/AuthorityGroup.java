@@ -19,7 +19,11 @@ public enum AuthorityGroup {
     EXTERNAL_APPLICATION_AUTHORITIES(new ArrayList<Authority>(0)),
 
     INTERNAL_STATE_AUTHORITIES(Arrays.asList(Authority.STATEADMINISTRATOR)), 
-    EXTERNAL_STATE_AUTHORITIES(new ArrayList<Authority>(0));
+    EXTERNAL_STATE_AUTHORITIES(new ArrayList<Authority>(0)),
+    
+    ADMINISTRATOR_AUTHORITIES(Arrays.asList(Authority.ADMINISTRATOR, Authority.PROJECTADMINISTRATOR, Authority.STATEADMINISTRATOR, Authority.SUPERADMINISTRATOR)),
+    
+    APPROVER_AUTHORITIES(Arrays.asList(Authority.APPROVER, Authority.SUPERADMINISTRATOR));
 
     private List<Authority> authorities;
 

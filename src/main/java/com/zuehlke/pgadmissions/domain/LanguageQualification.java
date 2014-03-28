@@ -17,32 +17,25 @@ import javax.persistence.OneToOne;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL_LANGUAGE_QUALIFICATIONS")
+@Entity(name = "APPLICATION_FORM_LANGUAGE_QUALIFICATION")
 public class LanguageQualification implements Serializable {
 
-    private static final long serialVersionUID = -4188769453233574918L;
+    private static final long serialVersionUID = -2695332340505084549L;
 
     @Id
     @GeneratedValue
     private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "language_qualification_document_id")
-    private Document languageQualificationDocument;
-
-    @OneToOne(mappedBy = "languageQualification")
-    private PersonalDetails personalDetails;
-
     @Column(name = "qualification_type")
     @Enumerated(EnumType.STRING)
-    LanguageQualificationEnum qualificationType;
+    private LanguageQualificationEnum qualificationType;
 
-    @Column(name = "other_qualification_type_name")
+    @Column(name = "qualification_type_other")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
-    private String otherQualificationTypeName;
+    private String qualificationTypeOther;
 
-    @Column(name = "date_of_examination")
-    private Date dateOfExamination;
+    @Column(name = "exam_date")
+    private Date examDate;
 
     @Column(name = "overall_score")
     private String overallScore;
@@ -59,18 +52,19 @@ public class LanguageQualification implements Serializable {
     @Column(name = "listening_score")
     private String listeningScore;
 
-    @Column(name = "exam_taken_online")
-    private Boolean examTakenOnline;
+    @Column(name = "exam_online")
+    private Boolean examOnline;
 
-    public LanguageQualification() {
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "document_id")
+    private Document proofOfAward = null;
+    
+    public Integer getId() {
+        return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public LanguageQualificationEnum getQualificationType() {
@@ -81,20 +75,20 @@ public class LanguageQualification implements Serializable {
         this.qualificationType = qualificationType;
     }
 
-    public String getOtherQualificationTypeName() {
-        return otherQualificationTypeName;
+    public String getQualificationTypeOther() {
+        return qualificationTypeOther;
     }
 
-    public void setOtherQualificationTypeName(String otherQualificationTypeName) {
-        this.otherQualificationTypeName = otherQualificationTypeName;
+    public void setQualificationTypeOther(String qualificationTypeOther) {
+        this.qualificationTypeOther = qualificationTypeOther;
     }
 
-    public Date getDateOfExamination() {
-        return dateOfExamination;
+    public Date getExamDate() {
+        return examDate;
     }
 
-    public void setDateOfExamination(Date dateOfExamination) {
-        this.dateOfExamination = dateOfExamination;
+    public void setExamDate(Date examDate) {
+        this.examDate = examDate;
     }
 
     public String getOverallScore() {
@@ -125,8 +119,8 @@ public class LanguageQualification implements Serializable {
         return speakingScore;
     }
 
-    public void setSpeakingScore(String speakingcore) {
-        this.speakingScore = speakingcore;
+    public void setSpeakingScore(String speakingScore) {
+        this.speakingScore = speakingScore;
     }
 
     public String getListeningScore() {
@@ -137,44 +131,20 @@ public class LanguageQualification implements Serializable {
         this.listeningScore = listeningScore;
     }
 
-    // freemarker convinience method
-    public boolean isExamTakenOnlineSet() {
-        return (examTakenOnline != null);
+    public Boolean getExamOnline() {
+        return examOnline;
     }
 
-    public Boolean getExamTakenOnline() {
-        return examTakenOnline;
+    public void setExamOnline(Boolean examOnline) {
+        this.examOnline = examOnline;
     }
 
-    public void setExamTakenOnline(Boolean examTakenOnline) {
-        this.examTakenOnline = examTakenOnline;
+    public Document getProofOfAward() {
+        return proofOfAward;
     }
 
-    public PersonalDetails getPersonalDetails() {
-        return personalDetails;
+    public void setProofOfAward(Document proofOfAward) {
+        this.proofOfAward = proofOfAward;
     }
-
-    public void setPersonalDetails(PersonalDetails personalDetails) {
-        this.personalDetails = personalDetails;
-    }
-
-    public Document getLanguageQualificationDocument() {
-        return languageQualificationDocument;
-    }
-
-    public void setLanguageQualificationDocument(Document languageQualificationDocument) {
-        if (languageQualificationDocument != null) {
-            languageQualificationDocument.setIsReferenced(true);
-        }
-        this.languageQualificationDocument = languageQualificationDocument;
-    }
-
-    @Override
-    public String toString() {
-        return String
-                .format("LanguageQualification [personalDetails=%s, qualificationType=%s, otherQualificationTypeName=%s, dateOfExamination=%s, overallScore=%s, readingScore=%s, writingScore=%s, speakingcore=%s, listeningScore=%s, examTakenOnline=%s]",
-                        personalDetails, qualificationType, otherQualificationTypeName, dateOfExamination, overallScore, readingScore, writingScore,
-                        speakingScore, listeningScore, examTakenOnline);
-    }
-
+    
 }

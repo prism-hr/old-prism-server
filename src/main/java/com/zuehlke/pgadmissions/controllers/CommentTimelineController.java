@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -37,7 +37,7 @@ public class CommentTimelineController {
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String id) {
-		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
+		ApplicationForm applicationForm = applicationService.getByApplicationNumber(id);
 		if (applicationForm == null) {
 			throw new MissingApplicationFormException(id);
 		}

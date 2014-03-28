@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
@@ -50,9 +50,9 @@ public class ProgrammeDetailsValidatorTest {
     @Autowired  
     private Validator validator;
     
-	private ProgrammeDetailsValidator programmeDetailsValidator;
+	private ProgramDetailsValidator programmeDetailsValidator;
     
-	private ProgrammeDetails programmeDetail;
+	private ProgramDetails programmeDetail;
 	
 	private ProgramInstance programInstance;
 	
@@ -64,7 +64,7 @@ public class ProgrammeDetailsValidatorTest {
 
 	@Test
 	public void shouldSupportProgrammeDetails() {
-		assertTrue(programmeDetailsValidator.supports(ProgrammeDetails.class));
+		assertTrue(programmeDetailsValidator.supports(ProgramDetails.class));
 	}
 	
 	@Test
@@ -141,7 +141,7 @@ public class ProgrammeDetailsValidatorTest {
 
 	@Test
 	public void shouldRejectIfSourcesOfInterestIsEmpty() {
-		programmeDetail.setSourcesOfInterest(null);
+		programmeDetail.setSourceOfInterest(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "sourcesOfInterest");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
@@ -156,7 +156,7 @@ public class ProgrammeDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfSourcesOfInterestFreeTextIsEmpty() {
 	    SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).build();
-	    programmeDetail.setSourcesOfInterest(sourcesOfInterest);
+	    programmeDetail.setSourceOfInterest(sourcesOfInterest);
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "sourcesOfInterest");
 	    EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
 	    EasyMock.replay(programInstanceDAOMock);
@@ -312,7 +312,7 @@ public class ProgrammeDetailsValidatorTest {
 	@Test
 	public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
 		programmeDetail.setStudyOption("Part-time");
-		programmeDetail.setStudyOptionCode("31");
+		programmeDetail.setStudyOption("31");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "studyOption");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(null);
 		EasyMock.replay(programInstanceDAOMock);
@@ -401,7 +401,7 @@ public class ProgrammeDetailsValidatorTest {
 		
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
 		
-		programmeDetailsValidator = new ProgrammeDetailsValidator(programInstanceDAOMock);
+		programmeDetailsValidator = new ProgramDetailsValidator(programInstanceDAOMock);
 		programmeDetailsValidator.setValidator((javax.validation.Validator) validator);
 	}
 }

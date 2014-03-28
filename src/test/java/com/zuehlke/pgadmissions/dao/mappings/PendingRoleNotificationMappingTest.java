@@ -67,7 +67,7 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 	@Before
 	public void prepare() {
 		RoleDAO roleDAO = new RoleDAO(sessionFactory);
-		reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
+		reviewerRole = roleDAO.getById(Authority.REVIEWER);
 		creatingUser = new RegisteredUserBuilder().firstName("Hanna").lastName("Doe").email("email@test.com").username("username2").password("password2")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
 		save(creatingUser);

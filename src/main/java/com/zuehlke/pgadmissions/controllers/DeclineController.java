@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class DeclineController {
 	private final UserService userService;
 	private final CommentService commentService;
-	private final ApplicationsService applicationsService;
+	private final ApplicationFormService applicationsService;
 	private static final String DECLINE_SUCCESS_VIEW_NAME = "/private/reviewers/decline_success_confirmation";
 	private static final String DECLINE_CONFIRMATION_VIEW_NAME = "/private/reviewers/decline_confirmation";
 	private final RefereeService refereeService;
@@ -36,7 +36,7 @@ public class DeclineController {
 	}
 
 	@Autowired
-	public DeclineController(UserService userService, CommentService commentService, ApplicationsService applicationsService, RefereeService refereeService, ActionsProvider actionsProvider) {
+	public DeclineController(UserService userService, CommentService commentService, ApplicationFormService applicationsService, RefereeService refereeService, ActionsProvider actionsProvider) {
 		this.userService = userService;
 		this.commentService = commentService;
 		this.applicationsService = applicationsService;
@@ -119,7 +119,7 @@ public class DeclineController {
 	}
 
 	public ApplicationForm getApplicationForm(String applicationId) {
-		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+		ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
 		if (applicationForm == null) {
 			throw new MissingApplicationFormException(applicationId);
 		}

@@ -24,8 +24,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
@@ -36,7 +36,7 @@ public class GenericCommentController {
 
     private static final String GENERIC_COMMENT_PAGE = "private/staff/admin/comment/genericcomment";
 
-    private final ApplicationsService applicationsService;
+    private final ApplicationFormService applicationsService;
 
     private final UserService userService;
 
@@ -48,16 +48,16 @@ public class GenericCommentController {
 
     private final ActionsProvider actionsProvider;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     public GenericCommentController() {
         this(null, null, null, null, null, null, null);
     }
 
     @Autowired
-    public GenericCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
+    public GenericCommentController(ApplicationFormService applicationsService, UserService userService, CommentService commentService,
             GenericCommentValidator genericCommentValidator, DocumentPropertyEditor documentPropertyEditor, ActionsProvider actionsProvider,
-            ApplicationFormUserRoleService applicationFormUserRoleService) {
+            WorkflowService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
@@ -69,7 +69,7 @@ public class GenericCommentController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+        ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new ResourceNotFoundException();
         }

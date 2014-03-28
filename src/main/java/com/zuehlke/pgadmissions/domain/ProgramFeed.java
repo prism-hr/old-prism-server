@@ -18,7 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity(name = "PROGRAM_FEED")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ProgramFeed extends Authorisable implements Serializable {
+public class ProgramFeed implements Serializable {
 
     private static final long serialVersionUID = -9073611033741317582L;
 
@@ -31,7 +31,7 @@ public class ProgramFeed extends Authorisable implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", nullable = false)
-    private QualificationInstitution institution;
+    private Institution institution;
 
     @OneToMany(mappedBy = "programFeed")
     private List<Program> programs = new ArrayList<Program>();
@@ -52,11 +52,11 @@ public class ProgramFeed extends Authorisable implements Serializable {
         this.feedUrl = feedUrl;
     }
 
-    public QualificationInstitution getInstitution() {
+    public Institution getInstitution() {
         return institution;
     }
 
-    public void setInstitution(QualificationInstitution institution) {
+    public void setInstitution(Institution institution) {
         this.institution = institution;
     }
 

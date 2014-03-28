@@ -59,7 +59,7 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 
 		Integer id = funding.getId();
 		FundingDAO fundingDAO = new FundingDAO(sessionFactory);
-		Funding reloadedFunding = fundingDAO.getFundingById(id);
+		Funding reloadedFunding = fundingDAO.getById(id);
 		assertEquals(funding, reloadedFunding);
 	}
 

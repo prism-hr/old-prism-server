@@ -35,7 +35,7 @@ public class ApprovalServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     @Mock
     @InjectIntoByType

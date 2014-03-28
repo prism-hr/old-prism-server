@@ -17,17 +17,9 @@ import com.zuehlke.pgadmissions.dto.AdvertDTO;
 @Transactional
 public class AdvertService {
 
-    private final AdvertDAO advertDAO;
-
-    AdvertService() {
-        this(null);
-    }
-
     @Autowired
-    public AdvertService(AdvertDAO advertDAO) {
-        this.advertDAO = advertDAO;
-    }
-    
+    private AdvertDAO advertDAO;
+
     public List<AdvertDTO> getAdvertFeed(OpportunityListType feedKey, String feedKeyValue, String advertId) {
         List<AdvertDTO> advertDTOs = new ArrayList<AdvertDTO>();
 

@@ -30,7 +30,7 @@ public class OpportunitiesService {
     private OpportunityRequestDAO opportunityRequestDAO;
 
     @Autowired
-    private ProgramsService programsService;
+    private ProgramService programsService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;

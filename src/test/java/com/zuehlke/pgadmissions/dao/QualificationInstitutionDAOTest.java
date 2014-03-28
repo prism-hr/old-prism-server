@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.QualificationInstitutionReference;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
@@ -18,11 +18,11 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnInstitutionForDomicileCode() {
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK").code("ABC")
+        Institution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK").code("ABC")
                 .build();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").domicileCode("UK")
+        Institution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").domicileCode("UK")
                 .code("ABCD").build();
-        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").domicileCode("CH")
+        Institution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").domicileCode("CH")
                 .code("ABCDE").build();
 
         QualificationInstitutionReference institution4 = new QualificationInstitutionBuilder().enabled(false).name("University of   Cambridge .")
@@ -39,7 +39,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
         QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
 
-        List<QualificationInstitution> returnList = qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("UK");
+        List<Institution> returnList = qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("UK");
 
         assertNotNull(returnList);
         assertEquals(1, returnList.size());
@@ -49,11 +49,11 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetInstitutionByCode() {
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK").code("ABC")
+        Institution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK").code("ABC")
                 .build();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").domicileCode("UK")
+        Institution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").domicileCode("UK")
                 .code("ABCD").build();
-        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").domicileCode("CH")
+        Institution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").domicileCode("CH")
                 .code("ABCDE").build();
 
         save(institution1, institution2, institution3);
@@ -62,7 +62,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
         QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
 
-        QualificationInstitution returned = qualificationInstitutionDAO.getInstitutionByCode("ABC");
+        Institution returned = qualificationInstitutionDAO.getByCode("ABC");
 
         assertEquals(institution1.getCode(), returned.getCode());
         assertEquals(institution1.getName(), returned.getName());
@@ -70,11 +70,11 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetLastCustomInstitution() {
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK")
+        Institution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK")
                 .code("CUST00005").build();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").domicileCode("UK")
+        Institution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").domicileCode("UK")
                 .code("CUST00006").build();
-        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").domicileCode("CH")
+        Institution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").domicileCode("CH")
                 .code("CUST00004").build();
 
         save(institution1, institution2, institution3);
@@ -83,7 +83,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
         QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
 
-        QualificationInstitution returned = qualificationInstitutionDAO.getLastCustomInstitution();
+        Institution returned = qualificationInstitutionDAO.getLastCustomInstitution();
 
         assertEquals(institution2.getCode(), returned.getCode());
         assertEquals(institution2.getName(), returned.getName());
@@ -91,11 +91,11 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetInstitutionByDomicileAndName() {
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK").code("ABC")
+        Institution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK").code("ABC")
                 .build();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("PL")
+        Institution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("PL")
                 .code("ABCD").build();
-        QualificationInstitution institution3 = new QualificationInstitutionBuilder().enabled(true).name("Akademia Gorniczo-Hutnicza").domicileCode("PL")
+        Institution institution3 = new QualificationInstitutionBuilder().enabled(true).name("Akademia Gorniczo-Hutnicza").domicileCode("PL")
                 .code("ABCDE").build();
 
         save(institution1, institution2, institution3);
@@ -104,7 +104,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
         QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
 
-        QualificationInstitution returned = qualificationInstitutionDAO.getInstitutionByDomicileAndName("PL", "University of London");
+        Institution returned = qualificationInstitutionDAO.getByDomicileAndName("PL", "University of London");
 
         assertEquals(institution2.getId(), returned.getId());
     }

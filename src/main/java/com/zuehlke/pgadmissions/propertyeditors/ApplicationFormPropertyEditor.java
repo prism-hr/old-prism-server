@@ -6,19 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 
 @Component
 public class ApplicationFormPropertyEditor extends PropertyEditorSupport {
 
-	private final ApplicationsService applicationsService;
+	private final ApplicationFormService applicationsService;
 
 	public ApplicationFormPropertyEditor() {
 		this(null);
 	}
 	
 	@Autowired
-	public ApplicationFormPropertyEditor(ApplicationsService applicationsService) {
+	public ApplicationFormPropertyEditor(ApplicationFormService applicationsService) {
 		this.applicationsService = applicationsService;
 	}
 
@@ -28,7 +28,7 @@ public class ApplicationFormPropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(applicationsService.getApplicationByApplicationNumber(strId));
+		setValue(applicationsService.getByApplicationNumber(strId));
 	}
 
 	@Override

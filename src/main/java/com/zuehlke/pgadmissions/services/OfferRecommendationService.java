@@ -41,10 +41,10 @@ public class OfferRecommendationService {
     private MailSendingService mailSendingService;
     
     @Autowired
-    private PorticoQueueService approvedSenderService;
+    private ExportQueueService approvedSenderService;
     
     @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     public boolean moveToApproved(ApplicationForm form, OfferRecommendedComment offerRecommendedComment) {
         if (ApplicationFormStatus.APPROVAL != form.getStatus()) {
@@ -56,8 +56,8 @@ public class OfferRecommendationService {
             if (earliestPossibleStartDate == null) {
                 return false;
             }
-            form.getProgrammeDetails().setStartDate(earliestPossibleStartDate);
-            programmeDetailDAO.save(form.getProgrammeDetails());
+            form.getProgramDetails().setStartDate(earliestPossibleStartDate);
+            programmeDetailDAO.save(form.getProgramDetails());
         }
 
         form.setStatus(ApplicationFormStatus.APPROVED);

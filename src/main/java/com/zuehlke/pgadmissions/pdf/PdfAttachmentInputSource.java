@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import org.springframework.core.io.InputStreamSource;
 
-public class PdfAttachmentInputSource implements InputStreamSource{
+public class PdfAttachmentInputSource implements InputStreamSource {
 
 	private final String attachmentFilename;
 	private byte[] pdf = null;

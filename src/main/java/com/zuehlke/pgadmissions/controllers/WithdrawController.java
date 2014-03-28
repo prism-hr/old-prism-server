@@ -14,8 +14,8 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WithdrawService;
 
@@ -25,11 +25,11 @@ public class WithdrawController {
 
     private final WithdrawService withdrawService;
 
-    private final ApplicationsService applicationService;
+    private final ApplicationFormService applicationService;
 
     private final UserService userService;
 
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
 
     private final ActionsProvider actionsProvider;
 
@@ -38,8 +38,8 @@ public class WithdrawController {
     }
 
     @Autowired
-    public WithdrawController(ApplicationsService applicationService, UserService userService, WithdrawService withdrawService,
-            ApplicationFormUserRoleService applicationFormUserRoleService, ActionsProvider actionsProvider) {
+    public WithdrawController(ApplicationFormService applicationService, UserService userService, WithdrawService withdrawService,
+            WorkflowService applicationFormUserRoleService, ActionsProvider actionsProvider) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.withdrawService = withdrawService;
@@ -66,7 +66,7 @@ public class WithdrawController {
 
     @ModelAttribute
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
+        ApplicationForm applicationForm = applicationService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }

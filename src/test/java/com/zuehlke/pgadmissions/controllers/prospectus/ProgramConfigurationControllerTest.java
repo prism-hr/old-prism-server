@@ -47,7 +47,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
 
@@ -56,7 +56,7 @@ public class ProgramConfigurationControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ProgramsService programsService;
+    private ProgramService programsService;
 
     @Mock
     @InjectIntoByType

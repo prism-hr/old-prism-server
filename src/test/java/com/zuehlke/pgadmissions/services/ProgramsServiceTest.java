@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
@@ -66,7 +66,7 @@ public class ProgramsServiceTest {
     private ProgramInstanceService programInstanceService;
 
     @TestedObject
-    private ProgramsService programsService;
+    private ProgramService programsService;
 
     @Test
     public void shouldGetAllPrograms() {
@@ -181,7 +181,7 @@ public class ProgramsServiceTest {
     public void shouldReturnAllProjectsForSuperAdministrator() {
         Program program = EasyMock.createMock(Program.class);
         RegisteredUser superAdmin = EasyMockUnitils.createMock(RegisteredUser.class);
-        expect(superAdmin.isInRole(superAdmin, Authority.SUPERADMINISTRATOR)).andReturn(true);
+        expect(superAdmin.checkUserHasRole(superAdmin, Authority.SUPERADMINISTRATOR)).andReturn(true);
         List<Project> allProjects = Collections.emptyList();
         expect(programDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
 
@@ -196,7 +196,7 @@ public class ProgramsServiceTest {
     public void shouldReturnAllProjectsForProgramAdministrator() {
         Program program = EasyMock.createMock(Program.class);
         RegisteredUser admin = EasyMockUnitils.createMock(RegisteredUser.class);
-        expect(admin.isInRole(admin, Authority.SUPERADMINISTRATOR)).andReturn(false);
+        expect(admin.checkUserHasRole(admin, Authority.SUPERADMINISTRATOR)).andReturn(false);
         expect(admin.isAdminInProgramme(program)).andReturn(true);
         List<Project> allProjects = Collections.emptyList();
         expect(programDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
@@ -212,7 +212,7 @@ public class ProgramsServiceTest {
     public void shouldReturnProjectsForProgramOfAuthor() {
         Program program = EasyMockUnitils.createMock(Program.class);
         RegisteredUser user = EasyMockUnitils.createMock(RegisteredUser.class);
-        expect(user.isInRole(user, Authority.SUPERADMINISTRATOR)).andReturn(false);
+        expect(user.checkUserHasRole(user, Authority.SUPERADMINISTRATOR)).andReturn(false);
         expect(user.isAdminInProgramme(program)).andReturn(false);
         List<Project> allProjects = Collections.emptyList();
         expect(programDAOMock.getProjectsForProgramOfWhichAuthor(program, user)).andReturn(allProjects);
@@ -227,14 +227,14 @@ public class ProgramsServiceTest {
     @Test
     public void shouldCreateNewCustomProgram() {
         Domicile domicile = new Domicile();
-        ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
+        ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
 
         RegisteredUser requestAuthor = new RegisteredUser();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, domicile).otherInstitution("other_name").build();
-        QualificationInstitution institution = new QualificationInstitutionBuilder().build();
+        Institution institution = new QualificationInstitutionBuilder().build();
 
-        expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
-        expect(qualificationInstitutionService.getOrCreateCustomInstitution("AGH", domicile, "other_name")).andReturn(institution);
+        expect(applicationContext.getBean(ProgramService.class)).andReturn(thisBean);
+        expect(qualificationInstitutionService.getOrCreate("AGH", domicile, "other_name")).andReturn(institution);
         Capture<Program> programCapture = new Capture<Program>();
         expect(thisBean.generateNextProgramCode(institution)).andReturn("AAA_00000");
         programDAOMock.save(capture(programCapture));
@@ -253,13 +253,13 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldGetCustomProgram() {
-        ProgramsService thisBean = EasyMockUnitils.createMock(ProgramsService.class);
+        ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
         Program program = new ProgramBuilder().institution(new QualificationInstitutionBuilder().code("any_inst").build()).build();
         RegisteredUser requestAuthor = new RegisteredUser();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, null).institutionCode("any_inst")
                 .atasRequired(true).sourceProgram(program).acceptingApplications(true).build();
 
-        expect(applicationContext.getBean(ProgramsService.class)).andReturn(thisBean);
+        expect(applicationContext.getBean(ProgramService.class)).andReturn(thisBean);
         expect(thisBean.getContactUserForProgram(program, requestAuthor)).andReturn(requestAuthor);
         expect(programDAOMock.merge(program)).andReturn(program);
         programDAOMock.save(program);
@@ -281,7 +281,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldGenerateNextProgramCode() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("AAA").build();
+        Institution institution = new QualificationInstitutionBuilder().code("AAA").build();
         Program lastCustomProgram = new ProgramBuilder().code("AAA_00018").build();
 
         expect(programDAOMock.getLastCustomProgram(institution)).andReturn(lastCustomProgram);
@@ -327,7 +327,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldInitialProgramCode() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("AAA").build();
+        Institution institution = new QualificationInstitutionBuilder().code("AAA").build();
 
         expect(programDAOMock.getLastCustomProgram(institution)).andReturn(null);
 

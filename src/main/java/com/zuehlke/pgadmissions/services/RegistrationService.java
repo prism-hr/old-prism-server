@@ -50,7 +50,7 @@ public class RegistrationService {
         pendingApplicantUser.setEnabled(false);
         pendingApplicantUser.setCredentialsNonExpired(true);
         pendingApplicantUser.setOriginalApplicationQueryString(queryString);
-        pendingApplicantUser.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
+        pendingApplicantUser.getRoles().add(roleDAO.getById(Authority.APPLICANT));
         pendingApplicantUser.setActivationCode(encryptionUtils.generateUUID());
         return pendingApplicantUser;
     }

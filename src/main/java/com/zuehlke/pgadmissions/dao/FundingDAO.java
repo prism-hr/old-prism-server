@@ -9,28 +9,19 @@ import com.zuehlke.pgadmissions.domain.Funding;
 @Repository
 public class FundingDAO {
 
-	private final SessionFactory sessionFactory;
+    @Autowired
+	private SessionFactory sessionFactory;
 
-	public FundingDAO() {
-		this(null);
-	}
-
-	@Autowired
-	public FundingDAO(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-
-	}
+	public Funding getById(Integer id) {
+        return (Funding) sessionFactory.getCurrentSession().get(Funding.class, id);
+    }
+	
+	public void save(Funding funding) {
+        sessionFactory.getCurrentSession().saveOrUpdate(funding);
+    }
 
 	public void delete(Funding funding) {
 		sessionFactory.getCurrentSession().delete(funding);
-
 	}
-
-	public Funding getFundingById(Integer id) {
-		return (Funding) sessionFactory.getCurrentSession().get(Funding.class, id);
-	}
-
-	public void save(Funding funding) {
-		sessionFactory.getCurrentSession().saveOrUpdate(funding);
-	}
+	
 }

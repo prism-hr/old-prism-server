@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @Service
 public class ConfigurationService {
@@ -42,7 +42,7 @@ public class ConfigurationService {
     
     private final RoleDAO roleDAO;
     
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
+    private final WorkflowService applicationFormUserRoleService;
     
     private final UserFactory userFactory;
     
@@ -54,7 +54,7 @@ public class ConfigurationService {
     @Autowired
     public ConfigurationService(final StageDurationDAO stageDurationDAO,
             final ReminderIntervalDAO reminderIntervalDAO, final NotificationsDurationDAO notificationsDurationDAO,
-            final PersonDAO personDAO, final UserDAO userDAO, final ApplicationFormUserRoleService applicationFormUserRoleService,
+            final PersonDAO personDAO, final UserDAO userDAO, final WorkflowService applicationFormUserRoleService,
             final UserFactory userFactory, final RoleDAO roleDAO) {
         this.stageDurationDAO = stageDurationDAO;
         this.reminderIntervalDAO = reminderIntervalDAO;
@@ -86,7 +86,7 @@ public class ConfigurationService {
     @Transactional
     public void saveConfigurations(ServiceLevelsDTO serviceLevelsDTO) {
         for (StageDuration stageDuration : serviceLevelsDTO.getStagesDuration()) {
-            StageDuration oldDuration = stageDurationDAO.getByStatus(stageDuration.getStage());
+            StageDuration oldDuration = stageDurationDAO.getById(stageDuration.getStage());
             if (oldDuration != null) {
                 oldDuration.setUnit(stageDuration.getUnit());
                 oldDuration.setDuration(stageDuration.getDuration());
@@ -138,10 +138,10 @@ public class ConfigurationService {
         RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(registryContact.getEmail());
         PendingRoleNotification admitterNotification = new PendingRoleNotification();
         admitterNotification.setAddedByUser(requestedBy);
-        admitterNotification.setRole(roleDAO.getRoleByAuthority(Authority.ADMITTER));
+        admitterNotification.setRole(roleDAO.getById(Authority.ADMITTER));
         PendingRoleNotification viewerNotification = new PendingRoleNotification();
         viewerNotification.setAddedByUser(requestedBy);
-        viewerNotification.setRole(roleDAO.getRoleByAuthority(Authority.VIEWER));
+        viewerNotification.setRole(roleDAO.getById(Authority.VIEWER));
         if (user == null) {
             user = userFactory.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(), Authority.VIEWER, Authority.ADMITTER);
             user.getPendingRoleNotifications().add(viewerNotification);
@@ -149,7 +149,7 @@ public class ConfigurationService {
             userDAO.save(user);
             applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);;
         } else if (user != null && user.isNotInRole(Authority.ADMITTER)) {
-            user.getRoles().add(roleDAO.getRoleByAuthority(Authority.ADMITTER));
+            user.getRoles().add(roleDAO.getById(Authority.ADMITTER));
             user.getPendingRoleNotifications().add(admitterNotification);
             userDAO.save(user);
             applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);
@@ -161,7 +161,7 @@ public class ConfigurationService {
         Map<ApplicationFormStatus, StageDuration> stageDurations = new HashMap<ApplicationFormStatus, StageDuration>();
         ApplicationFormStatus[] configurableStages = getConfigurableStages();
         for (ApplicationFormStatus applicationFormStatus : configurableStages) {
-            stageDurations.put(applicationFormStatus, stageDurationDAO.getByStatus(applicationFormStatus));
+            stageDurations.put(applicationFormStatus, stageDurationDAO.getById(applicationFormStatus));
         }
         return stageDurations;
     }

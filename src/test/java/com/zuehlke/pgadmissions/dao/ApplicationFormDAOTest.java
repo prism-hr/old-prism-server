@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -115,7 +115,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         String nextYear = new Integer(Integer.parseInt(thisYear) + 1).toString();
         flushAndClearSession();
 
-        QualificationInstitution institution = testObjectProvider.getEnabledInstitution();
+        Institution institution = testObjectProvider.getEnabledInstitution();
         Program program = new ProgramBuilder().code("test").title("test").description("test")
                 .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).institution(institution).build();
         save(program);

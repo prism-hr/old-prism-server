@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,8 +13,10 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
@@ -24,9 +27,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
@@ -57,9 +61,17 @@ public class UserDAO {
         session.flush();
     }
 
-    public RegisteredUser get(Integer id) {
+    public RegisteredUser getById(Integer id) {
         return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
                 .add(Restrictions.eq("id", id)).uniqueResult();
+    }
+    
+    public RegisteredUser getPrimaryById(Integer id) {
+        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+                .createAlias("primaryAccount", "registeredUser", JoinType.INNER_JOIN)
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.eq("id", id))
+                        .add(Restrictions.eq("registeredUser.id", id))).uniqueResult();
     }
 
     public RegisteredUser getUserByUsername(String username) {
@@ -71,11 +83,11 @@ public class UserDAO {
         return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<RegisteredUser> getUsersInRole(Role role) {
-        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles").add(Restrictions.eq("id", role.getId()))
+    public List<RegisteredUser> getUsersInRole(Authority ...authorities) {
+        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles").add(Restrictions.in("id", authorities))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
-
+    
     public RegisteredUser getUserByActivationCode(String activationCode) {
         return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("activationCode", activationCode))
                 .uniqueResult();
@@ -95,9 +107,6 @@ public class UserDAO {
     public List<RegisteredUser> getUsersForProgram(Program program) {
         final Map<Integer, RegisteredUser> users = new HashMap<Integer, RegisteredUser>();
 
-        Criteria superAdminRoleCriteria = sessionFactory.getCurrentSession().createCriteria(Role.class)
-                .add(Restrictions.eq("id", Authority.SUPERADMINISTRATOR));
-
         Criteria programsOfWhichAdministratorCriteria = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
                 .createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId()));
 
@@ -107,7 +116,7 @@ public class UserDAO {
         Criteria programsOfWhichViewer = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichViewer")
                 .add(Restrictions.eq("id", program.getId()));
 
-        CollectionUtils.forAllDo(getUsersInRole((Role) superAdminRoleCriteria.uniqueResult()), new Closure() {
+        CollectionUtils.forAllDo(getUsersInRole(Authority.SUPERADMINISTRATOR), new Closure() {
             @Override
             public void execute(Object target) {
                 RegisteredUser user = (RegisteredUser) target;
@@ -264,6 +273,54 @@ public class UserDAO {
                 .add(Restrictions.eq("accountNonExpired", true))
                 .add(Restrictions.eq("accountNonLocked", true))
                 .add(Restrictions.eq("credentialsNonExpired", true)).list();
+    }
+    
+    public List<RegisteredUser> getInterviewAdministrators(ApplicationForm application) {
+        return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.groupProperty("user"))
+                .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
+                .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
+                .createAlias("role", "applicationRole", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("applicationForm", application))
+                .add(Restrictions.ne("applicationRole.id", Authority.SUPERADMINISTRATOR))
+                .add(Restrictions.eq("action.id", ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
+    }
+    
+    public List<RegisteredUser> getUsersInterestedInApplication(ApplicationForm applicationForm) {
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.projectionList().add(Projections.groupProperty("user"), "user"))
+                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("applicationForm", applicationForm))
+                .add(Restrictions.eq("interestedInApplicant", true))
+                .add(Restrictions
+                        .disjunction()
+                        .add(Restrictions.eq("registeredUser.enabled", true))
+                        .add(Restrictions.conjunction().add(Restrictions.eq("registeredUser.enabled", false))
+                                .add(Restrictions.in("role.id", Arrays.asList(Authority.SUGGESTEDSUPERVISOR)))))
+                .addOrder(Order.asc("registeredUser.lastName"))
+                .addOrder(Order.asc("registeredUser.firstName")).addOrder(Order.asc("registeredUser.id")).list();
+    }
+
+    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
+        DetachedCriteria usersInterestedInApplicant = DetachedCriteria.forClass(ApplicationFormUserRole.class)
+                .setProjection(Projections.projectionList()
+                        .add(Projections.groupProperty("user")))
+                .add(Restrictions.eq("applicationForm", applicationForm))
+                .add(Restrictions.eq("interestedInApplicant", true));
+
+        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+                .setProjection(Projections.projectionList().add(Projections.groupProperty("user"), "user"))
+                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+                .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("program.id", applicationForm.getProgram().getId()))
+                .add(Restrictions.in("role.id", AuthorityGroup.getAllInternalRecruiterAuthorities()))
+                .add(Restrictions.isNull("registeredUser.primaryAccount"))
+                .add(Restrictions.eq("registeredUser.enabled", true))
+                .add(Property.forName("user").notIn(usersInterestedInApplicant))
+                .addOrder(Order.asc("registeredUser.lastName"))
+                .addOrder(Order.asc("registeredUser.firstName"))
+                .addOrder(Order.asc("registeredUser.id")).list();
     }
     
     private Date getBaselineDate(Date seedDate) {

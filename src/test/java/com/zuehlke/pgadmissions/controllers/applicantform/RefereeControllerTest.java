@@ -31,8 +31,8 @@ import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormExc
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -44,13 +44,13 @@ public class RefereeControllerTest {
     private RegisteredUser currentUser;
     private RefereeService refereeServiceMock;
     private RefereeController controller;
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private DomicilePropertyEditor domicilePropertyEditor;
     private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
     private RefereeValidator refereeValidatorMock;
     private EncryptionHelper encryptionHelperMock;
     private UserService userServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
     private DomicileService domicileServiceMock;
     private FullTextSearchService fullTextSearchServiceMock;
 
@@ -76,7 +76,7 @@ public class RefereeControllerTest {
         Referee referee = new Referee();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
         
         EasyMock.replay(refereeServiceMock, encryptionHelperMock);
         assertEquals("/private/pgStudents/form/components/references_details", controller.getRefereeView("enc", modelMap));
@@ -103,7 +103,7 @@ public class RefereeControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
         assertEquals(applicationForm, returnedApplicationForm);
@@ -111,7 +111,7 @@ public class RefereeControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("1");
     }
@@ -133,7 +133,7 @@ public class RefereeControllerTest {
         Referee referee = new RefereeBuilder().id(1).build();
 
         EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
         EasyMock.replay(refereeServiceMock, encryptionHelperMock);
 
         Referee returnedReferee = controller.getReferee("enc");
@@ -150,7 +150,7 @@ public class RefereeControllerTest {
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfRefereeDoesNotExist() {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("encrypted")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(null);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(null);
         EasyMock.replay(refereeServiceMock, encryptionHelperMock);
 
         controller.getReferee("encrypted");
@@ -171,7 +171,7 @@ public class RefereeControllerTest {
 
         EasyMock.expect(errors.hasErrors()).andReturn(false);
         EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
         refereeServiceMock.save(referee);
         applicationsServiceMock.save(applicationForm);
 
@@ -193,7 +193,7 @@ public class RefereeControllerTest {
 
         EasyMock.expect(errors.hasErrors()).andReturn(false);
         EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
         refereeServiceMock.processRefereesRoles(application.getReferees());
 
         EasyMock.replay(refereeServiceMock, errors, encryptionHelperMock);
@@ -213,7 +213,7 @@ public class RefereeControllerTest {
 
         EasyMock.expect(errors.hasErrors()).andReturn(true);
         EasyMock.expect(encryptionHelperMock.decryptToInteger("enc")).andReturn(1);
-        EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+        EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
 
         EasyMock.replay(refereeServiceMock, errors, encryptionHelperMock);
         String view = controller.editReferee("enc", referee, errors, modelMap);
@@ -225,13 +225,13 @@ public class RefereeControllerTest {
     public void setUp() {
 
         refereeServiceMock = EasyMock.createMock(RefereeService.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         domicilePropertyEditor = EasyMock.createMock(DomicilePropertyEditor.class);
         applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
         encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         refereeValidatorMock = EasyMock.createMock(RefereeValidator.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
         fullTextSearchServiceMock = EasyMock.createMock(FullTextSearchService.class);
 

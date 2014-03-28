@@ -24,21 +24,21 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 
 public class GenericCommentControllerTest {
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private UserService userServiceMock;
     private GenericCommentController controller;
     private GenericCommentValidator genericCommentValidatorMock;
     private CommentService commentServiceMock;
     private DocumentPropertyEditor documentPropertyEditorMock;
     private ActionsProvider actionsProviderMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Test
     public void shouldGetApplicationFormFromId() {
@@ -51,7 +51,7 @@ public class GenericCommentControllerTest {
         EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
         EasyMock.replay(currentUser, userServiceMock);
 
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock);
         ApplicationForm returnedApplication = controller.getApplicationForm("5");
         assertEquals(returnedApplication, applicationForm);
@@ -144,13 +144,13 @@ public class GenericCommentControllerTest {
 
     @Before
     public void setUp() {
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         genericCommentValidatorMock = EasyMock.createMock(GenericCommentValidator.class);
         commentServiceMock = EasyMock.createMock(CommentService.class);
         documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
         actionsProviderMock = EasyMock.createMock(ActionsProvider.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,
                 documentPropertyEditorMock, actionsProviderMock, applicationFormUserRoleServiceMock);
 

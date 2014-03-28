@@ -7,8 +7,8 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.components.ActionsProvider;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewConfirmDTOValidator;
@@ -18,7 +18,7 @@ public class InterviewConfirmControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
 
     @Mock
     @InjectIntoByType
@@ -30,7 +30,7 @@ public class InterviewConfirmControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Mock
     @InjectIntoByType

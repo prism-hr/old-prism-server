@@ -67,7 +67,7 @@ public class ReportPorticoDocumentUploadFailureServiceTest {
         EasyMock.expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(superadmins);
         
         String messageCode = "Portico reported that there was an error uploading the documents for application abcdefgh [errorCode=110, bookingReference=P000001]: Document file, /u02/uat/docs/U_AD_REF_DOC/P000043~REF_DOC~1.PDF, for Reference 1 already exists for application with Booking Reference P000043";
-        mailServiceMock.sendExportErrorMessage(eq(superadmins), eq(messageCode), EasyMock.isA(Date.class));
+        mailServiceMock.sendExportErrorMessage(eq(superadmins), eq(messageCode), EasyMock.isA(Date.class), applicationFormTransfer.getApplicationForm());
         EasyMock.expect(applicationFormTransferDAOMock.getByReceivedBookingReferenceNumber(bookingReferenceNumber)).andReturn(applicationFormTransfer);
         EasyMock.replay(applicationFormTransferDAOMock, mailServiceMock, userServiceMock);
         

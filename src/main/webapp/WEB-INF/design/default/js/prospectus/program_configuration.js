@@ -361,6 +361,7 @@ function bindAddClosingDateButtonAction() {
                 $('#ajaxloader').fadeOut('fast');
             }
         });
+        return false;
     });
 }
 
@@ -370,7 +371,7 @@ function appendClosingDateRow(closingDate) {
 
 function closingDateTd(closingDate) {
     var date = new Date(closingDate.closingDate);
-    return $.datepicker.formatDate('d M yy', date);
+    date = $.datepicker.formatDate('d M yy', date);
     var studyPlaces = "";
     if (closingDate.studyPlaces > 0) {
         studyPlaces = " (" + closingDate.studyPlaces + " Places)";
@@ -493,7 +494,7 @@ function getAdvertData(programme_code) {
 function updateAdvertSection(map) {
     var linkToApply = map['linkToApply'];
     var titleSeleted = $("#programAdvertProgramSelect option:selected").text();
-    var sharethisvar = 'http://api.addthis.com/oexchange/0.8/offer?url=' + linkToApply + '&title=' + titleSeleted;
+    var sharethisvar = '//api.addthis.com/oexchange/0.8/offer?url=' + linkToApply + '&title=' + titleSeleted;
 
     $("#programAdvertButtonToApply").val(map['buttonToApply']);
     $("#modalButtonToApply").val(map['buttonToApply']);
@@ -512,7 +513,8 @@ function updateProgramSection(map) {
     $("#programAdvertProgramType").val(map["programType"]);
     $("[name=programAdvertAtasRequired][value=" + map["atasRequired"] + "]").prop("checked", true);
 
-    $("#programAdvertInstitutionCountry").selectpicker('val', map["institutionCountryCode"]);
+    $("#programAdvertInstitutionCountry").val(map["institutionCountryCode"]);
+    $("#programAdvertInstitutionCountry").selectpicker('refresh');
     getInstitutionData(function() {
         $("#programAdvertInstitution").val(map["institutionCode"]);
     });

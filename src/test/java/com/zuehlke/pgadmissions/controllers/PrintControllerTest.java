@@ -23,13 +23,13 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class PrintControllerTest {
 
 	private PrintController controller;
-	private ApplicationsService applicationSevice;
+	private ApplicationFormService applicationSevice;
 	private PdfDocumentBuilder pdfDocumentBuilderMock;
 	private UserService userServiceMock;
 	private RegisteredUser currentUser;
@@ -43,7 +43,7 @@ public class PrintControllerTest {
 		response.setOutputStreamAccessAllowed(true);	
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
-		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
+		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
 		// EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(currentUser);
 		controller.printPage(request, response);
@@ -54,7 +54,7 @@ public class PrintControllerTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setParameter("applicationFormId", "23");
 		MockHttpServletResponse response = new MockHttpServletResponse();				
-		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(null).anyTimes();
+		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(null).anyTimes();
 		EasyMock.replay(applicationSevice);
 		controller.printPage(request, response);
 	}
@@ -69,7 +69,7 @@ public class PrintControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(currentUser).build();
 		// EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser);
-		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
+		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
 		byte[] bytes = "pdf".getBytes();
 		EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(PdfModelBuilder.class), EasyMock.eq(applicationForm))).andReturn(bytes);
 
@@ -101,8 +101,8 @@ public class PrintControllerTest {
 		EasyMock.expect(currentUser.isRefereeOfApplicationForm(EasyMock.eq(applicationFormOne))).andReturn(false);
 		EasyMock.expect(currentUser.isRefereeOfApplicationForm(EasyMock.eq(applicationFormTwo))).andReturn(false);
 		EasyMock.replay(currentUser);
-		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
-		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
+		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
+		EasyMock.expect(applicationSevice.getByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
 		byte[] bytes = "pdf".getBytes();
         EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
 
@@ -131,8 +131,8 @@ public class PrintControllerTest {
 		
 		// EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
 		EasyMock.replay(currentUser);
-		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(null).anyTimes();
-		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
+		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(null).anyTimes();
+		EasyMock.expect(applicationSevice.getByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
 		byte[] bytes = "pdf".getBytes();
         EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
 		
@@ -162,8 +162,8 @@ public class PrintControllerTest {
 		// EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(false);
 		// EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
 		EasyMock.replay(currentUser);
-		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
-		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
+		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
+		EasyMock.expect(applicationSevice.getByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
         byte[] bytes = "pdf".getBytes();
         EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
 
@@ -182,7 +182,7 @@ public class PrintControllerTest {
 	
 	@Before
 	public void setUp() {
-		applicationSevice = EasyMock.createMock(ApplicationsService.class);
+		applicationSevice = EasyMock.createMock(ApplicationFormService.class);
 		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		controller = new PrintController(applicationSevice, pdfDocumentBuilderMock, userServiceMock){

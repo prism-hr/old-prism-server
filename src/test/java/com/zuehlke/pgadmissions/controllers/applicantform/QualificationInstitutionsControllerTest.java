@@ -18,7 +18,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
@@ -57,9 +57,9 @@ public class QualificationInstitutionsControllerTest {
     @Test
     public void shouldGetInstitutions() {
         Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").build();
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().id(2).enabled(true).name("University of London").domicileCode("UK")
+        Institution institution1 = new QualificationInstitutionBuilder().id(2).enabled(true).name("University of London").domicileCode("UK")
                 .code("ABC").build();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().id(3).enabled(true).name("University of Cambridge").domicileCode("UK")
+        Institution institution2 = new QualificationInstitutionBuilder().id(3).enabled(true).name("University of Cambridge").domicileCode("UK")
                 .code("ABCD").build();
 
         expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
@@ -76,9 +76,9 @@ public class QualificationInstitutionsControllerTest {
     @Test
     public void shouldGetUserCategorizedInstitutions() {
         Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").build();
-        QualificationInstitution institution1 = new QualificationInstitutionBuilder().id(2).enabled(true).name("University of London").domicileCode("UK")
+        Institution institution1 = new QualificationInstitutionBuilder().id(2).enabled(true).name("University of London").domicileCode("UK")
                 .code("ABC").build();
-        QualificationInstitution institution2 = new QualificationInstitutionBuilder().id(3).enabled(true).name("University of Cambridge").domicileCode("UK")
+        Institution institution2 = new QualificationInstitutionBuilder().id(3).enabled(true).name("University of Cambridge").domicileCode("UK")
                 .code("ABCD").build();
         RegisteredUser user = new RegisteredUserBuilder().institutions(institution1).build();
 
@@ -89,7 +89,7 @@ public class QualificationInstitutionsControllerTest {
                 Lists.newArrayList(institution1, institution2));
 
         replay();
-        String institutions = controller.getInstitutionsUserCategorized("0");
+        String institutions = controller.getAdministratorInstitutions("0");
         verify();
 
         assertEquals(

@@ -73,7 +73,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         userDAO = new UserDAO(sessionFactory, null, null);
         applicationDAO = new ApplicationFormListDAO(sessionFactory, userDAO);
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        role = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+        role = roleDAO.getById(Authority.INTERVIEWER);
 
         applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)

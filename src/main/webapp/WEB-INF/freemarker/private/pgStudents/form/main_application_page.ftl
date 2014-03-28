@@ -8,11 +8,6 @@
   <#assign formDisplayState = "open"/>
 </#if>
 
-<#if message?has_content>
-  <#assign globalMsg = true/>
-<#else>
-  <#assign globalMsg = false/>
-</#if>
 <!---- validation errors -->
  <@spring.bind "applicationForm.programmeDetails" />
 <#if spring.status.errorMessages?has_content >
@@ -174,15 +169,15 @@
           </#if>
 
 		  
-          <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-					<div id="timelineview">
-						<ul class="tabs">				
-							<li class="current"><a href="#application" id="applicationBtn">Application</a></li>
-							<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
-							<li><a href="#opportunity" id="opportunityBtn">Opportunities</a></li>
-						</ul>
-				
-						<div class="tab-page" id="applicationTab">
+	  		<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
+			<div id="timelineview">
+				<ul class="tabs">				
+					<li class="current"><a href="#application" id="applicationBtn">Application</a></li>
+					<li><a href="#timeline" id="timelineBtn">Timeline</a></li>
+					<li><a href="#opportunity" id="opportunityBtn">Opportunities</a></li>
+				</ul>
+			
+				<div class="tab-page" id="applicationTab">
 	
 		          <!-- Programme Details -->
 		          <section id="programmeDetailsSection" class="folding form-rows violet <#if programDetailsError || studyOptionError>error</#if>">                      
@@ -226,21 +221,17 @@
 			          </section>
 		          </#if>  
 		
-		          <div class="buttons">
-		            <#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
-		            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
-		              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-		              <button id="saveAndClose" type="button" class="btn btn-large btn-primary">Save &amp; Close</button>
-		            </form>                                      
-		            <#elseif !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>                     
+		          <div class="buttons">                                    
+		            <#if user.canSubmitAsApplicant(applicationForm)>                     
 		            <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
 		              <input type="hidden" id="applicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
 		              <button id="saveAndClose" type="button" class="btn btn-large">Save &amp; Close</button>
 		              <button id="submitAppButton" type="button"  class="btn btn-primary btn-large">Submit</button>
 		            </form>
-		            <#else>
-		            <form>
-		              <button class="btn btn-large btn-primary" id="saveAndClose" type="button">Save &amp; Close</a>
+		          	<#elseif user.canUpdateAsApplicant(applicationForm) || user.canUpdateAsSuperadministrator(applicationForm)>
+		            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
+		              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
+		              <button id="saveAndClose" type="button" class="btn btn-large btn-primary">Save &amp; Close</button>
 		            </form>
 		            </#if>
 		          </div>

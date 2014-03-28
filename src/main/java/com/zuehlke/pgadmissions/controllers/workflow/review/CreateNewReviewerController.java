@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
@@ -30,7 +30,7 @@ public class CreateNewReviewerController {
 	private static final String CREATE_REVIEWER_SECTION = "/private/staff/reviewer/create_reviewer_section";
 	private static final String JSON_VIEW = "/private/staff/reviewer/reviewer_json";
 	private final UserService userService;
-	private final ApplicationsService applicationsService;
+	private final ApplicationFormService applicationsService;
 	private final NewUserByAdminValidator reviewerValidator;
 
 	CreateNewReviewerController() {
@@ -38,7 +38,7 @@ public class CreateNewReviewerController {
 	}
 
 	@Autowired
-	public CreateNewReviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator) {
+	public CreateNewReviewerController(ApplicationFormService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator) {
 				this.applicationsService = applicationsService;
 				this.userService = userService;
 				this.reviewerValidator = reviewerValidator;
@@ -88,7 +88,7 @@ public class CreateNewReviewerController {
     
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+		ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
 		if (application == null) {
 			throw new ResourceNotFoundException();
 		}

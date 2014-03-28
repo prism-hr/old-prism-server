@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
@@ -29,7 +29,7 @@ public class CreateNewSupervisorController {
 	private static final String CREATE_SUPERVISOR_SECTION = "/private/staff/supervisors/create_supervisor_section";
 	private static final String JSON_VIEW = "/private/staff/reviewer/reviewer_json";
 	private final UserService userService;
-	private final ApplicationsService applicationsService;
+	private final ApplicationFormService applicationsService;
 	private final NewUserByAdminValidator supervisorValidator;
 
 	CreateNewSupervisorController() {
@@ -37,7 +37,7 @@ public class CreateNewSupervisorController {
 	}
 
 	@Autowired
-	public CreateNewSupervisorController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator) {
+	public CreateNewSupervisorController(ApplicationFormService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator) {
 				this.applicationsService = applicationsService;
 				this.userService = userService;
 				this.supervisorValidator = supervisorValidator;
@@ -86,7 +86,7 @@ public class CreateNewSupervisorController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 
-		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+		ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
 		if (application == null) {
 			throw new MissingApplicationFormException(applicationId);
 		}

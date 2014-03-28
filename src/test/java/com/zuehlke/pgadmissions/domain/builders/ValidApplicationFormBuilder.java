@@ -23,9 +23,9 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
@@ -62,10 +62,10 @@ public class ValidApplicationFormBuilder {
     protected PersonalDetails personalDetails;
     protected AdditionalInformation additionalInformation;
     protected ProgramInstance instance;
-    protected QualificationInstitution institution;
+    protected Institution institution;
     protected Program program;
     protected SourcesOfInterest interest;
-    protected ProgrammeDetails programDetails;
+    protected ProgramDetails programDetails;
     protected QualificationType qualificationType;
     protected Qualification qualification1;
     protected Qualification qualification2;
@@ -153,8 +153,8 @@ public class ValidApplicationFormBuilder {
                                 .passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
                 .languageQualificationAvailable(true)
                 .languageQualification(
-                        new LanguageQualificationBuilder().dateOfExamination(new Date()).examTakenOnline(false)
-                                .languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").otherQualificationTypeName("FooBar")
+                        new LanguageQualificationBuilder().examDate(new Date()).examOnline(false)
+                                .languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").qualificationTypeName("FooBar")
                                 .overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
                                 .languageQualificationDocument(languageQualificationDocument).build()).phoneNumber("+44 (0) 123 123 1234")
                 .residenceDomicile(domicile).title(Title.MR).build();

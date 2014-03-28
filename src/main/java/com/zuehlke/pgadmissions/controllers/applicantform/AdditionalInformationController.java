@@ -5,7 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -14,90 +14,54 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
+import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
-import com.zuehlke.pgadmissions.services.AdditionalInfoService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.AdditionalInformationService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 
 @Controller
 @RequestMapping("/update")
 public class AdditionalInformationController {
 
-    private static final String STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW = "/private/pgStudents/form/components/additional_information";
-    private final AdditionalInfoService additionalService;
-    private final ApplicationsService applicationService;
-    private final AdditionalInformationValidator additionalInformationValidator;
-    private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
-    private final BooleanPropertyEditor booleanPropertyEditor;
-    private final UserService userService;
-    private final ApplicationFormUserRoleService applicationFormUserRoleService;
-
-    AdditionalInformationController() {
-        this(null, null, null, null, null, null, null);
-    }
+    @Autowired
+    private ApplicationFormService applicationFormService;
 
     @Autowired
-    public AdditionalInformationController(ApplicationsService applicationService, UserService userService,
-            ApplicationFormPropertyEditor applicationFormPropertyEditor, BooleanPropertyEditor booleanEditor, AdditionalInfoService addInfoServiceMock,
-            AdditionalInformationValidator infoValidator, final ApplicationFormUserRoleService applicationFormUserRoleService) {
-        this.applicationService = applicationService;
-        this.userService = userService;
-        this.applicationFormPropertyEditor = applicationFormPropertyEditor;
-        this.booleanPropertyEditor = booleanEditor;
-        this.additionalService = addInfoServiceMock;
-        this.additionalInformationValidator = infoValidator;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
+    private AdditionalInformationService additionalInformationService;
+
+    @Autowired
+    private AdditionalInformationValidator additionalInformationValidator;
+
+    @Autowired
+    private ApplicationFormPropertyEditor applicationFormPropertyEditor;
+
+    @Autowired
+    private BooleanPropertyEditor booleanPropertyEditor;
+    
+    @RequestMapping(value = "/getAdditionalInformation", method = RequestMethod.GET)
+    public String getAdditionalInformationView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
+        return returnView(modelMap, additionalInformationService.getOrCreate(applicationForm));
     }
 
     @RequestMapping(value = "/editAdditionalInformation", method = RequestMethod.POST)
-    public String editAdditionalInformation(@Valid AdditionalInformation info, BindingResult result,
-            @ModelAttribute("applicationForm") ApplicationForm application) {
-        if (application.isDecided()) {
-            throw new CannotUpdateApplicationException(info.getApplication().getApplicationNumber());
-        }
-
+    public String editAdditionalInformation(@Valid AdditionalInformation additionalInformation, BindingResult result,
+            @ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
         if (result.hasErrors()) {
-            return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
+            return returnView(modelMap, additionalInformation);
         }
-        
-        application.setAdditionalInformation(info);
-        additionalService.save(info);
-        applicationFormUserRoleService.insertApplicationUpdate(application, getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
-
-        return "redirect:/update/getAdditionalInformation?applicationId=" + info.getApplication().getApplicationNumber();
-
-    }
-
-    @RequestMapping(value = "/getAdditionalInformation", method = RequestMethod.GET)
-    public String getAdditionalInformationView(@ModelAttribute("applicationForm") ApplicationForm application, Model model) {
-        
-        AdditionalInformation information = application.getAdditionalInformation();
-        if(information == null){
-            information = new AdditionalInformation();
-            application.setAdditionalInformation(information);
-        }
-
-        model.addAttribute("additionalInformation", information);
-        model.addAttribute("applicationForm", application);
-        return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
+        additionalInformationService.saveOrUpdate(applicationForm, additionalInformation);
+        return RedirectLocation.UPDATE_APPLICATION_ADDITIONAL_INFORMATION + applicationForm.getApplicationNumber();
     }
 
     @ModelAttribute("message")
     public String getMessage(@RequestParam(required = false) String message) {
         return message;
-    }
-
-    private RegisteredUser getCurrentUser() {
-        return userService.getCurrentUser();
     }
 
     @ModelAttribute("errorCode")
@@ -118,11 +82,14 @@ public class AdditionalInformationController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-        if (application == null) {
-            throw new MissingApplicationFormException(applicationId);
-        }
-        return application;
+    public ApplicationForm getApplicationForm(String applicationId) {
+        return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
+                ApplicationFormAction.CORRECT_APPLICATION);
     }
+
+    private String returnView(ModelMap modelMap, AdditionalInformation additionalInformation) {
+        modelMap.put("additionalInformation", additionalInformation);
+        return TemplateLocation.APPLICATION_APPLICANT_ADDITIONAL_INFORMATION;
+    }
+    
 }

@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
@@ -44,7 +44,7 @@ public class SendToPorticoDataDTOValidatorTest {
 
     private DirectFieldBindingResult mappingResult;
 
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
 
     private QualificationService qualificationServiceMock;
 
@@ -140,15 +140,15 @@ public class SendToPorticoDataDTOValidatorTest {
 
         mappingResult = new DirectFieldBindingResult(sendToPorticoDataDTO, "sendToPorticoData");
 
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         qualificationServiceMock = EasyMock.createMock(QualificationService.class);
         refereeServiceMock = EasyMock.createMock(RefereeService.class);
 
-        EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(qualification1).anyTimes();
-        EasyMock.expect(qualificationServiceMock.getQualificationById(2)).andReturn(qualification2).anyTimes();
-        EasyMock.expect(refereeServiceMock.getRefereeById(11)).andReturn(referee1).anyTimes();
-        EasyMock.expect(refereeServiceMock.getRefereeById(12)).andReturn(referee2).anyTimes();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("84")).andReturn(applicationForm);
+        EasyMock.expect(qualificationServiceMock.getById(1)).andReturn(qualification1).anyTimes();
+        EasyMock.expect(qualificationServiceMock.getById(2)).andReturn(qualification2).anyTimes();
+        EasyMock.expect(refereeServiceMock.getById(11)).andReturn(referee1).anyTimes();
+        EasyMock.expect(refereeServiceMock.getById(12)).andReturn(referee2).anyTimes();
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("84")).andReturn(applicationForm);
 
         sendToPorticoDataValidator = new SendToPorticoDataDTOValidator(applicationsServiceMock, qualificationServiceMock, refereeServiceMock);
         sendToPorticoDataValidator.setValidator((javax.validation.Validator) validator);

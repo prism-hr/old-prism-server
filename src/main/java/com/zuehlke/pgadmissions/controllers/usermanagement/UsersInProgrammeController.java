@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ProgramsService;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -24,14 +24,14 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class UsersInProgrammeController {
 	private static final String USERS_ROLES_VIEW = "private/staff/superAdmin/users_roles";
 	private final UserService userService;
-	private final ProgramsService programsService;
+	private final ProgramService programsService;
 
 	UsersInProgrammeController(){
 		this(null, null);
 	}
 	
 	@Autowired
-	public UsersInProgrammeController(UserService userService, ProgramsService programsService) {
+	public UsersInProgrammeController(UserService userService, ProgramService programsService) {
 		this.userService = userService;
 		this.programsService = programsService;
 	}

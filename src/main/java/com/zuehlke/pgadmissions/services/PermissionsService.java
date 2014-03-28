@@ -18,37 +18,40 @@ import com.zuehlke.pgadmissions.utils.HibernateUtils;
 public class PermissionsService {
 
     @Autowired
-    private AuthenticationService authenticationService;
+    private RoleService roleService;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private OpportunityRequestDAO opportunityRequestDAO;
 
     @Autowired
-    private ProgramsService programsService;
+    private ProgramService programsService;
 
     public boolean canSeeOpportunityRequests() {
-        RegisteredUser user = getCurrentUser();
-        return user.isInRole(Authority.SUPERADMINISTRATOR) || !opportunityRequestDAO.getOpportunityRequestsForAuthor(user).isEmpty();
+        RegisteredUser user = userService.getCurrentUser();
+        return roleService.checkUserHasRole(user, Authority.SUPERADMINISTRATOR) || !opportunityRequestDAO.getOpportunityRequestsForAuthor(user).isEmpty();
     }
 
     public boolean canManageProjects() {
-        RegisteredUser user = getCurrentUser();
+        RegisteredUser user = userService.getCurrentUser();
         return !programsService.getProgramsForWhichCanManageProjects(user).isEmpty();
     }
 
     public boolean canSeeOpportunityRequest(OpportunityRequest opportunityRequest) {
-        RegisteredUser user = getCurrentUser();
-        return user.isInRole(Authority.SUPERADMINISTRATOR) || HibernateUtils.sameEntities(user, opportunityRequest.getAuthor());
+        RegisteredUser user = userService.getCurrentUser();
+        return roleService.checkUserHasRole(user, Authority.SUPERADMINISTRATOR) || HibernateUtils.sameEntities(user, opportunityRequest.getAuthor());
     }
 
     public boolean canPostOpportunityRequestComment(OpportunityRequest opportunityRequest, OpportunityRequestComment comment) {
-        RegisteredUser user = getCurrentUser();
-        
-        if(opportunityRequest.getStatus() == OpportunityRequestStatus.APPROVED) {
+        RegisteredUser user = userService.getCurrentUser();
+
+        if (opportunityRequest.getStatus() == OpportunityRequestStatus.APPROVED) {
             return false;
         }
 
-        if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
+        if (roleService.checkUserHasRole(user, Authority.SUPERADMINISTRATOR)) {
             return true;
         }
 
@@ -58,9 +61,5 @@ public class PermissionsService {
 
         return false;
     }
-
-    private RegisteredUser getCurrentUser() {
-        return authenticationService.getCurrentUser();
-    }
-
+    
 }

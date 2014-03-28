@@ -15,40 +15,45 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.dto.DocumentsSectionDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
 public class DocumentSectionValidatorTest {
 
-    @Autowired  
-    private Validator validator;  
-    
-	private DocumentSectionValidator documentSectionValidator;
-    
-	private ApplicationForm applicationForm;
+    @Autowired
+    private Validator validator;
 
-	@Test
-	public void shouldSupportApplicationForm() {
-		assertTrue(documentSectionValidator.supports(ApplicationForm.class));
-	}
+    private ApplicationFormDocumentValidator documentSectionValidator;
 
-	@Test
-	public void shoulRejectIfPersonalStatementNotUploaded() {
-		applicationForm.setPersonalStatement(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "personalStatement");
-		
-		documentSectionValidator.validate(applicationForm, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("file.upload.empty",mappingResult.getFieldError("personalStatement").getCode());
-	}
-	
-	@Before
-	public void setup() {
-		applicationForm = new ApplicationFormBuilder().cv(new DocumentBuilder().type(DocumentType.CV).build())
-				.personalStatement(new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).build()).build();
-		
-		documentSectionValidator = new DocumentSectionValidator();
-		documentSectionValidator.setValidator((javax.validation.Validator) validator);
-	}
+    private DocumentsSectionDTO documentsSectionDTO;
+
+    @Test
+    public void shouldSupportApplicationForm() {
+        assertTrue(documentSectionValidator.supports(DocumentsSectionDTO.class));
+    }
+
+    @Test
+    public void shoulRejectIfPersonalStatementNotUploaded() {
+        documentsSectionDTO.setPersonalStatement(null);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(documentsSectionDTO, "documentsSectionDTO");
+
+        documentSectionValidator.validate(documentsSectionDTO, mappingResult);
+        Assert.assertEquals(1, mappingResult.getErrorCount());
+        Assert.assertEquals("file.upload.empty", mappingResult.getFieldError("personalStatement").getCode());
+    }
+
+    @Before
+    public void setup() {
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).build();
+        documentsSectionDTO = new DocumentsSectionDTO();
+        documentsSectionDTO.setCv(new DocumentBuilder().type(DocumentType.CV).build());
+        documentsSectionDTO.setPersonalStatement(new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).build());
+        documentsSectionDTO.setApplication(application);
+
+        documentSectionValidator = new ApplicationFormDocumentValidator();
+        documentSectionValidator.setValidator((javax.validation.Validator) validator);
+    }
 }

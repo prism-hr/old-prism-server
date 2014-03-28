@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services.exporters;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -10,13 +11,19 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
+import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
@@ -26,24 +33,20 @@ import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService
 @Component
 public class PorticoAttachmentsZipCreator {
 
-    private final PdfDocumentBuilder pdfDocumentBuilder;
-    
-    private final CombinedReferencesPdfBuilder combinedReferenceBuilder;
-    
-    private final Transcript1PdfBuilder transcriptBuilder;
-    
-    public PorticoAttachmentsZipCreator() {
-        this(null, null, null);
-    }
-    
+    private Logger log = LoggerFactory.getLogger(PorticoAttachmentsZipCreator.class);
+
     @Autowired
-    public PorticoAttachmentsZipCreator(final PdfDocumentBuilder pdfDocumentBuilder, 
-            final CombinedReferencesPdfBuilder combinedReferenceBuilder, final Transcript1PdfBuilder transcriptBuilder) {
-        this.pdfDocumentBuilder = pdfDocumentBuilder;
-        this.combinedReferenceBuilder = combinedReferenceBuilder;
-        this.transcriptBuilder = transcriptBuilder;
-    }
-    
+    private PdfDocumentBuilder pdfDocumentBuilder;
+
+    @Autowired
+    private CombinedReferencesPdfBuilder combinedReferenceBuilder;
+
+    @Autowired
+    private Transcript1PdfBuilder transcriptBuilder;
+
+    @Value("${email.address.to}")
+    private String emailAddressTo;
+
     public void writeZipEntries(ApplicationForm applicationForm, String referenceNumber, OutputStream sftpOs) throws IOException, CouldNotCreateAttachmentsPack {
         Properties contentsProperties = new Properties();
         ZipOutputStream zos = null;
@@ -62,7 +65,8 @@ public class PorticoAttachmentsZipCreator {
         }
     }
 
-    protected void addContentsFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
+    protected void addContentsFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+            throws IOException {
         contentsProperties.put("applicationNumber", applicationForm.getApplicationNumber());
         contentsProperties.put("bookingReferenceNumber", referenceNumber);
         zos.putNextEntry(new ZipEntry(referenceNumber + "Contents.txt"));
@@ -70,84 +74,91 @@ public class PorticoAttachmentsZipCreator {
         zos.closeEntry();
     }
 
-    protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+    protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+            throws IOException, CouldNotCreateAttachmentsPack {
         List<ReferenceComment> references = applicationForm.getReferencesToSendToPortico();
         String filename;
         switch (references.size()) {
-            case 2:
-                if (references.get(1) != null) {
-                    filename = getRandomFilename();
-                    zos.putNextEntry(new ZipEntry(filename));
-                    combinedReferenceBuilder.build(references.get(1), zos);
-                    zos.closeEntry();
-                    contentsProperties.put("reference.2.serverFilename", filename);
-                    contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
-                }
+        case 2:
+            if (references.get(1) != null) {
+                filename = getRandomFilename();
+                zos.putNextEntry(new ZipEntry(filename));
+                combinedReferenceBuilder.build(references.get(1), zos);
+                zos.closeEntry();
+                contentsProperties.put("reference.2.serverFilename", filename);
+                contentsProperties.put("reference.2.applicationFilename", "References.2.pdf");
+            }
 
-                if (references.get(0) != null) {
-                    filename = getRandomFilename();
-                    zos.putNextEntry(new ZipEntry(filename));
-                    combinedReferenceBuilder.build(references.get(0), zos);
-                    zos.closeEntry();
-                    contentsProperties.put("reference.1.serverFilename", filename);
-                    contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
-                }
-                break;
+            if (references.get(0) != null) {
+                filename = getRandomFilename();
+                zos.putNextEntry(new ZipEntry(filename));
+                combinedReferenceBuilder.build(references.get(0), zos);
+                zos.closeEntry();
+                contentsProperties.put("reference.1.serverFilename", filename);
+                contentsProperties.put("reference.1.applicationFilename", "References.1.pdf");
+            }
+            break;
         }
     }
 
     protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
-        Document cv = applicationForm.getCv();
-        if (cv != null) {
+        Document document = applicationForm.getApplicationFormDocument().getCv();
+        if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(cv.getContent());
+            zos.write(getFileContents(document, applicationForm));
             zos.closeEntry();
             contentsProperties.put("curriculumVitae.1.serverFilename", filename);
-            contentsProperties.put("curriculumVitae.1.applicationFilename", cv.getFileName());
+            contentsProperties.put("curriculumVitae.1.applicationFilename", document != null ? document.getFileName()
+                    : "curriculumVitae.pdf");
         }
     }
 
-    protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
-        LanguageQualification languageQualification = applicationForm.getPersonalDetails().getLanguageQualification();
-        if (languageQualification != null) {
+    protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+            throws IOException, CouldNotCreateAttachmentsPack {
+        Document document = applicationForm.getPersonalDetails().getProofOfAward();
+        if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(languageQualification.getLanguageQualificationDocument().getContent());
-            zos.closeEntry();            
+            zos.write(getFileContents(document, applicationForm));
+            zos.closeEntry();
             contentsProperties.put("englishLanguageTestCertificate.1.serverFilename", filename);
-            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", languageQualification.getLanguageQualificationDocument().getFileName());
+            contentsProperties.put("englishLanguageTestCertificate.1.applicationFilename", document != null ? document.getFileName()
+                    : "englishLanguageTestCertificate.pdf");
         }
     }
 
-    protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
-        Document personalStatement = applicationForm.getPersonalStatement();
-        if (personalStatement != null) {
+    protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+            throws IOException {
+        Document document = applicationForm.getApplicationFormDocument().getPersonalStatement();
+        if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(personalStatement.getContent());
+            zos.write(getFileContents(document, applicationForm));
             zos.closeEntry();
             contentsProperties.put("researchProposal.1.serverFilename", filename);
-            contentsProperties.put("researchProposal.1.applicationFilename", personalStatement.getFileName());
+            contentsProperties.put("researchProposal.1.applicationFilename", document != null ? document.getFileName()
+                    : "researchProposal.pdf");
         }
     }
 
-    protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+    protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+            throws IOException, CouldNotCreateAttachmentsPack {
         List<Document> qualifications = applicationForm.getQualificationsToSendToPortico();
         String filename;
-        
+
         switch (qualifications.size()) {
         case 2:
             filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(qualifications.get(1).getContent());
+            zos.write(getFileContents(qualifications.get(1), applicationForm));
             zos.closeEntry();
             contentsProperties.put("transcript.2.serverFilename", filename);
             contentsProperties.put("transcript.2.applicationFilename", qualifications.get(1).getFileName());
         case 1:
             filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
-            zos.write(qualifications.get(0).getContent());
+            zos.write(getFileContents(qualifications.get(0), applicationForm));
             zos.closeEntry();
             contentsProperties.put("transcript.1.serverFilename", filename);
             contentsProperties.put("transcript.1.applicationFilename", qualifications.get(0).getFileName());
@@ -162,28 +173,68 @@ public class PorticoAttachmentsZipCreator {
             break;
         }
     }
-    
-    protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+
+    protected void addApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+            throws IOException, CouldNotCreateAttachmentsPack {
         String serverfilename = "ApplicationForm" + referenceNumber + ".pdf";
         String applicationFilename = "ApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
-        pdfDocumentBuilder.build(new PdfModelBuilder().includeCriminialConvictions(true).includeDisability(true).includeEthnicity(true).includeAttachments(false), zos, applicationForm);
+        try {
+            pdfDocumentBuilder.build(
+                    new PdfModelBuilder().includeCriminialConvictions(true).includeDisability(true).includeEthnicity(true).includeAttachments(false), zos,
+                    applicationForm);
+        } catch (Exception e) {
+            zos.write(getAlternativeMergedFileContents(applicationForm).getBytes());
+        }
         zos.closeEntry();
         contentsProperties.put("applicationForm.1.serverFilename", serverfilename);
         contentsProperties.put("applicationForm.1.applicationFilename", applicationFilename);
     }
-    
-    protected void addMergedApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException, CouldNotCreateAttachmentsPack {
+
+    protected void addMergedApplicationForm(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
+            throws IOException, CouldNotCreateAttachmentsPack {
         String serverfilename = "MergedApplicationForm" + referenceNumber + ".pdf";
         String applicationFilename = "MergedApplicationForm" + applicationForm.getApplicationNumber() + ".pdf";
         zos.putNextEntry(new ZipEntry(serverfilename));
-        pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), zos, applicationForm);
+        try {
+            pdfDocumentBuilder.build(new PdfModelBuilder().includeReferences(true), zos, applicationForm);
+        } catch (Exception e) {
+            zos.write(getAlternativeMergedFileContents(applicationForm).getBytes());
+        }
         zos.closeEntry();
         contentsProperties.put("mergedApplication.1.serverFilename", serverfilename);
-        contentsProperties.put("mergedApplication.1.applicationFilename", applicationFilename);        
+        contentsProperties.put("mergedApplication.1.applicationFilename", applicationFilename);
     }
-    
+
     protected String getRandomFilename() {
         return UUID.randomUUID() + ".pdf";
     }
+
+    private byte[] getFileContents(Document document, ApplicationForm application) {
+        try {
+            com.itextpdf.text.Document output = new com.itextpdf.text.Document(PageSize.A4, 50, 50, 100, 50);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PdfWriter.getInstance(output, baos);
+            output.open();
+            if (document != null) {
+                try {
+                    return document.getContent();
+                } catch (Exception e) {
+                    log.error("Couldn't read document", e);
+                }
+            } else {
+                log.error("Attempted to merge null document for portico export");
+            }
+            output.add(new Paragraph(getAlternativeMergedFileContents(application)));
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw new PdfDocumentBuilderException(e);
+        }
+    }
+    
+    private String getAlternativeMergedFileContents(ApplicationForm application) {
+        return ("We are sorry but we were unable to read and merge the contents of this document. " + "Please contact us at " + emailAddressTo
+                + " to obtain an original copy, " + "quoting our application reference number: " + application.getApplicationNumber() + ".");
+    }
+
 }

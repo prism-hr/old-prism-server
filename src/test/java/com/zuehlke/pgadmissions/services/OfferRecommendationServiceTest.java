@@ -40,11 +40,11 @@ public class OfferRecommendationServiceTest {
 
     @Mock
     @InjectIntoByType
-    private PorticoQueueService approvedSenderServiceMock;
+    private ExportQueueService approvedSenderServiceMock;
     
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     @TestedObject
     private OfferRecommendationService service;

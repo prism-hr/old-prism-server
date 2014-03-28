@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.QualificationInstitution;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -138,12 +138,12 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetUsersByRole() {
-        Role roleOne = roleDAO.getRoleByAuthority(Authority.APPLICANT);
+        Role roleOne = roleDAO.getById(Authority.APPLICANT);
         if (roleOne == null) {
             roleOne = new RoleBuilder().id(Authority.APPLICANT).doSendUpdateNotification(false).build();
             save(roleOne);
         }
-        Role roleTwo = roleDAO.getRoleByAuthority(Authority.ADMINISTRATOR);
+        Role roleTwo = roleDAO.getById(Authority.ADMINISTRATOR);
         if (roleTwo == null) {
             roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).doSendUpdateNotification(false).build();
             save(roleTwo);
@@ -158,7 +158,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         List<Integer> testUserIds = Arrays.asList(userOne.getId(), userTwo.getId());
 
         int roleOneHitCounter = 0;
-        for (RegisteredUser user : userDAO.getUsersInRole(roleOne)) {
+        for (RegisteredUser user : userDAO.getUsersInRole(roleOne.getId())) {
             if (testUserIds.contains(user.getId())) {
                 roleOneHitCounter++;
             }
@@ -166,7 +166,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         assertEquals(2, roleOneHitCounter);
 
         int roleTwoHitCounter = 0;
-        for (RegisteredUser user : userDAO.getUsersInRole(roleTwo)) {
+        for (RegisteredUser user : userDAO.getUsersInRole(roleTwo.getId())) {
             if (testUserIds.contains(user.getId())) {
                 roleTwoHitCounter++;
             }
@@ -177,7 +177,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetUsersByProgramme() {
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a60").domicileCode("AE").enabled(true).build();
+        Institution institution = new QualificationInstitutionBuilder().code("code").name("a60").domicileCode("AE").enabled(true).build();
         Program programOne = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("111111").title("hello").institution(institution).build();
         Program programTwo = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("222222").title("hello").institution(institution).build();
 
@@ -186,9 +186,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role superAdminRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
+        Role superAdminRole = roleDAO.getById(Authority.SUPERADMINISTRATOR);
 
-        int numberOfExistingSuperAdminUsers = userDAO.getUsersInRole(superAdminRole).size();
+        int numberOfExistingSuperAdminUsers = userDAO.getUsersInRole(superAdminRole.getId()).size();
 
         RegisteredUser superAdminOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
@@ -245,7 +245,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnSuperAdmininistrator() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role superAdminRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
+        Role superAdminRole = roleDAO.getById(Authority.SUPERADMINISTRATOR);
 
         RegisteredUser superAdmin = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
                 .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
@@ -258,7 +258,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnAdmininistrator() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role superAdminRole = roleDAO.getRoleByAuthority(Authority.ADMINISTRATOR);
+        Role superAdminRole = roleDAO.getById(Authority.ADMINISTRATOR);
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
@@ -271,7 +271,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnReviewer() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role superAdminRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
+        Role superAdminRole = roleDAO.getById(Authority.REVIEWER);
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
@@ -284,7 +284,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnInteverviweer() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role superAdminRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+        Role superAdminRole = roleDAO.getById(Authority.INTERVIEWER);
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
@@ -297,7 +297,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnApprover() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role superAdminRole = roleDAO.getRoleByAuthority(Authority.APPROVER);
+        Role superAdminRole = roleDAO.getById(Authority.APPROVER);
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
@@ -310,7 +310,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldNotReturnApplicant() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role superAdminRole = roleDAO.getRoleByAuthority(Authority.APPLICANT);
+        Role superAdminRole = roleDAO.getById(Authority.APPLICANT);
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
@@ -325,7 +325,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true)
-                .role(roleDAO.getRoleByAuthority(Authority.REFEREE)).build();
+                .role(roleDAO.getById(Authority.REFEREE)).build();
         save(user);
         flushAndClearSession();
         List<RegisteredUser> users = userDAO.getInternalUsers();
@@ -338,7 +338,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
                 .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true)
-                .roles(roleDAO.getRoleByAuthority(Authority.APPROVER), roleDAO.getRoleByAuthority(Authority.REVIEWER)).build();
+                .roles(roleDAO.getById(Authority.APPROVER), roleDAO.getById(Authority.REVIEWER)).build();
         save(user);
         flushAndClearSession();
         List<RegisteredUser> users = userDAO.getInternalUsers();
@@ -348,10 +348,10 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnUserWithPendingNotifications() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
-        Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+        Role reviewerRole = roleDAO.getById(Authority.REVIEWER);
+        Role interviewerRole = roleDAO.getById(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a10").domicileCode("AE").enabled(true).build();
+        Institution institution = new QualificationInstitutionBuilder().code("code").name("a10").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 
@@ -373,10 +373,10 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
         int previousNumberOfUsers = users.size();
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
-        Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+        Role reviewerRole = roleDAO.getById(Authority.REVIEWER);
+        Role interviewerRole = roleDAO.getById(Authority.INTERVIEWER);
 
-        QualificationInstitution institution = new QualificationInstitutionBuilder().code("code").name("a66").domicileCode("AE").enabled(true).build();
+        Institution institution = new QualificationInstitutionBuilder().code("code").name("a66").domicileCode("AE").enabled(true).build();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("doesntexist").title("another title").institution(institution).build();
         save(institution, program);
 
@@ -397,8 +397,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldNotReturnUserWithPendingNotificationsIfDateIsNull() {
         List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
-        Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+        Role reviewerRole = roleDAO.getById(Authority.REVIEWER);
+        Role interviewerRole = roleDAO.getById(Authority.INTERVIEWER);
 
         Program program = (Program) sessionFactory.getCurrentSession().get(Program.class, 63);
 
@@ -420,8 +420,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldNotReturnEnalbedUserWithPendingNotifications() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
-        Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+        Role reviewerRole = roleDAO.getById(Authority.REVIEWER);
+        Role interviewerRole = roleDAO.getById(Authority.INTERVIEWER);
 
         Program program = (Program) sessionFactory.getCurrentSession().get(Program.class, 63);
 
@@ -490,7 +490,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetAllSuperAdministrators() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role superadministratorRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
+        Role superadministratorRole = roleDAO.getById(Authority.SUPERADMINISTRATOR);
 
         RegisteredUser superadmin = new RegisteredUserBuilder().role(superadministratorRole).firstName("Jane").lastName("Doe").email("somethingelse@test.com")
                 .username("somethingelse").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
@@ -504,7 +504,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetAllAdmitters() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role admitterRole = roleDAO.getRoleByAuthority(Authority.ADMITTER);
+        Role admitterRole = roleDAO.getById(Authority.ADMITTER);
 
         RegisteredUser admitter = new RegisteredUserBuilder().role(admitterRole).firstName("Jane").lastName("Doe").email("somethingelse@test.com")
                 .username("somethingelse").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)

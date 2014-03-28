@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 
 @Service
@@ -35,38 +35,9 @@ public class ProgramInstanceService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public boolean isProgrammeStillAvailable(ApplicationForm applicationForm) {
-        Date maxProgrammeEndDate = null;
-        Date today = new Date();
-
-        ProgrammeDetails details = applicationForm.getProgrammeDetails();
-
-        for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
-            boolean isProgrammeEnabled = applicationForm.getAdvert().isEnabled();
-            boolean isInstanceEnabled = isActive(instance);
-            boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
-            boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-
-            if (isProgrammeEnabled && isInstanceEnabled && sameStudyOption && sameStudyOptionCode) {
-                Date programmeEndDate = instance.getApplicationDeadline();
-                if (maxProgrammeEndDate == null) {
-                    maxProgrammeEndDate = programmeEndDate;
-                } else if (programmeEndDate.after(maxProgrammeEndDate)) {
-                    maxProgrammeEndDate = programmeEndDate;
-                }
-            }
-        }
-
-        if (maxProgrammeEndDate == null || maxProgrammeEndDate.before(today)) {
-            return false;
-        }
-
-        return true;
-    }
-
     public Date getEarliestPossibleStartDate(ApplicationForm applicationForm) {
         Date result = null;
-        ProgrammeDetails details = applicationForm.getProgrammeDetails();
+        ProgramDetails details = applicationForm.getProgramDetails();
         Date today = new Date();
         Date todayPlusConsiderationPeriod = DateUtils.addMonths(today, CONSIDERATION_PERIOD_MONTHS);
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
@@ -88,14 +59,14 @@ public class ProgramInstanceService {
     }
 
     public boolean isPrefferedStartDateWithinBounds(ApplicationForm applicationForm) {
-        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgrammeDetails(), applicationForm.getProgrammeDetails().getStartDate());
+        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), applicationForm.getProgramDetails().getStartDate());
     }
 
     public boolean isPrefferedStartDateWithinBounds(ApplicationForm applicationForm, Date startDate) {
-        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgrammeDetails(), startDate);
+        return isPreferredStartDateWithinBounds(applicationForm, applicationForm.getProgramDetails(), startDate);
     }
 
-    private boolean isPreferredStartDateWithinBounds(ApplicationForm applicationForm, ProgrammeDetails programDetails, Date startDate) {
+    private boolean isPreferredStartDateWithinBounds(ApplicationForm applicationForm, ProgramDetails programDetails, Date startDate) {
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
             boolean afterStartDate = startDate.after(instance.getApplicationStartDate());
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
@@ -180,7 +151,7 @@ public class ProgramInstanceService {
         programInstance.setEnabled(true);
         programInstance.setIdentifier("CUSTOM");
         programInstance.setStudyOption(studyOption.getName());
-        programInstance.setStudyOptionCode(studyOption.getId());
+        programInstance.setStudyOption(studyOption.getId());
 
         programInstanceDAO.save(programInstance);
         return programInstance;

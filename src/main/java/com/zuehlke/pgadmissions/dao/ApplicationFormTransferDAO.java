@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
+import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 
 @Repository
@@ -81,6 +82,19 @@ public class ApplicationFormTransferDAO {
 
     public List<ApplicationFormTransfer> getAllTransfers() {
         return (List<ApplicationFormTransfer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).list();
+    }
+    
+    public ApplicationFormTransferError getErrorById(Long id) {
+        return (ApplicationFormTransferError) sessionFactory.getCurrentSession().get(ApplicationFormTransferError.class, id);
+    }
+    
+    public void requeueApplicationTransfer(final ApplicationForm application) {
+        ApplicationFormTransfer transfer = application.getApplicationFormTransfer();
+        if (transfer != null) {
+            transfer.setTransferStartTimepoint(new Date());
+            transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
+            save(transfer);
+        }
     }
 
 }

@@ -26,7 +26,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -46,11 +46,11 @@ public class ApplicationFormCreationServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ProgrammeDetailsService programmeDetailsServiceMock;
+    private ProgramDetailsService programmeDetailsServiceMock;
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
     
     @Mock
     @InjectIntoByType
@@ -204,7 +204,7 @@ public class ApplicationFormCreationServiceTest {
         RegisteredUser primarySupervisorUser = new RegisteredUserBuilder().email("primary@mail.com").firstName("primaryF").lastName("primaryL").build();
         RegisteredUser secondarySupervisorUser = new RegisteredUserBuilder().email("secondary@mail.com").firstName("secondaryF").lastName("secondaryL").build();
 
-        ProgrammeDetails programmeDetails = new ProgrammeDetails();
+        ProgramDetails programmeDetails = new ProgramDetails();
         ApplicationForm applicationForm = new ApplicationFormBuilder().programmeDetails(programmeDetails).build();
         Project project = new ProjectBuilder().primarySupervisor(primarySupervisorUser).secondarySupervisor(secondarySupervisorUser).build();
 
@@ -234,7 +234,7 @@ public class ApplicationFormCreationServiceTest {
         expect(applicationContextMock.getBean(ApplicationFormCreationService.class)).andReturn(thisBeanMock);
         expect(thisBeanMock.generateNewApplicationNumber(program)).andReturn("007");
         applicationFormDAOMock.save(isA(ApplicationForm.class));
-        programmeDetailsServiceMock.save(isA(ProgrammeDetails.class));
+        programmeDetailsServiceMock.save(isA(ProgramDetails.class));
 
         replay();
         ApplicationForm applicationForm = service.createNewApplicationForm(applicant, project);
@@ -245,9 +245,9 @@ public class ApplicationFormCreationServiceTest {
         assertSame(project, applicationForm.getProject());
         assertEquals("007", applicationForm.getApplicationNumber());
 
-        ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
+        ProgramDetails programmeDetails = applicationForm.getProgramDetails();
         assertEquals("A program", programmeDetails.getProgrammeName());
-        assertSame(programmeDetails, applicationForm.getProgrammeDetails());
+        assertSame(programmeDetails, applicationForm.getProgramDetails());
         assertSame(applicationForm, programmeDetails.getApplication());
     }
 

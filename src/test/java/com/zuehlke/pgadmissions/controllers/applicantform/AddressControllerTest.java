@@ -32,8 +32,8 @@ import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
@@ -41,14 +41,14 @@ import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
 public class AddressControllerTest {
 
     private RegisteredUser currentUser;
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
     private AddressSectionDTOValidator addressSectionValidatorMock;
     private AddressController controller;
 
     private DomicileService domicileServiceMock;
     private DomicilePropertyEditor domicilePropertyEditor;
     private UserService userServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Test(expected = CannotUpdateApplicationException.class)
     public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -76,7 +76,7 @@ public class AddressControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
         assertEquals(applicationForm, returnedApplicationForm);
@@ -84,7 +84,7 @@ public class AddressControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(null);
         EasyMock.replay(applicationsServiceMock);
         controller.getApplicationForm("1");
     }
@@ -114,7 +114,7 @@ public class AddressControllerTest {
         Address addressTwo = new AddressBuilder().id(2).address1("location2").address2("location2-line2").domicile(domicileTwo).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).contactAddress(addressOne).currentAddress(addressTwo).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
         AddressSectionDTO returnedAddress = controller.getAddressDTO("1");
         assertEquals("location1", returnedAddress.getContactAddress1());
@@ -139,7 +139,7 @@ public class AddressControllerTest {
         Address addressTwo = new AddressBuilder().id(2).address1("location1").domicile(domicileOne).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).contactAddress(addressOne).currentAddress(addressTwo).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
 
         AddressSectionDTO returnedAddress = controller.getAddressDTO("1");
@@ -160,7 +160,7 @@ public class AddressControllerTest {
         EasyMock.replay(userServiceMock);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock, currentUser);
 
         AddressSectionDTO returnedAddress = controller.getAddressDTO("1");
@@ -277,11 +277,11 @@ public class AddressControllerTest {
     public void setUp() {
         domicilePropertyEditor = EasyMock.createMock(DomicilePropertyEditor.class);
         domicileServiceMock = EasyMock.createMock(DomicileService.class);
-        applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 
         addressSectionValidatorMock = EasyMock.createMock(AddressSectionDTOValidator.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         controller = new AddressController(applicationsServiceMock, userServiceMock, domicileServiceMock, domicilePropertyEditor, addressSectionValidatorMock,
                 applicationFormUserRoleServiceMock);
 

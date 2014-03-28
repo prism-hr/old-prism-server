@@ -30,7 +30,7 @@ public class RolePropertyEditor extends PropertyEditorSupport {
             setValue(null);
             return;
         }
-        Role role = roleService.getRoleByAuthority(authorityEnum);
+        Role role = roleService.getById(authorityEnum);
         setValue(role);
     }
 

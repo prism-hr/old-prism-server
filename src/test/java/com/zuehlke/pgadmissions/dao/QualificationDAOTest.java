@@ -37,7 +37,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		Integer id = qualification.getId();
 		flushAndClearSession();
 		
-		assertEquals(qualification.getId(), qualificationDAO.getQualificationById(id).getId());
+		assertEquals(qualification.getId(), qualificationDAO.getById(id).getId());
 	}
 
 	@Test

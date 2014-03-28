@@ -54,10 +54,10 @@
         <label class="plain-label" for="studyOption">Study Option<em>*</em></label>
         <span class="hint" data-desc="<@spring.message 'programmeDetails.studyOption'/>"></span>
         <div class="field">
-          <select class="full" id="studyOption" name="studyOption"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled="disabled"</#if>>
+          <select class="full" id="studyOption" name="studyOption">
             <option value="">Select...</option>
             <#list studyOptions as studyOption>
-            <option value="${studyOption.name}"<#if programmeDetails.studyOption?? &&  programmeDetails.studyOption == studyOption.name> selected="selected"</#if>>${studyOption.name}</option>
+            <option value="${studyOption.name}"<#if programmeDetails.studyOption?? && programmeDetails.studyOption == studyOption.name> selected="selected"</#if>>${studyOption.name}</option>
             </#list>
           </select>
           <#if studyOptionError?? && studyOptionError=='true'>

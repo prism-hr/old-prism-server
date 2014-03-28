@@ -40,7 +40,7 @@ public class PermissionsServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ProgramsService programsService;
+    private ProgramService programsService;
 
     @TestedObject
     private PermissionsService service;

@@ -25,31 +25,31 @@ import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationEx
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 
 public class AdditionalInformationControllerTest {
     private RegisteredUser currentUser;
     private AdditionalInfoService addInfoServiceMock;
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
     private AdditionalInformationValidator validatorMock;
     private ApplicationFormPropertyEditor applFormPropertyEditorMock;
     private BooleanPropertyEditor booleanPropertyEditorMock;
     private AdditionalInformationController controller;
     private UserService userServiceMock;
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Before
     public void setUp() {
         addInfoServiceMock = EasyMock.createMock(AdditionalInfoService.class);
-        applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+        applicationServiceMock = EasyMock.createMock(ApplicationFormService.class);
         applFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
         booleanPropertyEditorMock = EasyMock.createMock(BooleanPropertyEditor.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         validatorMock = EasyMock.createMock(AdditionalInformationValidator.class);
-        applicationFormUserRoleServiceMock = EasyMock.createMock(ApplicationFormUserRoleService.class);
+        applicationFormUserRoleServiceMock = EasyMock.createMock(WorkflowService.class);
         controller = new AdditionalInformationController(applicationServiceMock, userServiceMock, applFormPropertyEditorMock,//
                 booleanPropertyEditorMock, addInfoServiceMock, validatorMock, applicationFormUserRoleServiceMock);
 
@@ -140,7 +140,7 @@ public class AdditionalInformationControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
+        EasyMock.expect(applicationServiceMock.getByApplicationNumber("100")).andReturn(applicationForm);
         EasyMock.replay(applicationServiceMock, currentUser);
         ApplicationForm returnedApplicationForm = controller.getApplicationForm("100");
         Assert.assertEquals(applicationForm, returnedApplicationForm);

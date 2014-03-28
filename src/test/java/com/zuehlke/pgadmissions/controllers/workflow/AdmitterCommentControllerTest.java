@@ -30,8 +30,8 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdmitterCommentValidator;
@@ -44,7 +44,7 @@ public class AdmitterCommentControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
 
     @Mock
     @InjectIntoByType
@@ -72,7 +72,7 @@ public class AdmitterCommentControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Mock
     BindingResult resultMock;
@@ -82,7 +82,7 @@ public class AdmitterCommentControllerTest {
         ApplicationForm form = new ApplicationFormBuilder().applicationNumber("app_id").id(12).build();
         RegisteredUser currentUser = new RegisteredUserBuilder().roles(new RoleBuilder().id(Authority.ADMITTER).build()).build();
 
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("app_id")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("app_id")).andReturn(form);
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
 
         replay();
@@ -96,7 +96,7 @@ public class AdmitterCommentControllerTest {
 
     @Test(expected = MissingApplicationFormException.class)
     public void shouldThrowExceptionIfApplicationNotFound() {
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("id")).andReturn(null);
+        expect(applicationsServiceMock.getByApplicationNumber("id")).andReturn(null);
 
         replay();
         controller.getApplicationForm("id");
@@ -106,7 +106,7 @@ public class AdmitterCommentControllerTest {
     @Test
     public void shouldReturnApplication() {
         ApplicationForm form = new ApplicationFormBuilder().id(12).build();
-        expect(applicationsServiceMock.getApplicationByApplicationNumber("id")).andReturn(form);
+        expect(applicationsServiceMock.getByApplicationNumber("id")).andReturn(form);
 
         replay();
         ApplicationForm result = controller.getApplicationForm("id");

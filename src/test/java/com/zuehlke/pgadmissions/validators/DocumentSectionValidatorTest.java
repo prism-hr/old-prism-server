@@ -12,7 +12,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.dto.DocumentsSectionDTO;
 
@@ -44,9 +47,11 @@ public class DocumentSectionValidatorTest {
 
     @Before
     public void setup() {
+        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).build();
         documentsSectionDTO = new DocumentsSectionDTO();
         documentsSectionDTO.setCv(new DocumentBuilder().type(DocumentType.CV).build());
         documentsSectionDTO.setPersonalStatement(new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).build());
+        documentsSectionDTO.setApplication(application);
 
         documentSectionValidator = new ApplicationFormDocumentValidator();
         documentSectionValidator.setValidator((javax.validation.Validator) validator);

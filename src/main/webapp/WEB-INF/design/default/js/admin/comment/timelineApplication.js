@@ -6,7 +6,7 @@ $(document).ready(function() {
 		
 	$('#timelineBtn').click(function()
 	{
-		$('#timelineTabview ul.tabs li').removeClass('current');
+		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		
 		$('#applicationTab').hide();
@@ -67,7 +67,7 @@ $(document).ready(function() {
 	if($('#applicationTab').length > 0){
 		$('#applicationBtn').click(function()
 		{
-			$('#timelineTabview ul.tabs li').removeClass('current');
+			$('#timelineview ul.tabs li').removeClass('current');
 			$(this).parent('li').addClass('current');
 	
 			$('#timelineTab').hide();
@@ -141,7 +141,7 @@ $(document).ready(function() {
 	var jumpToOpportunity = false;
 	
 	$('#opportunityBtn').click(function(){
-		$('#timelineTabview ul.tabs li').removeClass('current');
+		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		$('#applicationTab').hide();
 		$('#timelineTab').hide();

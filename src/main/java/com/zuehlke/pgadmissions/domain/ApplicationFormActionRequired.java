@@ -7,6 +7,10 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -41,12 +45,9 @@ public class ApplicationFormActionRequired implements Serializable {
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date assignedTimestamp = new Date();
 
-    public ApplicationFormActionRequired() {
-    }
-
-    public ApplicationFormActionRequired(ApplicationForm applicationForm, RegisteredUser user, Role role, Action action, Date deadlineTimestamp,
+    public ApplicationFormActionRequired(ApplicationFormUserRole applicationFormUserRole, Action action, Date deadlineTimestamp,
             Boolean bindDeadlineToDueDate, Boolean raisesUrgentFlag) {
-        setId(applicationForm, user, role, action);
+        setId(applicationFormUserRole, action);
         this.deadlineTimestamp = deadlineTimestamp;
         this.bindDeadlineToDueDate = bindDeadlineToDueDate;
         this.raisesUrgentFlag = raisesUrgentFlag;
@@ -56,8 +57,8 @@ public class ApplicationFormActionRequired implements Serializable {
         return id;
     }
 
-    public void setId(ApplicationForm applicationForm, RegisteredUser user, Role role, Action action) {
-        this.id.setApplicationFormUserRolePrimaryKey(applicationForm, user, role);
+    public void setId(ApplicationFormUserRole applicationFormUserRole, Action action) {
+        this.id.setApplicationFormUserRole(applicationFormUserRole);
         this.id.setAction(action);
     }
 
@@ -94,8 +95,12 @@ public class ApplicationFormActionRequired implements Serializable {
 
         private static final long serialVersionUID = -2595787410331680123L;
 
-        @EmbeddedId
-        protected ApplicationFormUserRole.ApplicationFormUserRolePrimaryKey applicationFormUserRolePrimaryKey;
+        @ManyToOne (fetch = FetchType.LAZY)
+        @JoinColumns({
+            @JoinColumn(name = "applicationFrom", referencedColumnName = "applicationForm"),
+            @JoinColumn(name = "user", referencedColumnName = "user"), 
+            @JoinColumn(name = "role", referencedColumnName = "role") })
+        protected ApplicationFormUserRole applicationFormUserRole;
 
         @Column(name = "action_id")
         protected Action action;
@@ -103,19 +108,17 @@ public class ApplicationFormActionRequired implements Serializable {
         public ApplicationFormActionRequiredPrimaryKey() {
         }
 
-        public ApplicationFormActionRequiredPrimaryKey(ApplicationForm applicationForm, RegisteredUser user, Role role, Action action) {
-            setApplicationFormUserRolePrimaryKey(applicationForm, user, role);
+        public ApplicationFormActionRequiredPrimaryKey(ApplicationFormUserRole applicationFormUserRole, Action action) {
+            this.applicationFormUserRole = applicationFormUserRole;
             this.action = action;
         }
 
-        public ApplicationFormUserRole.ApplicationFormUserRolePrimaryKey getApplicationFormUserRolePrimaryKey() {
-            return applicationFormUserRolePrimaryKey;
+        public ApplicationFormUserRole getApplicationFormUserRole() {
+            return applicationFormUserRole;
         }
 
-        public void setApplicationFormUserRolePrimaryKey(ApplicationForm applicationForm, RegisteredUser user, Role role) {
-            this.applicationFormUserRolePrimaryKey.applicationForm = applicationForm;
-            this.applicationFormUserRolePrimaryKey.user = user;
-            this.applicationFormUserRolePrimaryKey.role = role;
+        public void setApplicationFormUserRole(ApplicationFormUserRole applicationFormUserRole) {
+            this.applicationFormUserRole = applicationFormUserRole;
         }
 
         public Action getAction() {
@@ -128,8 +131,7 @@ public class ApplicationFormActionRequired implements Serializable {
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(applicationFormUserRolePrimaryKey.applicationForm, applicationFormUserRolePrimaryKey.role,
-                    applicationFormUserRolePrimaryKey.role, action);
+            return Objects.hashCode(applicationFormUserRole, action);
         }
 
         @Override
@@ -141,7 +143,8 @@ public class ApplicationFormActionRequired implements Serializable {
                 return false;
             }
             final ApplicationFormActionRequiredPrimaryKey other = (ApplicationFormActionRequiredPrimaryKey) obj;
-            return applicationFormUserRolePrimaryKey.equals(other) && Objects.equal(action.getId(), other.getAction().getId());
+            return applicationFormUserRole.getId().equals(other.getApplicationFormUserRole().getId())
+                    && Objects.equal(action.getId(), other.getAction().getId());
         }
 
     }

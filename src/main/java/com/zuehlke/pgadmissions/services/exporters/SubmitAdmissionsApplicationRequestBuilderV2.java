@@ -203,7 +203,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private DomicileTp buildDomicile() {
         DomicileTp domicileTp = xmlFactory.createDomicileTp();
-        domicileTp.setCode(applicationForm.getPersonalDetails().getResidenceCountry().getCode());
+        domicileTp.setCode(applicationForm.getPersonalDetails().getResidenceCountry().getEnabledCode());
         domicileTp.setName(applicationForm.getPersonalDetails().getResidenceCountry().getName());
         return domicileTp;
     }
@@ -247,7 +247,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             throw new IllegalArgumentException("Candidate should have at least one nationality.");
         }
 
-        nationalityTp.setCode(firstNationality.getCode());
+        nationalityTp.setCode(firstNationality.getEnabledCode());
         nationalityTp.setName(firstNationality.getName());
         return nationalityTp;
     }
@@ -259,7 +259,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         if (secondNationality == null) {
             return null;
         } else {
-            nationalityTp.setCode(secondNationality.getCode());
+            nationalityTp.setCode(secondNationality.getEnabledCode());
             nationalityTp.setName(secondNationality.getName());
             return nationalityTp;
         }
@@ -268,7 +268,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private CountryTp buildCountry() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         CountryTp countryTp = xmlFactory.createCountryTp();
-        countryTp.setCode(personalDetails.getCountry().getCode());
+        countryTp.setCode(personalDetails.getCountry().getEnabledCode());
         countryTp.setName(personalDetails.getCountry().getName());
         return countryTp;
     }
@@ -295,7 +295,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private DisabilityTp buildDisability() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         DisabilityTp disabilityTp = xmlFactory.createDisabilityTp();
-        disabilityTp.setCode(personalDetails.getDisability().getCode());
+        disabilityTp.setCode(personalDetails.getDisability().getEnabledCode());
         disabilityTp.setName(personalDetails.getDisability().getName());
         return disabilityTp;
     }
@@ -303,7 +303,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private EthnicityTp buildEthnicity() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         EthnicityTp ethnicityTp = xmlFactory.createEthnicityTp();
-        ethnicityTp.setCode(personalDetails.getEthnicity().getCode());
+        ethnicityTp.setCode(personalDetails.getEthnicity().getEnabledCode());
         ethnicityTp.setName(personalDetails.getEthnicity().getName());
         return ethnicityTp;
     }
@@ -319,7 +319,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         addressTp.setAddressLine3(currentAddress.getAddress3());
         addressTp.setAddressLine4(currentAddress.getAddress4());
         addressTp.setPostCode(currentAddress.getAddress5());
-        addressTp.setCountry(currentAddress.getDomicile().getCode());
+        addressTp.setCountry(currentAddress.getDomicile().getEnabledCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
         // in this format before.
@@ -348,7 +348,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         addressTp.setAddressLine3(contactAddress.getAddress3());
         addressTp.setAddressLine4(contactAddress.getAddress4());
         addressTp.setPostCode(contactAddress.getAddress5());
-        addressTp.setCountry(contactAddress.getDomicile().getCode());
+        addressTp.setCountry(contactAddress.getDomicile().getEnabledCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
         // in this format before.
@@ -529,7 +529,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         if(sourcesOfInterest == null) {
             return null;
         }
-        interestTp.setCode(sourcesOfInterest.getCode());
+        interestTp.setCode(sourcesOfInterest.getEnabledCode());
         interestTp.setName(sourcesOfInterest.getName());
         if (sourcesOfInterest.isFreeText()) {
             applicationTp.setOtherSourceofInterest(programmeDetails.getSourceOfInterestText());
@@ -553,7 +553,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                 qualificationsTp.setMainSubject(qualification.getQualificationSubject());
 
                 QualificationTp qualificationTp = xmlFactory.createQualificationTp();
-                qualificationTp.setCode(qualification.getQualificationType().getCode());
+                qualificationTp.setCode(qualification.getQualificationType().getEnabledCode());
                 qualificationTp.setName(qualification.getQualificationType().getName());
                 qualificationsTp.setQualification(qualificationTp);
 
@@ -563,7 +563,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                 institutionTp.setName(qualification.getQualificationInstitution());
 
                 CountryTp countryTp = xmlFactory.createCountryTp();
-                countryTp.setCode(qualification.getInstitutionCountry().getCode());
+                countryTp.setCode(qualification.getInstitutionCountry().getEnabledCode());
                 countryTp.setName(qualification.getInstitutionCountry().getName());
                 institutionTp.setCountry(countryTp);
 
@@ -648,7 +648,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             addressTp.setAddressLine3(referee.getAddressLocation().getAddress3());
             addressTp.setAddressLine4(referee.getAddressLocation().getAddress4());
             addressTp.setPostCode(referee.getAddressLocation().getAddress5());
-            addressTp.setCountry(referee.getAddressLocation().getDomicile().getCode());
+            addressTp.setCountry(referee.getAddressLocation().getDomicile().getEnabledCode());
 
             // postCode is mandatory but but PRISM did not collect addresses
             // in this format before.

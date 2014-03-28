@@ -48,6 +48,7 @@ public class Language implements SelfReferringImportedObject, Serializable {
         return name;
     }
 
+
     public void setName(String name) {
         this.name = name;
     }
@@ -66,6 +67,13 @@ public class Language implements SelfReferringImportedObject, Serializable {
     }
 
     public String getStringCode() {
+        return code;
+    }
+
+    public String getEnabledCode() {
+        if (!enabled && enabledObject != null) {
+            return enabledObject.getEnabledCode();
+        }
         return code;
     }
 

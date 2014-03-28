@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
@@ -45,9 +44,8 @@ public class ApplicationFormActionRequired implements Serializable {
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date assignedTimestamp = new Date();
 
-    public ApplicationFormActionRequired(ApplicationFormUserRole applicationFormUserRole, Action action, Date deadlineTimestamp,
-            Boolean bindDeadlineToDueDate, Boolean raisesUrgentFlag) {
-        setId(applicationFormUserRole, action);
+    public ApplicationFormActionRequired(Action action, Date deadlineTimestamp, Boolean bindDeadlineToDueDate, Boolean raisesUrgentFlag) {
+        this.setId(action);
         this.deadlineTimestamp = deadlineTimestamp;
         this.bindDeadlineToDueDate = bindDeadlineToDueDate;
         this.raisesUrgentFlag = raisesUrgentFlag;
@@ -57,8 +55,7 @@ public class ApplicationFormActionRequired implements Serializable {
         return id;
     }
 
-    public void setId(ApplicationFormUserRole applicationFormUserRole, Action action) {
-        this.id.setApplicationFormUserRole(applicationFormUserRole);
+    public void setId(Action action) {
         this.id.setAction(action);
     }
 
@@ -95,11 +92,11 @@ public class ApplicationFormActionRequired implements Serializable {
 
         private static final long serialVersionUID = -2595787410331680123L;
 
-        @ManyToOne (fetch = FetchType.LAZY)
+        @ManyToOne
         @JoinColumns({
-            @JoinColumn(name = "applicationFrom", referencedColumnName = "applicationForm"),
-            @JoinColumn(name = "user", referencedColumnName = "user"), 
-            @JoinColumn(name = "role", referencedColumnName = "role") })
+                @JoinColumn(name = "applicationFrom", referencedColumnName = "applicationForm", nullable = false, insertable = false, updatable = false),
+                @JoinColumn(name = "user", referencedColumnName = "user", insertable = false, nullable = false, updatable = false),
+                @JoinColumn(name = "role", referencedColumnName = "role", insertable = false, nullable = false, updatable = false) })
         protected ApplicationFormUserRole applicationFormUserRole;
 
         @Column(name = "action_id")

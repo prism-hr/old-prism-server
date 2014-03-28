@@ -65,15 +65,15 @@ public class RoleService {
             Boolean interestedInApplicant, HashSet<ApplicationFormActionRequired> actions) {
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRole(applicationForm, user, roleDAO.getById(authority), interestedInApplicant,
                 actions);
-        roleDAO.saveApplicationFormUserRole(applicationFormUserRole);
+        ApplicationFormUserRole mergedApplicationFormUserRole = roleDAO.saveApplicationFormUserRole(applicationFormUserRole);
         boolean raisesUrgentFlag = false;
-        for (ApplicationFormActionRequired action : applicationFormUserRole.getActions()) {
+        for (ApplicationFormActionRequired action : mergedApplicationFormUserRole.getActions()) {
             if (action.getRaisesUrgentFlag()) {
                 raisesUrgentFlag = true;
             }
         }
         applicationFormUserRole.setRaisesUrgentFlag(raisesUrgentFlag);
-        return applicationFormUserRole;
+        return mergedApplicationFormUserRole;
     }
     
     public ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Authority authority,

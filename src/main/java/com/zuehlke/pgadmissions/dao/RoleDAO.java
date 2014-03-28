@@ -35,28 +35,28 @@ public class RoleDAO {
                 .add(Restrictions.eq("id", id)).uniqueResult();
     }
     
-	public void saveRole(final Role role) {
-	    sessionFactory.getCurrentSession().merge(role);
+	public Role saveRole(final Role role) {
+	    return (Role) sessionFactory.getCurrentSession().merge(role);
 	}
 	
-	public void saveSystemUserRole(SystemUserRole systemUserRole) {
-        sessionFactory.getCurrentSession().merge(systemUserRole);
+	public SystemUserRole saveSystemUserRole(SystemUserRole systemUserRole) {
+        return (SystemUserRole) sessionFactory.getCurrentSession().merge(systemUserRole);
 	}
     
-    public void saveInstitutionUserRole(InstitutionUserRole institutionUserRole) {
-        sessionFactory.getCurrentSession().merge(institutionUserRole);
+    public InstitutionUserRole saveInstitutionUserRole(InstitutionUserRole institutionUserRole) {
+        return (InstitutionUserRole) sessionFactory.getCurrentSession().merge(institutionUserRole);
     }
     
-    public void saveProgramUserRole(ProgramUserRole programUserRole) {
-        sessionFactory.getCurrentSession().merge(programUserRole);
+    public ProgramUserRole saveProgramUserRole(ProgramUserRole programUserRole) {
+        return (ProgramUserRole) sessionFactory.getCurrentSession().merge(programUserRole);
     }
     
-    public void saveProjectUserRole(ProjectUserRole projectUserRole) {
-        sessionFactory.getCurrentSession().merge(projectUserRole);
+    public ProjectUserRole saveProjectUserRole(ProjectUserRole projectUserRole) {
+        return (ProjectUserRole) sessionFactory.getCurrentSession().merge(projectUserRole);
     }
     
-    public void saveApplicationFormUserRole(ApplicationFormUserRole applicationFormUserRole) {
-        sessionFactory.getCurrentSession().merge(applicationFormUserRole);
+    public ApplicationFormUserRole saveApplicationFormUserRole(ApplicationFormUserRole applicationFormUserRole) {
+        return (ApplicationFormUserRole) sessionFactory.getCurrentSession().merge(applicationFormUserRole);
     }
 
     public List<Role> getSystemUserRoles(RegisteredUser user) {

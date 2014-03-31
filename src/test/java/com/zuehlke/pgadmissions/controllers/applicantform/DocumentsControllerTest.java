@@ -19,16 +19,16 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.dto.DocumentsSectionDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormDocumentValidator;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -63,7 +63,7 @@ public class DocumentsControllerTest {
         ApplicationForm application = new ApplicationFormBuilder().cv(new Document()).personalStatement(new Document()).build();
         modelMap.put("applicationForm", application);
 
-        assertEquals("/private/pgStudents/form/components/documents", controller.getDocumentsView(modelMap));
+        assertEquals("/private/pgStudents/form/components/documents", controller.getDocumentsView(null, modelMap));
 
         assertNotNull(modelMap.get("documentsSectionDTO"));
     }
@@ -103,32 +103,31 @@ public class DocumentsControllerTest {
     @Test
     public void shouldSaveAppplicationFormAndRedirectIfNoErrors() {
         RegisteredUser currentUser = new RegisteredUser();
-        DocumentsSectionDTO documentsSectionDTO = new DocumentsSectionDTO();
+        ApplicationFormDocument documentsSectionDTO = new ApplicationFormDocument();
         BindingResult bindingResult = new BeanPropertyBindingResult(documentsSectionDTO, "documentsSectionDTO");
         ApplicationForm application = new ApplicationFormBuilder().id(666).applicationNumber("ABC").build();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
 
         expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        applicationsServiceMock.saveDocumentsSection(666, documentsSectionDTO);
         applicationFormUserRoleServiceMock.insertApplicationUpdate(application, currentUser, ApplicationUpdateScope.ALL_USERS);
 
         replay();
-        String view = controller.editDocuments(documentsSectionDTO, bindingResult, modelMap);
+        String view = controller.editDocuments(documentsSectionDTO, bindingResult, null, modelMap);
 
         assertEquals("redirect:/update/getDocuments?applicationId=ABC", view);
     }
 
     @Test
     public void shouldNotSaveAndReturnToViewIfErrors() {
-        DocumentsSectionDTO documentsSectionDTO = new DocumentsSectionDTO();
+        ApplicationFormDocument documentsSectionDTO = new ApplicationFormDocument();
         BindingResult bindingResult = new BeanPropertyBindingResult(documentsSectionDTO, "documentsSectionDTO");
         ModelMap modelMap = new ModelMap();
         
         bindingResult.rejectValue("personalStatement", "file.upload.empty");
 
         replay();
-        String view = controller.editDocuments(documentsSectionDTO, bindingResult, modelMap);
+        String view = controller.editDocuments(documentsSectionDTO, bindingResult, null, modelMap);
 
         assertEquals("/private/pgStudents/form/components/documents", view);
         assertSame(documentsSectionDTO, modelMap.get("documentsSectionDTO"));

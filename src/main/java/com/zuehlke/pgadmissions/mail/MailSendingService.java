@@ -24,11 +24,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
+import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 
 @Service
 public class MailSendingService extends AbstractMailSendingService {
@@ -184,16 +188,19 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-  	public void sendInterviewVoteNotificationToInterviewerParticipants(Interview interview) {
-        ApplicationForm application = interview.getApplication();
-        String subject = resolveMessage(INTERVIEW_VOTE_NOTIFICATION, application);
+  	public void sendInterviewVoteNotificationToInterviewerParticipants(AssignInterviewersComment assignInterviewersComment) {
+        ApplicationForm application = assignInterviewersComment.getApplication();
+        String subject = resolveMessage(EmailTemplateName.INTERVIEW_VOTE_NOTIFICATION, application);
         PrismEmailMessage message = null;
-        for (InterviewParticipant participant : interview.getParticipants()) {
+        
+        List<RegisteredUser> recipients = Lists.newLinkedList();
+        
+        for (RegisteredUser participant : assignInterviewersComment.getParticipants()) {
             try {
                 List<RegisteredUser> admins = application.getProgram().getAdministrators();
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
                         getAdminsEmailsCommaSeparatedAsString(admins), participant, application, getHostName() });
-                message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_NOTIFICATION);
+                message = buildMessage(participant, subject, modelBuilder.build(), INTERVIEW_VOTE_NOTIFICATION);
                 sendEmail(message);
                 participant.setLastNotified(new Date());
             } catch (Exception e) {

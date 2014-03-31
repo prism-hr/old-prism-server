@@ -46,7 +46,7 @@ public class GenericCommentController {
 
     private final DocumentPropertyEditor documentPropertyEditor;
 
-    private final ActionsProvider actionsProvider;
+    private final ActionService actionService;
 
     private final WorkflowService applicationFormUserRoleService;
 
@@ -80,7 +80,7 @@ public class GenericCommentController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("user")
@@ -109,7 +109,7 @@ public class GenericCommentController {
     public String getGenericCommentPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return GENERIC_COMMENT_PAGE;
     }
@@ -118,7 +118,7 @@ public class GenericCommentController {
     public String addComment(@Valid @ModelAttribute("comment") Comment comment, BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
         if (result.hasErrors()) {
             return GENERIC_COMMENT_PAGE;
         }

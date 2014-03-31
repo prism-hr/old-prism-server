@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -55,16 +56,10 @@ public class ApplicationFormService {
     private ApplicationFormListDAO applicationFormListDAO;
 
     @Autowired
-    private MailSendingService mailService;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
     private StateService stateService;
-
-    @Autowired
-    private EventFactory eventFactory;
 
     @Autowired
     private ProgramDetailsService programDetailsService;
@@ -83,6 +78,9 @@ public class ApplicationFormService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private WorkflowService workflowService;
 
     public ApplicationForm getById(Integer id) {
         return applicationFormDAO.getById(id);
@@ -121,9 +119,7 @@ public class ApplicationFormService {
     }
 
     public void submitApplication(ApplicationForm application, HttpServletRequest request) {
-        setApplicantIpAddress(application, request);
         setApplicationStatus(application, ApplicationFormStatus.VALIDATION);
-        sendApplicationSubmissionConfirmation(application);
         workflowService.applicationSubmitted(application);
         applicationFormDAO.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
     }
@@ -140,7 +136,6 @@ public class ApplicationFormService {
         case VALIDATION:
             application.setSubmittedDate(new LocalDate().toDate());
             application.setDueDate(getDueDateForApplication(application));
-            application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
         case INTERVIEW:
             application.setDueDate(getDueDateForApplication(application));
             application.setClosingDate(null);
@@ -157,7 +152,6 @@ public class ApplicationFormService {
         case WITHDRAWN:
             application.setDueDate(null);
             application.setClosingDate(null);
-            application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.WITHDRAWN));
             actionService.deleteApplicationActions(application);
         }
 
@@ -238,6 +232,10 @@ public class ApplicationFormService {
         return applicationDescriptor;
     }
 
+    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ApplicationFormAction completeStageAction) {
+        return applicationFormDAO.getLatestStateChangeComment(applicationForm, completeStageAction);
+    }
+
     private void autoPopulateApplication(ApplicationForm applicationForm) {
         RegisteredUser user = userService.getCurrentUser();
         if (user != null) {
@@ -310,22 +308,6 @@ public class ApplicationFormService {
             application.setDueDate(baselineDate.plusDays(daysToAdd).toDate());
         }
         return null;
-    }
-
-    private void setApplicantIpAddress(ApplicationForm application, HttpServletRequest request) {
-        String ipAddress = request.getRemoteAddr();
-        if (ipAddress != null) {
-            application.setIpAddress(ipAddress);
-        }
-    }
-
-    private void sendApplicationSubmissionConfirmation(final ApplicationForm applicationForm) {
-        try {
-            mailService.sendSubmissionConfirmationToApplicant(applicationForm);
-            applicationFormDAO.save(applicationForm);
-        } catch (Exception e) {
-            log.warn("{}", e);
-        }
     }
 
 }

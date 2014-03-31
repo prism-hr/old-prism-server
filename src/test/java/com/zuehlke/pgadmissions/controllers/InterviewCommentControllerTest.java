@@ -58,7 +58,7 @@ public class InterviewCommentControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
     
     @TestedObject
     private InterviewCommentController controller;

@@ -76,7 +76,7 @@ public class ReviewCommentController {
     private ApplicationFormUserRoleService ApplicationFormUserRoleService;
     
     @Autowired
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -91,7 +91,7 @@ public class ReviewCommentController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("user")
@@ -135,7 +135,7 @@ public class ReviewCommentController {
     public String getReviewFeedbackPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
         ApplicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return REVIEW_FEEDBACK_PAGE;
     }
@@ -144,7 +144,7 @@ public class ReviewCommentController {
     public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result, ModelMap modelMap) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
 
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {

@@ -27,8 +27,11 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferComment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
@@ -42,14 +45,13 @@ import com.zuehlke.pgadmissions.services.ApplicationFormService;
  */
 @Service
 public class ExportService {
-    
 
     private final Logger log = LoggerFactory.getLogger(ExportService.class);
 
     private final WebServiceTemplate webServiceTemplate;
 
     private final CommentDAO commentDAO;
-    
+
     private final UserDAO userDAO;
 
     private SftpAttachmentsSendingService sftpAttachmentsSendingService;
@@ -131,14 +133,23 @@ public class ExportService {
             throws PorticoExportServiceException {
         ApplicationForm form = applicationsService.getById(formObj.getId());
         ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
-        ValidationComment validationComment = commentDAO.getValidationCommentForApplication(form);
+        ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(form,
+                ApplicationFormAction.COMPLETE_VALIDATION_STAGE);
+
         Boolean isOverseasStudent = validationComment == null ? true : validationComment.getHomeOrOverseas().equals(HomeOrOverseas.OVERSEAS);
+        OfferRecommendedComment offerRecommendedComment = (OfferRecommendedComment) applicationsService.getLatestStateChangeComment(form,
+                ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
+        CommentAssignedUser primarySupervisor = null;
+        if (offerRecommendedComment != null) {
+            primarySupervisor = offerRecommendedComment.getPrimaryAssignedUser();
+        }
+
         final ByteArrayOutputStream requestMessageBuffer = new ByteArrayOutputStream(5000);
 
         AdmissionsApplicationResponse response = null;
         try {
             SubmitAdmissionsApplicationRequest request = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()).applicationForm(form)
-                    .isOverseasStudent(isOverseasStudent).build();
+                    .isOverseasStudent(isOverseasStudent).primarySupervisor(primarySupervisor.getUser()).build();
 
             listener.webServiceCallStarted(request, form);
 
@@ -163,7 +174,8 @@ public class ExportService {
             applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL,
                     WS_CALL_FAILED_NETWORK, ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.WEBSERVICE_UNREACHABLE, log);
         } catch (SoapFaultClientException e) {
-            // Web service refused our request. Probably with some validation errors
+            // Web service refused our request. Probably with some validation
+            // errors
             applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.REJECTED_BY_WEBSERVICE,
                     WS_CALL_FAILED_REFUSED, ApplicationFormTransferErrorHandlingDecision.RETRY, ApplicationFormTransferErrorType.WEBSERVICE_SOAP_FAULT, log);
         }

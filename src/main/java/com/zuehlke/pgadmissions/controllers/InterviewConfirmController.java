@@ -43,7 +43,7 @@ public class InterviewConfirmController {
 
     private final WorkflowService applicationFormUserRoleService;
 
-    private final ActionsProvider actionsProvider;
+    private final ActionService actionService;
 
     private final InterviewConfirmDTOValidator interviewConfirmDTOValidator;
 
@@ -82,7 +82,7 @@ public class InterviewConfirmController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute(value = "interviewConfirmDTO")
@@ -100,7 +100,7 @@ public class InterviewConfirmController {
     public String getInterviewConfirmPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
         
         AssignInterviewersComment latestComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.ASSIGN_INTERVIEWERS);
         
@@ -118,7 +118,7 @@ public class InterviewConfirmController {
                     BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
 
         if (result.hasErrors()) {
             return INTERVIEW_CONFIRM_PAGE;

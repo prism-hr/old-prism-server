@@ -14,12 +14,9 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
@@ -34,7 +31,7 @@ public class RefereeService {
 
     @Autowired
     private RefereeDAO refereeDAO;
-    
+
     @Autowired
     private UserService userService;
 
@@ -45,9 +42,6 @@ public class RefereeService {
     private CommentService commentService;
 
     @Autowired
-    private EventFactory eventFactory;
-
-    @Autowired
     private ApplicationFormDAO applicationFormDAO;
 
     @Autowired
@@ -55,39 +49,27 @@ public class RefereeService {
 
     @Autowired
     private EncryptionHelper encryptionHelper;
-    
+
     @Autowired
     private ApplicationFormService applicationFormService;
 
     @Autowired
-    private ApplicantRatingService applicantRatingService;
-    
-    @Autowired
-    private RoleDAO roleDAO;
-    
-    @Autowired
-    private CommentService commentService;
-    
-    @Autowired
-    private EncryptionUtils encryptionUtils;
-    
-    @Autowired
-    private EncryptionHelper encryptionHelper;
-    
-    @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
+    @Autowired
+    private ApplicationFormCopyHelper applicationFormCopyHelper;
 
     public Referee getRefereeById(Integer id) {
         return refereeDAO.getRefereeById(id);
     }
+
     public Referee getOrCreate(Integer refereeId) {
         if (refereeId == null) {
             return new Referee();
         }
         return getSecuredInstance(refereeId);
     }
-    
+
     public void saveOrUpdate(ApplicationForm application, Integer refereeId, Referee referee) {
         Referee persistentReferee;
         if (refereeId == null) {
@@ -104,35 +86,33 @@ public class RefereeService {
             processRefereeAndGetAsUser(referee);
         }
     }
-        
-        
-        
-        
-        ApplicationForm application = newReferee.getApplication();
-        
-        if (referee == null) {
-            referee = newReferee;
-        } else {
-            referee.setFirstname(newReferee.getFirstname());
-            referee.setLastname(newReferee.getLastname());
-            if (referee.getEmail() != newReferee.getEmail()) {
-                delete(referee);
-            }
-            referee.setEmail(newReferee.getEmail());
-            referee.setJobEmployer(newReferee.getJobEmployer());
-            referee.setJobTitle(newReferee.getJobTitle());
-            referee.setAddressLocation(newReferee.getAddressLocation());
-            referee.setPhoneNumber(newReferee.getPhoneNumber());
-            referee.setMessenger(newReferee.getMessenger());
-        }
 
-        if (!application.getStatus().isSubmitted()) {
-            save(referee);
-        } else if (application.getStatus().isModifiable()) {
-
-        }
-        
-    }
+    // TODO finish it
+    // ApplicationForm application = newReferee.getApplication();
+    //
+    // if (referee == null) {
+    // referee = newReferee;
+    // } else {
+    // referee.setFirstname(newReferee.getFirstname());
+    // referee.setLastname(newReferee.getLastname());
+    // if (referee.getEmail() != newReferee.getEmail()) {
+    // delete(referee);
+    // }
+    // referee.setEmail(newReferee.getEmail());
+    // referee.setJobEmployer(newReferee.getJobEmployer());
+    // referee.setJobTitle(newReferee.getJobTitle());
+    // referee.setAddressLocation(newReferee.getAddressLocation());
+    // referee.setPhoneNumber(newReferee.getPhoneNumber());
+    // referee.setMessenger(newReferee.getMessenger());
+    // }
+    //
+    // if (!application.getStatus().isSubmitted()) {
+    // save(referee);
+    // } else if (application.getStatus().isModifiable()) {
+    //
+    // }
+    //
+    // }
 
     public void refresh(Referee referee) {
         refereeDAO.refresh(referee);

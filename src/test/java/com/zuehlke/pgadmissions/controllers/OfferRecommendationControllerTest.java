@@ -35,7 +35,7 @@ public class OfferRecommendationControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
 
     @Mock
     @InjectIntoByType

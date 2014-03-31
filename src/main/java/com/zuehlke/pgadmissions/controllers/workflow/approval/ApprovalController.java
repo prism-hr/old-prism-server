@@ -98,7 +98,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser registeredUser = (RegisteredUser) modelMap.get("user");
 
-        actionsProvider.validateAction(applicationForm, registeredUser, ApplicationFormAction.ASSIGN_SUPERVISORS);
+        actionService.validateAction(applicationForm, registeredUser, ApplicationFormAction.ASSIGN_SUPERVISORS);
 
         modelMap.put("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
 
@@ -172,7 +172,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             BindingResult bindingResult, SessionStatus sessionStatus) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser initiator = getCurrentUser();
-        actionsProvider.validateAction(applicationForm, initiator, ApplicationFormAction.ASSIGN_SUPERVISORS);
+        actionService.validateAction(applicationForm, initiator, ApplicationFormAction.ASSIGN_SUPERVISORS);
 
         if (bindingResult.hasErrors()) {
             return PROPOSE_OFFER_RECOMMENDATION_SECTION;

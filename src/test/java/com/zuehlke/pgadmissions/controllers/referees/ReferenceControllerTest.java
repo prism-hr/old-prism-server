@@ -63,7 +63,7 @@ public class ReferenceControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
     
     @TestedObject
     private ReferenceController controller;

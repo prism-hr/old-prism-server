@@ -58,7 +58,7 @@ public class ReviewCommentControllerTest {
     
     @Mock
     @InjectIntoByType
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
     
     @TestedObject
     private ReviewCommentController controller;

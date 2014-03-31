@@ -48,7 +48,7 @@ public class MoveToReviewController {
     private ReviewService reviewService;
 
     @Autowired
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
 
     @Autowired
     private CommentAssignedUserPropertyEditor assignedUserPropertyEditor;
@@ -60,7 +60,7 @@ public class MoveToReviewController {
     @RequestMapping(method = RequestMethod.GET, value = "moveToReview")
     public String getReviewRoundDetailsPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-        actionsProvider.validateAction(application, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
+        actionService.validateAction(application, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
         applicationFormUserRoleService.deleteApplicationUpdate(application, getUser());
         return REVIEW_DETAILS_VIEW_NAME;
     }
@@ -76,7 +76,7 @@ public class MoveToReviewController {
 
         RegisteredUser user = getUser();
 
-        actionsProvider.validateAction(applicationForm, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
+        actionService.validateAction(applicationForm, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
         if (bindingResult.hasErrors()) {
             return REVIEWERS_SECTION_NAME;
         }
@@ -142,7 +142,7 @@ public class MoveToReviewController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
 }

@@ -36,7 +36,7 @@ public class StateTransitionService {
         if (!application.getProgram().isEnabled()) {
             return REJECTION_VIEW + application.getApplicationNumber() + 
                     "&rejectionId=" + REJECTION_REASON_WHEN_PROGAMME_EXPIRED.toString() + "&rejectionIdForced=true";
-        } else if (action != null && action.equals("abort")) {
+        } else if ("abort".equals(action)) {
             return STATE_TRANSITION_VIEW;
         } else {
             ApplicationFormStatus nextStatus = application.getNextStatus().getId();

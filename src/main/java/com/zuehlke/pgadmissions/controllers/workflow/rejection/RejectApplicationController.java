@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
@@ -26,10 +25,11 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.RejectService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.RejectionValidator;
 
 @Controller
@@ -39,42 +39,33 @@ public class RejectApplicationController {
     private static final String REJECT_VIEW_NAME = "private/staff/approver/reject_page";
     private static final String NEXT_VIEW_NAME = "redirect:/applications";
 
-    private final RejectService rejectService;
-
-    private final RejectReasonPropertyEditor rejectReasonPropertyEditor;
-
-    private final UserService userService;
-
-    private final RejectionValidator rejectionValidator;
-
-    private final ApplicationFormService applicationsService;
-
-    private final WorkflowService applicationFormUserRoleService;
-
-    private final ActionsProvider actionsProvider;
-
-    public RejectApplicationController() {
-        this(null, null, null, null, null, null, null);
-    }
+    @Autowired
+    private RejectService rejectService;
 
     @Autowired
-    public RejectApplicationController(ApplicationFormService applicationsService, RejectService rejectService, UserService userService,
-            RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator, WorkflowService applicationFormUserRoleService,
-            ActionsProvider actionsProvider) {
-        this.applicationsService = applicationsService;
-        this.rejectService = rejectService;
-        this.userService = userService;
-        this.rejectReasonPropertyEditor = rejectReasonPropertyEditor;
-        this.rejectionValidator = rejectionValidator;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.actionsProvider = actionsProvider;
-    }
+    private RejectReasonPropertyEditor rejectReasonPropertyEditor;
+
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private RejectionValidator rejectionValidator;
+
+    @Autowired
+    private ApplicationFormService applicationsService;
+
+    @Autowired
+    private WorkflowService applicationFormUserRoleService;
+
+    @Autowired
+    private ActionService actionService;
+
 
     @RequestMapping(method = RequestMethod.GET)
     public String getRejectPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
+        actionService.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
         applicationFormUserRoleService.deleteApplicationUpdate(application, user);
         return REJECT_VIEW_NAME;
     }
@@ -83,7 +74,7 @@ public class RejectApplicationController {
     public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors, ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
+        actionService.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
         
         if (errors.hasErrors()) {
             return REJECT_VIEW_NAME;
@@ -114,7 +105,7 @@ public class RejectApplicationController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     protected RegisteredUser getCurrentUser() {

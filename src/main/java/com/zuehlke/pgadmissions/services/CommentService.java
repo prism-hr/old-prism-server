@@ -16,10 +16,17 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.dto.StateChangeDTO;
+import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 
 @Service
 @Transactional
-public class ] {
+public class CommentService {
     
     @Autowired
     private CommentDAO commentDAO;

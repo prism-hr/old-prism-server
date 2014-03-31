@@ -1,70 +1,25 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
-
-import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.MessageSource;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.MapBindingResult;
-import org.springframework.web.bind.WebDataBinder;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.Score;
-import com.zuehlke.pgadmissions.domain.ScoringDefinition;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
-import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
-import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
-import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
-import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
-import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -72,7 +27,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
 
     @Mock
     @InjectIntoByType
@@ -125,10 +80,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
     @Mock
     @InjectIntoByType
-
-    @Mock
-    @InjectIntoByType
-    private ActionsProvider actionsProviderMock;
+    private ActionService actionsProviderMock;
     
     @TestedObject
     private EditApplicationFormAsProgrammeAdminController controller;
@@ -335,7 +287,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //        customQuestions.getQuestion().add(question1);
 //        ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 //
-//        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+//        EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 //        EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
 //        EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
 //
@@ -353,7 +305,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
 //        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).program(program).build();
 //
-//        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+//        EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 //        EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
 //
 //        EasyMock.replay(userServiceMock, applicationServiceMock, scoringDefinitionParserMock, scoreFactoryMock);

@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 public class ReviewService {
 
     @Autowired
-	private ApplicationsService applicationsService;
+	private ApplicationFormService applicationsService;
 
     @Autowired
 	private StageDurationService stageDurationService;
@@ -30,7 +30,7 @@ public class ReviewService {
 	private MailSendingService mailService;
 
     @Autowired
-	private ApplicationFormUserRoleService applicationFormUserRoleService;
+	private WorkflowService applicationFormUserRoleService;
 
 	public void moveApplicationToReview(ApplicationForm application, AssignReviewersComment assignReviewersComment) {
 	    

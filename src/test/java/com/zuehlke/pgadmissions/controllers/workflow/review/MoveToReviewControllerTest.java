@@ -6,19 +6,19 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class MoveToReviewControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
 
     @Mock
     @InjectIntoByType
@@ -35,11 +35,11 @@ public class MoveToReviewControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Mock
     @InjectIntoByType
-    private ActionsProvider actionsProviderMock;
+    private ActionService actionsProviderMock;
 
     @TestedObject
     private MoveToReviewController controller;
@@ -72,7 +72,7 @@ public class MoveToReviewControllerTest {
 //
 //        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 //        EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-//        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+//        EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 //        EasyMock.replay(applicationServiceMock, currentUserMock);
 //
 //        ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -138,7 +138,7 @@ public class MoveToReviewControllerTest {
 //
 //        };
 //        ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).build();
-//        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+//        EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 //        EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 //        EasyMock.replay(errorsMock, applicationServiceMock);
 //        assertEquals(MoveToReviewController.REVIEWERS_SECTION_NAME, controller.moveToReview("1", reviewRound, errorsMock));
@@ -164,7 +164,7 @@ public class MoveToReviewControllerTest {
 //
 //        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 //        EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-//        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+//        EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 //        EasyMock.replay(applicationServiceMock, currentUserMock);
 //
 //        ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -174,7 +174,7 @@ public class MoveToReviewControllerTest {
 //
 //    @Test(expected = MissingApplicationFormException.class)
 //    public void shouldThrowResourceNotFoundExceptionIfApplicatioDoesNotExist() {
-//        EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+//        EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(null);
 //        EasyMock.replay(applicationServiceMock);
 //
 //        controller.getApplicationForm("5");

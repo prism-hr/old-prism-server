@@ -1,11 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -18,35 +14,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
-import com.zuehlke.pgadmissions.domain.CompleteInterviewComment;
-import com.zuehlke.pgadmissions.domain.CompleteReviewComment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.StateChangeDTO;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.StateTransitionService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.StateChangeValidator;
 
 @Controller
@@ -84,7 +73,7 @@ public class StateTransitionController {
     protected StateTransitionService stateTransitionService;
 
     @Autowired
-    protected ApplicationFormUserRoleService applicationFormUserRoleService;
+    protected WorkflowService applicationFormUserRoleService;
 
     @Autowired
     protected ActionService actionService;
@@ -101,7 +90,7 @@ public class StateTransitionController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
-        return actionService.getApplicationDescriptorForUser(applicationForm, user);
+        return applicationFormService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("stateChangeDTO")
@@ -139,7 +128,7 @@ public class StateTransitionController {
                 stateChangeDTO.setHomeOrOverseas(validationComment.getHomeOrOverseas());
                 latestStateChangeComment = validationComment;
             } else {
-                latestStateChangeComment = applicationsService.getLatestStateChangeComment(applicationForm, null);
+                latestStateChangeComment = applicationFormService.getLatestStateChangeComment(applicationForm, null);
             }
 
             if (latestStateChangeComment.getUser() == registeredUser) {
@@ -203,7 +192,7 @@ public class StateTransitionController {
         }
 
         if (BooleanUtils.isTrue(stateChangeDTO.getFastTrackApplication())) {
-            applicationsFormService;
+            // TODO set into comment
         }
 
         commentService.postStateChangeComment(stateChangeDTO);
@@ -224,7 +213,7 @@ public class StateTransitionController {
     }
 
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationFormService.getApplicationByApplicationNumber(applicationId);
+        ApplicationForm applicationForm = applicationFormService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new MissingApplicationFormException(applicationId);
         }

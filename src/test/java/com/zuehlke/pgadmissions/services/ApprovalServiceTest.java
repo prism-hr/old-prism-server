@@ -43,7 +43,7 @@ public class ApprovalServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
     
     @Mock
     @InjectIntoByType
@@ -381,7 +381,7 @@ public class ApprovalServiceTest {
 //        programInstance.setApplicationDeadline(deadlineDate);
 //
 //        Capture<ApprovalRound> approvalRoundCapture = new Capture<ApprovalRound>();
-//        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
+//        EasyMock.expect(applicationFormDAOMock.getByApplicationNumber("bob")).andReturn(application).anyTimes();
 //        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 //        approvalRoundDAOMock.save(EasyMock.isA(ApprovalRound.class));
 //        ApprovalRound returnExpectation = new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(primary, secondary).build();
@@ -426,7 +426,7 @@ public class ApprovalServiceTest {
 //                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, suprvisorTwo).build()).build();
 //
 //        Capture<ApprovalRound> approvalRoundCapture = new Capture<ApprovalRound>();
-//        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
+//        EasyMock.expect(applicationFormDAOMock.getByApplicationNumber("bob")).andReturn(application).anyTimes();
 //        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 //        approvalRoundDAOMock.save(EasyMock.isA(ApprovalRound.class));
 //        ApprovalRound returnExpectation = new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors(supervisorOne, suprvisorTwo).build();
@@ -466,7 +466,7 @@ public class ApprovalServiceTest {
 //                .latestApprovalRound(new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors().build()).build();
 //
 //        Capture<ApprovalRound> approvalRoundCapture = new Capture<ApprovalRound>();
-//        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("bob")).andReturn(application).anyTimes();
+//        EasyMock.expect(applicationFormDAOMock.getByApplicationNumber("bob")).andReturn(application).anyTimes();
 //        EasyMock.expect(programInstanceServiceMock.isPrefferedStartDateWithinBounds(application, testDate)).andReturn(true);
 //        approvalRoundDAOMock.save(EasyMock.isA(ApprovalRound.class));
 //        ApprovalRound returnExpectation = new ApprovalRoundBuilder().recommendedStartDate(testDate).supervisors().build();

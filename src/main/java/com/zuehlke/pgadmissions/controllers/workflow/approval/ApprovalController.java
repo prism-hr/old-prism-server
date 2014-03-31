@@ -82,7 +82,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     private DatePropertyEditor datePropertyEditor;
 
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
     
     @Autowired
     private CommentAssignedUserPropertyEditor assignedUserPropertyEditor;

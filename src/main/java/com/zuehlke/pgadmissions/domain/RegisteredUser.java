@@ -34,7 +34,6 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @AnalyzerDef(name = "registeredUserAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
@@ -294,10 +293,6 @@ public class RegisteredUser implements Comparable<RegisteredUser>, Serializable 
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
     public String getDirectToUrl() {
         return directToUrl;
     }
@@ -310,24 +305,12 @@ public class RegisteredUser implements Comparable<RegisteredUser>, Serializable 
         return pendingRoleNotifications;
     }
 
-    public void setPendingRoleNotifications(List<PendingRoleNotification> pendingRoleNotifications) {
-        this.pendingRoleNotifications = pendingRoleNotifications;
-    }
-
     public List<Referee> getReferees() {
         return referees;
     }
 
-    public void setReferees(List<Referee> referees) {
-        this.referees = referees;
-    }
-
     public List<RegisteredUser> getLinkedAccounts() {
         return linkedAccounts;
-    }
-
-    public void setLinkedAccounts(List<RegisteredUser> linkedAccounts) {
-        this.linkedAccounts = linkedAccounts;
     }
 
     public RegisteredUser getPrimaryAccount() {
@@ -382,7 +365,16 @@ public class RegisteredUser implements Comparable<RegisteredUser>, Serializable 
         return researchOpportunitiesFeeds;
     }
 
-    public void setResearchOpportunitiesFeeds(List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds) {
-        this.researchOpportunitiesFeeds = researchOpportunitiesFeeds;
+    public String getDisplayName() {
+        return firstName + " " + lastName;
+    }
+    
+    @Override
+    public int compareTo(final RegisteredUser other) {
+        int firstNameResult = this.firstName.compareTo(other.firstName);
+        if (firstNameResult == 0) {
+            return this.lastName.compareTo(other.lastName);
+        }
+        return firstNameResult;
     }
 }

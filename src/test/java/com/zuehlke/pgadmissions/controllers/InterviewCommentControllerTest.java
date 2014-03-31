@@ -6,15 +6,15 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -22,7 +22,7 @@ public class InterviewCommentControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Mock
     @InjectIntoByType
@@ -54,7 +54,7 @@ public class InterviewCommentControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     @Mock
     @InjectIntoByType
@@ -66,7 +66,7 @@ public class InterviewCommentControllerTest {
 //    @Test
 //    public void shouldGetApplicationFormFromId() {
 //        ApplicationForm applicationForm = new ApplicationForm();
-//        expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+//        expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 //
 //        replay(applicationsServiceMock);
 //        ApplicationForm returnedApplication = controller.getApplicationForm("5");
@@ -77,7 +77,7 @@ public class InterviewCommentControllerTest {
 //
 //    @Test(expected = MissingApplicationFormException.class)
 //    public void shouldThrowExceptionIfApplicationFormDoesNotExist() {
-//        expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+//        expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(null);
 //
 //        replay(applicationsServiceMock);
 //        controller.getApplicationForm("5");
@@ -123,7 +123,7 @@ public class InterviewCommentControllerTest {
 //        ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 //
 //        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-//        expect(applicationsServiceMock.getApplicationByApplicationNumber("app")).andReturn(applicationForm);
+//        expect(applicationsServiceMock.getByApplicationNumber("app")).andReturn(applicationForm);
 //        expect(currentUser.getInterviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(interviewer));
 //        expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
 //        expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
@@ -147,7 +147,7 @@ public class InterviewCommentControllerTest {
 //        final Interviewer interviewer = new InterviewerBuilder().id(5).build();
 //
 //        expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-//        expect(applicationsServiceMock.getApplicationByApplicationNumber("app")).andReturn(applicationForm);
+//        expect(applicationsServiceMock.getByApplicationNumber("app")).andReturn(applicationForm);
 //        expect(currentUser.getInterviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(interviewer));
 //        expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
 //

@@ -6,12 +6,12 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.CommentAssignedUserValidator;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -20,7 +20,7 @@ public class InterviewVoteControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
     
     @Mock
     @InjectIntoByType
@@ -44,14 +44,14 @@ public class InterviewVoteControllerTest {
     
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
     
     @TestedObject
     private InterviewVoteController controller;
 
 //    @Test(expected = MissingApplicationFormException.class)
 //    public void shouldThrowExceptionWhenApptlicationIsNull() {
-//        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("app1")).andReturn(null);
+//        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("app1")).andReturn(null);
 //
 //        EasyMock.replay(applicationsServiceMock);
 //        controller.getApplicationForm("app1");
@@ -61,7 +61,7 @@ public class InterviewVoteControllerTest {
 //    @Test
 //    public void shouldGetApplicationFormFromId() {
 //        ApplicationForm applicationForm = new ApplicationForm();
-//        EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+//        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 //
 //        EasyMock.replay(applicationsServiceMock);
 //        ApplicationForm returnedApplication = controller.getApplicationForm("5");

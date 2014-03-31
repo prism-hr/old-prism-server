@@ -44,7 +44,7 @@ public class ApplicationSummaryService {
 
     private final EncryptionHelper encryptionHelper;
 
-    private final ActionsProvider actionsProvider;
+    private final ActionService actionService;
 
     public ApplicationSummaryService() {
         this(null, null, null, null);
@@ -63,7 +63,7 @@ public class ApplicationSummaryService {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedDate()));
         result.put("applicationUpdateDate", dateFormat.format(form.getLastUpdated()));
-        ApplicationDescriptor applicationDescriptor = actionsProvider.getApplicationDescriptorForUser(form, userService.getCurrentUser());
+        ApplicationDescriptor applicationDescriptor = actionService.getApplicationDescriptorForUser(form, userService.getCurrentUser());
         result.put("requiresAttention", BooleanUtils.toStringTrueFalse(applicationDescriptor.getNeedsToSeeUrgentFlag()));
         result.put("applicationNumber", form.getApplicationNumber());
     }

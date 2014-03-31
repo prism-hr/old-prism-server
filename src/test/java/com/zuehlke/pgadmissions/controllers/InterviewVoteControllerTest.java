@@ -40,7 +40,7 @@ public class InterviewVoteControllerTest {
     
     @Mock
     @InjectIntoByType
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
     
     @Mock
     @InjectIntoByType

@@ -81,7 +81,7 @@ public class ReferenceController {
     private ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @Autowired
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -96,7 +96,7 @@ public class ReferenceController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("user")
@@ -141,7 +141,7 @@ public class ReferenceController {
     public String getUploadReferencesPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return ADD_REFERENCES_VIEW_NAME;
     }
@@ -151,7 +151,7 @@ public class ReferenceController {
             throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
 
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {

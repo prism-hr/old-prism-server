@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -40,9 +39,6 @@ public class ViewEditApplicationFormController {
     private UserService userService;
 
     @Autowired
-    private ActionsProvider actionsProvider;
-
-    @Autowired
     private ActionService actionService;
 
     @InitBinder("applicationForm")
@@ -53,7 +49,7 @@ public class ViewEditApplicationFormController {
     @RequestMapping(method = RequestMethod.GET, value = "application")
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
         RegisteredUser user = userService.getCurrentUser();
-        ApplicationFormAction viewEditAction = actionsProvider.getPrecedentAction(applicationForm, user, ActionType.VIEW_EDIT);
+        ApplicationFormAction viewEditAction = actionService.getPrecedentAction(applicationForm, user, ActionType.VIEW_EDIT);
 
         switch (viewEditAction) {
         case COMPLETE_APPLICATION:

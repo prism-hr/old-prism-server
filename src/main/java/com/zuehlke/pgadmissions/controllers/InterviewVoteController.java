@@ -50,7 +50,7 @@ public class InterviewVoteController {
     private AcceptedTimeslotsPropertyEditor acceptedTimeslotsPropertyEditor;
     
     @Autowired
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
     
     @Autowired
     private ApplicationFormUserRoleService applicationFormUserRoleService;
@@ -88,14 +88,14 @@ public class InterviewVoteController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String getInterviewVotePage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_VOTE_PAGE;
     }
@@ -105,7 +105,7 @@ public class InterviewVoteController {
             @RequestParam(required = false) String comment, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
 
         if (bindingResult.hasErrors()) {
             return INTERVIEW_VOTE_PAGE;

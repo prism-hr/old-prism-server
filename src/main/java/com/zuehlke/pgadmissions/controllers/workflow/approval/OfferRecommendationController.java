@@ -51,7 +51,7 @@ public class OfferRecommendationController {
     private WorkflowService applicationFormUserRoleService;
 
     @Autowired
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
 
     @Autowired
     private OfferRecommendationService offerRecommendedService;
@@ -72,7 +72,7 @@ public class OfferRecommendationController {
     public String getOfferRecommendationPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
+        actionService.validateAction(application, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
 
         OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
         AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(application,
@@ -105,7 +105,7 @@ public class OfferRecommendationController {
             ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(application, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
+        actionService.validateAction(application, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
 
         if (errors.hasErrors()) {
             modelMap.put("offerRecommendedComment", offerRecommendedComment);
@@ -137,7 +137,7 @@ public class OfferRecommendationController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     protected RegisteredUser getCurrentUser() {

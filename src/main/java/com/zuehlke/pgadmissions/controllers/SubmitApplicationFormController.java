@@ -46,7 +46,7 @@ public class SubmitApplicationFormController {
     private UserService userService;
 
     @Autowired
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
 
     @Autowired
     private ApplicationFormUserRoleService applicationFormUserRoleService;
@@ -59,7 +59,7 @@ public class SubmitApplicationFormController {
     @RequestMapping(method = RequestMethod.POST)
     public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result, HttpServletRequest request) {
         RegisteredUser user = userService.getCurrentUser();
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.COMPLETE_APPLICATION);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.COMPLETE_APPLICATION);
 
         if (result.hasErrors()) {
             if (result.getFieldError("program") != null) {

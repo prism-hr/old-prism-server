@@ -37,5 +37,8 @@ public class TemplateLocation {
     
     public static final String MY_ACCOUNT_PAGE = PRIVATE + "/my_account";
     public static final String MY_ACCOUNT_SECTION = PRIVATE + "/my_account_section";
+    
+    public static final String DECLINE_SUCCESS_VIEW_NAME = PRIVATE + "reviewers/decline_success_confirmation";
+    public static final String DECLINE_CONFIRMATION_VIEW_NAME = PRIVATE + "reviewers/decline_confirmation";
 
 }

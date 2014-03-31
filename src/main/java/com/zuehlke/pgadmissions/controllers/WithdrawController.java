@@ -31,7 +31,7 @@ public class WithdrawController {
 
     private final WorkflowService applicationFormUserRoleService;
 
-    private final ActionsProvider actionsProvider;
+    private final ActionService actionService;
 
     public WithdrawController() {
         this(null, null, null, null, null);
@@ -51,7 +51,7 @@ public class WithdrawController {
     public String withdrawApplicationAndGetApplicationList(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.WITHDRAW);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.WITHDRAW);
 
         withdrawService.withdrawApplication(applicationForm);
         withdrawService.sendToPortico(applicationForm);

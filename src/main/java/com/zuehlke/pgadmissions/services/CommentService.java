@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 
 @Service
 @Transactional
-public class CommentService {
+public class ] {
     
     @Autowired
     private CommentDAO commentDAO;

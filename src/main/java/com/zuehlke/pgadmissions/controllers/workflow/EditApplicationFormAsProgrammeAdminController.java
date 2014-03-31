@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -50,8 +49,7 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.WorkflowService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -113,7 +111,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     protected ApplicationFormUserRoleService applicationFormUserRoleService;
     
     @Autowired
-    protected ActionsProvider actionsProvider;
+    protected ActionService actionService;
 
     @InitBinder(value = "sendToPorticoData")
     public void registerSendToPorticoData(WebDataBinder binder) {
@@ -133,7 +131,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute ApplicationForm applicationForm) {
-    	actionsProvider.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.EDIT_AS_ADMINISTRATOR);
+    	actionService.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.EDIT_AS_ADMINISTRATOR);
     	applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
@@ -267,7 +265,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     public void createScoresWithQuestion(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) throws ScoringDefinitionParseException {

@@ -58,7 +58,7 @@ public class MoveToInterviewController {
     private InterviewTimeslotsPropertyEditor interviewTimeslotsPropertyEditor;
 
     @Autowired
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
 
     @Autowired
     private ApplicationFormUserRoleService applicationFormUserRoleService;
@@ -76,7 +76,7 @@ public class MoveToInterviewController {
     public String getInterviewDetailsPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_INTERVIEWERS);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_INTERVIEWERS);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_PAGE;
     }
@@ -91,7 +91,7 @@ public class MoveToInterviewController {
     public String moveToInterview(@Valid @ModelAttribute("interview") AssignInterviewersComment interviewComment, BindingResult bindingResult, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_INTERVIEWERS);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_INTERVIEWERS);
 
         if (bindingResult.hasErrors()) {
             return INTERVIEWERS_SECTION;
@@ -111,7 +111,7 @@ public class MoveToInterviewController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("usersInterestedInApplication")

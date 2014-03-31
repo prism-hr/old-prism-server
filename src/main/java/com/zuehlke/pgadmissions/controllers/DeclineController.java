@@ -8,13 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
+import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -23,40 +24,35 @@ import com.zuehlke.pgadmissions.services.UserService;
 @Controller
 @RequestMapping(value = { "/decline" })
 public class DeclineController {
-	private final UserService userService;
-	private final CommentService commentService;
-	private final ApplicationFormService applicationsService;
-	private static final String DECLINE_SUCCESS_VIEW_NAME = "/private/reviewers/decline_success_confirmation";
-	private static final String DECLINE_CONFIRMATION_VIEW_NAME = "/private/reviewers/decline_confirmation";
-	private final RefereeService refereeService;
-	private final ActionsProvider actionsProvider;
-
-	DeclineController() {
-		this(null, null, null, null, null);
-	}
-
-	@Autowired
-	public DeclineController(UserService userService, CommentService commentService, ApplicationFormService applicationsService, RefereeService refereeService, ActionsProvider actionsProvider) {
-		this.userService = userService;
-		this.commentService = commentService;
-		this.applicationsService = applicationsService;
-		this.refereeService = refereeService;
-		this.actionsProvider = actionsProvider;
-	}
+    
+    @Autowired
+	private UserService userService;
+    
+    @Autowired
+	private CommentService commentService;
+    
+    @Autowired
+	private ApplicationFormService applicationsService;
+    
+    @Autowired
+	private RefereeService refereeService;
+    
+    @Autowired
+	private ActionService actionService;
 
 	@RequestMapping(value = "/review", method = RequestMethod.GET)
 	public String declineReview(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
 	    RegisteredUser reviewer = getReviewer(activationCode);
 	    ApplicationForm application = getApplicationForm(applicationId);
 	    
-	    actionsProvider.validateAction(application, reviewer, ApplicationFormAction.PROVIDE_REVIEW);
+	    actionService.validateAction(application, reviewer, ApplicationFormAction.PROVIDE_REVIEW);
 	    
 		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 		    commentService.declineReview(reviewer, application);
 		    modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
 		    reviewer.setDirectToUrl(null);
 		    userService.save(reviewer);
-		    return DECLINE_SUCCESS_VIEW_NAME;
+		    return TemplateLocation.DECLINE_SUCCESS_VIEW_NAME;
 		} else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
             // the user clicked on "Provide Review"
 		    if (!reviewer.isEnabled()) {
@@ -68,7 +64,7 @@ public class DeclineController {
 		    modelMap.put("message", "Please confirm that you wish to decline to provide a review. <b>You will not be able to reverse this decision.</b>");
 		    modelMap.put("okButton", "Confirm");
 		    modelMap.put("cancelButton", "Provide Review");
-            return DECLINE_CONFIRMATION_VIEW_NAME;
+            return TemplateLocation.DECLINE_CONFIRMATION_VIEW_NAME;
 		}
 	}
 
@@ -86,7 +82,7 @@ public class DeclineController {
 	    Referee referee = getReferee(activationCode, applicationForm);
 	    RegisteredUser user = userService.getUserByActivationCode(activationCode);
 	    
-	    actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
+	    actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
 	    
 	    if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 	        // the user clicked on "Confirm"
@@ -94,7 +90,7 @@ public class DeclineController {
     		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
     		user.setDirectToUrl(null);
             userService.save(user);
-    		return DECLINE_SUCCESS_VIEW_NAME;
+    		return TemplateLocation.DECLINE_SUCCESS_VIEW_NAME;;
 	    } else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
 	        // the user clicked on "Provide Reference"
 	        if (!referee.getUser().isEnabled()) {
@@ -106,7 +102,7 @@ public class DeclineController {
 	        modelMap.put("message", "Please confirm that you wish to decline to provide a reference. <b>You will not be able to reverse this decision.</b>");
 	        modelMap.put("okButton", "Confirm");
             modelMap.put("cancelButton", "Provide Reference");
-            return DECLINE_CONFIRMATION_VIEW_NAME;
+            return TemplateLocation.DECLINE_CONFIRMATION_VIEW_NAME;
 	    }
 	}
 

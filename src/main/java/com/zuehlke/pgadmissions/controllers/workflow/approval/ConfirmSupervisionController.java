@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -27,11 +26,12 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.ConfirmSupervisionDTOValidator;
 
 @Controller
@@ -56,10 +56,11 @@ public class ConfirmSupervisionController {
     @Autowired
     private ConfirmSupervisionDTOValidator confirmSupervisionDTOValidator;
 
-    private final WorkflowService applicationFormUserRoleService;
+    @Autowired
+    private WorkflowService workflowService;
 
     @Autowired
-    private ActionsProvider actionsProvider;
+    private ActionService actionService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;
@@ -77,7 +78,7 @@ public class ConfirmSupervisionController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("confirmSupervisionDTO")
@@ -119,8 +120,8 @@ public class ConfirmSupervisionController {
     public String confirmSupervision(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
-        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
+        workflowService.deleteApplicationUpdate(applicationForm, user);
         return CONFIRM_SUPERVISION_PAGE;
     }
 
@@ -128,14 +129,14 @@ public class ConfirmSupervisionController {
     public String applyConfirmSupervision(@Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
-        actionsProvider.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
 
         if (result.hasErrors()) {
             return CONFIRM_SUPERVISION_PAGE;
         }
 
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
+        workflowService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
 
         if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
             return "redirect:/applications?messageCode=supervision.confirmed&application=" + applicationForm.getApplicationNumber();

@@ -87,7 +87,7 @@ public class StateTransitionController {
     protected ApplicationFormUserRoleService applicationFormUserRoleService;
 
     @Autowired
-    protected ActionsProvider actionsProvider;
+    protected ActionService actionService;
 
     @InitBinder(value = "stateChangeDTO")
     public void registerBinders(WebDataBinder binder) {
@@ -101,7 +101,7 @@ public class StateTransitionController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
-        return actionsProvider.getApplicationDescriptorForUser(applicationForm, user);
+        return actionService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("stateChangeDTO")
@@ -196,7 +196,7 @@ public class StateTransitionController {
         }
 
         RegisteredUser registeredUser = stateChangeDTO.getRegisteredUser();
-        actionsProvider.validateAction(applicationForm, registeredUser, invokedAction);
+        actionService.validateAction(applicationForm, registeredUser, invokedAction);
 
         if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;

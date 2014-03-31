@@ -91,22 +91,6 @@ public class FundingControllerTest {
         assertSame(funding, modelMap.get("funding"));
     }
 
-	@Test
-	public void shouldReturnApplicationForm() {
-		currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-		EasyMock.replay(userServiceMock);
-	
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock, currentUser);
-		ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
-		assertEquals(applicationForm, returnedApplicationForm);
-	}
-
-
-
     @Test
     public void shouldSaveQulificationAndRedirectIfNoErrors() {
         RegisteredUser user = new RegisteredUser();

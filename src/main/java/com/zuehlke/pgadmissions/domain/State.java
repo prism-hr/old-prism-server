@@ -14,8 +14,9 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 @Entity(name = "STATE")
 public class State {
     
-    private static int SECONDS_IN_DAY = 86400;
-    private static int SECONDS_IN_WEEK = SECONDS_IN_DAY * 7;
+    private static final int SECONDS_IN_DAY = 86400;
+    private static final int SECONDS_IN_WEEK = SECONDS_IN_DAY * 7;
+    private static final int SECONDS_IN_MINUTE = 60;
     
 	@Id
     @Column(name="id")
@@ -57,6 +58,11 @@ public class State {
 	
 	public Integer getDurationInDays() {
 	    return duration/SECONDS_IN_DAY;
+	}
+	
+	
+	public Integer getDurationInMinutes() {
+	    return duration / SECONDS_IN_MINUTE;
 	}
 	
     public AbstractMap.SimpleEntry<Integer, DurationUnitEnum> getDisplayDuration() {

@@ -23,9 +23,6 @@ public class OfferRecommendationService {
     private final Logger log = LoggerFactory.getLogger(OfferRecommendationService.class);
 
     @Autowired
-    private ProgrammeDetailDAO programmeDetailDAO;
-
-    @Autowired
     private ProgramInstanceService programInstanceService;
 
     @Autowired
@@ -47,29 +44,29 @@ public class OfferRecommendationService {
     private WorkflowService applicationFormUserRoleService;
 
     public boolean moveToApproved(ApplicationForm form, OfferRecommendedComment offerRecommendedComment) {
-        if (ApplicationFormStatus.APPROVAL != form.getStatus()) {
-            throw new IllegalStateException();
-        }
-
-        if (!programInstanceService.isPrefferedStartDateWithinBounds(form)) {
-            Date earliestPossibleStartDate = programInstanceService.getEarliestPossibleStartDate(form);
-            if (earliestPossibleStartDate == null) {
-                return false;
-            }
-            form.getProgramDetails().setStartDate(earliestPossibleStartDate);
-            programmeDetailDAO.save(form.getProgramDetails());
-        }
-
-        form.setStatus(ApplicationFormStatus.APPROVED);
-        sendNotificationToApplicant(form);
-
-        applicationsService.save(form);
-
-        offerRecommendedComment.setApplication(form);
-        offerRecommendedComment.setContent("");
-        offerRecommendedComment.setUser(userService.getCurrentUser());
-        commentDAO.save(offerRecommendedComment);
-        applicationFormUserRoleService.deleteApplicationActions(form);
+//        if (ApplicationFormStatus.APPROVAL != form.getStatus().getId()) {
+//            throw new IllegalStateException();
+//        }
+//
+//        if (!programInstanceService.isPrefferedStartDateWithinBounds(form)) {
+//            Date earliestPossibleStartDate = programInstanceService.getEarliestPossibleStartDate(form);
+//            if (earliestPossibleStartDate == null) {
+//                return false;
+//            }
+//            form.getProgramDetails().setStartDate(earliestPossibleStartDate);
+//            programmeDetailDAO.save(form.getProgramDetails());
+//        }
+//
+//        form.setStatus(ApplicationFormStatus.APPROVED);
+//        sendNotificationToApplicant(form);
+//
+//        applicationsService.save(form);
+//
+//        offerRecommendedComment.setApplication(form);
+//        offerRecommendedComment.setContent("");
+//        offerRecommendedComment.setUser(userService.getCurrentUser());
+//        commentDAO.save(offerRecommendedComment);
+//        applicationFormUserRoleService.deleteApplicationActions(form);
         return true;
     }
 

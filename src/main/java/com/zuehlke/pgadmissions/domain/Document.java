@@ -34,10 +34,6 @@ public class Document implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "uploaded_by_id")
-    private RegisteredUser uploadedBy;
-
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "proofOfAward")
     private Qualification qualification;
 
@@ -114,14 +110,6 @@ public class Document implements Serializable {
 
     public void setDateUploaded(Date dateUploaded) {
         this.dateUploaded = dateUploaded;
-    }
-
-    public RegisteredUser getUploadedBy() {
-        return uploadedBy;
-    }
-
-    public void setUploadedBy(RegisteredUser uploadedBy) {
-        this.uploadedBy = uploadedBy;
     }
 
     public Qualification getQualification() {

@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,12 +13,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
@@ -54,11 +48,6 @@ public abstract class Advert implements Serializable {
     
     @Column(name = "enabled")
     private Boolean enabled = true;
-    
-    @Column(name = "last_edited_timestamp", insertable = true)
-    @Generated(GenerationTime.ALWAYS)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastEditedTimestamp;
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registered_user_id")
@@ -143,14 +132,6 @@ public abstract class Advert implements Serializable {
     	}
     	
     	return studyDurationToRead.toString() + " " + timeIntervalToRead;
-    }
-
-    public Date getLastEditedTimestamp() {
-        return lastEditedTimestamp;
-    }
-
-    public void setLastEditedTimestamp(Date lastEditedTimestamp) {
-        this.lastEditedTimestamp = lastEditedTimestamp;
     }
 
     public RegisteredUser getContactUser() {

@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SystemUserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -63,9 +62,7 @@ public class RoleDAO {
         return sessionFactory.getCurrentSession().createCriteria(SystemUserRole.class)
                 .setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("registeredUser.primaryAccount", user))
-                        .add(Restrictions.eq("id.user", user))).list();
+                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
     }
     
     public List<Role> getInstitutionUserRoles(Institution institution, RegisteredUser user) {
@@ -73,9 +70,7 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("id.institution", institution))
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("registeredUser.primaryAccount", user))
-                        .add(Restrictions.eq("id.user", user))).list();
+                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
         institutionRoles.addAll(getSystemUserRoles(user));
         return institutionRoles;
     }
@@ -85,9 +80,7 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("id.program", program))
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("registeredUser.primaryAccount", user))
-                        .add(Restrictions.eq("id.user", user))).list();
+                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
         programRoles.addAll(getInstitutionUserRoles(program.getInstitution(), user));
         return programRoles;
     }
@@ -97,9 +90,7 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("role"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("project", project))
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("registeredUser.primaryAccount", user))
-                        .add(Restrictions.eq("user", user))).list();
+                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
         projectRoles.addAll(getProgramUserRoles(project.getProgram(), user));
         return projectRoles;
     }
@@ -109,9 +100,7 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("id.applicationForm", application))
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("registeredUser.primaryAccount", user))
-                        .add(Restrictions.eq("id.user", user))).list();
+                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
     }
     
     public List<Role> getUserRoles(RegisteredUser user) {
@@ -120,32 +109,23 @@ public class RoleDAO {
         roles.addAll(sessionFactory.getCurrentSession().createCriteria(InstitutionUserRole.class)
                 .setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("registeredUser.primaryAccount", user))
-                        .add(Restrictions.eq("id.user", user))).list());
+                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list());
         
         roles.addAll(sessionFactory.getCurrentSession().createCriteria(ProgramUserRole.class)
                 .setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("registeredUser.primaryAccount", user))
-                        .add(Restrictions.eq("id.user", user))).list());
+                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list());
         
         roles.addAll(sessionFactory.getCurrentSession().createCriteria(ProjectUserRole.class)
                 .setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("registeredUser.primaryAccount", user))
-                        .add(Restrictions.eq("id.user", user))).list());
+                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list());
         
         roles.addAll(sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("id.role", "role", JoinType.INNER_JOIN)
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("registeredUser.primaryAccount", user))
-                        .add(Restrictions.eq("id.user", user)))
-                .add(Restrictions.eq("role.authorityScope", AuthorityScope.APPLICATION)).list());
+                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list());
         
         return roles;
     }

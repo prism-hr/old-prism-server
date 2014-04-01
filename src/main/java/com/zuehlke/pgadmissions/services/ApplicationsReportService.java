@@ -53,7 +53,7 @@ public class ApplicationsReportService {
     private static Logger logger = LoggerFactory.getLogger(ClassName.class.getName());
 
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Value("${application.host}") 
     private String host;

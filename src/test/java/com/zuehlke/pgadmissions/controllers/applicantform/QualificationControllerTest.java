@@ -22,6 +22,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
+import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
@@ -131,7 +132,7 @@ public class QualificationControllerTest {
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
 
         replay();
-        assertEquals(QualificationController.APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, controller.getQualificationView("app1", null, modelMap));
+        assertEquals(TemplateLocation.APPLICATION_APPLICANT_ADDITIONAL_INFORMATION, controller.getQualificationView("app1", null, modelMap));
 
         assertNotNull(modelMap.get("qualification"));
     }
@@ -150,7 +151,7 @@ public class QualificationControllerTest {
 
         replay();
         String view = controller.editQualification(null, qualification, errors, modelMap);
-        assertEquals(QualificationController.APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, view);
+        assertEquals(TemplateLocation.APPLICATION_APPLICANT_ADDITIONAL_INFORMATION, view);
     }
 
     @Test
@@ -187,7 +188,7 @@ public class QualificationControllerTest {
     @Test
     public void shouldReturnAllDomiciles() {
         List<Domicile> domicileList = Arrays.asList(new DomicileBuilder().id(1).enabled(true).build(), new DomicileBuilder().id(2).enabled(false).build());
-        EasyMock.expect(domicileDAOMock.getAllEnabledDomicilesExceptAlternateValues()).andReturn(Collections.singletonList(domicileList.get(0)));
+        EasyMock.expect(domicileDAOMock.getAllEnabledDomiciles()).andReturn(Collections.singletonList(domicileList.get(0)));
 
         replay();
 
@@ -196,34 +197,6 @@ public class QualificationControllerTest {
         assertEquals(domicileList.get(0), allDomiciles.get(0));
     }
 
-    @Test
-    public void shouldReturnApplicationForm() {
-        RegisteredUser applicant = new RegisteredUser();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).build();
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
-
-        replay();
-        ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
-
-        assertEquals(applicationForm, returnedApplicationForm);
-    }
-
-    @Test(expected = CannotUpdateApplicationException.class)
-    public void shouldThrowExceptionIfApplicationNotModifiable() {
-        RegisteredUser user = new RegisteredUserBuilder().id(4).build();
-        RegisteredUser applicant = new RegisteredUserBuilder().id(5).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).build();
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
-
-        replay();
-        ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
-
-        assertEquals(applicationForm, returnedApplicationForm);
-    }
 
     @Test
     public void shouldBindPropertyEditors() {

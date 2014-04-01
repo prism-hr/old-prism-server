@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -22,10 +21,11 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.InterviewConfirmDTOValidator;
 
 @Controller
@@ -35,34 +35,25 @@ public class InterviewConfirmController {
 
     private static final String INTERVIEW_CONFIRM_PAGE = "private/staff/interviewers/interview_confirm";
 
-    private final ApplicationFormService applicationsService;
-
-    private final UserService userService;
-
-    private final InterviewService interviewService;
-
-    private final WorkflowService applicationFormUserRoleService;
-
-    private final ActionService actionService;
-
-    private final InterviewConfirmDTOValidator interviewConfirmDTOValidator;
-
-
-    public InterviewConfirmController() {
-        this(null, null, null, null, null, null);
-    }
+    @Autowired
+    private ApplicationFormService applicationsService;
 
     @Autowired
-    public InterviewConfirmController(ApplicationFormService applicationsService, UserService userService, InterviewService interviewService,
-                    final WorkflowService applicationFormUserRoleService, ActionsProvider actionsProvider,
-                    InterviewConfirmDTOValidator interviewConfirmDTOValidator) {
-        this.applicationsService = applicationsService;
-        this.userService = userService;
-        this.interviewService = interviewService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.actionsProvider = actionsProvider;
-        this.interviewConfirmDTOValidator = interviewConfirmDTOValidator;
-    }
+    private UserService userService;
+
+    @Autowired
+    private InterviewService interviewService;
+
+    @Autowired
+    private WorkflowService applicationFormUserRoleService;
+
+    @Autowired
+    private ActionService actionService;
+
+    @Autowired
+    private InterviewConfirmDTOValidator interviewConfirmDTOValidator;
+
+
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -82,7 +73,7 @@ public class InterviewConfirmController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionService.getApplicationDescriptorForUser(applicationForm, user);
+        return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute(value = "interviewConfirmDTO")

@@ -74,7 +74,7 @@ public class ApplicationsServiceTest {
     @Test
     public void shouldGetApplicationbyApplicationNumber() {
         ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
-        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("ABC")).andReturn(application);
+        EasyMock.expect(applicationFormDAOMock.getByApplicationNumber("ABC")).andReturn(application);
 
         replay();
         Assert.assertEquals(application, applicationsService.getByApplicationNumber("ABC"));
@@ -84,7 +84,7 @@ public class ApplicationsServiceTest {
     @Test
     public void shouldFastTrackApplicationByClearingTheBatchDeadline() {
         ApplicationForm form = new ApplicationFormBuilder().applicationNumber("XXXXX").batchDeadline(new Date()).build();
-        EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber(form.getApplicationNumber())).andReturn(form);
+        EasyMock.expect(applicationFormDAOMock.getByApplicationNumber(form.getApplicationNumber())).andReturn(form);
         replay();
         applicationsService.fastTrackApplication(form.getApplicationNumber());
         verify();

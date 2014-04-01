@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WithdrawService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @Controller
 @RequestMapping("/withdraw")
@@ -39,12 +39,12 @@ public class WithdrawController {
 
     @Autowired
     public WithdrawController(ApplicationFormService applicationService, UserService userService, WithdrawService withdrawService,
-            WorkflowService applicationFormUserRoleService, ActionsProvider actionsProvider) {
+            WorkflowService applicationFormUserRoleService, ActionService actionService) {
         this.applicationService = applicationService;
         this.userService = userService;
         this.withdrawService = withdrawService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.actionsProvider = actionsProvider;
+        this.actionService = actionService;
     }
 
     @RequestMapping(method = RequestMethod.POST)

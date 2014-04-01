@@ -157,7 +157,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         flushAndClearSession();
 
-        ApplicationForm returnedForm = applicationDAO.getApplicationByApplicationNumber("ABC");
+        ApplicationForm returnedForm = applicationDAO.getByApplicationNumber("ABC");
         assertEquals(applicationFormOne.getId(), returnedForm.getId());
     }
 

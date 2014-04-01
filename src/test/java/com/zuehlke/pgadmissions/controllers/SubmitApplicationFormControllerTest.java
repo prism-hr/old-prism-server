@@ -31,8 +31,9 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.services.ApplicationFormUserRoleService;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.SubmitApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -44,7 +45,7 @@ public class SubmitApplicationFormControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsServiceMock;
+    private ApplicationFormService applicationsServiceMock;
 
     @Mock
     @InjectIntoByType
@@ -56,15 +57,15 @@ public class SubmitApplicationFormControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ActionsProvider actionsProviderMock;
+    private ActionService actionsProviderMock;
+    
+    @Mock
+    @InjectIntoByType
     private WorkflowService applicationFormUserRoleServiceMock;
+    
+    @Mock
+    @InjectIntoByType
     private ProgramService programsService;
-
-    @Mock
-    @InjectIntoByType
-
-    @Mock
-    @InjectIntoByType
 
     @Mock
     @InjectIntoByType
@@ -72,85 +73,6 @@ public class SubmitApplicationFormControllerTest {
 
     @TestedObject
     private SubmitApplicationFormController controller;
-
-    @Test
-    public void shouldReturnCurrentUser() {
-        RegisteredUser user = new RegisteredUser();
-        expect(userServiceMock.getCurrentUser()).andReturn(user);
-
-        replay();
-        assertEquals(user, controller.getUser());
-    }
-
-    @Test
-    public void shouldReturnStudentApplicationViewOnGetForApplicantOfApplication() {
-        RegisteredUser applicant = new RegisteredUser();
-        ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).program(new ProgramBuilder().code("dupa").build())
-                .advert(new AdvertBuilder().id(666).build()).build();
-
-        expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-        actionsProviderMock.validateAction(application, applicant, ApplicationFormAction.VIEW);
-        applicationFormUserRoleServiceMock.deleteApplicationUpdate(application, applicant);
-        expect(programsService.getValidProgramProjectAdvert("dupa", 666)).andReturn(null);
-
-        replay();
-        String view = controller.getApplicationView(null, application);
-
-        assertEquals("/private/pgStudents/form/main_application_page", view);
-    }
-
-    @Test
-    public void shouldReturnAdminApplicationViewOnGet() {
-        RegisteredUser applicant = new RegisteredUser();
-        ApplicationForm application = new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().id(6).build()).id(1).advert(new ProgramBuilder().id(1).build()).build();
-        
-        expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-        actionsProviderMock.validateAction(application, applicant, ApplicationFormAction.VIEW);
-        applicationFormUserRoleServiceMock.deleteApplicationUpdate(application, applicant);
-        expect(actionsProviderMock.checkActionAvailable(application, applicant, ApplicationFormAction.VIEW_EDIT)).andReturn(false);
-        
-        replay();
-        String view = controller.getApplicationView(null,
-                application);
-        assertEquals("/private/staff/application/main_application_page", view);
-    }
-
-    @Test
-    public void shouldReturnEditableApplicationViewOnGetForProgrammeAdministrator() {
-        RegisteredUser applicant = new RegisteredUserBuilder().id(1).build();
-        RegisteredUser admin = new RegisteredUserBuilder().id(2).build();
-        Program program = new ProgramBuilder().id(1).administrators(admin).build();
-        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).applicationNumber("abc").advert(program)
-                .applicant(applicant).build();
-
-        expect(userServiceMock.getCurrentUser()).andReturn(admin);
-        actionsProviderMock.validateAction(application, admin, ApplicationFormAction.VIEW);
-        expect(actionsProviderMock.checkActionAvailable(application, admin, ApplicationFormAction.VIEW_EDIT)).andReturn(true).once();
-        applicationFormUserRoleServiceMock.deleteApplicationUpdate(application, admin);
-        
-        replay();
-        String view = controller.getApplicationView(null, application);
-        
-        assertEquals("redirect:/editApplicationFormAsProgrammeAdmin?applicationId=abc", view);
-    }
-
-    @Test
-    public void shouldReturnStudentApplicationViewWithoutHeaders() {
-        RegisteredUser applicant = new RegisteredUserBuilder().id(1).build();
-        RegisteredUser admin = new RegisteredUserBuilder().id(2).build();
-        ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).build();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("embeddedApplication", "true");
-
-        expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
-        actionsProviderMock.validateAction(application, admin, ApplicationFormAction.VIEW);
-        applicationFormUserRoleServiceMock.deleteApplicationUpdate(application, admin);
-        
-        replay();
-        String view = controller.getApplicationView(request, application);
-        
-        assertEquals("/private/staff/application/main_application_page_without_headers", view);
-    }
 
     @Test
     public void shouldSubmitApplicationForm() throws UnknownHostException {
@@ -167,7 +89,6 @@ public class SubmitApplicationFormControllerTest {
         replay();
         controller.submitApplication(applicationForm, bindingResult, request);
 
-        assertEquals("127.0.0.1", applicationForm.getIpAddressAsString());
     }
 
     @Test

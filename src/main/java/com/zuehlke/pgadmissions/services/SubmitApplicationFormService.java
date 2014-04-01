@@ -18,13 +18,13 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 public class SubmitApplicationFormService {
 
     @Autowired
-    private ApplicationsService applicationService;
+    private ApplicationFormService applicationService;
 
     @Autowired
     private StageDurationService stageDurationService;
 
     @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
     
     @Autowired
     private MailSendingService mailSendingService;

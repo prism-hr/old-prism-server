@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -24,10 +23,11 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 
 @Controller
@@ -56,14 +56,14 @@ public class GenericCommentController {
 
     @Autowired
     public GenericCommentController(ApplicationFormService applicationsService, UserService userService, CommentService commentService,
-            GenericCommentValidator genericCommentValidator, DocumentPropertyEditor documentPropertyEditor, ActionsProvider actionsProvider,
+            GenericCommentValidator genericCommentValidator, DocumentPropertyEditor documentPropertyEditor, ActionService actionService,
             WorkflowService applicationFormUserRoleService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.commentService = commentService;
         this.genericCommentValidator = genericCommentValidator;
         this.documentPropertyEditor = documentPropertyEditor;
-        this.actionsProvider = actionsProvider;
+        this.actionService = actionService;
         this.applicationFormUserRoleService = applicationFormUserRoleService;
     }
 
@@ -80,7 +80,7 @@ public class GenericCommentController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionService.getApplicationDescriptorForUser(applicationForm, user);
+        return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("user")

@@ -58,6 +58,6 @@ public class ResendApplicationToPortico {
     
     @Transactional(readOnly = true)
     public ApplicationForm getApplicationForm(final String applicationNumber) {
-        return formDAO.getApplicationByApplicationNumber(applicationNumber);
+        return formDAO.getByApplicationNumber(applicationNumber);
     }
 }

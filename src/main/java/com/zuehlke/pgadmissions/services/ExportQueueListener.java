@@ -85,7 +85,7 @@ public class ExportQueueListener implements MessageListener {
 
     @Transactional
     public ApplicationForm getApplicationForm(final String applicationNumber) {
-        return applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
+        return applicationFormDAO.getByApplicationNumber(applicationNumber);
     }
 
     private ApplicationFormTransfer getApplicationFormTransfer(final ApplicationForm form) {

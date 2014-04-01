@@ -34,7 +34,7 @@ public class InterviewService {
     private final Logger log = LoggerFactory.getLogger(InterviewService.class);
 
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Autowired
     private MailSendingService mailService;
@@ -46,7 +46,7 @@ public class InterviewService {
     private CommentService commentService;
 
     @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     @Autowired
     private ApplicationContext applicationContext;

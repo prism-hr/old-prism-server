@@ -47,13 +47,13 @@ public class ApprovalService {
     private MailSendingService mailSendingService;
 
     @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;
 
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -102,7 +102,7 @@ public class ApprovalService {
     }
 
     public AssignSupervisorsComment initiateApprovalComment(String applicationId) {
-        ApplicationForm application = applicationDAO.getApplicationByApplicationNumber(applicationId);
+        ApplicationForm application = applicationDAO.getByApplicationNumber(applicationId);
         AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
         Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
         Project project = application.getProject();

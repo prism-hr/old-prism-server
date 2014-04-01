@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
@@ -57,16 +56,6 @@ public class AdditionalInformationController {
         }
         additionalInformationService.saveOrUpdate(applicationForm, additionalInformation);
         return RedirectLocation.UPDATE_APPLICATION_ADDITIONAL_INFORMATION + applicationForm.getApplicationNumber();
-    }
-
-    @ModelAttribute("message")
-    public String getMessage(@RequestParam(required = false) String message) {
-        return message;
-    }
-
-    @ModelAttribute("errorCode")
-    public String getErrorCode(String errorCode) {
-        return errorCode;
     }
 
     @InitBinder(value = "additionalInformation")

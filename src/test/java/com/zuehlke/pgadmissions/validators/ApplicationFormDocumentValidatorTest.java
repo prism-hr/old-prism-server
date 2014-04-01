@@ -13,26 +13,26 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
-import com.zuehlke.pgadmissions.dto.DocumentsSectionDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
-public class DocumentSectionValidatorTest {
+public class ApplicationFormDocumentValidatorTest {
 
     @Autowired
     private Validator validator;
 
     private ApplicationFormDocumentValidator documentSectionValidator;
 
-    private DocumentsSectionDTO documentsSectionDTO;
+    private ApplicationFormDocument documentsSectionDTO;
 
     @Test
     public void shouldSupportApplicationForm() {
-        assertTrue(documentSectionValidator.supports(DocumentsSectionDTO.class));
+        assertTrue(documentSectionValidator.supports(ApplicationFormDocument.class));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class DocumentSectionValidatorTest {
     @Before
     public void setup() {
         ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).build();
-        documentsSectionDTO = new DocumentsSectionDTO();
+        documentsSectionDTO = new ApplicationFormDocument();
         documentsSectionDTO.setCv(new DocumentBuilder().type(DocumentType.CV).build());
         documentsSectionDTO.setPersonalStatement(new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).build());
         documentsSectionDTO.setApplication(application);

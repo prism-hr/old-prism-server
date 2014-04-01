@@ -6,24 +6,24 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
-import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.ApprovalCommentValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 import com.zuehlke.pgadmissions.validators.RefereesAdminEditDTOValidator;
@@ -33,7 +33,7 @@ public class ApprovalControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationServiceMock;
+    private ApplicationFormService applicationServiceMock;
 
     @Mock
     @InjectIntoByType
@@ -121,11 +121,11 @@ public class ApprovalControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleServiceMock;
+    private WorkflowService applicationFormUserRoleServiceMock;
 
     @Mock
     @InjectIntoByType
-    private ActionsProvider actionsProviderMock;
+    private ActionService actionsProviderMock;
 
     @TestedObject
     private ApprovalController controller;
@@ -156,7 +156,7 @@ public class ApprovalControllerTest {
     // modelMap.put("approvalRound", application.getLatestApprovalRound());
     // modelMap.put("user", currentUserMock);
     //
-    // EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
+    // EasyMock.expect(applicationServiceMock.getByApplicationNumber("abc")).andReturn(application);
     // ApprovalRound approvalRound = (ApprovalRound) modelMap.get("approvalRound");
     //
     // Assert.assertEquals("/private/staff/supervisors/approval_details", controller.getMoveToApprovalPage(modelMap, null));
@@ -180,7 +180,7 @@ public class ApprovalControllerTest {
     // public void shouldGetApplication() {
     // ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
     //
-    // EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+    // EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
     //
     // EasyMock.replay(applicationServiceMock);
     // ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -478,7 +478,7 @@ public class ApprovalControllerTest {
     // customQuestions.getQuestion().add(question1);
     // ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
     //
-    // EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+    // EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
     // EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
     // EasyMock.expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
     //
@@ -496,7 +496,7 @@ public class ApprovalControllerTest {
     // final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
     // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).program(program).build();
     //
-    // EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+    // EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
     // EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
     //
     // EasyMock.replay(applicationServiceMock, scoringDefinitionParserMock, scoreFactoryMock);

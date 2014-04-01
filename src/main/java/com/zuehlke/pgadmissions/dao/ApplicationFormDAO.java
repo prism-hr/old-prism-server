@@ -77,7 +77,7 @@ public class ApplicationFormDAO {
                 .add(Restrictions.eq("program", program)).add(Restrictions.between("applicationTimestamp", startYear, endYear)).uniqueResult();
     }
 
-    public ApplicationForm getApplicationByApplicationNumber(String applicationNumber) {
+    public ApplicationForm getByApplicationNumber(String applicationNumber) {
         return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
                 .add(Restrictions.eq("applicationNumber", applicationNumber)).uniqueResult();
 

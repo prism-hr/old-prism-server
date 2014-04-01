@@ -69,7 +69,7 @@ public class PorticoQueueListenerTest {
         ApplicationForm form = new ValidApplicationFormBuilder().build();
         
         EasyMock.expect(messageMock.getText()).andReturn("XX");
-        EasyMock.expect(formDAOMock.getApplicationByApplicationNumber("XX")).andReturn(form);
+        EasyMock.expect(formDAOMock.getByApplicationNumber("XX")).andReturn(form);
         EasyMock.expect(applicationFormTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(formTransferMock);
         
         EasyMock.expect(messageMock.getJMSMessageID()).andReturn("1");
@@ -96,7 +96,7 @@ public class PorticoQueueListenerTest {
         ApplicationForm form = new ValidApplicationFormBuilder().build();
         
         EasyMock.expect(messageMock.getText()).andReturn("XX");
-        EasyMock.expect(formDAOMock.getApplicationByApplicationNumber("XX")).andReturn(form);
+        EasyMock.expect(formDAOMock.getByApplicationNumber("XX")).andReturn(form);
         EasyMock.expect(applicationFormTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(formTransferMock);
         
         EasyMock.expect(messageMock.getJMSMessageID()).andReturn("1");
@@ -137,7 +137,7 @@ public class PorticoQueueListenerTest {
         ApplicationForm form = new ValidApplicationFormBuilder().build();
         
         EasyMock.expect(messageMock.getText()).andReturn("XX");
-        EasyMock.expect(formDAOMock.getApplicationByApplicationNumber("XX")).andReturn(form);
+        EasyMock.expect(formDAOMock.getByApplicationNumber("XX")).andReturn(form);
         EasyMock.expect(applicationFormTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(formTransferMock);
         
         EasyMock.expect(messageMock.getJMSMessageID()).andReturn("1");

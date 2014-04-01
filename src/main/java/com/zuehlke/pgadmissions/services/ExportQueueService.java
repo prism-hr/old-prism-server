@@ -96,7 +96,7 @@ public class ExportQueueService {
 
     @Transactional
     public void handleNonDeliverableApplication(final String applicationNumber) {
-        ApplicationForm form = formDAO.getApplicationByApplicationNumber(applicationNumber);
+        ApplicationForm form = formDAO.getByApplicationNumber(applicationNumber);
         ApplicationFormTransfer transfer = formTransferService.getByApplicationForm(form);
         transfer.setStatus(ApplicationTransferStatus.CANCELLED);
     }

@@ -95,7 +95,7 @@ public class ApplicationFormService {
     }
 
     public ApplicationForm getByApplicationNumber(String applicationNumber) {
-        return applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
+        return applicationFormDAO.getByApplicationNumber(applicationNumber);
     }
 
     public List<ApplicationDescriptor> getApplicationsForList(final RegisteredUser user, final ApplicationsFiltering filtering) {

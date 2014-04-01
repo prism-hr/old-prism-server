@@ -8,15 +8,10 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
-import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class OfferRecommendationServiceTest {
-
-    @Mock
-    @InjectIntoByType
-    private ProgrammeDetailDAO programmeDetailDAOMock;
 
     @Mock
     @InjectIntoByType

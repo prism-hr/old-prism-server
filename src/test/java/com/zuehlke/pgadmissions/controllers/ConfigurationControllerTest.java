@@ -136,21 +136,6 @@ public class ConfigurationControllerTest {
     }
 
     @Test
-    public void shouldGetStageDurationsConvertedToStringKeys() {
-        Map<ApplicationFormStatus, StageDuration> map = new HashMap<ApplicationFormStatus, StageDuration>();
-        StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).build();
-        map.put(ApplicationFormStatus.VALIDATION, validationDuration);
-        StageDuration approvalDuration = new StageDurationBuilder().stage(ApplicationFormStatus.APPROVAL).build();
-        map.put(ApplicationFormStatus.APPROVAL, approvalDuration);
-        EasyMock.expect(configurationServiceMock.getStageDurations()).andReturn(map);
-        EasyMock.replay(configurationServiceMock);
-        Map<String, StageDuration> stageDurations = controller.getStageDurations();
-        assertEquals(2, stageDurations.size());
-        assertEquals(validationDuration, stageDurations.get("VALIDATION"));
-        assertEquals(approvalDuration, stageDurations.get("APPROVAL"));
-    }
-
-    @Test
     public void shouldGetReminderInterval() {
         List<ReminderInterval> intervals = Lists.newArrayList();
 

@@ -16,8 +16,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
+import org.unitils.inject.util.InjectionUtils;
 
-import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
@@ -115,7 +115,7 @@ public class ApplicationFormCopyHelperTest {
     @Before
     public void setup() {
 
-        DocumentDAO documentDAO = EasyMock.createMock(DocumentDAO.class);
+        DocumentService documentService = EasyMock.createMock(DocumentService.class);
         UserService userServiceMock = EasyMock.createMock(UserService.class);
 
         languageQualificationValidator = new LanguageQualificationValidator();
@@ -143,7 +143,7 @@ public class ApplicationFormCopyHelperTest {
         additionalInformationValidator.setValidator(validator);
 
         applicationFormCopyHelper = new ApplicationFormCopyHelper();
-        applicationFormCopyHelper.setDocumentDAO(documentDAO);
+        InjectionUtils.injectInto(documentService, applicationFormCopyHelper, "documentService");
 
         expect(userServiceMock.getCurrentUser()).andReturn(new RegisteredUserBuilder().email("jfi@zuhlke.pl").build()).anyTimes();
         replay(userServiceMock);

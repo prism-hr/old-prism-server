@@ -27,9 +27,16 @@ import com.zuehlke.pgadmissions.dto.ActionDefinition;
 @SuppressWarnings("unchecked")
 public class ActionDAO {
 
-    @Autowired
 	private SessionFactory sessionFactory;
 	
+    public ActionDAO() {
+    }
+
+    @Autowired
+    public ActionDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+    
     public Action getById(ApplicationFormAction actionId) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(Action.class)
                 .add(Restrictions.eq("id", actionId)).uniqueResult();

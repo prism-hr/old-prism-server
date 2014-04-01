@@ -49,9 +49,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private InterviewParticipantDAO interviewParticipantDAO;
-
-    @Autowired
     private WorkflowService applicationFormUserRoleService;
 
     @Autowired
@@ -114,7 +111,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendDigestEmail(Integer userId, DigestNotificationType digestNotificationType) {
-        final RegisteredUser user = userDAO.get(userId);
+        final RegisteredUser user = userDAO.getById(userId);
         return sendDigest(user, digestNotificationType);
     }
 
@@ -249,7 +246,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendNewUserInvitation(Integer userId) {
         PrismEmailMessage message = null;
-        RegisteredUser user = userDAO.get(userId);
+        RegisteredUser user = userDAO.getById(userId);
         String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[]) null);
         for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
             if (notification.getNotificationDate() == null) {

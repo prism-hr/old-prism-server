@@ -14,6 +14,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.LanguageQualification;
+import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
@@ -75,35 +77,44 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
         }
 
         if (BooleanUtils.isTrue(personalDetail.getPassportAvailable()) && BooleanUtils.isTrue(personalDetail.getRequiresVisa())) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportNumber", EMPTY_FIELD_ERROR_MESSAGE);
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nameOnPassport", EMPTY_FIELD_ERROR_MESSAGE);
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportIssueDate", EMPTY_FIELD_ERROR_MESSAGE);
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passportExpiryDate", EMPTY_FIELD_ERROR_MESSAGE);
+            
+            Passport passport = personalDetail.getPassport();
+            errors.pushNestedPath("passport");
+            
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "number", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "issueDate", EMPTY_FIELD_ERROR_MESSAGE);
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "expiryDate", EMPTY_FIELD_ERROR_MESSAGE);
 
-            Date passportExpiryDate = personalDetail.getPassportExpiryDate();
-            Date passportIssueDate = personalDetail.getPassportIssueDate();
+            Date passportExpiryDate = passport.getExpiryDate();
+            Date passportIssueDate = passport.getIssueDate();
             
             if (passportExpiryDate != null) {
                 if (passportExpiryDate.before(today)) {
-                    errors.rejectValue("passportExpiryDate", "date.field.notfuture");
+                    errors.rejectValue("expiryDate", "date.field.notfuture");
                 }
             }
             
             if (passportIssueDate != null) {
                 if (passportIssueDate.after(tomorrow)) {
-                    errors.rejectValue("passportIssueDate", "date.field.notpast");
+                    errors.rejectValue("issueDate", "date.field.notpast");
                 }
             }
             
             if (passportExpiryDate != null && passportIssueDate != null) {
                 if (org.apache.commons.lang.time.DateUtils.isSameDay(passportExpiryDate, passportIssueDate)) {
-                    errors.rejectValue("passportExpiryDate", "date.field.same");
-                    errors.rejectValue("passportIssueDate", "date.field.same");
+                    errors.rejectValue("expiryDate", "date.field.same");
+                    errors.rejectValue("issueDate", "date.field.same");
                 }
             }
+            
+            errors.popNestedPath();
         }
 
         if (BooleanUtils.isTrue(personalDetail.getLanguageQualificationAvailable())) {
+            LanguageQualification languageQualification = personalDetail.getLanguageQualification();
+            errors.pushNestedPath("languageQualification");
+            
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", EMPTY_DROPDOWN_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "examDate", EMPTY_FIELD_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "overallScore", EMPTY_FIELD_ERROR_MESSAGE);
@@ -112,21 +123,21 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "speakingScore", EMPTY_FIELD_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "listeningScore", EMPTY_FIELD_ERROR_MESSAGE);
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "examOnline", EMPTY_FIELD_ERROR_MESSAGE);
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "languageQualificationDocument", "file.upload.empty");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "proofOfAward", "file.upload.empty");
 
-            Date examDate = personalDetail.getExamDate();
+            Date examDate = languageQualification.getExamDate();
             if (examDate != null && DateUtils.truncate(examDate, Calendar.DATE).after(today)) {
                 errors.rejectValue("examDate", "date.field.notpast");
             }
 
-            if (personalDetail.getQualificationType() == LanguageQualificationEnum.OTHER) {
+            if (languageQualification.getQualificationType() == LanguageQualificationEnum.OTHER) {
                 ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationTypeName", EMPTY_FIELD_ERROR_MESSAGE);
             }
 
-            if (personalDetail.getQualificationType() == LanguageQualificationEnum.TOEFL) {
-                if (StringUtils.isNotBlank(personalDetail.getOverallScore())) {
+            if (languageQualification.getQualificationType() == LanguageQualificationEnum.TOEFL) {
+                if (StringUtils.isNotBlank(languageQualification.getOverallScore())) {
                     try {
-                        Integer overallScore = Integer.valueOf(personalDetail.getOverallScore());
+                        Integer overallScore = Integer.valueOf(languageQualification.getOverallScore());
                         if (!(overallScore >= 0 && overallScore <= 120)) {
                             errors.rejectValue("overallScore", "languagepersonalDetail.overallScore.notvalid");
                         }
@@ -135,9 +146,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getListeningScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getListeningScore())) {
                     try {
-                        Integer score = Integer.valueOf(personalDetail.getListeningScore());
+                        Integer score = Integer.valueOf(languageQualification.getListeningScore());
                         if (!(score >= 0 && score <= 30)) {
                             errors.rejectValue("listeningScore", "languagepersonalDetail.score.notvalid");
                         }
@@ -146,9 +157,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getReadingScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getReadingScore())) {
                     try {
-                        Integer score = Integer.valueOf(personalDetail.getReadingScore());
+                        Integer score = Integer.valueOf(languageQualification.getReadingScore());
                         if (!(score >= 0 && score <= 30)) {
                             errors.rejectValue("readingScore", "languagepersonalDetail.score.notvalid");
                         }
@@ -157,9 +168,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getSpeakingScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getSpeakingScore())) {
                     try {
-                        Integer score = Integer.valueOf(personalDetail.getSpeakingScore());
+                        Integer score = Integer.valueOf(languageQualification.getSpeakingScore());
                         if (!(score >= 0 && score <= 30)) {
                             errors.rejectValue("speakingScore", "languagepersonalDetail.score.notvalid");
                         }
@@ -168,9 +179,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getWritingScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getWritingScore())) {
                     try {
-                        Integer score = Integer.valueOf(personalDetail.getWritingScore());
+                        Integer score = Integer.valueOf(languageQualification.getWritingScore());
                         if (!(score >= 0 && score <= 30)) {
                             errors.rejectValue("writingScore", "languagepersonalDetail.score.notvalid");
                         }
@@ -178,10 +189,10 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                         errors.rejectValue("writingScore", "languagepersonalDetail.score.notvalid");
                     }
                 }
-            } else if (personalDetail.getQualificationType() == LanguageQualificationEnum.IELTS_ACADEMIC) {
-                if (StringUtils.isNotBlank(personalDetail.getOverallScore())) {
+            } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.IELTS_ACADEMIC) {
+                if (StringUtils.isNotBlank(languageQualification.getOverallScore())) {
                     try {
-                        Double overallScore = Double.valueOf(personalDetail.getOverallScore());
+                        Double overallScore = Double.valueOf(languageQualification.getOverallScore());
                         if (!(overallScore >= 4 && overallScore <= 9)) {
                             errors.rejectValue("overallScore", "languagepersonalDetail.general.score.notvalid");
                         }
@@ -190,9 +201,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getListeningScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getListeningScore())) {
                     try {
-                        Double score = Double.valueOf(personalDetail.getListeningScore());
+                        Double score = Double.valueOf(languageQualification.getListeningScore());
                         if (!(score >= 4 && score <= 9)) {
                             errors.rejectValue("listeningScore", "languagepersonalDetail.general.score.notvalid");
                         }
@@ -201,9 +212,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getReadingScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getReadingScore())) {
                     try {
-                        Double score = Double.valueOf(personalDetail.getReadingScore());
+                        Double score = Double.valueOf(languageQualification.getReadingScore());
                         if (!(score >= 4 && score <= 9)) {
                             errors.rejectValue("readingScore", "languagepersonalDetail.general.score.notvalid");
                         }
@@ -212,9 +223,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getSpeakingScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getSpeakingScore())) {
                     try {
-                        Double score = Double.valueOf(personalDetail.getSpeakingScore());
+                        Double score = Double.valueOf(languageQualification.getSpeakingScore());
                         if (!(score >= 4 && score <= 9)) {
                             errors.rejectValue("speakingScore", "languagepersonalDetail.general.score.notvalid");
                         }
@@ -223,9 +234,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getWritingScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getWritingScore())) {
                     try {
-                        Double score = Double.valueOf(personalDetail.getWritingScore());
+                        Double score = Double.valueOf(languageQualification.getWritingScore());
                         if (!(score >= 4 && score <= 9)) {
                             errors.rejectValue("writingScore", "languagepersonalDetail.general.score.notvalid");
                         }
@@ -234,9 +245,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
             } else {
-                if (StringUtils.isNotBlank(personalDetail.getOverallScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getOverallScore())) {
                     try {
-                        Integer overallScore = Integer.valueOf(personalDetail.getOverallScore());
+                        Integer overallScore = Integer.valueOf(languageQualification.getOverallScore());
                         if (!(overallScore >= 0 && overallScore <= 99)) {
                             errors.rejectValue("overallScore", "languagepersonalDetail.general.score.notvalid");
                         }
@@ -245,9 +256,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getListeningScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getListeningScore())) {
                     try {
-                        Integer score = Integer.valueOf(personalDetail.getListeningScore());
+                        Integer score = Integer.valueOf(languageQualification.getListeningScore());
                         if (!(score >= 0 && score <= 99)) {
                             errors.rejectValue("listeningScore", "languagepersonalDetail.general.score.notvalid");
                         }
@@ -256,9 +267,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getReadingScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getReadingScore())) {
                     try {
-                        Integer score = Integer.valueOf(personalDetail.getReadingScore());
+                        Integer score = Integer.valueOf(languageQualification.getReadingScore());
                         if (!(score >= 0 && score <= 99)) {
                             errors.rejectValue("readingScore", "languagepersonalDetail.general.score.notvalid");
                         }
@@ -267,9 +278,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getSpeakingScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getSpeakingScore())) {
                     try {
-                        Integer score = Integer.valueOf(personalDetail.getSpeakingScore());
+                        Integer score = Integer.valueOf(languageQualification.getSpeakingScore());
                         if (!(score >= 0 && score <= 99)) {
                             errors.rejectValue("speakingScore", "languagepersonalDetail.general.score.notvalid");
                         }
@@ -278,9 +289,9 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
 
-                if (StringUtils.isNotBlank(personalDetail.getWritingScore())) {
+                if (StringUtils.isNotBlank(languageQualification.getWritingScore())) {
                     try {
-                        Integer score = Integer.valueOf(personalDetail.getWritingScore());
+                        Integer score = Integer.valueOf(languageQualification.getWritingScore());
                         if (!(score >= 0 && score <= 99)) {
                             errors.rejectValue("writingScore", "languagepersonalDetail.general.score.notvalid");
                         }
@@ -289,6 +300,7 @@ public class PersonalDetailsValidator extends FormSectionObjectValidator impleme
                     }
                 }
             }
+            errors.popNestedPath();
         }
     }
     

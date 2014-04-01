@@ -116,7 +116,7 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addLanguageTestCertificate(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
-        Document document = applicationForm.getPersonalDetails().getProofOfAward();
+        Document document = applicationForm.getPersonalDetails().getLanguageQualification().getProofOfAward();
         if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));

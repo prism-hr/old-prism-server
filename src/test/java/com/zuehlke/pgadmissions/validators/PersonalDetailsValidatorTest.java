@@ -44,7 +44,7 @@ public class PersonalDetailsValidatorTest {
 
     private PersonalDetailsValidator personalDetailValidator;
 
-    private PassportInformationValidator passportInformationValidator;
+    private PassportValidator passportInformationValidator;
 
     private LanguageQualificationValidator languageQualificationValidator;
 
@@ -688,16 +688,16 @@ public class PersonalDetailsValidatorTest {
                 .englishFirstLanguage(true)
                 .languageQualificationAvailable(true)
                 .passportInformation(
-                        new PassportInformationBuilder().nameOnPassport("Kevin Francis Denver").passportNumber("000")
-                                .passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
-                                .passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
+                        new PassportInformationBuilder().name("Kevin Francis Denver").number("000")
+                                .expiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
+                                .issueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
                 .languageQualification(
                         new LanguageQualificationBuilder().examDate(new Date()).examOnline(false)
                                 .languageQualification(LanguageQualificationEnum.OTHER).qualificationTypeName("foobar").listeningScore("1")
                                 .overallScore("1").readingScore("1").writingScore("1").speakingScore("1")
                                 .languageQualificationDocument(new DocumentBuilder().build()).build()).build();
 
-        passportInformationValidator = new PassportInformationValidator();
+        passportInformationValidator = new PassportValidator();
         passportInformationValidator.setValidator((javax.validation.Validator) validator);
 
         languageQualificationValidator = new LanguageQualificationValidator();

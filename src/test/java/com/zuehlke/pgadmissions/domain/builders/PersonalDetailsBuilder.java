@@ -9,7 +9,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
-import com.zuehlke.pgadmissions.domain.PassportInformation;
+import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.Title;
@@ -37,7 +37,7 @@ public class PersonalDetailsBuilder {
 
     private Boolean passportAvailable;
     private Boolean requiresVisa;
-    private PassportInformation passportInformation;
+    private Passport passport;
 
     public PersonalDetailsBuilder passportAvailable(Boolean passportAvailable) {
         this.passportAvailable = passportAvailable;
@@ -54,8 +54,8 @@ public class PersonalDetailsBuilder {
         return this;
     }
 
-    public PersonalDetailsBuilder passportInformation(PassportInformation passportInformation) {
-        this.passportInformation = passportInformation;
+    public PersonalDetailsBuilder passportInformation(Passport passportInformation) {
+        this.passport = passportInformation;
         return this;
     }
 
@@ -152,7 +152,7 @@ public class PersonalDetailsBuilder {
         personalDetails.setRequiresVisa(requiresVisa);
         personalDetails.setPhoneNumber(phoneNumber);
         personalDetails.setLanguageQualification(languageQualification);
-        personalDetails.setPassportInformation(passportInformation);
+        personalDetails.setPassport(passport);
         personalDetails.setLanguageQualificationAvailable(languageQualificationAvailable);
         personalDetails.setPassportAvailable(passportAvailable);
         return personalDetails;

@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
 import com.zuehlke.pgadmissions.validators.LanguageQualificationValidator;
-import com.zuehlke.pgadmissions.validators.PassportInformationValidator;
+import com.zuehlke.pgadmissions.validators.PassportValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
@@ -46,7 +46,7 @@ public class ApplicationFormCopyHelperTest {
 
     private PersonalDetailsValidator personalDetailsValidator;
     private LanguageQualificationValidator languageQualificationValidator;
-    private PassportInformationValidator passportInformationValidator;
+    private PassportValidator passportInformationValidator;
     private QualificationValidator qualificationValidator;
     private EmploymentPositionValidator employmentPositionValidator;
     private FundingValidator fundingValidator;
@@ -121,7 +121,7 @@ public class ApplicationFormCopyHelperTest {
         languageQualificationValidator = new LanguageQualificationValidator();
         languageQualificationValidator.setValidator(validator);
 
-        passportInformationValidator = new PassportInformationValidator();
+        passportInformationValidator = new PassportValidator();
         passportInformationValidator.setValidator(validator);
 
         personalDetailsValidator = new PersonalDetailsValidator(passportInformationValidator, languageQualificationValidator);

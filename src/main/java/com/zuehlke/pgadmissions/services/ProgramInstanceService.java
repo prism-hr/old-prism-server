@@ -30,7 +30,7 @@ public class ProgramInstanceService {
     private ThrottleService throttleService;
 
     @Autowired
-    private ProgramInstanceDAO programInstanceDAO;
+    private ProgramService programService;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -44,10 +44,9 @@ public class ProgramInstanceService {
             Date applicationStartDate = instance.getApplicationStartDate();
             boolean startDateInFuture = today.before(applicationStartDate);
             boolean beforeEndDate = todayPlusConsiderationPeriod.before(instance.getApplicationDeadline());
-            boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
-            boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
+            boolean sameStudyOption = details.getStudyOption().getId().equals(instance.getStudyOption().getId());
             if (applicationForm.getAdvert().isEnabled() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption
-                    && sameStudyOptionCode) {
+                    ) {
                 if (startDateInFuture && (result == null || result.after(applicationStartDate))) {
                     result = applicationStartDate;
                 } else if (result == null || result.after(todayPlusConsiderationPeriod)) {
@@ -70,9 +69,8 @@ public class ProgramInstanceService {
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
             boolean afterStartDate = startDate.after(instance.getApplicationStartDate());
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
-            boolean sameStudyOption = programDetails.getStudyOption().equals(instance.getStudyOption());
-            boolean sameStudyOptionCode = programDetails.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode) {
+            boolean sameStudyOption = programDetails.getStudyOption().getId().equals(instance.getStudyOption().getId());
+            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption ) {
                 return true;
             }
         }
@@ -97,7 +95,7 @@ public class ProgramInstanceService {
 
     @Transactional
     public List<StudyOption> getDistinctStudyOptions() {
-        List<Object[]> options = programInstanceDAO.getDistinctStudyOptions();
+        List<Object[]> options = programService.getAvailableStudyOptions(null);
         List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(options.size());
 
         for (Object[] option : options) {

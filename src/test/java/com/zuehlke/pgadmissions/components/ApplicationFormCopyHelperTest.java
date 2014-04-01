@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -57,7 +58,9 @@ public class ApplicationFormCopyHelperTest {
     @Test
     public void shouldCopyApplicationForm() {
         ApplicationForm applicationForm = new ValidApplicationFormBuilder().build();
-        applicationForm.setStatus(ApplicationFormStatus.UNSUBMITTED);
+        State state = new State();
+        state.setSubmitted(false);
+        applicationForm.setStatus(state);
         validateApplication(applicationForm);
 
         ApplicationForm newApplicationForm = new ApplicationForm();

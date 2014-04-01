@@ -56,8 +56,8 @@ import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.exporters.ExportService;
 import com.zuehlke.pgadmissions.services.exporters.PorticoAttachmentsZipCreator;
-import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost;
@@ -81,7 +81,7 @@ public class PorticoDocumentUploadIT {
     private ApplicationFormService applicationsService;
     
     @Autowired
-    private PorticoExportService uclExportService;
+    private ExportService uclExportService;
     
     @Autowired
     private PdfDocumentBuilder pdfDocumentBuilder;

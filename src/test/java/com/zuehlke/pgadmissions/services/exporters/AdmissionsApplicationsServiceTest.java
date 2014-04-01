@@ -11,7 +11,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.StringUtils;
-import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -29,7 +28,6 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ApplicationTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.CourseApplicationTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.jaxb.GMonthAdapter;
@@ -41,18 +39,13 @@ public class AdmissionsApplicationsServiceTest {
     @Autowired
     private WebServiceTemplate webServiceTemplate;
 
-    private ProgramInstanceDAO programInstanceDAOMock = null;
-
     private ApplicationForm applicationForm = null;
 
     @Test
     public void shouldMarshallGMonthCorrectly() throws XmlMappingException, IOException, DatatypeConfigurationException {
         /*
-         * http://java.net/jira/browse/JAXB-643?page=com.atlassian.jira.plugin.
-         * system.issuetabpanels%3Aworklog-tabpanel Sun's
-         * DatatypeFactory#newXMLGregorianCalendar(String) and
-         * XMLGregorianCalendar which was bundled in jdk/jre6 lost backward
-         * compatibility in xsd:gMonth.
+         * http://java.net/jira/browse/JAXB-643?page=com.atlassian.jira.plugin. system.issuetabpanels%3Aworklog-tabpanel Sun's
+         * DatatypeFactory#newXMLGregorianCalendar(String) and XMLGregorianCalendar which was bundled in jdk/jre6 lost backward compatibility in xsd:gMonth.
          */
 
         DateTime firstDayOfMonth = new DateTime().dayOfMonth().withMinimumValue();
@@ -101,9 +94,7 @@ public class AdmissionsApplicationsServiceTest {
     }
 
     /**
-     * Sends a valid application form to the UCL test web service configured in
-     * the environment.properties. Run this test when connected to the UCL
-     * network.
+     * Sends a valid application form to the UCL test web service configured in the environment.properties. Run this test when connected to the UCL network.
      */
     @Test
     @Ignore
@@ -118,12 +109,10 @@ public class AdmissionsApplicationsServiceTest {
         System.out.println(String.format("ApplicantID [id=%s], ApplicationID [id=%s]", response.getReference().getApplicantID(), response.getReference()
                 .getApplicationID()));
 
-        EasyMock.verify(programInstanceDAOMock);
     }
 
     @Before
     public void setup() {
-        programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
         applicationForm = new ValidApplicationFormBuilder().build();
     }
 }

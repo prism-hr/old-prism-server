@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
-import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 @Service
 public class ExportQueueService {

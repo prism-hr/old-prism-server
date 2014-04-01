@@ -148,9 +148,9 @@ public class ValidApplicationFormBuilder {
                 .gender(Gender.MALE)
                 .requiresVisa(true)
                 .passportInformation(
-                        new PassportInformationBuilder().passportNumber("000").nameOnPassport("Kevin Francis Denver")
-                                .passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
-                                .passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
+                        new PassportInformationBuilder().number("000").name("Kevin Francis Denver")
+                                .expiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
+                                .issueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
                 .languageQualificationAvailable(true)
                 .languageQualification(
                         new LanguageQualificationBuilder().examDate(new Date()).examOnline(false)

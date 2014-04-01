@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlin
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
-import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 
 /**
@@ -95,12 +95,12 @@ public class ExportService {
 
     // oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
 
-    public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer) throws PorticoExportServiceException {
+    public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer) throws ExportServiceException {
         sendToPortico(form, transfer, new DeafListener());
     }
 
     public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener)
-            throws PorticoExportServiceException {
+            throws ExportServiceException {
         try {
             log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getApplicationNumber()));
             ExportService proxy = context.getBean(this.getClass());
@@ -110,7 +110,7 @@ public class ExportService {
             form.setExported(true);
             applicationsService.save(form);
             commentDAO.save(new ApplicationTransferComment(form, userDAO.getSuperadministrators().get(0)));
-        } catch (PorticoExportServiceException e) {
+        } catch (ExportServiceException e) {
             throw e;
         } catch (Exception e) {
             applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.CANCELLED, PRISM_EXCEPTION,
@@ -130,7 +130,7 @@ public class ExportService {
 
     @Transactional
     public void sendWebServiceRequest(final ApplicationForm formObj, final ApplicationFormTransfer transferObj, final TransferListener listener)
-            throws PorticoExportServiceException {
+            throws ExportServiceException {
         ApplicationForm form = applicationsService.getById(formObj.getId());
         ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(form,
@@ -183,7 +183,7 @@ public class ExportService {
 
     @Transactional
     public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transferObj, final TransferListener listener)
-            throws PorticoExportServiceException {
+            throws ExportServiceException {
         ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         try {
             listener.sftpTransferStarted(form);

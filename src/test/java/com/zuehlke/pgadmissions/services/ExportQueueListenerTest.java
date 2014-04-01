@@ -26,15 +26,15 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferErrorBuilder;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
-import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
+import com.zuehlke.pgadmissions.services.exporters.ExportService;
 
-public class PorticoQueueListenerTest {
+public class ExportQueueListenerTest {
 
-    private PorticoExportService porticoExportServiceMock;
+    private ExportService porticoExportServiceMock;
     
     private ApplicationFormDAO formDAOMock;
     
@@ -53,7 +53,7 @@ public class PorticoQueueListenerTest {
     @Before
     public void prepare() {
         applicationFormTransferServiceMock = EasyMock.createMock(ApplicationFormTransferService.class);
-        porticoExportServiceMock = EasyMock.createMock(PorticoExportService.class);
+        porticoExportServiceMock = EasyMock.createMock(ExportService.class);
         formDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
         messageMock = EasyMock.createMock(TextMessage.class);
         throttleServiceMock = EasyMock.createMock(ThrottleService.class);
@@ -78,7 +78,7 @@ public class PorticoQueueListenerTest {
         
         try {
             porticoExportServiceMock.sendToPortico(form, formTransferMock);
-        } catch (PorticoExportServiceException e) {
+        } catch (ExportServiceException e) {
             fail("The exception should not have been thrown");
         }
         
@@ -90,7 +90,7 @@ public class PorticoQueueListenerTest {
     }
     
     @Test
-    public void shouldTriggerARetryIfThereWasAnIssueWithTheNetwork() throws JMSException, PorticoExportServiceException {
+    public void shouldTriggerARetryIfThereWasAnIssueWithTheNetwork() throws JMSException, ExportServiceException {
         ApplicationFormTransfer formTransferMock = EasyMock.createMock(ApplicationFormTransfer.class);
         
         ApplicationForm form = new ValidApplicationFormBuilder().build();
@@ -103,7 +103,7 @@ public class PorticoQueueListenerTest {
         EasyMock.expect(messageMock.getStringProperty("Status")).andReturn(form.getStatus().toString());
         expect(messageMock.getStringProperty("Added")).andReturn("xx");
         
-        PorticoExportServiceException uclExportServiceException = new PorticoExportServiceException("error",
+        ExportServiceException uclExportServiceException = new ExportServiceException("error",
                 new ApplicationFormTransferErrorBuilder().errorHandlingStrategy(
                         ApplicationFormTransferErrorHandlingDecision.RETRY).build());
         
@@ -131,7 +131,7 @@ public class PorticoQueueListenerTest {
     }
     
     @Test
-    public void shouldStopThePorticoInterfaceIfThereWasAConfigurationIssue() throws JMSException, PorticoExportServiceException {
+    public void shouldStopThePorticoInterfaceIfThereWasAConfigurationIssue() throws JMSException, ExportServiceException {
         ApplicationFormTransfer formTransferMock = EasyMock.createMock(ApplicationFormTransfer.class);
         
         ApplicationForm form = new ValidApplicationFormBuilder().build();
@@ -144,7 +144,7 @@ public class PorticoQueueListenerTest {
         EasyMock.expect(messageMock.getStringProperty("Status")).andReturn(form.getStatus().toString());
         EasyMock.expect(messageMock.getStringProperty("Added")).andReturn("xx");
         
-        PorticoExportServiceException uclExportServiceException = new PorticoExportServiceException("error",
+        ExportServiceException uclExportServiceException = new ExportServiceException("error",
                 new ApplicationFormTransferErrorBuilder().errorHandlingStrategy(
                         ApplicationFormTransferErrorHandlingDecision.STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION).build());
         

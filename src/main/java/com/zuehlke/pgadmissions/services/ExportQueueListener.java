@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
@@ -75,7 +75,7 @@ public class ExportQueueListener implements MessageListener {
 
         try {
             exportService.sendToPortico(form, transfer);
-        } catch (PorticoExportServiceException e) {
+        } catch (ExportServiceException e) {
             sendEmailWithErrorMessage(form);
             errorHandlingStrategyResolver(e);
         } catch (Exception e) {
@@ -103,7 +103,7 @@ public class ExportQueueListener implements MessageListener {
         }
     }
 
-    private void errorHandlingStrategyResolver(PorticoExportServiceException e) {
+    private void errorHandlingStrategyResolver(ExportServiceException e) {
         switch (e.getErrorHandlingStrategy()) {
         case RETRY:
             throw new TriggerJmsRetryException(e.getMessage(), e);

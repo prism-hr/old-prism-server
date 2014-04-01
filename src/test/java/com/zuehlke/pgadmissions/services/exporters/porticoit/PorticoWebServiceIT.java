@@ -50,9 +50,9 @@ import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
-import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
+import com.zuehlke.pgadmissions.services.exporters.ExportService;
 import com.zuehlke.pgadmissions.services.exporters.TransferListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -68,7 +68,7 @@ public class PorticoWebServiceIT {
     private ApplicationFormService applicationsService;
 
     @Autowired
-    private PorticoExportService uclExportService;
+    private ExportService uclExportService;
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -118,12 +118,12 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void withdrawnApplicationWithNoMatchAtTRAN_withdrawnApplicationWithNoMatchAtTRANResent() throws PorticoExportServiceException {
+    public void withdrawnApplicationWithNoMatchAtTRAN_withdrawnApplicationWithNoMatchAtTRANResent() throws ExportServiceException {
         withdrawnApplicationWithNoMatchAtTRAN();
         withdrawnApplicationWithNoMatchAtTRANResent();
     }
 
-    private void withdrawnApplicationWithNoMatchAtTRAN() throws PorticoExportServiceException {
+    private void withdrawnApplicationWithNoMatchAtTRAN() throws ExportServiceException {
         csvEntries.add("Withdrawn application with no match at 'tran'");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -141,7 +141,7 @@ public class PorticoWebServiceIT {
         });
     }
 
-    private void withdrawnApplicationWithNoMatchAtTRANResent() throws PorticoExportServiceException {
+    private void withdrawnApplicationWithNoMatchAtTRANResent() throws ExportServiceException {
         csvEntries.add("Withdrawn application with no match at 'tran' resent");
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
@@ -166,7 +166,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void withdrawnApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() throws PorticoExportServiceException {
+    public void withdrawnApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() throws ExportServiceException {
         csvEntries.add("Withdrawn application with match at 'tran' and no active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -195,7 +195,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void withdrawnApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() throws PorticoExportServiceException {
+    public void withdrawnApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() throws ExportServiceException {
         csvEntries.add("Withdrawn application with match at 'tran' and active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -229,7 +229,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void withdrawnApplicationWithActiveUserIdentity_MUA_knownToUclPrism() throws PorticoExportServiceException {
+    public void withdrawnApplicationWithActiveUserIdentity_MUA_knownToUclPrism() throws ExportServiceException {
         csvEntries.add("Withdrawn application with active user identity (MUA) known to UCL Prism");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -263,7 +263,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void withdrawnUclPrismApplicationByApplicantWithACorrespondingFirstApplicationInProgressInTheUCLPorticoSystem() throws PorticoExportServiceException {
+    public void withdrawnUclPrismApplicationByApplicantWithACorrespondingFirstApplicationInProgressInTheUCLPorticoSystem() throws ExportServiceException {
         csvEntries.add("Withdrawn UCL Prism application by applicant with a corresponding first application in progress in the UCL Portico system");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -298,12 +298,12 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void rejectedApplicationWithNoMatchAtTRAN_rejectedApplicationWithNoMatchAtTRANResent() throws PorticoExportServiceException {
+    public void rejectedApplicationWithNoMatchAtTRAN_rejectedApplicationWithNoMatchAtTRANResent() throws ExportServiceException {
         rejectedApplicationWithNoMatchAtTRAN();
         rejectedApplicationWithNoMatchAtTRANResent();
     }
 
-    private void rejectedApplicationWithNoMatchAtTRAN() throws PorticoExportServiceException {
+    private void rejectedApplicationWithNoMatchAtTRAN() throws ExportServiceException {
         csvEntries.add("Rejected application with no match at 'tran'");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -322,7 +322,7 @@ public class PorticoWebServiceIT {
         });
     }
 
-    private void rejectedApplicationWithNoMatchAtTRANResent() throws PorticoExportServiceException {
+    private void rejectedApplicationWithNoMatchAtTRANResent() throws ExportServiceException {
         csvEntries.add("Rejected application with no match at 'tran' resent");
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
@@ -348,7 +348,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void rejectedApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() throws PorticoExportServiceException {
+    public void rejectedApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() throws ExportServiceException {
         csvEntries.add("Rejected application with match at 'tran' and no active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -381,7 +381,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void rejectedApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() throws PorticoExportServiceException {
+    public void rejectedApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() throws ExportServiceException {
         csvEntries.add("Rejected application with match at 'tran' and active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -416,7 +416,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void rejectedApplicationWithActiveUserIdentity_MUA_knownToUCLPrism() throws PorticoExportServiceException {
+    public void rejectedApplicationWithActiveUserIdentity_MUA_knownToUCLPrism() throws ExportServiceException {
         csvEntries.add("Rejected application with active user identity (MUA) known to UCL Prism");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -450,7 +450,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void rejectedUCLPrismApplicationByApplicantWithACorrespondingFirstApplicationInProgressInTheUCLPorticoSystem() throws PorticoExportServiceException {
+    public void rejectedUCLPrismApplicationByApplicantWithACorrespondingFirstApplicationInProgressInTheUCLPorticoSystem() throws ExportServiceException {
         csvEntries.add("Rejected UCL Prism application by applicant with a corresponding first application in progress in the UCL Portico system");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -486,12 +486,12 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void approvedApplicationWithNoMatchAtTRAN_approvedApplicationWithNoMatchAtTRANResent() throws PorticoExportServiceException {
+    public void approvedApplicationWithNoMatchAtTRAN_approvedApplicationWithNoMatchAtTRANResent() throws ExportServiceException {
         approvedApplicationWithNoMatchAtTRAN();
         approvedApplicationWithNoMatchAtTRANResent();
     }
 
-    private void approvedApplicationWithNoMatchAtTRAN() throws PorticoExportServiceException {
+    private void approvedApplicationWithNoMatchAtTRAN() throws ExportServiceException {
         csvEntries.add("Approved application with no match at 'tran'");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -510,7 +510,7 @@ public class PorticoWebServiceIT {
         });
     }
 
-    private void approvedApplicationWithNoMatchAtTRANResent() throws PorticoExportServiceException {
+    private void approvedApplicationWithNoMatchAtTRANResent() throws ExportServiceException {
         csvEntries.add("Approved application with no match at 'tran' resent");
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
@@ -536,7 +536,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void approvedApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() throws PorticoExportServiceException {
+    public void approvedApplicationWithMatchAtTRANAndNoActiveUserIdentity_MUA() throws ExportServiceException {
         csvEntries.add("Approved application with match at 'tran' and no active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -567,7 +567,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void approvedApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() throws PorticoExportServiceException {
+    public void approvedApplicationWithMatchAtTRANAndActiveUserIdentity_MUA() throws ExportServiceException {
         csvEntries.add("Approved application with match at 'tran' and active user identity (MUA)");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -602,7 +602,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void approvedApplicationWithActiveUserIdentity_MUA_knownToUCLPrism() throws PorticoExportServiceException {
+    public void approvedApplicationWithActiveUserIdentity_MUA_knownToUCLPrism() throws ExportServiceException {
         csvEntries.add("Approved application with active user identity (MUA) known to UCL Prism");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -637,7 +637,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void approvedUCLPrismApplicationByApplicantWithACorrespondingFirstApplicationInProgressInTheUCLPorticoSystem() throws PorticoExportServiceException {
+    public void approvedUCLPrismApplicationByApplicantWithACorrespondingFirstApplicationInProgressInTheUCLPorticoSystem() throws ExportServiceException {
         csvEntries.add("Approved UCL Prism application by applicant with a corresponding first application in progress in the UCL Portico system");
         randomApplicationForm = randomlyPickApplicationForm();
         ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
@@ -672,7 +672,7 @@ public class PorticoWebServiceIT {
     // ----------------------------------------------------------------------------------
     @Test
     @Transactional
-    public void approvedUCLPrismApplicationByApplicantWithADuplicateApplicationInTheUCLPorticoSystem() throws PorticoExportServiceException {
+    public void approvedUCLPrismApplicationByApplicantWithADuplicateApplicationInTheUCLPorticoSystem() throws ExportServiceException {
         csvEntries.add("Approved UCL Prism application by applicant with a duplicate application in the UCL Portico system");
         randomApplicationForm = applicationsService.getByApplicationNumber("RRDCIVSGEO01-2012-000032");
 

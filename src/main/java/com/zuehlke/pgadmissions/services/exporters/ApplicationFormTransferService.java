@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationTransferComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
-import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @Service
@@ -116,7 +116,7 @@ public class ApplicationFormTransferService {
     @Transactional
     public void processApplicationTransferError(TransferListener listener, ApplicationForm application, ApplicationFormTransfer transfer, Exception exception,
             ApplicationTransferStatus newStatus, String logMessage, ApplicationFormTransferErrorHandlingDecision handlingDecision,
-            ApplicationFormTransferErrorType errorType, Logger log) throws PorticoExportServiceException {
+            ApplicationFormTransferErrorType errorType, Logger log) throws ExportServiceException {
         ApplicationFormTransferError transferError = createTransferError(new ApplicationFormTransferErrorBuilder()
                 .diagnosticInfo(exception).errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
                 .problemClassification(ApplicationFormTransferErrorType.PRISM_EXCEPTION).transfer(transfer));
@@ -128,7 +128,7 @@ public class ApplicationFormTransferService {
         applicationFormDAO.save(application);
         commentDAO.save(new ApplicationTransferComment(application, userDAO.getSuperadministrators().get(0), transferError));
         log.error(String.format(logMessage, application.getApplicationNumber()), exception);
-        throw new PorticoExportServiceException(String.format(logMessage, application.getApplicationNumber()), exception, transferError);
+        throw new ExportServiceException(String.format(logMessage, application.getApplicationNumber()), exception, transferError);
     }
     
     @Transactional

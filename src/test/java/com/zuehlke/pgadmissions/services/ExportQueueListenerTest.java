@@ -15,8 +15,12 @@ import javax.jms.TextMessage;
 
 import org.easymock.EasyMock;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -32,35 +36,32 @@ import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferErrorB
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ExportQueueListenerTest {
 
+    @Mock @InjectIntoByType
     private ExportService porticoExportServiceMock;
     
+    @Mock @InjectIntoByType
     private ApplicationFormDAO formDAOMock;
     
+    @Mock @InjectIntoByType
     private ApplicationFormTransferService applicationFormTransferServiceMock;
     
+    @Mock @InjectIntoByType
     private ThrottleService throttleServiceMock;
     
+    @Mock @InjectIntoByType
     private TextMessage messageMock;
     
+    @Mock @InjectIntoByType
     private MailSendingService mailServiceMock;
     
+    @Mock @InjectIntoByType
     private UserService userServiceMock;
     
+    @TestedObject
     private ExportQueueListener listener;
-    
-    @Before
-    public void prepare() {
-        applicationFormTransferServiceMock = EasyMock.createMock(ApplicationFormTransferService.class);
-        porticoExportServiceMock = EasyMock.createMock(ExportService.class);
-        formDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-        messageMock = EasyMock.createMock(TextMessage.class);
-        throttleServiceMock = EasyMock.createMock(ThrottleService.class);
-        mailServiceMock = EasyMock.createMock(MailSendingService.class);
-        userServiceMock = EasyMock.createMock(UserService.class);
-        listener = new ExportQueueListener(porticoExportServiceMock, formDAOMock, applicationFormTransferServiceMock, throttleServiceMock, mailServiceMock, userServiceMock);
-    }
     
     @Test
     public void shouldReceiveJmsMessageAndCallSendToPortico() throws JMSException {

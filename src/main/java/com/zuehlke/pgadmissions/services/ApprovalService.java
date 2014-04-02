@@ -5,37 +5,30 @@ import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
 @Transactional
 public class ApprovalService {
 
     @Autowired
-    private ApplicationFormDAO applicationDAO;
-
-    @Autowired
-    private StageDurationService stageDurationService;
+    private StateService stateService;
 
     @Autowired
     private CommentService commentService;
@@ -102,7 +95,7 @@ public class ApprovalService {
     }
 
     public AssignSupervisorsComment initiateApprovalComment(String applicationId) {
-        ApplicationForm application = applicationDAO.getByApplicationNumber(applicationId);
+        ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
         AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
         Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
         Project project = application.getProject();
@@ -140,20 +133,13 @@ public class ApprovalService {
     }
 
     public void moveApplicationToApproval(ApplicationForm form, Comment newComment, RegisteredUser initiator) {
-        checkApplicationStatus(form);
         checkSendToPorticoStatus(form);
-
-        StageDuration approveStageDuration = stageDurationService.getById(ApplicationFormStatus.APPROVAL);
-        DateTime dueDate = DateUtils.addWorkingDaysInMinutes(new DateTime(), approveStageDuration.getDurationInMinutes());
-        form.setDueDate(dueDate.toDate());
 
         boolean sendReferenceRequest = form.getStatus().getId() == ApplicationFormStatus.VALIDATION;
 
-        form.setStatus(ApplicationFormStatus.APPROVAL);
+        applicationsService.setApplicationStatus(form, ApplicationFormStatus.APPROVAL);
 
-        applicationDAO.save(form);
-
-        Comment approvalComment = new AssignSupervisorsComment();
+        AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
         approvalComment.setApplication(form);
         approvalComment.setContent(StringUtils.EMPTY);
         approvalComment.setProjectAbstract(newComment.getProjectAbstract());
@@ -169,7 +155,6 @@ public class ApprovalService {
             mailSendingService.sendReferenceRequest(form.getReferees(), form);
             Comment latestStateChangeComment = applicationsService.getLatestStateChangeComment(form, null);
             form.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
-            applicationDAO.save(form);
             applicationFormUserRoleService.validationStageCompleted(form);
         }
 
@@ -180,9 +165,9 @@ public class ApprovalService {
 
     private void checkSendToPorticoStatus(ApplicationForm form) {
         // TODO check if explanation provided if not enough qualifications
-        if (!form.hasEnoughReferencesToSendToPortico() || (!form.hasEnoughQualificationsToSendToPortico())) {
-            throw new IllegalStateException("Send to portico data is not valid");
-        }
+//        if (!form.hasEnoughReferencesToSendToPortico() || (!form.hasEnoughQualificationsToSendToPortico())) {
+//            throw new IllegalStateException("Send to portico data is not valid");
+//        }
     }
 
 }

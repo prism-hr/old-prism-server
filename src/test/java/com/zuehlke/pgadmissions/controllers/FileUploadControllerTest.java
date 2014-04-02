@@ -94,7 +94,6 @@ public class FileUploadControllerTest {
 		assertEquals("ContentType", document.getContentType());
 		assertEquals("lala", new String(document.getContent()));
 		assertEquals(DocumentType.SUPPORTING_FUNDING, document.getType());
-		assertEquals(currentUser,document.getUploadedBy());
 		
 	}
 	
@@ -142,17 +141,17 @@ public class FileUploadControllerTest {
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
 		document = new DocumentBuilder().id(1).build();
 		userServiceMock = EasyMock.createMock(UserService.class);
-		controller = new FileUploadController(applicationsServiceMock, documentValidatorMock, documentServiceMock, userServiceMock) {
-			@Override
-			Document newDocument() {
-				return document;
-			}
-			@Override
-			BindingResult newErrors(Document document) {
-				return errors;
-			}
-
-		};
+//		controller = new FileUploadController(applicationsServiceMock, documentValidatorMock, documentServiceMock, userServiceMock) {
+//			@Override
+//			Document newDocument() {
+//				return document;
+//			}
+//			@Override
+//			BindingResult newErrors(Document document) {
+//				return errors;
+//			}
+//
+//		};
 
 		currentUser = new RegisteredUserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);

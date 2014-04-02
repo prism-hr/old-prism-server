@@ -128,7 +128,7 @@ public class ConfigurationController {
 
     @InitBinder(value = "serviceLevelsDTO")
     public void registerValidatorsAndPropertyEditors(WebDataBinder binder) {
-        binder.registerCustomEditor(StageDuration.class, stageDurationPropertyEditor);
+        binder.registerCustomEditor(State.class, stageDurationPropertyEditor);
         binder.registerCustomEditor(ReminderInterval.class, reminderIntervalPropertyEditor);
         binder.registerCustomEditor(NotificationsDuration.class, notificationsDurationPropertyEditor);
     }

@@ -17,10 +17,6 @@ public class ReviewServiceTest {
 
     @Mock
     @InjectIntoByType
-    private StageDurationService stageDurationService;
-
-    @Mock
-    @InjectIntoByType
     private MailSendingService mailService;
 
     @Mock

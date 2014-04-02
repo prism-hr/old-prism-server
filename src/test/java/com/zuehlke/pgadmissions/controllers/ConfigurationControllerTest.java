@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -126,7 +127,7 @@ public class ConfigurationControllerTest {
     @Test
     public void shouldRegistorPropertyEditorForStageDurations() {
         WebDataBinder dataBinderMock = EasyMock.createMock(WebDataBinder.class);
-        dataBinderMock.registerCustomEditor(StageDuration.class, stageDurationPropertyEditorMock);
+        dataBinderMock.registerCustomEditor(State.class, stageDurationPropertyEditorMock);
         dataBinderMock.registerCustomEditor(ReminderInterval.class, reminderIntervalPropertyEditorMock);
         dataBinderMock.registerCustomEditor(NotificationsDuration.class, notificationsDurationPropertyEditorMock);
 

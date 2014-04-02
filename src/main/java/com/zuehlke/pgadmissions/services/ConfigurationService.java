@@ -69,11 +69,10 @@ public class ConfigurationService {
 
     @Transactional
     public void saveConfigurations(ServiceLevelsDTO serviceLevelsDTO) {
-        for (StageDuration stageDuration : serviceLevelsDTO.getStagesDuration()) {
-            StageDuration oldDuration = stageDurationDAO.getById(stageDuration.getStage());
-            if (oldDuration != null) {
-                oldDuration.setUnit(stageDuration.getUnit());
-                oldDuration.setDuration(stageDuration.getDuration());
+        for (State state : serviceLevelsDTO.getStagesDuration()) {
+            State oldState = stateDAO.getById(state.getId());
+            if (oldState != null) {
+                oldState.setDuration(state.getDuration());
             }
         }
 

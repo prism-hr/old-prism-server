@@ -181,7 +181,7 @@ public class ProgramsServiceTest {
     public void shouldReturnAllProjectsForSuperAdministrator() {
         Program program = EasyMock.createMock(Program.class);
         RegisteredUser superAdmin = EasyMockUnitils.createMock(RegisteredUser.class);
-        expect(superAdmin.checkUserHasRole(superAdmin, Authority.SUPERADMINISTRATOR)).andReturn(true);
+        expect(superAdmin.hasRole(superAdmin, Authority.SUPERADMINISTRATOR)).andReturn(true);
         List<Project> allProjects = Collections.emptyList();
         expect(programDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
 
@@ -196,7 +196,7 @@ public class ProgramsServiceTest {
     public void shouldReturnAllProjectsForProgramAdministrator() {
         Program program = EasyMock.createMock(Program.class);
         RegisteredUser admin = EasyMockUnitils.createMock(RegisteredUser.class);
-        expect(admin.checkUserHasRole(admin, Authority.SUPERADMINISTRATOR)).andReturn(false);
+        expect(admin.hasRole(admin, Authority.SUPERADMINISTRATOR)).andReturn(false);
         expect(admin.isAdminInProgramme(program)).andReturn(true);
         List<Project> allProjects = Collections.emptyList();
         expect(programDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
@@ -212,7 +212,7 @@ public class ProgramsServiceTest {
     public void shouldReturnProjectsForProgramOfAuthor() {
         Program program = EasyMockUnitils.createMock(Program.class);
         RegisteredUser user = EasyMockUnitils.createMock(RegisteredUser.class);
-        expect(user.checkUserHasRole(user, Authority.SUPERADMINISTRATOR)).andReturn(false);
+        expect(user.hasRole(user, Authority.SUPERADMINISTRATOR)).andReturn(false);
         expect(user.isAdminInProgramme(program)).andReturn(false);
         List<Project> allProjects = Collections.emptyList();
         expect(programDAOMock.getProjectsForProgramOfWhichAuthor(program, user)).andReturn(allProjects);

@@ -145,7 +145,7 @@ public class RefereeService {
             }
         }
         if (!userExists(user)) {
-            user = 
+//            user = 
         }
         referee.setUser(user);
         save(referee);

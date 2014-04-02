@@ -94,26 +94,8 @@ public class ProgramDAO {
     }
 
     public List<Program> getProgramsForWhichUserCanManageProjects(RegisteredUser user) {
-        if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-            return getAllEnabledPrograms();
-        } else {
-            Set<Program> programs = new TreeSet<Program>(new Comparator<Program>() {
-                @Override
-                public int compare(Program p1, Program p2) {
-                    int compareInstitutions = p1.getInstitution().getName().compareTo(p2.getInstitution().getName());
-                    if (compareInstitutions != 0) {
-                        return compareInstitutions;
-                    }
-                    return p1.getTitle().compareTo(p2.getTitle());
-                }
-            });
-
-            programs.addAll(getEnabledProgramsForWhichUserHasProgramAuthority(user));
-            programs.addAll(getEnabledProgramsForWhichUserHasProjectAuthority(user));
-            programs.addAll(getEnabledProgramsForWhichUserHasApplicationAuthority(user));
-
-            return Lists.newArrayList(programs);
-        }
+        // TODO implement
+        return null;
     }
 
     public Program getLastCustomProgram(Institution institution) {
@@ -248,6 +230,16 @@ public class ProgramDAO {
     }
 
     public List<ProgramInstance> getAllProgramInstances(ProgramFeed programFeed) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<StudyOption> getAvailableStudyOptions() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public ProgramInstance getProgramInstance(Program program, StudyOption studyOption, Date date) {
         // TODO Auto-generated method stub
         return null;
     }

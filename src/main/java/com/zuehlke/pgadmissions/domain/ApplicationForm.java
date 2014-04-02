@@ -447,6 +447,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>,
             return StringUtils.EMPTY;
         }
     }
+    
+    public void setIpAddressAsString(String ipAddress) throws UnknownHostException {
+        this.ipAddress = InetAddress.getByName(ipAddress).getAddress();
+    }
 
 	@Override
 	public int compareTo(ApplicationForm appForm) {

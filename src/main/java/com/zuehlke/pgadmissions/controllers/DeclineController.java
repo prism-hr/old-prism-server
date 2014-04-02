@@ -90,7 +90,7 @@ public class DeclineController {
     		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
     		user.setDirectToUrl(null);
             userService.save(user);
-    		return TemplateLocation.DECLINE_SUCCESS_VIEW_NAME;;
+    		return TemplateLocation.DECLINE_SUCCESS_VIEW_NAME;
 	    } else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
 	        // the user clicked on "Provide Reference"
 	        if (!referee.getUser().isEnabled()) {

@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
+import com.zuehlke.pgadmissions.services.PorticoService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 
 @Component
@@ -43,6 +44,9 @@ public class PorticoAttachmentsZipCreator {
 
     @Autowired
     private Transcript1PdfBuilder transcriptBuilder;
+    
+    @Autowired
+    private PorticoService porticoService;
 
     @Value("${email.address.to}")
     private String emailAddressTo;
@@ -76,7 +80,7 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
-        List<ReferenceComment> references = applicationForm.getReferencesToSendToPortico();
+        List<ReferenceComment> references = porticoService.getReferencesToSendToPortico();
         String filename;
         switch (references.size()) {
         case 2:
@@ -144,7 +148,7 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
-        List<Document> qualifications = applicationForm.getQualificationsToSendToPortico();
+        List<Document> qualifications = porticoService.getQualificationsToSendToPortico();
         String filename;
 
         switch (qualifications.size()) {

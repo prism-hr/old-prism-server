@@ -31,7 +31,7 @@ public class RefereePropertyEditor extends PropertyEditorSupport {
             setValue(null);
             return;
         }
-        setValue(refereeService.getById(Integer.parseInt(encryptionHelper.decrypt(strId))));
+        setValue(refereeService.getRefereeById(Integer.parseInt(encryptionHelper.decrypt(strId))));
 
     }
 

@@ -10,6 +10,7 @@ import org.joda.time.DateTimeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
@@ -77,18 +78,18 @@ public class ProgramInstanceService {
 
     public boolean isActive(ProgramInstance programInstance) {
         // TODO use program.isEnabled()
-//        if (programInstance.getEnabled()) {
-//            return true;
-//        }
-//        if (programInstance.getDisabledDate() != null) {
-//            LocalDate disableLocalDate = new LocalDate(programInstance.getDisabledDate().getTime());
-//            LocalDate today = new LocalDate();
-//
-//            int processingDelay = throttleService.getProcessingDelayInDays();
-//            if (today.isBefore(disableLocalDate.plusDays(processingDelay))) {
-//                return true;
-//            }
-//        }
+        // if (programInstance.getEnabled()) {
+        // return true;
+        // }
+        // if (programInstance.getDisabledDate() != null) {
+        // LocalDate disableLocalDate = new LocalDate(programInstance.getDisabledDate().getTime());
+        // LocalDate today = new LocalDate();
+        //
+        // int processingDelay = throttleService.getProcessingDelayInDays();
+        // if (today.isBefore(disableLocalDate.plusDays(processingDelay))) {
+        // return true;
+        // }
+        // }
         return false;
     }
 
@@ -117,6 +118,7 @@ public class ProgramInstanceService {
         return instances;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     protected ProgramInstance createOrUpdateProgramInstance(Program program, int startYear, StudyOption studyOption) {
         ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
         DateTime startDate = thisBean.findPenultimateSeptemberMonday(startYear);
@@ -135,8 +137,7 @@ public class ProgramInstanceService {
         programInstance.setDisabledDate(deadline.minusMonths(1).toDate());
         programInstance.setEnabled(true);
         programInstance.setIdentifier("CUSTOM");
-        programInstance.setStudyOption(studyOption.getName());
-        programInstance.setStudyOption(studyOption.getId());
+        programInstance.setStudyOption(studyOption);
 
         return programInstance;
     }
@@ -144,7 +145,7 @@ public class ProgramInstanceService {
     protected List<StudyOption> getStudyOptions(String studyOptionCodesSplit) {
         List<String> studyOptionCodes = Arrays.asList(studyOptionCodesSplit.split(","));
         ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
-        List<StudyOption> distinctStudyOptions = thisBean.getDistinctStudyOptions();
+        List<StudyOption> distinctStudyOptions = programDAO.getAvailableStudyOptions();
 
         List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(studyOptionCodes.size());
         for (StudyOption o : distinctStudyOptions) {
@@ -191,11 +192,11 @@ public class ProgramInstanceService {
     }
 
     public int getAdvertisingDeadlineYear(Program program) {
-        return new DateTime(programInstanceDAO.getLatestActiveInstanceDeadline(program)).getYear();
+        return new DateTime(programDAO.getLatestActiveInstanceDeadline(program)).getYear();
     }
 
-    public List<String> getStudyOptions(Program program) {
-        return programInstanceDAO.getStudyOptions(program);
+    public List<StudyOption> getStudyOptions(Program program) {
+        return programDAO.getAvailableStudyOptions(program);
     }
 
 }

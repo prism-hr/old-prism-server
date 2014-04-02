@@ -135,8 +135,8 @@ public class SendToPorticoDataDTOValidatorTest {
         referee2 = new RefereeBuilder().reference(referenceComment).build();
 
         applicationForm = new ApplicationForm();
-        applicationForm.setQualifications(Arrays.asList(qualification1, qualification2));
-        applicationForm.setReferees(Arrays.asList(referee1, referee2));
+        applicationForm.getQualifications().addAll(Arrays.asList(qualification1, qualification2));
+        applicationForm.getReferees().addAll(Arrays.asList(referee1, referee2));
 
         mappingResult = new DirectFieldBindingResult(sendToPorticoDataDTO, "sendToPorticoData");
 
@@ -146,8 +146,8 @@ public class SendToPorticoDataDTOValidatorTest {
 
         EasyMock.expect(qualificationServiceMock.getById(1)).andReturn(qualification1).anyTimes();
         EasyMock.expect(qualificationServiceMock.getById(2)).andReturn(qualification2).anyTimes();
-        EasyMock.expect(refereeServiceMock.getById(11)).andReturn(referee1).anyTimes();
-        EasyMock.expect(refereeServiceMock.getById(12)).andReturn(referee2).anyTimes();
+        EasyMock.expect(refereeServiceMock.getRefereeById(11)).andReturn(referee1).anyTimes();
+        EasyMock.expect(refereeServiceMock.getRefereeById(12)).andReturn(referee2).anyTimes();
         EasyMock.expect(applicationsServiceMock.getByApplicationNumber("84")).andReturn(applicationForm);
 
         sendToPorticoDataValidator = new SendToPorticoDataDTOValidator(applicationsServiceMock, qualificationServiceMock, refereeServiceMock);

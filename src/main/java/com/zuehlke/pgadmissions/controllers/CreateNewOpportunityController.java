@@ -109,7 +109,7 @@ public class CreateNewOpportunityController {
 
     @ModelAttribute("countries")
     public List<Domicile> getAllEnabledDomiciles() {
-        return domicileService.getAllEnabledDomicilesExceptAlternateValues();
+        return domicileService.getAllEnabledDomiciles();
     }
 
     @ModelAttribute("opportunityRequest")

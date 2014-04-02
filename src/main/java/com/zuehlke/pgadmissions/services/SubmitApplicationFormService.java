@@ -26,8 +26,6 @@ public class SubmitApplicationFormService {
     private MailSendingService mailSendingService;
 
     public void submitApplication(ApplicationForm applicationForm) {
-        applicationForm.setSubmittedDate(DateUtils.truncateToDay(new Date()));
-        
         applicationService.setApplicationStatus(applicationForm, ApplicationFormStatus.VALIDATION);
         
         mailSendingService.sendSubmissionConfirmationToApplicant(applicationForm);

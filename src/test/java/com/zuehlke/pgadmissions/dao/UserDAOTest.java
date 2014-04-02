@@ -72,12 +72,12 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
         assertNotNull(user.getId());
         Integer id = user.getId();
-        RegisteredUser reloadedUser = userDAO.get(id);
+        RegisteredUser reloadedUser = userDAO.getById(id);
         assertSame(user, reloadedUser);
 
         flushAndClearSession();
 
-        reloadedUser = userDAO.get(id);
+        reloadedUser = userDAO.getById(id);
         assertNotSame(user, reloadedUser);
         assertEquals(user.getId(), reloadedUser.getId());
 

@@ -9,15 +9,16 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
@@ -28,14 +29,31 @@ import com.zuehlke.pgadmissions.services.ReferenceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class FileDownloadControllerTest {
+
+    @Mock
+    @InjectIntoByType
     private ApplicationFormTransferService applicationFormTransferServiceMock;
+
+    @Mock
+    @InjectIntoByType
     private DocumentService documentServiceMock;
-    private FileDownloadController controller;
-    private RegisteredUser currentUser;
+
+    @Mock
+    @InjectIntoByType
     private ReferenceService referenceServiceMock;
+
+    @Mock
+    @InjectIntoByType
     private UserService userServiceMock;
+
+    @Mock
+    @InjectIntoByType
     private EncryptionHelper encryptionHelperMock;
+
+    @TestedObject
+    private FileDownloadController controller;
 
     @Test
     public void shouldGetApplicationFormDocumentFromServiceAndWriteContentToResponse() throws IOException {
@@ -102,9 +120,6 @@ public class FileDownloadControllerTest {
         EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
         EasyMock.replay(referenceServiceMock);
 
-        EasyMock.expect(currentUser.canSeeReference(reference)).andReturn(true);
-        EasyMock.replay(currentUser);
-
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ServletOutputStream servletOutputStream = new ServletOutputStream() {
 
@@ -164,32 +179,9 @@ public class FileDownloadControllerTest {
         HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
         EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
         EasyMock.replay(referenceServiceMock);
-        EasyMock.expect(currentUser.canSeeReference(reference)).andReturn(false);
-        EasyMock.replay(currentUser);
 
         controller.downloadReferenceDocument("encryptedId", responseMock);
 
         EasyMock.verify(referenceServiceMock);
-    }
-
-    @Before
-    public void setup() {
-
-        documentServiceMock = EasyMock.createMock(DocumentService.class);
-        referenceServiceMock = EasyMock.createMock(ReferenceService.class);
-        userServiceMock = EasyMock.createMock(UserService.class);
-        encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-        applicationFormTransferServiceMock = EasyMock.createMock(ApplicationFormTransferService.class);
-        controller = new FileDownloadController(applicationFormTransferServiceMock, documentServiceMock, referenceServiceMock, userServiceMock,
-                encryptionHelperMock);
-        currentUser = EasyMock.createMock(RegisteredUser.class);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-        EasyMock.replay(userServiceMock);
-
-    }
-
-    @After
-    public void tearDown() {
-        SecurityContextHolder.clearContext();
     }
 }

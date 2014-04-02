@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -42,56 +43,56 @@ import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 public class ProgramDAO {
     // TODO reimplement getProgramsOfWhichPrevious*() methods
 
-    @Autowired
     private SessionFactory sessionFactory;
-    
+
+    public ProgramDAO() {
+    }
+
+    @Autowired
+    public ProgramDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
     public Advert getById(Integer advertId) {
-        return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class)
-                .add(Restrictions.eq("id", advertId)).uniqueResult();
+        return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("id", advertId)).uniqueResult();
     }
-    
+
     public Advert getAcceptingApplicationsById(Integer advertId) {
-        return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class)
-                .add(Restrictions.eq("id", advertId))
+        return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("id", advertId))
                 .add(Restrictions.eq("active", true)).uniqueResult();
     }
-    
+
     public Program getProgramByCode(String code) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .add(Restrictions.eq("code", code)).uniqueResult();
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code)).uniqueResult();
     }
-    
+
     public Program getProgamAcceptingApplicationsByCode(String code) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .add(Restrictions.eq("code", code))
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code))
                 .add(Restrictions.eq("active", true)).uniqueResult();
     }
-    
+
     public String getProgramIdByCode(String code) {
-        return (String) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .setProjection(Projections.property("id"))
+        return (String) sessionFactory.getCurrentSession().createCriteria(Program.class).setProjection(Projections.property("id"))
                 .add(Restrictions.eq("code", code)).uniqueResult().toString();
     }
 
     public void save(Advert advert) {
         sessionFactory.getCurrentSession().saveOrUpdate(advert);
     }
-    
+
     public void merge(Advert advert) {
         sessionFactory.getCurrentSession().merge(advert);
     }
-    
+
     public void saveStudyOption(StudyOption studyOption) {
         sessionFactory.getCurrentSession().saveOrUpdate(studyOption);
     }
 
     public List<Program> getAllEnabledPrograms() {
-        return sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq("enabled", true))
-                .addOrder(Order.asc("title")).list();
+        return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .add(Restrictions.eq("enabled", true)).addOrder(Order.asc("title")).list();
     }
-    
+
     public List<Program> getProgramsForWhichUserCanManageProjects(RegisteredUser user) {
         if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
             return getAllEnabledPrograms();
@@ -106,41 +107,34 @@ public class ProgramDAO {
                     return p1.getTitle().compareTo(p2.getTitle());
                 }
             });
-    
+
             programs.addAll(getEnabledProgramsForWhichUserHasProgramAuthority(user));
             programs.addAll(getEnabledProgramsForWhichUserHasProjectAuthority(user));
             programs.addAll(getEnabledProgramsForWhichUserHasApplicationAuthority(user));
-            
+
             return Lists.newArrayList(programs);
         }
     }
-	
+
     public Program getLastCustomProgram(Institution institution) {
         String matcher = String.format("%s_%%", institution.getCode());
         DetachedCriteria maxCustomCode = DetachedCriteria.forClass(Program.class).setProjection(Projections.max("code"))
                 .add(Restrictions.like("code", matcher));
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .add(Property.forName("code").eq(maxCustomCode)).uniqueResult();
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Property.forName("code").eq(maxCustomCode)).uniqueResult();
     }
-    
+
     public ProgramClosingDate getClosingDateById(final Integer id) {
-        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
-            .add(Restrictions.eq("id", id)).uniqueResult();
+        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class).add(Restrictions.eq("id", id)).uniqueResult();
     }
-    
+
     public ProgramClosingDate getClosingDateByDate(final Program program, final Date date) {
-        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("closingDate", date))
-                .addOrder(Order.desc("id"))
-                .setMaxResults(1).uniqueResult();
+        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class).add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("closingDate", date)).addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
     }
-    
+
     public Date getNextClosingDate(Program program) {
-        return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class)
-                .setProjection(Projections.min("closingDate"))
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.ge("closingDate", new Date())).uniqueResult();
+        return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class).setProjection(Projections.min("closingDate"))
+                .add(Restrictions.eq("program", program)).add(Restrictions.ge("closingDate", new Date())).uniqueResult();
     }
 
     public void updateClosingDate(ProgramClosingDate closingDate) {
@@ -152,7 +146,7 @@ public class ProgramDAO {
             }
         }
     }
-    
+
     public void deleteClosingDate(ProgramClosingDate closingDate) {
         if (closingDate != null) {
             Program program = closingDate.getProgram();
@@ -162,116 +156,100 @@ public class ProgramDAO {
             }
         }
     }
-    
+
     public List<ProgramType> getProgamTypes() {
         return (List<ProgramType>) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).list();
     }
-    
+
     public ProgramType getProgramTypeById(ProgramTypeId programTypeId) {
-        return (ProgramType) sessionFactory.getCurrentSession().createCriteria(ProgramType.class)
-                .add(Restrictions.eq("id", programTypeId)).uniqueResult();
+        return (ProgramType) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).add(Restrictions.eq("id", programTypeId)).uniqueResult();
     }
-    
+
     public Integer getDefaultStudyDurationForProgramType(ProgramTypeId programTypeId) {
-        return (Integer) sessionFactory.getCurrentSession().createCriteria(ProgramType.class)
-                .setProjection(Projections.property("defaultStudyDuration"))
+        return (Integer) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).setProjection(Projections.property("defaultStudyDuration"))
                 .add(Restrictions.eq("id", programTypeId)).uniqueResult();
     }
-    
+
     public List<Program> getEnabledProgramsForWhichUserHasProgramAuthority(RegisteredUser user) {
         HashSet<Program> programs = new HashSet<Program>();
         for (Authority authority : AuthorityGroup.INTERNAL_PROGRAM_AUTHORITIES.getAuthorities()) {
             programs.addAll((List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                    .createAlias(authority.toString().toLowerCase() + "s", "registeredUser", JoinType.INNER_JOIN)
-                    .add(Restrictions.eq("enabled", true))
+                    .createAlias(authority.toString().toLowerCase() + "s", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("enabled", true))
                     .add(Restrictions.eq("registeredUser.id", user.getId())).list());
         }
         return new ArrayList<Program>(programs);
     }
-    
+
     public List<Program> getEnabledProgramsForWhichUserHasProjectAuthority(RegisteredUser user) {
-        return sessionFactory.getCurrentSession().createCriteria(Project.class)
+        return sessionFactory
+                .getCurrentSession()
+                .createCriteria(Project.class)
                 .setProjection(Projections.groupProperty("program"))
                 .createAlias("program", "program", JoinType.INNER_JOIN)
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("primarySupervisor", user))
-                        .add(Restrictions.eq("administrator", user))
-                        .add(Restrictions.eq("secondarySupervisor", user))
-                .add(Restrictions.eq("program.enabled", true))).list();
+                .add(Restrictions.disjunction().add(Restrictions.eq("primarySupervisor", user)).add(Restrictions.eq("administrator", user))
+                        .add(Restrictions.eq("secondarySupervisor", user)).add(Restrictions.eq("program.enabled", true))).list();
     }
-    
+
     public List<Program> getEnabledProgramsForWhichUserHasApplicationAuthority(RegisteredUser user) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
-                .setProjection(Projections.groupProperty("applicationForm.program"))
-                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
-                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
-                .createAlias("role", "applicationRole", JoinType.INNER_JOIN)
+                .setProjection(Projections.groupProperty("applicationForm.program")).createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
+                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN).createAlias("role", "applicationRole", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.in("applicationRole.id", AuthorityGroup.INTERNAL_APPLICATION_AUTHORITIES.getAuthorities()))
                 .add(Restrictions.eq("program.enabled", true)).list();
     }
-    
+
     public List<Project> getProjectsForProgram(Program program) {
-        return sessionFactory.getCurrentSession().createCriteria(Project.class).
-                add(Restrictions.eq("program", program)).
-                add(Restrictions.eq("enabled", true)).list();
+        return sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("program", program)).add(Restrictions.eq("enabled", true))
+                .list();
     }
 
     public List<Project> getProjectsForProgramOfWhichAuthor(Program program, RegisteredUser author) {
-        return sessionFactory.getCurrentSession().createCriteria(Project.class).
-                add(Restrictions.eq("program", program)).
-                add(Restrictions.disjunction().
-                    add(Restrictions.eq("contactUser", author)).
-                    add(Restrictions.eq("administrator", author)).
-                    add(Restrictions.eq("primarySupervisor", author))).
-                add(Restrictions.eq("enabled", true)).list();
+        return sessionFactory
+                .getCurrentSession()
+                .createCriteria(Project.class)
+                .add(Restrictions.eq("program", program))
+                .add(Restrictions.disjunction().add(Restrictions.eq("contactUser", author)).add(Restrictions.eq("administrator", author))
+                        .add(Restrictions.eq("primarySupervisor", author))).add(Restrictions.eq("enabled", true)).list();
     }
-    
+
     public void deleteInactiveAdverts() {
-        Query query = sessionFactory.getCurrentSession()
-                .createSQLQuery("CALL SP_DELETE_INACTIVE_ADVERTS();");
+        Query query = sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_INACTIVE_ADVERTS();");
         query.executeUpdate();
     }
-    
+
     public Date getDefaultStartDate(Program program, StudyOption studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
-        return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-                .setProjection(Projections.min("applicationDeadline"))
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("enabled", true))
-                .add(Restrictions.eq("studyOption", studyOption))
+        return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).setProjection(Projections.min("applicationDeadline"))
+                .add(Restrictions.eq("program", program)).add(Restrictions.eq("enabled", true)).add(Restrictions.eq("studyOption", studyOption))
                 .add(Restrictions.ge("applicationDeadline", today)).uniqueResult();
     }
-    
+
     public List<ProgramInstance> getActiveProgramInstances(Program program) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
-        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("enabled", true))
-                .add(Restrictions.ge("applicationDeadline", today))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("enabled", true)).add(Restrictions.ge("applicationDeadline", today)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .list();
     }
-    
+
     public List<StudyOption> getAvailableStudyOptions(Program program) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
         return (List<StudyOption>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-                .setProjection(Projections.groupProperty("studyOption"))
-                .createAlias("studyOption", "studyOption", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("enabled", true))
-                .add(Restrictions.ge("applicationDeadline", today))
+                .setProjection(Projections.groupProperty("studyOption")).createAlias("studyOption", "studyOption", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("program", program)).add(Restrictions.eq("enabled", true)).add(Restrictions.ge("applicationDeadline", today))
                 .addOrder(Order.asc("studyOption.displayName")).list();
     }
-    
+
     public List<ProgramInstance> getActiveProgramInstancesForStudyOption(Program program, StudyOption studyOption) {
         Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
-        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class)
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("studyOption", studyOption))
-                .add(Restrictions.eq("enabled", true))
-                .add(Restrictions.ge("applicationDeadline", today))
-                .addOrder(Order.asc("applicationStartDate"))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return (List<ProgramInstance>) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class).add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("studyOption", studyOption)).add(Restrictions.eq("enabled", true)).add(Restrictions.ge("applicationDeadline", today))
+                .addOrder(Order.asc("applicationStartDate")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
-    
+
+    public List<ProgramInstance> getAllProgramInstances(ProgramFeed programFeed) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

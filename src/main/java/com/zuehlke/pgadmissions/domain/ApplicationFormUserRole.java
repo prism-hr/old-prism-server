@@ -44,6 +44,9 @@ public class ApplicationFormUserRole implements Serializable {
     @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "id.applicationFormUserRole")
     private HashSet<ApplicationFormActionRequired> actions = new HashSet<ApplicationFormActionRequired>();
 
+    public ApplicationFormUserRole() {
+    }
+    
     public ApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Role role, Boolean interestedInApplicant,
             HashSet<ApplicationFormActionRequired> actions) {
         setId(applicationForm, user, role);

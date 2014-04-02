@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers.applicantform;
+package com.zuehlke.pgadmissions.controllers;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;

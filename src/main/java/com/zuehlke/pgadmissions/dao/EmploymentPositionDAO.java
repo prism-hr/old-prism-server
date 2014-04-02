@@ -9,19 +9,26 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 @Repository
 public class EmploymentPositionDAO {
 
-    @Autowired
-	private SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
-	public EmploymentPosition getById(Integer id) {
+    public EmploymentPositionDAO() {
+    }
+
+    @Autowired
+    public EmploymentPositionDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    public EmploymentPosition getById(Integer id) {
         return (EmploymentPosition) sessionFactory.getCurrentSession().get(EmploymentPosition.class, id);
     }
-	
-	public void save(EmploymentPosition employmentPosition) {
-        sessionFactory.getCurrentSession().saveOrUpdate(employmentPosition); 
+
+    public void save(EmploymentPosition employmentPosition) {
+        sessionFactory.getCurrentSession().saveOrUpdate(employmentPosition);
     }
 
-	public void delete(EmploymentPosition position) {
-		sessionFactory.getCurrentSession().delete(position);		
-	}
+    public void delete(EmploymentPosition position) {
+        sessionFactory.getCurrentSession().delete(position);
+    }
 
 }

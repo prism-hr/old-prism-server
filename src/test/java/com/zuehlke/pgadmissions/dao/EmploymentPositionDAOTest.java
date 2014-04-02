@@ -17,7 +17,9 @@ import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
+    
 	private RegisteredUser user;
+	
 	private Program program;
 
 	@Test(expected = NullPointerException.class)

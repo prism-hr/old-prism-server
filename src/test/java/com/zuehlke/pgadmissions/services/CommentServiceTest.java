@@ -3,10 +3,15 @@ package com.zuehlke.pgadmissions.services;
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -14,18 +19,34 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class CommentServiceTest {
 
-    private CommentDAO commentDAOMock;
+    @Mock @InjectIntoByType
+    private CommentDAO commentDAO;
+    
+    @Mock @InjectIntoByType
+    private ApplicationFormService applicationsService;
+    
+    @Mock @InjectIntoByType 
+    private WorkflowService applicationFormUserRoleService;
+    
+    @Mock @InjectIntoByType 
+    private UserService userService;
+    
+    @Mock @InjectIntoByType
+    private StateDAO stateDAO;
+    
+    @TestedObject
     private CommentService service;
 
     @Test
     public void shouldDelegateCommentSaveToDAO() {
         Comment appReview = EasyMock.createMock(Comment.class);
-        commentDAOMock.save(appReview);
-        EasyMock.replay(appReview, commentDAOMock);
+        commentDAO.save(appReview);
+        EasyMock.replay(appReview, commentDAO);
         service.save(appReview);
-        EasyMock.verify(commentDAOMock);
+        EasyMock.verify(commentDAO);
     }
 
     @Test
@@ -40,12 +61,7 @@ public class CommentServiceTest {
         Assert.assertEquals(reviewerUser, reviewComment.getUser());
         Assert.assertEquals(application, reviewComment.getApplication());
 
-        EasyMock.verify(commentDAOMock);
+        EasyMock.verify(commentDAO);
     }
 
-    @Before
-    public void setUp() {
-        commentDAOMock = EasyMock.createMock(CommentDAO.class);
-        service = new CommentService(commentDAOMock);
-    }
 }

@@ -23,7 +23,7 @@ public class AdvertServiceTest {
 	@Before
 	public void setUp(){
 		dao = createMock(AdvertDAO.class);
-		advertService = new AdvertService(dao);
+		advertService = new AdvertService();
 	}
 	@Test
 	public void shouldGetAdvertsFromDAO(){

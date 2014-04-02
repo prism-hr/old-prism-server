@@ -74,12 +74,12 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         assertNotNull(inApplication.getId());
         Integer id = inApplication.getId();
-        ApplicationForm reloadedApplication = applicationDAO.get(id);
+        ApplicationForm reloadedApplication = applicationDAO.getById(id);
         assertSame(inApplication, reloadedApplication);
 
         flushAndClearSession();
 
-        reloadedApplication = applicationDAO.get(id);
+        reloadedApplication = applicationDAO.getById(id);
         assertNotSame(inApplication, reloadedApplication);
         assertEquals(inApplication.getId(), reloadedApplication.getId());
         assertEquals(inApplication.getApplicant().getId(), user.getId());
@@ -104,7 +104,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         applicationDAO.save(inApplication);
 
         Integer id = inApplication.getId();
-        ApplicationForm reloadedApplication = applicationDAO.get(id);
+        ApplicationForm reloadedApplication = applicationDAO.getById(id);
         assertNotNull(reloadedApplication.getApplicationTimestamp());
     }
 
@@ -174,7 +174,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         Qualification qualification1 = new Qualification();
         qualification1.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
         qualification1.setQualificationGrade("");
-        qualification1.setQualificationInstitution("");
+//        qualification1.setQualificationInstitution("");
 
         qualification1.setQualificationLanguage("Abkhazian");
         qualification1.setQualificationSubject("");
@@ -186,7 +186,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         Qualification qualification2 = new Qualification();
         qualification2.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
         qualification2.setQualificationGrade("");
-        qualification2.setQualificationInstitution("");
+//        qualification2.setQualificationInstitution("");
         qualification2.setQualificationLanguage("Abkhazian");
         qualification2.setQualificationSubject("");
         qualification2.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));

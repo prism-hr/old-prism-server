@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,13 +18,11 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Service
 @Transactional
@@ -40,7 +37,7 @@ public class InterviewService {
     private MailSendingService mailService;
 
     @Autowired
-    private StageDurationService stageDurationService;
+    private StateService stateService;
 
     @Autowired
     private CommentService commentService;
@@ -53,12 +50,8 @@ public class InterviewService {
 
     public void moveApplicationToInterview(RegisteredUser user, final AssignInterviewersComment interviewComment, ApplicationForm applicationForm) {
         interviewComment.setApplication(applicationForm);
-        assignInterviewDueDate(interviewComment, applicationForm);
-
-        ApplicationFormStatus previousStatus = applicationForm.getStatus();
-        applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
-
-        applicationsService.save(applicationForm);
+        
+        applicationsService.setApplicationStatus(applicationForm, ApplicationFormStatus.INTERVIEW);
 
         // TODO add interview status transient field to the comment and use it here
         // if (!interview.getTakenPlace()) {
@@ -80,26 +73,16 @@ public class InterviewService {
         interviewComment.setUseCustomQuestions(latestStateChangeComment.getUseCustomQuestions());
         commentService.save(interviewComment);
 
-        if (previousStatus == ApplicationFormStatus.VALIDATION) {
-            mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
-            applicationForm.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
-            applicationsService.save(applicationForm);
-            applicationFormUserRoleService.validationStageCompleted(applicationForm);
-        }
+        // TODO move into common place
+//        if (previousStatus == ApplicationFormStatus.VALIDATION) {
+//            mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
+//            applicationForm.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
+//            applicationsService.save(applicationForm);
+//            applicationFormUserRoleService.validationStageCompleted(applicationForm);
+//        }
 
         applicationFormUserRoleService.movedToInterviewStage(interviewComment);
         applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
-    }
-
-    // FIXME extract common subclass for AssignInterviewersComment and InterviewScheduleComment
-    protected void assignInterviewDueDate(final Comment interviewComment, ApplicationForm applicationForm) {
-        Date baseDate = interviewComment.getAppointmentDate();
-        if (baseDate == null) {
-            baseDate = new Date();
-        }
-        StageDuration duration = stageDurationService.getByStatus(ApplicationFormStatus.INTERVIEW);
-        Date dueDate = DateUtils.addWorkingDaysInMinutes(DateUtils.truncateToDay(baseDate), duration.getDurationInMinutes());
-        applicationForm.setDueDate(dueDate);
     }
 
     public void postVote(InterviewVoteComment interviewVoteComment, RegisteredUser registeredUser) {
@@ -107,7 +90,7 @@ public class InterviewService {
         AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(
                 application, ApplicationFormAction.ASSIGN_INTERVIEWERS);
         commentService.save(interviewVoteComment);
-        applicationFormUserRoleService.interviewParticipantResponded(assignInterviewersComment, registeredUser);
+        applicationFormUserRoleService.interviewParticipantResponded(interviewVoteComment);
         applicationFormUserRoleService.insertApplicationUpdate(interviewVoteComment.getApplication(), registeredUser,
                 ApplicationUpdateScope.INTERNAL);
         mailService.sendInterviewVoteConfirmationToAdministrators(application, registeredUser);
@@ -134,7 +117,8 @@ public class InterviewService {
                 interviewConfirmDTO.getInterviewInstructions());
         commentService.save(scheduleComment);
 
-        thisBean.assignInterviewDueDate(scheduleComment, applicationForm);
+        // TODO set due date
+//        thisBean.assignInterviewDueDate(scheduleComment, applicationForm);
         thisBean.sendConfirmationEmails(scheduleComment);
         applicationFormUserRoleService.interviewConfirmed(scheduleComment);
         applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);

@@ -19,10 +19,6 @@ public class ApprovalServiceTest {
 
     @Mock
     @InjectIntoByType
-    private StageDurationService stageDurationService;
-
-    @Mock
-    @InjectIntoByType
     private CommentService commentService;
 
     @Mock

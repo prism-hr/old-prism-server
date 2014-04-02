@@ -112,8 +112,8 @@ public class MailSendingServiceTest {
         mockMailSender = createMock(MailSender.class);
         configurationServiceMock = createMock(ConfigurationService.class);
         applicationFormDAOMock = createMock(ApplicationFormDAO.class);
-        service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock,
-                encryptionUtilsMock, HOST, SERVICE_OFFER, UCL_PROSPECTUS_LINK);
+//        service = new MailSendingService(mockMailSender, configurationServiceMock, applicationFormDAOMock, userDAOMock, roleDAOMock, refereeDAOMock,
+//                encryptionUtilsMock, HOST, SERVICE_OFFER, UCL_PROSPECTUS_LINK);
     }
 
 //    @Test

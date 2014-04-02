@@ -15,19 +15,21 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
-import com.zuehlke.pgadmissions.services.RoleService;
 
 @SuppressWarnings("unchecked")
 @Repository
 public class OpportunityRequestDAO {
 
-    @Autowired
-    private RoleService roleService;
-    
-    @Autowired
     private SessionFactory sessionFactory;
+
+    public OpportunityRequestDAO() {
+    }
+
+    @Autowired
+    public OpportunityRequestDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     public void save(OpportunityRequest opportunityRequest) {
         sessionFactory.getCurrentSession().saveOrUpdate(opportunityRequest);
@@ -48,11 +50,12 @@ public class OpportunityRequestDAO {
                         .add(Subqueries.propertiesIn(new String[] { "sourceProgram", "createdDate", "id" }, initialRequestsWithProgramsCriteria))
                         .add(Restrictions.isNull("sourceProgram"))) //
                 .addOrder(Order.asc("status"));
-        
-        if (!roleService.checkUserHasSystemRole(user, Authority.SUPERADMINISTRATOR)) {
-            opportunitiesCriteria = opportunitiesCriteria.add(Restrictions.eq("author", user));
-        }
-        
+
+        // move into service
+        // if (!roleService.checkUserHasSystemRole(user, Authority.SUPERADMINISTRATOR)) {
+        // opportunitiesCriteria = opportunitiesCriteria.add(Restrictions.eq("author", user));
+        // }
+
         return opportunitiesCriteria.list();
     }
 

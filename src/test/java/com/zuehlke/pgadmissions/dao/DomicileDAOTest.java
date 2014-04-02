@@ -50,7 +50,7 @@ public class DomicileDAOTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldReturnEnabledDomicilesWithoutAlternateValues() {
 	    DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
-	    List<Domicile> domiciles = domicileDAO.getAllEnabledDomicilesExceptAlternateValues();
+	    List<Domicile> domiciles = domicileDAO.getAllEnabledDomiciles();
 	    for (Domicile domicile : domiciles) {
 	        Assert.assertTrue("The list contains a disabled domicile.", domicile.getEnabled());
 	        Assert.assertFalse("The list contains an alternate code.", StringUtils.equalsIgnoreCase(domicile.getCode(), "XF"));

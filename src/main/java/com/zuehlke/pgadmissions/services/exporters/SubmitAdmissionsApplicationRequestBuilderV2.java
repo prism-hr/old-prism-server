@@ -54,6 +54,7 @@ import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -282,10 +283,10 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         if (personalDetails.getPassportAvailable()) {
             PassportTp passportTp = xmlFactory.createPassportTp();
-            passportTp.setName(personalDetails.getNameOnPassport());
-            passportTp.setNumber(personalDetails.getPassportNumber());
-            passportTp.setExpiryDate(buildXmlDate(personalDetails.getPassportExpiryDate()));
-            passportTp.setIssueDate(buildXmlDate(personalDetails.getPassportIssueDate()));
+            passportTp.setName(personalDetails.getPassport().getName());
+            passportTp.setNumber(personalDetails.getPassport().getNumber());
+            passportTp.setExpiryDate(buildXmlDate(personalDetails.getPassport().getExpiryDate()));
+            passportTp.setIssueDate(buildXmlDate(personalDetails.getPassport().getIssueDate()));
             return passportTp;
         } else {
             PassportTp passportTp = xmlFactory.createPassportTp();
@@ -389,7 +390,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
         applicationTp.setIpAddress(applicationForm.getIpAddressAsString());
-        applicationTp.setExternalApplicationID(applicationForm.getApplication().getApplicationNumber());
+        applicationTp.setExternalApplicationID(applicationForm.getApplicationNumber());
 
         if (StringUtils.isBlank(applicationForm.getIpAddressAsString())) {
             applicationTp.setIpAddress(IP_ADDRESS_NOT_PROVIDED_VALUE);
@@ -460,7 +461,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         ProgramInstance activeInstance = null;
         for (ProgramInstance instance : program.getInstances()) {
             if (com.zuehlke.pgadmissions.utils.DateUtils.isToday(instance.getApplicationStartDate()) || instance.getApplicationStartDate().after(new Date())) {
-                if (instance.getStudyOption().equalsIgnoreCase(programmeDetails.getStudyOption())) {
+                if (instance.getStudyOption().getId().equals(programmeDetails.getId())) {
                     activeInstance = instance;
                     break;
                 }
@@ -493,8 +494,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private ModeofattendanceTp buildModeofattendance() {
         ProgramDetails programmeDetails = applicationForm.getProgramDetails();
         ModeofattendanceTp modeofattendanceTp = xmlFactory.createModeofattendanceTp();
-        modeofattendanceTp.setCode(programmeDetails.getStudyOptionCode());
-        modeofattendanceTp.setName(programmeDetails.getStudyOption());
+        modeofattendanceTp.setCode(programmeDetails.getStudyOption().getId());
+        modeofattendanceTp.setName(programmeDetails.getStudyOption().getDisplayName());
         return modeofattendanceTp;
     }
 
@@ -560,12 +561,13 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
                 InstitutionTp institutionTp = xmlFactory.createInstitutionTp();
 
-                institutionTp.setCode(qualification.getQualificationInstitutionCode());
-                institutionTp.setName(qualification.getQualificationInstitution());
+                institutionTp.setCode(qualification.getInstitution().getCode());
+                institutionTp.setName(qualification.getInstitution().getName());
 
                 CountryTp countryTp = xmlFactory.createCountryTp();
-                countryTp.setCode(qualification.getInstitutionCountry().getEnabledCode());
-                countryTp.setName(qualification.getInstitutionCountry().getName());
+                countryTp.setCode(qualification.getInstitution().getDomicileCode());
+                // FIXME specify domicile name
+                countryTp.setName(qualification.getInstitution().getDomicileCode());
                 institutionTp.setCountry(countryTp);
 
                 qualificationsTp.setInstitution(institutionTp);
@@ -677,54 +679,55 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = xmlFactory.createEnglishLanguageQualificationDetailsTp();
         
         if (personalDetails.getLanguageQualificationAvailable()) {
+            LanguageQualification languageQualification = personalDetails.getLanguageQualification();
             EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();
-            englishLanguageTp.setDateTaken(buildXmlDate(personalDetails.getExamDate()));
+            englishLanguageTp.setDateTaken(buildXmlDate(languageQualification.getExamDate()));
 
-            if (personalDetails.getQualificationType() == LanguageQualificationEnum.OTHER) {
+            if (languageQualification.getQualificationType() == LanguageQualificationEnum.OTHER) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.OTHER);
-                englishLanguageTp.setOtherLanguageExam(personalDetails.getQualificationTypeOther());
-            } else if (personalDetails.getQualificationType() == LanguageQualificationEnum.TOEFL) {
+                englishLanguageTp.setOtherLanguageExam(languageQualification.getQualificationTypeOther());
+            } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.TOEFL) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.TOEFL);
-                if (personalDetails.getExamOnline()) {
+                if (languageQualification.getExamOnline()) {
                     englishLanguageTp.setMethod("TOEFL_INTERNET");
                 } else {
                     englishLanguageTp.setMethod("TOEFL_PAPER");
                 }
-            } else if (personalDetails.getQualificationType() == LanguageQualificationEnum.IELTS_ACADEMIC) {
+            } else if (languageQualification.getQualificationType() == LanguageQualificationEnum.IELTS_ACADEMIC) {
                 englishLanguageTp.setLanguageExam(QualificationsinEnglishTp.IELTS);
             } else {
                 throw new IllegalArgumentException(String.format("QualificationType type [%s] could not be converted",
-                        personalDetails.getQualificationType()));
+                        languageQualification.getQualificationType()));
             }
 
             // The web service does not allow scores in the format "6.0" it only
             // accepts "6" and the like.
             EnglishLanguageScoreTp overallScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             overallScoreTp.setName(LanguageBandScoreTp.OVERALL);
-            overallScoreTp.setScore(personalDetails.getOverallScore().replace(".0", ""));
+            overallScoreTp.setScore(languageQualification.getOverallScore().replace(".0", ""));
 
             EnglishLanguageScoreTp readingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             readingScoreTp.setName(LanguageBandScoreTp.READING);
-            readingScoreTp.setScore(personalDetails.getReadingScore().replace(".0", ""));
+            readingScoreTp.setScore(languageQualification.getReadingScore().replace(".0", ""));
 
             EnglishLanguageScoreTp writingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             writingScoreTp.setName(LanguageBandScoreTp.WRITING);
-            writingScoreTp.setScore(personalDetails.getWritingScore().replace(".0", ""));
+            writingScoreTp.setScore(languageQualification.getWritingScore().replace(".0", ""));
 
             EnglishLanguageScoreTp essayOrSpeakingScoreTp = null;
             if (StringUtils.equalsIgnoreCase("TOEFL_PAPER", englishLanguageTp.getMethod())) {
                 essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
                 essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.ESSAY);
-                essayOrSpeakingScoreTp.setScore(personalDetails.getWritingScore().replace(".0", ""));
+                essayOrSpeakingScoreTp.setScore(languageQualification.getWritingScore().replace(".0", ""));
             } else {
                 essayOrSpeakingScoreTp = xmlFactory.createEnglishLanguageScoreTp();
                 essayOrSpeakingScoreTp.setName(LanguageBandScoreTp.SPEAKING);
-                essayOrSpeakingScoreTp.setScore(personalDetails.getSpeakingScore().replace(".0", ""));
+                essayOrSpeakingScoreTp.setScore(languageQualification.getSpeakingScore().replace(".0", ""));
             }
 
             EnglishLanguageScoreTp listeningScoreTp = xmlFactory.createEnglishLanguageScoreTp();
             listeningScoreTp.setName(LanguageBandScoreTp.LISTENING);
-            listeningScoreTp.setScore(personalDetails.getListeningScore().replace(".0", ""));
+            listeningScoreTp.setScore(languageQualification.getListeningScore().replace(".0", ""));
 
             englishLanguageTp.getLanguageScore()
                     .addAll(Arrays.asList(overallScoreTp, readingScoreTp, writingScoreTp, essayOrSpeakingScoreTp, listeningScoreTp));

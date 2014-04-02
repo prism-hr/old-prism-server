@@ -270,10 +270,6 @@ public class ProgramService {
         return programDAO.getAvailableStudyOptions(program);
     }
     
-    public List<StudyOption> getAvailableStudyOptions() {
-        return programDAO.getAvailableStudyOptions();
-    }
-
     public Date getNextClosingDate(Program program) {
         return programDAO.getNextClosingDate(program);
     }

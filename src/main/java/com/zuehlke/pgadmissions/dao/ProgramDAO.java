@@ -19,6 +19,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -240,6 +241,11 @@ public class ProgramDAO {
     }
 
     public ProgramInstance getProgramInstance(Program program, StudyOption studyOption, Date date) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public DateTimeZone getLatestActiveInstanceDeadline(Program program) {
         // TODO Auto-generated method stub
         return null;
     }

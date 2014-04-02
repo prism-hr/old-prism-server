@@ -65,10 +65,10 @@ public class RefereeController {
 
     @Autowired
     private FullTextSearchService searchService;
-    
+
     @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
     public String getRefereeView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer refereeId, ModelMap modelMap) {
-        return returnView(modelMap, refereeService.getById(refereeId));
+        return returnView(modelMap, refereeService.getOrCreate(refereeId));
     }
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
@@ -91,7 +91,7 @@ public class RefereeController {
 
         return "redirect:/update/getReferee?applicationId=" + applicationForm.getApplicationNumber();
     }
-    
+
     @RequestMapping(value = "/deleteReferee", method = RequestMethod.POST)
     public String deleteReferee(@RequestParam("id") String encrypedRefereeId) {
         Integer id = encryptionHelper.decryptToInteger(encrypedRefereeId);
@@ -125,26 +125,17 @@ public class RefereeController {
         return applicationsService.getSecuredApplication(applicationId, ApplicationFormAction.EDIT_AS_APPLICANT, ApplicationFormAction.CORRECT_APPLICATION);
     }
 
-    @ModelAttribute("message")
-    public String getMessage(@RequestParam(required = false) String message) {
-        return message;
-    }
-
     @InitBinder(value = "referee")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(refereeValidator);
-        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
-    }
-
-    public StringTrimmerEditor newStringTrimmerEditor() {
-        return new StringTrimmerEditor(false);
     }
 
     private String returnView(ModelMap modelMap, Referee referee) {
         modelMap.put("referee", referee);
         return TemplateLocation.APPLICATION_APPLICANT_REFEREE;
     }
-    
+
 }

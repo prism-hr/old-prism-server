@@ -161,7 +161,7 @@ public class EditOpportunityRequestController {
 
     @ModelAttribute("countries")
     public List<Domicile> getAllEnabledDomiciles() {
-        return domicileService.getAllEnabledDomicilesExceptAlternateValues();
+        return domicileService.getAllEnabledDomiciles();
     }
 
     @ModelAttribute("studyOptions")

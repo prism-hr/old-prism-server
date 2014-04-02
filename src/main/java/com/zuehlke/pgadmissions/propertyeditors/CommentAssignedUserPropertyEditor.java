@@ -49,7 +49,7 @@ public class CommentAssignedUserPropertyEditor extends PropertyEditorSupport {
         }
         String appId = split[0];
         Integer userId = encryptionHelper.decryptToInteger(split[1]);
-        RegisteredUser user = userService.getUser(userId);
+        RegisteredUser user = userService.getById(userId);
         if (user == null) {
             throw new IllegalArgumentException("no such user: " + split[1]);
         }

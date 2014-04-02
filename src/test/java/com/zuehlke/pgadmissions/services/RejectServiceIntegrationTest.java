@@ -53,7 +53,7 @@ public class RejectServiceIntegrationTest {
 
     @Autowired
     private ProgramDAO programDao;
-    
+
     @Autowired
     private QualificationInstitutionDAO qualificationInstitutionDAO;
 
@@ -79,14 +79,14 @@ public class RejectServiceIntegrationTest {
 
         Institution institution = new QualificationInstitutionBuilder().code("code").name("a5").domicileCode("AE").enabled(true).build();
         qualificationInstitutionDAO.save(institution);
-        
+
         Program program = new ProgramBuilder().contactUser(approver).title("alelele").code("blabjk").institution(institution).build();
         program.getApprovers().add(approver);
         programDao.save(program);
 
         ApplicationForm application = new ApplicationForm();
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+                .enabled(false).build();
         userDAO.save(user);
         application.setApplicant(user);
 
@@ -106,7 +106,7 @@ public class RejectServiceIntegrationTest {
         rejectsService.moveApplicationToReject(application, rejection);
         flushNClear();
 
-        ApplicationForm storedAppl = applicationDAO.get(application.getId());
+        ApplicationForm storedAppl = applicationDAO.getById(application.getId());
 
         Assert.assertEquals(ApplicationFormStatus.REJECTED, storedAppl.getStatus());
         Assert.assertEquals(reason1.getId(), storedAppl.getRejection().getRejectionReason().getId());

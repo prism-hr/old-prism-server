@@ -28,10 +28,8 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
-import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @Service
 public class ScheduledMailSendingService extends AbstractMailSendingService {

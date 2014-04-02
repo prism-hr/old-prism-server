@@ -64,7 +64,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldSaveAndLoadUser() throws Exception {
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+                .enabled(false).build();
 
         assertNull(user.getId());
 
@@ -87,9 +87,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldFindUsersByUsername() throws Exception {
 
         RegisteredUser userOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+                .password("password").enabled(true).build();
         RegisteredUser userTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+                .password("password").enabled(true).build();
 
         save(userOne, userTwo);
 
@@ -104,10 +104,10 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldFindUsersByActivationCode() throws Exception {
 
         RegisteredUser userOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).activationCode("xyz")
+                .password("password").enabled(false).activationCode("xyz")
                 .build();
         RegisteredUser userTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).activationCode("def")
+                .password("password").enabled(false).activationCode("def")
                 .build();
 
         save(userOne, userTwo);
@@ -122,11 +122,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldFindDisabledUsersByEmail() throws Exception {
         RegisteredUser userOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email1@test.com").username("username")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).activationCode("xyz")
+                .password("password").enabled(false).activationCode("xyz")
                 .build();
 
         RegisteredUser userTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email1@test.com").username("otherusername")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).activationCode("def").build();
+                .password("password").enabled(true).activationCode("def").build();
 
         save(userOne, userTwo);
 
@@ -150,9 +150,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         }
 
         RegisteredUser userOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(roleOne).build();
+                .password("password").enabled(true).role(roleOne).build();
         RegisteredUser userTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).roles(roleOne, roleTwo)
+                .password("password").enabled(true).roles(roleOne, roleTwo)
                 .build();
         save(userOne, userTwo);
         List<Integer> testUserIds = Arrays.asList(userOne.getId(), userTwo.getId());
@@ -191,19 +191,19 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         int numberOfExistingSuperAdminUsers = userDAO.getUsersInRole(superAdminRole.getId()).size();
 
         RegisteredUser superAdminOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
+                .password("password").enabled(true).role(superAdminRole).build();
 
         RegisteredUser superAdminTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).roles(superAdminRole).build();
+                .password("password").enabled(true).roles(superAdminRole).build();
 
         RegisteredUser superAdminThree = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username3")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).roles(superAdminRole).build();
+                .password("password").enabled(true).roles(superAdminRole).build();
 
         RegisteredUser approverOne = new RegisteredUserBuilder().programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username4").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+                .username("username4").password("password").enabled(true).build();
 
         RegisteredUser approverTwo = new RegisteredUserBuilder().programsOfWhichApprover(programTwo).firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username5").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+                .username("username5").password("password").enabled(true).build();
 
         RegisteredUser approverThree = new RegisteredUserBuilder().programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe")
                 .email("email@test.com").username("username6").password("password").accountNonExpired(false).accountNonLocked(false)
@@ -248,7 +248,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role superAdminRole = roleDAO.getById(Authority.SUPERADMINISTRATOR);
 
         RegisteredUser superAdmin = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
+                .password("password").enabled(true).role(superAdminRole).build();
         save(superAdmin);
         flushAndClearSession();
         List<RegisteredUser> users = userDAO.getInternalUsers();
@@ -261,7 +261,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role superAdminRole = roleDAO.getById(Authority.ADMINISTRATOR);
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
+                .enabled(true).role(superAdminRole).build();
         save(user);
         flushAndClearSession();
         List<RegisteredUser> users = userDAO.getInternalUsers();
@@ -274,7 +274,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role superAdminRole = roleDAO.getById(Authority.REVIEWER);
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
+                .enabled(true).role(superAdminRole).build();
         save(user);
         flushAndClearSession();
         List<RegisteredUser> users = userDAO.getInternalUsers();
@@ -287,7 +287,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role superAdminRole = roleDAO.getById(Authority.INTERVIEWER);
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
+                .enabled(true).role(superAdminRole).build();
         save(user);
         flushAndClearSession();
         List<RegisteredUser> users = userDAO.getInternalUsers();
@@ -300,7 +300,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role superAdminRole = roleDAO.getById(Authority.APPROVER);
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
+                .enabled(true).role(superAdminRole).build();
         save(user);
         flushAndClearSession();
         List<RegisteredUser> users = userDAO.getInternalUsers();
@@ -313,7 +313,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role superAdminRole = roleDAO.getById(Authority.APPLICANT);
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).build();
+                .enabled(true).role(superAdminRole).build();
         save(user);
         flushAndClearSession();
         List<RegisteredUser> users = userDAO.getInternalUsers();
@@ -324,7 +324,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldNotReturnReferee() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true)
+                .enabled(true)
                 .role(roleDAO.getById(Authority.REFEREE)).build();
         save(user);
         flushAndClearSession();
@@ -337,7 +337,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         List<RegisteredUser> usersBefore = userDAO.getInternalUsers();
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true)
+                .enabled(true)
                 .roles(roleDAO.getById(Authority.APPROVER), roleDAO.getById(Authority.REVIEWER)).build();
         save(user);
         flushAndClearSession();
@@ -359,7 +359,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingOne, pendingTwo)
+                .enabled(false).pendingRoleNotifications(pendingOne, pendingTwo)
                 .build();
         save(user);
         flushAndClearSession();
@@ -384,7 +384,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingOne, pendingTwo)
+                .enabled(false).pendingRoleNotifications(pendingOne, pendingTwo)
                 .build();
         save(user);
         flushAndClearSession();
@@ -408,7 +408,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).notificationDate(now).build();
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingOne, pendingTwo)
+                .enabled(false).pendingRoleNotifications(pendingOne, pendingTwo)
                 .build();
         save(user);
         flushAndClearSession();
@@ -429,7 +429,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).pendingRoleNotifications(pendingOne, pendingTwo)
+                .enabled(true).pendingRoleNotifications(pendingOne, pendingTwo)
                 .build();
         save(user);
         flushAndClearSession();
@@ -442,7 +442,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldNotReturnUserWithNoPendingNotifications() {
 
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+                .enabled(false).build();
         save(user);
         flushAndClearSession();
 
@@ -493,7 +493,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role superadministratorRole = roleDAO.getById(Authority.SUPERADMINISTRATOR);
 
         RegisteredUser superadmin = new RegisteredUserBuilder().role(superadministratorRole).firstName("Jane").lastName("Doe").email("somethingelse@test.com")
-                .username("somethingelse").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                .username("somethingelse").password("password").enabled(false)
                 .build();
         sessionFactory.getCurrentSession().save(superadmin);
 
@@ -507,7 +507,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role admitterRole = roleDAO.getById(Authority.ADMITTER);
 
         RegisteredUser admitter = new RegisteredUserBuilder().role(admitterRole).firstName("Jane").lastName("Doe").email("somethingelse@test.com")
-                .username("somethingelse").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+                .username("somethingelse").password("password").enabled(false)
                 .build();
         sessionFactory.getCurrentSession().save(admitter);
 

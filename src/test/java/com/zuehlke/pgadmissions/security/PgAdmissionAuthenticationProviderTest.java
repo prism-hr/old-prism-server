@@ -99,36 +99,6 @@ public class PgAdmissionAuthenticationProviderTest {
 		authenticationProvider.authenticate(authenticationToken);
 	}
 
-	@Test(expected = AccountExpiredException.class)
-	public void shouldThrowAccountExpiredExceptionForExpiredAccount() {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").accountNonExpired(false).id(1).build();
-		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
-        EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("bob", "secret");
-		authenticationProvider.authenticate(authenticationToken);
-	}
-
-	@Test(expected = CredentialsExpiredException.class)
-	public void shouldThrowCredentialsExpiredExceptionForExpiredCredentials() throws NoSuchAlgorithmException {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").credentialsNonExpired(false).id(1).build();
-		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
-		EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("bob", "secret");
-		authenticationProvider.authenticate(authenticationToken);
-	}
-
-	@Test(expected = LockedException.class)
-	public void shouldThrowLockedExceptionForLockedAccount() throws NoSuchAlgorithmException {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").accountNonLocked(false).id(1).build();
-		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
-		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
-        EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("bob", "secret");
-		authenticationProvider.authenticate(authenticationToken);
-	}
-
 	@Before
 	public void setup() {
 		userDetailsServiceMock = EasyMock.createMock(UserDetailsService.class);

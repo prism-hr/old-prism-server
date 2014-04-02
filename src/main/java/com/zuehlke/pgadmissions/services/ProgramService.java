@@ -274,7 +274,7 @@ public class ProgramService {
         return programDAO.getNextClosingDate(program);
     }
     
-    private RegisteredUser getContactUserForProgram(Program program, RegisteredUser candidateUser) {
+    protected RegisteredUser getContactUserForProgram(Program program, RegisteredUser candidateUser) {
         List<RegisteredUser> administrators = program.getAdministrators();
         if (!administrators.isEmpty()) {
             if (administrators.contains(candidateUser)) {

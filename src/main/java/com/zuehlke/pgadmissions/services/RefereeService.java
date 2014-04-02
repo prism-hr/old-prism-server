@@ -168,9 +168,6 @@ public class RefereeService {
         user.setLastName(referee.getLastname());
         user.setUsername(referee.getEmail());
         user.setEnabled(false);
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
         user.setDirectToUrl(DirectURLsEnum.ADD_REFERENCE.displayValue() + referee.getApplication().getApplicationNumber());
         userService.save(user);
         return user;
@@ -207,7 +204,7 @@ public class RefereeService {
 
     public ReferenceComment editReferenceComment(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
-        Referee referee = getById(refereeId);
+        Referee referee = getRefereeById(refereeId);
         ReferenceComment reference = referee.getReference();
         reference.setContent(refereesAdminEditDTO.getComment());
         reference.setSuitableForInstitution(refereesAdminEditDTO.getSuitableForUCL());
@@ -230,7 +227,7 @@ public class RefereeService {
             referee = createReferee(refereesAdminEditDTO, applicationForm);
         } else {
             Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
-            referee = getById(refereeId);
+            referee = getRefereeById(refereeId);
         }
 
         if (referee.getUser() == null) {
@@ -282,7 +279,7 @@ public class RefereeService {
     }
 
     private Referee getSecuredInstance(Integer refereeId) {
-        Referee referee = getById(refereeId);
+        Referee referee = getRefereeById(refereeId);
         if (referee == null) {
             throw new ResourceNotFoundException();
         }

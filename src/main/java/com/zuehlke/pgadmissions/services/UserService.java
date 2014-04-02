@@ -415,5 +415,10 @@ public class UserService {
     	userDAO.save(registeredUser);
     	
     }
+
+    public RegisteredUser getById(int id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
     
 }

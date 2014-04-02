@@ -225,7 +225,7 @@ public class EditOpportunityRequestControllerTest {
     @Test
     public void shouldGetDistinctStudyOptions() {
         List<StudyOption> studyOptions = Lists.newArrayList();
-        EasyMock.expect(programInstanceService.getDistinctStudyOptions()).andReturn(studyOptions);
+        EasyMock.expect(programInstanceService.getAvailableStudyOptions()).andReturn(studyOptions);
 
         replay();
         List<StudyOption> returnedList = controller.getDistinctStudyOptions();

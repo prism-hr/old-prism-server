@@ -23,29 +23,20 @@ import com.zuehlke.pgadmissions.services.WorkflowService;
 @RequestMapping("/withdraw")
 public class WithdrawController {
 
-    private final WithdrawService withdrawService;
-
-    private final ApplicationFormService applicationService;
-
-    private final UserService userService;
-
-    private final WorkflowService applicationFormUserRoleService;
-
-    private final ActionService actionService;
-
-    public WithdrawController() {
-        this(null, null, null, null, null);
-    }
+    @Autowired
+    private WithdrawService withdrawService;
 
     @Autowired
-    public WithdrawController(ApplicationFormService applicationService, UserService userService, WithdrawService withdrawService,
-            WorkflowService applicationFormUserRoleService, ActionService actionService) {
-        this.applicationService = applicationService;
-        this.userService = userService;
-        this.withdrawService = withdrawService;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.actionService = actionService;
-    }
+    private ApplicationFormService applicationService;
+
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private WorkflowService workflowService;
+
+    @Autowired
+    private ActionService actionService;
 
     @RequestMapping(method = RequestMethod.POST)
     public String withdrawApplicationAndGetApplicationList(ModelMap modelMap) {
@@ -55,8 +46,8 @@ public class WithdrawController {
 
         withdrawService.withdrawApplication(applicationForm);
         withdrawService.sendToPortico(applicationForm);
-        applicationFormUserRoleService.deleteApplicationActions(applicationForm);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        actionService.deleteApplicationActions(applicationForm);
+        workflowService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
         return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();
     }
 

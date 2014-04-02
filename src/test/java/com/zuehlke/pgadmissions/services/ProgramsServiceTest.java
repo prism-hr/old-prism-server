@@ -261,7 +261,7 @@ public class ProgramsServiceTest {
 
         expect(applicationContext.getBean(ProgramService.class)).andReturn(thisBean);
         expect(thisBean.getContactUserForProgram(program, requestAuthor)).andReturn(requestAuthor);
-        expect(programDAOMock.merge(program)).andReturn(program);
+        programDAOMock.merge(program);
         programDAOMock.save(program);
 
         replay();

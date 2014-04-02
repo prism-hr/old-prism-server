@@ -81,9 +81,6 @@ public abstract class AbstractMailSendingService {
         user.getRoles().add(refereeRole);
         user.setActivationCode(encryptionUtils.generateUUID());
         user.setEnabled(false);
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
-        user.setCredentialsNonExpired(true);
         user.setDirectToUrl(DirectURLsEnum.ADD_REFERENCE.displayValue() + referee.getApplication().getApplicationNumber());
         userDAO.save(user);
         return user;

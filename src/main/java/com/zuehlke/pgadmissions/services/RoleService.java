@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,5 +95,10 @@ public class RoleService {
                 return roleDAO.getApplicationFormUserRoles((ApplicationForm) discriminator, user).contains(roleDAO.getById(authority));
         }
         return roleDAO.getUserRoles(user).contains(roleDAO.getById(authority));
+    }
+
+    public List<Program> getProgramsByUserAndRole(RegisteredUser currentUser, Authority administrator) {
+        // TODO Auto-generated method stub
+        return null;
     }    
 }

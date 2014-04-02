@@ -76,7 +76,7 @@ public class RefereeController {
             @ModelAttribute ApplicationForm applicationForm) {
         Referee referee = null;
         if (StringUtils.isNotBlank(refereeId)) {
-            referee = getReferee(refereeId);
+            referee = refereeService.getRefereeById(refereeId);
         }
 
         if (result.hasErrors()) {
@@ -95,7 +95,7 @@ public class RefereeController {
     @RequestMapping(value = "/deleteReferee", method = RequestMethod.POST)
     public String deleteReferee(@RequestParam("id") String encrypedRefereeId) {
         Integer id = encryptionHelper.decryptToInteger(encrypedRefereeId);
-        Referee referee = refereeService.getById(id);
+        Referee referee = refereeService.getRefereeById(id);
         refereeService.delete(referee);
         updateLastAccessAndLastModified(userService.getCurrentUser(), referee.getApplication());
         return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getApplicationNumber() + "&message=deleted";

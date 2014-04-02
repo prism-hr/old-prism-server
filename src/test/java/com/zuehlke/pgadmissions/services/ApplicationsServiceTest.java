@@ -64,7 +64,7 @@ public class ApplicationsServiceTest {
     @Test
     public void shouldGetApplicationById() {
         ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
-        EasyMock.expect(applicationFormDAOMock.get(234)).andReturn(application);
+        EasyMock.expect(applicationFormDAOMock.getById(234)).andReturn(application);
 
         replay();
         Assert.assertEquals(application, applicationsService.getById(234));
@@ -79,79 +79,6 @@ public class ApplicationsServiceTest {
         replay();
         Assert.assertEquals(application, applicationsService.getByApplicationNumber("ABC"));
         verify();
-    }
-
-    @Test
-    public void shouldFastTrackApplicationByClearingTheBatchDeadline() {
-        ApplicationForm form = new ApplicationFormBuilder().applicationNumber("XXXXX").batchDeadline(new Date()).build();
-        EasyMock.expect(applicationFormDAOMock.getByApplicationNumber(form.getApplicationNumber())).andReturn(form);
-        replay();
-        applicationsService.fastTrackApplication(form.getApplicationNumber());
-        verify();
-        Assert.assertNull(form.getBatchDeadline());
-    }
-
-    @Test
-    public void shouldGetBatchDeadlineForApplication() {
-        Program program = new ProgramBuilder().code("KLOP").id(1).build();
-        ApplicationForm form = new ApplicationFormBuilder().advert(program).build();
-        DateTime deadline = new DateTime(new Date());
-        Date deadlineTruncated = new DateTime(deadline.getYear(), deadline.getMonthOfYear(), deadline.getDayOfMonth(), 0, 0, 0).toDate();
-        EasyMock.expect(programDAOMock.getNextClosingDate(EasyMock.eq(program))).andReturn(deadlineTruncated);
-
-        replay();
-        Date returnedDeadline = applicationsService.getBatchDeadlineForApplication(form);
-        verify();
-
-        assertEquals(deadlineTruncated, returnedDeadline);
-    }
-
-    @Test
-    public void shouldTransFormUKCountriesAndDomiciles() {
-        Country validCountry = new CountryBuilder().code("XK").enabled(true).build();
-        Domicile validDomicile = new DomicileBuilder().code("XK").enabled(true).build();
-
-        Country invalidCountry = new CountryBuilder().code("XF").enabled(true).build();
-        Domicile invalidDomicile1 = new DomicileBuilder().code("XF").enabled(true).build();
-        Domicile invalidDomicile2 = new DomicileBuilder().code("XI").enabled(true).build();
-        Domicile invalidDomicile3 = new DomicileBuilder().code("XH").enabled(true).build();
-        Domicile invalidDomicile4 = new DomicileBuilder().code("8826").enabled(true).build();
-        PersonalDetails personalDetails = new PersonalDetailsBuilder().country(invalidCountry).residenceDomicile(invalidDomicile1).build();
-        Address address = new AddressBuilder().domicile(invalidDomicile2).build();
-        Qualification qualification1 = new QualificationBuilder().institutionCountry(invalidDomicile3).build();
-        Qualification qualification2 = new QualificationBuilder().institutionCountry(invalidDomicile4).build();
-        EmploymentPosition position1 = new EmploymentPositionBuilder().domicile(invalidDomicile1).toEmploymentPosition();
-        EmploymentPosition position2 = new EmploymentPositionBuilder().domicile(invalidDomicile2).toEmploymentPosition();
-        Referee referee1 = new RefereeBuilder().addressDomicile(invalidDomicile3).build();
-        Referee referee2 = new RefereeBuilder().addressDomicile(invalidDomicile4).build();
-
-        ApplicationForm application = new ApplicationFormBuilder().personalDetails(personalDetails).contactAddress(address).currentAddress(address)
-                .qualifications(qualification1, qualification2).employmentPositions(position1, position2).referees(referee1, referee2).build();
-
-        EasyMock.expect(countriesDAOMock.getEnabledCountryByCode("XK")).andReturn(validCountry);
-        EasyMock.expect(domicileDAOMock.getEnabledDomicileByCode("XK")).andReturn(validDomicile);
-
-        replay();
-        applicationsService.transformUKCountriesAndDomiciles(application);
-        verify();
-
-        assertEquals(application.getPersonalDetails().getCountry().getCode(), validCountry.getCode());
-        assertEquals(application.getPersonalDetails().getResidenceCountry().getCode(), validDomicile.getCode());
-        assertEquals(application.getCurrentAddress().getDomicile().getCode(), validDomicile.getCode());
-        assertEquals(application.getContactAddress().getDomicile().getCode(), validDomicile.getCode());
-
-        for (Qualification qualification : application.getQualifications()) {
-            assertEquals(qualification.getInstitutionCountry().getCode(), validDomicile.getCode());
-        }
-
-        for (EmploymentPosition position : application.getEmploymentPositions()) {
-            assertEquals(position.getEmployerAddress().getDomicile().getCode(), validDomicile.getCode());
-        }
-
-        for (Referee referee : application.getReferees()) {
-            assertEquals(referee.getAddressLocation().getDomicile().getCode(), validDomicile.getCode());
-        }
-
     }
 
 }

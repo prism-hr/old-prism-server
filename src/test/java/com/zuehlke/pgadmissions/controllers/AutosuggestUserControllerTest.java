@@ -25,12 +25,11 @@ public class AutosuggestUserControllerTest {
     @Before
     public void prepare() {
         user1 = new RegisteredUserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com")
-                .username("tyler@durden.com").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();
+                .username("tyler@durden.com").password("password").enabled(false).build();
 
         similiarToUser1 = new RegisteredUserBuilder().firstName("Taylor").lastName("Dordeen")
                 .email("taylor@dordeen.com").username("taylor@durden.com").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+                .enabled(false).build();
         
         searchServiceMock = EasyMock.createMock(FullTextSearchService.class);
         controller = new AutosuggestUserController(searchServiceMock);

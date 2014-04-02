@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import java.util.Date;
-
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
@@ -14,7 +12,6 @@ public class AdvertBuilder {
     private String funding;
     private Boolean active = true;
     private Boolean enabled = true;
-    private Date lastEditedTimestamp = new Date();
     private RegisteredUser contactUser;
 
     public AdvertBuilder id(Integer id) {
@@ -52,11 +49,6 @@ public class AdvertBuilder {
         return this;
     }
     
-    public AdvertBuilder lastEditedTimestamp(Date lastEditedTimestamp) {
-        this.lastEditedTimestamp = lastEditedTimestamp;
-        return this;
-    }
-    
     public AdvertBuilder contactUser(RegisteredUser contactUser) {
         this.contactUser = contactUser;
         return this;
@@ -71,7 +63,6 @@ public class AdvertBuilder {
         advert.setFunding(funding);
         advert.setActive(active);
         advert.setEnabled(enabled);
-        advert.setLastEditedTimestamp(lastEditedTimestamp);
         advert.setContactUser(contactUser);
         return advert;
     }

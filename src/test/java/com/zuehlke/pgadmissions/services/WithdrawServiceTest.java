@@ -52,7 +52,7 @@ public class WithdrawServiceTest {
         verify();
 
         assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
-        assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getPreviousStatus());
+        assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getLastStatus());
     }
 
     @Test

@@ -206,7 +206,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectPassportNumberIfEmpty() {
-        personalDetails.getPassportInformation().setPassportNumber(null);
+        personalDetails.getPassport().setNumber(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -215,7 +215,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectPassportNumberIfLongerThan35() {
-        personalDetails.getPassportInformation().setPassportNumber("0123456789012345678901234567890123456789");
+        personalDetails.getPassport().setNumber("0123456789012345678901234567890123456789");
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -224,7 +224,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectNameOnPassportIfEmpty() {
-        personalDetails.getPassportInformation().setNameOnPassport(null);
+        personalDetails.getPassport().setName(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -233,7 +233,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectPassportIssueDateIfEmpty() {
-        personalDetails.getPassportInformation().setPassportIssueDate(null);
+        personalDetails.getPassport().setIssueDate(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -242,7 +242,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectPassportExpiryDateIfEmpty() {
-        personalDetails.getPassportInformation().setPassportExpiryDate(null);
+        personalDetails.getPassport().setExpiryDate(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -252,8 +252,8 @@ public class PersonalDetailsValidatorTest {
     @Test
     public void shouldRejectPassportExpiryAndIssueDateAreTheSame() {
         Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1);
-        personalDetails.getPassportInformation().setPassportExpiryDate(oneMonthAgo);
-        personalDetails.getPassportInformation().setPassportIssueDate(oneMonthAgo);
+        personalDetails.getPassport().setExpiryDate(oneMonthAgo);
+        personalDetails.getPassport().setIssueDate(oneMonthAgo);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(3, mappingResult.getErrorCount());
@@ -265,7 +265,7 @@ public class PersonalDetailsValidatorTest {
     @Test
     public void shouldRejectPassportExpiryDateIsInThePast() {
         Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1);
-        personalDetails.getPassportInformation().setPassportExpiryDate(oneMonthAgo);
+        personalDetails.getPassport().setExpiryDate(oneMonthAgo);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -275,7 +275,7 @@ public class PersonalDetailsValidatorTest {
     @Test
     public void shouldRejectPassportIssueDateIsInTheFuture() {
         Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), +1);
-        personalDetails.getPassportInformation().setPassportIssueDate(oneMonthAgo);
+        personalDetails.getPassport().setIssueDate(oneMonthAgo);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());

@@ -7,18 +7,17 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 
 @Service
@@ -30,7 +29,7 @@ public class ProgramInstanceService {
     private ThrottleService throttleService;
 
     @Autowired
-    private ProgramService programService;
+    private ProgramDAO programDAO;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -45,8 +44,7 @@ public class ProgramInstanceService {
             boolean startDateInFuture = today.before(applicationStartDate);
             boolean beforeEndDate = todayPlusConsiderationPeriod.before(instance.getApplicationDeadline());
             boolean sameStudyOption = details.getStudyOption().getId().equals(instance.getStudyOption().getId());
-            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption
-                    ) {
+            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption) {
                 if (startDateInFuture && (result == null || result.after(applicationStartDate))) {
                     result = applicationStartDate;
                 } else if (result == null || result.after(todayPlusConsiderationPeriod)) {
@@ -70,7 +68,7 @@ public class ProgramInstanceService {
             boolean afterStartDate = startDate.after(instance.getApplicationStartDate());
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
             boolean sameStudyOption = programDetails.getStudyOption().getId().equals(instance.getStudyOption().getId());
-            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption ) {
+            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption) {
                 return true;
             }
         }
@@ -78,31 +76,20 @@ public class ProgramInstanceService {
     }
 
     public boolean isActive(ProgramInstance programInstance) {
-        if (programInstance.getEnabled()) {
-            return true;
-        }
-        if (programInstance.getDisabledDate() != null) {
-            LocalDate disableLocalDate = new LocalDate(programInstance.getDisabledDate().getTime());
-            LocalDate today = new LocalDate();
-
-            int processingDelay = throttleService.getProcessingDelayInDays();
-            if (today.isBefore(disableLocalDate.plusDays(processingDelay))) {
-                return true;
-            }
-        }
+        // TODO use program.isEnabled()
+//        if (programInstance.getEnabled()) {
+//            return true;
+//        }
+//        if (programInstance.getDisabledDate() != null) {
+//            LocalDate disableLocalDate = new LocalDate(programInstance.getDisabledDate().getTime());
+//            LocalDate today = new LocalDate();
+//
+//            int processingDelay = throttleService.getProcessingDelayInDays();
+//            if (today.isBefore(disableLocalDate.plusDays(processingDelay))) {
+//                return true;
+//            }
+//        }
         return false;
-    }
-
-    @Transactional
-    public List<StudyOption> getDistinctStudyOptions() {
-        List<Object[]> options = programService.getAvailableStudyOptions(null);
-        List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(options.size());
-
-        for (Object[] option : options) {
-            StudyOption studyOption = new StudyOption(option[0].toString(), option[1].toString());
-            studyOptions.add(studyOption);
-        }
-        return studyOptions;
     }
 
     @Transactional
@@ -135,7 +122,7 @@ public class ProgramInstanceService {
         DateTime startDate = thisBean.findPenultimateSeptemberMonday(startYear);
         DateTime deadline = thisBean.findPenultimateSeptemberMonday(startYear + 1);
 
-        ProgramInstance programInstance = programInstanceDAO.getProgramInstance(program, studyOption, startDate.toDate());
+        ProgramInstance programInstance = programDAO.getProgramInstance(program, studyOption, startDate.toDate());
         if (programInstance == null) {
             programInstance = new ProgramInstance();
             programInstance.setProgram(program);
@@ -151,7 +138,6 @@ public class ProgramInstanceService {
         programInstance.setStudyOption(studyOption.getName());
         programInstance.setStudyOption(studyOption.getId());
 
-        programInstanceDAO.save(programInstance);
         return programInstance;
     }
 

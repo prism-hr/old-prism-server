@@ -52,26 +52,23 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(refereeRole)
                 .interestedInApplicant(true).build();
 
-        ApplicationFormActionRequired actionRequired1 = new ApplicationFormActionRequired();
-        actionRequired1.setAction(reference);
-        actionRequired1.setBindDeadlineToDueDate(false);
-        actionRequired1.setDeadlineTimestamp(new Date());
+        ApplicationFormActionRequired actionRequired1 = new ApplicationFormActionRequired(reference, new Date(), false, null);
         applicationFormUserRole.getActions().add(actionRequired1);
 
         flushAndClearSession();
 
-        applicationFormUserRoleDAO.save(applicationFormUserRole);
+        roleDAO.saveApplicationFormUserRole(applicationFormUserRole);
 
         ApplicationFormUserRole returned = (ApplicationFormUserRole) sessionFactory.getCurrentSession().get(ApplicationFormUserRole.class,
                 applicationFormUserRole.getId());
 
-        assertEquals("ABC", returned.getApplicationForm().getApplicationNumber());
-        assertEquals("Jane", returned.getUser().getFirstName());
-        assertEquals(refereeRole.getId(), returned.getRole().getId());
+        assertEquals("ABC", returned.getId().getApplicationForm().getApplicationNumber());
+        assertEquals("Jane", returned.getId().getUser().getFirstName());
+        assertEquals(refereeRole.getId(), returned.getId().getRole().getId());
 
         assertEquals(1, returned.getActions().size());
-        ApplicationFormActionRequired actionRequired = returned.getActions().get(0);
-        assertEquals(reference, actionRequired.getAction());
+        ApplicationFormActionRequired actionRequired = returned.getActions().iterator().next();
+        assertEquals(reference, actionRequired.getId().getAction());
         assertFalse(actionRequired.getBindDeadlineToDueDate());
 
     }
@@ -80,7 +77,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
     public void shouldFindApplicationFormUserRoleByApplicationFormAndUserAndAuthority() throws ParseException {
 
         RegisteredUser secondUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@123.com").username("franek")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+                .password("password").enabled(false).build();
         sessionFactory.getCurrentSession().save(secondUser);
 
         Role refereeRole = roleDAO.getById(Authority.REFEREE);
@@ -94,7 +91,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
                 .interestedInApplicant(true).build();
         save(role1, role2, role3);
 
-        ApplicationFormUserRole role = applicationFormUserRoleDAO.findByApplicationFormAndUserAndAuthority(application, user, Authority.REFEREE);
+        List<ApplicationFormUserRole> role = applicationFormUserRoleDAO.getByApplicationFormAndUserAndAuthorities(application, user, Authority.REFEREE);
         assertEquals(role1, role);
     }
 
@@ -113,7 +110,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
                 .interestedInApplicant(true).build();
         save(role1, role2, role3);
 
-        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.findByApplicationFormAndAuthorities(application, Authority.REFEREE,
+        List<ApplicationFormUserRole> roles = applicationFormUserRoleDAO.getByApplicationFormAndAuthorities(application, Authority.REFEREE,
                 Authority.SUPERADMINISTRATOR);
         assertThat(roles, contains(role1, role3));
     }
@@ -246,7 +243,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
 
         user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+                .enabled(false).build();
 
         Date lastUpdatedDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 06 2011 14:05:23");
         

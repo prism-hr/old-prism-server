@@ -138,13 +138,19 @@ public class ProgramInstanceService {
         programInstance.setEnabled(true);
         programInstance.setIdentifier("CUSTOM");
         programInstance.setStudyOption(studyOption);
+        programDAO.save(programInstance);
 
         return programInstance;
+    }
+    
+    
+
+    public List<StudyOption> getAvailableStudyOptions() {
+        return programDAO.getAvailableStudyOptions();
     }
 
     protected List<StudyOption> getStudyOptions(String studyOptionCodesSplit) {
         List<String> studyOptionCodes = Arrays.asList(studyOptionCodesSplit.split(","));
-        ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
         List<StudyOption> distinctStudyOptions = programDAO.getAvailableStudyOptions();
 
         List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(studyOptionCodes.size());

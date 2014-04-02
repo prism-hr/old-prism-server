@@ -33,7 +33,7 @@ public class UserPropertyEditor extends PropertyEditorSupport {
             setValue(null);
             return;
         }
-        setValue(userService.getUser(encryptionHelper.decryptToInteger(strId)));
+        setValue(userService.getById(encryptionHelper.decryptToInteger(strId)));
 
     }
 

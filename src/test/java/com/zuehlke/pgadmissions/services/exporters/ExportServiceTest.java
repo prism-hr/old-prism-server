@@ -1110,8 +1110,6 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         userDAOMock = EasyMock.createMock(UserDAO.class);
 
-        applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
-
         applicationContextMock = EasyMock.createMock(ApplicationContext.class);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,

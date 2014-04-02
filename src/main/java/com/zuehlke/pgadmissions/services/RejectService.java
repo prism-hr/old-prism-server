@@ -36,7 +36,7 @@ public class RejectService {
 	private MailSendingService mailService;
 	
 	@Autowired
-	private WorkflowService applicationFormUserRoleService;
+	private ActionService actionService;
 	
 	@Autowired
 	private StateDAO stateDAO;
@@ -56,7 +56,7 @@ public class RejectService {
 		
 		sendRejectNotificationToApplicant(form);
 		applicationDao.save(form);
-		applicationFormUserRoleService.deleteApplicationActions(form);
+		actionService.deleteApplicationActions(form);
 	}
 	
 	private void sendRejectNotificationToApplicant(ApplicationForm form) {

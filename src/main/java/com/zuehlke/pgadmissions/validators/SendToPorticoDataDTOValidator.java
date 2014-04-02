@@ -85,7 +85,7 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
         if (referees != null) {
         	
             for (int i = 0; i < referees.size(); i++) {
-            	if (!refereeService.getById(referees.get(i)).hasProvidedReference()) {
+            	if (!refereeService.getRefereeById(referees.get(i)).hasProvidedReference()) {
             		referees.remove(i);
             	}
             }

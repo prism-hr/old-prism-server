@@ -7,17 +7,14 @@ import static org.junit.Assert.assertNull;
 import javax.servlet.http.HttpServletRequest;
 
 import org.easymock.EasyMock;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
-import org.powermock.api.easymock.annotation.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.validation.BindingResult;
@@ -25,8 +22,6 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.services.SwitchUserService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AccountValidator;
@@ -101,11 +96,9 @@ public class AccountControllerTest {
     public void shouldSwitchUserAccount() {
         PowerMock.mockStatic(SecurityContextHolder.class);
 
-        RegisteredUser currentAccount = new RegisteredUserBuilder().id(1).accountNonExpired(true).accountNonLocked(true).enabled(true).activationCode("abc")
-                .email("B@A.com").password("password").build();
+        RegisteredUser currentAccount = new RegisteredUserBuilder().id(1).enabled(true).activationCode("abc").email("B@A.com").password("password").build();
 
-        RegisteredUser desiredAccount = new RegisteredUserBuilder().id(2).accountNonExpired(true).accountNonLocked(true).enabled(true).activationCode("abcd")
-                .email("A@B.com").password("password").build();
+        RegisteredUser desiredAccount = new RegisteredUserBuilder().id(2).enabled(true).activationCode("abcd").email("A@B.com").password("password").build();
 
         desiredAccount.setPrimaryAccount(currentAccount);
 

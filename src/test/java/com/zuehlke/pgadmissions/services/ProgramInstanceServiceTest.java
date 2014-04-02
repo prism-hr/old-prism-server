@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
-import java.util.Date;
 import java.util.List;
 
 import org.easymock.EasyMock;
@@ -27,16 +26,11 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ProgramInstanceServiceTest {
@@ -55,6 +49,10 @@ public class ProgramInstanceServiceTest {
     @Mock
     @InjectIntoByType
     private ApplicationContext applicationContext;
+
+    @Mock
+    @InjectIntoByType
+    private ProgramDAO programDAO;
 
     @Test
     public void shouldReturnTrueForIsActiveIfProgramInstanceIsEnabled() {
@@ -154,7 +152,7 @@ public class ProgramInstanceServiceTest {
         StudyOption partOption = new StudyOption("P+++", "Part-time");
         StudyOption fullOption = new StudyOption("F+++", "Fart-time");
         StudyOption modularOption = new StudyOption("B+++", "Modular");
-        expect(thisBean.getDistinctStudyOptions()).andReturn(Lists.newArrayList(partOption, fullOption, modularOption));
+        expect(thisBean.getAvailableStudyOptions()).andReturn(Lists.newArrayList(partOption, fullOption, modularOption));
 
         replay();
         List<StudyOption> studyOptions = service.getStudyOptions("P+++,F+++");
@@ -176,7 +174,7 @@ public class ProgramInstanceServiceTest {
         expect(thisBean.findPenultimateSeptemberMonday(2013)).andReturn(monday2013);
         expect(thisBean.findPenultimateSeptemberMonday(2014)).andReturn(monday2014);
         expect(programService.getProgramInstance(program, fullTimeOption, monday2013.toDate())).andReturn(programInstance);
-        programService.save(programInstance);
+        programDAO.save(programInstance);
 
         replay();
         ProgramInstance returned = service.createOrUpdateProgramInstance(program, 2013, fullTimeOption);
@@ -217,8 +215,7 @@ public class ProgramInstanceServiceTest {
         assertTrue(programInstance.getEnabled());
         assertEquals("CUSTOM", programInstance.getIdentifier());
         assertSame(program, programInstance.getProgram());
-        assertEquals(studyOption.getName(), programInstance.getStudyOption());
-        assertEquals(studyOption.getId(), programInstance.getStudyOptionCode());
+        assertEquals(studyOption.getId(), programInstance.getStudyOption().getId());
     }
 
 }

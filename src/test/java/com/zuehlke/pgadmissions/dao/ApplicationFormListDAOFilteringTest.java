@@ -76,12 +76,10 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         role = roleDAO.getById(Authority.INTERVIEWER);
 
         applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-                .applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
+                .enabled(false).applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
 
         currentUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
-                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program)
-                .applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
+                .enabled(false).applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
 
         sessionFactory.getCurrentSession().flush();
 
@@ -219,7 +217,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     @Test
     public void shouldReturnAppsFilteredByApplicantName() {
         RegisteredUser otherUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek")
-                .password("franek123").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+                .password("franek123").enabled(false).build();
 
         ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(otherUser).status(ApplicationFormStatus.APPROVAL)
                 .applicationNumber("other1").build();
@@ -347,7 +345,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     @Test
     public void shouldReturnAppsFilteredByApplicantFirstNameAndLastName() {
         RegisteredUser otherUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek")
-                .password("franek123").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+                .password("franek123").enabled(false).build();
 
         ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(otherUser).status(ApplicationFormStatus.APPROVAL)
                 .applicationNumber("other1").build();
@@ -366,18 +364,17 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     @Test
     public void shouldReturnAppsFilteredByProgramName() {
         Program alternativeProgram = testObjectProvider.getAlternativeEnabledProgram(program);
-        
-        ApplicationForm app1InApproval = new ApplicationFormBuilder().advert(alternativeProgram).applicant(applicant)
-                .status(ApplicationFormStatus.APPROVAL).applicationNumber("app112").submittedDate(DateUtils.addDays(submissionDate, 0))
-                .lastUpdated(DateUtils.addDays(lastEditedDate, 5)).build();
+
+        ApplicationForm app1InApproval = new ApplicationFormBuilder().advert(alternativeProgram).applicant(applicant).status(ApplicationFormStatus.APPROVAL)
+                .applicationNumber("app112").submittedDate(DateUtils.addDays(submissionDate, 0)).lastUpdated(DateUtils.addDays(lastEditedDate, 5)).build();
 
         save(app1InApproval);
         createAndSaveApplicationFormUserRoles(app1InApproval);
 
         flushAndClearSession();
 
-        ApplicationsFilter programFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm(alternativeProgram.getTitle())
-                .searchPredicate(SearchPredicate.CONTAINING).build();
+        ApplicationsFilter programFilter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME)
+                .searchTerm(alternativeProgram.getTitle()).searchPredicate(SearchPredicate.CONTAINING).build();
 
         List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.ASCENDING, 1, programFilter), 50);

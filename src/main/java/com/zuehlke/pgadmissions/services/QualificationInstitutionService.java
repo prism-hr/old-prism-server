@@ -55,7 +55,7 @@ public class QualificationInstitutionService {
         return persistentInstitution;
     }
 
-    private String generateNextInstitutionCode() {
+    protected String generateNextInstitutionCode() {
         Institution lastCustomInstitution = qualificationInstitutionDAO.getLastCustomInstitution();
         Integer codeNumber;
         if (lastCustomInstitution != null) {

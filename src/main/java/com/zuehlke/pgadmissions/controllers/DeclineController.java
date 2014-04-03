@@ -73,7 +73,8 @@ public class DeclineController {
 		if (user == null) {
 			throw new ResourceNotFoundException();
 		}
-		return user.getRefereeForApplicationForm(applicationForm);
+		// FIXME get referee for a user
+		return null; //user.getRefereeForApplicationForm(applicationForm);
 	}
 
 	@RequestMapping(value = "/reference", method = RequestMethod.GET)

@@ -42,9 +42,9 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
+import com.zuehlke.pgadmissions.services.PorticoService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.validators.ApprovalCommentValidator;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
@@ -86,6 +86,9 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     
     @Autowired
     private CommentAssignedUserPropertyEditor assignedUserPropertyEditor;
+    
+    @Autowired
+    private PorticoService porticoService;
 
     @InitBinder(value = "sendToPorticoData")
     public void registerSendToPorticoData(WebDataBinder binder) {
@@ -106,8 +109,8 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         if (latestApprovalComment != null) {
             SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();
             porticoData.setApplicationNumber(applicationForm.getApplicationNumber());
-            porticoData.setQualificationsSendToPortico(applicationForm.getQualicationsToSendToPorticoIds());
-            porticoData.setRefereesSendToPortico(applicationForm.getRefereesToSendToPorticoIds());
+            porticoData.setQualificationsSendToPortico(porticoService.getQualificationsToSendToPorticoIds(applicationForm));
+            porticoData.setRefereesSendToPortico(porticoService.getRefereesToSendToPorticoIds(applicationForm));
             porticoData.setEmptyQualificationsExplanation(latestApprovalComment.getMissingQualificationExplanation());
             modelMap.put("sendToPorticoData", porticoData);
         }

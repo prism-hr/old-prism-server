@@ -129,6 +129,8 @@ public class ApplicationFormService {
         application.setStatus(stateService.getById(newStatus));
         application.setNextStatus(null);
 
+        // TODO add referee roles and send referee notifications
+        // TODO add admitter roles
         switch (newStatus) {
         case UNSUBMITTED:
             application.setDueDate(getDueDateForApplication(application));
@@ -154,6 +156,7 @@ public class ApplicationFormService {
             application.setClosingDate(null);
             actionService.deleteApplicationActions(application);
         }
+        
 
     }
 

@@ -45,7 +45,7 @@ public class ConfigurationService {
     private UserDAO userDAO;
 
     @Autowired
-    private RoleDAO roleDAO;
+    private RoleService roleService;
 
     @Autowired
     private WorkflowService applicationFormUserRoleService;
@@ -111,7 +111,7 @@ public class ConfigurationService {
     private void removeAdmitterRoleToUser(String email) {
         RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(email);
         if (user != null) {
-            user.removeRole(Authority.ADMITTER);
+            roleService.removeRole(user, Authority.ADMITTER);
             userDAO.save(user);
             applicationFormUserRoleService.deleteUserRole(user, Authority.ADMITTER);
         }
@@ -121,24 +121,25 @@ public class ConfigurationService {
         RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(registryContact.getEmail());
         PendingRoleNotification admitterNotification = new PendingRoleNotification();
         admitterNotification.setAddedByUser(requestedBy);
-        admitterNotification.setRole(roleDAO.getById(Authority.ADMITTER));
-        PendingRoleNotification viewerNotification = new PendingRoleNotification();
-        viewerNotification.setAddedByUser(requestedBy);
-        viewerNotification.setRole(roleDAO.getById(Authority.VIEWER));
-        if (user == null) {
-            user = userFactory.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(),
-                    Authority.VIEWER, Authority.ADMITTER);
-            user.getPendingRoleNotifications().add(viewerNotification);
-            user.getPendingRoleNotifications().add(admitterNotification);
-            userDAO.save(user);
-            applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);
-            ;
-        } else if (user != null && user.isNotInRole(Authority.ADMITTER)) {
-            user.getRoles().add(roleDAO.getById(Authority.ADMITTER));
-            user.getPendingRoleNotifications().add(admitterNotification);
-            userDAO.save(user);
-            applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);
-        }
+        // TODO reimplement
+//        admitterNotification.setRole(roleDAO.getById(Authority.ADMITTER));
+//        PendingRoleNotification viewerNotification = new PendingRoleNotification();
+//        viewerNotification.setAddedByUser(requestedBy);
+//        viewerNotification.setRole(roleDAO.getById(Authority.VIEWER));
+//        if (user == null) {
+//            user = userFactory.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(),
+//                    Authority.VIEWER, Authority.ADMITTER);
+//            user.getPendingRoleNotifications().add(viewerNotification);
+//            user.getPendingRoleNotifications().add(admitterNotification);
+//            userDAO.save(user);
+//            applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);
+//            ;
+//        } else if (user != null && user.isNotInRole(Authority.ADMITTER)) {
+//            user.getRoles().add(roleDAO.getById(Authority.ADMITTER));
+//            user.getPendingRoleNotifications().add(admitterNotification);
+//            userDAO.save(user);
+//            applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);
+//        }
     }
 
     @Transactional

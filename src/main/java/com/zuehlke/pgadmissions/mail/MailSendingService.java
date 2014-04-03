@@ -50,7 +50,6 @@ public class MailSendingService extends AbstractMailSendingService {
     private String uclProspectusLink;
 
     private void sendReferenceRequest(Referee referee, ApplicationForm application) {
-        processRefereeAndGetAsUser(referee);
         PrismEmailMessage message = null;
         try {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());

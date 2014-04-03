@@ -110,4 +110,9 @@ public class RoleService {
         // TODO Auto-generated method stub
         return null;
     }
+
+    public void removeRole(RegisteredUser user, Authority admitter) {
+        // TODO Auto-generated method stub
+        
+    }
 }

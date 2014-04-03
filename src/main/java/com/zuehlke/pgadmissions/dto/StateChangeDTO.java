@@ -89,12 +89,6 @@ public class StateChangeDTO {
         return applicationForm.getApplicationNumber();
     }
 
-    // TODO move into service
-    public Boolean hasGlobalAdministrationRights() {
-        return registeredUser.isInRole(Authority.SUPERADMINISTRATOR) || registeredUser.isAdminInProgramme(applicationForm.getProgram())
-                || registeredUser.isProjectAdministrator(applicationForm, registeredUser) || registeredUser.isApproverInProgram(applicationForm.getProgram());
-    }
-
     public Boolean hasFastTrackOption() {
         if (applicationForm.getClosingDate() == null) {
             return false;

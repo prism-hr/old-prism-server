@@ -80,7 +80,7 @@ public class QualificationInstitutionsControllerTest {
                 .code("ABC").build();
         Institution institution2 = new QualificationInstitutionBuilder().id(3).enabled(true).name("University of Cambridge").domicileCode("UK")
                 .code("ABCD").build();
-        RegisteredUser user = new RegisteredUserBuilder().institutions(institution1).build();
+        RegisteredUser user = new RegisteredUser();
 
         expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
         expect(domicileDAO.getDomicileById(0)).andReturn(domicile);

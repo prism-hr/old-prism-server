@@ -286,4 +286,9 @@ public class RefereeService {
         return referee;
     }
 
+    public boolean isRefereeOfApplicationForm(RegisteredUser currentUser, ApplicationForm form) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

@@ -224,13 +224,13 @@ public class ExportService {
      * In case we send an incomplete application we still want to send the referees which might have responded with a comment and or a document.
      */
     @Transactional
-    protected void prepareApplicationForm(final ApplicationForm form) {
-        if (form.getStatus().getId() == ApplicationFormStatus.WITHDRAWN || form.getStatus().getId() == ApplicationFormStatus.REJECTED) {
-            if (porticoService.getReferencesToSendToPortico().size() < 2) {
+    protected void prepareApplicationForm(final ApplicationForm application) {
+        if (application.getStatus().getId() == ApplicationFormStatus.WITHDRAWN || application.getStatus().getId() == ApplicationFormStatus.REJECTED) {
+            if (porticoService.getReferencesToSendToPortico(application).size() < 2) {
                 final HashMap<Integer, Referee> refereesToSend = new HashMap<Integer, Referee>();
 
                 // try to find two referees which have provided a reference.
-                for (Referee referee : form.getReferees()) {
+                for (Referee referee : application.getReferees()) {
                     if (refereesToSend.size() == 2) {
                         break;
                     }
@@ -244,7 +244,7 @@ public class ExportService {
                 }
 
                 // select x more referees until we've got 2
-                for (Referee referee : form.getReferees()) {
+                for (Referee referee : application.getReferees()) {
                     if (refereesToSend.size() == 2) {
                         break;
                     }
@@ -256,7 +256,7 @@ public class ExportService {
                 }
             }
         }
-        applicationsService.save(form);
+        applicationsService.save(application);
     }
 
     public ApplicationFormTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {

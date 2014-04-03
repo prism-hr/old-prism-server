@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
 @RequestMapping("/update")
@@ -65,17 +66,17 @@ public class RefereeController {
 
     @Autowired
     private FullTextSearchService searchService;
-
+    
     @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
     public String getRefereeView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer refereeId, ModelMap modelMap) {
         return returnView(modelMap, refereeService.getOrCreate(refereeId));
     }
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
-    public String editReferee(String refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap,
+    public String editReferee(Integer refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap,
             @ModelAttribute ApplicationForm applicationForm) {
         Referee referee = null;
-        if (StringUtils.isNotBlank(refereeId)) {
+        if (refereeId != null) {
             referee = refereeService.getRefereeById(refereeId);
         }
 
@@ -93,11 +94,10 @@ public class RefereeController {
     }
 
     @RequestMapping(value = "/deleteReferee", method = RequestMethod.POST)
-    public String deleteReferee(@RequestParam("id") String encrypedRefereeId) {
-        Integer id = encryptionHelper.decryptToInteger(encrypedRefereeId);
-        Referee referee = refereeService.getRefereeById(id);
+    public String deleteReferee(@RequestParam("id") Integer refereeId) {
+        
+        Referee referee = refereeService.getRefereeById(refereeId);
         refereeService.delete(referee);
-        updateLastAccessAndLastModified(userService.getCurrentUser(), referee.getApplication());
         return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getApplicationNumber() + "&message=deleted";
     }
 

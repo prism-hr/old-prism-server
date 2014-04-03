@@ -8,12 +8,15 @@ import java.util.HashMap;
 
 import org.easymock.EasyMock;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.ServletRequestBindingException;
+import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
 
 import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -24,182 +27,175 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class PrintControllerTest {
 
-	private PrintController controller;
-	private ApplicationFormService applicationSevice;
-	private PdfDocumentBuilder pdfDocumentBuilderMock;
-	private UserService userServiceMock;
-	private RegisteredUser currentUser;
+    @Mock
+    @InjectIntoByType
+    private ApplicationFormService applicationSevice;
 
-	@Test(expected=ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfUserCannotSeeApplicationForm() throws ServletRequestBindingException, IOException {
-		
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setParameter("applicationFormId", "23");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		response.setOutputStreamAccessAllowed(true);	
+    @Mock
+    @InjectIntoByType
+    private PdfDocumentBuilder pdfDocumentBuilder;
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
-		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
-		// EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-		EasyMock.replay(currentUser);
-		controller.printPage(request, response);
-		
-	}
-	@Test(expected=ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() throws ServletRequestBindingException, IOException {
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setParameter("applicationFormId", "23");
-		MockHttpServletResponse response = new MockHttpServletResponse();				
-		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(null).anyTimes();
-		EasyMock.replay(applicationSevice);
-		controller.printPage(request, response);
-	}
+    @Mock
+    @InjectIntoByType
+    private UserService userService;
 
-	@Test
-	public void shouldBuildPDFForApplicationAndSend() throws IOException, ServletRequestBindingException {
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setParameter("applicationFormId", "23");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		response.setOutputStreamAccessAllowed(true);		
+    @Mock
+    @InjectIntoByType
+    private RefereeService refereeService;
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(currentUser).build();
-		// EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.replay(currentUser);
-		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
-		byte[] bytes = "pdf".getBytes();
-		EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(PdfModelBuilder.class), EasyMock.eq(applicationForm))).andReturn(bytes);
+    private PrintController controller;
 
-		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourceNotFoundExceptionIfUserCannotSeeApplicationForm() throws ServletRequestBindingException, IOException {
 
-		controller.printPage(request, response);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter("applicationFormId", "23");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.setOutputStreamAccessAllowed(true);
 
-		assertArrayEquals(bytes, response.getContentAsByteArray());
-		assertEquals("0", response.getHeader("Expires"));
-		assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
-		assertEquals("public", response.getHeader("Pragma"));
-		assertEquals("inline; filename=\"UCL_PRISM_23.pdf\"", response.getHeader("Content-Disposition"));
-		assertEquals("application/pdf", response.getContentType());
-		assertEquals(bytes.length, response.getContentLength());
-	}
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).build();
+        EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
+        // EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
+        controller.printPage(request, response);
+
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() throws ServletRequestBindingException, IOException {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter("applicationFormId", "23");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(null).anyTimes();
+        EasyMock.replay(applicationSevice);
+        controller.printPage(request, response);
+    }
 
     @Test
-    @SuppressWarnings("unchecked")
-	public void shouldBuildPDFForAllSelectedApplicationsAndSend() throws IOException, ServletRequestBindingException, DocumentException {
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setParameter("appList", "23;34;");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		response.setOutputStreamAccessAllowed(true);		
+    public void shouldBuildPDFForApplicationAndSend() throws IOException, ServletRequestBindingException {
+        RegisteredUser applicant = new RegisteredUser();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter("applicationFormId", "23");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.setOutputStreamAccessAllowed(true);
 
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(new RegisteredUserBuilder().id(4).build()).build();
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(new RegisteredUserBuilder().id(5).build()).build();
-		// EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(true);
-		// EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
-		EasyMock.expect(currentUser.isRefereeOfApplicationForm(EasyMock.eq(applicationFormOne))).andReturn(false);
-		EasyMock.expect(currentUser.isRefereeOfApplicationForm(EasyMock.eq(applicationFormTwo))).andReturn(false);
-		EasyMock.replay(currentUser);
-		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
-		EasyMock.expect(applicationSevice.getByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
-		byte[] bytes = "pdf".getBytes();
-        EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
-
-		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
-
-		controller.printAll(request, response);
-
-		assertArrayEquals(bytes, response.getContentAsByteArray());
-		assertEquals("0", response.getHeader("Expires"));
-		assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
-		assertEquals("public", response.getHeader("Pragma"));
-		assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
-		assertEquals("application/pdf", response.getContentType());
-		assertEquals(bytes.length, response.getContentLength());
-	}
-
-    @Test
-    @SuppressWarnings("unchecked")
-	public void shouldSkipNullApplications() throws ServletRequestBindingException, DocumentException, IOException{
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setParameter("appList", "23;34;");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		response.setOutputStreamAccessAllowed(true);		
-
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(currentUser).build();
-		
-		// EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
-		EasyMock.replay(currentUser);
-		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(null).anyTimes();
-		EasyMock.expect(applicationSevice.getByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
-		byte[] bytes = "pdf".getBytes();
-        EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
-		
-		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
-
-		controller.printAll(request, response);
-		
-		assertArrayEquals(bytes, response.getContentAsByteArray());
-		assertEquals("0", response.getHeader("Expires"));
-		assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
-		assertEquals("public", response.getHeader("Pragma"));
-		assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
-		assertEquals("application/pdf", response.getContentType());
-		assertEquals(bytes.length, response.getContentLength());
-	}
-	
-	@SuppressWarnings("unchecked")
-    @Test
-	public void shouldSkipApplicationsUserCannotSees() throws ServletRequestBindingException, DocumentException, IOException{
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setParameter("appList", "23;34;");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		response.setOutputStreamAccessAllowed(true);		
-
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(currentUser).build();
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(currentUser).build();
-		// EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(false);
-		// EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
-		EasyMock.replay(currentUser);
-		EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
-		EasyMock.expect(applicationSevice.getByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant).build();
+        // EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+        EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationForm).anyTimes();
         byte[] bytes = "pdf".getBytes();
-        EasyMock.expect(pdfDocumentBuilderMock.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
+        EasyMock.expect(pdfDocumentBuilder.build(EasyMock.isA(PdfModelBuilder.class), EasyMock.eq(applicationForm))).andReturn(bytes);
 
-		EasyMock.replay(applicationSevice, pdfDocumentBuilderMock);
+        EasyMock.replay(applicationSevice, pdfDocumentBuilder);
 
-		controller.printAll(request, response);
+        controller.printPage(request, response);
 
-		assertArrayEquals(bytes, response.getContentAsByteArray());
-		assertEquals("0", response.getHeader("Expires"));
-		assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
-		assertEquals("public", response.getHeader("Pragma"));
-		assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
-		assertEquals("application/pdf", response.getContentType());
-		assertEquals(bytes.length, response.getContentLength());
-	}
-	
-	@Before
-	public void setUp() {
-		applicationSevice = EasyMock.createMock(ApplicationFormService.class);
-		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
-		userServiceMock = EasyMock.createMock(UserService.class);
-		controller = new PrintController(applicationSevice, pdfDocumentBuilderMock, userServiceMock){
-			@Override
-			protected String getTimestamp() {
-				return "timestamp";
-			}
-		};
-		currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(currentUser.getId()).andReturn(1).anyTimes();
-		
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-		EasyMock.replay(userServiceMock);
-	}
+        assertArrayEquals(bytes, response.getContentAsByteArray());
+        assertEquals("0", response.getHeader("Expires"));
+        assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
+        assertEquals("public", response.getHeader("Pragma"));
+        assertEquals("inline; filename=\"UCL_PRISM_23.pdf\"", response.getHeader("Content-Disposition"));
+        assertEquals("application/pdf", response.getContentType());
+        assertEquals(bytes.length, response.getContentLength());
+    }
 
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldBuildPDFForAllSelectedApplicationsAndSend() throws IOException, ServletRequestBindingException, DocumentException {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter("appList", "23;34;");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.setOutputStreamAccessAllowed(true);
+
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(new RegisteredUserBuilder().id(4).build()).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(new RegisteredUserBuilder().id(5).build()).build();
+        // EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(true);
+        // EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
+        EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
+        EasyMock.expect(applicationSevice.getByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
+        byte[] bytes = "pdf".getBytes();
+        EasyMock.expect(pdfDocumentBuilder.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
+
+        EasyMock.replay(applicationSevice, pdfDocumentBuilder);
+
+        controller.printAll(request, response);
+
+        assertArrayEquals(bytes, response.getContentAsByteArray());
+        assertEquals("0", response.getHeader("Expires"));
+        assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
+        assertEquals("public", response.getHeader("Pragma"));
+        assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
+        assertEquals("application/pdf", response.getContentType());
+        assertEquals(bytes.length, response.getContentLength());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldSkipNullApplications() throws ServletRequestBindingException, DocumentException, IOException {
+        RegisteredUser applicant = new RegisteredUser();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter("appList", "23;34;");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.setOutputStreamAccessAllowed(true);
+
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(applicant).build();
+
+        // EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
+        EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(null).anyTimes();
+        EasyMock.expect(applicationSevice.getByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
+        byte[] bytes = "pdf".getBytes();
+        EasyMock.expect(pdfDocumentBuilder.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
+
+        EasyMock.replay(applicationSevice, pdfDocumentBuilder);
+
+        controller.printAll(request, response);
+
+        assertArrayEquals(bytes, response.getContentAsByteArray());
+        assertEquals("0", response.getHeader("Expires"));
+        assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
+        assertEquals("public", response.getHeader("Pragma"));
+        assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
+        assertEquals("application/pdf", response.getContentType());
+        assertEquals(bytes.length, response.getContentLength());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldSkipApplicationsUserCannotSees() throws ServletRequestBindingException, DocumentException, IOException {
+        RegisteredUser applicant = new RegisteredUser();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter("appList", "23;34;");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.setOutputStreamAccessAllowed(true);
+
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(applicant).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(applicant).build();
+        // EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(false);
+        // EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
+        EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
+        EasyMock.expect(applicationSevice.getByApplicationNumber("34")).andReturn(applicationFormTwo).anyTimes();
+        byte[] bytes = "pdf".getBytes();
+        EasyMock.expect(pdfDocumentBuilder.build(EasyMock.isA(HashMap.class))).andReturn(bytes);
+
+        EasyMock.replay(applicationSevice, pdfDocumentBuilder);
+
+        controller.printAll(request, response);
+
+        assertArrayEquals(bytes, response.getContentAsByteArray());
+        assertEquals("0", response.getHeader("Expires"));
+        assertEquals("must-revalidate, post-check=0, pre-check=0", response.getHeader("Cache-Control"));
+        assertEquals("public", response.getHeader("Pragma"));
+        assertEquals("inline; filename=\"UCL_PRISM_timestamp.pdf\"", response.getHeader("Content-Disposition"));
+        assertEquals("application/pdf", response.getContentType());
+        assertEquals(bytes.length, response.getContentLength());
+    }
+
+    @After
+    public void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
 }

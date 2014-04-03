@@ -96,7 +96,7 @@ public class ApplicationSummaryService {
         String title = mostRecentQualification.getQualificationTitle();
         String subject = mostRecentQualification.getQualificationSubject();
         String grade = mostRecentQualification.getQualificationGrade();
-        String institution = mostRecentQualification.getQualificationInstitution();
+        String institution = mostRecentQualification.getInstitution().getName();
 
         StringBuilder builder = new StringBuilder();
         trimToEmptyAndJoin(builder, title, false);

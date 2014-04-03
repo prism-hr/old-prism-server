@@ -81,10 +81,6 @@ public class UserService {
         return userDAO.getUsersForProgram(program);
     }
 
-    public List<RegisteredUser> getAllInternalUsers() {
-        return userDAO.getInternalUsers();
-    }
-
     public RegisteredUser getUserByEmail(String email) {
         return userDAO.getUserByEmail(email);
     }
@@ -103,10 +99,7 @@ public class UserService {
         user.setLastName(lastname);
         user.setUsername(email);
         user.setEmail(email);
-        user.setAccountNonExpired(true);
-        user.setAccountNonLocked(true);
         user.setEnabled(false);
-        user.setCredentialsNonExpired(true);
         user.setActivationCode(encryptionUtils.generateUUID());
         return user;
     }

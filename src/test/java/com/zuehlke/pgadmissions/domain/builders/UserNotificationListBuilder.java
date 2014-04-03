@@ -218,30 +218,30 @@ public class UserNotificationListBuilder {
             NotificationListTestCase testCase) {
         user.setLatestUpdateNotificationDate(updateBaselineDate);
         ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithUpdateNotification, true, false);
-        switch (testCase) {
-        case RECEIVED_RECENT_UPDATE_NOTIFICATION:
-            user.setLatestUpdateNotificationDate(baselineDate);
-            updateDummyObject(user);
-            break;
-        case ROLE_NOT_SUBSCRIBED_TO_UPDATES:
-            applicationFormUserRole.setRole(roleWithoutUpdateNotification);
-            updateDummyObject(applicationFormUserRole);
-            break;
-        case NO_UPDATES:
-            applicationFormUserRole.setRaisesUpdateFlag(false);
-            updateDummyObject(applicationFormUserRole);
-            break;
-        case OLD_UPDATES:
-            applicationFormUserRole.setUpdateTimestamp(reminderBaselineDate);
-            updateDummyObject(applicationFormUserRole);
-            break;
-        case USER_ACCOUNT_DISABLED:
-            user.setEnabled(false);
-            updateDummyObject(user);
-            break;
-        default:
-            break;
-        }
+//        switch (testCase) {
+//        case RECEIVED_RECENT_UPDATE_NOTIFICATION:
+//            user.setLatestUpdateNotificationDate(baselineDate);
+//            updateDummyObject(user);
+//            break;
+//        case ROLE_NOT_SUBSCRIBED_TO_UPDATES:
+//            applicationFormUserRole.setRole(roleWithoutUpdateNotification);
+//            updateDummyObject(applicationFormUserRole);
+//            break;
+//        case NO_UPDATES:
+//            applicationFormUserRole.setRaisesUpdateFlag(false);
+//            updateDummyObject(applicationFormUserRole);
+//            break;
+//        case OLD_UPDATES:
+//            applicationFormUserRole.setUpdateTimestamp(reminderBaselineDate);
+//            updateDummyObject(applicationFormUserRole);
+//            break;
+//        case USER_ACCOUNT_DISABLED:
+//            user.setEnabled(false);
+//            updateDummyObject(user);
+//            break;
+//        default:
+//            break;
+//        }
         return new RegisteredUserTestHarness(user, testScenario, applicationFormUserRole);
     }
 
@@ -280,35 +280,35 @@ public class UserNotificationListBuilder {
 
     private RegisteredUserTestHarness buildInstanceThatDoesNotRequireOpportunityRequestNotification(RegisteredUser user,
             NotificationListTestScenario testScenario, NotificationListTestCase testCase) {
-        switch (testCase) {
-        case RECEIVED_RECENT_OPPORTUNITY_REQUEST_NOTIFICATION:
-            user.getRoles().add(superadministratorRole);
-            user.setLatestOpportunityRequestNotificationDate(baselineDate);
-            break;
-        case ROLE_NOT_SUPERADMINISTRATOR:
-            user.getRoles().clear();
-            break;
-        default:
-            break;
-        }
+//        switch (testCase) {
+//        case RECEIVED_RECENT_OPPORTUNITY_REQUEST_NOTIFICATION:
+//            user.getRoles().add(superadministratorRole);
+//            user.setLatestOpportunityRequestNotificationDate(baselineDate);
+//            break;
+//        case ROLE_NOT_SUPERADMINISTRATOR:
+//            user.getRoles().clear();
+//            break;
+//        default:
+//            break;
+//        }
         updateDummyObject(user);
         return new RegisteredUserTestHarness(user, testScenario);
     }
 
     private RegisteredUserTestHarness buildInstanceThatRequiresOpportunityRequestNotification(RegisteredUser user, NotificationListTestScenario testScenario,
             NotificationListTestCase testCase) {
-        switch (testCase) {
-        case OPPORTUNITY_REQUEST_NOTIFICATION_NEVER_RECEIVED:
-            user.getRoles().add(superadministratorRole);
-            user.setLatestOpportunityRequestNotificationDate(null);
-            break;
-        case OPPORTUNITY_REQUEST_NOTIFICATION_RECEIVED_AGES_AGO:
-            user.getRoles().add(superadministratorRole);
-            user.setLatestOpportunityRequestNotificationDate(DateUtils.addDays(opportunityRequestBaselineDate, -1));
-            break;
-        default:
-            break;
-        }
+//        switch (testCase) {
+//        case OPPORTUNITY_REQUEST_NOTIFICATION_NEVER_RECEIVED:
+//            user.getRoles().add(superadministratorRole);
+//            user.setLatestOpportunityRequestNotificationDate(null);
+//            break;
+//        case OPPORTUNITY_REQUEST_NOTIFICATION_RECEIVED_AGES_AGO:
+//            user.getRoles().add(superadministratorRole);
+//            user.setLatestOpportunityRequestNotificationDate(DateUtils.addDays(opportunityRequestBaselineDate, -1));
+//            break;
+//        default:
+//            break;
+//        }
         updateDummyObject(user);
         return new RegisteredUserTestHarness(user, testScenario);
     }

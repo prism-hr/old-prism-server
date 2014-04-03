@@ -13,15 +13,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -53,43 +48,6 @@ public abstract class AbstractMailSendingService {
 
     @Autowired
     private MailSender mailSender;
-
-    protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
-        RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
-        Role refereeRole = roleService.getById(Authority.REFEREE);
-
-        if (userExists(user) && !isUserReferee(user)) {
-            user.getRoles().add(refereeRole);
-        }
-
-        if (!userExists(user)) {
-            user = createAndSaveNewUserWithRefereeRole(referee, refereeRole);
-        }
-
-        referee.setUser(user);
-
-        refereeDAO.save(referee);
-
-        return user;
-    }
-
-    private RegisteredUser createAndSaveNewUserWithRefereeRole(final Referee referee, final Role refereeRole) {
-        RegisteredUser user = new RegisteredUser();
-        user.setEmail(referee.getEmail());
-        user.setFirstName(referee.getFirstname());
-        user.setLastName(referee.getLastname());
-        user.setUsername(referee.getEmail());
-        user.getRoles().add(refereeRole);
-        user.setActivationCode(encryptionUtils.generateUUID());
-        user.setEnabled(false);
-        user.setDirectToUrl(DirectURLsEnum.ADD_REFERENCE.displayValue() + referee.getApplication().getApplicationNumber());
-        userDAO.save(user);
-        return user;
-    }
-
-    private boolean userExists(final RegisteredUser user) {
-        return user != null;
-    }
 
     protected String getAdminsEmailsCommaSeparatedAsString(final List<RegisteredUser> administrators) {
         Set<String> administratorMails = new LinkedHashSet<String>();

@@ -197,7 +197,8 @@ public class StateTransitionController {
 
         commentService.postStateChangeComment(stateChangeDTO);
 
-        if (BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights())) {
+        // FIXME check if has global administration rights (administrator or approver), use PermissionsService, split it into 2 actions
+        if (true) {
             if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
                 return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
             }

@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 import com.zuehlke.pgadmissions.utils.GsonExclusionStrategies;
@@ -106,6 +107,9 @@ public class ProgramConfigurationController {
     @Autowired
     private ProgramTypePropertyEditor programTypePropertyEditor;
 
+    @Autowired
+    private RoleService roleService;
+
     private Gson gson;
 
     @PostConstruct
@@ -136,10 +140,11 @@ public class ProgramConfigurationController {
 
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
-        if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+        RegisteredUser user = userService.getCurrentUser();
+        if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }
-        return userService.getCurrentUser().getProgramsOfWhichAdministrator();
+        return roleService.getProgramsByUserAndRole(user, Authority.ADMINISTRATOR);
     }
 
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)

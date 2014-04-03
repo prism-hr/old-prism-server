@@ -1,14 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.collections.Closure;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -105,50 +100,8 @@ public class UserDAO {
     }
 
     public List<RegisteredUser> getUsersForProgram(Program program) {
-        final Map<Integer, RegisteredUser> users = new HashMap<Integer, RegisteredUser>();
-
-        Criteria programsOfWhichAdministratorCriteria = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-                .createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId()));
-
-        Criteria programsOfWhichApprover = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichApprover")
-                .add(Restrictions.eq("id", program.getId()));
-
-        Criteria programsOfWhichViewer = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichViewer")
-                .add(Restrictions.eq("id", program.getId()));
-
-        CollectionUtils.forAllDo(getUsersInRole(Authority.SUPERADMINISTRATOR), new Closure() {
-            @Override
-            public void execute(Object target) {
-                RegisteredUser user = (RegisteredUser) target;
-                users.put(user.getId(), user);
-            }
-        });
-
-        CollectionUtils.forAllDo(programsOfWhichAdministratorCriteria.list(), new Closure() {
-            @Override
-            public void execute(Object target) {
-                RegisteredUser user = (RegisteredUser) target;
-                users.put(user.getId(), user);
-            }
-        });
-
-        CollectionUtils.forAllDo(programsOfWhichApprover.list(), new Closure() {
-            @Override
-            public void execute(Object target) {
-                RegisteredUser user = (RegisteredUser) target;
-                users.put(user.getId(), user);
-            }
-        });
-
-        CollectionUtils.forAllDo(programsOfWhichViewer.list(), new Closure() {
-            @Override
-            public void execute(Object target) {
-                RegisteredUser user = (RegisteredUser) target;
-                users.put(user.getId(), user);
-            }
-        });
-
-        return new ArrayList<RegisteredUser>(users.values());
+        // TODO implement using roleDAO
+        return null;
     }
 
     public RegisteredUser getUserByEmail(String email) {
@@ -163,17 +116,6 @@ public class UserDAO {
 
     public RegisteredUser getUserByEmailIncludingDisabledAccounts(String email) {
         return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("email", email)).uniqueResult();
-    }
-
-    public List<RegisteredUser> getInternalUsers() {
-        return sessionFactory
-                .getCurrentSession()
-                .createCriteria(RegisteredUser.class)
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .createAlias("roles", "role")
-                .add(Restrictions.and(Restrictions.not(Restrictions.eq("role.id", Authority.APPLICANT)),
-                        Restrictions.not(Restrictions.eq("role.id", Authority.REFEREE)))).addOrder(Order.asc("firstName")).addOrder(Order.asc("lastName"))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     public List<Integer> getUsersIdsWithPendingRoleNotifications() {

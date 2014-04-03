@@ -96,7 +96,6 @@ public class DeclineControllerTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
         EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
         Referee referee = new RefereeBuilder().id(5).build();
-        EasyMock.expect(userMock.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
         EasyMock.replay(userServiceMock, userMock);
         Referee returnedReferee = controller.getReferee("5", applicationForm);
         assertEquals(referee, returnedReferee);

@@ -47,8 +47,6 @@ public class GenericCommentControllerTest {
 
         RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-        EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
-        EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
         EasyMock.replay(currentUser, userServiceMock);
 
         EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);

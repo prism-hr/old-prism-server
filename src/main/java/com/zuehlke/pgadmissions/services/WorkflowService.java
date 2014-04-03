@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -241,7 +242,7 @@ public class WorkflowService {
 //        deleteRoleAction(application, Authority.SUPERADMINISTRATOR, ApplicationFormAction.CONFIRM_ELIGIBILITY);
     }
 
-    public void referencePosted(Referee referee) {
+    public void referencePosted(ReferenceComment comment) {
 //        deleteUserAction(referee.getApplication(), referee.getUser(), Authority.REFEREE, ApplicationFormAction.PROVIDE_REFERENCE);
     }
 

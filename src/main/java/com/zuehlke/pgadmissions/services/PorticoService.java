@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 
@@ -12,22 +13,22 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 @Transactional
 public class PorticoService {
 
-    public List<ReferenceComment> getReferencesToSendToPortico() {
+    public List<ReferenceComment> getReferencesToSendToPortico(ApplicationForm application) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public List<Integer> getReferencesToSendToPorticoIds() {
+    public List<Integer> getRefereesToSendToPorticoIds(ApplicationForm application) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public List<Document> getQualificationsToSendToPortico() {
+    public List<Document> getQualificationsToSendToPortico(ApplicationForm application) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public List<Integer> getQualificationsToSendToPorticoIds() {
+    public List<Integer> getQualificationsToSendToPorticoIds(ApplicationForm application) {
         // TODO Auto-generated method stub
         return null;
     }

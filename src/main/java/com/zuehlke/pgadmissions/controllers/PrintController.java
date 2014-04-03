@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -35,22 +36,17 @@ public class PrintController {
 
     private final Logger log = LoggerFactory.getLogger(PrintController.class);
     
-	private final ApplicationFormService applicationSevice;
+    @Autowired
+	private ApplicationFormService applicationSevice;
 	
-	private final PdfDocumentBuilder pdfDocumentBuilder;
+    @Autowired
+	private PdfDocumentBuilder pdfDocumentBuilder;
 	
-	private final UserService userService;
-
-	public PrintController() {
-		this(null, null, null);
-	}
-
-	@Autowired
-	public PrintController(final ApplicationFormService applicationSevice, final PdfDocumentBuilder builder, final UserService userService) {
-		this.applicationSevice = applicationSevice;
-		this.pdfDocumentBuilder = builder;
-		this.userService = userService;
-	}
+    @Autowired
+	private UserService userService;
+	
+    @Autowired
+	private RefereeService refereeService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public void printPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletRequestBindingException {
@@ -62,14 +58,14 @@ public class PrintController {
 		    throw new ResourceNotFoundException();
 		}
 		
-		RegisteredUser currentUser = userService.getCurrentUser();
+		RegisteredUser user = userService.getCurrentUser();
 		
 		PdfModelBuilder pdfModelBuilder = new PdfModelBuilder();
-		if (isApplicant(currentUser, form)) {
+		if (isApplicant(user, form)) {
 		    pdfModelBuilder.includeCriminialConvictions(true);
 		    pdfModelBuilder.includeDisability(true);
 		    pdfModelBuilder.includeEthnicity(true);
-		} else if (!currentUser.isRefereeOfApplicationForm(form)) {
+		} else if (!refereeService.isRefereeOfApplicationForm(user, form)) {
 		    pdfModelBuilder.includeReferences(true);
 		}
 		
@@ -80,7 +76,7 @@ public class PrintController {
 	public void printAll(final HttpServletRequest request, final HttpServletResponse response) throws ServletRequestBindingException, DocumentException, IOException {
 		String appListToPrint = ServletRequestUtils.getStringParameter(request, "appList");
 		String[] applicationIds = appListToPrint.split(";");
-		RegisteredUser currentUser = userService.getCurrentUser();
+		RegisteredUser user = userService.getCurrentUser();
 		HashMap<PdfModelBuilder, ApplicationForm> formsToPrint = new HashMap<PdfModelBuilder, ApplicationForm>();
 		
 		for (String applicationId : applicationIds) {
@@ -91,11 +87,11 @@ public class PrintController {
 			}
 			
 			PdfModelBuilder pdfModelBuilder = new PdfModelBuilder();
-			if (isApplicant(currentUser, form)) {
+			if (isApplicant(user, form)) {
 			    pdfModelBuilder.includeCriminialConvictions(true);
 			    pdfModelBuilder.includeDisability(true);
 			    pdfModelBuilder.includeEthnicity(true);
-			} else if (!currentUser.isRefereeOfApplicationForm(form)) {
+			} else if (!refereeService.isRefereeOfApplicationForm(user, form)) {
 	            pdfModelBuilder.includeReferences(true);
 	        }
 			

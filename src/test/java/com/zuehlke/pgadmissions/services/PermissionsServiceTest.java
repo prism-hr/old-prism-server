@@ -47,7 +47,9 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldBeAbleToSeeOpportunityRequestsIfSuperadmin() {
-        RegisteredUser registeredUser = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
+        RegisteredUser registeredUser = new RegisteredUserBuilder()
+        // .role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build())
+                .build();
 
         expect(userService.getCurrentUser()).andReturn(registeredUser);
 

@@ -80,7 +80,7 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addReferences(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
-        List<ReferenceComment> references = porticoService.getReferencesToSendToPortico();
+        List<ReferenceComment> references = porticoService.getReferencesToSendToPortico(applicationForm);
         String filename;
         switch (references.size()) {
         case 2:
@@ -148,7 +148,7 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addTranscriptFiles(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException, CouldNotCreateAttachmentsPack {
-        List<Document> qualifications = porticoService.getQualificationsToSendToPortico();
+        List<Document> qualifications = porticoService.getQualificationsToSendToPortico(applicationForm);
         String filename;
 
         switch (qualifications.size()) {

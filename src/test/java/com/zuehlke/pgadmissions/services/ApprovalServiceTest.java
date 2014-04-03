@@ -53,7 +53,7 @@ public class ApprovalServiceTest {
 //
 //        ApprovalRound approvalRound = new ApprovalRoundBuilder().build();
 //        StateChangeComment stateChangeComment = new StateChangeComment();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().comments(stateChangeComment).status(ApplicationFormStatus.VALIDATION).id(1).build();
+//        ApplicationForm applicationForm = new ApplicationFormBuilder().comments(stateChangeComment).status(new State().withId(ApplicationFormStatus.VALIDATION)).id(1).build();
 //        applyValidSendToPorticoData(applicationForm);
 //        expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
 //                new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
@@ -91,7 +91,7 @@ public class ApprovalServiceTest {
 //                .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(date)
 //                .supervisors(primarySupervisor, secondarySupervisor).build();
 //        RegisteredUser user = new RegisteredUserBuilder().id(8).build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
+//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.INTERVIEW)).id(1).build();
 //        applyValidSendToPorticoData(applicationForm);
 //        expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
 //                new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
@@ -129,7 +129,7 @@ public class ApprovalServiceTest {
 //    @Test
 //    public void shouldMoveToApprovalIfInApproval() {
 //        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).id(1).build();
+//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.APPROVAL)).id(1).build();
 //        applyValidSendToPorticoData(applicationForm);
 //        expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.APPROVAL)).andReturn(
 //                new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
@@ -169,7 +169,7 @@ public class ApprovalServiceTest {
 //    public void shouldFailIfApplicationHasNoReferencesForSendingToPortico() {
 //        RegisteredUser initiator = new RegisteredUserBuilder().id(10).build();
 //        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
+//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.INTERVIEW)).id(1).build();
 //        applyValidSendToPorticoData(applicationForm);
 //        for (Referee referee : applicationForm.getReferees()) {
 //            referee.setSendToUCL(false);
@@ -181,7 +181,7 @@ public class ApprovalServiceTest {
 //    public void shouldFailIfApplicationHasNoQualicifacionsForSendingToPorticoAndNoExplanation() {
 //        RegisteredUser initiator = new RegisteredUserBuilder().id(10).build();
 //        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
+//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.INTERVIEW)).id(1).build();
 //        applyValidSendToPorticoData(applicationForm);
 //        for (Qualification qualifications : applicationForm.getQualifications()) {
 //            qualifications.setSendToUCL(false);
@@ -193,7 +193,7 @@ public class ApprovalServiceTest {
 //    public void shouldMoveToApprovalIfInApplicationWithNoQualificationsButExplanationProvided() {
 //        RegisteredUser initiator = new RegisteredUserBuilder().id(10).build();
 //        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).build();
+//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.INTERVIEW)).id(1).build();
 //        applyValidSendToPorticoData(applicationForm);
 //        for (Qualification qualifications : applicationForm.getQualifications()) {
 //            qualifications.setSendToUCL(false);
@@ -221,7 +221,7 @@ public class ApprovalServiceTest {
 //
 //        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation")
 //                .supervisors(primarySupervisor, secondarySupervisor).build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
+//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.INTERVIEW)).id(1).latestApprovalRound(approvalRound).build();
 //        approvalRound.setApplication(applicationForm);
 //
 //        Date startDate = Calendar.getInstance().getTime();
@@ -281,7 +281,7 @@ public class ApprovalServiceTest {
 //
 //        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation")
 //                .supervisors(primarySupervisor, secondarySupervisor).build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
+//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.INTERVIEW)).id(1).latestApprovalRound(approvalRound).build();
 //
 //        Date startDate = Calendar.getInstance().getTime();
 //
@@ -317,7 +317,7 @@ public class ApprovalServiceTest {
 //
 //        ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).missingQualificationExplanation("explanation").projectDescriptionAvailable(false)
 //                .supervisors(primarySupervisor, secondarySupervisor).build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.INTERVIEW).id(1).latestApprovalRound(approvalRound).build();
+//        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.INTERVIEW)).id(1).latestApprovalRound(approvalRound).build();
 //        approvalRound.setApplication(applicationForm);
 //
 //        ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();

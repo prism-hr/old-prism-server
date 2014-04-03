@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormUserRoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
@@ -91,22 +92,22 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         program = testObjectProvider.getEnabledProgram();
 
-        app1InApproval = new ApplicationFormBuilder().id(1).advert(program).applicant(applicant).status(ApplicationFormStatus.APPROVAL)
+        app1InApproval = new ApplicationFormBuilder().id(1).advert(program).applicant(applicant).status(new State().withId(ApplicationFormStatus.APPROVAL))
                 .applicationNumber("app1").submittedDate(DateUtils.addDays(submissionDate, 0)).lastUpdated(DateUtils.addDays(lastEditedDate, 5))
                 .averageRating(BigDecimal.valueOf(2.33)).build();
-        app2InReview = new ApplicationFormBuilder().id(2).advert(program).applicant(applicant).status(ApplicationFormStatus.REVIEW).applicationNumber("app2")
+        app2InReview = new ApplicationFormBuilder().id(2).advert(program).applicant(applicant).status(new State().withId(ApplicationFormStatus.REVIEW)).applicationNumber("app2")
                 .submittedDate(DateUtils.addDays(submissionDate, 1)).lastUpdated(DateUtils.addDays(lastEditedDate, 4)).averageRating(BigDecimal.valueOf(2.66))
                 .build();
-        app3InValidation = new ApplicationFormBuilder().id(3).advert(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION)
+        app3InValidation = new ApplicationFormBuilder().id(3).advert(program).applicant(applicant).status(new State().withId(ApplicationFormStatus.VALIDATION))
                 .applicationNumber("app3").submittedDate(DateUtils.addDays(submissionDate, 2)).lastUpdated(DateUtils.addDays(lastEditedDate, 3))
                 .averageRating(BigDecimal.valueOf(0)).build();
-        app4InApproved = new ApplicationFormBuilder().id(4).advert(program).applicant(applicant).status(ApplicationFormStatus.APPROVED)
+        app4InApproved = new ApplicationFormBuilder().id(4).advert(program).applicant(applicant).status(new State().withId(ApplicationFormStatus.APPROVED))
                 .applicationNumber("app4").submittedDate(DateUtils.addDays(submissionDate, 3)).lastUpdated(DateUtils.addDays(lastEditedDate, 2))
                 .averageRating(null).build();
-        app5InInterview = new ApplicationFormBuilder().id(5).advert(program).applicant(applicant).status(ApplicationFormStatus.INTERVIEW)
+        app5InInterview = new ApplicationFormBuilder().id(5).advert(program).applicant(applicant).status(new State().withId(ApplicationFormStatus.INTERVIEW))
                 .applicationNumber("app5").submittedDate(DateUtils.addDays(submissionDate, 4)).lastUpdated(DateUtils.addDays(lastEditedDate, 1))
                 .averageRating(BigDecimal.valueOf(0.1)).build();
-        app6InReview = new ApplicationFormBuilder().id(6).advert(program).applicant(applicant).status(ApplicationFormStatus.REVIEW).applicationNumber("app6")
+        app6InReview = new ApplicationFormBuilder().id(6).advert(program).applicant(applicant).status(new State().withId(ApplicationFormStatus.REVIEW)).applicationNumber("app6")
                 .submittedDate(DateUtils.addDays(submissionDate, 5)).lastUpdated(DateUtils.addDays(lastEditedDate, 0)).averageRating(BigDecimal.valueOf(5))
                 .build();
 
@@ -128,7 +129,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Test
     public void shouldReturnAppsFilteredByNumber() {
-        ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(applicant).status(ApplicationFormStatus.APPROVAL)
+        ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(applicant).status(new State().withId(ApplicationFormStatus.APPROVAL))
                 .applicationNumber("other1").build();
         save(otherApplicationForm);
         flushAndClearSession();
@@ -143,7 +144,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Test
     public void shouldReturnAppsFilteredByNotNumber() {
-        ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(applicant).status(ApplicationFormStatus.APPROVAL)
+        ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(applicant).status(new State().withId(ApplicationFormStatus.APPROVAL))
                 .applicationNumber("other1").build();
         save(otherApplicationForm);
         createAndSaveApplicationFormUserRoles(otherApplicationForm);
@@ -219,7 +220,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         RegisteredUser otherUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek")
                 .password("franek123").enabled(false).build();
 
-        ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(otherUser).status(ApplicationFormStatus.APPROVAL)
+        ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(otherUser).status(new State().withId(ApplicationFormStatus.APPROVAL))
                 .applicationNumber("other1").build();
         save(otherUser, otherApplicationForm);
         createAndSaveApplicationFormUserRoles(otherApplicationForm);
@@ -347,7 +348,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         RegisteredUser otherUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek")
                 .password("franek123").enabled(false).build();
 
-        ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(otherUser).status(ApplicationFormStatus.APPROVAL)
+        ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(otherUser).status(new State().withId(ApplicationFormStatus.APPROVAL))
                 .applicationNumber("other1").build();
         save(otherUser, otherApplicationForm);
         createAndSaveApplicationFormUserRoles(otherApplicationForm);
@@ -365,7 +366,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     public void shouldReturnAppsFilteredByProgramName() {
         Program alternativeProgram = testObjectProvider.getAlternativeEnabledProgram(program);
 
-        ApplicationForm app1InApproval = new ApplicationFormBuilder().advert(alternativeProgram).applicant(applicant).status(ApplicationFormStatus.APPROVAL)
+        ApplicationForm app1InApproval = new ApplicationFormBuilder().advert(alternativeProgram).applicant(applicant).status(new State().withId(ApplicationFormStatus.APPROVAL))
                 .applicationNumber("app112").submittedDate(DateUtils.addDays(submissionDate, 0)).lastUpdated(DateUtils.addDays(lastEditedDate, 5)).build();
 
         save(app1InApproval);

@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -74,7 +75,7 @@ public class RejectServiceTest {
         admin = new RegisteredUserBuilder().id(324).username("admin").build();
         approver = new RegisteredUserBuilder().id(22414).username("real approver").build();
         Program program = new ProgramBuilder().id(10023).build();
-        application = new ApplicationFormBuilder().id(200).advert(program).status(ApplicationFormStatus.VALIDATION).build();
+        application = new ApplicationFormBuilder().id(200).advert(program).status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
 
         reason1 = new RejectReasonBuilder().id(1).text("idk").build();
         reason2 = new RejectReasonBuilder().id(2).text("idc").build();

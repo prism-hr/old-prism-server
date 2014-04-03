@@ -32,7 +32,7 @@ public class ReviewServiceTest {
     // ReviewRound reviewRound = new ReviewRoundBuilder().id(1).build();
     // Referee referee = new RefereeBuilder().build();
     // StateChangeComment stateChangeComment = new StateChangeComment();
-    // ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).comments(stateChangeComment).status(ApplicationFormStatus.VALIDATION)
+    // ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).comments(stateChangeComment).status(new State().withId(ApplicationFormStatus.VALIDATION))
     // .id(1).build();
     // EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
     // new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
@@ -66,7 +66,7 @@ public class ReviewServiceTest {
     // public void shouldMoveToReviewIfInReview() throws ParseException {
     // StateChangeComment changeComment = new StateChangeComment();
     // ReviewRound reviewRound = new ReviewRoundBuilder().id(1).build();
-    // ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).comments(changeComment).build();
+    // ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.REVIEW)).id(1).comments(changeComment).build();
     // EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(
     // new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).build());
     // reviewRoundDAOMock.save(reviewRound);

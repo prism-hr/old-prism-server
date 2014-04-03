@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -60,7 +61,7 @@ public class FileUploadControllerTest {
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowCannotUpdateApplicationExceptionIfApplicationFormNotInUnsubmmitedState() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).status(ApplicationFormStatus.APPROVED)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).status(new State().withId(ApplicationFormStatus.APPROVED))
 				.build();
 		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);

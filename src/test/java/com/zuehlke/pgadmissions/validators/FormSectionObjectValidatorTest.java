@@ -50,7 +50,7 @@ public class FormSectionObjectValidatorTest {
 
     @Before
     public void setup() throws ParseException {
-        applicationForm = new ApplicationFormBuilder().id(2).status(ApplicationFormStatus.UNSUBMITTED).build();
+        applicationForm = new ApplicationFormBuilder().id(2).status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).build();
         formSectionObject = new MyObject();
         formSectionObjectValidator = new FormSectionObjectValidator() {
         };

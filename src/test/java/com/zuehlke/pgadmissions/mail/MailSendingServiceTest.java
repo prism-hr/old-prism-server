@@ -927,7 +927,7 @@ public class MailSendingServiceTest {
 //        Program program = new ProgramBuilder().id(4).title(SAMPLE_PROGRAM_TITLE).administrators(admin1, admin2).build();
 //        ProgrammeDetails programDetails = new ProgrammeDetailsBuilder().id(5).build();
 //        RejectReason reason = new RejectReasonBuilder().text(SAMPLE_REJECTION_REASON).build();
-//        ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).status(ApplicationFormStatus.APPROVED)
+//        ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).status(new State().withId(ApplicationFormStatus.APPROVED))
 //                .rejection(new RejectionBuilder().rejectionReason(reason).includeProspectusLink(false).build()).applicant(applicant)
 //                .programmeDetails(programDetails).applicationNumber(SAMPLE_APPLICATION_NUMBER).program(program).build();
 //        return applicationForm;

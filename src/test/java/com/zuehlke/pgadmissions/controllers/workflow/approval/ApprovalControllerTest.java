@@ -432,7 +432,7 @@ public class ApprovalControllerTest {
     // Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
     // RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
     // Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
-    // ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(ApplicationFormStatus.INTERVIEW)
+    // ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(new State().withId(ApplicationFormStatus.INTERVIEW))
     // .build();
     // SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
     // BindingResult porticoResult = new MapBindingResult(Collections.emptyMap(), "");
@@ -469,7 +469,7 @@ public class ApprovalControllerTest {
     // public void shouldReturnRefereesAdminEditDTO() throws Exception {
     // final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
     // final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
-    // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).program(program).build();
+    // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.REVIEW)).program(program).build();
     //
     // final Question question1 = new Question();
     // question1.setLabel("question1");
@@ -494,7 +494,7 @@ public class ApprovalControllerTest {
     // public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
     // final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
     // final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
-    // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).program(program).build();
+    // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.REVIEW)).program(program).build();
     //
     // EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
     // EasyMock.expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));

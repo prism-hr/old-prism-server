@@ -8,6 +8,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -29,7 +30,7 @@ public class ReferenceDAOTest extends AutomaticRollbackTestCase {
         save(user);
 
         ApplicationForm application = new ApplicationFormBuilder().advert(testObjectProvider.getEnabledProgram()).applicant(user)
-                .status(ApplicationFormStatus.VALIDATION).build();
+                .status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
         save(application);
 
         ReferenceComment reference = new ReferenceCommentBuilder().user(user).comment("comment").application(application).build();

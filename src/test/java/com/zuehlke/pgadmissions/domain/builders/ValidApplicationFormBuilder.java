@@ -19,18 +19,19 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
@@ -182,7 +183,7 @@ public class ValidApplicationFormBuilder {
                 .batchDeadline(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).contactAddress(address).currentAddress(address)
                 .dueDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).employmentPositions(employmentPosition).fundings(funding)
                 .lastUpdated(new Date()).personalDetails(personalDetails).advert(program).programmeDetails(programDetails).projectTitle("Project Title")
-                .qualification(qualification1, qualification2).status(ApplicationFormStatus.APPROVED).submittedDate(new Date()).cv(cvDocument)
+                .qualification(qualification1, qualification2).status(new State().withId(ApplicationFormStatus.APPROVED)).submittedDate(new Date()).cv(cvDocument)
                 .personalStatement(personalStatement).referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");
         applicationForm = getApplicationFormBuilder().build();
 

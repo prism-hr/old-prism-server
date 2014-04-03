@@ -55,7 +55,7 @@ public class OfferRecommendationServiceTest {
 //                .enabled(true).studyOption("1", "full").build();
 //        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
 //        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().supervisors(new Supervisor()).build();
-//        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
+//        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.APPROVAL)).program(program).id(2)
 //                .programmeDetails(programmeDetails).latestApprovalRound(latestApprovalRound).build();
 //        Supervisor primarySupervisor = new SupervisorBuilder().isPrimary(true).build();
 //        Supervisor secondarySupervisor = new SupervisorBuilder().id(1).build();
@@ -95,7 +95,7 @@ public class OfferRecommendationServiceTest {
 //        ProgramInstance instanceEnabled = new ProgramInstanceBuilder().applicationStartDate(DateUtils.addDays(startDate, 3))
 //                .applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(true).studyOption("1", "full").build();
 //        Program program = new ProgramBuilder().id(1).enabled(true).instances(instanceDisabled, instanceEnabled).build();
-//        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).program(program).id(2)
+//        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.APPROVAL)).program(program).id(2)
 //                .programmeDetails(programmeDetails).build();
 //        OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
 //
@@ -118,7 +118,7 @@ public class OfferRecommendationServiceTest {
 //
 //    @Test(expected = IllegalStateException.class)
 //    public void shouldFailOmMoveToApprovedIfApplicationNotInApproval() {
-//        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).id(2).build();
+//        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.REJECTED)).id(2).build();
 //        replay();
 //        service.moveToApproved(application, null);
 //        verify();

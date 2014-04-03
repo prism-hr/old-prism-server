@@ -18,15 +18,9 @@ public class DocumentBuilder {
 	private String contentType;
 	private DocumentType type;
 	private Date dateUploaded;
-	private RegisteredUser uploadedBy;
 	
 	public DocumentBuilder qualification(Qualification qualification){
 		this.qualification = qualification;
-		return this;
-	}
-	
-	public DocumentBuilder uploadedBy(RegisteredUser uploadedBy){
-		this.uploadedBy = uploadedBy;
 		return this;
 	}
 	
@@ -68,7 +62,6 @@ public class DocumentBuilder {
 		document.setType(type);
 		document.setContentType(contentType);
 		document.setDateUploaded(dateUploaded);
-		document.setUploadedBy(uploadedBy);
 		document.setQualification(qualification);
 		return document;
 	}

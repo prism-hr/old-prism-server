@@ -99,18 +99,4 @@ public class SuperadminUserDTOValidatorTest {
 		Assert.assertEquals("text.email.notvalid", mappingResult.getFieldError("email").getCode());
 	}	
 	
-	@Test
-	@DirtiesContext
-	@Ignore
-	public void shouldRejectIfEmailThatOfExistingApplicant() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
-		user.setEmail("applicant@test.com");
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("applicant@test.com"))
-				.andReturn(new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.APPLICANT).build()).build()).anyTimes();
-		EasyMock.replay(userServiceMock);
-		superadminUserDTOValidator.validate(user, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.email.applicant", mappingResult.getFieldError("email").getCode());
-	}
 }

@@ -20,11 +20,12 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Rejection;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class ApplicationFormBuilder {
 
-    private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
+    private State status;
     private ProgramDetails programmeDetails;
     private PersonalDetails personalDetails;
     private Address currentAddress;
@@ -54,8 +55,8 @@ public class ApplicationFormBuilder {
     private String ipAddress;
     private BigDecimal averageRating;
     private Boolean useCustomReferenceQuestions = false;
-    private ApplicationFormStatus nextStatus;
-    private ApplicationFormStatus previousStatus;
+    private State nextStatus;
+    private State lastStatus;
 
     public ApplicationFormBuilder ipAddress(String ipAddress) {
         this.ipAddress = ipAddress;
@@ -98,7 +99,7 @@ public class ApplicationFormBuilder {
     }
     
     public ApplicationFormBuilder previousStatus(ApplicationFormStatus previousStatus) {
-        this.previousStatus = previousStatus;
+        this.lastStatus = previousStatus;
         return this;
     }
 
@@ -244,7 +245,7 @@ public class ApplicationFormBuilder {
         application.setId(id);
         application.setApplicant(applicant);
         application.setSubmittedDate(submittedDate);
-        application.setReferees(referees);
+        application.getReferees().addAll(referees);
         application.setApplicationTimestamp(appDate);
         application.getQualifications().addAll(qualifications);
         application.setProgramDetails(programmeDetails);
@@ -259,7 +260,7 @@ public class ApplicationFormBuilder {
         application.setProjectTitle(projectTitle);
         application.setStatus(status);
         application.setNextStatus(nextStatus);
-        application.setPreviousStatus(previousStatus);
+        application.setLastStatus(lastStatus);
         application.setAdditionalInformation(info);
         application.setLastUpdated(lastUpdated);
         application.setAcceptedTermsOnSubmission(acceptedTerms);

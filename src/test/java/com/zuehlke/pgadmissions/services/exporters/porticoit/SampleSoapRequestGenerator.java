@@ -28,7 +28,9 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplic
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV2;
 import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 
@@ -39,19 +41,19 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
 
     @Autowired
     private WebServiceTemplate webServiceTemplate;
-    
+
+    @Autowired
+    private StateService stateService;
+
     private ApplicationFormDAO applicationFormDAO;
-    
+
     private SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder;
-    
+
     /**
-     * This test collects all the completed application forms (except test applications) from the database 
-     * and sends them to the configured web service. It enhances the data with 
-     * PassportInformation, LanguageQualifications if they do not exist. This 
-     * is because the current production data does not include such information 
-     * whereas the web service declares some of that information mandatory. Additionally,
-     * the application form statuses are changed randomly to be either APPROVED, REJECTED or 
-     * WITHDRAWN. 
+     * This test collects all the completed application forms (except test applications) from the database and sends them to the configured web service. It
+     * enhances the data with PassportInformation, LanguageQualifications if they do not exist. This is because the current production data does not include
+     * such information whereas the web service declares some of that information mandatory. Additionally, the application form statuses are changed randomly to
+     * be either APPROVED, REJECTED or WITHDRAWN.
      * <p>
      * Run this test when connected to the UCL network.
      */
@@ -59,7 +61,7 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
     public void generateSampleSoapRequestsFromProductionData() {
         long idx = 0;
         Marshaller marshaller = webServiceTemplate.getMarshaller();
-        
+
         List<ApplicationForm> applications = new LinkedList<ApplicationForm>();
         applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPROVED));
         applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPROVAL));
@@ -68,30 +70,34 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
         applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.REVIEW));
         applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.VALIDATION));
         applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.WITHDRAWN));
-        
+
+        State approvedState = stateService.getById(ApplicationFormStatus.APPROVED);
+        State rejectedState = stateService.getById(ApplicationFormStatus.REJECTED);
+        State withdrawnState = stateService.getById(ApplicationFormStatus.WITHDRAWN);
+
         for (ApplicationForm form : applications) {
             try {
                 if (isTestProgram(form)) {
                     continue;
                 }
-                
+
                 idx++;
-                
+
                 if (idx % 2 == 0) {
-                    form.setStatus(ApplicationFormStatus.APPROVED);
+                    form.setStatus(approvedState);
                 } else {
-                    form.setStatus(ApplicationFormStatus.REJECTED);
+                    form.setStatus(rejectedState);
                 }
-                
+
                 if (idx % 3 == 0) {
-                    form.setStatus(ApplicationFormStatus.WITHDRAWN);
+                    form.setStatus(withdrawnState);
                 }
-                
+
                 // Generate request
                 SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(form).build();
 
                 // Save request to file
-                marshaller.marshal(request, new StreamResult(new File("request_" + idx + ".txt")));                    
+                marshaller.marshal(request, new StreamResult(new File("request_" + idx + ".txt")));
 
                 // Send request and record response
                 try {
@@ -113,14 +119,14 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
                 System.err.println(DiagnosticInfoPrintUtils.printRootCauseStackTrace(e));
             }
         }
-        
+
         System.out.println(idx);
     }
 
     private boolean isTestProgram(ApplicationForm form) {
         return form.getAdvert().getTitle().equalsIgnoreCase("ABC") || form.getAdvert().getTitle().equalsIgnoreCase("Test Programme");
     }
-    
+
     @Before
     public void initialise() {
         applicationFormDAO = new ApplicationFormDAO(sessionFactory);

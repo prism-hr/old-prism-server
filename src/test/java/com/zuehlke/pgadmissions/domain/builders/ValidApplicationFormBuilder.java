@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
@@ -80,7 +81,7 @@ public class ValidApplicationFormBuilder {
         try {
             Resource testFileAsResurce = new ClassPathResource("/pdf/valid.pdf");
             Document document = new DocumentBuilder().dateUploaded(new Date()).contentType("application/pdf").fileName(filename)
-                    .content(FileUtils.readFileToByteArray(testFileAsResurce.getFile())).uploadedBy(user).type(docType).build();
+                    .content(FileUtils.readFileToByteArray(testFileAsResurce.getFile())).type(docType).build();
             return document;
         } catch (IOException e) {
             e.printStackTrace();
@@ -117,10 +118,10 @@ public class ValidApplicationFormBuilder {
         domicile = new DomicileBuilder().code("XK").name("United Kingdom").enabled(true).build();
         address = new AddressBuilder().domicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1])
                 .address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).build();
-        referenceComment1 = new ReferenceCommentBuilder().comment("Hello From Bob").document(referenceDocument).providedBy(user)
-                .suitableForProgramme(true).suitableForUcl(true).user(user).build();
-        referenceComment2 = new ReferenceCommentBuilder().comment("Hello From Jane").document(referenceDocument).providedBy(user)
-                .suitableForProgramme(true).suitableForUcl(true).user(user).build();
+        referenceComment1 = new ReferenceCommentBuilder().comment("Hello From Bob").document(referenceDocument).providedBy(user).suitableForProgramme(true)
+                .suitableForUcl(true).user(user).build();
+        referenceComment2 = new ReferenceCommentBuilder().comment("Hello From Jane").document(referenceDocument).providedBy(user).suitableForProgramme(true)
+                .suitableForUcl(true).user(user).build();
         refereeOne = new RefereeBuilder().id(Integer.MAX_VALUE - 1).user(approverUser).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith")
                 .addressDomicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
                 .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer")
@@ -153,9 +154,8 @@ public class ValidApplicationFormBuilder {
                                 .issueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
                 .languageQualificationAvailable(true)
                 .languageQualification(
-                        new LanguageQualificationBuilder().examDate(new Date()).examOnline(false)
-                                .languageQualification(LanguageQualificationEnum.OTHER).listeningScore("1").qualificationTypeName("FooBar")
-                                .overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
+                        new LanguageQualificationBuilder().examDate(new Date()).examOnline(false).languageQualification(LanguageQualificationEnum.OTHER)
+                                .listeningScore("1").qualificationTypeName("FooBar").overallScore("1").readingScore("1").speakingScore("1").writingScore("1")
                                 .languageQualificationDocument(languageQualificationDocument).build()).phoneNumber("+44 (0) 123 123 1234")
                 .residenceDomicile(domicile).title(Title.MR).build();
         additionalInformation = new AdditionalInformationBuilder().setConvictions(false).build();
@@ -163,21 +163,18 @@ public class ValidApplicationFormBuilder {
                 .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 5)).enabled(true).studyOption("F+++++", "Full-time")
                 .identifier("0009").build();
         institution = new QualificationInstitutionBuilder().code("code").name("jakas instytucja").domicileCode("AE").enabled(true).build();
-        program = new ProgramBuilder().contactUser(approverUser).administrators(user).approver(user).code("TMRMBISING99").enabled(true).instances(instance)
+        program = new ProgramBuilder().contactUser(approverUser).code("TMRMBISING99").enabled(true).instances(instance)
                 .title("MRes Medical and Biomedical Imaging").institution(institution).build();
         interest = new SourcesOfInterestBuilder().code("BRIT_COUN").name("British Council").build();
-        programDetails = new ProgrammeDetailsBuilder().programmeName("MRes Medical and Biomedical Imaging").projectName("Project Title")
-                .sourcesOfInterest(interest).startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
-                .build();
+        programDetails = new ProgrammeDetailsBuilder().sourcesOfInterest(interest).startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
+                .studyOption(new StudyOption("F+++++", "Full-time")).build();
         qualificationType = new QualificationTypeBuilder().code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
-        qualification1 = new QualificationBuilder().id(Integer.MAX_VALUE - 1).awardDate(new Date()).grade("6").institutionCode("UK0000")
-                .institution("University of London").institutionCountry(domicile).languageOfStudy("English")
-                .startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).subject("Engineering").title("MSc").type(qualificationType)
-                .isCompleted(true).proofOfAward(proofOfAwardDocument).sendToUCL(true).build();
-        qualification2 = new QualificationBuilder().id(Integer.MAX_VALUE - 2).awardDate(new Date()).grade("6").institutionCode("UK0000")
-                .institution("University of London").institutionCountry(domicile).languageOfStudy("English")
-                .startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).subject("Engineering").title("MSc").type(qualificationType)
-                .isCompleted(true).proofOfAward(proofOfAwardDocument).sendToUCL(true).build();
+        qualification1 = new QualificationBuilder().id(Integer.MAX_VALUE - 1).awardDate(new Date()).grade("6").institution(institution)
+                .languageOfStudy("English").startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).subject("Engineering").title("MSc")
+                .type(qualificationType).isCompleted(true).proofOfAward(proofOfAwardDocument).sendToUCL(true).build();
+        qualification2 = new QualificationBuilder().id(Integer.MAX_VALUE - 2).awardDate(new Date()).grade("6").institution(institution)
+                .languageOfStudy("English").startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).subject("Engineering").title("MSc")
+                .type(qualificationType).isCompleted(true).proofOfAward(proofOfAwardDocument).sendToUCL(true).build();
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
                 .type(FundingType.SCHOLARSHIP).value("5").build();
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
@@ -188,7 +185,7 @@ public class ValidApplicationFormBuilder {
                 .qualification(qualification1, qualification2).status(ApplicationFormStatus.APPROVED).submittedDate(new Date()).cv(cvDocument)
                 .personalStatement(personalStatement).referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");
         applicationForm = getApplicationFormBuilder().build();
-        
+
         personalDetails.setApplication(applicationForm);
         qualification1.setApplication(applicationForm);
         qualification2.setApplication(applicationForm);
@@ -197,7 +194,7 @@ public class ValidApplicationFormBuilder {
         refereeOne.setApplication(applicationForm);
         refereeTwo.setApplication(applicationForm);
         additionalInformation.setApplication(applicationForm);
-        
+
         return applicationForm;
     }
 

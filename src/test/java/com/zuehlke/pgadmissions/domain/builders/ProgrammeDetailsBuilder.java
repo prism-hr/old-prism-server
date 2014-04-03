@@ -7,16 +7,14 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 
 public class ProgrammeDetailsBuilder {
 
 	private Integer id;
 	private ApplicationForm applicationForm;
-	private String programmeName;
-	private String studyOption;
-	private String studyOptionCode;
-	private String projectName;
+	private StudyOption studyOption;
 	private Date startDate;
 	private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
 	private SourcesOfInterest sourcesOfInterest;
@@ -37,26 +35,10 @@ public class ProgrammeDetailsBuilder {
 		return this;
 	}
 	
-	public ProgrammeDetailsBuilder programmeName(String programmeName) {
-		this.programmeName = programmeName;
-		return this;
-	}
-	
-	public ProgrammeDetailsBuilder studyOption(String studyOption) {
+	public ProgrammeDetailsBuilder studyOption(StudyOption studyOption) {
 		this.studyOption = studyOption;
 		return this;
 	}
-	
-	public ProgrammeDetailsBuilder studyOptionCode(String studyOptionCode) {
-        this.studyOptionCode = studyOptionCode;
-        return this;
-    }
-	
-	public ProgrammeDetailsBuilder studyOption(String studyOptionCode, String studyOption) {
-        this.studyOptionCode = studyOptionCode;
-        this.studyOption = studyOption;
-        return this;
-    }
 	
 	public ProgrammeDetailsBuilder applicationForm(ApplicationForm applicationForm) {
 		this.applicationForm = applicationForm;
@@ -65,12 +47,6 @@ public class ProgrammeDetailsBuilder {
 	
 	public ProgrammeDetailsBuilder startDate(Date startDate) {
 		this.startDate = startDate;
-		return this;
-	}
-	
-	
-	public ProgrammeDetailsBuilder projectName(String projectName) {
-		this.projectName = projectName;
 		return this;
 	}
 	
@@ -85,11 +61,8 @@ public class ProgrammeDetailsBuilder {
 		ProgramDetails programmeDetails = new ProgramDetails();
 		programmeDetails.setId(id);
 		programmeDetails.setApplication(applicationForm);
-		programmeDetails.setProjectName(projectName);
-		programmeDetails.setProgrammeName(programmeName);
 		programmeDetails.setStartDate(startDate);
 		programmeDetails.setStudyOption(studyOption);
-		programmeDetails.setStudyOption(studyOptionCode);
 		programmeDetails.getSuggestedSupervisors().addAll(suggestedSupervisors);
 		programmeDetails.setSourceOfInterest(sourcesOfInterest);
 		programmeDetails.setSourceOfInterestText(sourcesOfInterestText);

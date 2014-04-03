@@ -8,11 +8,8 @@ import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -40,7 +37,7 @@ public class PgAdmissionAuthenticationProviderTest {
 	public void shouldReturnPopulatedAuthenticationForValidCredentials() throws NoSuchAlgorithmException {
 		Role roleOne = new RoleBuilder().id(Authority.APPLICANT).build();
 		Role roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").roles(roleOne, roleTwo).id(1).build();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
         EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);

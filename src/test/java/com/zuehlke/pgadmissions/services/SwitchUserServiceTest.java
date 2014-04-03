@@ -42,10 +42,14 @@ public class SwitchUserServiceTest {
         role2 = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         
         user1 = new RegisteredUserBuilder().id(5).firstName("Jane").lastName("Doe").email("jane@doe.com")
-                .username("janeUsername").password("password").enabled(true).roles(role1).build();
+                .username("janeUsername").password("password").enabled(true)
+//                .roles(role1)
+                .build();
         
         user2 = new RegisteredUserBuilder().id(6).firstName("John").lastName("Doe").email("john@doe.com")
-                .username("johnUsername").password("password").enabled(true).roles(role1, role2).build();
+                .username("johnUsername").password("password").enabled(true)
+//                .roles(role1, role2)
+                .build();
         
         user2.setPrimaryAccount(user1);
         user1.getLinkedAccounts().add(user2);
@@ -81,24 +85,4 @@ public class SwitchUserServiceTest {
         authenticationProvider.authenticate(authenticationToken);
     }
 
-    @Test(expected = AccountExpiredException.class)
-    public void shouldThrowAccountExpiredExceptionForExpiredAccount() {
-        user2.setAccountNonExpired(false);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user1, user2);
-        authenticationProvider.authenticate(authenticationToken);
-    }
-
-    @Test(expected = CredentialsExpiredException.class)
-    public void shouldThrowCredentialsExpiredExceptionForExpiredCredentials() throws NoSuchAlgorithmException {
-        user2.setCredentialsNonExpired(false);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user1, user2);
-        authenticationProvider.authenticate(authenticationToken);
-    }
-
-    @Test(expected = LockedException.class)
-    public void shouldThrowLockedExceptionForLockedAccount() throws NoSuchAlgorithmException {
-        user2.setAccountNonLocked(false);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user1, user2);
-        authenticationProvider.authenticate(authenticationToken);
-    }    
 }

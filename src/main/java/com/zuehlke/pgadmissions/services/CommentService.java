@@ -118,7 +118,8 @@ public class CommentService {
         stateChangeComment.setNextStatus(nextStatus);
         stateChangeComment.setDelegateAdministrator(null);
         
-        if (BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights())) {
+        // TODO check if has global administration rights (PermissionsService) 
+        if (true) {
             if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
                 String delegateAdministratorEmail = stateChangeDTO.getDelegateEmail();
                 RegisteredUser userToSaveAsDelegate = userService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);

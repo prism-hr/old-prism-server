@@ -36,8 +36,10 @@ public class StateChangeValidator extends AbstractValidator {
         }
         
         ApplicationFormStatus nextStatus = stateChangeDTO.getNextStatus();
-        boolean stateChangeRequiresFastTrack = !(ApplicationFormStatus.APPROVED.equals(nextStatus) || ApplicationFormStatus.REJECTED.equals(nextStatus)) &&
-        		BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights());
+        boolean stateChangeRequiresFastTrack = !(ApplicationFormStatus.APPROVED.equals(nextStatus) || ApplicationFormStatus.REJECTED.equals(nextStatus))
+                // FIXME check it by invoking PermissionsService
+                 // && BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights())
+        		        ;
         boolean fastrackValueMissing = stateChangeDTO.getFastTrackApplication() == null && stateChangeDTO.getApplicationForm().getClosingDate() != null;        
         
         if(stateChangeRequiresFastTrack && fastrackValueMissing){

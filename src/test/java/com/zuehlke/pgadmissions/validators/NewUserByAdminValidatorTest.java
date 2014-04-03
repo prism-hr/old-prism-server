@@ -83,17 +83,4 @@ public class NewUserByAdminValidatorTest {
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("email").getCode());
 	}
 	
-	@Test
-	@Ignore
-	public void shouldRejectIfEmailThatOfExistingApplicant() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
-		user.setEmail("applicant@test.com");
-		EasyMock.reset(userServiceMock);
-		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("applicant@test.com"))
-				.andReturn(new RegisteredUserBuilder().id(1).roles(new RoleBuilder().id(Authority.APPLICANT).build()).build()).anyTimes();
-		EasyMock.replay(userServiceMock);
-		newUserByAdminValidator.validate(user, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("text.email.applicant", mappingResult.getFieldError("email").getCode());
-	}
 }

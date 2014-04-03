@@ -31,9 +31,6 @@ public class ProgramBuilder {
     private RegisteredUser contactUser;
     private String code;
     private boolean atasRequired;
-    private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
-    private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
-    private List<RegisteredUser> viewers = new ArrayList<RegisteredUser>();
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
     private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
@@ -88,30 +85,9 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder viewers(RegisteredUser... users) {
-        for (RegisteredUser approver : users) {
-            this.viewers.add(approver);
-        }
-        return this;
-    }
-
     public ProgramBuilder instances(ProgramInstance... instances) {
         for (ProgramInstance instance : instances) {
             this.instances.add(instance);
-        }
-        return this;
-    }
-
-    public ProgramBuilder approver(RegisteredUser... approvers) {
-        for (RegisteredUser approver : approvers) {
-            this.approvers.add(approver);
-        }
-        return this;
-    }
-
-    public ProgramBuilder administrators(RegisteredUser... administrators) {
-        for (RegisteredUser administrator : administrators) {
-            this.administrators.add(administrator);
         }
         return this;
     }
@@ -172,10 +148,7 @@ public class ProgramBuilder {
         program.setEnabled(enabled);
         program.setContactUser(contactUser);
         program.setCode(code);
-        program.getApprovers().addAll(approvers);
-        program.getAdministrators().addAll(administrators);
         program.getInstances().addAll(instances);
-        program.getViewers().addAll(viewers);
         program.getScoringDefinitions().putAll(scoringDefinitions);
         program.setAtasRequired(atasRequired);
         program.getClosingDates().addAll(programClosingDates);

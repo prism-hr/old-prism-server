@@ -52,7 +52,7 @@ public class MailSendingService extends AbstractMailSendingService {
     private void sendReferenceRequest(Referee referee, ApplicationForm application) {
         PrismEmailMessage message = null;
         try {
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(application.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "referee", "adminsEmails", "applicant", "application", "programme", "host" },
                     new Object[] { referee, adminsEmails, application.getApplicant(), application, application.getProgramDetails(), host });
             String subject = resolveMessage(REFEREE_NOTIFICATION, application);
@@ -74,7 +74,7 @@ public class MailSendingService extends AbstractMailSendingService {
         PrismEmailMessage message = null;
         try {
             RegisteredUser applicant = form.getApplicant();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
@@ -100,7 +100,7 @@ public class MailSendingService extends AbstractMailSendingService {
         PrismEmailMessage message = null;
         try {
             RegisteredUser applicant = form.getApplicant();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
@@ -126,7 +126,7 @@ public class MailSendingService extends AbstractMailSendingService {
         PrismEmailMessage message = null;
         try {
             RegisteredUser applicant = form.getApplicant();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(form.getProgram().getAdministrators());
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
@@ -146,14 +146,14 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewConfirmationToInterviewers(ApplicationForm applicationForm, List<RegisteredUser> interviewers) {
+    public void sendInterviewConfirmationToInterviewers(ApplicationForm application, List<RegisteredUser> interviewers) {
         PrismEmailMessage message = null;
         for (RegisteredUser interviewer : interviewers) {
             try {
-                String subject = resolveMessage(INTERVIEWER_NOTIFICATION, applicationForm);
-                List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
+                String subject = resolveMessage(INTERVIEWER_NOTIFICATION, application);
+                List<RegisteredUser> admins = roleService.getProgramAdministrators(application.getProgram());
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "interviewer", "application", "applicant", "host" },
-                        new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), interviewer, applicationForm, applicationForm.getApplicant(),
+                        new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), interviewer, application, application.getApplicant(),
                                 getHostName() });
                 message = buildMessage(interviewer, subject, modelBuilder.build(), INTERVIEWER_NOTIFICATION);
                 sendEmail(message);
@@ -163,25 +163,25 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewConfirmationToApplicant(ApplicationForm applicationForm) {
+    public void sendInterviewConfirmationToApplicant(ApplicationForm application) {
         PrismEmailMessage message = null;
         try {
-            String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, applicationForm, applicationForm.getLastStatus().getId().displayValue() );
-            List<RegisteredUser> admins = applicationForm.getProgram().getAdministrators();
+            String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, application, application.getLastStatus().getId().displayValue() );
+            List<RegisteredUser> admins = roleService.getProgramAdministrators(application.getProgram());
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), applicationForm, applicationForm.getApplicant(),
-                            configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, applicationForm.getLastStatus().getId().displayValue() });
+                    new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), application, application.getApplicant(),
+                            configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, application.getLastStatus().getId().displayValue() });
 
             Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.REJECTED.equals(applicationForm.getStatus())) {
-                model.put("reason", applicationForm.getRejection().getRejectionReason());
-                if (applicationForm.getRejection().isIncludeProspectusLink()) {
+            if (ApplicationFormStatus.REJECTED.equals(application.getStatus())) {
+                model.put("reason", application.getRejection().getRejectionReason());
+                if (application.getRejection().isIncludeProspectusLink()) {
                     model.put("prospectusLink", uclProspectusLink);
                 }
 
             }
-            message = buildMessage(applicationForm.getApplicant(), subject, model, MOVED_TO_INTERVIEW_NOTIFICATION);
+            message = buildMessage(application.getApplicant(), subject, model, MOVED_TO_INTERVIEW_NOTIFICATION);
             sendEmail(message);
         } catch (Exception e) {
             log.error("Error while sending interview confirmation email to applicant: {}", e);
@@ -197,7 +197,7 @@ public class MailSendingService extends AbstractMailSendingService {
         
         for (CommentAssignedUser assignedUser : assignInterviewersComment.getAssignedUsers()) {
             try {
-                List<RegisteredUser> admins = application.getProgram().getAdministrators();
+                List<RegisteredUser> admins = roleService.getProgramAdministrators(application.getProgram());
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
                         getAdminsEmailsCommaSeparatedAsString(admins), assignedUser.getUser(), application, getHostName() });
                 message = buildMessage(assignedUser.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_NOTIFICATION);

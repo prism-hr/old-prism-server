@@ -414,9 +414,9 @@ public class WorkflowService {
             administrators.put(superAdministrator, Authority.SUPERADMINISTRATOR);
         }
 
-        for (RegisteredUser administrator : applicationForm.getProgram().getAdministrators()) {
-            administrators.put(administrator, Authority.ADMINISTRATOR);
-        }
+//        for (RegisteredUser administrator : applicationForm.getProgram().getAdministrators()) {
+//            administrators.put(administrator, Authority.ADMINISTRATOR);
+//        }
 
         Project project = applicationForm.getProject();
         if (project != null) {

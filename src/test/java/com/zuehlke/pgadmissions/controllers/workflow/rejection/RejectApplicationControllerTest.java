@@ -84,7 +84,7 @@ public class RejectApplicationControllerTest {
 
     @Test
     public void getRejectionPage() {
-        RegisteredUser admin = new RegisteredUserBuilder().id(1).username("admin").role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
+        RegisteredUser admin = new RegisteredUserBuilder().id(1).username("admin").build();
         ApplicationForm application = new ApplicationForm();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
@@ -157,7 +157,7 @@ public class RejectApplicationControllerTest {
     @Test
     public void moveToRejectWithValidRejection() {
         ApplicationForm application = new ApplicationForm();
-        RegisteredUser admin = new RegisteredUserBuilder().id(1).username("admin").role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
+        RegisteredUser admin = new RegisteredUserBuilder().id(1).username("admin").build();
         Rejection rejection = new RejectionBuilder().id(3).build();
         BindingResult result = new BeanPropertyBindingResult(rejection, "rejection");
 
@@ -179,7 +179,7 @@ public class RejectApplicationControllerTest {
     @Test
     public void returnToRejectViewWithInvalidRejection() {
         ApplicationForm application = new ApplicationForm();
-        RegisteredUser admin = new RegisteredUserBuilder().id(1).username("admin").role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
+        RegisteredUser admin = new RegisteredUserBuilder().id(1).username("admin").build();
         Rejection rejection = new RejectionBuilder().id(3).build();
         BindingResult result = new DirectFieldBindingResult(rejection, "rejection");
         result.reject("error");

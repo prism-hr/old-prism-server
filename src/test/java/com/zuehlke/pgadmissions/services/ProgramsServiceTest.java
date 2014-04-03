@@ -178,53 +178,6 @@ public class ProgramsServiceTest {
     }
 
     @Test
-    public void shouldReturnAllProjectsForSuperAdministrator() {
-        Program program = EasyMock.createMock(Program.class);
-        RegisteredUser superAdmin = EasyMockUnitils.createMock(RegisteredUser.class);
-        expect(superAdmin.hasRole(superAdmin, Authority.SUPERADMINISTRATOR)).andReturn(true);
-        List<Project> allProjects = Collections.emptyList();
-        expect(programDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
-
-        replay();
-        List<Project> loadedProjects = programsService.listProjects(superAdmin, program);
-        verify();
-
-        assertSame(allProjects, loadedProjects);
-    }
-
-    @Test
-    public void shouldReturnAllProjectsForProgramAdministrator() {
-        Program program = EasyMock.createMock(Program.class);
-        RegisteredUser admin = EasyMockUnitils.createMock(RegisteredUser.class);
-        expect(admin.hasRole(admin, Authority.SUPERADMINISTRATOR)).andReturn(false);
-        expect(admin.isAdminInProgramme(program)).andReturn(true);
-        List<Project> allProjects = Collections.emptyList();
-        expect(programDAOMock.getProjectsForProgram(program)).andReturn(allProjects);
-
-        replay();
-        List<Project> loadedProjects = programsService.listProjects(admin, program);
-        verify();
-
-        assertSame(allProjects, loadedProjects);
-    }
-
-    @Test
-    public void shouldReturnProjectsForProgramOfAuthor() {
-        Program program = EasyMockUnitils.createMock(Program.class);
-        RegisteredUser user = EasyMockUnitils.createMock(RegisteredUser.class);
-        expect(user.hasRole(user, Authority.SUPERADMINISTRATOR)).andReturn(false);
-        expect(user.isAdminInProgramme(program)).andReturn(false);
-        List<Project> allProjects = Collections.emptyList();
-        expect(programDAOMock.getProjectsForProgramOfWhichAuthor(program, user)).andReturn(allProjects);
-
-        replay();
-        List<Project> loadedProjects = programsService.listProjects(user, program);
-        verify();
-
-        assertSame(allProjects, loadedProjects);
-    }
-
-    @Test
     public void shouldCreateNewCustomProgram() {
         Domicile domicile = new Domicile();
         ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);

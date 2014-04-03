@@ -13,58 +13,42 @@ import com.zuehlke.pgadmissions.dao.NotificationsDurationDAO;
 import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.dao.StageDurationDAO;
+import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
-import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @Service
 public class ConfigurationService {
 
-    private final StageDurationDAO stageDurationDAO;
-    
-    private final ReminderIntervalDAO reminderIntervalDAO;
-
-    private final NotificationsDurationDAO notificationsDurationDAO;
-    
-    private final PersonDAO personDAO;
-    
-    private final UserDAO userDAO;
-    
-    private final RoleDAO roleDAO;
-    
-    private final WorkflowService applicationFormUserRoleService;
-    
-    private final UserFactory userFactory;
-    
-
-    public ConfigurationService() {
-        this(null, null, null, null, null, null, null, null);
-    }
+    @Autowired
+    private StateDAO stateDAO;
 
     @Autowired
-    public ConfigurationService(final StageDurationDAO stageDurationDAO,
-            final ReminderIntervalDAO reminderIntervalDAO, final NotificationsDurationDAO notificationsDurationDAO,
-            final PersonDAO personDAO, final UserDAO userDAO, final WorkflowService applicationFormUserRoleService,
-            final UserFactory userFactory, final RoleDAO roleDAO) {
-        this.stageDurationDAO = stageDurationDAO;
-        this.reminderIntervalDAO = reminderIntervalDAO;
-        this.notificationsDurationDAO = notificationsDurationDAO;
-        this.personDAO = personDAO;
-        this.userDAO  = userDAO;
-        this.applicationFormUserRoleService = applicationFormUserRoleService;
-        this.userFactory = userFactory;
-        this.roleDAO = roleDAO;
-    }
+    private ReminderIntervalDAO reminderIntervalDAO;
+
+    @Autowired
+    private NotificationsDurationDAO notificationsDurationDAO;
+
+    @Autowired
+    private PersonDAO personDAO;
+
+    @Autowired
+    private UserDAO userDAO;
+
+    @Autowired
+    private RoleDAO roleDAO;
+
+    @Autowired
+    private WorkflowService applicationFormUserRoleService;
 
     @Transactional
     public Person getRegistryUserWithId(Integer id) {
@@ -85,11 +69,10 @@ public class ConfigurationService {
 
     @Transactional
     public void saveConfigurations(ServiceLevelsDTO serviceLevelsDTO) {
-        for (StageDuration stageDuration : serviceLevelsDTO.getStagesDuration()) {
-            StageDuration oldDuration = stageDurationDAO.getById(stageDuration.getStage());
-            if (oldDuration != null) {
-                oldDuration.setUnit(stageDuration.getUnit());
-                oldDuration.setDuration(stageDuration.getDuration());
+        for (State state : serviceLevelsDTO.getStagesDuration()) {
+            State oldState = stateDAO.getById(state.getId());
+            if (oldState != null) {
+                oldState.setDuration(state.getDuration());
             }
         }
 
@@ -100,13 +83,13 @@ public class ConfigurationService {
                 oldReminderInterval.setUnit(reminderInterval.getUnit());
             }
         }
-        
+
         NotificationsDuration notificationsDuration = serviceLevelsDTO.getNotificationsDuration();
         NotificationsDuration oldNotificationsDuration = notificationsDurationDAO.getNotificationsDuration();
         oldNotificationsDuration.setDuration(notificationsDuration.getDuration());
         oldNotificationsDuration.setUnit(notificationsDuration.getUnit());
     }
-    
+
     @Transactional
     public void saveRegistryUsers(List<Person> registryContacts, RegisteredUser requestedBy) {
         for (Person person : getAllRegistryUsers()) {
@@ -115,19 +98,19 @@ public class ConfigurationService {
                 removeAdmitterRoleToUser(person.getEmail());
             }
         }
-        
+
         for (Person person : registryContacts) {
             personDAO.save(person);
         }
-        
+
         for (Person person : registryContacts) {
             saveRegistryContactsAsUsers(person, requestedBy);
         }
     }
-    
+
     private void removeAdmitterRoleToUser(String email) {
         RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(email);
-        if (user!=null) {
+        if (user != null) {
             user.removeRole(Authority.ADMITTER);
             userDAO.save(user);
             applicationFormUserRoleService.deleteUserRole(user, Authority.ADMITTER);
@@ -143,11 +126,13 @@ public class ConfigurationService {
         viewerNotification.setAddedByUser(requestedBy);
         viewerNotification.setRole(roleDAO.getById(Authority.VIEWER));
         if (user == null) {
-            user = userFactory.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(), Authority.VIEWER, Authority.ADMITTER);
+            user = userFactory.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(),
+                    Authority.VIEWER, Authority.ADMITTER);
             user.getPendingRoleNotifications().add(viewerNotification);
             user.getPendingRoleNotifications().add(admitterNotification);
             userDAO.save(user);
-            applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);;
+            applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);
+            ;
         } else if (user != null && user.isNotInRole(Authority.ADMITTER)) {
             user.getRoles().add(roleDAO.getById(Authority.ADMITTER));
             user.getPendingRoleNotifications().add(admitterNotification);
@@ -157,20 +142,15 @@ public class ConfigurationService {
     }
 
     @Transactional
-    public Map<ApplicationFormStatus, StageDuration> getStageDurations() {
-        Map<ApplicationFormStatus, StageDuration> stageDurations = new HashMap<ApplicationFormStatus, StageDuration>();
-        ApplicationFormStatus[] configurableStages = getConfigurableStages();
-        for (ApplicationFormStatus applicationFormStatus : configurableStages) {
-            stageDurations.put(applicationFormStatus, stageDurationDAO.getById(applicationFormStatus));
-        }
-        return stageDurations;
+    public List<State> getConfigurableStates() {
+        return stateDAO.getAllConfigurableStates();
     }
 
     @Transactional
     public List<ReminderInterval> getReminderIntervals() {
         return reminderIntervalDAO.getReminderIntervals();
     }
-    
+
     @Transactional
     public NotificationsDuration getNotificationsDuration() {
         return notificationsDurationDAO.getNotificationsDuration();
@@ -178,19 +158,13 @@ public class ConfigurationService {
 
     private boolean containsRegistryUser(Person person, List<Person> persons) {
         for (Person entry : persons) {
-            if (entry.getId()!=null) {
+            if (entry.getId() != null) {
                 if (entry.getId().equals(person.getId())) {
                     return true;
                 }
             }
         }
         return false;
-    }
-
-    public ApplicationFormStatus[] getConfigurableStages() {
-        return new ApplicationFormStatus[] { 
-                ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW,
-                ApplicationFormStatus.INTERVIEW, ApplicationFormStatus.APPROVAL };
     }
 
 }

@@ -22,6 +22,9 @@ public class StudyOption implements Serializable {
         setDisplayName(displayName);
     }
     
+    public StudyOption() {
+    }
+    
     public String getId() {
         return id;
     }

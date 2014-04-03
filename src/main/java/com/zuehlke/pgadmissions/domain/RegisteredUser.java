@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -33,15 +35,16 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @AnalyzerDef(name = "registeredUserAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
 @Indexed
 @Entity(name = "REGISTERED_USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class RegisteredUser implements Comparable<RegisteredUser>, Serializable {
+public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, Serializable {
 
     private static final long serialVersionUID = 7913035836949510857L;
 
@@ -92,12 +95,6 @@ public class RegisteredUser implements Comparable<RegisteredUser>, Serializable 
     private String upi;
 
     private boolean enabled;
-
-    private boolean accountNonExpired;
-
-    private boolean accountNonLocked;
-
-    private boolean credentialsNonExpired;
 
     private String activationCode;
 
@@ -258,30 +255,6 @@ public class RegisteredUser implements Comparable<RegisteredUser>, Serializable 
         this.enabled = enabled;
     }
 
-    public boolean isAccountNonExpired() {
-        return accountNonExpired;
-    }
-
-    public void setAccountNonExpired(boolean accountNonExpired) {
-        this.accountNonExpired = accountNonExpired;
-    }
-
-    public boolean isAccountNonLocked() {
-        return accountNonLocked;
-    }
-
-    public void setAccountNonLocked(boolean accountNonLocked) {
-        this.accountNonLocked = accountNonLocked;
-    }
-
-    public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
-    }
-
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-        this.credentialsNonExpired = credentialsNonExpired;
-    }
-
     public String getActivationCode() {
         return activationCode;
     }
@@ -292,10 +265,6 @@ public class RegisteredUser implements Comparable<RegisteredUser>, Serializable 
 
     public List<Comment> getComments() {
         return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
     }
 
     public String getDirectToUrl() {
@@ -310,24 +279,12 @@ public class RegisteredUser implements Comparable<RegisteredUser>, Serializable 
         return pendingRoleNotifications;
     }
 
-    public void setPendingRoleNotifications(List<PendingRoleNotification> pendingRoleNotifications) {
-        this.pendingRoleNotifications = pendingRoleNotifications;
-    }
-
     public List<Referee> getReferees() {
         return referees;
     }
 
-    public void setReferees(List<Referee> referees) {
-        this.referees = referees;
-    }
-
     public List<RegisteredUser> getLinkedAccounts() {
         return linkedAccounts;
-    }
-
-    public void setLinkedAccounts(List<RegisteredUser> linkedAccounts) {
-        this.linkedAccounts = linkedAccounts;
     }
 
     public RegisteredUser getPrimaryAccount() {
@@ -382,7 +339,36 @@ public class RegisteredUser implements Comparable<RegisteredUser>, Serializable 
         return researchOpportunitiesFeeds;
     }
 
-    public void setResearchOpportunitiesFeeds(List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds) {
-        this.researchOpportunitiesFeeds = researchOpportunitiesFeeds;
+    public String getDisplayName() {
+        return firstName + " " + lastName;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public int compareTo(final RegisteredUser other) {
+        int firstNameResult = this.firstName.compareTo(other.firstName);
+        if (firstNameResult == 0) {
+            return this.lastName.compareTo(other.lastName);
+        }
+        return firstNameResult;
     }
 }

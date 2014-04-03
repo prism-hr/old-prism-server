@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -33,9 +34,12 @@ public class ProspectusController {
 
     @Autowired
     private ProgramInstanceService programInstanceService;
-    
+
     @Autowired
     private DomicileService domicileService;
+
+    @Autowired
+    private RoleService roleService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showProspectus() {
@@ -49,10 +53,11 @@ public class ProspectusController {
 
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
-        if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+        RegisteredUser currentUser = userService.getCurrentUser();
+        if (roleService.hasRole(currentUser, Authority.SUPERADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }
-        return userService.getCurrentUser().getProgramsOfWhichAdministrator();
+        return roleService.getProgramsByUserAndRole(currentUser, Authority.ADMINISTRATOR);
     }
 
     @ModelAttribute("projectProgrammes")
@@ -62,19 +67,19 @@ public class ProspectusController {
 
     @ModelAttribute("studyOptions")
     public List<StudyOption> getDistinctStudyOptions() {
-        return programInstanceService.getDistinctStudyOptions();
+        return programInstanceService.getAvailableStudyOptions();
     }
-    
+
     @ModelAttribute("countries")
     public List<Domicile> getAllEnabledDomiciles() {
-        return domicileService.getAllEnabledDomicilesExceptAlternateValues();
+        return domicileService.getAllEnabledDomiciles();
     }
-    
+
     @ModelAttribute("advertisingDeadlines")
     public List<Integer> getAdvertisingDeadlines() {
         return programInstanceService.getPossibleAdvertisingDeadlineYears();
     }
-    
+
     @ModelAttribute("programTypes")
     public List<ProgramType> getProgramTypes() {
         return programsService.getProgramTypes();

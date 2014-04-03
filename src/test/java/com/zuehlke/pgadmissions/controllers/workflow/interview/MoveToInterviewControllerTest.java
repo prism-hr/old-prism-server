@@ -5,20 +5,17 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 
 public class MoveToInterviewControllerTest {
     private ApplicationFormService applicationServiceMock;
-
-    @Mock
-    @InjectIntoByType
 
     @Mock
     @InjectIntoByType
@@ -46,7 +43,7 @@ public class MoveToInterviewControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ActionsProvider actionsProviderMock;
+    private ActionService actionsProviderMock;
 
     @Mock
     @InjectIntoByType
@@ -75,7 +72,7 @@ public class MoveToInterviewControllerTest {
 //    public void shouldReturnNewInterviewWithEmtpyInterviewersIfNoLatestInterview() {
 //
 //        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("abc").build();
-//        expect(applicationServiceMock.getApplicationByApplicationNumber("abc")).andReturn(application);
+//        expect(applicationServiceMock.getByApplicationNumber("abc")).andReturn(application);
 //
 //        replay(applicationServiceMock);
 //        Interview returnedInterview = controller.getInterview("abc");
@@ -93,7 +90,7 @@ public class MoveToInterviewControllerTest {
 //
 //        expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 //        expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-//        expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
+//        expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 //        replay(applicationServiceMock, currentUserMock);
 //
 //        ApplicationForm returnedForm = controller.getApplicationForm("5");
@@ -103,7 +100,7 @@ public class MoveToInterviewControllerTest {
 //
 //    @Test(expected = MissingApplicationFormException.class)
 //    public void shouldThrowResourceNotFoundExceptionIfApplicatioDoesNotExist() {
-//        expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
+//        expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(null);
 //
 //        replay(applicationServiceMock);
 //        controller.getApplicationForm("5");

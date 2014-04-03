@@ -28,10 +28,6 @@ public class DomicileService {
         return domicileDAO.getAllEnabledDomiciles();
     }
 
-    public List<Domicile> getAllEnabledDomicilesExceptAlternateValues() {
-    	return domicileDAO.getAllEnabledDomicilesExceptAlternateValues();
-    }
-
     public Domicile getDomicileById(Integer id) {
         return domicileDAO.getDomicileById(id);
     }

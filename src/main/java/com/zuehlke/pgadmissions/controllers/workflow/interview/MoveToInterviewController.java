@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
@@ -28,10 +27,11 @@ import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.InterviewTimeslotsPropertyEditor;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.utils.TimeZoneList;
 
 @Controller
@@ -41,10 +41,10 @@ public class MoveToInterviewController {
 
     private static final String INTERVIEWERS_SECTION = "/private/staff/interviewers/interviewer_section";
     private static final String INTERVIEW_PAGE = "/private/staff/interviewers/interview_details";
-    
+
     @Autowired
-    private ApplicationsService applicationsService;
-    
+    private ApplicationFormService applicationsService;
+
     @Autowired
     private UserService userService;
 
@@ -61,7 +61,7 @@ public class MoveToInterviewController {
     private ActionService actionService;
 
     @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
@@ -111,7 +111,7 @@ public class MoveToInterviewController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionService.getApplicationDescriptorForUser(applicationForm, user);
+        return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("usersInterestedInApplication")
@@ -150,9 +150,9 @@ public class MoveToInterviewController {
 
     @InitBinder("interview")
     public void registerValidatorAndPropertyEditor(WebDataBinder binder) {
-//        binder.setValidator(interviewValidator);
+        // binder.setValidator(interviewValidator);
         // FIXME consider creating CommentAssignedUserPropertyEditor
-//        binder.registerCustomEditor(Interviewer.class, interviewerPropertyEditor);
+        // binder.registerCustomEditor(Interviewer.class, interviewerPropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.registerCustomEditor(null, "timeslots", interviewTimeslotsPropertyEditor);

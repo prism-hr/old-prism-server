@@ -22,15 +22,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
+import org.unitils.inject.util.InjectionUtils;
 
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -42,6 +44,7 @@ import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.services.ProgramService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -56,7 +59,7 @@ public class ProgrammeDetailsValidatorTest {
 	
 	private ProgramInstance programInstance;
 	
-	private ProgramInstanceDAO programInstanceDAOMock;
+	private ProgramService programServiceMock;
 	
 	private Program program;
 	
@@ -77,36 +80,23 @@ public class ProgrammeDetailsValidatorTest {
             .build();
         programmeDetail.getSuggestedSupervisors().add(suggestedSupervisor);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-        EasyMock.replay(programInstanceDAOMock);
+        EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+        EasyMock.replay(programServiceMock);
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
-        EasyMock.verify(programInstanceDAOMock);
+        EasyMock.verify(programServiceMock);
 
         Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("suggestedSupervisors.duplicate.email", mappingResult.getFieldError("suggestedSupervisors").getCode());
 	}
 
 	@Test
-	public void shouldRejectIfProgrammeNameIsEmpty() {
-		programmeDetail.setProgrammeName(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "programmeName");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-		EasyMock.replay(programInstanceDAOMock);
-		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		EasyMock.verify(programInstanceDAOMock);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
-		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("programmeName").getCode());
-		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
-	}
-
-	@Test
 	public void shouldRejectIfStudyOptionIsEmpty() {
 		programmeDetail.setStudyOption(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "studyOption");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-		EasyMock.replay(programInstanceDAOMock);
+		EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+		EasyMock.replay(programServiceMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		EasyMock.verify(programInstanceDAOMock);
+		EasyMock.verify(programServiceMock);
 
 		Assert.assertEquals(2, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("studyOption").getCode());
@@ -117,10 +107,10 @@ public class ProgrammeDetailsValidatorTest {
 	public void shouldRejectIfStartDateIsEmpty() {
 		programmeDetail.setStartDate(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-		EasyMock.replay(programInstanceDAOMock);
+		EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+		EasyMock.replay(programServiceMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		EasyMock.verify(programInstanceDAOMock);
+		EasyMock.verify(programServiceMock);
 
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldErrors("startDate").get(0).getCode());
@@ -130,10 +120,10 @@ public class ProgrammeDetailsValidatorTest {
 	public void shouldRejectIfStartDateIsFutureDate() {
 		programmeDetail.setStartDate(DateUtils.addDays(new Date(), -1));
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-		EasyMock.replay(programInstanceDAOMock);
+		EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+		EasyMock.replay(programServiceMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		EasyMock.verify(programInstanceDAOMock);
+		EasyMock.verify(programServiceMock);
 	
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldErrors("startDate").get(0).getCode());
@@ -143,10 +133,10 @@ public class ProgrammeDetailsValidatorTest {
 	public void shouldRejectIfSourcesOfInterestIsEmpty() {
 		programmeDetail.setSourceOfInterest(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "sourcesOfInterest");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-		EasyMock.replay(programInstanceDAOMock);
+		EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+		EasyMock.replay(programServiceMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		EasyMock.verify(programInstanceDAOMock);
+		EasyMock.verify(programServiceMock);
 
 		Assert.assertEquals(2, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("sourcesOfInterest").getCode());
@@ -158,10 +148,10 @@ public class ProgrammeDetailsValidatorTest {
 	    SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().id(1).code("OTHER").name("Other").enabled(true).build();
 	    programmeDetail.setSourceOfInterest(sourcesOfInterest);
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "sourcesOfInterest");
-	    EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-	    EasyMock.replay(programInstanceDAOMock);
+	    EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+	    EasyMock.replay(programServiceMock);
 	    programmeDetailsValidator.validate(programmeDetail, mappingResult);
-	    EasyMock.verify(programInstanceDAOMock);
+	    EasyMock.verify(programServiceMock);
 
 	    Assert.assertEquals(2, mappingResult.getErrorCount());
 	    Assert.assertEquals("text.field.empty", mappingResult.getFieldError("sourcesOfInterestText").getCode());
@@ -172,10 +162,10 @@ public class ProgrammeDetailsValidatorTest {
     public void shouldRejectIfStartDateIsNotInRange() {
 	    programmeDetail.setStartDate(DateUtils.addYears(new Date(), 5));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-        EasyMock.replay(programInstanceDAOMock);
+        EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+        EasyMock.replay(programServiceMock);
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
-        EasyMock.verify(programInstanceDAOMock);
+        EasyMock.verify(programServiceMock);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("programmeDetails.startDate.invalid", mappingResult.getFieldError("startDate").getCode());
@@ -185,10 +175,10 @@ public class ProgrammeDetailsValidatorTest {
 	public void shouldRejectIfSuggestedSupervisorFirstNameIsEmpty() {
 		programmeDetail.getSuggestedSupervisors().get(0).setFirstname(null);
 		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-		EasyMock.replay(programInstanceDAOMock);
+		EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+		EasyMock.replay(programServiceMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		EasyMock.verify(programInstanceDAOMock);
+		EasyMock.verify(programServiceMock);
 
 		Assert.assertEquals(2, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("suggestedSupervisors").getCode());
@@ -200,10 +190,10 @@ public class ProgrammeDetailsValidatorTest {
         String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
         programmeDetail.getSuggestedSupervisors().get(0).setFirstname(chineseName);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-        EasyMock.replay(programInstanceDAOMock);
+        EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+        EasyMock.replay(programServiceMock);
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
-        EasyMock.verify(programInstanceDAOMock);
+        EasyMock.verify(programServiceMock);
 
         Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("You must enter ASCII compliant characters.", mappingResult.getFieldError("suggestedSupervisors[0].firstname").getDefaultMessage());
@@ -214,10 +204,10 @@ public class ProgrammeDetailsValidatorTest {
     public void shouldRejectIfSuggestedSupervisorFirstNameIsLongerThan30() {
         programmeDetail.getSuggestedSupervisors().get(0).setFirstname("PaulinePaulinePaulinePaulinePaulinePaulinePauline");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-        EasyMock.replay(programInstanceDAOMock);
+        EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+        EasyMock.replay(programServiceMock);
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
-        EasyMock.verify(programInstanceDAOMock);
+        EasyMock.verify(programServiceMock);
 
         Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("A maximum of 30 characters are allowed.", mappingResult.getFieldError("suggestedSupervisors[0].firstname").getDefaultMessage());
@@ -228,10 +218,10 @@ public class ProgrammeDetailsValidatorTest {
 	public void shouldRejectIfSuggestedSupervisorLastNameIsEmpty() {
 		programmeDetail.getSuggestedSupervisors().get(0).setLastname(null);
 		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-		EasyMock.replay(programInstanceDAOMock);
+		EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+		EasyMock.replay(programServiceMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		EasyMock.verify(programInstanceDAOMock);
+		EasyMock.verify(programServiceMock);
 
 		Assert.assertEquals(2, mappingResult.getErrorCount());
 		Assert.assertEquals("text.field.empty", mappingResult.getFieldError("suggestedSupervisors").getCode());
@@ -243,10 +233,10 @@ public class ProgrammeDetailsValidatorTest {
         String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
         programmeDetail.getSuggestedSupervisors().get(0).setLastname(chineseName);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-        EasyMock.replay(programInstanceDAOMock);
+        EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+        EasyMock.replay(programServiceMock);
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
-        EasyMock.verify(programInstanceDAOMock);
+        EasyMock.verify(programServiceMock);
 
         Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("You must enter ASCII compliant characters.", mappingResult.getFieldError("suggestedSupervisors[0].lastname").getDefaultMessage());
@@ -257,10 +247,10 @@ public class ProgrammeDetailsValidatorTest {
     public void shouldRejectIfSuggestedSupervisorLastNameIsLongerThan40() {
         programmeDetail.getSuggestedSupervisors().get(0).setLastname("PaulinePaulinePaulinePaulinePaulinePaulinePaulinePaulinePaulinePauline");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-        EasyMock.replay(programInstanceDAOMock);
+        EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+        EasyMock.replay(programServiceMock);
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
-        EasyMock.verify(programInstanceDAOMock);
+        EasyMock.verify(programServiceMock);
 
         Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("A maximum of 40 characters are allowed.", mappingResult.getFieldError("suggestedSupervisors[0].lastname").getDefaultMessage());
@@ -271,10 +261,10 @@ public class ProgrammeDetailsValidatorTest {
     public void shouldRejectIfSuggestedSupervisorEmailIsEmpty() {
         programmeDetail.getSuggestedSupervisors().get(0).setEmail(null);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-        EasyMock.replay(programInstanceDAOMock);
+        EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+        EasyMock.replay(programServiceMock);
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
-        EasyMock.verify(programInstanceDAOMock);
+        EasyMock.verify(programServiceMock);
 
         Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("text.field.empty", mappingResult.getFieldError("suggestedSupervisors").getCode());
@@ -285,10 +275,10 @@ public class ProgrammeDetailsValidatorTest {
     public void shouldRejectIfSuggestedSupervisorEmailContainsInvalidCharacter() {
         programmeDetail.getSuggestedSupervisors().get(0).setEmail("paul.@never.com");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-        EasyMock.replay(programInstanceDAOMock);
+        EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+        EasyMock.replay(programServiceMock);
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
-        EasyMock.verify(programInstanceDAOMock);
+        EasyMock.verify(programServiceMock);
 
         Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("You must enter a valid email address.", mappingResult.getFieldError("suggestedSupervisors[0].email").getDefaultMessage());
@@ -299,10 +289,10 @@ public class ProgrammeDetailsValidatorTest {
     public void shouldRejectIfSuggestedSupervisorEmailIsLongerThan255() {
         programmeDetail.getSuggestedSupervisors().get(0).setEmail("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890@a.com");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
-        EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
-        EasyMock.replay(programInstanceDAOMock);
+        EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Arrays.asList(programInstance));
+        EasyMock.replay(programServiceMock);
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
-        EasyMock.verify(programInstanceDAOMock);
+        EasyMock.verify(programServiceMock);
 
         Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("A maximum of 255 characters are allowed.", mappingResult.getFieldError("suggestedSupervisors[0].email").getDefaultMessage());
@@ -311,13 +301,13 @@ public class ProgrammeDetailsValidatorTest {
 
 	@Test
 	public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
-		programmeDetail.setStudyOption("Part-time");
-		programmeDetail.setStudyOption("31");
+	    StudyOption studyOption = new StudyOption("Dupa", "Jasia");
+		programmeDetail.setStudyOption(studyOption);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "studyOption");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPastAndSortByDeadline(program, programmeDetail.getStudyOption())).andReturn(null);
-		EasyMock.replay(programInstanceDAOMock);
+		EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(null);
+		EasyMock.replay(programServiceMock);
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		EasyMock.verify(programInstanceDAOMock);
+		EasyMock.verify(programServiceMock);
 
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("programmeDetails.studyOption.invalid", mappingResult.getFieldError("studyOption").getCode());
@@ -338,7 +328,9 @@ public class ProgrammeDetailsValidatorTest {
 	
 	@Test
 	public void shouldRejectIfApplicationSubmittedAndTermsAcceptedIsFalse() {
-		form.setStatus(ApplicationFormStatus.VALIDATION);
+		State validationState = new State();
+		validationState.setId(ApplicationFormStatus.VALIDATION);
+        form.setStatus(validationState);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 
@@ -349,7 +341,8 @@ public class ProgrammeDetailsValidatorTest {
 	@Test
 	public void shouldNotRejectIfApplicationsubmittedAndTermsAcceptedIsTrue() {
 		programmeDetail.setAcceptedTerms(true);
-		form.setStatus(ApplicationFormStatus.VALIDATION);
+		State validationState = new State();
+        validationState.setId(ApplicationFormStatus.VALIDATION);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 
@@ -358,7 +351,6 @@ public class ProgrammeDetailsValidatorTest {
 	
 	@Test
 	public void shouldNotRejectIfApplicationUnsubmittedAndTermsAcceptedIsFalse() {
-		form.setStatus(ApplicationFormStatus.UNSUBMITTED);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
 
@@ -399,9 +391,10 @@ public class ProgrammeDetailsValidatorTest {
 		    .startDate(DateUtils.addDays(new Date(),10)).applicationForm(form)
 		    .studyOption("1", "Full-time").build();
 		
-		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
+		programServiceMock = EasyMock.createMock(ProgramService.class);
 		
-		programmeDetailsValidator = new ProgramDetailsValidator(programInstanceDAOMock);
+		programmeDetailsValidator = new ProgramDetailsValidator();
+		InjectionUtils.injectInto(programServiceMock, programmeDetailsValidator, "programService");
 		programmeDetailsValidator.setValidator((javax.validation.Validator) validator);
 	}
 }

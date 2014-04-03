@@ -33,8 +33,8 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
     public void prepare() {
         applicationFormTransferDAO = new ApplicationFormTransferDAO(sessionFactory);
         RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();
+                .username("username").password("password")
+                .enabled(false).build();
 
         save(user);
         flushAndClearSession();
@@ -85,17 +85,17 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         ApplicationForm withdrawnForm1 = new ApplicationFormBuilder().advert(program).applicant(applicant).build();
         ApplicationForm rejectedForm1 = new ApplicationFormBuilder().advert(program).applicant(applicant).build();
         
-        approvedForm1.setStatus(ApplicationFormStatus.APPROVED);
-        approvedForm1.setApplicationNumber("1");
-        
-        approvedForm2.setStatus(ApplicationFormStatus.APPROVED);
-        approvedForm2.setApplicationNumber("2");
-        
-        withdrawnForm1.setStatus(ApplicationFormStatus.WITHDRAWN);
-        withdrawnForm1.setApplicationNumber("3");
-        
-        rejectedForm1.setStatus(ApplicationFormStatus.REJECTED);
-        rejectedForm1.setApplicationNumber("4");
+//        approvedForm1.setStatus(ApplicationFormStatus.APPROVED);
+//        approvedForm1.setApplicationNumber("1");
+//        
+//        approvedForm2.setStatus(ApplicationFormStatus.APPROVED);
+//        approvedForm2.setApplicationNumber("2");
+//        
+//        withdrawnForm1.setStatus(ApplicationFormStatus.WITHDRAWN);
+//        withdrawnForm1.setApplicationNumber("3");
+//        
+//        rejectedForm1.setStatus(ApplicationFormStatus.REJECTED);
+//        rejectedForm1.setApplicationNumber("4");
         
         DateTime now = new DateTime();
         

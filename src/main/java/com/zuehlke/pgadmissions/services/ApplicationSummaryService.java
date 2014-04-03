@@ -18,7 +18,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -52,18 +51,18 @@ public class ApplicationSummaryService {
 
     @Autowired
     public ApplicationSummaryService(final ApplicationFormService applicationsService, final UserService userService, final EncryptionHelper encryptionHelper,
-            final ActionsProvider actionsProvider) {
+            final ActionService actionService) {
         this.applicationsService = applicationsService;
         this.userService = userService;
         this.encryptionHelper = encryptionHelper;
-        this.actionsProvider = actionsProvider;
+        this.actionService = actionService;
     }
 
     private void addApplicationProperties(final ApplicationForm form, final Map<String, String> result) {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
         result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedDate()));
         result.put("applicationUpdateDate", dateFormat.format(form.getLastUpdated()));
-        ApplicationDescriptor applicationDescriptor = actionService.getApplicationDescriptorForUser(form, userService.getCurrentUser());
+        ApplicationDescriptor applicationDescriptor = applicationsService.getApplicationDescriptorForUser(form, userService.getCurrentUser());
         result.put("requiresAttention", BooleanUtils.toStringTrueFalse(applicationDescriptor.getNeedsToSeeUrgentFlag()));
         result.put("applicationNumber", form.getApplicationNumber());
     }

@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Preconditions;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProgramFeedDAO;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
@@ -43,7 +42,6 @@ public class ProgrammesImporter implements IProgrammesImporter {
 
     private ApplicationContext applicationContext;
     private final JAXBContext context;
-    private final ProgramInstanceDAO programInstanceDAO;
     private final ProgramDAO programDAO;
     private final ProgramFeedDAO programFeedDAO;
     private final ImportService importService;
@@ -52,15 +50,14 @@ public class ProgrammesImporter implements IProgrammesImporter {
     private final String password;
 
     public ProgrammesImporter() throws JAXBException {
-        this(null, null, null, null, null, null, null);
+        this(null, null, null, null, null, null);
     }
 
     @Autowired
-    public ProgrammesImporter(ApplicationContext applicationContext, ProgramInstanceDAO programDAO, ProgramDAO programDao, ProgramFeedDAO programFeedDAO, ImportService importService,
+    public ProgrammesImporter(ApplicationContext applicationContext, ProgramDAO programDao, ProgramFeedDAO programFeedDAO, ImportService importService,
             @Value("${xml.data.import.prismProgrammes.user}") String user, @Value("${xml.data.import.prismProgrammes.password}") String password)
             throws JAXBException {
         this.applicationContext = applicationContext;
-        this.programInstanceDAO = programDAO;
         this.programDAO = programDao;
         this.programFeedDAO = programFeedDAO;
         this.importService = importService;
@@ -95,12 +92,11 @@ public class ProgrammesImporter implements IProgrammesImporter {
         String feedUrl = programFeed.getFeedUrl();
         ProgrammeOccurrences programmes = unmarshallXML(feedUrl);
         List<PrismProgrammeAdapter> importData = createAdapter(programmes);
-        List<ProgramInstance> currentData = programInstanceDAO.getAllProgramInstances(programFeed);
+        List<ProgramInstance> currentData = programDAO.getAllProgramInstances(programFeed);
         List<ProgramInstance> changes = importService.merge(currentData, importData);
 
         for (ProgramInstance programInstance : changes) {
             programDAO.saveStudyOption(programInstance.getStudyOption());
-            programInstanceDAO.save(programInstance);
             Program program = programInstance.getProgram();
             if (program.getId() == null) {
                 program.setProgramFeed(programFeed);

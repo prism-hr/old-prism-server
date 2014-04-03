@@ -32,7 +32,7 @@ public class PermissionsServiceTest {
 
     @Mock
     @InjectIntoByType
-    private AuthenticationService authenticationService;
+    private UserService userService;
 
     @Mock
     @InjectIntoByType
@@ -49,7 +49,7 @@ public class PermissionsServiceTest {
     public void shouldBeAbleToSeeOpportunityRequestsIfSuperadmin() {
         RegisteredUser registeredUser = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
 
-        expect(authenticationService.getCurrentUser()).andReturn(registeredUser);
+        expect(userService.getCurrentUser()).andReturn(registeredUser);
 
         replay();
         assertTrue(service.canSeeOpportunityRequests());
@@ -60,7 +60,7 @@ public class PermissionsServiceTest {
     public void shouldBeAbleToSeeOpportunityRequestsIfRequestAuthor() {
         RegisteredUser registeredUser = new RegisteredUser();
 
-        expect(authenticationService.getCurrentUser()).andReturn(registeredUser);
+        expect(userService.getCurrentUser()).andReturn(registeredUser);
         expect(opportunityRequestDAO.getOpportunityRequestsForAuthor(registeredUser)).andReturn(Collections.singletonList(new OpportunityRequest()));
 
         replay();
@@ -72,7 +72,7 @@ public class PermissionsServiceTest {
     public void shouldNotBeAbleToSeeOpportunityRequests() {
         RegisteredUser registeredUser = new RegisteredUser();
 
-        expect(authenticationService.getCurrentUser()).andReturn(registeredUser);
+        expect(userService.getCurrentUser()).andReturn(registeredUser);
         expect(opportunityRequestDAO.getOpportunityRequestsForAuthor(registeredUser)).andReturn(Collections.<OpportunityRequest> emptyList());
 
         replay();
@@ -86,7 +86,7 @@ public class PermissionsServiceTest {
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
         OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.APPROVE).build();
 
-        expect(authenticationService.getCurrentUser()).andReturn(registeredUser).anyTimes();
+        expect(userService.getCurrentUser()).andReturn(registeredUser).anyTimes();
 
         replay();
         assertFalse(service.canPostOpportunityRequestComment(opportunityRequest, comment));
@@ -99,7 +99,7 @@ public class PermissionsServiceTest {
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
         OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.REVISE).build();
 
-        expect(authenticationService.getCurrentUser()).andReturn(registeredUser).anyTimes();
+        expect(userService.getCurrentUser()).andReturn(registeredUser).anyTimes();
 
         replay();
         assertTrue(service.canPostOpportunityRequestComment(opportunityRequest, comment));
@@ -111,7 +111,7 @@ public class PermissionsServiceTest {
         RegisteredUser registeredUser = new RegisteredUserBuilder().id(53425345).build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
 
-        expect(authenticationService.getCurrentUser()).andReturn(registeredUser);
+        expect(userService.getCurrentUser()).andReturn(registeredUser);
 
         replay();
         assertTrue(service.canSeeOpportunityRequest(opportunityRequest));
@@ -122,7 +122,7 @@ public class PermissionsServiceTest {
     public void shouldBeAbleToManageProjects() {
         RegisteredUser registeredUser = new RegisteredUser();
 
-        expect(authenticationService.getCurrentUser()).andReturn(registeredUser);
+        expect(userService.getCurrentUser()).andReturn(registeredUser);
         expect(programsService.getProgramsForWhichCanManageProjects(registeredUser)).andReturn(Collections.singletonList(new Program()));
 
         replay();

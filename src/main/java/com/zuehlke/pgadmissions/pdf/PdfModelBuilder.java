@@ -36,10 +36,12 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
-import com.zuehlke.pgadmissions.domain.PassportInformation;
+import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -423,35 +425,35 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         if (personalDetails != null && BooleanUtils.isTrue(personalDetails.getRequiresVisa())) {
-            PassportInformation passportInformation = personalDetails.getPassportInformation();
+            Passport passportInformation = personalDetails.getPassport();
             if (passportInformation != null) {
                 table.addCell(newTableCell("Passport Number", SMALL_BOLD_FONT));
 
-                if (StringUtils.isBlank(passportInformation.getPassportNumber())) {
+                if (StringUtils.isBlank(passportInformation.getNumber())) {
                     table.addCell(newTableCell(null, SMALL_FONT));
                 } else {
-                    table.addCell(newTableCell(passportInformation.getPassportNumber(), SMALL_FONT));
+                    table.addCell(newTableCell(passportInformation.getNumber(), SMALL_FONT));
                 }
 
                 table.addCell(newTableCell("Name on Passport", SMALL_BOLD_FONT));
-                if (StringUtils.isBlank(passportInformation.getNameOnPassport())) {
+                if (StringUtils.isBlank(passportInformation.getName())) {
                     table.addCell(newTableCell(null, SMALL_FONT));
                 } else {
-                    table.addCell(newTableCell(passportInformation.getNameOnPassport(), SMALL_FONT));
+                    table.addCell(newTableCell(passportInformation.getName(), SMALL_FONT));
                 }
 
                 table.addCell(newTableCell("Passport Issue Date", SMALL_BOLD_FONT));
-                if (passportInformation.getPassportIssueDate() == null) {
+                if (passportInformation.getIssueDate() == null) {
                     table.addCell(newTableCell(null, SMALL_FONT));
                 } else {
-                    table.addCell(newTableCell(dateFormat.format(passportInformation.getPassportIssueDate()), SMALL_FONT));
+                    table.addCell(newTableCell(dateFormat.format(passportInformation.getIssueDate()), SMALL_FONT));
                 }
 
                 table.addCell(newTableCell("Passport Expiry Date", SMALL_BOLD_FONT));
-                if (passportInformation.getPassportExpiryDate() == null) {
+                if (passportInformation.getExpiryDate() == null) {
                     table.addCell(newTableCell(null, SMALL_FONT));
                 } else {
-                    table.addCell(newTableCell(dateFormat.format(passportInformation.getPassportExpiryDate()), SMALL_FONT));
+                    table.addCell(newTableCell(dateFormat.format(passportInformation.getExpiryDate()), SMALL_FONT));
                 }
             }
         }
@@ -551,32 +553,33 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 
+        ApplicationFormAddress address = form.getApplicationFormAddress();
         table.addCell(newTableCell("Current Address", SMALL_BOLD_FONT));
-        if (form.getCurrentAddress() == null) {
+        if (address.getCurrentAddress() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            table.addCell(newTableCell(form.getCurrentAddress().getLocationString(), SMALL_FONT));
+            table.addCell(newTableCell(address.getCurrentAddress().getLocationString(), SMALL_FONT));
         }
 
         table.addCell(newTableCell("Country", SMALL_BOLD_FONT));
-        if (form.getCurrentAddress() == null) {
+        if (address.getCurrentAddress() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            table.addCell(newTableCell(form.getCurrentAddress().getDomicile().getName(), SMALL_FONT));
+            table.addCell(newTableCell(address.getCurrentAddress().getDomicile().getName(), SMALL_FONT));
         }
 
         table.addCell(newTableCell("Contact Address", SMALL_BOLD_FONT));
-        if (form.getContactAddress() == null) {
+        if (address.getContactAddress() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            table.addCell(newTableCell(form.getContactAddress().getLocationString(), SMALL_FONT));
+            table.addCell(newTableCell(address.getContactAddress().getLocationString(), SMALL_FONT));
         }
 
         table.addCell(newTableCell("Country", SMALL_BOLD_FONT));
-        if (form.getContactAddress() == null) {
+        if (address.getContactAddress() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
         } else {
-            table.addCell(newTableCell(form.getContactAddress().getDomicile().getName(), SMALL_FONT));
+            table.addCell(newTableCell(address.getContactAddress().getDomicile().getName(), SMALL_FONT));
         }
         pdfDocument.add(table);
     }
@@ -604,17 +607,11 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
                 table.addCell(newTableCell("Institution Country", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getInstitutionCountry().getName(), SMALL_FONT));
+                // TODO display country name rather than code
+                table.addCell(newTableCell(qualification.getInstitution().getDomicileCode(), SMALL_FONT));
 
                 table.addCell(newTableCell("Institution/Provider Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getQualificationInstitution(), SMALL_FONT));
-
-                table.addCell(newTableCell("Other Institution / Provider Name", SMALL_BOLD_FONT));
-                if (StringUtils.isNotBlank(qualification.getOtherQualificationInstitution())) {
-                    table.addCell(newTableCell(qualification.getOtherQualificationInstitution(), SMALL_FONT));
-                } else {
-                    table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
-                }
+                table.addCell(newTableCell(qualification.getInstitution().getName(), SMALL_FONT));
 
                 table.addCell(newTableCell("Qualification Type", SMALL_BOLD_FONT));
                 table.addCell(newTableCell(qualification.getQualificationType().getName(), SMALL_FONT));
@@ -632,20 +629,20 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(newTableCell(dateFormat.format(qualification.getQualificationStartDate()), SMALL_FONT));
 
                 table.addCell(newTableCell("Has this Qualification been awarded", SMALL_BOLD_FONT));
-                if (BooleanUtils.isTrue(qualification.isQualificationCompleted())) {
+                if (BooleanUtils.isTrue(qualification.getCompleted())) {
                     table.addCell(newTableCell("Yes", SMALL_FONT));
                 } else {
                     table.addCell(newTableCell("No", SMALL_FONT));
                 }
 
-                if (qualification.isQualificationCompleted()) {
+                if (qualification.getCompleted()) {
                     table.addCell(newTableCell("Grade/Result/GPA", SMALL_BOLD_FONT));
                 } else {
                     table.addCell(newTableCell("Expected Grade/Result/GPA", SMALL_BOLD_FONT));
                 }
                 table.addCell(newTableCell(qualification.getQualificationGrade(), SMALL_FONT));
 
-                if (BooleanUtils.isTrue(qualification.isQualificationCompleted())) {
+                if (BooleanUtils.isTrue(qualification.getCompleted())) {
                     table.addCell(newTableCell("Award Date", SMALL_BOLD_FONT));
                 } else {
                     table.addCell(newTableCell("Expected Award Date", SMALL_BOLD_FONT));
@@ -875,16 +872,18 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 
+        ApplicationFormDocument documents = form.getApplicationFormDocument();
+
         table.addCell(newTableCell("Personal Statement", SMALL_BOLD_FONT));
         if (includeAttachments) {
-            if (form.getPersonalStatement() != null) {
+            if (documents.getPersonalStatement() != null) {
                 table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                bookmarkMap.put(appendixCounter++, form.getPersonalStatement());
+                bookmarkMap.put(appendixCounter++, documents.getPersonalStatement());
             } else {
                 table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
             }
         } else {
-            if (form.getPersonalStatement() != null) {
+            if (documents.getPersonalStatement() != null) {
                 table.addCell(newTableCell(PROVIDED, SMALL_FONT));
             } else {
                 table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
@@ -893,14 +892,14 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
         table.addCell(newTableCell("CV/Resume", SMALL_BOLD_FONT));
         if (includeAttachments) {
-            if (form.getCv() != null) {
+            if (documents.getCv() != null) {
                 table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                bookmarkMap.put(appendixCounter++, form.getCv());
+                bookmarkMap.put(appendixCounter++, documents.getCv());
             } else {
                 table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
             }
         } else {
-            if (form.getCv() != null) {
+            if (documents.getCv() != null) {
                 table.addCell(newTableCell(PROVIDED, SMALL_FONT));
             } else {
                 table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));

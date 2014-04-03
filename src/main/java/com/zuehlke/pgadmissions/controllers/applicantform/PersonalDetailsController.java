@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
@@ -186,16 +185,6 @@ public class PersonalDetailsController {
     @ModelAttribute("languageQualificationTypes")
     public LanguageQualificationEnum[] getLanguageQualificationTypes() {
         return LanguageQualificationEnum.values();
-    }
-
-    @ModelAttribute("message")
-    public String getMessage(@RequestParam(required = false) String message) {
-        return message;
-    }
-
-    @ModelAttribute("errorCode")
-    public String getErrorCode(String errorCode) {
-        return errorCode;
     }
 
     private String returnView(ModelMap modelMap, PersonalDetails personalDetails, RegisteredUser updatedUser) {

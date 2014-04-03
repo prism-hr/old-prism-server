@@ -26,7 +26,6 @@ import org.springframework.context.ApplicationContext;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProgramFeedDAO;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -42,8 +41,6 @@ public class ProgrammesImporterTest {
     
     private ProgramDAO programDAO;
 
-    private ProgramInstanceDAO programInstanceDAO;
-
     private ProgramFeedDAO programFeedDAO;
 
     private ImportService importService;
@@ -52,10 +49,9 @@ public class ProgrammesImporterTest {
     public void setUp() throws MalformedURLException, JAXBException {
         applicationContext = EasyMock.createMock(ApplicationContext.class);
         programDAO = EasyMock.createMock(ProgramDAO.class);
-        programInstanceDAO = EasyMock.createMock(ProgramInstanceDAO.class);
         programFeedDAO = EasyMock.createMock(ProgramFeedDAO.class);
         importService = EasyMock.createMock(ImportService.class);
-        importer = new ProgrammesImporter(applicationContext, programInstanceDAO, programDAO, programFeedDAO, importService, "user", "password");
+        importer = new ProgrammesImporter(applicationContext, programDAO, programFeedDAO, importService, "user", "password");
     }
     
     @Test
@@ -102,11 +98,9 @@ public class ProgrammesImporterTest {
                 .applicationStartDate(startDate).studyOption("2", "option").enabled(true).build());
 
 
-        EasyMock.expect(programInstanceDAO.getAllProgramInstances(programFeed)).andReturn(currentData);
 
         List<ProgramInstance> changes = currentData.subList(0, 1);
         EasyMock.expect(importService.merge(EasyMock.same(currentData), EasyMock.anyObject(List.class))).andReturn(changes);
-        programInstanceDAO.save(EasyMock.same(changes.get(0)));
 
         EasyMock.expect(programDAO.getProgramByCode("DDNBENSING09")).andReturn(p1);
         EasyMock.expect(programDAO.getProgramByCode("DDNCIVSUSR09")).andReturn(p2);
@@ -114,11 +108,11 @@ public class ProgrammesImporterTest {
         programDAO.save(p1);
         programDAO.save(p2);
 
-        EasyMock.replay(programInstanceDAO, programDAO, importService);
+        EasyMock.replay(programDAO, importService);
 
         importer.importData(programFeed);
 
-        EasyMock.verify(programInstanceDAO, programDAO, importService);
+        EasyMock.verify(programDAO, importService);
 
         assertSame(programFeed, p2.getProgramFeed());
         Assert.assertTrue("The ATAS flag should have been updated to be true", p1.getAtasRequired());

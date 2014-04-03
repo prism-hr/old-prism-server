@@ -16,22 +16,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
+import org.unitils.inject.util.InjectionUtils;
 
-import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
 import com.zuehlke.pgadmissions.validators.LanguageQualificationValidator;
-import com.zuehlke.pgadmissions.validators.PassportInformationValidator;
+import com.zuehlke.pgadmissions.validators.PassportValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
@@ -45,7 +46,7 @@ public class ApplicationFormCopyHelperTest {
 
     private PersonalDetailsValidator personalDetailsValidator;
     private LanguageQualificationValidator languageQualificationValidator;
-    private PassportInformationValidator passportInformationValidator;
+    private PassportValidator passportInformationValidator;
     private QualificationValidator qualificationValidator;
     private EmploymentPositionValidator employmentPositionValidator;
     private FundingValidator fundingValidator;
@@ -57,7 +58,9 @@ public class ApplicationFormCopyHelperTest {
     @Test
     public void shouldCopyApplicationForm() {
         ApplicationForm applicationForm = new ValidApplicationFormBuilder().build();
-        applicationForm.setStatus(ApplicationFormStatus.UNSUBMITTED);
+        State state = new State();
+        state.setSubmitted(false);
+        applicationForm.setStatus(state);
         validateApplication(applicationForm);
 
         ApplicationForm newApplicationForm = new ApplicationForm();
@@ -112,13 +115,13 @@ public class ApplicationFormCopyHelperTest {
     @Before
     public void setup() {
 
-        DocumentDAO documentDAO = EasyMock.createMock(DocumentDAO.class);
+        DocumentService documentService = EasyMock.createMock(DocumentService.class);
         UserService userServiceMock = EasyMock.createMock(UserService.class);
 
         languageQualificationValidator = new LanguageQualificationValidator();
         languageQualificationValidator.setValidator(validator);
 
-        passportInformationValidator = new PassportInformationValidator();
+        passportInformationValidator = new PassportValidator();
         passportInformationValidator.setValidator(validator);
 
         personalDetailsValidator = new PersonalDetailsValidator(passportInformationValidator, languageQualificationValidator);
@@ -140,7 +143,7 @@ public class ApplicationFormCopyHelperTest {
         additionalInformationValidator.setValidator(validator);
 
         applicationFormCopyHelper = new ApplicationFormCopyHelper();
-        applicationFormCopyHelper.setDocumentDAO(documentDAO);
+        InjectionUtils.injectInto(documentService, applicationFormCopyHelper, "documentService");
 
         expect(userServiceMock.getCurrentUser()).andReturn(new RegisteredUserBuilder().email("jfi@zuhlke.pl").build()).anyTimes();
         replay(userServiceMock);

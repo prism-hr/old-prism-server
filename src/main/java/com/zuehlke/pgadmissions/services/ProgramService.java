@@ -12,22 +12,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
-import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service
 @Transactional
@@ -96,11 +94,8 @@ public class ProgramService {
     }
 
     public List<Project> listProjects(RegisteredUser user, Program program) {
-        if (user.checkUserHasRole(user, Authority.SUPERADMINISTRATOR) || user.isAdminInProgramme(program)) {
-            return programDAO.getProjectsForProgram(program);
-        } else {
-            return programDAO.getProjectsForProgramOfWhichAuthor(program, user);
-        }
+        // TODO implement
+        return null;
     }
 
     public String getDefaultClosingDate(Program program) {
@@ -113,8 +108,6 @@ public class ProgramService {
     }
 
     public void updateClosingDate(ProgramClosingDate closingDate) {
-        Program program = closingDate.getProgram();
-        program.setLastEditedTimestamp(new Date());
         programDAO.updateClosingDate(closingDate);
     }
 
@@ -125,7 +118,6 @@ public class ProgramService {
 
     public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {
         program.getClosingDates().add(programClosingDate);
-        program.setLastEditedTimestamp(new Date());
         programDAO.save(program);
     }
 
@@ -177,23 +169,25 @@ public class ProgramService {
     }
 
     protected void grantAdminPermissionsForProgram(RegisteredUser user, Program program) {
-        if (!HibernateUtils.containsEntity(user.getInstitutions(), program.getInstitution())) {
-            user.getInstitutions().add(program.getInstitution());
-        }
-        Role adminRole = roleService.getById(Authority.ADMINISTRATOR);
-        Role approverRole = roleService.getById(Authority.APPROVER);
-        if (!HibernateUtils.containsEntity(user.getRoles(), adminRole)) {
-            user.getRoles().add(adminRole);
-        }
-        if (!HibernateUtils.containsEntity(user.getRoles(), approverRole)) {
-            user.getRoles().add(approverRole);
-        }
-        if (!HibernateUtils.containsEntity(user.getProgramsOfWhichAdministrator(), program)) {
-            user.getProgramsOfWhichAdministrator().add(program);
-        }
-        if (!HibernateUtils.containsEntity(user.getProgramsOfWhichApprover(), program)) {
-            user.getProgramsOfWhichApprover().add(program);
-        }
+        // TODO try to reuse any method from RoleService
+        throw new UnsupportedOperationException();
+//        if (!HibernateUtils.containsEntity(user.getInstitutions(), program.getInstitution())) {
+//            user.getInstitutions().add(program.getInstitution());
+//        }
+//        Role adminRole = roleService.getById(Authority.ADMINISTRATOR);
+//        Role approverRole = roleService.getById(Authority.APPROVER);
+//        if (!HibernateUtils.containsEntity(user.getRoles(), adminRole)) {
+//            user.getRoles().add(adminRole);
+//        }
+//        if (!HibernateUtils.containsEntity(user.getRoles(), approverRole)) {
+//            user.getRoles().add(approverRole);
+//        }
+//        if (!HibernateUtils.containsEntity(user.getProgramsOfWhichAdministrator(), program)) {
+//            user.getProgramsOfWhichAdministrator().add(program);
+//        }
+//        if (!HibernateUtils.containsEntity(user.getProgramsOfWhichApprover(), program)) {
+//            user.getProgramsOfWhichApprover().add(program);
+//        }
     }
 
     public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
@@ -211,7 +205,7 @@ public class ProgramService {
     }
 
     public boolean canChangeInstitution(RegisteredUser user, OpportunityRequest opportunityRequest) {
-        if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
+        if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
             return true;
         }
 
@@ -220,11 +214,12 @@ public class ProgramService {
             return true;
         }
 
-        for (Institution institution : user.getInstitutions()) {
-            if (institution.getCode().equals(opportunityRequest.getInstitutionCode())) {
-                return true;
-            }
-        }
+        // TODO reimplement
+//        for (Institution institution : user.getInstitutions()) {
+//            if (institution.getCode().equals(opportunityRequest.getInstitutionCode())) {
+//                return true;
+//            }
+//        }
 
         return false;
 
@@ -279,7 +274,7 @@ public class ProgramService {
         return programDAO.getNextClosingDate(program);
     }
     
-    private RegisteredUser getContactUserForProgram(Program program, RegisteredUser candidateUser) {
+    protected RegisteredUser getContactUserForProgram(Program program, RegisteredUser candidateUser) {
         List<RegisteredUser> administrators = program.getAdministrators();
         if (!administrators.isEmpty()) {
             if (administrators.contains(candidateUser)) {
@@ -290,5 +285,6 @@ public class ProgramService {
         }
         return program.getContactUser();
     }
+
 
 }

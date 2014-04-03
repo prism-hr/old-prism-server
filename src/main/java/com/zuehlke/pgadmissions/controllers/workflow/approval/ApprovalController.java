@@ -82,7 +82,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     private DatePropertyEditor datePropertyEditor;
 
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
     
     @Autowired
     private CommentAssignedUserPropertyEditor assignedUserPropertyEditor;
@@ -232,7 +232,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
 
         if (!"newReferee".equals(editedRefereeId)) {
             Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
-            Referee referee = refereeService.getById(decryptedId);
+            Referee referee = refereeService.getRefereeById(decryptedId);
             if (referee.getReference() != null) {
                 return REFERENCE_SECTION;
             }

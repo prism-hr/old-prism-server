@@ -37,8 +37,9 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlin
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
-import com.zuehlke.pgadmissions.exceptions.PorticoExportServiceException;
+import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.PorticoService;
 
 /**
  * This is UCL data export service. Used for situations where we push data to UCL system (PORTICO).
@@ -47,20 +48,6 @@ import com.zuehlke.pgadmissions.services.ApplicationFormService;
 public class ExportService {
 
     private final Logger log = LoggerFactory.getLogger(ExportService.class);
-
-    private final WebServiceTemplate webServiceTemplate;
-
-    private final CommentDAO commentDAO;
-
-    private final UserDAO userDAO;
-
-    private SftpAttachmentsSendingService sftpAttachmentsSendingService;
-
-    private final ApplicationFormService applicationsService;
-
-    private final ApplicationFormTransferService applicationFormTransferService;
-
-    private final ApplicationContext context;
 
     private static final String PRISM_EXCEPTION = "There was an internal PRISM exception [applicationNumber=%s]";
 
@@ -76,31 +63,43 @@ public class ExportService {
 
     private static final String SFTP_CALL_FAILED_DIRECTORY = "The SFTP target directory is not accessible [applicationNumber=%s]";
 
-    public ExportService() {
-        this(null, null, null, null, null, null, null);
-    }
+    private WebServiceTemplate webServiceTemplate;
+
+    private CommentDAO commentDAO;
+
+    private UserDAO userDAO;
+
+    private SftpAttachmentsSendingService sftpAttachmentsSendingService;
+
+    private ApplicationFormService applicationsService;
+
+    private ApplicationFormTransferService applicationFormTransferService;
+
+    private PorticoService porticoService;
+
+    private final ApplicationContext context;
 
     @Autowired
     public ExportService(WebServiceTemplate webServiceTemplate, ApplicationFormService applicationsService, CommentDAO commentDAO, UserDAO userDAO,
             SftpAttachmentsSendingService sftpAttachmentsSendingService, ApplicationFormTransferService applicationFormTransferService,
-            ApplicationContext context) {
+            PorticoService porticoService, ApplicationContext context) {
         this.webServiceTemplate = webServiceTemplate;
         this.commentDAO = commentDAO;
         this.userDAO = userDAO;
         this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
         this.applicationFormTransferService = applicationFormTransferService;
         this.applicationsService = applicationsService;
+        this.porticoService = porticoService;
         this.context = context;
     }
 
     // oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
 
-    public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer) throws PorticoExportServiceException {
+    public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer) throws ExportServiceException {
         sendToPortico(form, transfer, new DeafListener());
     }
 
-    public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener)
-            throws PorticoExportServiceException {
+    public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener) throws ExportServiceException {
         try {
             log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getApplicationNumber()));
             ExportService proxy = context.getBean(this.getClass());
@@ -110,7 +109,7 @@ public class ExportService {
             form.setExported(true);
             applicationsService.save(form);
             commentDAO.save(new ApplicationTransferComment(form, userDAO.getSuperadministrators().get(0)));
-        } catch (PorticoExportServiceException e) {
+        } catch (ExportServiceException e) {
             throw e;
         } catch (Exception e) {
             applicationFormTransferService.processApplicationTransferError(listener, form, transfer, e, ApplicationTransferStatus.CANCELLED, PRISM_EXCEPTION,
@@ -130,7 +129,7 @@ public class ExportService {
 
     @Transactional
     public void sendWebServiceRequest(final ApplicationForm formObj, final ApplicationFormTransfer transferObj, final TransferListener listener)
-            throws PorticoExportServiceException {
+            throws ExportServiceException {
         ApplicationForm form = applicationsService.getById(formObj.getId());
         ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(form,
@@ -183,7 +182,7 @@ public class ExportService {
 
     @Transactional
     public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transferObj, final TransferListener listener)
-            throws PorticoExportServiceException {
+            throws ExportServiceException {
         ApplicationFormTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         try {
             listener.sftpTransferStarted(form);
@@ -227,7 +226,7 @@ public class ExportService {
     @Transactional
     protected void prepareApplicationForm(final ApplicationForm form) {
         if (form.getStatus().getId() == ApplicationFormStatus.WITHDRAWN || form.getStatus().getId() == ApplicationFormStatus.REJECTED) {
-            if (form.getReferencesToSendToPortico().size() < 2) {
+            if (porticoService.getReferencesToSendToPortico().size() < 2) {
                 final HashMap<Integer, Referee> refereesToSend = new HashMap<Integer, Referee>();
 
                 // try to find two referees which have provided a reference.

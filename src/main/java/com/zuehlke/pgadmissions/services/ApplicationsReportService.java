@@ -53,7 +53,7 @@ public class ApplicationsReportService {
     private static Logger logger = LoggerFactory.getLogger(ClassName.class.getName());
 
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Value("${application.host}") 
     private String host;
@@ -200,7 +200,7 @@ public class ApplicationsReportService {
                     row.addCell(getFundingTotal(app));
 
                     // overall rating
-                    row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
+//                    row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
                     row.addCell(app.getStatus().getId().displayValue());
 
                     // reference report
@@ -237,7 +237,7 @@ public class ApplicationsReportService {
                     row.addCell(getFundingTotal(app));
 
                     // overall rating
-                    row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
+//                    row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
                     row.addCell(canSeeRating ? String.valueOf(overallPositiveEndorsements) : N_R);
 
                     row.addCell(app.getStatus().getId().displayValue());

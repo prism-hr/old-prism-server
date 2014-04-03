@@ -50,6 +50,9 @@ public class ApplicationFormUserRole implements Serializable {
         @JoinColumn(name = "role", referencedColumnName = "role", insertable = false, nullable = false, updatable = false) })
     private HashSet<ApplicationFormActionRequired> actions = new HashSet<ApplicationFormActionRequired>();
 
+    public ApplicationFormUserRole() {
+    }
+    
     public ApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Role role, Boolean interestedInApplicant,
             HashSet<ApplicationFormActionRequired> actions) {
         setId(applicationForm, user, role);

@@ -91,7 +91,7 @@ public class RegisteredUserIrisProfileController {
         }
         
         List<RegisteredUser> usersWithUpi = userService.getUsersWithUpi(upi);
-        List<RegisteredUser> linkedAccounts = currentUser.getAllLinkedAccounts();
+        List<RegisteredUser> linkedAccounts = currentUser.getLinkedAccounts();
         List<RegisteredUser> intersection = ListUtils.subtract(usersWithUpi, linkedAccounts);
         
         if (intersection.isEmpty()) {
@@ -113,7 +113,7 @@ public class RegisteredUserIrisProfileController {
     @ResponseBody
     public void unlinkIrisProfileForCurrentUser() {
         RegisteredUser currentUser = userService.getCurrentUser();
-        List<RegisteredUser> linkedAccounts = currentUser.getAllLinkedAccounts();
+        List<RegisteredUser> linkedAccounts = currentUser.getLinkedAccounts();
         for(RegisteredUser account : linkedAccounts){
             account.setUpi(null);
             userService.save(account);

@@ -30,7 +30,7 @@ public class CommentTimelineController {
 	private UserService userService;
 	
 	@Autowired
-	private ApplicationsService applicationService;
+	private ApplicationFormService applicationService;
 	
 	@Autowired
 	private CommentService commentService;

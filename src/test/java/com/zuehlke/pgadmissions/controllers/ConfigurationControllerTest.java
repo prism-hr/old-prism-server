@@ -35,16 +35,14 @@ import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
-import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ThrottleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -126,28 +124,13 @@ public class ConfigurationControllerTest {
     @Test
     public void shouldRegistorPropertyEditorForStageDurations() {
         WebDataBinder dataBinderMock = EasyMock.createMock(WebDataBinder.class);
-        dataBinderMock.registerCustomEditor(StageDuration.class, stageDurationPropertyEditorMock);
+        dataBinderMock.registerCustomEditor(State.class, stageDurationPropertyEditorMock);
         dataBinderMock.registerCustomEditor(ReminderInterval.class, reminderIntervalPropertyEditorMock);
         dataBinderMock.registerCustomEditor(NotificationsDuration.class, notificationsDurationPropertyEditorMock);
 
         EasyMock.replay(dataBinderMock);
         controller.registerValidatorsAndPropertyEditors(dataBinderMock);
         EasyMock.verify(dataBinderMock);
-    }
-
-    @Test
-    public void shouldGetStageDurationsConvertedToStringKeys() {
-        Map<ApplicationFormStatus, StageDuration> map = new HashMap<ApplicationFormStatus, StageDuration>();
-        StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).build();
-        map.put(ApplicationFormStatus.VALIDATION, validationDuration);
-        StageDuration approvalDuration = new StageDurationBuilder().stage(ApplicationFormStatus.APPROVAL).build();
-        map.put(ApplicationFormStatus.APPROVAL, approvalDuration);
-        EasyMock.expect(configurationServiceMock.getStageDurations()).andReturn(map);
-        EasyMock.replay(configurationServiceMock);
-        Map<String, StageDuration> stageDurations = controller.getStageDurations();
-        assertEquals(2, stageDurations.size());
-        assertEquals(validationDuration, stageDurations.get("VALIDATION"));
-        assertEquals(approvalDuration, stageDurations.get("APPROVAL"));
     }
 
     @Test

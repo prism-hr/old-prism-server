@@ -13,11 +13,7 @@ public class ReviewServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsService;
-
-    @Mock
-    @InjectIntoByType
-    private StageDurationService stageDurationService;
+    private ApplicationFormService applicationsService;
 
     @Mock
     @InjectIntoByType
@@ -25,7 +21,7 @@ public class ReviewServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     @TestedObject
     private ReviewService reviewService;

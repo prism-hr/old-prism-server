@@ -24,7 +24,7 @@ public class RefereePropertyEditorTest {
 		public void shouldLoadByIdAndSetAsValue(){
 			Referee referee = new RefereeBuilder().id(1).build();
 			EasyMock.expect(encryptionHelper.decrypt("1")).andReturn("1");
-			EasyMock.expect(refereeServiceMock.getById(1)).andReturn(referee);
+			EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
 			EasyMock.replay(refereeServiceMock, encryptionHelper);
 			editor.setAsText("1");
 			assertEquals(referee, editor.getValue());

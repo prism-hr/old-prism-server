@@ -104,23 +104,14 @@ public class ProgramDetailsController {
                 ApplicationFormAction.CORRECT_APPLICATION);
     }
 
-    @ModelAttribute("message")
-    public String getMessage(@RequestParam(required = false) String message) {
-        return message;
-    }
-
     @InitBinder(value = "programmeDetails")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(programmeDetailsValidator);
-        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
         binder.registerCustomEditor(SuggestedSupervisor.class, supervisorJSONPropertyEditor);
         binder.registerCustomEditor(SourcesOfInterest.class, sourcesOfInterestPropertyEditor);
-    }
-
-    public StringTrimmerEditor newStringTrimmerEditor() {
-        return new StringTrimmerEditor(false);
     }
 
     private String returnView(ModelMap modelMap, ProgramDetails programDetails) {

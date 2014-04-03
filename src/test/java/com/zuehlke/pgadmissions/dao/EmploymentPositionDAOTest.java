@@ -17,77 +17,79 @@ import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
-	private RegisteredUser user;
-	private Program program;
 
-	@Test(expected = NullPointerException.class)
-	public void shouldThrowNullPointerException() {
-		EmploymentPositionDAO positionDAO = new EmploymentPositionDAO();
-		EmploymentPosition position = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
-		positionDAO.delete(position);
-	}
+    private RegisteredUser user;
 
-	@Test
-	public void shouldDeleteEmploymentPosition() {
-		ApplicationForm application = new ApplicationForm();
-		application.setAdvert(program);
-		application.setApplicant(user);
-		
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().address1("Address").application(application).employerName("fr")
-				.endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
-		save(application, employmentPosition);
-		flushAndClearSession();
+    private Program program;
 
-		Integer id = employmentPosition.getId();
-		EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
-		dao.delete(employmentPosition);
-		flushAndClearSession();
-		assertNull(sessionFactory.getCurrentSession().get(EmploymentPosition.class, id));
-	}
+    @Test(expected = NullPointerException.class)
+    public void shouldThrowNullPointerException() {
+        EmploymentPositionDAO positionDAO = new EmploymentPositionDAO();
+        EmploymentPosition position = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
+        positionDAO.delete(position);
+    }
 
-	@Test
-	public void shouldSaveEmployemnt() {
-		ApplicationForm application = new ApplicationForm();
-		application.setAdvert(program);
-		application.setApplicant(user);
-		
-		save(application);
-		flushAndClearSession();
+    @Test
+    public void shouldDeleteEmploymentPosition() {
+        ApplicationForm application = new ApplicationForm();
+        application.setAdvert(program);
+        application.setApplicant(user);
 
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().address1("Address").application(application).employerName("fr")
-				.endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
+        EmploymentPosition employmentPosition = new EmploymentPositionBuilder().address1("Address").application(application).employerName("fr")
+                .endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
+        save(application, employmentPosition);
+        flushAndClearSession();
 
-		EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
-		dao.save(employmentPosition);
-		flushAndClearSession();
+        Integer id = employmentPosition.getId();
+        EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
+        dao.delete(employmentPosition);
+        flushAndClearSession();
+        assertNull(sessionFactory.getCurrentSession().get(EmploymentPosition.class, id));
+    }
 
-		assertEquals(employmentPosition.getId(), ((EmploymentPosition) sessionFactory.getCurrentSession().get(EmploymentPosition.class, employmentPosition.getId())).getId());
-	}
+    @Test
+    public void shouldSaveEmployemnt() {
+        ApplicationForm application = new ApplicationForm();
+        application.setAdvert(program);
+        application.setApplicant(user);
 
-	@Test
-	public void shouldGetEmploymentById() {
-		ApplicationForm application = new ApplicationForm();
-		application.setAdvert(program);
-		application.setApplicant(user);
-		
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().address1("Address").application(application).employerName("fr")
-				.endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
-		save(application, employmentPosition);
-		flushAndClearSession();
+        save(application);
+        flushAndClearSession();
 
-		EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
-		EmploymentPosition reloadedPosistion = dao.getById(employmentPosition.getId());
-		assertEquals(employmentPosition.getId(), reloadedPosistion.getId());
+        EmploymentPosition employmentPosition = new EmploymentPositionBuilder().address1("Address").application(application).employerName("fr")
+                .endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
 
-	}
+        EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
+        dao.save(employmentPosition);
+        flushAndClearSession();
 
-	@Before
-	public void prepare() {
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username").password("password").accountNonExpired(false).accountNonLocked(false)
-                .credentialsNonExpired(false).enabled(false).build();
-		save(user);
-		flushAndClearSession();
-		program = testObjectProvider.getEnabledProgram();
-	}
+        assertEquals(employmentPosition.getId(),
+                ((EmploymentPosition) sessionFactory.getCurrentSession().get(EmploymentPosition.class, employmentPosition.getId())).getId());
+    }
+
+    @Test
+    public void shouldGetEmploymentById() {
+        ApplicationForm application = new ApplicationForm();
+        application.setAdvert(program);
+        application.setApplicant(user);
+
+        EmploymentPosition employmentPosition = new EmploymentPositionBuilder().address1("Address").application(application).employerName("fr")
+                .endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
+        save(application, employmentPosition);
+        flushAndClearSession();
+
+        EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
+        EmploymentPosition reloadedPosistion = dao.getById(employmentPosition.getId());
+        assertEquals(employmentPosition.getId(), reloadedPosistion.getId());
+
+    }
+
+    @Before
+    public void prepare() {
+        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+                .build();
+        save(user);
+        flushAndClearSession();
+        program = testObjectProvider.getEnabledProgram();
+    }
 }

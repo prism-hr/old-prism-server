@@ -6,33 +6,27 @@ import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.StudyOption;
 
 public class ProgramInstanceBuilder {
 
     private Date applicationDeadline;
     private Date applicationStartDate;
     private String academicYear;
-    private String studyOption;
-    private String studyOptionCode;
+    private StudyOption studyOption;
     private Integer id;
     private Program program;
     private Boolean enabled;
     private String identifier;
     private Date disabledDate;
 
-    public ProgramInstanceBuilder studyOptionCode(String id) {
-        this.studyOptionCode = id;
-        return this;
-    }
-
-    public ProgramInstanceBuilder studyOption(String option) {
+    public ProgramInstanceBuilder studyOption(StudyOption option) {
         this.studyOption = option;
         return this;
     }
 
     public ProgramInstanceBuilder studyOption(String id, String option) {
-        this.studyOption = option;
-        this.studyOptionCode = id;
+        this.studyOption = new StudyOption(id, option);
         return this;
     }
 
@@ -80,7 +74,6 @@ public class ProgramInstanceBuilder {
         ProgramInstance programInstance = new ProgramInstance();
         programInstance.setApplicationDeadline(applicationDeadline);
         programInstance.setStudyOption(studyOption);
-        programInstance.setStudyOption(studyOptionCode);
         programInstance.setId(id);
         programInstance.setIdentifier(identifier);
         programInstance.setProgram(program);

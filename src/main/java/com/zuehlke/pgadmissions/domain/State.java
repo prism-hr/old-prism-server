@@ -145,4 +145,9 @@ public class State {
         this.underConsideration = underConsideration;
     }
     
+    public State withId(ApplicationFormStatus id) {
+        this.id = id;
+        return this;
+    }
+    
 }

@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public abstract class AbstractMailSendingService {
@@ -38,7 +39,7 @@ public abstract class AbstractMailSendingService {
     protected UserDAO userDAO;
 
     @Autowired
-    protected RoleDAO roleDAO;
+    protected RoleService roleService;
 
     @Autowired
     protected EncryptionUtils encryptionUtils;
@@ -55,7 +56,7 @@ public abstract class AbstractMailSendingService {
 
     protected RegisteredUser processRefereeAndGetAsUser(final Referee referee) {
         RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
-        Role refereeRole = roleDAO.getById(Authority.REFEREE);
+        Role refereeRole = roleService.getById(Authority.REFEREE);
 
         if (userExists(user) && !isUserReferee(user)) {
             user.getRoles().add(refereeRole);

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Named;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -57,6 +57,7 @@ import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.services.ExportQueueService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
@@ -69,60 +70,50 @@ public class ConfigurationController {
     private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
     private static final String CONFIGURATION_SECTION_NAME = "/private/staff/superAdmin/configuration_section";
 
-    private final JsonPropertyEditor stageDurationPropertyEditor;
+    @Resource(name = "stageDurationPropertyEditor")
+    private JsonPropertyEditor stageDurationPropertyEditor;
 
-    private final JsonPropertyEditor reminderIntervalPropertyEditor;
+    @Resource(name = "reminderIntervalPropertyEditor")
+    private JsonPropertyEditor reminderIntervalPropertyEditor;
 
-    private final JsonPropertyEditor notificationsDurationPropertyEditor;
-
-    private final UserService userService;
-
-    private final ConfigurationService configurationService;
-
-    private final EmailTemplateService templateService;
-
-    private final ThrottleService throttleService;
-
-    private final ExportQueueService queueService;
-
-    private final ProgramService programsService;
-
-    private final ScoringDefinitionParser scoringDefinitionParser;
-
-    private final ScoreFactory scoreFactory;
-
-    private final ScoresPropertyEditor scoresPropertyEditor;
-
-    private final FeedbackCommentValidator dummyCommentValidator;
-
-    private final ApplicationContext applicationContext;
-
-    public ConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-    }
+    @Resource(name = "notificationsDurationPropertyEditor")
+    private JsonPropertyEditor notificationsDurationPropertyEditor;
 
     @Autowired
-    public ConfigurationController(@Named(value = "stageDurationPropertyEditor") JsonPropertyEditor stageDurationPropertyEditor,
-            @Named(value = "reminderIntervalPropertyEditor") JsonPropertyEditor reminderIntervalPropertyEditor,
-            @Named(value = "notificationsDurationPropertyEditor") JsonPropertyEditor notificationsDurationPropertyEditor, UserService userService,
-            ConfigurationService configurationService, EmailTemplateService templateService, ThrottleService throttleService, ExportQueueService queueService,
-            ProgramService programsService, ScoringDefinitionParser scoringDefinitionParser, ScoreFactory scoreFactory,
-            ScoresPropertyEditor scoresPropertyEditor, FeedbackCommentValidator dummyCommentValidator, ApplicationContext applicationContext) {
-        this.stageDurationPropertyEditor = stageDurationPropertyEditor;
-        this.reminderIntervalPropertyEditor = reminderIntervalPropertyEditor;
-        this.notificationsDurationPropertyEditor = notificationsDurationPropertyEditor;
-        this.userService = userService;
-        this.configurationService = configurationService;
-        this.templateService = templateService;
-        this.throttleService = throttleService;
-        this.queueService = queueService;
-        this.programsService = programsService;
-        this.scoringDefinitionParser = scoringDefinitionParser;
-        this.scoreFactory = scoreFactory;
-        this.scoresPropertyEditor = scoresPropertyEditor;
-        this.dummyCommentValidator = dummyCommentValidator;
-        this.applicationContext = applicationContext;
-    }
+    private UserService userService;
+
+    @Autowired
+    private ConfigurationService configurationService;
+
+    @Autowired
+    private EmailTemplateService templateService;
+
+    @Autowired
+    private ThrottleService throttleService;
+
+    @Autowired
+    private ExportQueueService queueService;
+
+    @Autowired
+    private ProgramService programsService;
+
+    @Autowired
+    private ScoringDefinitionParser scoringDefinitionParser;
+
+    @Autowired
+    private ScoreFactory scoreFactory;
+
+    @Autowired
+    private ScoresPropertyEditor scoresPropertyEditor;
+
+    @Autowired
+    private FeedbackCommentValidator dummyCommentValidator;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private RoleService roleService;
 
     @InitBinder(value = "serviceLevelsDTO")
     public void registerValidatorsAndPropertyEditors(WebDataBinder binder) {
@@ -133,7 +124,8 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getConfigurationPage() {
-        if (!getUser().isInRole(Authority.SUPERADMINISTRATOR) && !getUser().isInRole(Authority.ADMINISTRATOR)) {
+        RegisteredUser user = userService.getCurrentUser();
+        if (!roleService.hasRole(user, Authority.SUPERADMINISTRATOR) && !roleService.hasRole(user, Authority.ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
         return CONFIGURATION_VIEW_NAME;
@@ -141,7 +133,7 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET, value = "config_section")
     public String getConfigurationSection() {
-        if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+        if (!roleService.hasRole(getUser(), Authority.SUPERADMINISTRATOR)) {
             return "/private/common/simpleMessage";
         }
         return CONFIGURATION_SECTION_NAME;
@@ -149,7 +141,8 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute ServiceLevelsDTO serviceLevelsDTO) {
-        if (!getUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+        RegisteredUser user = userService.getCurrentUser();
+        if (!roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
         configurationService.saveConfigurations(serviceLevelsDTO);
@@ -329,12 +322,11 @@ public class ConfigurationController {
     public List<ReminderInterval> getReminderIntervals() {
         return configurationService.getReminderIntervals();
     }
-    
+
     @ModelAttribute("notificationsDuration")
     public NotificationsDuration getNotificationsDuration() {
         return configurationService.getNotificationsDuration();
     }
-    
 
     @ModelAttribute("units")
     public DurationUnitEnum[] getUnits() {
@@ -348,10 +340,11 @@ public class ConfigurationController {
 
     @ModelAttribute("programs")
     public List<Program> getPrograms() {
-        if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+        RegisteredUser user = userService.getCurrentUser();
+        if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }
-        return userService.getCurrentUser().getProgramsOfWhichAdministrator();
+        return roleService.getProgramsByUserAndRole(user, Authority.ADMINISTRATOR);
     }
 
     private Map<String, String> validateScoringDefinition(String programCode, String scoringContent) {

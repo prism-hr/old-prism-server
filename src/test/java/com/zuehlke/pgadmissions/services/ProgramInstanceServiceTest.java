@@ -90,10 +90,8 @@ public class ProgramInstanceServiceTest {
     public void shouldGetDistinctStudyOptions() {
         List<Object[]> options = Lists.newArrayList(new Object[] { "code1", "option1" }, new Object[] { "code2", "option2" });
 
-        expect(programService.getDistinctStudyOptions()).andReturn(options);
-
         replay();
-        List<StudyOption> studyOptions = service.getDistinctStudyOptions();
+        List<StudyOption> studyOptions = service.getAvailableStudyOptions();
         verify();
 
         assertThat(studyOptions, containsInAnyOrder(new StudyOption("code1", "option1"), new StudyOption("code2", "option2")));
@@ -173,7 +171,6 @@ public class ProgramInstanceServiceTest {
         expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
         expect(thisBean.findPenultimateSeptemberMonday(2013)).andReturn(monday2013);
         expect(thisBean.findPenultimateSeptemberMonday(2014)).andReturn(monday2014);
-        expect(programService.getProgramInstance(program, fullTimeOption, monday2013.toDate())).andReturn(programInstance);
         programDAO.save(programInstance);
 
         replay();
@@ -195,8 +192,6 @@ public class ProgramInstanceServiceTest {
         expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
         expect(thisBean.findPenultimateSeptemberMonday(2013)).andReturn(monday2013);
         expect(thisBean.findPenultimateSeptemberMonday(2014)).andReturn(monday2014);
-        expect(programService.getProgramInstance(program, fullTimeOption, monday2013.toDate())).andReturn(null);
-        programService.save(isA(ProgramInstance.class));
 
         replay();
         ProgramInstance returned = service.createOrUpdateProgramInstance(program, 2013, fullTimeOption);

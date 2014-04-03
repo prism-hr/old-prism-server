@@ -82,7 +82,7 @@ public class RejectApplicationController {
 
         rejectService.moveApplicationToReject(application, rejection);
         rejectService.sendToPortico(application);
-        applicationFormUserRoleService.deleteApplicationActions(application);
+        actionService.deleteApplicationActions(application);
         applicationFormUserRoleService.insertApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
         return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
     }

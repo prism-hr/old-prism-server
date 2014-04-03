@@ -36,20 +36,17 @@ public class UsersInProgrammeControllerTest {
 	public void shouldReturnUsersForProgramOrderedByLastnameFirstname() {
 		Program program = new ProgramBuilder().id(5).build();
 		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userOne.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
 		EasyMock.expect(userOne.getId()).andReturn(1).anyTimes();
 		EasyMock.expect(userOne.getLastName()).andReturn("ZZZ").anyTimes();
 		EasyMock.expect(userOne.getFirstName()).andReturn("BBB").anyTimes();
 		
 		RegisteredUser userTwo = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userTwo.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
 		EasyMock.expect(userTwo.getId()).andReturn(2).anyTimes();
 		EasyMock.expect(userTwo.getLastName()).andReturn("ZZZ").anyTimes();
 		EasyMock.expect(userTwo.getFirstName()).andReturn("AAA").anyTimes();
 		
 		RegisteredUser userThree = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userThree.getId()).andReturn(3).anyTimes();
-		EasyMock.expect(userThree.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
 		EasyMock.expect(userThree.getLastName()).andReturn("AAA").anyTimes();
 		EasyMock.expect(userThree.getFirstName()).andReturn("GGG").anyTimes();
 		
@@ -71,9 +68,7 @@ public class UsersInProgrammeControllerTest {
 		
 		Program program = new ProgramBuilder().id(5).build();
 		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userOne.getAuthoritiesForProgram(program)).andReturn(Collections.EMPTY_LIST).anyTimes();
 		RegisteredUser userTwo = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userTwo.getAuthoritiesForProgram(program)).andReturn(Arrays.asList( Authority.APPROVER)).anyTimes();
 		EasyMock.expect(programsServiceMock.getProgramByCode("enc")).andReturn(program);
 		EasyMock.expect(userServiceMock.getAllUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
 		EasyMock.replay(userOne, userTwo, programsServiceMock, userServiceMock);
@@ -97,8 +92,6 @@ public class UsersInProgrammeControllerTest {
 	public void shouldThrowExceptionForNonAdministrators() {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 		EasyMock.replay(userServiceMock);
-		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-		EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false).anyTimes();		
 		EasyMock.replay(currentUserMock);
 		controller.getUsersInProgramView();
 	}
@@ -106,7 +99,6 @@ public class UsersInProgrammeControllerTest {
   	public void shouldReturnUsersInRolesView() {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 		EasyMock.replay(userServiceMock);
-		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();		
 		EasyMock.replay(currentUserMock);
 		assertEquals("private/staff/superAdmin/users_roles", controller.getUsersInProgramView());
 	}
@@ -127,11 +119,4 @@ public class UsersInProgrammeControllerTest {
 		assertNull(controller.getSelectedProgram(null));
 	}
 
-	@Before
-	public void setUp(){
-		userServiceMock = EasyMock.createMock(UserService.class);
-		programsServiceMock = EasyMock.createMock(ProgramService.class);
-		currentUserMock = EasyMock.createMock(RegisteredUser.class);		
-		controller = new UsersInProgrammeController(userServiceMock, programsServiceMock);
-	}
 }

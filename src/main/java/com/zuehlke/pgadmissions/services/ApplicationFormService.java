@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -40,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
 @Transactional
@@ -220,9 +218,8 @@ public class ApplicationFormService {
 
     public void applicationCreated(ApplicationForm application) {
         RegisteredUser applicant = application.getApplicant();
-        ApplicationFormActionRequired completeApplicationAction = new ApplicationFormActionRequired(application, applicant,
-                roleService.getById(Authority.APPLICANT), actionService.getById(ApplicationFormAction.COMPLETE_APPLICATION), application.getDueDate(), true,
-                false);
+        ApplicationFormActionRequired completeApplicationAction = new ApplicationFormActionRequired(
+                actionService.getById(ApplicationFormAction.COMPLETE_APPLICATION), application.getDueDate(), false, true);
         roleService.createApplicationFormUserRole(application, applicant, Authority.APPLICANT, false, completeApplicationAction);
     }
 

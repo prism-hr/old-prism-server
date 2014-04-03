@@ -17,7 +17,17 @@ public class PorticoService {
         return null;
     }
 
+    public List<Integer> getReferencesToSendToPorticoIds() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     public List<Document> getQualificationsToSendToPortico() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<Integer> getQualificationsToSendToPorticoIds() {
         // TODO Auto-generated method stub
         return null;
     }

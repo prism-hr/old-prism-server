@@ -17,47 +17,45 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping("/manageUsers")
 public class UsersInProgrammeController {
-	private static final String USERS_ROLES_VIEW = "private/staff/superAdmin/users_roles";
-	private final UserService userService;
-	private final ProgramService programsService;
 
-	UsersInProgrammeController(){
-		this(null, null);
-	}
-	
-	@Autowired
-	public UsersInProgrammeController(UserService userService, ProgramService programsService) {
-		this.userService = userService;
-		this.programsService = programsService;
-	}
+    private static final String USERS_ROLES_VIEW = "private/staff/superAdmin/users_roles";
 
-	@ModelAttribute("usersInRoles")
-	public List<RegisteredUser> getUsersInProgram(@RequestParam(required = false) String programCode) {
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ProgramService programsService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @ModelAttribute("usersInRoles")
+    public List<RegisteredUser> getUsersInProgram(@RequestParam(required = false) String programCode) {
         if (programCode == null) {
             return new ArrayList<RegisteredUser>();
         }
-        
+
         Program selectedProgram = getSelectedProgram(programCode);
-        
+
         if (selectedProgram == null) {
             return new ArrayList<RegisteredUser>();
         }
-        
+
         List<RegisteredUser> allUsersForProgram = userService.getAllUsersForProgram(selectedProgram);
         List<RegisteredUser> allUserWhoAreNotSuperadminsOnly = new ArrayList<RegisteredUser>();
-        
+
         for (RegisteredUser registeredUser : allUsersForProgram) {
-            if (!registeredUser.getAuthoritiesForProgram(selectedProgram).isEmpty()
-                    && !listContainsId(registeredUser, allUserWhoAreNotSuperadminsOnly)) {
+            if (!registeredUser.getAuthoritiesForProgram(selectedProgram).isEmpty() && !listContainsId(registeredUser, allUserWhoAreNotSuperadminsOnly)) {
                 allUserWhoAreNotSuperadminsOnly.add(registeredUser);
             }
         }
-        
+
         Collections.sort(allUserWhoAreNotSuperadminsOnly, new Comparator<RegisteredUser>() {
             @Override
             public int compare(RegisteredUser o1, RegisteredUser o2) {
@@ -68,24 +66,25 @@ public class UsersInProgrammeController {
             }
         });
         return allUserWhoAreNotSuperadminsOnly;
-	}
+    }
 
-	@RequestMapping(method = RequestMethod.GET, value = "/program")
-	public String getUsersInProgramView() {
-		if (!(userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR) || userService.getCurrentUser().isInRole(Authority.ADMINISTRATOR))) {
-			throw new ResourceNotFoundException();
-		}
-		return USERS_ROLES_VIEW;
-	}
-	
-	@ModelAttribute("selectedProgram")
-	public Program getSelectedProgram(@RequestParam(required = false) String programCode) {
-		if (programCode == null) {
-			return null;
-		}
-		return programsService.getProgramByCode(programCode);
-	}
-	
+    @RequestMapping(method = RequestMethod.GET, value = "/program")
+    public String getUsersInProgramView() {
+        RegisteredUser user = userService.getCurrentUser();
+        if (!roleService.hasAnyRole(user, Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR)) {
+            throw new ResourceNotFoundException();
+        }
+        return USERS_ROLES_VIEW;
+    }
+
+    @ModelAttribute("selectedProgram")
+    public Program getSelectedProgram(@RequestParam(required = false) String programCode) {
+        if (programCode == null) {
+            return null;
+        }
+        return programsService.getProgramByCode(programCode);
+    }
+
     private boolean listContainsId(RegisteredUser user, List<RegisteredUser> userList) {
         for (RegisteredUser entry : userList) {
             if (entry.getId().equals(user.getId())) {
@@ -93,5 +92,5 @@ public class UsersInProgrammeController {
             }
         }
         return false;
-    }   	
+    }
 }

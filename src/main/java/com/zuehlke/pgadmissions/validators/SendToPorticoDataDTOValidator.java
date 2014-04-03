@@ -11,6 +11,7 @@ import org.springframework.validation.ValidationUtils;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.PorticoService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
@@ -22,13 +23,16 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
     private final QualificationService qualificationService;
 
     private final RefereeService refereeService;
+    
+    private final PorticoService porticoService;
 
     @Autowired
     public SendToPorticoDataDTOValidator(ApplicationFormService applicationFormService, QualificationService qualificationService, 
-    		RefereeService refereeService) {
+    		RefereeService refereeService, PorticoService porticoService) {
     	this.applicationFormService = applicationFormService;
         this.qualificationService = qualificationService;
         this.refereeService = refereeService;
+        this.porticoService = porticoService;
     }
 
     @Override
@@ -57,21 +61,22 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
             	}
             }
             
-            // It was possible to select a qualification and neither a selection nor a justification for not making one was entered
-            // Form level error
-            if (applicationForm.hasQualificationsWithTranscripts() &&
-            	qualifications.isEmpty() && 
-                StringUtils.isBlank(explanation)) {
-            	errors.rejectValue("qualificationsSendToPortico", "portico.submit.no.qualification.or.explanation");
-            }
-            
-            // It was not possible to select a qualification and a justification for not selecting one was not made
-            // Form and field level errors
-            if (!applicationForm.hasQualificationsWithTranscripts() &&
-            	StringUtils.isBlank(explanation)) {
-            	errors.rejectValue("qualificationsSendToPortico", "portico.submit.no.qualification.or.explanation");
-            	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emptyQualificationsExplanation", EMPTY_FIELD_ERROR_MESSAGE);
-            }
+            // FIXME check if have transcripts
+//            // It was possible to select a qualification and neither a selection nor a justification for not making one was entered
+//            // Form level error
+//            if (applicationForm.hasQualificationsWithTranscripts() &&
+//            	qualifications.isEmpty() && 
+//                StringUtils.isBlank(explanation)) {
+//            	errors.rejectValue("qualificationsSendToPortico", "portico.submit.no.qualification.or.explanation");
+//            }
+//            
+//            // It was not possible to select a qualification and a justification for not selecting one was not made
+//            // Form and field level errors
+//            if (!applicationForm.hasQualificationsWithTranscripts() &&
+//            	StringUtils.isBlank(explanation)) {
+//            	errors.rejectValue("qualificationsSendToPortico", "portico.submit.no.qualification.or.explanation");
+//            	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emptyQualificationsExplanation", EMPTY_FIELD_ERROR_MESSAGE);
+//            }
   
             // In either of the above scenarios an out of range text explanation was provided
             // Field level error

@@ -59,7 +59,7 @@ public class QualificationServiceTest {
         qualificationDAOMock.delete(qualification);
 
         replay();
-        service.delete(qualification);
+        service.delete(2);
     }
 
     @Test

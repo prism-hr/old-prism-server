@@ -20,14 +20,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.easymock.EasyMock;
 import org.joda.time.DateTime;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
+import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
@@ -40,10 +41,8 @@ import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ThrottleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
@@ -59,6 +58,7 @@ import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ConfigurationControllerTest {
 
     private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
@@ -82,7 +82,7 @@ public class ConfigurationControllerTest {
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundIfNotSuperAdminOrADmin() {
         RegisteredUser applicant = new RegisteredUserBuilder().id(1).username("aa").email("aa@gmail.com").firstName("mark").lastName("ham")
-                .role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
+                .build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
         EasyMock.replay(userServiceMock);
@@ -473,38 +473,4 @@ public class ConfigurationControllerTest {
         EasyMock.verify(programsServiceMock);
     }
 
-    @Before
-    public void setUp() {
-        stageDurationPropertyEditorMock = EasyMock.createMock(JsonPropertyEditor.class);
-
-        reminderIntervalPropertyEditorMock = EasyMock.createMock(JsonPropertyEditor.class);
-
-        notificationsDurationPropertyEditorMock = EasyMock.createMock(JsonPropertyEditor.class);
-
-        userServiceMock = EasyMock.createMock(UserService.class);
-
-        emailTemplateServiceMock = EasyMock.createMock(EmailTemplateService.class);
-
-        throttleserviceMock = EasyMock.createMock(ThrottleService.class);
-
-        configurationServiceMock = EasyMock.createMock(ConfigurationService.class);
-
-        queueServiceMock = EasyMock.createMock(ExportQueueService.class);
-
-        programsServiceMock = EasyMock.createMock(ProgramService.class);
-
-        scoringDefinitionParserMock = EasyMock.createMock(ScoringDefinitionParser.class);
-
-        applicationContext = EasyMock.createMock(ApplicationContext.class);
-
-        controller = new ConfigurationController(stageDurationPropertyEditorMock, reminderIntervalPropertyEditorMock, notificationsDurationPropertyEditorMock,
-                userServiceMock, configurationServiceMock, emailTemplateServiceMock, throttleserviceMock, queueServiceMock, programsServiceMock,
-                scoringDefinitionParserMock, null, null, null, applicationContext);
-
-        superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-                .role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).build();
-
-        admin = new RegisteredUserBuilder().id(3).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")
-                .role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
-    }
 }

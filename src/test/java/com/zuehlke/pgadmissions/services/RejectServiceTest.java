@@ -30,100 +30,97 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class RejectServiceTest {
 
     @TestedObject
-	private RejectService rejectService;
+    private RejectService rejectService;
 
     @Mock
     @InjectIntoByType
-	private RejectReasonDAO rejectDaoMock;
+    private RejectReasonDAO rejectDaoMock;
 
     @Mock
     @InjectIntoByType
-	private ApplicationFormDAO applicationDaoMock;
+    private ApplicationFormDAO applicationDaoMock;
 
     @Mock
     @InjectIntoByType
     private MailSendingService mailServiceMock;
-    
+
     @Mock
     @InjectIntoByType
     private ExportQueueService porticoQueueService;
-    
+
     @Mock
     @InjectIntoByType
-    private WorkflowService applicationFormUserRoleService;
+    private ActionService actionService;
 
     private ApplicationForm application;
-	
-	private RejectReason reason1;
-	
-	private RejectReason reason2;
-	
-	private RegisteredUser admin;
-	
-	private RegisteredUser approver;
 
-	
-	@Before
-	public void setUp() {
-		admin = new RegisteredUserBuilder().id(324).username("admin").role(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).build();
-		approver = new RegisteredUserBuilder().id(22414).username("real approver").role(new RoleBuilder().id(Authority.APPROVER).build()).build();
-		Program program = new ProgramBuilder().id(10023).administrators(admin).approver(approver).build();
-		application = new ApplicationFormBuilder().id(200).advert(program).status(ApplicationFormStatus.VALIDATION).build();
+    private RejectReason reason1;
 
-		reason1 = new RejectReasonBuilder().id(1).text("idk").build();
-		reason2 = new RejectReasonBuilder().id(2).text("idc").build();
-	}
+    private RejectReason reason2;
 
-	@Test
-	public void shouldMoveToReject() {
-		Rejection rejection = new RejectionBuilder().id(1).build();
-		
-		applicationDaoMock.save(application);
-		expectLastCall();
-		
-		mailServiceMock.sendRejectionConfirmationToApplicant(application);
-		applicationFormUserRoleService.deleteApplicationActions(application);
-		
-		replay();
-		rejectService.moveApplicationToReject(application, rejection);
-		verify();
-		
-		assertEquals(ApplicationFormStatus.REJECTED, application.getStatus());
-		assertEquals(rejection,application.getRejection());
-	}
+    private RegisteredUser admin;
 
-	@Test
-	public void loadAllRejections() {
-		List<RejectReason> values = new ArrayList<RejectReason>();
-		values.add(reason1);
-		values.add(reason2);
-		expect(rejectDaoMock.getAllReasons()).andReturn(values);
-		
-		replay();
-		List<RejectReason> reasons = rejectService.getAllRejectionReasons();
-		verify();
-		
-		assertNotNull(reasons);
-		assertEquals(2, reasons.size());
-		assertEquals("idc", reasons.get(1).getText());
-	}
-	
-	@Test
-	public void shouldGetRejectReasonById(){
-		RejectReason rejectReason = new RejectReasonBuilder().id(1).build();
-		expect(rejectDaoMock.getRejectReasonById(1)).andReturn(rejectReason);
-		
-		replay();
-		assertEquals(rejectReason,rejectService.getRejectReasonById(1));
-		verify();
-	}
+    private RegisteredUser approver;
+
+    @Before
+    public void setUp() {
+        admin = new RegisteredUserBuilder().id(324).username("admin").build();
+        approver = new RegisteredUserBuilder().id(22414).username("real approver").build();
+        Program program = new ProgramBuilder().id(10023).administrators(admin).approver(approver).build();
+        application = new ApplicationFormBuilder().id(200).advert(program).status(ApplicationFormStatus.VALIDATION).build();
+
+        reason1 = new RejectReasonBuilder().id(1).text("idk").build();
+        reason2 = new RejectReasonBuilder().id(2).text("idc").build();
+    }
+
+    @Test
+    public void shouldMoveToReject() {
+        Rejection rejection = new RejectionBuilder().id(1).build();
+
+        applicationDaoMock.save(application);
+        expectLastCall();
+
+        mailServiceMock.sendRejectionConfirmationToApplicant(application);
+        actionService.deleteApplicationActions(application);
+
+        replay();
+        rejectService.moveApplicationToReject(application, rejection);
+        verify();
+
+        assertEquals(ApplicationFormStatus.REJECTED, application.getStatus());
+        assertEquals(rejection, application.getRejection());
+    }
+
+    @Test
+    public void loadAllRejections() {
+        List<RejectReason> values = new ArrayList<RejectReason>();
+        values.add(reason1);
+        values.add(reason2);
+        expect(rejectDaoMock.getAllReasons()).andReturn(values);
+
+        replay();
+        List<RejectReason> reasons = rejectService.getAllRejectionReasons();
+        verify();
+
+        assertNotNull(reasons);
+        assertEquals(2, reasons.size());
+        assertEquals("idc", reasons.get(1).getText());
+    }
+
+    @Test
+    public void shouldGetRejectReasonById() {
+        RejectReason rejectReason = new RejectReasonBuilder().id(1).build();
+        expect(rejectDaoMock.getRejectReasonById(1)).andReturn(rejectReason);
+
+        replay();
+        assertEquals(rejectReason, rejectService.getRejectReasonById(1));
+        verify();
+    }
 }

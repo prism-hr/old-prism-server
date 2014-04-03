@@ -58,6 +58,7 @@ import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.PorticoService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotCreateAttachmentsPack;
 import com.zuehlke.pgadmissions.services.exporters.SftpAttachmentsSendingService.CouldNotOpenSshConnectionToRemoteHost;
@@ -118,6 +119,8 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
     private ApplicationFormTransferDAO applicationFormTransferDAO;
 
+    private PorticoService porticoServiceMock;
+
     @Test
     public void shouldcreateApplicationFormTransfer() {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
@@ -177,7 +180,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         EasyMock.replay(webServiceTemplateMock, applicationFormTransferServiceMock, commentDAOMock, applicationsServiceMock);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,
-                applicationFormTransferService, applicationContextMock);
+                applicationFormTransferService, porticoServiceMock,applicationContextMock);
 
         try {
             exportService.sendWebServiceRequest(applicationForm, applicationFormTransfer, listener);
@@ -257,7 +260,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         EasyMock.replay(webServiceTemplateMock, applicationsServiceMock, commentDAOMock);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,
-                applicationFormTransferService, applicationContextMock);
+                applicationFormTransferService, porticoServiceMock,applicationContextMock);
 
         try {
             exportService.sendWebServiceRequest(applicationForm, applicationFormTransfer, listener);
@@ -276,7 +279,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,
-                applicationFormTransferService, applicationContextMock);
+                applicationFormTransferService, porticoServiceMock,applicationContextMock);
 
         SoapFault mockFault = EasyMock.createMock(SoapFault.class);
         EasyMock.expect(mockFault.getFaultStringOrReason()).andReturn("Authentication Failed");
@@ -365,7 +368,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         EasyMock.expect(applicationsServiceMock.getById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,
-                applicationFormTransferService, applicationContextMock) {
+                applicationFormTransferService, porticoServiceMock,applicationContextMock) {
             @Override
             public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transfer, final TransferListener listener)
                     throws ExportServiceException {
@@ -447,7 +450,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         EasyMock.expect(applicationsServiceMock.getById(EasyMock.anyInt())).andReturn(applicationForm).anyTimes();
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,
-                applicationFormTransferService, applicationContextMock) {
+                applicationFormTransferService, porticoServiceMock,applicationContextMock) {
             @Override
             public void uploadDocuments(final ApplicationForm form, final ApplicationFormTransfer transfer, final TransferListener listener)
                     throws ExportServiceException {
@@ -518,7 +521,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, sftpAttachmentsSendingService,
-                applicationFormTransferService, applicationContextMock);
+                applicationFormTransferService, porticoServiceMock,applicationContextMock);
 
         EasyMock.replay(jschfactoryMock);
 
@@ -592,7 +595,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, sftpAttachmentsSendingService,
-                applicationFormTransferService, applicationContextMock);
+                applicationFormTransferService, porticoServiceMock,applicationContextMock);
 
         EasyMock.replay(jschfactoryMock, sessionMock);
 
@@ -676,7 +679,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, sftpAttachmentsSendingService,
-                applicationFormTransferService, applicationContextMock);
+                applicationFormTransferService, porticoServiceMock,applicationContextMock);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
 
@@ -762,7 +765,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, sftpAttachmentsSendingService,
-                applicationFormTransferService, applicationContextMock);
+                applicationFormTransferService, porticoServiceMock,applicationContextMock);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
 
@@ -852,7 +855,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                 sftpPort, sftpUsername, sftpPassword, targetFolder);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, sftpAttachmentsSendingService,
-                applicationFormTransferService, applicationContextMock);
+                applicationFormTransferService, porticoServiceMock,applicationContextMock);
 
         EasyMock.replay(jschfactoryMock, sessionMock, sftpChannelMock);
 
@@ -912,7 +915,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingServiceMock = EasyMock.createMock(SftpAttachmentsSendingService.class);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock,
-                sftpAttachmentsSendingServiceMock, applicationFormTransferService, applicationContextMock);
+                sftpAttachmentsSendingServiceMock, applicationFormTransferService, porticoServiceMock,applicationContextMock);
 
         sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener);
 
@@ -980,7 +983,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         SftpAttachmentsSendingService sftpAttachmentsSendingServiceMock = EasyMock.createMock(SftpAttachmentsSendingService.class);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock,
-                sftpAttachmentsSendingServiceMock, applicationFormTransferService, applicationContextMock);
+                sftpAttachmentsSendingServiceMock, applicationFormTransferService, porticoServiceMock,applicationContextMock);
 
         EasyMock.expect(sftpAttachmentsSendingServiceMock.sendApplicationFormDocuments(applicationForm, listener)).andReturn("abc.zip");
 
@@ -997,7 +1000,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
     public void shouldPrepareApplicationIfItIsRejectedOrWithdrawn() throws ExportServiceException {
         applicationForm = new ValidApplicationFormBuilder().build();
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,
-                applicationFormTransferService, applicationContextMock) {
+                applicationFormTransferService, porticoServiceMock,applicationContextMock) {
             @Override
             public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener)
                     throws ExportServiceException {
@@ -1023,7 +1026,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
     public void shouldPrepareApplicationIfItIsRejectedOrWithdrawnAndRefereeHasNotProvidedReference() throws ExportServiceException {
         applicationForm = new ValidApplicationFormBuilder().build();
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,
-                applicationFormTransferService, applicationContextMock) {
+                applicationFormTransferService, porticoServiceMock,applicationContextMock) {
             @Override
             public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener)
                     throws ExportServiceException {
@@ -1037,7 +1040,6 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         applicationForm.getReferees().get(0).setReference(null);
 
-        applicationsServiceMock.transformUKCountriesAndDomiciles(applicationForm);
         applicationsServiceMock.save(applicationForm);
 
         EasyMock.replay(applicationsServiceMock);
@@ -1052,7 +1054,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
     public void shouldPrepareApplicationFormIfLessThan2RefereesHaveBeenSelected() throws ExportServiceException {
         applicationForm = new ValidApplicationFormBuilder().build();
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,
-                applicationFormTransferService, applicationContextMock) {
+                applicationFormTransferService, porticoServiceMock,applicationContextMock) {
             @Override
             public void sendToPortico(final ApplicationForm form, final ApplicationFormTransfer transfer, TransferListener listener)
                     throws ExportServiceException {
@@ -1067,7 +1069,6 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         applicationForm.getReferees().get(0).setSendToUCL(null);
         applicationForm.getReferees().get(1).setSendToUCL(true);
 
-        applicationsServiceMock.transformUKCountriesAndDomiciles(applicationForm);
         applicationsServiceMock.save(applicationForm);
 
         EasyMock.replay(applicationsServiceMock);
@@ -1109,11 +1110,13 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         commentDAOMock = EasyMock.createMock(CommentDAO.class);
 
         userDAOMock = EasyMock.createMock(UserDAO.class);
+        
+        porticoServiceMock = EasyMock.createMock(PorticoService.class);
 
         applicationContextMock = EasyMock.createMock(ApplicationContext.class);
 
         exportService = new ExportService(webServiceTemplateMock, applicationsServiceMock, commentDAOMock, userDAOMock, attachmentsSendingService,
-                applicationFormTransferService, applicationContextMock);
+                applicationFormTransferService, porticoServiceMock,applicationContextMock);
 
         hasBeenCalled = false;
     }

@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
@@ -25,21 +25,21 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 @Service
 @Transactional
 public class RoleService {
- 
+
     @Autowired
     private RoleDAO roleDAO;
-    
+
     public Role getById(Authority authority) {
         return roleDAO.getById(authority);
     }
-    
+
     public void createSystemUserRoles(RegisteredUser user, Authority... authorities) {
         for (Authority authority : authorities) {
             SystemUserRole systemUserRole = new SystemUserRole(user, roleDAO.getById(authority));
             roleDAO.saveSystemUserRole(systemUserRole);
         }
     }
-    
+
     public void createInstitutionUserRoles(Institution institution, RegisteredUser user, Authority... authorities) {
         for (Authority authority : authorities) {
             InstitutionUserRole institutionUserRole = new InstitutionUserRole(institution, user, roleDAO.getById(authority));
@@ -62,9 +62,9 @@ public class RoleService {
     }
 
     public ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Authority authority,
-            Boolean interestedInApplicant, HashSet<ApplicationFormActionRequired> actions) {
+            Boolean interestedInApplicant, ApplicationFormActionRequired... actions) {
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRole(applicationForm, user, roleDAO.getById(authority), interestedInApplicant,
-                actions);
+                Sets.newHashSet(actions));
         ApplicationFormUserRole mergedApplicationFormUserRole = roleDAO.saveApplicationFormUserRole(applicationFormUserRole);
         boolean raisesUrgentFlag = false;
         for (ApplicationFormActionRequired action : mergedApplicationFormUserRole.getActions()) {
@@ -75,24 +75,33 @@ public class RoleService {
         applicationFormUserRole.setRaisesUrgentFlag(raisesUrgentFlag);
         return mergedApplicationFormUserRole;
     }
-    
+
+    public boolean hasAnyRole(RegisteredUser user, Authority... authorities) {
+        for (Authority authority : authorities) {
+            if (hasRole(user, authority, null)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean hasRole(RegisteredUser user, Authority authority) {
         return hasRole(user, authority, null);
     }
-    
+
     public boolean hasRole(RegisteredUser user, Authority authority, Object discriminator) {
         Role role = roleDAO.getById(authority);
         switch (role.getAuthorityScope()) {
-            case SYSTEM:
-                return roleDAO.getSystemUserRoles(user).contains(roleDAO.getById(authority));
-            case INSTITUTION:
-                return roleDAO.getInstitutionUserRoles((Institution) discriminator, user).contains(roleDAO.getById(authority));
-            case PROGRAM:
-                return roleDAO.getProgramUserRoles((Program) discriminator, user).contains(roleDAO.getById(authority));
-            case PROJECT:
-                return roleDAO.getProjectUserRoles((Project) discriminator, user).contains(roleDAO.getById(authority));   
-            case APPLICATION:
-                return roleDAO.getApplicationFormUserRoles((ApplicationForm) discriminator, user).contains(roleDAO.getById(authority));
+        case SYSTEM:
+            return roleDAO.getSystemUserRoles(user).contains(roleDAO.getById(authority));
+        case INSTITUTION:
+            return roleDAO.getInstitutionUserRoles((Institution) discriminator, user).contains(roleDAO.getById(authority));
+        case PROGRAM:
+            return roleDAO.getProgramUserRoles((Program) discriminator, user).contains(roleDAO.getById(authority));
+        case PROJECT:
+            return roleDAO.getProjectUserRoles((Project) discriminator, user).contains(roleDAO.getById(authority));
+        case APPLICATION:
+            return roleDAO.getApplicationFormUserRoles((ApplicationForm) discriminator, user).contains(roleDAO.getById(authority));
         }
         return roleDAO.getUserRoles(user).contains(roleDAO.getById(authority));
     }
@@ -100,5 +109,5 @@ public class RoleService {
     public List<Program> getProgramsByUserAndRole(RegisteredUser currentUser, Authority administrator) {
         // TODO Auto-generated method stub
         return null;
-    }    
+    }
 }

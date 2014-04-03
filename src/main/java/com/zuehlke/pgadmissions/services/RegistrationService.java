@@ -27,30 +27,26 @@ public class RegistrationService {
 
     private final Logger log = LoggerFactory.getLogger(RegistrationService.class);
 
-	@Autowired
-	private EncryptionUtils encryptionUtils;
+    @Autowired
+    private EncryptionUtils encryptionUtils;
 
-	@Autowired
-	private RoleDAO roleDAO;
+    @Autowired
+    private RoleService roleService;
 
-	@Autowired
-	private UserDAO userDAO;
+    @Autowired
+    private UserDAO userDAO;
 
-	@Autowired
-	private RefereeDAO refereeDAO;
+    @Autowired
+    private RefereeDAO refereeDAO;
 
-	@Autowired
-	private MailSendingService mailService;
+    @Autowired
+    private MailSendingService mailService;
 
     public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser, String queryString) {
         pendingApplicantUser.setUsername(pendingApplicantUser.getEmail());
         pendingApplicantUser.setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
-        pendingApplicantUser.setAccountNonExpired(true);
-        pendingApplicantUser.setAccountNonLocked(true);
         pendingApplicantUser.setEnabled(false);
-        pendingApplicantUser.setCredentialsNonExpired(true);
         pendingApplicantUser.setOriginalApplicationQueryString(queryString);
-        pendingApplicantUser.getRoles().add(roleDAO.getById(Authority.APPLICANT));
         pendingApplicantUser.setActivationCode(encryptionUtils.generateUUID());
         return pendingApplicantUser;
     }
@@ -65,27 +61,27 @@ public class RegistrationService {
         } else {
             // User is an applicant
             user = processPendingApplicantUser(pendingUser, queryString);
+            // FIXME add applicant role to the user
+            userDAO.save(user);
         }
-
-        userDAO.save(user);
 
         sendConfirmationEmail(user);
         return user;
     }
 
-	public void sendInstructionsToRegisterIfActivationCodeIsMissing(final RegisteredUser user) {
-		Referee referee = refereeDAO.getRefereeByUser(user);
+    public void sendInstructionsToRegisterIfActivationCodeIsMissing(final RegisteredUser user) {
+        Referee referee = refereeDAO.getRefereeByUser(user);
 
-		if (!user.getPendingRoleNotifications().isEmpty()) {
-			for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
-				notification.setNotificationDate(null);
-			}
-			userDAO.save(user);
-		} else if (referee != null) {
-			referee.setLastNotified(null);
-			refereeDAO.save(referee);
-		}
-	}
+        if (!user.getPendingRoleNotifications().isEmpty()) {
+            for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
+                notification.setNotificationDate(null);
+            }
+            userDAO.save(user);
+        } else if (referee != null) {
+            referee.setLastNotified(null);
+            refereeDAO.save(referee);
+        }
+    }
 
     public void sendConfirmationEmail(RegisteredUser newUser) {
         try {

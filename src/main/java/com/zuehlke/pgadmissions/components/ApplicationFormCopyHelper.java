@@ -236,7 +236,6 @@ public class ApplicationFormCopyHelper {
             return null;
         }
         Document to = new Document();
-        to.setUploadedBy(from.getUploadedBy());
         to.setType(from.getType());
         to.setContentType(from.getContentType());
         to.setFileName(from.getFileName());

@@ -15,9 +15,11 @@ import java.util.List;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -38,6 +40,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.SuperadminUserDTOValidator;
 import com.zuehlke.pgadmissions.validators.UserDTOValidator;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ManageUsersControllerTest {
 
     private ProgramService programServiceMock;
@@ -105,7 +108,6 @@ public class ManageUsersControllerTest {
         EasyMock.expect(userMock.getEmail()).andReturn("bsmith@test.com");
         EasyMock.expect(userMock.getFirstName()).andReturn("bob");
         EasyMock.expect(userMock.getLastName()).andReturn("Smith");
-        EasyMock.expect(userMock.getAuthoritiesForProgram(program)).andReturn(Arrays.asList(Authority.ADMINISTRATOR, Authority.INTERVIEWER));
         EasyMock.expect(encryptionHelperMock.decryptToInteger(encryptedUserId)).andReturn(1);
         EasyMock.expect(userServiceMock.getById(1)).andReturn(userMock);
 
@@ -125,7 +127,6 @@ public class ManageUsersControllerTest {
 
     @Test
     public void shouldReturnAllProgramsForSuperAdminUser() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
         Program program1 = new ProgramBuilder().id(1).build();
         Program program2 = new ProgramBuilder().id(2).build();
         EasyMock.expect(programServiceMock.getAllEnabledPrograms()).andReturn(Arrays.asList(program1, program2));
@@ -138,10 +139,8 @@ public class ManageUsersControllerTest {
 
     @Test
     public void shouldReturnProgramsOfWhichAdministratorForAdmins() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
         Program program1 = new ProgramBuilder().id(1).build();
         Program program2 = new ProgramBuilder().id(2).build();
-        EasyMock.expect(currentUserMock.getProgramsOfWhichAdministrator()).andReturn(Arrays.asList(program1, program2));
         EasyMock.replay(programServiceMock, currentUserMock, userServiceMock);
         List<Program> programs = controller.getPrograms();
         EasyMock.verify(programServiceMock, currentUserMock, userServiceMock);
@@ -151,7 +150,6 @@ public class ManageUsersControllerTest {
 
     @Test
     public void shouldReturnCorrectPossibleRoles() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
         EasyMock.replay(currentUserMock);
 
         List<Authority> authorities = controller.getAuthorities();
@@ -163,9 +161,6 @@ public class ManageUsersControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfUserNeitherSuperAdminOrAdmin() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-        EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false).anyTimes();
-        EasyMock.expect(currentUserMock.isNotInRole(Authority.ADMITTER)).andReturn(true).anyTimes();
         EasyMock.replay(currentUserMock, userServiceMock);
         controller.getAddUsersView();
         EasyMock.verify(currentUserMock, userServiceMock);
@@ -173,7 +168,6 @@ public class ManageUsersControllerTest {
 
     @Test
     public void shoulReturnNewUsersViewForSuperadmin() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
         EasyMock.replay(currentUserMock, userServiceMock);
         assertEquals("private/staff/superAdmin/create_new_user_in_role_page", controller.getAddUsersView());
         EasyMock.verify(currentUserMock, userServiceMock);
@@ -181,8 +175,6 @@ public class ManageUsersControllerTest {
 
     @Test
     public void shoulReturnNewUsersViewForAdmin() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-        EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true).anyTimes();
         EasyMock.replay(currentUserMock, userServiceMock);
         assertEquals("private/staff/superAdmin/create_new_user_in_role_page", controller.getAddUsersView());
         EasyMock.verify(currentUserMock, userServiceMock);
@@ -193,8 +185,6 @@ public class ManageUsersControllerTest {
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-        EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true).anyTimes();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
         EasyMock.replay(errorsMock);
@@ -222,8 +212,6 @@ public class ManageUsersControllerTest {
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-        EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true).anyTimes();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
         EasyMock.replay(errorsMock);
@@ -252,8 +240,6 @@ public class ManageUsersControllerTest {
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-        EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true).anyTimes();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
         EasyMock.replay(errorsMock);
@@ -278,8 +264,6 @@ public class ManageUsersControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfUserNeitherSuperAdminOrAdminOnSubmission() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-        EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false).anyTimes();
         EasyMock.replay(currentUserMock, userServiceMock);
         controller.handleEditUserRoles(null, null);
         EasyMock.verify(currentUserMock, userServiceMock);
@@ -290,8 +274,6 @@ public class ManageUsersControllerTest {
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-        EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true).anyTimes();
         EasyMock.replay(currentUserMock, userServiceMock);
 
         UserDTO newUserDTO = new UserDTO();
@@ -309,8 +291,6 @@ public class ManageUsersControllerTest {
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-        EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true).anyTimes();
 
         UserDTO newUserDTO = new UserDTO();
         newUserDTO.setFirstName("Jane");
@@ -333,8 +313,6 @@ public class ManageUsersControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfUserNeitherSuperAdminOrAdminOnRemove() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-        EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false).anyTimes();
         EasyMock.replay(currentUserMock, userServiceMock);
         controller.handleRemoveUserFromProgram(null);
         EasyMock.verify(currentUserMock, userServiceMock);
@@ -405,7 +383,6 @@ public class ManageUsersControllerTest {
     
     @Test
     public void shouldCreateNewUserInRolesSuperAdmin() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
 
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
@@ -430,7 +407,6 @@ public class ManageUsersControllerTest {
     
     @Test
     public void shouldCreateNewUserInRolesAdmitter() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
         
         
         Person userOne = new PersonBuilder().id(1).lastname("ZZZZ").firstname("BBBB").build();
@@ -451,7 +427,6 @@ public class ManageUsersControllerTest {
     
     @Test
     public void shouldUpdateRolesForUserIfUserAlreadyExists() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 
@@ -475,7 +450,6 @@ public class ManageUsersControllerTest {
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfUserNotSuperAdminOnSubmission() {
        
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
         EasyMock.replay(userServiceMock, currentUserMock);
         controller.handleAddSuperadmin(null, null);
         EasyMock.verify(userServiceMock, currentUserMock);
@@ -483,7 +457,6 @@ public class ManageUsersControllerTest {
     
     @Test
     public void shouldReturnToViewIfErrorsOnSaveSuperadmin() {
-        EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
         EasyMock.replay(userServiceMock, currentUserMock);
 
         UserDTO userDTO = new UserDTO();
@@ -520,21 +493,4 @@ public class ManageUsersControllerTest {
 
     }
 
-    @Before
-    public void setUp() {
-
-        userServiceMock = EasyMock.createMock(UserService.class);
-        programServiceMock = EasyMock.createMock(ProgramService.class);
-        currentUserMock = EasyMock.createMock(RegisteredUser.class);
-        programPropertyEditorMock = EasyMock.createMock(ProgramPropertyEditor.class);
-        newUserDTOValidatorMock = EasyMock.createMock(UserDTOValidator.class);
-        encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-        userDTOValidatorMock = EasyMock.createMock(SuperadminUserDTOValidator.class);
-        registryPropertyEditorMock = EasyMock.createMock(PersonPropertyEditor.class);
-        configurationServiceMock = EasyMock.createMock(ConfigurationService.class);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-
-        controller = new ManageUsersController(programServiceMock, userServiceMock, programPropertyEditorMock,
-                newUserDTOValidatorMock, encryptionHelperMock, userDTOValidatorMock, registryPropertyEditorMock, configurationServiceMock);
-    }
 }

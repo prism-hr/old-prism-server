@@ -126,7 +126,7 @@ public class CreateNewOpportunityController {
 
     @ModelAttribute("studyOptions")
     public List<StudyOption> getDistinctStudyOptions() {
-        return programInstanceService.getDistinctStudyOptions();
+        return programInstanceService.getAvailableStudyOptions();
     }
 
     @ModelAttribute("advertisingDeadlines")

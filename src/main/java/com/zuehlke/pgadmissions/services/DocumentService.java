@@ -35,7 +35,6 @@ public class DocumentService {
         document.setContentType(multipartFile.getContentType());
         document.setContent(multipartFile.getBytes());
         document.setType(documentType);
-        document.setUploadedBy(userService.getCurrentUser());
         document.setFileData(multipartFile);
         return document;
     }

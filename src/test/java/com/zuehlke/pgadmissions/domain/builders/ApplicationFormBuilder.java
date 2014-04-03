@@ -88,17 +88,17 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder status(ApplicationFormStatus status) {
+    public ApplicationFormBuilder status(State status) {
         this.status = status;
         return this;
     }
     
-    public ApplicationFormBuilder nextStatus(ApplicationFormStatus nextStatus) {
+    public ApplicationFormBuilder nextStatus(State nextStatus) {
         this.nextStatus = nextStatus;
         return this;
     }
     
-    public ApplicationFormBuilder previousStatus(ApplicationFormStatus previousStatus) {
+    public ApplicationFormBuilder previousStatus(State previousStatus) {
         this.lastStatus = previousStatus;
         return this;
     }

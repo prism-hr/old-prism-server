@@ -10,6 +10,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.FormSectionObject;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
@@ -20,7 +21,7 @@ public class FormSectionObjectValidatorTest {
 
     @Test
     public void shouldRejectIfApplicationSubmittedAndTermsAcceptedIsFalse() {
-        applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
+        applicationForm.setStatus(new State().withId(ApplicationFormStatus.VALIDATION));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
         formSectionObjectValidator.addExtraValidation(formSectionObject, mappingResult);
 
@@ -31,7 +32,7 @@ public class FormSectionObjectValidatorTest {
     @Test
     public void shouldNotRejectIfApplicationsubmittedAndTermsAcceptedIsTrue() {
         formSectionObject.setAcceptedTerms(true);
-        applicationForm.setStatus(ApplicationFormStatus.VALIDATION);
+        applicationForm.setStatus(new State().withId(ApplicationFormStatus.VALIDATION));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
         formSectionObjectValidator.addExtraValidation(formSectionObject, mappingResult);
 
@@ -40,7 +41,7 @@ public class FormSectionObjectValidatorTest {
 
     @Test
     public void shouldNotRejectIfApplicationUnsubmittedAndTermsAcceptedIsFalse() {
-        applicationForm.setStatus(ApplicationFormStatus.UNSUBMITTED);
+        applicationForm.setStatus(new State().withId(ApplicationFormStatus.UNSUBMITTED));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
         formSectionObjectValidator.addExtraValidation(formSectionObject, mappingResult);
 

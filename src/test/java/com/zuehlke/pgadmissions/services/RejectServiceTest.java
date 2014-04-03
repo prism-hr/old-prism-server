@@ -73,7 +73,7 @@ public class RejectServiceTest {
     public void setUp() {
         admin = new RegisteredUserBuilder().id(324).username("admin").build();
         approver = new RegisteredUserBuilder().id(22414).username("real approver").build();
-        Program program = new ProgramBuilder().id(10023).administrators(admin).approver(approver).build();
+        Program program = new ProgramBuilder().id(10023).build();
         application = new ApplicationFormBuilder().id(200).advert(program).status(ApplicationFormStatus.VALIDATION).build();
 
         reason1 = new RejectReasonBuilder().id(1).text("idk").build();

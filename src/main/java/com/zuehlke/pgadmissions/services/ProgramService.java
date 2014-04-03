@@ -275,7 +275,7 @@ public class ProgramService {
     }
     
     protected RegisteredUser getContactUserForProgram(Program program, RegisteredUser candidateUser) {
-        List<RegisteredUser> administrators = program.getAdministrators();
+        List<RegisteredUser> administrators = roleService.getProgramAdministrators(program);
         if (!administrators.isEmpty()) {
             if (administrators.contains(candidateUser)) {
                 return candidateUser;

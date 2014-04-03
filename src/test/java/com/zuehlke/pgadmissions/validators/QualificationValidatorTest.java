@@ -40,24 +40,6 @@ public class QualificationValidatorTest {
     }
 
     @Test
-    public void shouldRejectIfProviderIsEmpty() {
-        qualification.setQualificationInstitution(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
-        qualificationValidator.validate(qualification, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("qualificationInstitution").getCode());
-    }
-
-    @Test
-    public void shouldRejectIfInstitutionCountryIsEmpty() {
-        qualification.setInstitutionCountry(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
-        qualificationValidator.validate(qualification, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("institutionCountry").getCode());
-    }
-
-    @Test
     public void shouldRejectIfSubjectIsEmpty() {
         qualification.setQualificationSubject(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
@@ -153,19 +135,6 @@ public class QualificationValidatorTest {
         Assert.assertEquals("qualification.start_date.notvalid", mappingResult.getFieldError("qualificationStartDate").getCode());
     }
 
-    @Test
-    public void shouldRejectIfQualificationInstitutionIsLongerThan200Chars() {
-        StringBuilder builder = new StringBuilder();
-        for (int idx = 0; idx < 250; idx++) {
-            builder.append("a");
-        }
-        qualification.setQualificationInstitution(builder.toString());
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
-        qualificationValidator.validate(qualification, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("A maximum of 200 characters are allowed.",
-                mappingResult.getFieldError("qualificationInstitution").getDefaultMessage());
-    }
 
     @Test
     public void shouldRejectIfQualificationLanguageIsLongerThan70Chars() {
@@ -204,15 +173,6 @@ public class QualificationValidatorTest {
         Assert.assertEquals("date.field.notfuture", mappingResult.getFieldError("qualificationAwardDate").getCode());
     }
     
-    @Test
-    public void shouldRejectIfQualificationInstitutionCodeIsEmpty() {
-        qualification.setQualificationInstitutionCode(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
-        qualificationValidator.validate(qualification, mappingResult);
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("qualificationInstitutionCode").getCode());
-    }
-
     @Before
     public void setup() throws ParseException {
         qualification = new Qualification();
@@ -220,12 +180,9 @@ public class QualificationValidatorTest {
         qualification.setId(3);
         qualification.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
         qualification.setQualificationGrade("first");
-        qualification.setQualificationInstitution("UCL");
-        qualification.setInstitutionCountry(new Domicile());
         qualification.setQualificationLanguage("Abkhazian");
         qualification.setQualificationSubject("CS");
         qualification.setQualificationTitle("MS");
-        qualification.setQualificationInstitutionCode("code");
         qualification.setCompleted(true);
         qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
         qualification.setQualificationType(new QualificationTypeBuilder().name("degree").build());

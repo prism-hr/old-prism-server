@@ -48,17 +48,13 @@ public abstract class AbstractMailSendingService {
 
     @Autowired
     private MailSender mailSender;
-
+    
     protected String getAdminsEmailsCommaSeparatedAsString(final List<RegisteredUser> administrators) {
         Set<String> administratorMails = new LinkedHashSet<String>();
         for (RegisteredUser admin : administrators) {
             administratorMails.add(admin.getEmail());
         }
         return StringUtils.join(administratorMails.toArray(new String[] {}), ", ");
-    }
-
-    protected Collection<RegisteredUser> getProgramAdministrators(final ApplicationForm application) {
-        return application.getProgram().getAdministrators();
     }
 
     protected PrismEmailMessage buildMessage(RegisteredUser recipient, String subject, Map<String, Object> model, EmailTemplateName templateName) {

@@ -144,8 +144,8 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
                 allOf(hasProperty("action", equalTo(ApplicationFormAction.COMMENT)), hasProperty("raisesUrgentFlag", equalTo(false))), //
                 allOf(hasProperty("action", equalTo(ApplicationFormAction.PROVIDE_REFERENCE)), hasProperty("raisesUrgentFlag", equalTo(false))), //
                 allOf(hasProperty("action", equalTo(ApplicationFormAction.CONFIRM_ELIGIBILITY)), hasProperty("raisesUrgentFlag", equalTo(false))), //
-                allOf(hasProperty("action", equalTo(ApplicationFormAction.EMAIL_APPLICANT)), hasProperty("raisesUrgentFlag", equalTo(false))), //
-                allOf(hasProperty("action", equalTo(ApplicationFormAction.VIEW)), hasProperty("raisesUrgentFlag", equalTo(false))))); //
+                allOf(hasProperty("action", equalTo(ApplicationFormAction.EMAIL_APPLICANT)), hasProperty("raisesUrgentFlag", equalTo(false))) //
+                )); //
     }
 
     @SuppressWarnings("unchecked")
@@ -169,8 +169,8 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
         assertThat(actions, containsInAnyOrder( //
                 allOf(hasProperty("action", equalTo(ApplicationFormAction.COMMENT)), hasProperty("raisesUrgentFlag", equalTo(false))), //
-                allOf(hasProperty("action", equalTo(ApplicationFormAction.EMAIL_APPLICANT)), hasProperty("raisesUrgentFlag", equalTo(false))), //
-                allOf(hasProperty("action", equalTo(ApplicationFormAction.VIEW)), hasProperty("raisesUrgentFlag", equalTo(false))))); //
+                allOf(hasProperty("action", equalTo(ApplicationFormAction.EMAIL_APPLICANT)), hasProperty("raisesUrgentFlag", equalTo(false))) //
+                )); //
     }
 
     @Test
@@ -242,13 +242,13 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         roleDAO = new RoleDAO(sessionFactory);
         applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
 
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .enabled(false).build();
+        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+                .build();
 
         Date lastUpdatedDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 06 2011 14:05:23");
-        
+
         program = testObjectProvider.getEnabledProgram();
-        
+
         application = new ApplicationForm();
         application.setApplicant(user);
         application.setLastUpdated(lastUpdatedDate);
@@ -258,7 +258,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
 
         save(user, application);
         flushAndClearSession();
-        
+
         comment = testObjectProvider.getAction(ApplicationFormAction.COMMENT);
         reference = testObjectProvider.getAction(ApplicationFormAction.PROVIDE_REFERENCE);
         eligibility = testObjectProvider.getAction(ApplicationFormAction.CONFIRM_ELIGIBILITY);

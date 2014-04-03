@@ -245,7 +245,7 @@ public class RegisterControllerTest {
     @Test
     public void shouldActivateAccountAndRedirectToApplicationListIfNoDirectURL() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
-        RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(1).activationCode(activationCode)
+        RegisteredUser user = new RegisteredUserBuilder().id(1).activationCode(activationCode)
                 .enabled(false).username("email@email.com").email("email@email.com").password("1234").build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         userServiceMock.save(user);
@@ -259,7 +259,7 @@ public class RegisterControllerTest {
     @Test
     public void shouldActivateAccountAndRedirectToDirectURLIfProvided() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
-        RegisteredUser user = new RegisteredUserBuilder().directURL("/directLink").role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(1)
+        RegisteredUser user = new RegisteredUserBuilder().directURL("/directLink").id(1)
                 .activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         userServiceMock.save(user);
@@ -274,7 +274,7 @@ public class RegisterControllerTest {
     public void shouldActivateAccountAndRedirectToDirectURLIfProvidedAtRegistrationTime() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
 
-        RegisteredUser user = new RegisteredUserBuilder().directURL(null).role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build()).id(1)
+        RegisteredUser user = new RegisteredUserBuilder().directURL(null).id(1)
                 .activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").build();
 
         MockHttpServletRequest requestMock = new MockHttpServletRequest();

@@ -1,0 +1,316 @@
+package com.zuehlke.pgadmissions.dao.mappings;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.zuehlke.pgadmissions.dao.DomicileDAO;
+import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
+import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
+import com.zuehlke.pgadmissions.domain.Address;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.RejectReason;
+import com.zuehlke.pgadmissions.domain.Rejection;
+import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
+import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.Title;
+
+public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
+
+    private RegisteredUser user;
+    private Program program;
+    private Project project;
+    private RegisteredUser reviewerUser;
+    private RegisteredUser interviewerUser;
+    private RegisteredUser applicationAdmin;
+    private RegisteredUser approver;
+
+    @Test
+    public void shouldSaveAndLoadApplicationForm() throws ParseException {
+
+        Date lastUpdatedDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 06 2011 14:05:23");
+        ApplicationForm application = new ApplicationForm();
+        application.setApplicant(user);
+        application.setLastUpdated(lastUpdatedDate);
+        application.setAdvert(project);
+        application.setStatus(ApplicationFormStatus.APPROVED);
+        application.setApplicationNumber("ABC");
+        assertNull(application.getId());
+
+        sessionFactory.getCurrentSession().save(application);
+
+        assertNotNull(application.getId());
+        Integer id = application.getId();
+        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+        assertSame(application, reloadedApplication);
+
+        flushAndClearSession();
+
+        reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+        assertNotSame(application, reloadedApplication);
+        assertEquals(application.getId(), reloadedApplication.getId());
+
+        assertEquals(user.getId(), reloadedApplication.getApplicant().getId());
+
+        assertEquals(project.getProgram().getId(), reloadedApplication.getProgram().getId());
+        assertEquals(project.getId(), reloadedApplication.getProject().getId());
+        assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
+        assertEquals(project.getTitle(), reloadedApplication.getProjectTitle());
+        assertEquals(lastUpdatedDate, application.getLastUpdated());
+        assertEquals("ABC", application.getApplicationNumber());
+    }
+
+    @Test
+    public void shouldLoadApplicationFormWithPersonalDetails() throws ParseException {
+        Country country1 = new CountryBuilder().name("AA").code("AA").enabled(true).build();
+        Country country2 = new CountryBuilder().name("CC").code("CC").enabled(true).build();
+        Domicile country3 = new DomicileBuilder().name("DD").code("DD").enabled(true).build();
+        Language nationality1 = new LanguageBuilder().name("aaaaa").code("aa").enabled(true).build();
+        save(country1, country2, country3, nationality1);
+
+        ApplicationForm application = new ApplicationFormBuilder().applicant(user).advert(program).build();
+        PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).firstNationality(nationality1)
+                .dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).title(Title.MR).gender(Gender.MALE).residenceDomicile(country3)
+                .requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").applicationForm(application).build();
+        application.setPersonalDetails(personalDetails);
+
+        sessionFactory.getCurrentSession().save(application);
+        flushAndClearSession();
+
+        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+        assertEquals(personalDetails.getId(), reloadedApplication.getPersonalDetails().getId());
+    }
+
+    @Test
+    public void shouldSaveAndLoadApplicationFormWithAddress() {
+        ApplicationForm application = new ApplicationForm();
+        application.setAdvert(program);
+        application.setApplicant(user);
+
+        Domicile domicile = new DomicileBuilder().name("AA").code("AA").enabled(true).build();
+        save(domicile);
+
+        Address addressOne = new AddressBuilder().domicile(domicile).address1("london").build();
+        Address addressTwo = new AddressBuilder().domicile(domicile).address1("london").build();
+
+        application.setCurrentAddress(addressOne);
+        application.setContactAddress(addressTwo);
+
+        save(application);
+        assertNotNull(addressOne.getId());
+        assertNotNull(addressTwo.getId());
+        flushAndClearSession();
+
+        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+        assertEquals(addressOne.getId(), reloadedApplication.getCurrentAddress().getId());
+        assertEquals(addressTwo.getId(), reloadedApplication.getContactAddress().getId());
+    }
+
+    @Test
+    public void shouldLoadApplicationFormWithCVAndPersonalStatement() {
+
+        ApplicationForm application = new ApplicationForm();
+        application.setAdvert(program);
+        application.setApplicant(user);
+        Document cv = new DocumentBuilder().fileName("bob").type(DocumentType.CV).content("aaa!".getBytes()).build();
+        Document personalStatement = new DocumentBuilder().fileName("bob").type(DocumentType.PERSONAL_STATEMENT).content("aaa!".getBytes()).build();
+        save(cv, personalStatement);
+        flushAndClearSession();
+        application.setCv(cv);
+        application.setPersonalStatement(personalStatement);
+
+        sessionFactory.getCurrentSession().save(application);
+        flushAndClearSession();
+
+        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+
+        assertEquals(cv.getId(), reloadedApplication.getCv().getId());
+        assertEquals(personalStatement.getId(), application.getPersonalStatement().getId());
+    }
+
+    @Test
+    public void shouldLoadApplicationFormWithComments() {
+
+        ApplicationForm application = new ApplicationForm();
+        application.setAdvert(program);
+        application.setApplicant(user);
+
+        sessionFactory.getCurrentSession().save(application);
+        Integer id = application.getId();
+        flushAndClearSession();
+
+        Comment commentOne = new CommentBuilder().application(application).comment("comment1").user(user).build();
+        Comment commentTwo = new CommentBuilder().application(application).comment("comment2").user(user).build();
+        save(commentOne, commentTwo);
+
+        flushAndClearSession();
+
+        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+        assertEquals(2, reloadedApplication.getApplicationComments().size());
+
+        assertTrue(listContainsId(commentOne, reloadedApplication.getApplicationComments()));
+        assertTrue(listContainsId(commentTwo, reloadedApplication.getApplicationComments()));
+    }
+
+    @Test
+    public void shouldSaveQualificationsWithApplication() throws ParseException {
+
+        ApplicationForm application = new ApplicationForm();
+        application.setAdvert(program);
+        application.setApplicant(user);
+
+        QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
+        DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
+        Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
+                .title("").languageOfStudy("Abkhazian").subject("").isCompleted(true).institutionCode("AS009Z")
+                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0))
+                .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
+        Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").title("")
+                .isCompleted(true).institution("").languageOfStudy("Achinese").subject("").institutionCode("AS008Z")
+                .startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type(qualificationTypeDAO.getAllQualificationTypes().get(0))
+                .institutionCountry(domicileDAO.getAllEnabledDomiciles().get(0)).build();
+
+        application.getQualifications().addAll(Arrays.asList(qualification1, qualification2));
+
+        sessionFactory.getCurrentSession().saveOrUpdate(application);
+        flushAndClearSession();
+
+        Integer id = application.getId();
+        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+        assertEquals(2, reloadedApplication.getQualifications().size());
+    }
+
+    @Test
+    public void shouldSaveAndLoadRejection() throws ParseException, InterruptedException {
+
+        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
+        save(application);
+
+        RejectReasonDAO rejectReasonDAO = new RejectReasonDAO(sessionFactory);
+        RejectReason rejectReason = rejectReasonDAO.getAllReasons().get(0);
+        Rejection rejection = new RejectionBuilder().includeProspectusLink(true).rejectionReason(rejectReason).build();
+
+        application.setRejection(rejection);
+        save(application);
+
+        flushAndClearSession();
+
+        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+
+        assertEquals(rejection.getId(), reloadedApplication.getRejection().getId());
+    }
+
+    @Test
+    public void shouldLoadApplicationFormWithADisabledProject() throws ParseException {
+
+        Date lastUpdatedDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 06 2011 14:05:23");
+        ApplicationForm application = new ApplicationForm();
+        application.setApplicant(user);
+        application.setLastUpdated(lastUpdatedDate);
+        application.setAdvert(project);
+        application.setStatus(ApplicationFormStatus.APPROVED);
+        application.setApplicationNumber("ABC");
+        assertNull(application.getId());
+
+        sessionFactory.getCurrentSession().save(application);
+        project.setEnabled(false);
+        project.setActive(false);
+        sessionFactory.getCurrentSession().update(project);
+
+        assertNotNull(application.getId());
+        Integer id = application.getId();
+        ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+        assertSame(application, reloadedApplication);
+
+        flushAndClearSession();
+
+        reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+        assertNotSame(application, reloadedApplication);
+        assertEquals(application.getId(), reloadedApplication.getId());
+
+        assertEquals(user.getId(), reloadedApplication.getApplicant().getId());
+
+        assertEquals(project.getProgram().getId(), reloadedApplication.getProgram().getId());
+        assertEquals(project.getId(), reloadedApplication.getProject().getId());
+        assertTrue(!project.isEnabled());
+        assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
+        assertEquals(project.getTitle(), reloadedApplication.getProjectTitle());
+        assertEquals(lastUpdatedDate, application.getLastUpdated());
+        assertEquals("ABC", application.getApplicationNumber());
+    }
+
+    @Before
+    public void prepare() {
+        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+
+        reviewerUser = new RegisteredUserBuilder().firstName("hanna").lastName("hoopla").email("hoopla@test.com").username("hoopla").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+
+        interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com").username("brady").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+
+        applicationAdmin = new RegisteredUserBuilder().firstName("joan").lastName("arc").email("act@test.com").username("arc").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+
+        approver = new RegisteredUserBuilder().firstName("het").lastName("get").email("het@test.com").username("hed").password("password")
+                .accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
+
+        Institution institution = new QualificationInstitutionBuilder().code("code").name("a41").domicileCode("AE").enabled(true).build();
+
+
+        save(user, reviewerUser, institution, interviewerUser, applicationAdmin, approver);
+
+        flushAndClearSession();
+        
+        program = testObjectProvider.getEnabledProgram();
+        project = testObjectProvider.getEnabledProject();
+        
+    }
+
+    private boolean listContainsId(Comment comment, List<Comment> comments) {
+        for (Comment entry : comments) {
+            if (entry.getId().equals(comment.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+}

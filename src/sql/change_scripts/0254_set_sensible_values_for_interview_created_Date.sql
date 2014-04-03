@@ -1,0 +1,1 @@
+UPDATE INTERVIEW set created_date = '2012-01-01 00:00:00' where created_date = '0000-00-00 00:00:00';

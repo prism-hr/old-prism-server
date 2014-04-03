@@ -62,7 +62,10 @@ public class StateTransitionService {
 
     public List<ApplicationFormStatus> getAssignableNextStati(final ApplicationForm application, final RegisteredUser user) {
         ApplicationFormStatus status = application.getStatus().getId();
-        boolean canAdministerApplication = permissionsService.canAdministerApplication(application, user);
+        boolean canAdministerApplication = 
+                
+                
+                permissionsService.canAdministerApplication(application, user);
         boolean canApproveApplication = permissionsService.canApproveApplication(application, user);
         List<ApplicationFormStatus> nextStati = new ArrayList<ApplicationFormStatus>();
 

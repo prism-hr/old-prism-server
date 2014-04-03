@@ -10,6 +10,8 @@ import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,7 +43,11 @@ public class ApplicationFormUserRole implements Serializable {
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date assignedTimestamp = new Date();
     
-    @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "id.applicationFormUserRole")
+    @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumns({
+        @JoinColumn(name = "applicationFrom", referencedColumnName = "applicationForm", nullable = false, insertable = false, updatable = false),
+        @JoinColumn(name = "user", referencedColumnName = "user", insertable = false, nullable = false, updatable = false),
+        @JoinColumn(name = "role", referencedColumnName = "role", insertable = false, nullable = false, updatable = false) })
     private HashSet<ApplicationFormActionRequired> actions = new HashSet<ApplicationFormActionRequired>();
 
     public ApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Role role, Boolean interestedInApplicant,

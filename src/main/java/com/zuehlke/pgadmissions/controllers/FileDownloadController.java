@@ -84,6 +84,10 @@ public class FileDownloadController {
         if (applicationFormTransferError == null) {
             throw new ResourceNotFoundException();
         }
+        String request = applicationFormTransferError.getRequestCopy();
+        if (request == null) {
+            throw new ResourceNotFoundException();
+        }
         sendDocument(response, applicationFormTransferError.getTransfer().getApplicationForm().getApplicationNumber() + "_transfer_request.txt",
                 TEXT_CONTENT_TYPE, applicationFormTransferError.getRequestCopy().getBytes());
     }

@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SystemUserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
 
 @Service
 @Transactional
@@ -76,27 +77,24 @@ public class RoleService {
     }
     
     public boolean checkUserHasRole(RegisteredUser user, Authority authority) {
+        return hasRole(user, authority, null);
+    }
+    
+    public boolean hasRole(RegisteredUser user, Authority authority, Object discriminator) {
+        Role role = roleDAO.getById(authority);
+        switch (role.getAuthorityScope()) {
+            case SYSTEM:
+                return roleDAO.getSystemUserRoles(user).contains(roleDAO.getById(authority));
+            case INSTITUTION:
+                return roleDAO.getInstitutionUserRoles((Institution) discriminator, user).contains(roleDAO.getById(authority));
+            case PROGRAM:
+                return roleDAO.getProgramUserRoles((Program) discriminator, user).contains(roleDAO.getById(authority));
+            case PROJECT:
+                return roleDAO.getProjectUserRoles((Project) discriminator, user).contains(roleDAO.getById(authority));   
+            case APPLICATION:
+                return roleDAO.getApplicationFormUserRoles((ApplicationForm) discriminator, user).contains(roleDAO.getById(authority));
+        }
         return roleDAO.getUserRoles(user).contains(roleDAO.getById(authority));
-    }
-    
-    public boolean checkUserHasSystemRole(RegisteredUser user, Authority authority) {
-        return roleDAO.getSystemUserRoles(user).contains(roleDAO.getById(authority));
-    }
-    
-    public boolean checkUserHasInstitutionRole(Institution institution, RegisteredUser user, Authority authority) {
-        return roleDAO.getInstitutionUserRoles(institution, user).contains(roleDAO.getById(authority));
-    }
-    
-    public boolean checkUserHasProgramRole(Program program, RegisteredUser user, Authority authority) {
-        return roleDAO.getProgramUserRoles(program, user).contains(roleDAO.getById(authority));
-    }
-    
-    public boolean checkUserHasProjectRole(Project project, RegisteredUser user, Authority authority) {
-        return roleDAO.getProjectUserRoles(project, user).contains(roleDAO.getById(authority));
-    }
-    
-    public boolean checkUserHasApplicationRole(ApplicationForm application, RegisteredUser user, Authority authority) {
-        return roleDAO.getApplicationFormUserRoles(application, user).contains(roleDAO.getById(authority));
     }
     
 }

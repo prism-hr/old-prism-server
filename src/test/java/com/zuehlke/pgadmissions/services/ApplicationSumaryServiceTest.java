@@ -363,7 +363,7 @@ public class ApplicationSumaryServiceTest {
 //
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).personalStatement(personalStatement).referees(referee, refereeWhoResponded)
 //                .personalDetails(details).fundings(funding).qualifications(qualification, mostRecentQualification)
-//                .employmentPositions(position, mostRecentPosition).status(ApplicationFormStatus.APPROVED).submittedDate(dateOfSubmission).cv(cv)
+//                .employmentPositions(position, mostRecentPosition).status(new State().withId(ApplicationFormStatus.APPROVED)).submittedDate(dateOfSubmission).cv(cv)
 //                .lastUpdated(dateOfLastUpdate).applicant(applicant).applicationNumber(SAMPLE_APPLICATION_NUMBER).build();
 //        return applicationForm;
 //

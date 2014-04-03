@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormTransferBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -40,7 +41,7 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
         program = testObjectProvider.getEnabledProgram();
         applicationForm = new ApplicationFormBuilder().advert(program).applicant(user)
-                .status(ApplicationFormStatus.VALIDATION).build();
+                .status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
         save(applicationForm);
         flushAndClearSession();
     }

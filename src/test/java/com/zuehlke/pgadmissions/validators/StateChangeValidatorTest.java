@@ -19,6 +19,7 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -63,7 +64,7 @@ public class StateChangeValidatorTest {
 		stateChangeDTO.setEnglishCompentencyOk(null);
         stateChangeDTO.setConfirmNextStage(true);
         Program program = new ProgramBuilder().build();
-        ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).advert(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.VALIDATION)).advert(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -76,7 +77,7 @@ public class StateChangeValidatorTest {
 		stateChangeDTO.setHomeOrOverseas(null);
         stateChangeDTO.setConfirmNextStage(true);
         Program program = new ProgramBuilder().build();
-        ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).advert(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.VALIDATION)).advert(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -89,7 +90,7 @@ public class StateChangeValidatorTest {
 		stateChangeDTO.setQualifiedForPhd(null);
         stateChangeDTO.setConfirmNextStage(true);
         Program program = new ProgramBuilder().build();
-        ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).advert(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.VALIDATION)).advert(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -167,7 +168,7 @@ public class StateChangeValidatorTest {
 	        scoringDefinitions.put(stage, new ScoringDefinition());
 	    }
 	    Program program = new ProgramBuilder().scoringDefinitions(scoringDefinitions).build();
-        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).advert(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.VALIDATION)).advert(program).build();
         stateChangeDTO.setApplicationForm(application);
 	    stateChangeDTO.setNextStatus(ApplicationFormStatus.REVIEW);
 	    stateChangeDTO.setConfirmNextStage(true);
@@ -188,7 +189,7 @@ public class StateChangeValidatorTest {
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
         Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
         Program program = new ProgramBuilder().scoringDefinitions(scoringDefinitions).build();
-        ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).advert(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.VALIDATION)).advert(program).build();
         stateChangeDTO.setApplicationForm(application);
         stateChangeDTO.setNextStatus(ApplicationFormStatus.REVIEW);
         stateChangeDTO.setConfirmNextStage(true);

@@ -57,7 +57,7 @@ public class InterviewServiceTest {
     // .build();
     // Referee referee = new RefereeBuilder().build();
     // StateChangeComment stateChangeComment = new StateChangeComment();
-    // ApplicationForm applicationForm = new ApplicationFormBuilder().comments(stateChangeComment).referees(referee).status(ApplicationFormStatus.VALIDATION)
+    // ApplicationForm applicationForm = new ApplicationFormBuilder().comments(stateChangeComment).referees(referee).status(new State().withId(ApplicationFormStatus.VALIDATION))
     // .id(1).build();
     //
     // StageDuration duration = new StageDurationBuilder().duration(1).unit(DurationUnitEnum.DAYS).build();
@@ -101,7 +101,7 @@ public class InterviewServiceTest {
     // .takenPlace(true).furtherDetails("applicant!").furtherInterviewerDetails("interviewer!").build();
     // Referee referee = new RefereeBuilder().build();
     // StateChangeComment stateChangeComment = new StateChangeComment();
-    // ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).comments(stateChangeComment).status(ApplicationFormStatus.VALIDATION)
+    // ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).comments(stateChangeComment).status(new State().withId(ApplicationFormStatus.VALIDATION))
     // .id(1).build();
     //
     // StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
@@ -139,7 +139,7 @@ public class InterviewServiceTest {
     // Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).furtherDetails("applicant!")
     // .furtherInterviewerDetails("interviewer!").locationURL("loc").build();
     // StateChangeComment changeComment = new StateChangeComment();
-    // ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).comments(changeComment).build();
+    // ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.REVIEW)).id(1).comments(changeComment).build();
     // StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
     // InterviewScheduleComment interviewScheduleComment = new InterviewScheduleComment();
     //
@@ -166,7 +166,7 @@ public class InterviewServiceTest {
     // Interview interview = new InterviewBuilder().dueDate(new SimpleDateFormat("dd MM yyyy").parse("01 04 2012")).id(1).furtherDetails("applicant!")
     // .furtherInterviewerDetails("interviewer!").locationURL("loc").build();
     // StateChangeComment changeComment = new StateChangeComment();
-    // ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW).id(1).comments(changeComment).build();
+    // ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.REVIEW)).id(1).comments(changeComment).build();
     // StageDuration duration = new StageDurationBuilder().duration(5).unit(DurationUnitEnum.DAYS).build();
     // InterviewScheduleComment interviewScheduleComment = new InterviewScheduleComment();
     //
@@ -192,7 +192,7 @@ public class InterviewServiceTest {
     // RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari")
     // .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
     // ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).build())
-    // .applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION).build();
+    // .applicant(new RegisteredUserBuilder().id(1).build()).status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
     // interviewerDAOMock.save(interviewer);
     // EasyMock.replay(interviewerDAOMock);
     // interviewService.addInterviewerInPreviousInterview(application, interviewerUser);
@@ -207,7 +207,7 @@ public class InterviewServiceTest {
     // .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
     // Interview latestInterview = new InterviewBuilder().build();
     // ApplicationForm application = new ApplicationFormBuilder().latestInterview(latestInterview).id(1).program(new ProgramBuilder().id(1).build())
-    // .applicant(new RegisteredUserBuilder().id(1).build()).status(ApplicationFormStatus.VALIDATION).build();
+    // .applicant(new RegisteredUserBuilder().id(1).build()).status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
     // interviewerDAOMock.save(interviewer);
     //
     // EasyMock.replay(interviewerDAOMock);

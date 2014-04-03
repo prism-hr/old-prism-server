@@ -10,6 +10,7 @@ import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -35,7 +36,7 @@ public class WithdrawControllerTest {
 
     @Test
     public void shouldChangeStatusToWithdrawnAndSaveAndSendEmailsNotifications() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicant(student).id(2)
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.VALIDATION)).applicant(student).id(2)
                 .applicationNumber("abc").build();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);

@@ -148,7 +148,7 @@ public class StateTransitionControllerTest {
     //
     // @Test
     // public void shouldReturnAvaialableNextStatuses() {
-    // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).build();
+    // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
     // final RegisteredUser registeredUser = new RegisteredUserBuilder().id(5).build();
     // userServiceMock.addRoleToUser(registeredUser, Authority.SUPERADMINISTRATOR);
     // controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock, encryptionHelperMock,

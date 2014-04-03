@@ -25,10 +25,11 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -122,7 +123,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         
         long number = applicationDAO.getApplicationsInProgramThisYear(program, thisYear);
         assertEquals(0, number);
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().advert(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(ApplicationFormStatus.APPROVAL)).build();
 
         save(applicationFormOne);
 
@@ -130,7 +131,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         assertEquals(Long.valueOf(1), applicationDAO.getApplicationsInProgramThisYear(program, thisYear));
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().advert(program).applicant(user).status(ApplicationFormStatus.VALIDATION).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
         save(applicationFormTwo);
 
         flushAndClearSession();
@@ -151,7 +152,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetApplicationByApplicationNumber() {
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(user)
-                .status(ApplicationFormStatus.APPROVAL).build();
+                .status(new State().withId(ApplicationFormStatus.APPROVAL)).build();
 
         save(applicationFormOne);
 
@@ -199,8 +200,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldGetTwoApplicationsByApplicantAndProgram() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().advert(program).applicant(user).status(ApplicationFormStatus.APPROVAL).build();
-        ApplicationForm applicationForm2 = new ApplicationFormBuilder().advert(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(ApplicationFormStatus.APPROVAL)).build();
+        ApplicationForm applicationForm2 = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).build();
 
         save(applicationForm, applicationForm2);
         flushAndClearSession();
@@ -228,16 +229,16 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
                 .password("password").enabled(false).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).toDate()).advert(program).applicant(user)
-                .status(ApplicationFormStatus.APPROVAL).build();
+                .status(new State().withId(ApplicationFormStatus.APPROVAL)).build();
         ApplicationForm applicationForm2 = new ApplicationFormBuilder().submittedDate(initialDate.toDate()).advert(program).applicant(user)
-                .status(ApplicationFormStatus.VALIDATION).build();
+                .status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
         ApplicationForm applicationForm3 = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(1).toDate()).advert(program).applicant(user)
-                .status(ApplicationFormStatus.INTERVIEW).build();
+                .status(new State().withId(ApplicationFormStatus.INTERVIEW)).build();
 
         ApplicationForm recentApplicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).plusMinutes(2).toDate()).advert(program)
-                .applicant(otherApplicant).status(ApplicationFormStatus.UNSUBMITTED).build();
+                .applicant(otherApplicant).status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).build();
         ApplicationForm otherApplication = new ApplicationFormBuilder().submittedDate(initialDate.plusWeeks(1).toDate()).advert(program)
-                .applicant(otherApplicant).status(ApplicationFormStatus.REVIEW).build();
+                .applicant(otherApplicant).status(new State().withId(ApplicationFormStatus.REVIEW)).build();
 
         save(otherApplicant, applicationForm, applicationForm2, applicationForm3, recentApplicationForm, otherApplication);
 

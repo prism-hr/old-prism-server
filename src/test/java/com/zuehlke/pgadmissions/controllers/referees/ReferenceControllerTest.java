@@ -6,16 +6,16 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -23,7 +23,7 @@ public class ReferenceControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Mock
     @InjectIntoByType
@@ -59,7 +59,7 @@ public class ReferenceControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     @Mock
     @InjectIntoByType
@@ -71,7 +71,7 @@ public class ReferenceControllerTest {
 //    @Test
 //    public void shouldReturnApplicationForm() {
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
-//        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+//        expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 //        replay(applicationsServiceMock, currentUser, userServiceMock);
 //        ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
 //        verify(applicationsServiceMock, currentUser, userServiceMock);
@@ -81,7 +81,7 @@ public class ReferenceControllerTest {
 //
 //    @Test(expected = MissingApplicationFormException.class)
 //    public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-//        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
+//        expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(null);
 //        replay(applicationsServiceMock);
 //        controller.getApplicationForm("1");
 //    }
@@ -115,7 +115,7 @@ public class ReferenceControllerTest {
 //        ArrayList<Score> generatedScores = Lists.newArrayList(new Score());
 //
 //        expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-//        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+//        expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 //        expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee).anyTimes();
 //        expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andReturn(customQuestions);
 //        expect(scoreFactoryMock.createScores(customQuestions.getQuestion())).andReturn(generatedScores);
@@ -140,7 +140,7 @@ public class ReferenceControllerTest {
 //        final Referee referee = new RefereeBuilder().id(8).build();
 //
 //        expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
-//        expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
+//        expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 //        expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee).anyTimes();
 //        expect(scoringDefinitionParserMock.parseScoringDefinition("xmlContent")).andThrow(new ScoringDefinitionParseException("error"));
 //

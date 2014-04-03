@@ -59,7 +59,7 @@ public class AccountValidatorTest {
     public void shouldRejectIfNewPasswordIsNotSetAndCurrentAndConfirmAreSet() {
         user.setNewPassword(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.replay(userServiceMock);
         accountValidator.validate(user, mappingResult);
@@ -71,7 +71,7 @@ public class AccountValidatorTest {
     public void shouldRejectIfCurrentPasswordIsNotSetAndConfirmAndNewPasswordAreSet() {
         user.setPassword(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.replay(userServiceMock);
         accountValidator.validate(user, mappingResult);
@@ -83,7 +83,7 @@ public class AccountValidatorTest {
     public void shouldRejectIfConfirmPasswordIsNotSetAndCurrentAndNewPasswordAreSet() {
         user.setConfirmPassword(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "confirmPassword");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.replay(userServiceMock);
         accountValidator.validate(user, mappingResult);
@@ -95,7 +95,7 @@ public class AccountValidatorTest {
     public void shouldRejectIfCurrentPasswordNotSameWithExisting() {
         user.setPassword("12345678");
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("25d55ad283aa400af464c76d713c07ad");
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("25d55ad283aa400af464c76d713c07ad");
@@ -110,7 +110,7 @@ public class AccountValidatorTest {
     public void shouldRejectIfNewAndConfirmPasswordsNotSame() {
         user.setConfirmPassword("password");
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
@@ -126,7 +126,7 @@ public class AccountValidatorTest {
         user.setNewPassword("1234");
         user.setConfirmPassword("1234");
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234")).andReturn("1234");
@@ -141,7 +141,7 @@ public class AccountValidatorTest {
         user.setNewPassword("1234567891234567");
         user.setConfirmPassword("1234567891234567");
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234567891234567")).andReturn("1234567891234567");
@@ -156,7 +156,7 @@ public class AccountValidatorTest {
         user.setNewPassword(" 12o*-lala");
         user.setConfirmPassword(" 12o*-lala");
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
         EasyMock.expect(encryptionUtilsMock.getMD5Hash(" 12o*-lala")).andReturn(" 12o*-lala");
@@ -172,7 +172,7 @@ public class AccountValidatorTest {
 
         user.setEmail("email2@test.com");
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email2@test.com")).andReturn(existingUser);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
@@ -190,7 +190,7 @@ public class AccountValidatorTest {
 
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
 
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email2@test.com")).andReturn(existingUser);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
@@ -204,7 +204,7 @@ public class AccountValidatorTest {
     public void shouldRejectIfEmailNotValidEmail() {
         user.setEmail("notvalidemail");
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("notvalidemail")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
@@ -218,7 +218,7 @@ public class AccountValidatorTest {
     public void shouldRejectIfEmailIsEmpty() {
         user.setEmail(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
         EasyMock.replay(userServiceMock, encryptionUtilsMock);
         accountValidator.validate(user, mappingResult);
@@ -230,7 +230,7 @@ public class AccountValidatorTest {
     public void shouldRejectIfFirstNameEmpty() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "firstName");
         user.setFirstName("");
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
@@ -244,7 +244,7 @@ public class AccountValidatorTest {
     public void shouldRejectIfLastNameNull() {
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "lastName");
         user.setLastName(null);
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");

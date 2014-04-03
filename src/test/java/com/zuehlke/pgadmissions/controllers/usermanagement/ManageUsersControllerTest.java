@@ -107,7 +107,7 @@ public class ManageUsersControllerTest {
         EasyMock.expect(userMock.getLastName()).andReturn("Smith");
         EasyMock.expect(userMock.getAuthoritiesForProgram(program)).andReturn(Arrays.asList(Authority.ADMINISTRATOR, Authority.INTERVIEWER));
         EasyMock.expect(encryptionHelperMock.decryptToInteger(encryptedUserId)).andReturn(1);
-        EasyMock.expect(userServiceMock.getUser(1)).andReturn(userMock);
+        EasyMock.expect(userServiceMock.getById(1)).andReturn(userMock);
 
         EasyMock.expect(programServiceMock.getProgramByCode(programCode)).andReturn(program);
         EasyMock.replay(encryptionHelperMock, userServiceMock, userMock, programServiceMock);

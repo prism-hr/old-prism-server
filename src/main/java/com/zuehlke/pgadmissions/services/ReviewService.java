@@ -5,11 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -21,34 +21,35 @@ import com.zuehlke.pgadmissions.utils.DateUtils;
 public class ReviewService {
 
     @Autowired
-	private ApplicationsService applicationsService;
-
-    @Autowired
-	private StageDurationService stageDurationService;
+	private ApplicationFormService applicationsService;
 
     @Autowired
 	private MailSendingService mailService;
 
     @Autowired
-	private ApplicationFormUserRoleService applicationFormUserRoleService;
+	private WorkflowService applicationFormUserRoleService;
+    
+    @Autowired
+    private StateDAO stateDAO;
 
 	public void moveApplicationToReview(ApplicationForm application, AssignReviewersComment assignReviewersComment) {
 	    
 	    Comment latestAssignReviewersComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.ASSIGN_REVIEWERS);
 	    
 	    DateTime baseDate;
-	    if (application.getBatchDeadline() == null || latestAssignReviewersComment != null) {
+	    if (application.getClosingDate() == null || latestAssignReviewersComment != null) {
 	        baseDate = new DateTime();
 	    }
 	    else {
-	        baseDate = new DateTime(application.getBatchDeadline());
+	        baseDate = new DateTime(application.getClosingDate());
 	    }
 	    
-		StageDuration reviewStageDuration = stageDurationService.getById(ApplicationFormStatus.REVIEW);
-		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, reviewStageDuration.getDurationInMinutes());
+		State state = stateDAO.getById(ApplicationFormStatus.REVIEW);
+        Integer durationInMinutes = state.getDurationInMinutes();
+		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, durationInMinutes);
         application.setDueDate(dueDate.toDate());
-        boolean sendReferenceRequest = application.getStatus() == ApplicationFormStatus.VALIDATION;
-        application.setStatus(ApplicationFormStatus.REVIEW);
+        boolean sendReferenceRequest = application.getStatus().getId() == ApplicationFormStatus.VALIDATION;
+        application.setStatus(state);
 		
         if (sendReferenceRequest) {
             mailService.sendReferenceRequest(application.getReferees(), application);

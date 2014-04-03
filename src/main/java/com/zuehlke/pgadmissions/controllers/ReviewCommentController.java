@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -34,10 +33,11 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
 @Controller
@@ -49,7 +49,7 @@ public class ReviewCommentController {
     private static final String REVIEW_FEEDBACK_PAGE = "private/staff/reviewer/feedback/reviewcomment";
     
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Autowired
     private UserService userService;
@@ -73,7 +73,7 @@ public class ReviewCommentController {
     private ScoreFactory scoreFactory;
     
     @Autowired
-    private ApplicationFormUserRoleService ApplicationFormUserRoleService;
+    private WorkflowService WorkflowService;
     
     @Autowired
     private ActionService actionService;
@@ -91,7 +91,7 @@ public class ReviewCommentController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionService.getApplicationDescriptorForUser(applicationForm, user);
+        return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("user")
@@ -136,7 +136,7 @@ public class ReviewCommentController {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = (RegisteredUser) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
-        ApplicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
+        WorkflowService.deleteApplicationUpdate(applicationForm, user);
         return REVIEW_FEEDBACK_PAGE;
     }
 
@@ -164,8 +164,8 @@ public class ReviewCommentController {
         applicationsService.save(applicationForm);
         commentService.save(comment);
         applicationForm.getApplicationComments().add(comment);
-        ApplicationFormUserRoleService.reviewPosted(comment);
-        ApplicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
+        WorkflowService.reviewPosted(comment);
+        WorkflowService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
 
         return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
     }

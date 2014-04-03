@@ -23,7 +23,7 @@ public class UserPropertyEditorTest {
 	public void shouldLoadByIdAndSetAsValue(){
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
 		EasyMock.replay(userServiceMock, encryptionHelperMock);
 		
 		editor.setAsText("bob");

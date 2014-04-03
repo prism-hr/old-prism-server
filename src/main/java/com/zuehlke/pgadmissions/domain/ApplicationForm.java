@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +24,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Generated;
@@ -436,6 +439,18 @@ public class ApplicationForm implements Comparable<ApplicationForm>,
 	public List<Referee> getReferees() {
 		return referees;
 	}
+	
+    public String getIpAddressAsString() {
+        try {
+            return InetAddress.getByAddress(ipAddress).getHostAddress();
+        } catch (UnknownHostException e) {
+            return StringUtils.EMPTY;
+        }
+    }
+    
+    public void setIpAddressAsString(String ipAddress) throws UnknownHostException {
+        this.ipAddress = InetAddress.getByName(ipAddress).getAddress();
+    }
 
 	@Override
 	public int compareTo(ApplicationForm appForm) {

@@ -35,7 +35,7 @@ public class WithdrawServiceTest {
 
     @Mock
     @InjectIntoByType
-    private WorkflowService applicationFormUserRoleServiceMock;
+    private ActionService actionService;
 
     @TestedObject
     private WithdrawService service;
@@ -45,14 +45,14 @@ public class WithdrawServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REVIEW).build();
 
         applicationServiceMock.save(applicationForm);
-        applicationFormUserRoleServiceMock.deleteApplicationActions(applicationForm);
+        actionService.deleteApplicationActions(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);
         verify();
 
         assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
-        assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getPreviousStatus());
+        assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getLastStatus());
     }
 
     @Test
@@ -60,14 +60,14 @@ public class WithdrawServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).build();
 
         applicationServiceMock.save(applicationForm);
-        applicationFormUserRoleServiceMock.deleteApplicationActions(applicationForm);
+        actionService.deleteApplicationActions(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);
         verify();
 
         assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
-        assertEquals(ApplicationFormStatus.UNSUBMITTED, applicationForm.getPreviousStatus());
+        assertEquals(ApplicationFormStatus.UNSUBMITTED, applicationForm.getLastStatus());
     }
 
     @Test

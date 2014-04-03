@@ -75,15 +75,11 @@ public class EmploymentPositionController {
     @InitBinder("employmentPosition")
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(employmentPositionValidator);
-        binder.registerCustomEditor(String.class, newStringTrimmerEditor());
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(Language.class, languagePropertyEditor);
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
-    }
-
-    public StringTrimmerEditor newStringTrimmerEditor() {
-        return new StringTrimmerEditor(false);
     }
 
     @RequestMapping(value = "/getEmploymentPosition", method = RequestMethod.GET)
@@ -136,11 +132,6 @@ public class EmploymentPositionController {
     public ApplicationForm getApplicationForm(String applicationId) {
         return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.COMPLETE_APPLICATION,
                 ApplicationFormAction.CORRECT_APPLICATION);
-    }
-
-    @ModelAttribute("message")
-    public String getMessage(@RequestParam(required = false) String message) {
-        return message;
     }
 
     private String returnView(ModelMap modelMap, EmploymentPosition employmentPosition) {

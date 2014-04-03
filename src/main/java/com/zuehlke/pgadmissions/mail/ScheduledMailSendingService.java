@@ -28,10 +28,8 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
-import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @Service
 public class ScheduledMailSendingService extends AbstractMailSendingService {
@@ -47,9 +45,6 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @Autowired
-    private InterviewParticipantDAO interviewParticipantDAO;
 
     @Autowired
     private WorkflowService applicationFormUserRoleService;
@@ -114,7 +109,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendDigestEmail(Integer userId, DigestNotificationType digestNotificationType) {
-        final RegisteredUser user = userDAO.get(userId);
+        final RegisteredUser user = userDAO.getById(userId);
         return sendDigest(user, digestNotificationType);
     }
 
@@ -249,7 +244,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendNewUserInvitation(Integer userId) {
         PrismEmailMessage message = null;
-        RegisteredUser user = userDAO.get(userId);
+        RegisteredUser user = userDAO.getById(userId);
         String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[]) null);
         for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
             if (notification.getNotificationDate() == null) {

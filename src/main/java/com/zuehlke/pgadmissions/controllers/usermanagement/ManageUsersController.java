@@ -225,7 +225,7 @@ public class ManageUsersController {
     }
 
     private UserDTO createUserDTOFromExistingUser(final String user, final String programCode) {
-        RegisteredUser selectedUser = userService.getUser(encryptionHelper.decryptToInteger(user));
+        RegisteredUser selectedUser = userService.getById(encryptionHelper.decryptToInteger(user));
         UserDTO userDTO = new UserDTO();
         userDTO.setFirstName(selectedUser.getFirstName());
         userDTO.setLastName(selectedUser.getLastName());

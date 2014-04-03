@@ -2,20 +2,19 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -29,7 +28,6 @@ public class ProgramBuilder {
     private String funding;
     private Boolean active = true;
     private Boolean enabled = true;
-    private Date lastEditedTimestamp;
     private RegisteredUser contactUser;
     private String code;
     private boolean atasRequired;
@@ -77,11 +75,6 @@ public class ProgramBuilder {
 
     public ProgramBuilder enabled(boolean enabled) {
         this.enabled = enabled;
-        return this;
-    }
-
-    public ProgramBuilder lastEditedTimestamp(Date lastEditedTimestamp) {
-        this.lastEditedTimestamp = lastEditedTimestamp;
         return this;
     }
 
@@ -165,8 +158,7 @@ public class ProgramBuilder {
 
     public ProgramBuilder advert(Advert advert) {
         return id(advert.getId()).title(advert.getTitle()).description(advert.getDescription()).studyDuration(advert.getStudyDuration())
-                .funding(advert.getFunding()).active(advert.isActive()).enabled(advert.isEnabled()).lastEditedTimestamp(advert.getLastEditedTimestamp())
-                .contactUser(advert.getContactUser());
+                .funding(advert.getFunding()).active(advert.isActive()).enabled(advert.isEnabled()).contactUser(advert.getContactUser());
     }
 
     public Program build() {
@@ -178,7 +170,6 @@ public class ProgramBuilder {
         program.setFunding(funding);
         program.setActive(active);
         program.setEnabled(enabled);
-        program.setLastEditedTimestamp(lastEditedTimestamp);
         program.setContactUser(contactUser);
         program.setCode(code);
         program.getApprovers().addAll(approvers);

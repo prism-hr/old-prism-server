@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -35,11 +34,12 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
 @Controller
@@ -51,7 +51,7 @@ public class ReferenceController {
     private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
 
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Autowired
     private DocumentPropertyEditor documentPropertyEditor;
@@ -78,7 +78,7 @@ public class ReferenceController {
     private ScoreFactory scoreFactory;
 
     @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     @Autowired
     private ActionService actionService;
@@ -96,7 +96,7 @@ public class ReferenceController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getCurrentUser();
-        return actionService.getApplicationDescriptorForUser(applicationForm, user);
+        return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("user")

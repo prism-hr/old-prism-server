@@ -7,18 +7,18 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 
 @Service
@@ -30,7 +30,7 @@ public class ProgramInstanceService {
     private ThrottleService throttleService;
 
     @Autowired
-    private ProgramInstanceDAO programInstanceDAO;
+    private ProgramDAO programDAO;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -44,10 +44,8 @@ public class ProgramInstanceService {
             Date applicationStartDate = instance.getApplicationStartDate();
             boolean startDateInFuture = today.before(applicationStartDate);
             boolean beforeEndDate = todayPlusConsiderationPeriod.before(instance.getApplicationDeadline());
-            boolean sameStudyOption = details.getStudyOption().equals(instance.getStudyOption());
-            boolean sameStudyOptionCode = details.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption
-                    && sameStudyOptionCode) {
+            boolean sameStudyOption = details.getStudyOption().getId().equals(instance.getStudyOption().getId());
+            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && (startDateInFuture || beforeEndDate) && sameStudyOption) {
                 if (startDateInFuture && (result == null || result.after(applicationStartDate))) {
                     result = applicationStartDate;
                 } else if (result == null || result.after(todayPlusConsiderationPeriod)) {
@@ -70,9 +68,8 @@ public class ProgramInstanceService {
         for (ProgramInstance instance : applicationForm.getProgram().getInstances()) {
             boolean afterStartDate = startDate.after(instance.getApplicationStartDate());
             boolean beforeEndDate = startDate.before(instance.getApplicationDeadline());
-            boolean sameStudyOption = programDetails.getStudyOption().equals(instance.getStudyOption());
-            boolean sameStudyOptionCode = programDetails.getStudyOptionCode().equals(instance.getStudyOptionCode());
-            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption && sameStudyOptionCode) {
+            boolean sameStudyOption = programDetails.getStudyOption().getId().equals(instance.getStudyOption().getId());
+            if (applicationForm.getAdvert().isEnabled() && isActive(instance) && afterStartDate && beforeEndDate && sameStudyOption) {
                 return true;
             }
         }
@@ -80,31 +77,20 @@ public class ProgramInstanceService {
     }
 
     public boolean isActive(ProgramInstance programInstance) {
-        if (programInstance.getEnabled()) {
-            return true;
-        }
-        if (programInstance.getDisabledDate() != null) {
-            LocalDate disableLocalDate = new LocalDate(programInstance.getDisabledDate().getTime());
-            LocalDate today = new LocalDate();
-
-            int processingDelay = throttleService.getProcessingDelayInDays();
-            if (today.isBefore(disableLocalDate.plusDays(processingDelay))) {
-                return true;
-            }
-        }
+        // TODO use program.isEnabled()
+        // if (programInstance.getEnabled()) {
+        // return true;
+        // }
+        // if (programInstance.getDisabledDate() != null) {
+        // LocalDate disableLocalDate = new LocalDate(programInstance.getDisabledDate().getTime());
+        // LocalDate today = new LocalDate();
+        //
+        // int processingDelay = throttleService.getProcessingDelayInDays();
+        // if (today.isBefore(disableLocalDate.plusDays(processingDelay))) {
+        // return true;
+        // }
+        // }
         return false;
-    }
-
-    @Transactional
-    public List<StudyOption> getDistinctStudyOptions() {
-        List<Object[]> options = programInstanceDAO.getDistinctStudyOptions();
-        List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(options.size());
-
-        for (Object[] option : options) {
-            StudyOption studyOption = new StudyOption(option[0].toString(), option[1].toString());
-            studyOptions.add(studyOption);
-        }
-        return studyOptions;
     }
 
     @Transactional
@@ -132,12 +118,13 @@ public class ProgramInstanceService {
         return instances;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     protected ProgramInstance createOrUpdateProgramInstance(Program program, int startYear, StudyOption studyOption) {
         ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
         DateTime startDate = thisBean.findPenultimateSeptemberMonday(startYear);
         DateTime deadline = thisBean.findPenultimateSeptemberMonday(startYear + 1);
 
-        ProgramInstance programInstance = programInstanceDAO.getProgramInstance(program, studyOption, startDate.toDate());
+        ProgramInstance programInstance = programDAO.getProgramInstance(program, studyOption, startDate.toDate());
         if (programInstance == null) {
             programInstance = new ProgramInstance();
             programInstance.setProgram(program);
@@ -150,17 +137,21 @@ public class ProgramInstanceService {
         programInstance.setDisabledDate(deadline.minusMonths(1).toDate());
         programInstance.setEnabled(true);
         programInstance.setIdentifier("CUSTOM");
-        programInstance.setStudyOption(studyOption.getName());
-        programInstance.setStudyOption(studyOption.getId());
+        programInstance.setStudyOption(studyOption);
+        programDAO.save(programInstance);
 
-        programInstanceDAO.save(programInstance);
         return programInstance;
+    }
+    
+    
+
+    public List<StudyOption> getAvailableStudyOptions() {
+        return programDAO.getAvailableStudyOptions();
     }
 
     protected List<StudyOption> getStudyOptions(String studyOptionCodesSplit) {
         List<String> studyOptionCodes = Arrays.asList(studyOptionCodesSplit.split(","));
-        ProgramInstanceService thisBean = applicationContext.getBean(ProgramInstanceService.class);
-        List<StudyOption> distinctStudyOptions = thisBean.getDistinctStudyOptions();
+        List<StudyOption> distinctStudyOptions = programDAO.getAvailableStudyOptions();
 
         List<StudyOption> studyOptions = Lists.newArrayListWithCapacity(studyOptionCodes.size());
         for (StudyOption o : distinctStudyOptions) {
@@ -207,11 +198,11 @@ public class ProgramInstanceService {
     }
 
     public int getAdvertisingDeadlineYear(Program program) {
-        return new DateTime(programInstanceDAO.getLatestActiveInstanceDeadline(program)).getYear();
+        return new DateTime(programDAO.getLatestActiveInstanceDeadline(program)).getYear();
     }
 
-    public List<String> getStudyOptions(Program program) {
-        return programInstanceDAO.getStudyOptions(program);
+    public List<StudyOption> getStudyOptions(Program program) {
+        return programDAO.getAvailableStudyOptions(program);
     }
 
 }

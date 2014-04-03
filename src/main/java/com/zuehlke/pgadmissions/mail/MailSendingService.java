@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.EXPORT_ERR
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERROR;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
@@ -24,11 +25,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
+import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 
 @Service
 public class MailSendingService extends AbstractMailSendingService {
@@ -184,20 +189,22 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-  	public void sendInterviewVoteNotificationToInterviewerParticipants(Interview interview) {
-        ApplicationForm application = interview.getApplication();
-        String subject = resolveMessage(INTERVIEW_VOTE_NOTIFICATION, application);
+  	public void sendInterviewVoteNotificationToInterviewerParticipants(AssignInterviewersComment assignInterviewersComment) {
+        ApplicationForm application = assignInterviewersComment.getApplication();
+        String subject = resolveMessage(EmailTemplateName.INTERVIEW_VOTE_NOTIFICATION, application);
         PrismEmailMessage message = null;
-        for (InterviewParticipant participant : interview.getParticipants()) {
+        
+        List<RegisteredUser> recipients = Lists.newLinkedList();
+        
+        for (CommentAssignedUser assignedUser : assignInterviewersComment.getAssignedUsers()) {
             try {
                 List<RegisteredUser> admins = application.getProgram().getAdministrators();
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
-                        getAdminsEmailsCommaSeparatedAsString(admins), participant, application, getHostName() });
-                message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_NOTIFICATION);
+                        getAdminsEmailsCommaSeparatedAsString(admins), assignedUser.getUser(), application, getHostName() });
+                message = buildMessage(assignedUser.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_NOTIFICATION);
                 sendEmail(message);
-                participant.setLastNotified(new Date());
             } catch (Exception e) {
-                log.error("Error while sending interview vote notification email to interview participant: " + participant.getUser().getEmail(), e);
+                log.error("Error while sending interview vote notification email to interview participant: " + assignedUser.getUser().getEmail(), e);
             }
         }
     }

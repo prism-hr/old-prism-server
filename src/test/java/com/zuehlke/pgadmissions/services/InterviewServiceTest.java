@@ -13,7 +13,7 @@ public class InterviewServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     @Mock
     @InjectIntoByType
@@ -21,15 +21,11 @@ public class InterviewServiceTest {
 
     @Mock
     @InjectIntoByType
-    private StageDurationService stageDurationService;
-
-    @Mock
-    @InjectIntoByType
     private CommentService commentService;
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
     @Mock
     @InjectIntoByType

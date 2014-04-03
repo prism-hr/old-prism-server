@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
-import com.zuehlke.pgadmissions.services.exporters.PorticoExportService;
 
 @Service
 public class ExportQueueService {
@@ -96,7 +95,7 @@ public class ExportQueueService {
 
     @Transactional
     public void handleNonDeliverableApplication(final String applicationNumber) {
-        ApplicationForm form = formDAO.getApplicationByApplicationNumber(applicationNumber);
+        ApplicationForm form = formDAO.getByApplicationNumber(applicationNumber);
         ApplicationFormTransfer transfer = formTransferService.getByApplicationForm(form);
         transfer.setStatus(ApplicationTransferStatus.CANCELLED);
     }

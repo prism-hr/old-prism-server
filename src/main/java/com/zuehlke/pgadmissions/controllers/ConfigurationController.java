@@ -38,9 +38,8 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
-import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.Throttle;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
@@ -127,7 +126,7 @@ public class ConfigurationController {
 
     @InitBinder(value = "serviceLevelsDTO")
     public void registerValidatorsAndPropertyEditors(WebDataBinder binder) {
-        binder.registerCustomEditor(StageDuration.class, stageDurationPropertyEditor);
+        binder.registerCustomEditor(State.class, stageDurationPropertyEditor);
         binder.registerCustomEditor(ReminderInterval.class, reminderIntervalPropertyEditor);
         binder.registerCustomEditor(NotificationsDuration.class, notificationsDurationPropertyEditor);
     }
@@ -316,24 +315,14 @@ public class ConfigurationController {
         return names;
     }
 
-    @ModelAttribute("stages")
-    public ApplicationFormStatus[] getConfigurableStages() {
-        return configurationService.getConfigurableStages();
+    @ModelAttribute("states")
+    public List<State> getConfigurableStates() {
+        return configurationService.getConfigurableStates();
     }
 
     @ModelAttribute("user")
     public RegisteredUser getUser() {
         return userService.getCurrentUser();
-    }
-
-    @ModelAttribute("stageDurations")
-    public Map<String, StageDuration> getStageDurations() {
-        Map<ApplicationFormStatus, StageDuration> stageDurations = configurationService.getStageDurations();
-        Map<String, StageDuration> durations = new HashMap<String, StageDuration>();
-        for (ApplicationFormStatus status : stageDurations.keySet()) {
-            durations.put(status.toString(), stageDurations.get(status));
-        }
-        return durations;
     }
 
     @ModelAttribute("reminderIntervals")

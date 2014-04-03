@@ -16,7 +16,6 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -30,10 +29,11 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.AdmitterCommentValidator;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -64,7 +64,7 @@ public class AdmitterCommentControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ActionsProvider actionsProviderMock;
+    private ActionService actionsProviderMock;
 
     @Mock
     @InjectIntoByType

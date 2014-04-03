@@ -16,7 +16,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.PassportInformation;
+import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -55,20 +55,18 @@ public class PersonalDetailsServiceTest {
                 new LanguageQualificationBuilder().languageQualificationDocument(oldQualificationDocument).build()).build();
         PersonalDetails newPersonalDetails = new PersonalDetailsBuilder()
                 .languageQualification(new LanguageQualificationBuilder().languageQualificationDocument(newQualificationDocument).build())
-                .passportAvailable(true).passportInformation(new PassportInformation()).id(1).languageQualificationAvailable(null).passportAvailable(null)
+                .passportAvailable(true).passportInformation(new Passport()).id(1).languageQualificationAvailable(null).passportAvailable(null)
                 .build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().personalDetails(personalDetails).applicant(applicant).build();
 
         expect(applicationContext.getBean(PersonalDetailsService.class)).andReturn(thisBeanMock);
-        expect(applicationFormDAOMock.get(84)).andReturn(applicationForm);
+        expect(applicationFormDAOMock.getById(84)).andReturn(applicationForm);
         documentService.replaceDocument(oldQualificationDocument, newQualificationDocument);
-        thisBeanMock.copyPersonalDetails(personalDetails, newPersonalDetails);
-        thisBeanMock.copyApplicantData(applicant, newApplicant);
         applicationFormDAOMock.save(applicationForm);
 
         replay();
-        service.save(84, newPersonalDetails, newApplicant);
+        service.saveOrUpdate(null, newPersonalDetails, newApplicant);
 
         assertSame(personalDetails, applicationForm.getPersonalDetails());
     }

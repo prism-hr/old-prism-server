@@ -4,6 +4,8 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
@@ -21,21 +23,12 @@ import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class AbstractMailSendingServiceTest {
     
     private static final String HOST = "http://localhost:8080";
 
     private class TestableAbstractMailSendingService extends AbstractMailSendingService {
-        public TestableAbstractMailSendingService(
-                final MailSender mailSender, 
-                final ApplicationFormDAO formDAO,
-                final ConfigurationService configurationService, 
-                final UserDAO userDAO, 
-                final RoleDAO roleDAO, 
-                final RefereeDAO refereeDAO,
-                final EncryptionUtils encryptionUtils) {
-            super(mailSender, formDAO, configurationService, userDAO, roleDAO, refereeDAO, encryptionUtils, HOST);
-        }
     }
     
     private TestableAbstractMailSendingService service;
@@ -54,26 +47,6 @@ public class AbstractMailSendingServiceTest {
     
     private UserDAO userDAOMock;
     
-    @Before
-    public void setup() {
-        mockMailSender = EasyMock.createMock(MailSender.class);
-        configurationServiceMock = EasyMock.createMock(ConfigurationService.class);
-        applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-        userDAOMock = EasyMock.createMock(UserDAO.class);
-        roleDAOMock = EasyMock.createMock(RoleDAO.class);
-        refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
-        encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
-        userDAOMock = EasyMock.createMock(UserDAO.class);
-        service = new TestableAbstractMailSendingService(
-                mockMailSender, 
-                applicationFormDAOMock, 
-                configurationServiceMock, 
-                userDAOMock,
-                roleDAOMock, 
-                refereeDAOMock, 
-                encryptionUtilsMock);
-    }
-
     @Test
     public void shouldAddRefereeRoleIfUserExistsAndIsNotAReferee() {
         Role reviewerRole = new RoleBuilder().id(Authority.REVIEWER).build();
@@ -120,7 +93,7 @@ public class AbstractMailSendingServiceTest {
 
     @Test
     public void shouldCreateUserWithRefereeRoleIfRefereeDoesNotExist() {
-        final RegisteredUser user = new RegisteredUserBuilder().id(1).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+        final RegisteredUser user = new RegisteredUserBuilder().id(1).enabled(true).build();
         Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com").application(new ApplicationFormBuilder().id(1).applicationNumber("abc").build()).build();
         Role role = new RoleBuilder().build();
         EasyMock.expect(roleDAOMock.getById(Authority.REFEREE)).andReturn(role);

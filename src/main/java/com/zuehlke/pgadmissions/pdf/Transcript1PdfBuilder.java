@@ -15,13 +15,13 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 
 @Component
 public class Transcript1PdfBuilder extends AbstractPdfModelBuilder {
     
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
 
     public Transcript1PdfBuilder() {
     }

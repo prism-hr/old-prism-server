@@ -3,52 +3,43 @@ package com.zuehlke.pgadmissions.services;
 import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMock;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
+import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.EmploymentPositionDAO;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class EmploymentPositionServiceTest {
 
-	
-	private EmploymentPositionDAO employmentPositionDAOMock;
-	private EmploymentPositionService employmentPositionService;
+    @Mock
+    @InjectIntoByType
+    private ApplicationFormService applicationFormService;
 
-	@Test
-	public void shouldGetEmploymentFromDAO(){
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
-		EasyMock.expect(employmentPositionDAOMock.getById(1)).andReturn(employmentPosition);
-		EasyMock.replay(employmentPositionDAOMock);
-		EmploymentPosition returnedEmployment = employmentPositionService.getById(1);
-		assertEquals(employmentPosition, returnedEmployment);
-	}
-	
-	@Test
-	public void shouldDelegateSaveToDAO(){
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
-		employmentPositionDAOMock.save(employmentPosition);
-		EasyMock.replay(employmentPositionDAOMock);
-		employmentPositionService.save(employmentPosition);
-		EasyMock.verify(employmentPositionDAOMock);
-	}
-	
-	
-	@Test
-	public void shouldDelegateDeleteToDAO(){
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
-		employmentPositionDAOMock.delete(employmentPosition);
-		EasyMock.replay(employmentPositionDAOMock);
-		employmentPositionService.delete(employmentPosition);
-		EasyMock.verify(employmentPositionDAOMock);
-	}
-	
-	
-	
-	@Before
-	public void setup(){
-		employmentPositionDAOMock = EasyMock.createMock(EmploymentPositionDAO.class);
-		employmentPositionService = new EmploymentPositionService(employmentPositionDAOMock);
-	}
+    @Mock
+    @InjectIntoByType
+    private EmploymentPositionDAO employmentPositionDAO;
+
+    @Mock
+    @InjectIntoByType
+    private ApplicationFormCopyHelper applicationFormCopyHelper;
+
+    @TestedObject
+    private EmploymentPositionService service;
+
+    @Test
+    public void shouldGetEmploymentFromDAO() {
+        EmploymentPosition employmentPosition = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
+        EasyMock.expect(employmentPositionDAO.getById(1)).andReturn(employmentPosition);
+        EasyMock.replay(employmentPositionDAO);
+        EmploymentPosition returnedEmployment = service.getById(1);
+        assertEquals(employmentPosition, returnedEmployment);
+    }
+
 }

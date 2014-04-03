@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.helpers.RegisteredUserTestHarness;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 public class UserNotificationListBuilder {
-    
+
     private int taskReminderSuccessCount = 0;
     private int taskNotificationSuccessCount = 0;
     private int updateNotificationSuccessCount = 0;
@@ -42,7 +42,7 @@ public class UserNotificationListBuilder {
     private final Date updateBaselineDate;
     private final Date opportunityRequestBaselineDate;
     private final Date reminderBaselineDate;
-    private final Date expiryBaselineDate;    
+    private final Date expiryBaselineDate;
 
     public UserNotificationListBuilder(SessionFactory sessionFactory, Date baselineDate, int testIterations, int reminderIntervalInDays,
             int expiryIntervalInDays, Program program) {
@@ -57,7 +57,7 @@ public class UserNotificationListBuilder {
         this.reminderBaselineDate = DateUtils.addDays((Date) baselineDate.clone(), -reminderIntervalInDays);
         this.expiryBaselineDate = DateUtils.addDays((Date) baselineDate.clone(), -expiryIntervalInDays);
         this.actionWithSyndicatedNotification = testObjectProvider.getAction(NotificationMethod.SYNDICATED);
-        this.actionWithIndividualNotification = testObjectProvider.getAction(NotificationMethod.INDIVIDUAL);             
+        this.actionWithIndividualNotification = testObjectProvider.getAction(NotificationMethod.INDIVIDUAL);
         this.roleWithUpdateNotification = testObjectProvider.getRole(true);
         this.roleWithoutUpdateNotification = testObjectProvider.getRole(false);
         this.superadministratorRole = testObjectProvider.getRole(Authority.SUPERADMINISTRATOR);
@@ -155,7 +155,7 @@ public class UserNotificationListBuilder {
     public int getUpdateNotificationSuccessCount() {
         return updateNotificationSuccessCount;
     }
-    
+
     public int getOpportunityRequestNotificationSuccessCount() {
         return opportunityRequestNotificationSuccessCount;
     }
@@ -211,7 +211,6 @@ public class UserNotificationListBuilder {
         }
         updateDummyObject(user);
         ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithUpdateNotification, false, true);
-        applicationFormUserRole.setUpdateTimestamp(baselineDate);
         return new RegisteredUserTestHarness(user, testScenario, applicationFormUserRole);
     }
 
@@ -240,18 +239,6 @@ public class UserNotificationListBuilder {
             user.setEnabled(false);
             updateDummyObject(user);
             break;
-        case USER_ACCOUNT_EXPIRED:
-            user.setAccountNonExpired(false);
-            updateDummyObject(user);
-            break;
-        case USER_ACCOUNT_LOCKED:
-            user.setAccountNonLocked(false);
-            updateDummyObject(user);
-            break;
-        case USER_CREDENTIALS_EXPIRED:
-            user.setCredentialsNonExpired(false);
-            updateDummyObject(user);
-            break;
         default:
             break;
         }
@@ -278,23 +265,11 @@ public class UserNotificationListBuilder {
             updateDummyObject(applicationFormUserRole);
             break;
         case ACTION_NOT_SYNDICATED:
-            applicationFormActionRequired.setAction(actionWithIndividualNotification);
+            applicationFormActionRequired.setId(actionWithIndividualNotification);
             updateDummyObject(applicationFormActionRequired);
             break;
         case USER_ACCOUNT_DISABLED:
             user.setEnabled(false);
-            updateDummyObject(user);
-            break;
-        case USER_ACCOUNT_EXPIRED:
-            user.setAccountNonExpired(false);
-            updateDummyObject(user);
-            break;
-        case USER_ACCOUNT_LOCKED:
-            user.setAccountNonLocked(false);
-            updateDummyObject(user);
-            break;
-        case USER_CREDENTIALS_EXPIRED:
-            user.setCredentialsNonExpired(false);
             updateDummyObject(user);
             break;
         default:
@@ -365,16 +340,13 @@ public class UserNotificationListBuilder {
     }
 
     private RegisteredUser getDummyUser() {
-        RegisteredUser user = new RegisteredUserBuilder().username(encryptionUtils.generateUUID()).enabled(true).accountNonExpired(true).accountNonLocked(true)
-                .credentialsNonExpired(true).build();
+        RegisteredUser user = new RegisteredUserBuilder().username(encryptionUtils.generateUUID()).enabled(true).build();
         saveDummyObject(user);
         return user;
     }
 
     private ApplicationFormActionRequired getDummyApplicationFormActionRequired(Action action) {
-        ApplicationFormActionRequired applicationFormActionRequired = new ApplicationFormActionRequired();
-        applicationFormActionRequired.setAction(action);
-        applicationFormActionRequired.setDeadlineTimestamp(baselineDate);
+        ApplicationFormActionRequired applicationFormActionRequired = new ApplicationFormActionRequired(action, baselineDate, null, null);
         return applicationFormActionRequired;
     }
 

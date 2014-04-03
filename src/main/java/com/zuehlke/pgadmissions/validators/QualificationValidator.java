@@ -46,7 +46,7 @@ public class QualificationValidator extends FormSectionObjectValidator implement
             }
         }
 
-        if (qualification.isQualificationCompleted()) {
+        if (qualification.getCompleted()) {
             if (qualification.getQualificationAwardDate() != null && qualification.getQualificationAwardDate().after(today)) {
                 errors.rejectValue("qualificationAwardDate", "date.field.notpast");
             }
@@ -60,15 +60,7 @@ public class QualificationValidator extends FormSectionObjectValidator implement
             errors.reject("");
         }
 
-        if (StringUtils.equalsIgnoreCase("Select...", qualification.getQualificationInstitution())) {
-            errors.reject("qualificationInstitution", EMPTY_DROPDOWN_ERROR_MESSAGE);
-        }
-
-        String institutionCode = qualification.getQualificationInstitutionCode();
-        if (StringUtils.isNotBlank(institutionCode) && StringUtils.equalsIgnoreCase("OTHER", institutionCode)) {
-            if (StringUtils.isBlank(qualification.getOtherQualificationInstitution())) {
-                errors.rejectValue("otherQualificationInstitution", EMPTY_FIELD_ERROR_MESSAGE);
-            }
-        }
+        ValidationUtils.rejectIfEmpty(errors, "qualificationInstitution", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        
     }
 }

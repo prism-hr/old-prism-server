@@ -99,11 +99,11 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         roleDAO = new RoleDAO(sessionFactory);
 
         applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-                .role(roleDAO.getById(Authority.APPLICANT)).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
+//                .role(roleDAO.getById(Authority.APPLICANT))
                 .enabled(true).applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
 
         superUser = new RegisteredUserBuilder().firstName("John").lastName("Doe").email("email@test.com").username("superUserUsername").password("password")
-                .role(roleDAO.getById(Authority.SUPERADMINISTRATOR)).accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false)
+//                .role(roleDAO.getById(Authority.SUPERADMINISTRATOR))
                 .enabled(true).applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
 
         sessionFactory.getCurrentSession().flush();
@@ -126,7 +126,9 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationFormListDAO applicationFormListDAOMock = EasyMock.createMock(ApplicationFormListDAO.class);
         InjectionUtils.injectInto(applicationFormListDAOMock, applicationsService, "applicationFormListDAO");
 
-        RegisteredUser user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().id(Authority.APPLICANT).build()).build();
+        RegisteredUser user = new RegisteredUserBuilder().id(1).username("bob")
+//                .role(new RoleBuilder().id(Authority.APPLICANT).build())
+                .build();
         ApplicationsFiltering filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
         EasyMock.expect(applicationFormListDAOMock.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE)).andReturn(
                 Arrays.asList(applicationDescriptor));
@@ -318,7 +320,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingFirstNameFred() {
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("FredzzZZZZZerick").lastName("Doe").email("email@test.com").username("freddy")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+                .password("password").enabled(true).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(applicant)
                 .status(ApplicationFormStatus.APPROVAL).build();
@@ -343,7 +345,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     public void shouldGetApplicationBelongingToApplicantMatchingLastName() {
 
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com").username("freddy")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+                .password("password").enabled(true).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(applicant)
                 .status(ApplicationFormStatus.APPROVAL).build();
@@ -368,7 +370,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     public void shouldNotReturnAppIfTermNotInApplicantNameFirstOrLastName() {
 
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").username("freddy")
-                .password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).build();
+                .password("password").enabled(true).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(applicant)
                 .status(ApplicationFormStatus.APPROVAL).build();
@@ -628,13 +630,17 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldSortApplicationWithApplName() throws ParseException {
         RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("1")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
         RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("AAAA").lastName("CCCC").username("2")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
         RegisteredUser applicant3 = new RegisteredUserBuilder().firstName("BBBB").lastName("AAAA").username("3")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
         RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1).status(ApplicationFormStatus.APPROVED)
                 .applicationNumber("ABCDE1").advert(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).build();
@@ -677,13 +683,17 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldSortApplicationWithApplStatus() throws ParseException {
         RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("1")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
         RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("AAAA").lastName("CCCC").username("2")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
         RegisteredUser applicant3 = new RegisteredUserBuilder().firstName("BBBB").lastName("AAAA").username("3")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
         RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1).status(ApplicationFormStatus.APPROVED)
                 .applicationNumber("ABCDE1").advert(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).build();
@@ -726,13 +736,17 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldSortApplicationWithProgramName() throws ParseException {
         RegisteredUser applicant1 = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("1")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
         RegisteredUser applicant2 = new RegisteredUserBuilder().firstName("AAAA").lastName("CCCC").username("2")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
         RegisteredUser applicant3 = new RegisteredUserBuilder().firstName("BBBB").lastName("AAAA").username("3")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
         RegisteredUser applicant4 = new RegisteredUserBuilder().firstName("CCCC").lastName("AAAA").username("4")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
 
         Program program1 = new ProgramBuilder().code("empty1").title("AAA").institution(institution)
                 .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).build();
@@ -810,7 +824,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldReturnApplicationWithSupervisorInProgrammeDetails() {
         RegisteredUser applicant = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("1")
-                .role(roleDAO.getById(Authority.APPLICANT)).build();
+//                .role(roleDAO.getById(Authority.APPLICANT))
+                .build();
         SuggestedSupervisor supervisor = new SuggestedSupervisorBuilder().aware(true).email("threepwood@monkeyisland.com").firstname("Guybrush")
                 .lastname("Threepwood").build();
         SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().name("foo").code("foo").build();
@@ -832,7 +847,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
         assertEquals(1, applications.size());
-        assertEquals(supervisor.getLastname(), applicationFormDAO.get(applications.get(0).getApplicationFormId()).getProgramDetails()
+        assertEquals(supervisor.getLastname(), applicationFormDAO.getById(applications.get(0).getApplicationFormId()).getProgramDetails()
                 .getSuggestedSupervisors().get(0).getLastname());
     }
 

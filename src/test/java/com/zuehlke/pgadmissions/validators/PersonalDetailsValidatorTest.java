@@ -44,7 +44,7 @@ public class PersonalDetailsValidatorTest {
 
     private PersonalDetailsValidator personalDetailValidator;
 
-    private PassportInformationValidator passportInformationValidator;
+    private PassportValidator passportInformationValidator;
 
     private LanguageQualificationValidator languageQualificationValidator;
 
@@ -206,7 +206,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectPassportNumberIfEmpty() {
-        personalDetails.getPassportInformation().setPassportNumber(null);
+        personalDetails.getPassport().setNumber(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -215,7 +215,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectPassportNumberIfLongerThan35() {
-        personalDetails.getPassportInformation().setPassportNumber("0123456789012345678901234567890123456789");
+        personalDetails.getPassport().setNumber("0123456789012345678901234567890123456789");
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -224,7 +224,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectNameOnPassportIfEmpty() {
-        personalDetails.getPassportInformation().setNameOnPassport(null);
+        personalDetails.getPassport().setName(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -233,7 +233,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectPassportIssueDateIfEmpty() {
-        personalDetails.getPassportInformation().setPassportIssueDate(null);
+        personalDetails.getPassport().setIssueDate(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -242,7 +242,7 @@ public class PersonalDetailsValidatorTest {
 
     @Test
     public void shouldRejectPassportExpiryDateIfEmpty() {
-        personalDetails.getPassportInformation().setPassportExpiryDate(null);
+        personalDetails.getPassport().setExpiryDate(null);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -252,8 +252,8 @@ public class PersonalDetailsValidatorTest {
     @Test
     public void shouldRejectPassportExpiryAndIssueDateAreTheSame() {
         Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1);
-        personalDetails.getPassportInformation().setPassportExpiryDate(oneMonthAgo);
-        personalDetails.getPassportInformation().setPassportIssueDate(oneMonthAgo);
+        personalDetails.getPassport().setExpiryDate(oneMonthAgo);
+        personalDetails.getPassport().setIssueDate(oneMonthAgo);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(3, mappingResult.getErrorCount());
@@ -265,7 +265,7 @@ public class PersonalDetailsValidatorTest {
     @Test
     public void shouldRejectPassportExpiryDateIsInThePast() {
         Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), -1);
-        personalDetails.getPassportInformation().setPassportExpiryDate(oneMonthAgo);
+        personalDetails.getPassport().setExpiryDate(oneMonthAgo);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -275,7 +275,7 @@ public class PersonalDetailsValidatorTest {
     @Test
     public void shouldRejectPassportIssueDateIsInTheFuture() {
         Date oneMonthAgo = org.apache.commons.lang.time.DateUtils.addMonths(new Date(), +1);
-        personalDetails.getPassportInformation().setPassportIssueDate(oneMonthAgo);
+        personalDetails.getPassport().setIssueDate(oneMonthAgo);
         BindingResult mappingResult = new BeanPropertyBindingResult(personalDetails, "personalDetails");
         personalDetailValidator.validate(personalDetails, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -688,16 +688,16 @@ public class PersonalDetailsValidatorTest {
                 .englishFirstLanguage(true)
                 .languageQualificationAvailable(true)
                 .passportInformation(
-                        new PassportInformationBuilder().nameOnPassport("Kevin Francis Denver").passportNumber("000")
-                                .passportExpiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
-                                .passportIssueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
+                        new PassportInformationBuilder().name("Kevin Francis Denver").number("000")
+                                .expiryDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 20))
+                                .issueDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -10)).build())
                 .languageQualification(
                         new LanguageQualificationBuilder().examDate(new Date()).examOnline(false)
                                 .languageQualification(LanguageQualificationEnum.OTHER).qualificationTypeName("foobar").listeningScore("1")
                                 .overallScore("1").readingScore("1").writingScore("1").speakingScore("1")
                                 .languageQualificationDocument(new DocumentBuilder().build()).build()).build();
 
-        passportInformationValidator = new PassportInformationValidator();
+        passportInformationValidator = new PassportValidator();
         passportInformationValidator.setValidator((javax.validation.Validator) validator);
 
         languageQualificationValidator = new LanguageQualificationValidator();

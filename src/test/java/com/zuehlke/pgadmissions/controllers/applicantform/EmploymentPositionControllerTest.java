@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
+import java.util.Date;
+
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,33 +14,44 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
-import com.zuehlke.pgadmissions.services.RefereeService;
-import com.zuehlke.pgadmissions.validators.RefereeValidator;
+import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
-public class RefereeControllerTest {
+public class EmploymentPositionControllerTest {
 
     @Mock
     @InjectIntoByType
-    private RefereeService refereeService;
+    private EmploymentPositionService employmentPositionService;
 
     @Mock
     @InjectIntoByType
-    private DomicileService domicileService;
+    private LanguageService languageService;
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormService applicationsService;
+    private ApplicationFormService applicationFormService;
 
     @Mock
     @InjectIntoByType
-    private DomicilePropertyEditor domicilePropertyEditor;
+    private LanguagePropertyEditor languagePropertyEditor;
+
+    @Mock
+    @InjectIntoByType
+    private DatePropertyEditor datePropertyEditor;
+
+    @Mock
+    @InjectIntoByType
+    private EmploymentPositionValidator employmentPositionValidator;
 
     @Mock
     @InjectIntoByType
@@ -46,23 +59,25 @@ public class RefereeControllerTest {
 
     @Mock
     @InjectIntoByType
-    private RefereeValidator refereeValidator;
+    private DomicileService domicileService;
 
     @Mock
     @InjectIntoByType
-    private EncryptionHelper encryptionHelper;
+    private DomicilePropertyEditor domicilePropertyEditor;
 
     @Mock
     @InjectIntoByType
     private FullTextSearchService searchService;
 
     @TestedObject
-    private RefereeController controller;
+    private EmploymentPositionController controller;
 
     @Test
     public void shouldBindPropertyEditors() {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-        binderMock.setValidator(refereeValidator);
+        binderMock.setValidator(employmentPositionValidator);
+        binderMock.registerCustomEditor(Date.class, datePropertyEditor);
+        binderMock.registerCustomEditor(Language.class, languagePropertyEditor);
         binderMock.registerCustomEditor(Domicile.class, domicilePropertyEditor);
         binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
@@ -70,5 +85,4 @@ public class RefereeControllerTest {
         controller.registerPropertyEditors(binderMock);
         EasyMock.verify(binderMock);
     }
-
 }

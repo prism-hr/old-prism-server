@@ -13,23 +13,23 @@
 				<h3>Service Level Commitments</h3>
 				
 				<select id="stages" style="display: none;">
-					<#list stages as stage>
-					<option value="${stage}"></option>
+					<#list states as state>
+					<option value="${stage.id}"></option>
 					</#list>
 				</select>
 
-				<#list stages as stage>
+				<#list states as state>
 				<div class="row"> 
-					<label for="${stage}_duration" id="${stage.displayValue()}-lbl" class="plain-label">${stage.displayValue()} Stage Duration<em>*</em></label>
+					<label for="${state.id}_duration" id="${stage.displayValue()}-lbl" class="plain-label">${stage.displayValue()} Stage Duration<em>*</em></label>
 					<span class="hint" data-desc="<@spring.message 'configuration.validationDuration'/> ${stage.displayValue()} stage."></span>
 					<div class="field">	
-						<input type="hidden" id="stage" name="stage" value="${stage}" />
-						<#if stageDurations[stage]?? && stageDurations[stage].duration??>  				
-						<input class="numeric input-small" type="text" size="4" id="${stage}_duration" name="${stage}_duration" value="${stageDurations[stage].duration?string("######")}" />
+						<input type="hidden" id="stage" name="stage" value="${state.id}" />
+						<#if states[state]?? && states[state].duration??>  				
+						<input class="numeric input-small" type="text" size="4" id="${state.id}_duration" name="${state.id}_duration" value="${state.duration?string("######")}" />
 						<#else>
-						<input class="numeric" type="text" size="4" id="${stage}_duration" name="${stage}_duration"  />
+						<input class="numeric" type="text" size="4" id="${state.id}_duration" name="${state.id}_duration"  />
 						</#if>
-						<select name="${stage}_unit" id="${stage}_unit" class="input-small">
+						<select name="${state.id}_unit" id="${state.id}_unit" class="input-small">
 							<option value="">Select...</option>
 							<#list units as unit>
                                 <option value="${unit}" <#if  stageDurations[stage]?? && stageDurations[stage].unit?? && stageDurations[stage].unit == unit> selected="selected"</#if>>${unit.displayValue()}</option>

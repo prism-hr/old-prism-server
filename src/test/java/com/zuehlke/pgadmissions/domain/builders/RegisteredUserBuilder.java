@@ -5,15 +5,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
 
 public class RegisteredUserBuilder {
     private String firstName;
@@ -28,19 +22,9 @@ public class RegisteredUserBuilder {
     private String directURL;
     private Integer id;
     private boolean enabled = true;
-    private boolean accountNonExpired = true;
-    private boolean accountNonLocked = true;
-    private boolean credentialsNonExpired = true;
     private String activationCode;
     private String upi;
     private Date applicationListLastAccessTimestamp;
-    private List<Referee> referees = new ArrayList<Referee>();
-    private List<Comment> comments = new ArrayList<Comment>();
-    private List<Role> roles = new ArrayList<Role>();
-    private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
-    private List<Program> programsOfWhichApprover = new ArrayList<Program>();
-    private List<Program> programsOfWhichViewer = new ArrayList<Program>();
-    private List<Institution> institutions = Lists.newArrayList();
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
     private ApplicationsFiltering filtering;
     private String originalApplicationQueryString;
@@ -64,48 +48,6 @@ public class RegisteredUserBuilder {
 
     public RegisteredUserBuilder pendingRoleNotifications(PendingRoleNotification... pendingRoleNotifications) {
         this.pendingRoleNotifications.addAll(Arrays.asList(pendingRoleNotifications));
-        return this;
-    }
-
-    public RegisteredUserBuilder programsOfWhichAdministrator(Program... programs) {
-        this.programsOfWhichAdministrator.addAll(Arrays.asList(programs));
-        return this;
-    }
-
-    public RegisteredUserBuilder programsOfWhichApprover(Program... programs) {
-        this.programsOfWhichApprover.addAll(Arrays.asList(programs));
-        return this;
-    }
-
-    public RegisteredUserBuilder programsOfWhichViewer(Program... programs) {
-        this.programsOfWhichViewer.addAll(Arrays.asList(programs));
-        return this;
-    }
-    
-    public RegisteredUserBuilder institutions(Institution... institutions) {
-        this.institutions.addAll(Arrays.asList(institutions));
-        return this;
-    }
-
-    public RegisteredUserBuilder referees(Referee... referees) {
-        this.referees.addAll(Arrays.asList(referees));
-        return this;
-    }
-
-    public RegisteredUserBuilder comments(Comment... comments) {
-        this.comments.addAll(Arrays.asList(comments));
-        return this;
-    }
-
-    public RegisteredUserBuilder role(Role role) {
-        this.roles.add(role);
-        return this;
-    }
-
-    public RegisteredUserBuilder roles(Role... roles) {
-        for (Role role : roles) {
-            this.roles.add(role);
-        }
         return this;
     }
 
@@ -184,21 +126,6 @@ public class RegisteredUserBuilder {
         return this;
     }
 
-    public RegisteredUserBuilder accountNonExpired(boolean accountNonExpired) {
-        this.accountNonExpired = accountNonExpired;
-        return this;
-    }
-
-    public RegisteredUserBuilder accountNonLocked(boolean accountNonLocked) {
-        this.accountNonLocked = accountNonLocked;
-        return this;
-    }
-
-    public RegisteredUserBuilder credentialsNonExpired(boolean credentialsNonExpired) {
-        this.credentialsNonExpired = credentialsNonExpired;
-        return this;
-    }
-
     public RegisteredUserBuilder primaryAccount(RegisteredUser primaryAccount) {
         this.primaryAccount = primaryAccount;
         return this;
@@ -216,18 +143,8 @@ public class RegisteredUserBuilder {
         user.setPassword(password);
         user.setNewPassword(newPassword);
         user.setEnabled(enabled);
-        user.setAccountNonExpired(accountNonExpired);
-        user.setAccountNonLocked(accountNonLocked);
-        user.setCredentialsNonExpired(credentialsNonExpired);
         user.setActivationCode(activationCode);
-        user.getRoles().addAll(roles);
-        user.getProgramsOfWhichAdministrator().addAll(programsOfWhichAdministrator);
-        user.getProgramsOfWhichApprover().addAll(programsOfWhichApprover);
-        user.getProgramsOfWhichViewer().addAll(programsOfWhichViewer);
-        user.getInstitutions().addAll(institutions);
         user.setConfirmPassword(confirmPassword);
-        user.getReferees().addAll(referees);
-        user.getComments().addAll(comments);
         user.getPendingRoleNotifications().addAll(pendingRoleNotifications);
         user.setDirectToUrl(directURL);
         user.setOriginalApplicationQueryString(originalApplicationQueryString);

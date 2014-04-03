@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.HashSet;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SystemUserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
 
 @Service
 @Transactional
@@ -76,7 +76,7 @@ public class RoleService {
         return mergedApplicationFormUserRole;
     }
     
-    public boolean checkUserHasRole(RegisteredUser user, Authority authority) {
+    public boolean hasRole(RegisteredUser user, Authority authority) {
         return hasRole(user, authority, null);
     }
     
@@ -96,5 +96,9 @@ public class RoleService {
         }
         return roleDAO.getUserRoles(user).contains(roleDAO.getById(authority));
     }
-    
+
+    public List<Program> getProgramsByUserAndRole(RegisteredUser currentUser, Authority administrator) {
+        // TODO Auto-generated method stub
+        return null;
+    }    
 }

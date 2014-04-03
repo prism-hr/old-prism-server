@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
-import java.util.Date;
 import java.util.List;
 
 import org.easymock.EasyMock;
@@ -27,16 +26,11 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ProgramInstanceServiceTest {
@@ -46,7 +40,7 @@ public class ProgramInstanceServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ProgramInstanceDAO programInstanceDAO;
+    private ProgramService programService;
 
     @Mock
     @InjectIntoByType
@@ -56,138 +50,9 @@ public class ProgramInstanceServiceTest {
     @InjectIntoByType
     private ApplicationContext applicationContext;
 
-    @Test
-    public void shouldReturnFalseForIsProgrammeStillAvailableIfLargestEndDateIsBeforeToday() {
-        DateTime instance1StartDate = new DateTime(2011, 1, 1, 8, 0);
-        DateTime instance1EndDate = new DateTime(2011, 8, 1, 8, 0);
-
-        DateTime instance2StartDate = new DateTime(2012, 10, 1, 8, 0);
-        DateTime instance2EndDate = new DateTime(2012, 6, 1, 8, 0);
-
-        ProgramInstance instance1 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance1StartDate.toDate())
-                .enabled(true).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
-
-        ProgramInstance instance2 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance2StartDate.toDate())
-                .enabled(true).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
-
-        Program program = new ProgramBuilder().id(Integer.MAX_VALUE).code("TMRMBISING99").enabled(true).instances(instance1, instance2)
-                .title("MRes Medical and Biomedical Imaging").build();
-
-        ProgramDetails programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging")
-                .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
-                .build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).advert(program).programmeDetails(programDetails).build();
-
-        assertFalse("Should have returned false because the largest possible end date is " + instance2EndDate.toString() + " which is before today",
-                service.isProgrammeStillAvailable(applicationForm));
-    }
-
-    @Test
-    public void shouldReturnTrueForIsProgrammeStillAvailableIfLargestEndDateIsAfterToday() {
-        DateTime instance1StartDate = new DateTime(2013, 1, 1, 8, 0);
-        DateTime instance1EndDate = new DateTime(2013, 8, 1, 8, 0);
-
-        DateTime instance2StartDate = new DateTime(2014, 10, 1, 8, 0);
-        DateTime instance2EndDate = new DateTime(2014, 6, 1, 8, 0);
-
-        ProgramInstance instance1 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance1StartDate.toDate())
-                .enabled(true).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
-
-        ProgramInstance instance2 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance2StartDate.toDate())
-                .enabled(true).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
-
-        Program program = new ProgramBuilder().id(Integer.MAX_VALUE).code("TMRMBISING99").enabled(true).instances(instance1, instance2)
-                .title("MRes Medical and Biomedical Imaging").build();
-
-        ProgramDetails programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging")
-                .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
-                .build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).advert(program).programmeDetails(programDetails).build();
-
-        assertTrue("Should have returned true because the largest possible end date is " + instance2EndDate.toString() + " which is after today",
-                service.isProgrammeStillAvailable(applicationForm));
-    }
-
-    @Test
-    public void shouldReturnFalseForIsProgrammeStillAvailableIfProgrammeIsNotEnabled() {
-        DateTime instance1StartDate = new DateTime(2013, 1, 1, 8, 0);
-        DateTime instance1EndDate = new DateTime(2013, 8, 1, 8, 0);
-
-        DateTime instance2StartDate = new DateTime(2014, 10, 1, 8, 0);
-        DateTime instance2EndDate = new DateTime(2014, 6, 1, 8, 0);
-
-        ProgramInstance instance1 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance1StartDate.toDate())
-                .enabled(true).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
-
-        ProgramInstance instance2 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance2StartDate.toDate())
-                .enabled(true).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
-
-        Program program = new ProgramBuilder().id(Integer.MAX_VALUE).code("TMRMBISING99").enabled(false).instances(instance1, instance2)
-                .title("MRes Medical and Biomedical Imaging").build();
-
-        ProgramDetails programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging")
-                .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
-                .build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).advert(program).programmeDetails(programDetails).build();
-
-        assertFalse("Should have returned false because the programme is not enabled", service.isProgrammeStillAvailable(applicationForm));
-    }
-
-    @Test
-    public void shouldReturnFalseForIsProgrammeStillAvailableIfNoInstancesAreEnabled() {
-        DateTime instance1StartDate = new DateTime(2013, 1, 1, 8, 0);
-        DateTime instance1EndDate = new DateTime(2013, 8, 1, 8, 0);
-
-        DateTime instance2StartDate = new DateTime(2014, 10, 1, 8, 0);
-        DateTime instance2EndDate = new DateTime(2014, 6, 1, 8, 0);
-
-        ProgramInstance instance1 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance1StartDate.toDate())
-                .enabled(false).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
-
-        ProgramInstance instance2 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance2StartDate.toDate())
-                .enabled(false).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
-
-        Program program = new ProgramBuilder().id(Integer.MAX_VALUE).code("TMRMBISING99").enabled(false).instances(instance1, instance2)
-                .title("MRes Medical and Biomedical Imaging").build();
-
-        ProgramDetails programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging")
-                .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("F+++++", "Full-time")
-                .build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).advert(program).programmeDetails(programDetails).build();
-
-        assertFalse("Should have returned false because the programme instances are not enabled", service.isProgrammeStillAvailable(applicationForm));
-    }
-
-    @Test
-    public void shouldReturnFalseForIsProgrammeStillAvailableIfStudyOptionsDoNotMatch() {
-        DateTime instance1StartDate = new DateTime(2013, 1, 1, 8, 0);
-        DateTime instance1EndDate = new DateTime(2013, 8, 1, 8, 0);
-
-        DateTime instance2StartDate = new DateTime(2014, 10, 1, 8, 0);
-        DateTime instance2EndDate = new DateTime(2014, 6, 1, 8, 0);
-
-        ProgramInstance instance1 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance1StartDate.toDate())
-                .enabled(false).applicationDeadline(instance1EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
-
-        ProgramInstance instance2 = new ProgramInstanceBuilder().id(Integer.MAX_VALUE).academicYear("2013").applicationStartDate(instance2StartDate.toDate())
-                .enabled(false).applicationDeadline(instance2EndDate.toDate()).studyOption("F+++++", "Full-time").identifier("0009").build();
-
-        Program program = new ProgramBuilder().id(Integer.MAX_VALUE).code("TMRMBISING99").enabled(false).instances(instance1, instance2)
-                .title("MRes Medical and Biomedical Imaging").build();
-
-        ProgramDetails programDetails = new ProgrammeDetailsBuilder().id(Integer.MAX_VALUE).programmeName("MRes Medical and Biomedical Imaging")
-                .projectName("Project Title").startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1)).studyOption("H+++++", "Part-time")
-                .build();
-
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(Integer.MAX_VALUE).advert(program).programmeDetails(programDetails).build();
-
-        assertFalse("Should have returned false because the study options do not match the programme instances",
-                service.isProgrammeStillAvailable(applicationForm));
-    }
+    @Mock
+    @InjectIntoByType
+    private ProgramDAO programDAO;
 
     @Test
     public void shouldReturnTrueForIsActiveIfProgramInstanceIsEnabled() {
@@ -225,7 +90,7 @@ public class ProgramInstanceServiceTest {
     public void shouldGetDistinctStudyOptions() {
         List<Object[]> options = Lists.newArrayList(new Object[] { "code1", "option1" }, new Object[] { "code2", "option2" });
 
-        expect(programInstanceDAO.getDistinctStudyOptions()).andReturn(options);
+        expect(programService.getDistinctStudyOptions()).andReturn(options);
 
         replay();
         List<StudyOption> studyOptions = service.getDistinctStudyOptions();
@@ -287,7 +152,7 @@ public class ProgramInstanceServiceTest {
         StudyOption partOption = new StudyOption("P+++", "Part-time");
         StudyOption fullOption = new StudyOption("F+++", "Fart-time");
         StudyOption modularOption = new StudyOption("B+++", "Modular");
-        expect(thisBean.getDistinctStudyOptions()).andReturn(Lists.newArrayList(partOption, fullOption, modularOption));
+        expect(thisBean.getAvailableStudyOptions()).andReturn(Lists.newArrayList(partOption, fullOption, modularOption));
 
         replay();
         List<StudyOption> studyOptions = service.getStudyOptions("P+++,F+++");
@@ -308,8 +173,8 @@ public class ProgramInstanceServiceTest {
         expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
         expect(thisBean.findPenultimateSeptemberMonday(2013)).andReturn(monday2013);
         expect(thisBean.findPenultimateSeptemberMonday(2014)).andReturn(monday2014);
-        expect(programInstanceDAO.getProgramInstance(program, fullTimeOption, monday2013.toDate())).andReturn(programInstance);
-        programInstanceDAO.save(programInstance);
+        expect(programService.getProgramInstance(program, fullTimeOption, monday2013.toDate())).andReturn(programInstance);
+        programDAO.save(programInstance);
 
         replay();
         ProgramInstance returned = service.createOrUpdateProgramInstance(program, 2013, fullTimeOption);
@@ -330,8 +195,8 @@ public class ProgramInstanceServiceTest {
         expect(applicationContext.getBean(ProgramInstanceService.class)).andReturn(thisBean);
         expect(thisBean.findPenultimateSeptemberMonday(2013)).andReturn(monday2013);
         expect(thisBean.findPenultimateSeptemberMonday(2014)).andReturn(monday2014);
-        expect(programInstanceDAO.getProgramInstance(program, fullTimeOption, monday2013.toDate())).andReturn(null);
-        programInstanceDAO.save(isA(ProgramInstance.class));
+        expect(programService.getProgramInstance(program, fullTimeOption, monday2013.toDate())).andReturn(null);
+        programService.save(isA(ProgramInstance.class));
 
         replay();
         ProgramInstance returned = service.createOrUpdateProgramInstance(program, 2013, fullTimeOption);
@@ -350,8 +215,7 @@ public class ProgramInstanceServiceTest {
         assertTrue(programInstance.getEnabled());
         assertEquals("CUSTOM", programInstance.getIdentifier());
         assertSame(program, programInstance.getProgram());
-        assertEquals(studyOption.getName(), programInstance.getStudyOption());
-        assertEquals(studyOption.getId(), programInstance.getStudyOptionCode());
+        assertEquals(studyOption.getId(), programInstance.getStudyOption().getId());
     }
 
 }

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.base.Strings;
-import com.zuehlke.pgadmissions.components.ActionsProvider;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
@@ -21,10 +20,11 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.AcceptedTimeslotsPropertyEditor;
-import com.zuehlke.pgadmissions.services.WorkflowService;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.CommentAssignedUserValidator;
 
 @Controller
@@ -35,7 +35,7 @@ public class InterviewVoteController {
     private static final String INTERVIEW_VOTE_PAGE = "private/staff/interviewers/interview_vote";
     
     @Autowired
-    private ApplicationsService applicationsService;
+    private ApplicationFormService applicationsService;
     
     @Autowired
     private UserService userService;
@@ -53,7 +53,7 @@ public class InterviewVoteController {
     private ActionService actionService;
     
     @Autowired
-    private ApplicationFormUserRoleService applicationFormUserRoleService;
+    private WorkflowService applicationFormUserRoleService;
 
 
     @ModelAttribute("applicationForm")
@@ -88,7 +88,7 @@ public class InterviewVoteController {
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
         RegisteredUser user = getUser();
-        return actionService.getApplicationDescriptorForUser(applicationForm, user);
+        return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @RequestMapping(method = RequestMethod.GET)

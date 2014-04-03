@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
@@ -95,7 +96,7 @@ public class ApplicationFormService {
     }
 
     public ApplicationForm getByApplicationNumber(String applicationNumber) {
-        return applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
+        return applicationFormDAO.getByApplicationNumber(applicationNumber);
     }
 
     public List<ApplicationDescriptor> getApplicationsForList(final RegisteredUser user, final ApplicationsFiltering filtering) {
@@ -124,6 +125,7 @@ public class ApplicationFormService {
         applicationFormDAO.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public void setApplicationStatus(ApplicationForm application, ApplicationFormStatus newStatus) {
         application.setLastStatus(application.getStatus());
         application.setStatus(stateService.getById(newStatus));

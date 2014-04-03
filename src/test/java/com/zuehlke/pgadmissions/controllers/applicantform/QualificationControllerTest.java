@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.applicantform;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 
 import java.util.Arrays;
@@ -13,9 +12,6 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.annotation.Mock;
@@ -29,28 +25,21 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
-import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -124,55 +113,6 @@ public class QualificationControllerTest {
     private QualificationController controller;
 
     @Test
-    public void shouldReturnQualificationView() {
-        RegisteredUser applicant = new RegisteredUser();
-        ModelMap modelMap = new ModelMap();
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-
-        replay();
-        assertEquals(QualificationController.APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, controller.getQualificationView("app1", null, modelMap));
-
-        assertNotNull(modelMap.get("qualification"));
-    }
-
-    @Test
-    public void shouldNotSaveAndReturnToViewIfErrors() {
-        RegisteredUser applicant = new RegisteredUser();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).applicationNumber("ABC").build();
-        Qualification qualification = new QualificationBuilder().application(applicationForm).build();
-        BindingResult errors = new BeanPropertyBindingResult(qualification, "qualification");
-        errors.reject("aa");
-        ModelMap modelMap = new ModelMap();
-        modelMap.put("applicationForm", applicationForm);
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-
-        replay();
-        String view = controller.editQualification(null, qualification, errors, modelMap);
-        assertEquals(QualificationController.APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, view);
-    }
-
-    @Test
-    public void shouldSaveQulificationAndRedirectIfNoErrors() {
-        RegisteredUser applicant = new RegisteredUser();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).applicationNumber("ABC").build();
-        Qualification qualification = new QualificationBuilder().application(applicationForm).build();
-        BindingResult errors = new BeanPropertyBindingResult(qualification, "qualification");
-        ModelMap modelMap = new ModelMap();
-        modelMap.put("applicationForm", applicationForm);
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-        qualificationServiceMock.saveOrUpdate(applicationForm, null, qualification);
-        applicationFormUserRoleServiceMock.insertApplicationUpdate(applicationForm, applicant, ApplicationUpdateScope.ALL_USERS);
-
-        replay();
-        String view = controller.editQualification(null, qualification, errors, modelMap);
-
-        assertEquals("redirect:/update/getQualification?applicationId=ABC", view);
-    }
-
-    @Test
     public void shouldReturnAllLanguages() {
         List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).enabled(true).build(), new LanguageBuilder().id(2).enabled(false).build());
         EasyMock.expect(languageServiceMock.getAllEnabledLanguages()).andReturn(Collections.singletonList(languageList.get(0)));
@@ -187,42 +127,13 @@ public class QualificationControllerTest {
     @Test
     public void shouldReturnAllDomiciles() {
         List<Domicile> domicileList = Arrays.asList(new DomicileBuilder().id(1).enabled(true).build(), new DomicileBuilder().id(2).enabled(false).build());
-        EasyMock.expect(domicileDAOMock.getAllEnabledDomicilesExceptAlternateValues()).andReturn(Collections.singletonList(domicileList.get(0)));
+        EasyMock.expect(domicileDAOMock.getAllEnabledDomiciles()).andReturn(Collections.singletonList(domicileList.get(0)));
 
         replay();
 
         List<Domicile> allDomiciles = controller.getAllEnabledDomiciles();
         assertEquals(1, allDomiciles.size());
         assertEquals(domicileList.get(0), allDomiciles.get(0));
-    }
-
-    @Test
-    public void shouldReturnApplicationForm() {
-        RegisteredUser applicant = new RegisteredUser();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).build();
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
-
-        replay();
-        ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
-
-        assertEquals(applicationForm, returnedApplicationForm);
-    }
-
-    @Test(expected = CannotUpdateApplicationException.class)
-    public void shouldThrowExceptionIfApplicationNotModifiable() {
-        RegisteredUser user = new RegisteredUserBuilder().id(4).build();
-        RegisteredUser applicant = new RegisteredUserBuilder().id(5).build();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).build();
-
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-        EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
-
-        replay();
-        ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
-
-        assertEquals(applicationForm, returnedApplicationForm);
     }
 
     @Test

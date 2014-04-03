@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.unitils.easymock.EasyMockUnitils.replay;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -11,13 +12,17 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.validation.BindingResult;
+import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -33,47 +38,48 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.ApplicationFormCreationService;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.ApplicationQueryStringParser;
 import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class RegisterControllerTest {
 
-    private RegistrationController registerController;
-
+    @Mock
+    @InjectIntoByType
     private UserService userServiceMock;
 
+    @Mock
+    @InjectIntoByType
     private RegisterFormValidator regusterFormValidatorMock;
 
+    @Mock
+    @InjectIntoByType
     private RegistrationService registrationServiceMock;
 
-    private ApplicationFormCreationService applicationFormCreationServiceMock;
+    @Mock
+    @InjectIntoByType
+    private ApplicationFormService applicationFormService;
 
+    @Mock
+    @InjectIntoByType
     private ProgramService programServiceMock;
 
+    @Mock
+    @InjectIntoByType
     private ApplicationQueryStringParser qureyStringParserMock;
 
+    @Mock
+    @InjectIntoByType
     private EncryptionHelper encryptionHelper;
 
     private MockHttpSession mockHttpSession;
 
-    @Before
-    public void setUp() {
-        regusterFormValidatorMock = EasyMock.createMock(RegisterFormValidator.class);
-        userServiceMock = EasyMock.createMock(UserService.class);
-        registrationServiceMock = EasyMock.createMock(RegistrationService.class);
-        applicationFormCreationServiceMock = EasyMock.createMock(ApplicationFormCreationService.class);
-        programServiceMock = EasyMock.createMock(ProgramService.class);
-        qureyStringParserMock = EasyMock.createMock(ApplicationQueryStringParser.class);
-        encryptionHelper = EasyMock.createMock(EncryptionHelper.class);
-        registerController = new RegistrationController(regusterFormValidatorMock, userServiceMock, registrationServiceMock, applicationFormCreationServiceMock,
-                programServiceMock, qureyStringParserMock, encryptionHelper);
-        mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute(LoginController.CLICKED_ON_ALREADY_REGISTERED, true);
-    }
+    @TestedObject
+    private RegistrationController registerController;
 
     @Test
     public void shouldReturnRegisterPageIfRedirectedFromPrismInternally() {
@@ -304,10 +310,10 @@ public class RegisterControllerTest {
         EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(parsedParams);
         EasyMock.expect(programServiceMock.getValidProgramProjectAdvert("code", null)).andReturn(program);
         userServiceMock.save(user);
-        EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(user, program)).andReturn(applicationForm);
-        EasyMock.replay(userServiceMock, applicationFormCreationServiceMock, programServiceMock, qureyStringParserMock);
+        // EasyMock.expect(applicationFormService.getOrCreateApplication(user, program)).andReturn(applicationForm);
+
+        replay();
         String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
-        EasyMock.verify(userServiceMock);
         assertEquals("redirect:/application?applicationId=ABC&activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
     }
@@ -327,10 +333,10 @@ public class RegisterControllerTest {
         EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(parsedParams);
         EasyMock.expect(programServiceMock.getValidProgramProjectAdvert("code", null)).andReturn(project);
         userServiceMock.save(user);
-        EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(user, project)).andReturn(applicationForm);
-        EasyMock.replay(userServiceMock, applicationFormCreationServiceMock, programServiceMock, qureyStringParserMock);
+        // EasyMock.expect(applicationFormCreationServiceMock.createOrGetUnsubmittedApplicationForm(user, project)).andReturn(applicationForm);
+
+        replay();
         String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
-        EasyMock.verify(userServiceMock);
         assertEquals("redirect:/application?applicationId=ABC&activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
     }
@@ -347,8 +353,9 @@ public class RegisterControllerTest {
         parsedParams.put("advert", "1");
         EasyMock.expect(qureyStringParserMock.parse(queryString)).andReturn(parsedParams);
         EasyMock.expect(programServiceMock.getValidProgramProjectAdvert("code", 1)).andThrow(new CannotApplyException());
+
         userServiceMock.save(user);
-        EasyMock.replay(userServiceMock, applicationFormCreationServiceMock, programServiceMock, qureyStringParserMock);
+        replay();
         registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
     }
 

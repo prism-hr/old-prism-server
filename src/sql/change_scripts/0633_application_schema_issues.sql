@@ -371,6 +371,39 @@ INNER JOIN APPLICATION_FORM_UPDATE
 SET APPLICATION_FORM_UPDATE.registered_user_id = USER.id
 ;
 
+UPDATE USER INNER JOIN REGISTERED_USER
+	ON USER.email = REGISTERED_USER.email
+SET action_id = IF(direct_to_url LIKE "/referee%", "PROVIDE_REFERENCE", "PROVIDE_REVIEW"),
+	application_id = (
+		SELECT id
+		FROM APPLICATION
+		WHERE application_number = SUBSTRING(direct_to_url, POSITION("=" IN direct_to_url) + 1))
+WHERE REGISTERED_USER.direct_to_url IS NOT NULL
+;
+
+UPDATE USER INNER JOIN REGISTERED_USER
+	ON USER.email = REGISTERED_USER.email
+SET action_id = "COMPLETE_APPLICATION",
+	advert_id = REPLACE(SUBSTRING(REPLACE(REPLACE(REPLACE(SUBSTRING(original_querystring, 
+		POSITION("advert" IN REGISTERED_USER.original_querystring)), "advert:", ""), "||", "|"), 
+		"project:", ""), 1, 2), "|", "")
+WHERE REGISTERED_USER.original_querystring LIKE "%advert%"
+;
+
+UPDATE USER INNER JOIN REGISTERED_USER
+	ON USER.email = REGISTERED_USER.email
+SET action_id = "COMPLETE_APPLICATION",
+	advert_id = (
+		SELECT PROGRAM.id
+		FROM PROGRAM
+		WHERE PROGRAM.code = (
+			IF(SUBSTRING(REGISTERED_USER.original_querystring, 9, 12) LIKE "ABC%",
+				"ABC",
+				SUBSTRING(REGISTERED_USER.original_querystring, 9, 12))))
+WHERE REGISTERED_USER.original_querystring LIKE "%program%"
+	AND USER.advert_id IS NULL
+;
+
 DROP TABLE REGISTERED_USER
 ;
 

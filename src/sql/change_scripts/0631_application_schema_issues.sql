@@ -1,3 +1,6 @@
+/* Test case: 20493
+   Real case: 21588 */
+
 CALL SP_FILL_MISSING_PROOF_OF_AWARD_DOCUMENTS (20493)
 ;
 

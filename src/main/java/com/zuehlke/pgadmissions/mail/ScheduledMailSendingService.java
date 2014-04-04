@@ -185,7 +185,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         try {
             String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
             ApplicationForm application = referee.getApplication();
-            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
+            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(application.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
                     adminsEmails, referee, application, application.getApplicant(), getHostName() });
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
@@ -203,32 +203,32 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     public void sendInterviewParticipantVoteReminder() {
         log.trace("Sending interview scheduling reminder to users");
         // TODO get participants due to reminder using query to ApplicationFormUserRole
-//        List<Integer> participantIds = interviewParticipantDAO.getInterviewParticipantsDueReminder();
-//        for (Integer participantId : participantIds) {
-//            applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participantId);
-//        }
+        // List<Integer> participantIds = interviewParticipantDAO.getInterviewParticipantsDueReminder();
+        // for (Integer participantId : participantIds) {
+        // applicationContext.getBean(this.getClass()).sendInterviewParticipantVoteReminder(participantId);
+        // }
         log.trace("Sending interview scheduling reminder to users");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendInterviewParticipantVoteReminder(Integer userId) {
-//        final RegisteredUser user = userService.getUser(userId);
-//        try {
-//            PrismEmailMessage message;
-//            ApplicationForm application = participant.getInterview().getApplication();
-//            String subject = resolveMessage(INTERVIEW_VOTE_REMINDER, application);
-//            String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
-//            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
-//                    adminsEmails, participant, application, getHostName() });
-//
-//            message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_REMINDER);
-//            sendEmail(message);
-//            participant.setLastNotified(new Date());
-//            interviewParticipantDAO.save(participant);
-//        } catch (Exception e) {
-//            log.error("Error while sending interview vote reminder email to participant:", e);
-//            return false;
-//        }
+        // final RegisteredUser user = userService.getUser(userId);
+        // try {
+        // PrismEmailMessage message;
+        // ApplicationForm application = participant.getInterview().getApplication();
+        // String subject = resolveMessage(INTERVIEW_VOTE_REMINDER, application);
+        // String adminsEmails = getAdminsEmailsCommaSeparatedAsString(application.getProgram().getAdministrators());
+        // EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
+        // adminsEmails, participant, application, getHostName() });
+        //
+        // message = buildMessage(participant.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_REMINDER);
+        // sendEmail(message);
+        // participant.setLastNotified(new Date());
+        // interviewParticipantDAO.save(participant);
+        // } catch (Exception e) {
+        // log.error("Error while sending interview vote reminder email to participant:", e);
+        // return false;
+        // }
         return true;
     }
 

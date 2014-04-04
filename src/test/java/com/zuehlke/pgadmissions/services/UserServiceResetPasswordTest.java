@@ -40,10 +40,6 @@ public class UserServiceResetPasswordTest {
 
     @Mock
     @InjectIntoByType
-    private UserFactory userFactoryMock;
-
-    @Mock
-    @InjectIntoByType
     private EncryptionUtils encryptionUtilsMock;
 
     @Mock

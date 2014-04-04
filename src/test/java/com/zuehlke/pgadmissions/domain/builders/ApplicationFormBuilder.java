@@ -36,7 +36,7 @@ public class ApplicationFormBuilder {
     private Advert advert;
     private Date appDate;
     private Date submittedDate;
-    private Date batchDeadline;
+    private Date closingDate;
     private Date dueDate;
     private Boolean acceptedTerms;
     private List<Qualification> qualifications = new ArrayList<Qualification>();
@@ -205,8 +205,8 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder batchDeadline(Date batchDeadline) {
-        this.batchDeadline = batchDeadline;
+    public ApplicationFormBuilder closingDate(Date closingDate) {
+        this.closingDate = closingDate;
         return this;
     }
 
@@ -267,7 +267,7 @@ public class ApplicationFormBuilder {
         application.getApplicationComments().addAll(comments);
         application.setRejection(rejection);
         application.setApplicationNumber(applicationNumber);
-        application.setBatchDeadline(batchDeadline);
+        application.setClosingDate(closingDate);
         application.setRejectNotificationDate(rejectNotificationDate);
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         application.getEmploymentPositions().addAll(employmentPositions);

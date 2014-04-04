@@ -133,7 +133,6 @@ public class ProgramConfigurationControllerTest {
         expect(domicileService.getEnabledDomicileByCode("PL")).andReturn(domicile);
         expect(encryptionHelper.encrypt(88)).andReturn("encPL");
         expect(programInstanceService.getAdvertisingDeadlineYear(program)).andReturn(2084);
-        expect(programInstanceService.getStudyOptions(program)).andReturn(Lists.newArrayList("opt1", "opt2"));
         expect(templateRenderer.renderButton(dataMap)).andReturn("button");
         expect(templateRenderer.renderLink(dataMap)).andReturn("button");
 

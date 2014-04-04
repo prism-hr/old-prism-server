@@ -230,9 +230,9 @@ public class ApplicationFormValidatorTest {
         program = new ProgramBuilder().id(1).title("Program 1").build();
         programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
                 .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).build();
-        program.setInstances(Arrays.asList(programInstance));
+        program.getInstances().addAll(Arrays.asList(programInstance));
         personalDetails = new PersonalDetailsBuilder().id(1).build();
-        programmeDetails = new ProgrammeDetailsBuilder().studyOption("1", "Full-time").id(2).build();
+        programmeDetails = new ProgrammeDetailsBuilder().studyOption(new StudyOption("1", "Full-time")).id(2).build();
         currentAddress = new AddressBuilder().address1("address").build();
         contactAddress = new AddressBuilder().address1("address").build();
         additionalInformation = new AdditionalInformationBuilder().id(3).build();

@@ -31,12 +31,12 @@ public class RefereeService {
 
     @Autowired
     private RefereeDAO refereeDAO;
-
+    
     @Autowired
     private UserService userService;
 
     @Autowired
-    private RoleDAO roleDAO;
+    private RoleService roleService;
 
     @Autowired
     private CommentService commentService;
@@ -114,10 +114,6 @@ public class RefereeService {
     //
     // }
 
-    public void refresh(Referee referee) {
-        refereeDAO.refresh(referee);
-    }
-
     public void processRefereesRoles(List<Referee> referees) {
         for (Referee referee : referees) {
             processRefereeAndGetAsUser(referee);
@@ -135,30 +131,16 @@ public class RefereeService {
         if (user.getActivationCode() == null) {
             user.setActivationCode(encryptionUtils.generateUUID());
         }
-        user.getRoles().add(roleDAO.getRoleByAuthority(Authority.REFEREE));
-        
 
-        if (userExists(user) && !isUserReferee(user)) {
-            user.getRoles().add(refereeRole);
+        if (!roleService.hasRole(user, Authority.REFEREE, referee.getApplication())) {
+//            user.getRoles().add(refereeRole);
             if (user.getActivationCode() == null) {
                 
             }
         }
-        if (!userExists(user)) {
-//            user = 
-        }
         referee.setUser(user);
-        save(referee);
         applicationFormUserRoleService.createRefereeRole(referee);
         return user;
-    }
-
-    private boolean userExists(RegisteredUser user) {
-        return user != null;
-    }
-
-    private boolean isUserReferee(RegisteredUser user) {
-        return user.isInRole(Authority.REFEREE);
     }
 
     private RegisteredUser createAndSaveNewUserWithRefereeRole(Referee referee) {
@@ -186,9 +168,9 @@ public class RefereeService {
         refereeDAO.delete(referee);
     }
 
-    public void declineToActAsRefereeAndSendNotification(Referee referee) {
+    public void declineToActAsRefereeAndSendNotification(int refereeId) {
+        Referee referee = refereeDAO.getRefereeById(refereeId);
         referee.setDeclined(true);
-        refereeDAO.save(referee);
     }
 
     public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> refereesSendToPortico) {
@@ -238,11 +220,14 @@ public class RefereeService {
         applicationForm.getApplicationComments().add(referenceComment);
         commentService.save(referenceComment);
 
-        if (applicationForm.getReferencesToSendToPortico().size() < 2) {
-            referee.setSendToUCL(true);
-        }
-        applicationFormUserRoleService.referencePosted(referee);
-        saveReferenceAndSendMailNotifications(referee);
+        // FIXME try to notify PorticoService that reference comment has been posted
+//        if ( applicationForm.getReferencesToSendToPortico().size() < 2) {
+//            referee.setSendToUCL(true);
+//        }
+        applicationFormUserRoleService.referencePosted(referenceComment);
+        
+        // FIXME call mail sending service
+//        saveReferenceAndSendMailNotifications(referee);
         return referenceComment;
     }
 

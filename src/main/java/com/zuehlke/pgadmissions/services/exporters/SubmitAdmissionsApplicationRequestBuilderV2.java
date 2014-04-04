@@ -427,7 +427,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
         }
 
-        OfferRecommendedComment offerRecommendedComment = applicationForm.getOfferRecommendedComment();
+        // FIXME get offer recommended comment (this class should be Spring component so it can access CommentService)
+        OfferRecommendedComment offerRecommendedComment = null; // applicationForm.getOfferRecommendedComment();
         if (offerRecommendedComment != null) {
             if (isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getAtasRequired())) {
                 applicationTp.setAtasStatement(offerRecommendedComment.getProjectAbstract());
@@ -625,7 +626,10 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private RefereeListTp buildReferee() {
         RefereeListTp resultList = xmlFactory.createRefereeListTp();
-        for (Referee referee : applicationForm.getRefereesToSendToPortico()) {
+        
+        // FIXME get referees to send to portico (this class should be Spring component)
+        List<Referee> referees = null; //applicationForm.getRefereesToSendToPortico();
+        for (Referee referee : referees ) {
             RefereeTp refereeTp = xmlFactory.createRefereeTp();
 
             refereeTp.setPosition(referee.getJobTitle());

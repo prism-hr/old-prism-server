@@ -1,0 +1,171 @@
+package com.zuehlke.pgadmissions.services;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.zuehlke.pgadmissions.dao.NotificationsDurationDAO;
+import com.zuehlke.pgadmissions.dao.PersonDAO;
+import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.dao.StateDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.NotificationsDuration;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
+import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReminderInterval;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
+
+@Service
+public class ConfigurationService {
+
+    @Autowired
+    private StateDAO stateDAO;
+
+    @Autowired
+    private ReminderIntervalDAO reminderIntervalDAO;
+
+    @Autowired
+    private NotificationsDurationDAO notificationsDurationDAO;
+
+    @Autowired
+    private PersonDAO personDAO;
+
+    @Autowired
+    private UserDAO userDAO;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private WorkflowService applicationFormUserRoleService;
+
+    @Transactional
+    public Person getRegistryUserWithId(Integer id) {
+        return personDAO.getPersonWithId(id);
+    }
+
+    @Transactional
+    public List<Person> getAllRegistryUsers() {
+        List<Person> allPersons = personDAO.getAllPersons();
+        List<Person> allRegistryUsers = new ArrayList<Person>();
+        for (Person person : allPersons) {
+            if (!(person instanceof SuggestedSupervisor)) {
+                allRegistryUsers.add(person);
+            }
+        }
+        return allRegistryUsers;
+    }
+
+    @Transactional
+    public void saveConfigurations(ServiceLevelsDTO serviceLevelsDTO) {
+        for (State state : serviceLevelsDTO.getStagesDuration()) {
+            State oldState = stateDAO.getById(state.getId());
+            if (oldState != null) {
+                oldState.setDuration(state.getDuration());
+            }
+        }
+
+        for (ReminderInterval reminderInterval : serviceLevelsDTO.getReminderIntervals()) {
+            ReminderInterval oldReminderInterval = reminderIntervalDAO.getReminderInterval(reminderInterval.getReminderType());
+            if (oldReminderInterval != null) {
+                oldReminderInterval.setDuration(reminderInterval.getDuration());
+                oldReminderInterval.setUnit(reminderInterval.getUnit());
+            }
+        }
+
+        NotificationsDuration notificationsDuration = serviceLevelsDTO.getNotificationsDuration();
+        NotificationsDuration oldNotificationsDuration = notificationsDurationDAO.getNotificationsDuration();
+        oldNotificationsDuration.setDuration(notificationsDuration.getDuration());
+        oldNotificationsDuration.setUnit(notificationsDuration.getUnit());
+    }
+
+    @Transactional
+    public void saveRegistryUsers(List<Person> registryContacts, RegisteredUser requestedBy) {
+        for (Person person : getAllRegistryUsers()) {
+            if (!containsRegistryUser(person, registryContacts)) {
+                personDAO.delete(person);
+                removeAdmitterRoleToUser(person.getEmail());
+            }
+        }
+
+        for (Person person : registryContacts) {
+            personDAO.save(person);
+        }
+
+        for (Person person : registryContacts) {
+            saveRegistryContactsAsUsers(person, requestedBy);
+        }
+    }
+
+    private void removeAdmitterRoleToUser(String email) {
+        RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(email);
+        if (user != null) {
+            roleService.removeRole(user, Authority.ADMITTER);
+            userDAO.save(user);
+            applicationFormUserRoleService.deleteUserRole(user, Authority.ADMITTER);
+        }
+    }
+
+    private void saveRegistryContactsAsUsers(final Person registryContact, RegisteredUser requestedBy) {
+        RegisteredUser user = userDAO.getUserByEmailIncludingDisabledAccounts(registryContact.getEmail());
+        PendingRoleNotification admitterNotification = new PendingRoleNotification();
+        admitterNotification.setAddedByUser(requestedBy);
+        // TODO reimplement
+//        admitterNotification.setRole(roleDAO.getById(Authority.ADMITTER));
+//        PendingRoleNotification viewerNotification = new PendingRoleNotification();
+//        viewerNotification.setAddedByUser(requestedBy);
+//        viewerNotification.setRole(roleDAO.getById(Authority.VIEWER));
+//        if (user == null) {
+//            user = userFactory.createNewUserInRoles(registryContact.getFirstname(), registryContact.getLastname(), registryContact.getEmail(),
+//                    Authority.VIEWER, Authority.ADMITTER);
+//            user.getPendingRoleNotifications().add(viewerNotification);
+//            user.getPendingRoleNotifications().add(admitterNotification);
+//            userDAO.save(user);
+//            applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);
+//            ;
+//        } else if (user != null && user.isNotInRole(Authority.ADMITTER)) {
+//            user.getRoles().add(roleDAO.getById(Authority.ADMITTER));
+//            user.getPendingRoleNotifications().add(admitterNotification);
+//            userDAO.save(user);
+//            applicationFormUserRoleService.insertUserRole(user, Authority.ADMITTER);
+//        }
+    }
+
+    @Transactional
+    public List<State> getConfigurableStates() {
+        return stateDAO.getAllConfigurableStates();
+    }
+
+    @Transactional
+    public List<ReminderInterval> getReminderIntervals() {
+        return reminderIntervalDAO.getReminderIntervals();
+    }
+
+    @Transactional
+    public NotificationsDuration getNotificationsDuration() {
+        return notificationsDurationDAO.getNotificationsDuration();
+    }
+
+    private boolean containsRegistryUser(Person person, List<Person> persons) {
+        for (Person entry : persons) {
+            if (entry.getId() != null) {
+                if (entry.getId().equals(person.getId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+}

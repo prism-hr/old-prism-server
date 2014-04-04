@@ -45,19 +45,6 @@ public class CommentDAO {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<ReviewComment> getReviewCommentsDueNotification() {
-        return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class).add(Restrictions.eq("type", CommentType.REVIEW))
-                .add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified", false)))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-    }
-
-    public List<InterviewComment> getInterviewCommentsDueNotification() {
-        return (List<InterviewComment>) sessionFactory.getCurrentSession().createCriteria(InterviewComment.class)
-                .add(Restrictions.eq("type", CommentType.INTERVIEW))
-                .add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified", false)))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-    }
-
     public ValidationComment getValidationCommentForApplication(ApplicationForm applicationForm) {
         return (ValidationComment) sessionFactory.getCurrentSession().createCriteria(ValidationComment.class) //
                 .add(Restrictions.eq("type", CommentType.VALIDATION)) //

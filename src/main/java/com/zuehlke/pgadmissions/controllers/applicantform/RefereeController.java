@@ -88,7 +88,7 @@ public class RefereeController {
             return STUDENTS_FORM_REFEREES_VIEW;
         }
 
-        refereeService.saveOrUpdate(referee, newReferee);
+        refereeService.saveOrUpdate(applicationForm, refereeId, newReferee);
 
         return "redirect:/update/getReferee?applicationId=" + applicationForm.getApplicationNumber();
     }

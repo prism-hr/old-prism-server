@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
@@ -17,7 +16,6 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -26,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
@@ -49,8 +46,8 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         commentDAO = new CommentDAO(sessionFactory);
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
-               .enabled(false).build();
+        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+                .build();
         save(user);
         flushAndClearSession();
         program = testObjectProvider.getEnabledProgram();
@@ -110,54 +107,6 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         assertEquals(reviewComment.getId(), reloadedComment.getId());
         assertEquals(user.getId(), reloadedComment.getUser().getId());
         assertTrue(reloadedComment instanceof ReviewComment);
-    }
-
-    @Test
-    public void shouldGetAllReviewCommentsDueAdminEmailNotification() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).build();
-        save(application);
-        flushAndClearSession();
-
-        Comment comment = new CommentBuilder().user(user).comment("comment").application(application).build();
-        ReviewComment reviewComment = new ReviewCommentBuilder().application(application).content("comment").user(user).build();
-        ReviewComment reviewComment1 = new ReviewCommentBuilder().application(application).content("comment").user(user).build();
-        ReviewComment reviewComment2 = new ReviewCommentBuilder().application(application).content("comment").user(user).build();
-
-        save(comment, reviewComment, reviewComment1, reviewComment2);
-
-        flushAndClearSession();
-
-        List<ReviewComment> reloadedComments = commentDAO.getReviewCommentsDueNotification();
-
-        assertFalse(listContainsId(comment, reloadedComments));
-        assertFalse(listContainsId(reviewComment2, reloadedComments));
-        assertFalse(listContainsId(reviewComment1, reloadedComments));
-        assertTrue(listContainsId(reviewComment, reloadedComments));
-    }
-
-    @Test
-    public void shouldGetAllInterviewCommentsDueAdminEmailNotification() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).build();
-        save(application);
-        flushAndClearSession();
-
-        Comment comment = new CommentBuilder().user(user).comment("comment").application(application).build();
-        InterviewComment interviewComment1 = new InterviewCommentBuilder().user(user).application(application).content("comment").build();
-        InterviewComment interviewComment2 = new InterviewCommentBuilder().user(user).application(application).content("comment").build();
-        InterviewComment interviewComment3 = new InterviewCommentBuilder().user(user).application(application).content("comment").build();
-        InterviewComment interviewComment4 = new InterviewCommentBuilder().user(user).application(application).content("comment").build();
-
-        save(comment, interviewComment1, interviewComment2, interviewComment3, interviewComment4);
-
-        flushAndClearSession();
-
-        List<InterviewComment> reloadedComments = commentDAO.getInterviewCommentsDueNotification();
-
-        assertFalse(listContainsId(comment, reloadedComments));
-        assertTrue(listContainsId(interviewComment1, reloadedComments));
-        assertFalse(listContainsId(interviewComment2, reloadedComments));
-        assertTrue(listContainsId(interviewComment3, reloadedComments));
-        assertFalse(listContainsId(interviewComment4, reloadedComments));
     }
 
     @Test

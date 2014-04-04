@@ -87,7 +87,7 @@ public class DeclineController {
 	    
 	    if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 	        // the user clicked on "Confirm"
-    		refereeService.declineToActAsRefereeAndSendNotification(referee);
+    		refereeService.declineToActAsRefereeAndSendNotification(referee.getId());
     		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
     		user.setDirectToUrl(null);
             userService.save(user);

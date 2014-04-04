@@ -18,22 +18,17 @@ import com.zuehlke.pgadmissions.services.RefereeService;
 @Component
 public class SendToPorticoDataDTOValidator extends AbstractValidator {
 
-	private final ApplicationFormService applicationFormService;
+    @Autowired
+	private ApplicationFormService applicationFormService;
 	
-    private final QualificationService qualificationService;
-
-    private final RefereeService refereeService;
-    
-    private final PorticoService porticoService;
+    @Autowired
+    private QualificationService qualificationService;
 
     @Autowired
-    public SendToPorticoDataDTOValidator(ApplicationFormService applicationFormService, QualificationService qualificationService, 
-    		RefereeService refereeService, PorticoService porticoService) {
-    	this.applicationFormService = applicationFormService;
-        this.qualificationService = qualificationService;
-        this.refereeService = refereeService;
-        this.porticoService = porticoService;
-    }
+    private RefereeService refereeService;
+    
+    @Autowired
+    private PorticoService porticoService;
 
     @Override
     public boolean supports(Class<?> clazz) {

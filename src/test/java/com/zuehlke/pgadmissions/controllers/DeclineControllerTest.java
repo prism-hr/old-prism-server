@@ -111,28 +111,6 @@ public class DeclineControllerTest {
     }
 
     @Test
-    public void shouldDeclineReviewAndReturnMessageView() {
-        final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW)
-                .applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).applicationNumber("ABC").build();
-        commentServiceMock.declineReview(reviewer, applicationForm);
-        reviewer.setDirectToUrl(null);
-        EasyMock.replay(commentServiceMock, reviewer);
-        String view = controller.declineReview("5", applicationForm.getApplicationNumber(), "OK", new ModelMap());
-        EasyMock.verify(commentServiceMock);
-        assertEquals(TemplateLocation.DECLINE_SUCCESS_VIEW_NAME, view);
-    }
-
-    @Test
-    public void shouldReturnConfirmationDialogForReview() {
-        final RegisteredUser reviewer = EasyMock.createMock(RegisteredUser.class);
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REVIEW)
-                .applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).applicationNumber("ABC").build();
-        String view = controller.declineReview("5", applicationForm.getApplicationNumber(), null, new ModelMap());
-        assertEquals(TemplateLocation.DECLINE_CONFIRMATION_VIEW_NAME, view);
-    }
-
-    @Test
     public void shouldReturnConfirmationDialogForReference() {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC")
                 .applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).build();
@@ -141,30 +119,6 @@ public class DeclineControllerTest {
         String view = controller.declineReference("5", "ABC", null, new ModelMap());
         EasyMock.verify(refereeServiceMock);
         assertEquals(TemplateLocation.DECLINE_CONFIRMATION_VIEW_NAME, view);
-    }
-
-    @Test
-    public void shouldDeclineReferenceAndReturnMessageView() {
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC")
-                .applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).build();
-        final RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
-        final Referee referee = new RefereeBuilder().application(applicationForm).id(5).build();
-
-        EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
-
-        refereeServiceMock.declineToActAsRefereeAndSendNotification(referee);
-
-        userMock.setDirectToUrl(null);
-
-        userServiceMock.save(userMock);
-
-        EasyMock.replay(userServiceMock, refereeServiceMock);
-
-        String view = controller.declineReference("5", "ABC", "OK", new ModelMap());
-
-        EasyMock.verify(refereeServiceMock);
-
-        assertEquals(TemplateLocation.DECLINE_SUCCESS_VIEW_NAME, view);
     }
 
 }

@@ -18,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
+import org.unitils.inject.util.InjectionUtils;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -28,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.PorticoService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
@@ -59,6 +61,8 @@ public class SendToPorticoDataDTOValidatorTest {
     private Referee referee2;
 
     private ApplicationForm applicationForm;
+
+    private PorticoService porticoServiceMock;
 
     @Test
     public void shouldValidateCorrectData() {
@@ -112,7 +116,7 @@ public class SendToPorticoDataDTOValidatorTest {
     public void shouldRejectIfExplanationIsKLongerThan500Characters() {
         sendToPorticoDataDTO.setRefereesSendToPortico(Arrays.asList(new Integer[] { 11, 12 }));
         sendToPorticoDataDTO.setEmptyQualificationsExplanation(RandomStringUtils.randomAscii(50001));
-        
+
         EasyMock.replay(qualificationServiceMock, refereeServiceMock);
         sendToPorticoDataValidator.validate(sendToPorticoDataDTO, mappingResult);
         assertEquals(2, mappingResult.getErrorCount());
@@ -143,6 +147,7 @@ public class SendToPorticoDataDTOValidatorTest {
         applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         qualificationServiceMock = EasyMock.createMock(QualificationService.class);
         refereeServiceMock = EasyMock.createMock(RefereeService.class);
+        porticoServiceMock = EasyMock.createMock(PorticoService.class);
 
         EasyMock.expect(qualificationServiceMock.getById(1)).andReturn(qualification1).anyTimes();
         EasyMock.expect(qualificationServiceMock.getById(2)).andReturn(qualification2).anyTimes();
@@ -150,7 +155,12 @@ public class SendToPorticoDataDTOValidatorTest {
         EasyMock.expect(refereeServiceMock.getRefereeById(12)).andReturn(referee2).anyTimes();
         EasyMock.expect(applicationsServiceMock.getByApplicationNumber("84")).andReturn(applicationForm);
 
-        sendToPorticoDataValidator = new SendToPorticoDataDTOValidator(applicationsServiceMock, qualificationServiceMock, refereeServiceMock);
+        sendToPorticoDataValidator = new SendToPorticoDataDTOValidator();
+        InjectionUtils.injectInto(applicationsServiceMock, sendToPorticoDataValidator, "applicationFormService");
+        InjectionUtils.injectInto(qualificationServiceMock, sendToPorticoDataValidator, "qualificationService");
+        InjectionUtils.injectInto(refereeServiceMock, sendToPorticoDataValidator, "refereeService");
+        InjectionUtils.injectInto(porticoServiceMock, sendToPorticoDataValidator, "porticoService");
+
         sendToPorticoDataValidator.setValidator((javax.validation.Validator) validator);
 
         EasyMock.replay(applicationsServiceMock);

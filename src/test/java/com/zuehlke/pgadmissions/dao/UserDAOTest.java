@@ -10,7 +10,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,10 +20,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -32,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserNotificationListBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
@@ -131,48 +129,6 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
         RegisteredUser foundUser = userDAO.getDisabledUserByEmail("email1@test.com");
         assertEquals(userOne.getId(), foundUser.getId());
-    }
-
-    @Test
-    public void shouldGetUsersByRole() {
-        Role roleOne = roleDAO.getById(Authority.APPLICANT);
-        if (roleOne == null) {
-            roleOne = new RoleBuilder().id(Authority.APPLICANT).doSendUpdateNotification(false).build();
-            save(roleOne);
-        }
-        Role roleTwo = roleDAO.getById(Authority.ADMINISTRATOR);
-        if (roleTwo == null) {
-            roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).doSendUpdateNotification(false).build();
-            save(roleTwo);
-        }
-
-        RegisteredUser userOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-                .password("password").enabled(true)
-//                .role(roleOne)
-                .build();
-        RegisteredUser userTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername")
-                .password("password").enabled(true)
-//                .roles(roleOne, roleTwo)
-                .build();
-        save(userOne, userTwo);
-        List<Integer> testUserIds = Arrays.asList(userOne.getId(), userTwo.getId());
-
-        int roleOneHitCounter = 0;
-        for (RegisteredUser user : userDAO.getUsersInRole(roleOne.getId())) {
-            if (testUserIds.contains(user.getId())) {
-                roleOneHitCounter++;
-            }
-        }
-        assertEquals(2, roleOneHitCounter);
-
-        int roleTwoHitCounter = 0;
-        for (RegisteredUser user : userDAO.getUsersInRole(roleTwo.getId())) {
-            if (testUserIds.contains(user.getId())) {
-                roleTwoHitCounter++;
-            }
-        }
-        assertEquals(1, roleTwoHitCounter);
-
     }
 
     @Test

@@ -42,7 +42,7 @@ public class ManageUsersController {
     private static final String NEW_USER_VIEW_NAME = "private/staff/superAdmin/create_new_user_in_role_page";
 
     @Autowired
-    private  ProgramService programsService;
+    private  ProgramService programService;
 
     @Autowired
     private  UserService userService;
@@ -90,7 +90,7 @@ public class ManageUsersController {
     public List<Program> getPrograms() {
         RegisteredUser currentUser = getCurrentUser();
         if (roleService.hasRole(currentUser, Authority.SUPERADMINISTRATOR)) {
-            return programsService.getAllEnabledPrograms();
+            return programService.getAllEnabledPrograms();
         }
         return roleService.getProgramsByUserAndRole(currentUser, Authority.ADMINISTRATOR);
     }
@@ -120,18 +120,7 @@ public class ManageUsersController {
 
     @ModelAttribute("superadmins")
     public List<RegisteredUser> getSuperadmins() {
-        List<RegisteredUser> superadmins = userService.getUsersInRole(Authority.SUPERADMINISTRATOR);
-
-        Collections.sort(superadmins, new Comparator<RegisteredUser>() {
-
-            @Override
-            public int compare(RegisteredUser o1, RegisteredUser o2) {
-                if (!o1.getLastName().equals(o2.getLastName())) {
-                    return o1.getLastName().compareTo(o2.getLastName());
-                }
-                return o1.getFirstName().compareTo(o2.getFirstName());
-            }
-        });
+        List<RegisteredUser> superadmins = roleService.getUsersInRole(Authority.SUPERADMINISTRATOR);
         return superadmins;
     }
 
@@ -228,9 +217,10 @@ public class ManageUsersController {
         userDTO.setEmail(selectedUser.getEmail());
         Program selectedProgram = getSelectedProgram(programCode);
         userDTO.setSelectedProgram(selectedProgram);
-        List<Authority> authoritiesForProgram = selectedUser.getAuthoritiesForProgram(selectedProgram);
-        Authority[] selectedAuthorities = authoritiesForProgram.toArray(new Authority[] {});
-        userDTO.setSelectedAuthorities(selectedAuthorities);
+        // FIXME apply authorities
+//        List<Authority> authoritiesForProgram = selectedUser.getAuthoritiesForProgram(selectedProgram);
+//        Authority[] selectedAuthorities = authoritiesForProgram.toArray(new Authority[] {});
+//        userDTO.setSelectedAuthorities(selectedAuthorities);
         userDTO.setNewUser(false);
         return userDTO;
     }
@@ -249,7 +239,7 @@ public class ManageUsersController {
         if (programCode == null) {
             return null;
         }
-        Program selectedProgram = programsService.getProgramByCode(programCode);
+        Program selectedProgram = programService.getProgramByCode(programCode);
         if (selectedProgram == null) {
             throw new ResourceNotFoundException();
         }

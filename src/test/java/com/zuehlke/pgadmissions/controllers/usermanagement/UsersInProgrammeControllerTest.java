@@ -26,68 +26,6 @@ public class UsersInProgrammeControllerTest {
 	private RegisteredUser currentUserMock;
 	private UsersInProgrammeController controller;
 
-	@Test
-	public void shouldReturnEmptyUserInRoleListIfNoProgram() {		
-		List<RegisteredUser> users = controller.getUsersInProgram(null);
-		assertTrue(users.isEmpty());
-	}
-	
-	@Test
-	public void shouldReturnUsersForProgramOrderedByLastnameFirstname() {
-		Program program = new ProgramBuilder().id(5).build();
-		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userOne.getId()).andReturn(1).anyTimes();
-		EasyMock.expect(userOne.getLastName()).andReturn("ZZZ").anyTimes();
-		EasyMock.expect(userOne.getFirstName()).andReturn("BBB").anyTimes();
-		
-		RegisteredUser userTwo = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userTwo.getId()).andReturn(2).anyTimes();
-		EasyMock.expect(userTwo.getLastName()).andReturn("ZZZ").anyTimes();
-		EasyMock.expect(userTwo.getFirstName()).andReturn("AAA").anyTimes();
-		
-		RegisteredUser userThree = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userThree.getId()).andReturn(3).anyTimes();
-		EasyMock.expect(userThree.getLastName()).andReturn("AAA").anyTimes();
-		EasyMock.expect(userThree.getFirstName()).andReturn("GGG").anyTimes();
-		
-		EasyMock.expect(programsServiceMock.getProgramByCode("enc")).andReturn(program);
-		EasyMock.expect(userServiceMock.getAllUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTwo, userThree));
-		EasyMock.replay(userOne, userTwo, userThree, programsServiceMock, userServiceMock);
-		
-		List<RegisteredUser> users = controller.getUsersInProgram("enc");		
-		
-		assertEquals(3, users.size());
-		assertEquals(userThree, users.get(0));
-		assertEquals(userTwo, users.get(1));
-		assertEquals(userOne, users.get(2));
-		
-	}
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldExcludeUsersWhoAreSuperadminsOnly() {
-		
-		Program program = new ProgramBuilder().id(5).build();
-		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
-		RegisteredUser userTwo = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(programsServiceMock.getProgramByCode("enc")).andReturn(program);
-		EasyMock.expect(userServiceMock.getAllUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
-		EasyMock.replay(userOne, userTwo, programsServiceMock, userServiceMock);
-		List<RegisteredUser> users = controller.getUsersInProgram("enc");		
-		assertEquals(1, users.size());
-		assertTrue(users.containsAll(Arrays.asList(userTwo)));
-		
-	}
-	
-	@Test
-	public void shouldReutrnEmptyListIfProgramDoesNotExist() {
-		
-		EasyMock.expect(programsServiceMock.getProgramByCode("enc")).andReturn(null);
-	
-		EasyMock.replay(programsServiceMock);
-		List<RegisteredUser> users = controller.getUsersInProgram("enc");		
-		assertTrue(users.isEmpty());
-	}
-	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowExceptionForNonAdministrators() {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();

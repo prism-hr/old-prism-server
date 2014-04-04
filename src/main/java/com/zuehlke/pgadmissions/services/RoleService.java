@@ -105,6 +105,10 @@ public class RoleService {
         }
         return roleDAO.getUserRoles(user).contains(roleDAO.getById(authority));
     }
+    
+    public List<RegisteredUser> getUsersInRole(Authority... authorities) {
+        return roleDAO.getUsersInRole(authorities);
+    }
 
     public List<Program> getProgramsByUserAndRole(RegisteredUser currentUser, Authority administrator) {
         // TODO Auto-generated method stub

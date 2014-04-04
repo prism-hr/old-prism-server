@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.mail.PrismMailMessageException;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.importers.Importer;
 
 @Service
@@ -33,17 +33,17 @@ public class XMLDataImportTask {
 
     private final MailSendingService mailService;
 
-    private final UserService userService;
+    private final RoleService roleService;
 
     private final ImportDataReferenceUpdater importDataReferenceUpdater;
 
     @Autowired
     public XMLDataImportTask(List<Importer> importers, @Value("${xml.data.import.user}") final String user,
-            @Value("${xml.data.import.password}") final String password, final MailSendingService mailService, final UserService userService,
+            @Value("${xml.data.import.password}") final String password, final MailSendingService mailService, final RoleService roleService,
             final ImportDataReferenceUpdater importDataReferenceUpdater) {
         this.importers = importers;
         this.mailService = mailService;
-        this.userService = userService;
+        this.roleService = roleService;
         this.importDataReferenceUpdater = importDataReferenceUpdater;
         this.authenticator = new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -68,7 +68,7 @@ public class XMLDataImportTask {
                     message += "\n" + cause.toString();
                 }
                 try {
-                    mailService.sendImportErrorMessage(userService.getUsersInRole(Authority.SUPERADMINISTRATOR), message, new Date());
+                    mailService.sendImportErrorMessage(roleService.getUsersInRole(Authority.SUPERADMINISTRATOR), message, new Date());
                 } catch (PrismMailMessageException pmme) {
                     log.warn("{}", pmme);
                 }

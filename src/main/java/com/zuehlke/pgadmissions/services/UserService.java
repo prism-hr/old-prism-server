@@ -52,10 +52,6 @@ public class UserService {
     @Autowired
     private WorkflowService applicationFormUserRoleService;
 
-    public List<RegisteredUser> getUsersInRole(Authority ... authorities) {
-        return userDAO.getUsersInRole(authorities);
-    }
-
     public void save(RegisteredUser user) {
         userDAO.save(user);
     }

@@ -8,6 +8,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThat;
+import static org.unitils.easymock.EasyMockUnitils.replay;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,10 +17,15 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.unitils.UnitilsJUnit4TestClassRunner;
+import org.unitils.easymock.EasyMockUnitils;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -36,6 +42,7 @@ import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.ProgramService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.SuperadminUserDTOValidator;
 import com.zuehlke.pgadmissions.validators.UserDTOValidator;
@@ -43,23 +50,53 @@ import com.zuehlke.pgadmissions.validators.UserDTOValidator;
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ManageUsersControllerTest {
 
-    private ProgramService programServiceMock;
+    @Mock
+    @InjectIntoByType
+    private ProgramService programService;
+
+    @Mock
+    @InjectIntoByType
+    private UserService userService;
+
+    @Mock
+    @InjectIntoByType
+    private ProgramPropertyEditor programPropertyEditor;
+
+    @Mock
+    @InjectIntoByType
+    private UserDTOValidator newUserDTOValidator;
+
+    @Mock
+    @InjectIntoByType
+    private EncryptionHelper encryptionHelper;
+
+    @Mock
+    @InjectIntoByType
+    private SuperadminUserDTOValidator userDTOValidator;
+
+    @Mock
+    @InjectIntoByType
+    private PersonPropertyEditor registryPropertyEditor;
+
+    @Mock
+    @InjectIntoByType
+    private ConfigurationService configurationService;
+
+    @Mock
+    @InjectIntoByType
+    private RoleService roleService;
+
+    @TestedObject
     private ManageUsersController controller;
-    private UserService userServiceMock;
-    private RegisteredUser currentUserMock;
-    private ProgramPropertyEditor programPropertyEditorMock;
-    private UserDTOValidator newUserDTOValidatorMock;
-    private EncryptionHelper encryptionHelperMock;
-    private SuperadminUserDTOValidator userDTOValidatorMock;
-    private PersonPropertyEditor registryPropertyEditorMock;
-    private ConfigurationService configurationServiceMock;
+
+    private RegisteredUser currentUser = new RegisteredUser();
 
     @Test
     public void shouldGetSelectedProgramfIdProvided() {
         Program program = new ProgramBuilder().id(5).code("ABC").build();
 
-        EasyMock.expect(programServiceMock.getProgramByCode("ABC")).andReturn(program);
-        EasyMock.replay(programServiceMock);
+        EasyMock.expect(programService.getProgramByCode("ABC")).andReturn(program);
+        replay();
 
         assertEquals(program, controller.getSelectedProgram("ABC"));
     }
@@ -71,24 +108,24 @@ public class ManageUsersControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoucnExceptionIfNoSuchProgram() {
-        EasyMock.expect(programServiceMock.getProgramByCode("ABC")).andReturn(null);
-        EasyMock.replay(programServiceMock);
+        EasyMock.expect(programService.getProgramByCode("ABC")).andReturn(null);
+        replay();
         controller.getSelectedProgram("ABC");
     }
 
     @Test
     public void shouldReturnCurrentUser() {
-        EasyMock.replay(userServiceMock);
-        assertEquals(currentUserMock, controller.getUser());
-        EasyMock.verify(userServiceMock);
+        replay();
+        assertEquals(currentUser, controller.getUser());
+
     }
 
     @Test
     public void shouldReturnNewUserDTO() {
         String programCode = "DEF";
         Program program = new ProgramBuilder().id(1).build();
-        EasyMock.expect(programServiceMock.getProgramByCode(programCode)).andReturn(program);
-        EasyMock.replay(programServiceMock);
+        EasyMock.expect(programService.getProgramByCode(programCode)).andReturn(program);
+        replay();
         UserDTO userDTO = controller.getNewUserDTO(null, programCode);
         assertNotNull(userDTO);
         assertNull(userDTO.getEmail());
@@ -102,17 +139,17 @@ public class ManageUsersControllerTest {
     public void shouldPopulateUserDTOWithUserDetails() {
         String programCode = "DEF";
         Program program = new ProgramBuilder().id(1).build();
-        EasyMock.reset(userServiceMock);
+        EasyMock.reset(userService);
         String encryptedUserId = "abc";
         RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
         EasyMock.expect(userMock.getEmail()).andReturn("bsmith@test.com");
         EasyMock.expect(userMock.getFirstName()).andReturn("bob");
         EasyMock.expect(userMock.getLastName()).andReturn("Smith");
-        EasyMock.expect(encryptionHelperMock.decryptToInteger(encryptedUserId)).andReturn(1);
-        EasyMock.expect(userServiceMock.getById(1)).andReturn(userMock);
+        EasyMock.expect(encryptionHelper.decryptToInteger(encryptedUserId)).andReturn(1);
+        EasyMock.expect(userService.getById(1)).andReturn(userMock);
 
-        EasyMock.expect(programServiceMock.getProgramByCode(programCode)).andReturn(program);
-        EasyMock.replay(encryptionHelperMock, userServiceMock, userMock, programServiceMock);
+        EasyMock.expect(programService.getProgramByCode(programCode)).andReturn(program);
+        replay();
 
         UserDTO userDTO = controller.getNewUserDTO(encryptedUserId, programCode);
 
@@ -129,10 +166,10 @@ public class ManageUsersControllerTest {
     public void shouldReturnAllProgramsForSuperAdminUser() {
         Program program1 = new ProgramBuilder().id(1).build();
         Program program2 = new ProgramBuilder().id(2).build();
-        EasyMock.expect(programServiceMock.getAllEnabledPrograms()).andReturn(Arrays.asList(program1, program2));
-        EasyMock.replay(programServiceMock, currentUserMock, userServiceMock);
+        EasyMock.expect(programService.getAllEnabledPrograms()).andReturn(Arrays.asList(program1, program2));
+        replay();
         List<Program> programs = controller.getPrograms();
-        EasyMock.verify(programServiceMock, currentUserMock, userServiceMock);
+
         assertEquals(2, programs.size());
         assertTrue(programs.containsAll(Arrays.asList(program1, program2)));
     }
@@ -141,16 +178,16 @@ public class ManageUsersControllerTest {
     public void shouldReturnProgramsOfWhichAdministratorForAdmins() {
         Program program1 = new ProgramBuilder().id(1).build();
         Program program2 = new ProgramBuilder().id(2).build();
-        EasyMock.replay(programServiceMock, currentUserMock, userServiceMock);
+        replay();
         List<Program> programs = controller.getPrograms();
-        EasyMock.verify(programServiceMock, currentUserMock, userServiceMock);
+
         assertEquals(2, programs.size());
         assertTrue(programs.containsAll(Arrays.asList(program1, program2)));
     }
 
     @Test
     public void shouldReturnCorrectPossibleRoles() {
-        EasyMock.replay(currentUserMock);
+        replay();
 
         List<Authority> authorities = controller.getAuthorities();
         assertThat(authorities, contains( //
@@ -161,33 +198,33 @@ public class ManageUsersControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfUserNeitherSuperAdminOrAdmin() {
-        EasyMock.replay(currentUserMock, userServiceMock);
+        replay();
         controller.getAddUsersView();
-        EasyMock.verify(currentUserMock, userServiceMock);
+
     }
 
     @Test
     public void shoulReturnNewUsersViewForSuperadmin() {
-        EasyMock.replay(currentUserMock, userServiceMock);
+        replay();
         assertEquals("private/staff/superAdmin/create_new_user_in_role_page", controller.getAddUsersView());
-        EasyMock.verify(currentUserMock, userServiceMock);
+
     }
 
     @Test
     public void shoulReturnNewUsersViewForAdmin() {
-        EasyMock.replay(currentUserMock, userServiceMock);
+        replay();
         assertEquals("private/staff/superAdmin/create_new_user_in_role_page", controller.getAddUsersView());
-        EasyMock.verify(currentUserMock, userServiceMock);
+
     }
 
     @Test
     public void shouldCreateNewUserInRoles() {
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+        EasyMock.reset(userService);
+        EasyMock.expect(userService.getCurrentUser()).andReturn(currentUser).anyTimes();
 
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-        EasyMock.replay(errorsMock);
+        replay();
 
         UserDTO newUserDTO = new UserDTO();
         newUserDTO.setFirstName("Jane");
@@ -196,25 +233,24 @@ public class ManageUsersControllerTest {
         Program program = new ProgramBuilder().id(5).code("ABC").build();
         newUserDTO.setSelectedProgram(program);
         newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
-        EasyMock.expect(userServiceMock.createNewUserForProgramme("Jane", "Doe", "jane.doe@test.com", program, Authority.REVIEWER, Authority.ADMINISTRATOR))
+        EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
+        EasyMock.expect(userService.createNewUserForProgramme("Jane", "Doe", "jane.doe@test.com", program, Authority.REVIEWER, Authority.ADMINISTRATOR))
                 .andReturn(new RegisteredUserBuilder().id(4).build());
 
-        EasyMock.replay(currentUserMock, userServiceMock);
+        replay();
 
         assertEquals("redirect:/manageUsers/edit?programCode=ABC", controller.handleEditUserRoles(newUserDTO, errorsMock));
 
-        EasyMock.verify(userServiceMock);
     }
 
     @Test
     public void shouldUpdateRolesForUserIfUserAlreadyExistsButNotInRole() {
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+        EasyMock.reset(userService);
+        EasyMock.expect(userService.getCurrentUser()).andReturn(currentUser).anyTimes();
 
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-        EasyMock.replay(errorsMock);
+        replay();
 
         UserDTO newUserDTO = new UserDTO();
         newUserDTO.setFirstName("Jane");
@@ -225,24 +261,23 @@ public class ManageUsersControllerTest {
         newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
 
         RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
-        userServiceMock.updateUserWithNewRoles(existingUser, program, Authority.REVIEWER, Authority.ADMINISTRATOR);
+        EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
+        userService.updateUserWithNewRoles(existingUser, program, Authority.REVIEWER, Authority.ADMINISTRATOR);
 
-        EasyMock.replay(currentUserMock, userServiceMock);
+        replay();
 
         assertEquals("redirect:/manageUsers/edit?programCode=ABC", controller.handleEditUserRoles(newUserDTO, errorsMock));
 
-        EasyMock.verify(userServiceMock);
     }
 
     @Test
     public void shouldReturnToAllProgramsViewIfNoProgramOnUserDTO() {
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+        EasyMock.reset(userService);
+        EasyMock.expect(userService.getCurrentUser()).andReturn(currentUser).anyTimes();
 
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-        EasyMock.replay(errorsMock);
+        replay();
 
         UserDTO newUserDTO = new UserDTO();
         newUserDTO.setFirstName("Jane");
@@ -252,45 +287,42 @@ public class ManageUsersControllerTest {
         newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
 
         RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
-        userServiceMock.updateUserWithNewRoles(existingUser, null, Authority.REVIEWER, Authority.ADMINISTRATOR);
+        EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
+        userService.updateUserWithNewRoles(existingUser, null, Authority.REVIEWER, Authority.ADMINISTRATOR);
 
-        EasyMock.replay(currentUserMock, userServiceMock);
+        replay();
 
         assertEquals("redirect:/manageUsers/edit", controller.handleEditUserRoles(newUserDTO, errorsMock));
 
-        EasyMock.verify(userServiceMock);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfUserNeitherSuperAdminOrAdminOnSubmission() {
-        EasyMock.replay(currentUserMock, userServiceMock);
+        replay();
         controller.handleEditUserRoles(null, null);
-        EasyMock.verify(currentUserMock, userServiceMock);
+
     }
 
     @Test
     public void shouldReturnToViewIfErrors() {
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
+        EasyMock.reset(userService);
+        EasyMock.expect(userService.getCurrentUser()).andReturn(currentUser).anyTimes();
 
-        EasyMock.replay(currentUserMock, userServiceMock);
+        replay();
 
         UserDTO newUserDTO = new UserDTO();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-        EasyMock.replay(errorsMock);
+        replay();
 
         assertEquals("private/staff/superAdmin/create_new_user_in_role_page", controller.handleEditUserRoles(newUserDTO, errorsMock));
 
-        EasyMock.verify(userServiceMock);
     }
 
     @Test
     public void shouldUpdateExistingUserWithEmptyRolesOnRemove() {
-        EasyMock.reset(userServiceMock);
-        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
-
+        EasyMock.reset(userService);
+        EasyMock.expect(userService.getCurrentUser()).andReturn(currentUser).anyTimes();
 
         UserDTO newUserDTO = new UserDTO();
         newUserDTO.setFirstName("Jane");
@@ -300,131 +332,124 @@ public class ManageUsersControllerTest {
         newUserDTO.setSelectedProgram(program);
 
         RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
-        userServiceMock.deleteUserFromProgramme(existingUser, program);
-        EasyMock.expect(currentUserMock.getId()).andReturn(1);
+        EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
+        userService.deleteUserFromProgramme(existingUser, program);
+        EasyMock.expect(currentUser.getId()).andReturn(1);
 
-        EasyMock.replay(currentUserMock, userServiceMock);
+        replay();
 
         assertEquals("redirect:/manageUsers/edit?programCode=ABC", controller.handleRemoveUserFromProgram(newUserDTO));
 
-        EasyMock.verify(userServiceMock);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfUserNeitherSuperAdminOrAdminOnRemove() {
-        EasyMock.replay(currentUserMock, userServiceMock);
+        replay();
         controller.handleRemoveUserFromProgram(null);
-        EasyMock.verify(currentUserMock, userServiceMock);
+
     }
 
     @Test
     public void shouldBindPropertyEditors() {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-        binderMock.setValidator(newUserDTOValidatorMock);
-        binderMock.registerCustomEditor(Program.class, programPropertyEditorMock);
+        binderMock.setValidator(newUserDTOValidator);
+        binderMock.registerCustomEditor(Program.class, programPropertyEditor);
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 
-        EasyMock.replay(binderMock);
+        replay();
         controller.registerPropertyEditors(binderMock);
-        EasyMock.verify(binderMock);
+
     }
-    
+
     @Test
     public void shouldRegistorPropertyEditorForRegistryUsers() {
         WebDataBinder dataBinderMock = EasyMock.createMock(WebDataBinder.class);
-        dataBinderMock.registerCustomEditor(Person.class, registryPropertyEditorMock);
-        EasyMock.replay(dataBinderMock);
+        dataBinderMock.registerCustomEditor(Person.class, registryPropertyEditor);
+        replay();
         controller.registerValidatorsAndPropertyEditorsForRegistryUsers(dataBinderMock);
-        EasyMock.verify(dataBinderMock);
+
     }
-    
+
     @Test
     public void shouldGetAllRegistryUsers() {
         Person personOne = new PersonBuilder().id(1).build();
         Person personTwo = new PersonBuilder().id(4).build();
 
-        EasyMock.expect(configurationServiceMock.getAllRegistryUsers()).andReturn(Arrays.asList(personOne, personTwo));
-        EasyMock.replay(configurationServiceMock);
+        EasyMock.expect(configurationService.getAllRegistryUsers()).andReturn(Arrays.asList(personOne, personTwo));
+        replay();
         List<Person> allRegistryUsers = controller.getAllRegistryContacts();
         assertEquals(2, allRegistryUsers.size());
         assertTrue(allRegistryUsers.containsAll(Arrays.asList(personOne, personTwo)));
     }
-    
+
     @Test
     public void shouldReturnAllSuperadministratorsOrderbylastnameFirstname() {
         RegisteredUser userOne = new RegisteredUserBuilder().id(1).lastName("ZZZZ").firstName("BBBB").build();
         RegisteredUser userTwo = new RegisteredUserBuilder().id(4).lastName("ZZZZ").firstName("AAAA").build();
         RegisteredUser userThree = new RegisteredUserBuilder().id(5).lastName("AA").firstName("GGG").build();
-        EasyMock.expect(userServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
-        EasyMock.replay(userServiceMock);
+        EasyMock.expect(roleService.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
+        replay();
         List<RegisteredUser> superadmins = controller.getSuperadmins();
-        EasyMock.verify(userServiceMock);
+
         assertEquals(3, superadmins.size());
         assertEquals(userThree, superadmins.get(0));
         assertEquals(userTwo, superadmins.get(1));
         assertEquals(userOne, superadmins.get(2));
     }
-    
+
     @Test
     public void shouldReturnAllRegistryContacts() {
         Person userOne = new PersonBuilder().id(1).lastname("ZZZZ").firstname("BBBB").build();
         Person userTwo = new PersonBuilder().id(2).lastname("AAAA").firstname("AAAA").build();
         Person userThree = new PersonBuilder().id(3).lastname("GGG").firstname("GGG").build();
-        EasyMock.expect(configurationServiceMock.getAllRegistryUsers()).andReturn(Arrays.asList(userOne, userTwo, userThree));
-        EasyMock.replay(configurationServiceMock);
+        EasyMock.expect(configurationService.getAllRegistryUsers()).andReturn(Arrays.asList(userOne, userTwo, userThree));
+        replay();
         List<Person> superadmins = controller.getAllRegistryContacts();
-        EasyMock.verify(configurationServiceMock);
+
         assertEquals(3, superadmins.size());
         assertEquals(userOne.getId(), superadmins.get(0).getId());
         assertEquals(userTwo.getId(), superadmins.get(1).getId());
         assertEquals(userThree.getId(), superadmins.get(2).getId());
     }
-    
+
     @Test
     public void shouldCreateNewUserInRolesSuperAdmin() {
 
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-        
 
         UserDTO userDTO = new UserDTO();
         userDTO.setFirstName("Jane");
         userDTO.setLastName("Doe");
         userDTO.setEmail("jane.doe@test.com");
 
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
-        EasyMock.expect(userServiceMock.createNewUserForProgramme("Jane", "Doe", "jane.doe@test.com", null, Authority.SUPERADMINISTRATOR)).andReturn(
+        EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
+        EasyMock.expect(userService.createNewUserForProgramme("Jane", "Doe", "jane.doe@test.com", null, Authority.SUPERADMINISTRATOR)).andReturn(
                 new RegisteredUserBuilder().id(4).build());
 
-        EasyMock.replay(errorsMock, currentUserMock, userServiceMock);
+        replay();
 
         assertEquals("redirect:/manageUsers/edit", controller.handleAddSuperadmin(userDTO, errorsMock));
 
-
-        EasyMock.verify(errorsMock, currentUserMock, userServiceMock);
     }
-    
+
     @Test
     public void shouldCreateNewUserInRolesAdmitter() {
-        
-        
+
         Person userOne = new PersonBuilder().id(1).lastname("ZZZZ").firstname("BBBB").build();
         Person userTwo = new PersonBuilder().id(2).lastname("AAAA").firstname("AAAA").build();
         Person userThree = new PersonBuilder().id(3).lastname("GGG").firstname("GGG").build();
         RegistryUserDTO userDTO = new RegistryUserDTO();
         userDTO.setRegistryUsers(Arrays.asList(userOne, userTwo, userThree));
-        
-        configurationServiceMock.saveRegistryUsers(userDTO.getRegistryUsers(), currentUserMock);
-        
-        EasyMock.replay(configurationServiceMock, currentUserMock, userServiceMock);
-        
+
+        configurationService.saveRegistryUsers(userDTO.getRegistryUsers(), currentUser);
+
+        replay();
+
         assertEquals("redirect:/manageUsers/edit", controller.handleEditRegistryUsers(userDTO));
-        
-        
-        EasyMock.verify(configurationServiceMock, currentUserMock, userServiceMock);
+
     }
-    
+
     @Test
     public void shouldUpdateRolesForUserIfUserAlreadyExists() {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
@@ -436,50 +461,47 @@ public class ManageUsersControllerTest {
         userDTO.setEmail("jane.doe@test.com");
 
         RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
-        userServiceMock.updateUserWithNewRoles(existingUser, null, Authority.SUPERADMINISTRATOR);
+        EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
+        userService.updateUserWithNewRoles(existingUser, null, Authority.SUPERADMINISTRATOR);
 
-        EasyMock.replay(currentUserMock, userServiceMock, errorsMock);
+        replay();
 
         assertEquals("redirect:/manageUsers/edit", controller.handleAddSuperadmin(userDTO, errorsMock));
 
-        EasyMock.verify(userServiceMock, errorsMock, currentUserMock);
     }
-    
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfUserNotSuperAdminOnSubmission() {
-       
-        EasyMock.replay(userServiceMock, currentUserMock);
+
+        replay();
         controller.handleAddSuperadmin(null, null);
-        EasyMock.verify(userServiceMock, currentUserMock);
+
     }
-    
+
     @Test
     public void shouldReturnToViewIfErrorsOnSaveSuperadmin() {
-        EasyMock.replay(userServiceMock, currentUserMock);
+        replay();
 
         UserDTO userDTO = new UserDTO();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-        EasyMock.replay(errorsMock);
+        replay();
 
         assertEquals("private/staff/superAdmin/create_new_user_in_role_page", controller.handleAddSuperadmin(userDTO, errorsMock));
 
-        EasyMock.verify(userServiceMock);
     }
-    
+
     @Test
     public void shouldBindSuperAdminPropertyEditors() {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-        binderMock.setValidator(this.userDTOValidatorMock);
+        binderMock.setValidator(userDTOValidator);
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
-        
-        EasyMock.replay(binderMock);
+
+        replay();
         controller.registerValidator(binderMock);
-        EasyMock.verify(binderMock);
+
     }
-    
+
     @Test
     public void shouldReturnNewDTO() {
 
@@ -489,7 +511,7 @@ public class ManageUsersControllerTest {
         assertNull(userDTO.getFirstName());
         assertNull(userDTO.getLastName());
         assertEquals(0, userDTO.getSelectedAuthorities().length);
-        assertNull( userDTO.getSelectedProgram());
+        assertNull(userDTO.getSelectedProgram());
 
     }
 

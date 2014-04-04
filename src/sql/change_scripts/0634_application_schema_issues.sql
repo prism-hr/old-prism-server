@@ -23,7 +23,7 @@ ALTER TABLE APPLICATION
 ;
 
 UPDATE APPLICATION INNER JOIN APPLICATION_TRANSFER
-	ON APPLICATION.id = APPLIATION_TRANSFER.application_id
+	ON APPLICATION.id = APPLICATION_TRANSFER.application_id
 SET APPLICATION.application_transfer_id = APPLICATION_TRANSFER.id
 ;
 
@@ -50,9 +50,9 @@ ALTER TABLE APPLICATION_TRANSFER
 	MODIFY COLUMN created_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CHANGE COLUMN transfer_begin_timeppoint began_timestamp DATETIME,
 	CHANGE COLUMN transfer_end_timepoint ended_timestamp DATETIME,
-	CHANGE COLUMN status application_transfer_status_id VARCHAR(50) NOT NULL DEFAULT "QUEUED_FOR_WEBSERVICE_CALL",
-	ADD INDEX (application_transfer_status_id),
-	ADD FOREIGN KEY (application_transfer_status_id) REFERENCES APPLICATION_TRANSFER_STATUS (id),
+	CHANGE COLUMN status application_transfer_state_id VARCHAR(50) NOT NULL DEFAULT "QUEUED_FOR_WEBSERVICE_CALL",
+	ADD INDEX (application_transfer_state_id),
+	ADD FOREIGN KEY (application_transfer_state_id) REFERENCES APPLICATION_TRANSFER_STATE (id),
 	CHANGE COLUMN ucl_user_id_received external_applicant_reference VARCHAR(50),
 	CHANGE COLUMN ucl_booking_ref_number_received external_transfer_reference VARCHAR(50)
 ;
@@ -102,7 +102,7 @@ ALTER TABLE APPLICATION
 	ADD FOREIGN KEY (application_transfer_id) REFERENCES APPLICATION_TRANSFER (id)
 ;
 
-CREATE TABLE APPLICATION_UPDATE_SCOPE (
+CREATE TABLE UPDATE_SCOPE (
 	id VARCHAR(50) NOT NULL,
 	precedence INT(10) UNSIGNED NOT NULL,
 	PRIMARY KEY (id),
@@ -114,14 +114,14 @@ CREATE TABLE APPLICATION_UPDATE_SCOPE (
 ;
 
 ALTER TABLE APPLICATION_ROLE
-	ADD COLUMN application_update_scope_id VARCHAR(50),
-	ADD INDEX (application_update_scope_id),
-	ADD CONSTRAINT fk_application_role_application_update_scope_id 
-		FOREIGN KEY (application_update_scope_id) REFERENCES APPLICATION_UPDATE_SCOPE (id)
+	ADD COLUMN update_scope_id VARCHAR(50),
+	ADD INDEX (update_scope_id),
+	ADD CONSTRAINT fk_application_role_update_scope_id 
+		FOREIGN KEY (update_scope_id) REFERENCES UPDATE_SCOPE (id)
 ;
 
 UPDATE APPLICATION_ROLE
-SET application_update_scope_id = IF (update_visibility = 0, "EXTERNAL", "INTERNAL")
+SET update_scope_id = IF (update_visibility = 0, "EXTERNAL", "INTERNAL")
 ;
 
 ALTER TABLE APPLICATION_ROLE
@@ -129,57 +129,42 @@ ALTER TABLE APPLICATION_ROLE
 ;
 
 UPDATE APPLICATION_ROLE
-SET application_update_scope_id = "EXTERNAL"
+SET update_scope_id = "EXTERNAL"
 WHERE id = "APPLICATION_REFEREE"
-;
-
-ALTER TABLE APPLICATION_ROLE
-	ADD COLUMN application_role_scope_id VARCHAR(50),
-	ADD INDEX (application_role_scope_id),
-	ADD FOREIGN KEY (application_role_scope_id) REFERENCES APPLICATION_ROLE_SCOPE (id)
-;
-
-UPDATE APPLICATION_ROLE INNER JOIN APPLICATION_ROLE_SCOPE
-	ON APPLICATION_ROLE.id LIKE CONCAT(APPLICATION_ROLE_SCOPE.id, "%")
-SET APPLICATION_ROLE.application_role_scope_id = APPLICATION_ROLE_SCOPE.id
-;
-
-ALTER TABLE APPLICATION_ROLE
-	MODIFY COLUMN application_role_scope_id VARCHAR(50) NOT NULL
 ;
 
 CREATE TABLE APPLICATION_UPDATE (
 	application_id INT(10) UNSIGNED NOT NULL,
-	application_update_scope_id VARCHAR(50) NOT NULL,
-	PRIMARY KEY (application_id, application_update_scope_id),
-	INDEX (application_update_scope_id),
+	update_scope_id VARCHAR(50) NOT NULL,
+	PRIMARY KEY (application_id, update_scope_id),
+	INDEX (update_scope_id),
 	FOREIGN KEY (application_id) REFERENCES APPLICATION (id),
-	FOREIGN KEY (application_update_scope_id) REFERENCES APPLICATION_UPDATE_SCOPE (id)
+	FOREIGN KEY (update_scope_id) REFERENCES UPDATE_SCOPE (id)
 ) ENGINE = INNODB
 	SELECT APPLICATION_FORM_UPDATE.application_form_id AS application_id, 
-		APPLICATION_UPDATE_SCOPE.id AS application_update_scope_id
+		UPDATE_SCOPE.id AS update_scope_id
 	FROM APPLICATION_FORM_USER_ROLE INNER JOIN APPLICATION_ROLE
 		ON APPLICATION_FORM_USER_ROLE.application_role_id = APPLICATION_ROLE.id
 	INNER JOIN APPLICATION_FORM_UPDATE
 		ON APPLICATION_FORM_USER_ROLE.application_form_id = APPLICATION_FORM_UPDATE.application_form_id
-	INNER JOIN APPLICATION_UPDATE_SCOPE
-		ON APPLICATION_ROLE.application_update_scope_id = APPLICATION_UPDATE_SCOPE.id
-	GROUP BY APPLICATION_FORM_UPDATE.application_form_id, APPLICATION_UPDATE_SCOPE.id
+	INNER JOIN UPDATE_SCOPE
+		ON APPLICATION_ROLE.update_scope_id = UPDATE_SCOPE.id
+	GROUP BY APPLICATION_FORM_UPDATE.application_form_id, UPDATE_SCOPE.id
 ;
 
 CREATE TABLE APPLICATION_UPDATE_VIEW (
 	application_id INT(10) UNSIGNED NOT NULL,
-	application_update_scope_id VARCHAR(50) NOT NULL,
+	update_scope_id VARCHAR(50) NOT NULL,
 	user_id INT(10) UNSIGNED NOT NULL,
-	PRIMARY KEY (application_id, application_update_scope_id, user_id),
-	INDEX (application_update_scope_id),
+	PRIMARY KEY (application_id, update_scope_id, user_id),
+	INDEX (update_scope_id),
 	INDEX (user_id),
 	FOREIGN KEY (application_id) REFERENCES APPLICATION (id),
-	FOREIGN KEY (application_update_scope_id) REFERENCES APPLICATION_UPDATE_SCOPE (id),
+	FOREIGN KEY (update_scope_id) REFERENCES UPDATE_SCOPE (id),
 	FOREIGN KEY (user_id) REFERENCES USER (id)
 ) ENGINE = INNODB
 	SELECT APPLICATION_UPDATE.application_id AS application_id,
-		APPLICATION_UPDATE.application_update_scope_id AS application_update_scope_id,
+		APPLICATION_UPDATE.update_scope_id AS update_scope_id,
 		APPLICATION_FORM_UPDATE.registered_user_id AS user_id
 	FROM APPLICATION_UPDATE INNER JOIN APPLICATION_FORM_UPDATE
 		ON APPLICATION_UPDATE.application_id = APPLICATION_FORM_UPDATE.application_form_id

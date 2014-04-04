@@ -78,11 +78,6 @@ public class UserDAO {
         return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<RegisteredUser> getUsersInRole(Authority ...authorities) {
-        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles").add(Restrictions.in("id", authorities))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-    }
-    
     public RegisteredUser getUserByActivationCode(String activationCode) {
         return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("activationCode", activationCode))
                 .uniqueResult();

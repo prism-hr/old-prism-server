@@ -118,4 +118,9 @@ public class RoleDAO {
         return roles;
     }
 
+    public List<RegisteredUser> getUsersInRole(Authority[] authorities) {
+        // TODO Auto-generated method stub, sort by first and last names
+        return null;
+    }
+
 }

@@ -37,35 +37,8 @@ public class UsersInProgrammeController {
 
     @ModelAttribute("usersInRoles")
     public List<RegisteredUser> getUsersInProgram(@RequestParam(required = false) String programCode) {
-        if (programCode == null) {
-            return new ArrayList<RegisteredUser>();
-        }
-
-        Program selectedProgram = getSelectedProgram(programCode);
-
-        if (selectedProgram == null) {
-            return new ArrayList<RegisteredUser>();
-        }
-
-        List<RegisteredUser> allUsersForProgram = userService.getAllUsersForProgram(selectedProgram);
-        List<RegisteredUser> allUserWhoAreNotSuperadminsOnly = new ArrayList<RegisteredUser>();
-
-        for (RegisteredUser registeredUser : allUsersForProgram) {
-            if (!registeredUser.getAuthoritiesForProgram(selectedProgram).isEmpty() && !listContainsId(registeredUser, allUserWhoAreNotSuperadminsOnly)) {
-                allUserWhoAreNotSuperadminsOnly.add(registeredUser);
-            }
-        }
-
-        Collections.sort(allUserWhoAreNotSuperadminsOnly, new Comparator<RegisteredUser>() {
-            @Override
-            public int compare(RegisteredUser o1, RegisteredUser o2) {
-                if (!o1.getLastName().equals(o2.getLastName())) {
-                    return o1.getLastName().compareTo(o2.getLastName());
-                }
-                return o1.getFirstName().compareTo(o2.getFirstName());
-            }
-        });
-        return allUserWhoAreNotSuperadminsOnly;
+        // TODO implement
+        return null;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/program")
@@ -85,12 +58,4 @@ public class UsersInProgrammeController {
         return programsService.getProgramByCode(programCode);
     }
 
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> userList) {
-        for (RegisteredUser entry : userList) {
-            if (entry.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

@@ -137,7 +137,7 @@ INSERT INTO USER_INSTITUTION_IDENTITY
 	WHERE REGISTERED_USER.upi IS NOT NULL
 ;
 
-CREATE TABLE NOTIFICATION_TYPE (
+CREATE TABLE NOTIFICATION_PURPOSE (
 	id VARCHAR(50) NOT NULL,
 	PRIMARY KEY (id)
 ) ENGINE = INNODB
@@ -149,14 +149,14 @@ CREATE TABLE NOTIFICATION_TYPE (
 CREATE TABLE USER_BATCH_NOTIFICATION (
 	user_id INT(10) UNSIGNED NOT NULL,
 	application_role_scope_id VARCHAR(50) NOT NULL,
-	notification_type_id VARCHAR(50) NOT NULL,
+	notification_purpose_id VARCHAR(50) NOT NULL,
 	last_notification_timestamp DATETIME,
-	PRIMARY KEY (user_id, application_role_scope_id, notification_type_id),
+	PRIMARY KEY (user_id, application_role_scope_id, notification_purpose_id),
 	INDEX (application_role_scope_id),
-	INDEX (notification_type_id),
+	INDEX (notification_purpose_id),
 	FOREIGN KEY (user_id) REFERENCES USER (id),
 	FOREIGN KEY (application_role_scope_id) REFERENCES APPLICATION_ROLE_SCOPE (id),
-	FOREIGN KEY (notification_type_id) REFERENCES NOTIFICATION_TYPE (id)
+	FOREIGN KEY (notification_purpose_id) REFERENCES NOTIFICATION_PURPOSE (id)
 ) ENGINE = INNODB
 ;
 

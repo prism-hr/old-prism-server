@@ -100,5 +100,6 @@ public class RoleService {
     public List<Program> getProgramsByUserAndRole(RegisteredUser currentUser, Authority administrator) {
         // TODO Auto-generated method stub
         return null;
-    }    
+    }
+    
 }

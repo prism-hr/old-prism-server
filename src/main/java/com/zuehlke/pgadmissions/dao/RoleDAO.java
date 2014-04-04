@@ -79,7 +79,8 @@ public class RoleDAO {
 
     public List<Role> getProgramUserRoles(Program program, RegisteredUser user) {
         List<Role> programRoles = sessionFactory.getCurrentSession().createCriteria(ProgramUserRole.class).setProjection(Projections.groupProperty("id.role"))
-                .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("id.program", program))
+                .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("id.program", program))
                 .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
         programRoles.addAll(getInstitutionUserRoles(program.getInstitution(), user));
         return programRoles;

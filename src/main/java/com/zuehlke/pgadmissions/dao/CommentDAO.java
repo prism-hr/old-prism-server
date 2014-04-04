@@ -12,9 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -75,5 +73,12 @@ public class CommentDAO {
     public List<CommentAssignedUser> getNotDecliningSupervisorsFromLatestApprovalStage(ApplicationForm application) {
         // TODO implement
         return null;
+    }
+    
+    public <T extends Comment> T getLastCommentOfType(ApplicationForm application, Class<T> clazz) {
+        return (T) sessionFactory.getCurrentSession().createCriteria(clazz).add(Restrictions.eq("application", application))
+                .addOrder(Order.desc("createdTimestamp"))
+                .addOrder(Order.desc("id"))
+                .uniqueResult();
     }
 }

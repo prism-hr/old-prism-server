@@ -10,6 +10,8 @@ import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -28,8 +30,7 @@ public class ApplicationFormBuilder {
     private State status;
     private ProgramDetails programmeDetails;
     private PersonalDetails personalDetails;
-    private Address currentAddress;
-    private Address contactAddress;
+    private ApplicationFormAddress applicationFormAddress;
     private Integer id;
     private RegisteredUser applicant;
     private String projectTitle;
@@ -44,8 +45,7 @@ public class ApplicationFormBuilder {
     private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
     private List<Comment> comments = new ArrayList<Comment>();
     private List<Funding> fundings = new ArrayList<Funding>();
-    private Document cv = null;
-    private Document personalStatement = null;
+    private ApplicationFormDocument applicationFormDocument;
     private AdditionalInformation info;
     private Date lastUpdated;
     private Date rejectNotificationDate;
@@ -123,23 +123,13 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder contactAddress(Address contactAddress) {
-        this.contactAddress = contactAddress;
+    public ApplicationFormBuilder applicationFormAddress(ApplicationFormAddress applicationFormAddress) {
+        this.applicationFormAddress = applicationFormAddress;
         return this;
     }
 
-    public ApplicationFormBuilder currentAddress(Address currentAddress) {
-        this.currentAddress = currentAddress;
-        return this;
-    }
-
-    public ApplicationFormBuilder personalStatement(Document personalStatement) {
-        this.personalStatement = personalStatement;
-        return this;
-    }
-
-    public ApplicationFormBuilder cv(Document cv) {
-        this.cv = cv;
+    public ApplicationFormBuilder applicationFormDocument(ApplicationFormDocument applicationFormDocument) {
+        this.applicationFormDocument = applicationFormDocument;
         return this;
     }
 
@@ -250,10 +240,8 @@ public class ApplicationFormBuilder {
         application.getQualifications().addAll(qualifications);
         application.setProgramDetails(programmeDetails);
         application.getFundings().addAll(fundings);
-        application.setCv(cv);
-        application.setPersonalStatement(personalStatement);
-        application.setContactAddress(contactAddress);
-        application.setCurrentAddress(currentAddress);
+        application.setApplicationFormAddress(applicationFormAddress);
+        application.setApplicationFormDocument(applicationFormDocument);
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
         application.setAdvert(advert);

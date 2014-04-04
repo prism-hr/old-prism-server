@@ -28,6 +28,8 @@ import org.unitils.inject.util.InjectionUtils;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -238,9 +240,9 @@ public class ApplicationFormValidatorTest {
         additionalInformation = new AdditionalInformationBuilder().id(3).build();
         applicationForm = new ApplicationFormBuilder().advert(program).programmeDetails(programmeDetails).acceptedTerms(true).personalDetails(personalDetails)
                 .additionalInformation(additionalInformation)//
-                .currentAddress(currentAddress).contactAddress(contactAddress)//
+                .applicationFormAddress(new ApplicationFormAddress().withCurrentAddress(currentAddress).withContactAddress(contactAddress))
                 .referees(new Referee(), new Referee(), new Referee())//
-                .personalStatement(new Document()).build();
+                .applicationFormDocument(new ApplicationFormDocument().withPersonalStatement(new Document())).build();
 
         programService = EasyMock.createMock(ProgramService.class);
         programmeDetailsValidatorMock = EasyMock.createMock(ProgramDetailsValidator.class);

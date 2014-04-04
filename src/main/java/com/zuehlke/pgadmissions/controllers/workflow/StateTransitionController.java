@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -122,7 +123,7 @@ public class StateTransitionController {
             Comment latestStateChangeComment = null;
 
             if (applicationForm.getStatus().getId() == ApplicationFormStatus.VALIDATION) {
-                ValidationComment validationComment = applicationForm.getValidationComment();
+                ValidationComment validationComment = commentService.getLastCommentOfType(applicationForm, ValidationComment.class);
                 stateChangeDTO.setQualifiedForPhd(validationComment.getQualifiedForPhd());
                 stateChangeDTO.setEnglishCompentencyOk(validationComment.getEnglishCompetencyOk());
                 stateChangeDTO.setHomeOrOverseas(validationComment.getHomeOrOverseas());

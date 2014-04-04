@@ -60,7 +60,7 @@ public class DocumentsControllerTest {
     @Test
     public void shouldReturnApplicationFormView() {
         ModelMap modelMap = new ModelMap();
-        ApplicationForm application = new ApplicationFormBuilder().cv(new Document()).personalStatement(new Document()).build();
+        ApplicationForm application = new ApplicationFormBuilder().applicationFormDocument(new ApplicationFormDocument().withPersonalStatement(new Document()).withCv(new Document())).build();
         modelMap.put("applicationForm", application);
 
         assertEquals("/private/pgStudents/form/components/documents", controller.getDocumentsView(null, modelMap));

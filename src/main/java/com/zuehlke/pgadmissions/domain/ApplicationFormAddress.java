@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import org.hibernate.search.indexes.serialization.javaserialization.impl.Add;
+
 @Entity(name="APPLICATION_FORM_ADDRESS")
 public class ApplicationFormAddress implements Serializable, FormSectionObject {
 
@@ -76,6 +78,16 @@ public class ApplicationFormAddress implements Serializable, FormSectionObject {
     
     public boolean currentAddressIsContactAddress() {
         return currentAddress == contactAddress;
+    }
+    
+    public ApplicationFormAddress withCurrentAddress(Address address) {
+        this.currentAddress = address;
+        return this;
+    }
+
+    public ApplicationFormAddress withContactAddress(Address address) {
+        this.contactAddress = address;
+        return this;
     }
 
 }

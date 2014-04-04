@@ -73,5 +73,15 @@ public class ApplicationFormDocument implements Serializable, FormSectionObject 
     public void setAcceptedTerms(boolean acceptedTerms) {
         this.acceptedTerms = acceptedTerms;
     }
+    
+    public ApplicationFormDocument withPersonalStatement(Document document) {
+        this.personalStatement = document;
+        return this;
+    }
+    
+    public ApplicationFormDocument withCv(Document document) {
+        this.cv = document;
+        return this;
+    }
 
 }

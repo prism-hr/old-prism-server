@@ -83,15 +83,15 @@ public class ApplicationFormUserRoleBuilder {
     
     public ApplicationFormUserRole build() {
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRole();
-        applicationFormUserRole.setId(id);
-        applicationFormUserRole.setInterestedInApplicant(interestedInApplicant);
-        applicationFormUserRole.getActions().addAll(actions);
-        applicationFormUserRole.setApplicationForm(applicationForm);
-        applicationFormUserRole.setUser(user);
-        applicationFormUserRole.setRole(role);
-        applicationFormUserRole.setRaisesUpdateFlag(raisesUpdateFlag);
-        applicationFormUserRole.setRaisesUrgentFlag(raisesUrgentFlag);
-        applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
+//        applicationFormUserRole.setId(id);
+//        applicationFormUserRole.setInterestedInApplicant(interestedInApplicant);
+//        applicationFormUserRole.getActions().addAll(actions);
+//        applicationFormUserRole.setApplicationForm(applicationForm);
+//        applicationFormUserRole.setUser(user);
+//        applicationFormUserRole.setRole(role);
+//        applicationFormUserRole.setRaisesUpdateFlag(raisesUpdateFlag);
+//        applicationFormUserRole.setRaisesUrgentFlag(raisesUrgentFlag);
+//        applicationFormUserRole.setUpdateTimestamp(updateTimestamp);
         return applicationFormUserRole;
     }
 

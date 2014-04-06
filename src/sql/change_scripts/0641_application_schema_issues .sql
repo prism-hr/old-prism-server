@@ -96,7 +96,7 @@ CREATE TABLE SYSTEM_ACTION_OPTIONAL (
 	role_id VARCHAR(50) NOT NULL,
 	action_id VARCHAR(100) NOT NULL,
 	PRIMARY KEY (id),
-	UNIQUE INDEX role_id_2 (role_id, action_id),
+	UNIQUE INDEX (role_id, action_id),
 	INDEX (action_id),
 	FOREIGN KEY (role_id) REFERENCES ROLE (id),
 	FOREIGN KEY (action_id) REFERENCES ACTION (id)
@@ -105,14 +105,11 @@ CREATE TABLE SYSTEM_ACTION_OPTIONAL (
 
 CREATE TABLE INSTITUTION_ACTION_OPTIONAL (
 	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	institution_id INT(10) UNSIGNED NOT NULL,
 	role_id VARCHAR(50) NOT NULL,
 	action_id VARCHAR(100) NOT NULL,
 	PRIMARY KEY (id),
-	UNIQUE INDEX role_id_2 (institution_id, role_id, action_id),
-	INDEX (role_id),
+	UNIQUE INDEX (role_id, action_id),
 	INDEX (action_id),
-	FOREIGN KEY (institution_id) REFERENCES INSTITUTION (id),
 	FOREIGN KEY (role_id) REFERENCES ROLE (id),
 	FOREIGN KEY (action_id) REFERENCES ACTION (id)
 ) ENGINE = INNODB
@@ -127,7 +124,7 @@ CREATE TABLE PROGRAM_ACTION_REQUIRED (
 	raises_urgent_flag INT(1) UNSIGNED NOT NULL,
 	assigned_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
-	UNIQUE INDEX role_id_2 (program_id, role_id, action_id),
+	UNIQUE INDEX (program_id, role_id, action_id),
 	INDEX (role_id),
 	INDEX (action_id),
 	INDEX (deadline_timestamp),
@@ -141,30 +138,73 @@ CREATE TABLE PROGRAM_ACTION_REQUIRED (
 
 CREATE TABLE PROGRAM_ACTION_OPTIONAL (
 	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	program_id INT(10) UNSIGNED NOT NULL,
 	role_id VARCHAR(50) NOT NULL,
+	state_id VARCHAR(50) NOT NULL,
 	action_id VARCHAR(100) NOT NULL,
 	PRIMARY KEY (id),
-	UNIQUE INDEX role_id_2 (program_id, role_id, action_id),
-	INDEX (role_id),
+	UNIQUE INDEX (role_id, state_id, action_id),
+	INDEX (state_id),
 	INDEX (action_id),
-	FOREIGN KEY (program_id) REFERENCES INSTITUTION (id),
 	FOREIGN KEY (role_id) REFERENCES ROLE (id),
+	FOREIGN KEY (state_id) REFERENCES STATE (id),
 	FOREIGN KEY (action_id) REFERENCES ACTION (id)
 ) ENGINE = INNODB
 ;
 
 CREATE TABLE PROJECT_ACTION_OPTIONAL (
 	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	project_id INT(10) UNSIGNED NOT NULL,
 	role_id VARCHAR(50) NOT NULL,
+	state_id VARCHAR(50) NOT NULL,
 	action_id VARCHAR(100) NOT NULL,
 	PRIMARY KEY (id),
-	UNIQUE INDEX role_id_2 (project_id, role_id, action_id),
-	INDEX (role_id),
+	UNIQUE INDEX (role_id, state_id, action_id),
+	INDEX (state_id),
 	INDEX (action_id),
-	FOREIGN KEY (project_id) REFERENCES INSTITUTION (id),
 	FOREIGN KEY (role_id) REFERENCES ROLE (id),
+	FOREIGN KEY (state_id) REFERENCES STATE (id),
 	FOREIGN KEY (action_id) REFERENCES ACTION (id)
 ) ENGINE = INNODB
+;
+
+CREATE TABLE ROLE_INHERITANCE (
+	id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	role_id VARCHAR(50) NOT NULL,
+	inherited_role_id VARCHAR(50) NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE INDEX (role_id, inherited_role_id),
+	INDEX (inherited_role_id),
+	FOREIGN KEY (role_id) REFERENCES ROLE (id),
+	FOREIGN KEY (inherited_role_id) REFERENCES ROLE (id)
+) ENGINE = INNODB
+;
+
+INSERT INTO ROLE_INHERITANCE (role_id, inherited_role_id)
+	SELECT ROLE.id, ROLE2.id
+	FROM ROLE INNER JOIN ROLE AS ROLE2
+	WHERE ROLE.scope_id = "SYSTEM"
+	AND ROLE2.scope_id IN ("INSTITUTION", "PROGRAM")
+;
+
+INSERT INTO ROLE_INHERITANCE (role_id, inherited_role_id)
+	SELECT ROLE.id, ROLE2.id
+	FROM ROLE INNER JOIN ROLE AS ROLE2
+	WHERE ROLE.scope_id = "INSTITUTION"
+	AND ROLE2.scope_id = "PROGRAM"
+;
+
+DELETE FROM ROLE_INHERITANCE
+WHERE inherited_role_id LIKE "%SUPERVISOR"
+;
+
+DELETE FROM ROLE_INHERITANCE
+WHERE role_id IN ("PROGRAM_APPROVER", "PROGRAM_VIEWER")
+;
+
+DELETE FROM ROLE_INHERITANCE
+WHERE inherited_role_id LIKE "%VIEWER"
+;
+
+INSERT INTO ROLE_INHERITANCE (role_id, inherited_role_id)
+	SELECT id, id
+	FROM ROLE
 ;

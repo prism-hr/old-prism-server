@@ -79,7 +79,7 @@ public class ManageUsersControllerTest {
     @Mock
     @InjectIntoByType
     private RoleService roleService;
-    
+
     @Mock
     @InjectIntoByType
     private ManageUsersService manageUsersService;
@@ -168,7 +168,8 @@ public class ManageUsersControllerTest {
         newUserDTO.setSelectedProgram(program);
         newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
         EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
-        EasyMock.expect(manageUsersService.addUserProgramRoles("Jane", "Doe", "jane.doe@test.com", program, Authority.REVIEWER, Authority.ADMINISTRATOR))
+        EasyMock.expect(
+                manageUsersService.setUserProgramRoles("Jane", "Doe", "jane.doe@test.com", program, true, true, Authority.REVIEWER, Authority.ADMINISTRATOR))
                 .andReturn(new RegisteredUserBuilder().id(4).build());
 
         replay();
@@ -194,10 +195,6 @@ public class ManageUsersControllerTest {
         newUserDTO.setSelectedProgram(program);
         newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
 
-        RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
-        EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
-        userService.updateUserWithNewRoles(existingUser, program, Authority.REVIEWER, Authority.ADMINISTRATOR);
-
         replay();
 
         assertEquals("redirect:/manageUsers/edit?programCode=ABC", controller.handleEditUserRoles(newUserDTO, errorsMock));
@@ -221,8 +218,6 @@ public class ManageUsersControllerTest {
         newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
 
         RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
-        EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
-        userService.updateUserWithNewRoles(existingUser, null, Authority.REVIEWER, Authority.ADMINISTRATOR);
 
         replay();
 
@@ -311,7 +306,7 @@ public class ManageUsersControllerTest {
         userDTO.setLastName("Doe");
         userDTO.setEmail("jane.doe@test.com");
 
-        EasyMock.expect(manageUsersService.addUserProgramRoles("Jane", "Doe", "jane.doe@test.com", null, Authority.SUPERADMINISTRATOR)).andReturn(
+        EasyMock.expect(manageUsersService.setUserProgramRoles("Jane", "Doe", "jane.doe@test.com", null, true, true, Authority.SUPERADMINISTRATOR)).andReturn(
                 new RegisteredUserBuilder().id(4).build());
 
         replay();
@@ -331,8 +326,6 @@ public class ManageUsersControllerTest {
         userDTO.setEmail("jane.doe@test.com");
 
         RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
-        EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
-        userService.updateUserWithNewRoles(existingUser, null, Authority.SUPERADMINISTRATOR);
 
         replay();
 

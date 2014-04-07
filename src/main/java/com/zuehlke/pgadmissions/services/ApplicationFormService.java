@@ -162,7 +162,6 @@ public class ApplicationFormService {
 
     public ApplicationForm getOrCreateApplication(final RegisteredUser applicant, final String programCode, final Integer advertId) {
         Advert advert = programService.getValidProgramProjectAdvert(programCode, advertId);
-        userService.addRoleToUser(applicant, Authority.APPLICANT);
         ApplicationForm applicationForm = applicationFormDAO.getInProgressApplication(applicant, advert);
         if (applicationForm != null) {
             return applicationForm;

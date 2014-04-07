@@ -106,7 +106,7 @@ public class RoleService {
         }
         return roleDAO.getUserRoles(user).contains(roleDAO.getById(authority));
     }
-    
+
     public List<RegisteredUser> getUsersInRole(Authority... authorities) {
         return roleDAO.getUsersInRole(authorities);
     }
@@ -116,9 +116,18 @@ public class RoleService {
         return null;
     }
 
-    public void removeRole(RegisteredUser user, Authority admitter) {
+    /**
+     * Removes given roles from the user.
+     * 
+     * @param user
+     *            user to remove roles from
+     * @param discriminator
+     *            specifies roles' scope, system scope when <code>null</code>
+     * @param authorities
+     *            role to remove, when <code>null</code> removes all the roles in given scope
+     */
+    public void removeRoles(RegisteredUser user, Object discriminator, Authority... authorities) {
         // TODO Auto-generated method stub
-        
     }
 
     public List<RegisteredUser> getProgramAdministrators(Program program) {

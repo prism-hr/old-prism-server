@@ -274,7 +274,7 @@ public class ManageUsersControllerTest {
     public void shouldGetAdmitters() {
         List<RegisteredUser> admitters = Lists.newArrayList();
 
-        EasyMock.expect(roleService.getUsersInRole(Authority.ADMITTER)).andReturn(admitters);
+        EasyMock.expect(roleService.getUsersInSystemRole(Authority.ADMITTER)).andReturn(admitters);
         replay();
         List<RegisteredUser> returned = controller.getAdmitters();
 
@@ -286,7 +286,7 @@ public class ManageUsersControllerTest {
         RegisteredUser userOne = new RegisteredUserBuilder().id(1).lastName("ZZZZ").firstName("BBBB").build();
         RegisteredUser userTwo = new RegisteredUserBuilder().id(4).lastName("ZZZZ").firstName("AAAA").build();
         RegisteredUser userThree = new RegisteredUserBuilder().id(5).lastName("AA").firstName("GGG").build();
-        EasyMock.expect(roleService.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
+        EasyMock.expect(roleService.getUsersInSystemRole(Authority.SUPERADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
         replay();
         List<RegisteredUser> superadmins = controller.getSuperadministrators();
 

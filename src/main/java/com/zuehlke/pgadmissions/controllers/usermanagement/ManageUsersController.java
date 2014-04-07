@@ -108,13 +108,13 @@ public class ManageUsersController {
 
     @ModelAttribute("superadministrators")
     public List<RegisteredUser> getSuperadministrators() {
-        List<RegisteredUser> superadmins = roleService.getUsersInRole(Authority.SUPERADMINISTRATOR);
+        List<RegisteredUser> superadmins = roleService.getUsersInSystemRole(Authority.SUPERADMINISTRATOR);
         return superadmins;
     }
 
     @ModelAttribute("admitters")
     public List<RegisteredUser> getAdmitters() {
-        return roleService.getUsersInRole(Authority.ADMITTER);
+        return roleService.getUsersInSystemRole(Authority.ADMITTER);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/edit")

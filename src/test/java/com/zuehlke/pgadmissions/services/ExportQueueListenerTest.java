@@ -115,7 +115,7 @@ public class ExportQueueListenerTest {
         RegisteredUser admin1 = new RegisteredUserBuilder().id(1).build();
         RegisteredUser admin2 = new RegisteredUserBuilder().id(2).build();
         List<RegisteredUser> admins = asList(admin1, admin2);
-        expect(roleServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR))
+        expect(roleServiceMock.getUsersInSystemRole(Authority.SUPERADMINISTRATOR))
         	.andReturn(admins);
         
         mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class), form);

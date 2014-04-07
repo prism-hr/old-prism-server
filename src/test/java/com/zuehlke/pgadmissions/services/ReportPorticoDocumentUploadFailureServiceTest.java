@@ -45,7 +45,7 @@ public class ReportPorticoDocumentUploadFailureServiceTest {
         RegisteredUser superadmin1 = new RegisteredUserBuilder().id(12).build();
         RegisteredUser superadmin2 = new RegisteredUserBuilder().id(13).build();
         List<RegisteredUser> superadmins = Arrays.asList(superadmin1, superadmin2);
-        EasyMock.expect(roleServiceMock.getUsersInRole(Authority.SUPERADMINISTRATOR)).andReturn(superadmins);
+        EasyMock.expect(roleServiceMock.getUsersInSystemRole(Authority.SUPERADMINISTRATOR)).andReturn(superadmins);
         
         String messageCode = "Portico reported that there was an error uploading the documents for application abcdefgh [errorCode=110, bookingReference=P000001]: Document file, /u02/uat/docs/U_AD_REF_DOC/P000043~REF_DOC~1.PDF, for Reference 1 already exists for application with Booking Reference P000043";
         mailServiceMock.sendExportErrorMessage(eq(superadmins), eq(messageCode), EasyMock.isA(Date.class), applicationFormTransfer.getApplicationForm());

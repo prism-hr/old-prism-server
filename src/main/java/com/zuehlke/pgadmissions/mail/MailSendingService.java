@@ -81,7 +81,7 @@ public class MailSendingService extends AbstractMailSendingService {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(Authority.ADMITTER), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInSystemRole(Authority.ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -107,7 +107,7 @@ public class MailSendingService extends AbstractMailSendingService {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(Authority.ADMITTER), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInSystemRole(Authority.ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -133,7 +133,7 @@ public class MailSendingService extends AbstractMailSendingService {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(Authority.ADMITTER), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInSystemRole(Authority.ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -175,7 +175,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), application, application.getApplicant(),
-                            roleService.getUsersInRole(Authority.ADMITTER), getHostName(), admissionsOfferServiceLevel, application.getLastStatus().getId().displayValue() });
+                            roleService.getUsersInSystemRole(Authority.ADMITTER), getHostName(), admissionsOfferServiceLevel, application.getLastStatus().getId().displayValue() });
 
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(application.getStatus())) {

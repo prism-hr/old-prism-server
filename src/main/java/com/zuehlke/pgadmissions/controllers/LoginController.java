@@ -8,11 +8,14 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -21,7 +24,7 @@ public class LoginController {
 
     public static final String CLICKED_ON_ALREADY_REGISTERED = "CLICKED_ON_ALREADY_REGISTERED";
 
-    private static final String APPLY_REQUEST_SESSION_ATTRIBUTE = "applyRequest";
+    private static final String REQUEST_ADVERT_ID = "requestAdvertId";
 
     private static final String ACTIVATION_CODE_URL_PARAMETER = "activationCode";
 
@@ -33,6 +36,9 @@ public class LoginController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ProgramService programService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String getLoginPage(final HttpServletRequest request, final HttpServletResponse response, final HttpSession session) {
@@ -113,7 +119,7 @@ public class LoginController {
 
     private void setApplyNewQueryStringInSession(final HttpServletRequest request) {
         DefaultSavedRequest defaultSavedRequest = getDefaultSavedRequest(request);
-        request.getSession().setAttribute(APPLY_REQUEST_SESSION_ATTRIBUTE, composeQueryString(defaultSavedRequest));
+        request.getSession().setAttribute(REQUEST_ADVERT_ID, getAdvertId(defaultSavedRequest));
     }
 
     private void clearUserEmailInSession(final HttpServletRequest request) {
@@ -121,25 +127,18 @@ public class LoginController {
     }
 
     private void clearApplyRequestInSession(final HttpServletRequest request) {
-        request.getSession().setAttribute(APPLY_REQUEST_SESSION_ATTRIBUTE, null);
+        request.getSession().setAttribute(REQUEST_ADVERT_ID, null);
     }
 
-    private String composeQueryString(DefaultSavedRequest savedRequest) {
-        StringBuilder sb = new StringBuilder();
-        composeQueryStringPart(savedRequest, "program", "program", sb);
-        composeQueryStringPart(savedRequest, "advert", "advert", sb);
-        composeQueryStringPart(savedRequest, "project", "project", sb);
-        return sb.toString();
-    }
-
-    private void composeQueryStringPart(DefaultSavedRequest request, String parameter, String key, StringBuilder builder) {
-        String[] parameterArr = request.getParameterValues(parameter);
-        if (parameterArr != null && parameterArr.length > 0) {
-            if (builder.length() > 0) {
-                builder.append("||");
-            }
-            builder.append(key).append(":").append(parameterArr[0]);
+    private Integer getAdvertId(SavedRequest request) {
+        if (request.getParameterValues("advert") != null) {
+            return Integer.parseInt(request.getParameterValues("advert")[0]);
         }
+        if (request.getParameterValues("program") != null) {
+            Program program = programService.getProgramByCode(request.getParameterValues("program")[0]);
+            return program.getId();
+        }
+        return null;
     }
 
 }

@@ -34,7 +34,7 @@ public class RegistrationService {
     private RoleService roleService;
 
     @Autowired
-    private UserDAO userDAO;
+    private UserService userService;
 
     @Autowired
     private RefereeDAO refereeDAO;
@@ -42,57 +42,40 @@ public class RegistrationService {
     @Autowired
     private MailSendingService mailService;
 
-    public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser, String queryString) {
+    public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser, Integer advertId) {
         pendingApplicantUser.setUsername(pendingApplicantUser.getEmail());
         pendingApplicantUser.setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
         pendingApplicantUser.setEnabled(false);
-        pendingApplicantUser.setOriginalApplicationQueryString(queryString);
+        // FIXME set advert ID
+//        pendingApplicantUser.setOriginalApplicationQueryString(advertId);
         pendingApplicantUser.setActivationCode(encryptionUtils.generateUUID());
         return pendingApplicantUser;
     }
 
-    public RegisteredUser updateOrSaveUser(RegisteredUser pendingUser, String queryString) {
+    public RegisteredUser updateOrSaveUser(RegisteredUser pendingUser, Integer advertId) {
         RegisteredUser user = null;
         if (StringUtils.isNotEmpty(pendingUser.getActivationCode())) {
             // User has been invited to join PRISM
-            user = userDAO.getUserByActivationCode(pendingUser.getActivationCode());
+            user = userService.getUserByActivationCode(pendingUser.getActivationCode());
             user.setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
             user.setUsername(user.getEmail());
         } else {
             // User is an applicant
-            user = processPendingApplicantUser(pendingUser, queryString);
+            user = processPendingApplicantUser(pendingUser, advertId);
             // FIXME add applicant role to the user
-            userDAO.save(user);
+            userService.save(user);
         }
 
-        sendConfirmationEmail(user);
+        mailService.sendRegistrationConfirmation(user);
         return user;
     }
 
-    public void sendInstructionsToRegisterIfActivationCodeIsMissing(final RegisteredUser user) {
-        Referee referee = refereeDAO.getRefereeByUser(user);
-
-        if (!user.getPendingRoleNotifications().isEmpty()) {
-            for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
-                notification.setNotificationDate(null);
-            }
-            userDAO.save(user);
-        } else if (referee != null) {
-            referee.setLastNotified(null);
-            refereeDAO.save(referee);
-        }
-    }
-
     public void sendConfirmationEmail(RegisteredUser newUser) {
-        try {
-            mailService.sendRegistrationConfirmation(newUser);
-        } catch (Exception e) {
-            log.warn("{}", e);
-        }
+        mailService.sendRegistrationConfirmation(newUser);
     }
 
     public RegisteredUser findUserForActivationCode(String activationCode) {
-        return userDAO.getUserByActivationCode(activationCode);
+        return userService.getUserByActivationCode(activationCode);
     }
 
     Map<String, Object> modelMap() {

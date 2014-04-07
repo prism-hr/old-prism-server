@@ -61,7 +61,7 @@ public class LoginControllerTest {
         replay();
         session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);
         assertEquals(REGISTER_USER_REDIRECT, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
-        assertEquals("program:code||advert:1||project:1", session.getAttribute("applyRequest"));
+        assertEquals(1, session.getAttribute("requestAdvertId"));
     }
 
     @Test
@@ -71,15 +71,15 @@ public class LoginControllerTest {
         request.setSession(session);
         DefaultSavedRequest defaultSavedRequestMock = EasyMockUnitils.createMock(DefaultSavedRequest.class);
         expect(defaultSavedRequestMock.getRequestURL()).andReturn("/apply/new").anyTimes();
-        expect(defaultSavedRequestMock.getParameterValues("program")).andReturn(new String[] {});
-        expect(defaultSavedRequestMock.getParameterValues("advert")).andReturn(new String[] {});
-        expect(defaultSavedRequestMock.getParameterValues("project")).andReturn(new String[] {});
-        expect(defaultSavedRequestMock.getParameterValues("activationCode")).andReturn(null).anyTimes();
+        expect(defaultSavedRequestMock.getParameterValues("program")).andReturn(null);
+        expect(defaultSavedRequestMock.getParameterValues("advert")).andReturn(null);
+        expect(defaultSavedRequestMock.getParameterValues("activationCode")).andReturn(null);
+
         replay();
         session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);
 
         assertEquals(REGISTER_USER_REDIRECT, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
-        assertEquals("", session.getAttribute("applyRequest"));
+        assertNull(session.getAttribute("requestAdvertId"));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class LoginControllerTest {
         session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);
 
         assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
-        assertNull(session.getAttribute("applyRequest"));
+        assertNull(session.getAttribute("requestAdvertId"));
     }
 
     @Test
@@ -110,8 +110,7 @@ public class LoginControllerTest {
         DefaultSavedRequest defaultSavedRequestMock = EasyMockUnitils.createMock(DefaultSavedRequest.class);
 
         // Assumptions
-        expect(defaultSavedRequestMock.getRequestURL()).andReturn("/applications&activationCode=" + userWithActivationCode.getActivationCode())
-                .anyTimes();
+        expect(defaultSavedRequestMock.getRequestURL()).andReturn("/applications&activationCode=" + userWithActivationCode.getActivationCode()).anyTimes();
         expect(defaultSavedRequestMock.getParameterValues("activationCode")).andReturn(new String[] { userWithActivationCode.getActivationCode() });
         expect(defaultSavedRequestMock.getParameterValues("activationCode")).andReturn(new String[] { userWithActivationCode.getActivationCode() });
         expect(userServiceMock.getUserByActivationCode(userWithActivationCode.getActivationCode())).andReturn(userWithActivationCode);
@@ -125,7 +124,7 @@ public class LoginControllerTest {
         verify();
 
         assertEquals("ked@zuhlke.com", session.getAttribute("loginUserEmail"));
-        assertNull(session.getAttribute("applyRequest"));
+        assertNull(session.getAttribute("requestAdvertId"));
     }
 
     @Test
@@ -142,7 +141,7 @@ public class LoginControllerTest {
         session.putValue("loginUserEmail", "ked@zuhlke.com");
 
         assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
-        assertNull(session.getAttribute("applyRequest"));
+        assertNull(session.getAttribute("requestAdvertId"));
         assertNull(session.getAttribute("loginUserEmail"));
     }
 
@@ -156,7 +155,7 @@ public class LoginControllerTest {
         request.addHeader("referer", "/register");
 
         assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
-        assertNull(session.getAttribute("applyRequest"));
+        assertNull(session.getAttribute("requestAdvertId"));
         assertNull(session.getAttribute("loginUserEmail"));
         assertTrue((Boolean) session.getAttribute("CLICKED_ON_ALREADY_REGISTERED"));
     }
@@ -172,7 +171,7 @@ public class LoginControllerTest {
         request.addHeader("referer", "/login");
 
         assertEquals(LOGIN_PAGE, loginController.getLoginPage(request, new MockHttpServletResponse(), session));
-        assertNull(session.getAttribute("applyRequest"));
+        assertNull(session.getAttribute("requestAdvertId"));
         assertNull(session.getAttribute("loginUserEmail"));
         assertTrue((Boolean) session.getAttribute("CLICKED_ON_ALREADY_REGISTERED"));
     }

@@ -177,11 +177,11 @@
               </div>
               <div class="control-group">
                 <div class="controls">
-              <#if Session.applyRequest?has_content>
+                  <#if Session.requestAdvertId?has_content>
                     <a href="/pgadmissions/register">Not Registered?</a>
-                </#if>
-                    
-                <a href="/pgadmissions/forgotPassword">Forgot Password</a>
+                  </#if>
+                      
+                  <a href="/pgadmissions/forgotPassword">Forgot Password</a>
                 </div>
               </div>
               </fieldset>

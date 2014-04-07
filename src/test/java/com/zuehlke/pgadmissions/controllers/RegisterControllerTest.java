@@ -33,8 +33,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -202,17 +200,16 @@ public class RegisterControllerTest {
 
     @Test
     public void shouldGetQueryStringFromSessionAndSetOnUserIfAvailable() {
-        String queryString = "queryString";
         RegisteredUser pendingUser = new RegisteredUserBuilder().id(1).build();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 
-        EasyMock.expect(registrationServiceMock.updateOrSaveUser(pendingUser, queryString)).andReturn(pendingUser);
+        EasyMock.expect(registrationServiceMock.updateOrSaveUser(pendingUser, 84)).andReturn(pendingUser);
 
         EasyMock.replay(registrationServiceMock);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        mockHttpSession.setAttribute("applyRequest", queryString);
+        mockHttpSession.setAttribute("requestAdvertId", 84);
         request.setSession(mockHttpSession);
         String view = registerController.submitRegistration(pendingUser, errorsMock, new ExtendedModelMap(), request);
         assertEquals("public/register/registration_complete", view);

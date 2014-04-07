@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,15 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service("userService")
 @Transactional
@@ -55,6 +49,11 @@ public class UserService {
         userDAO.save(user);
     }
 
+    public RegisteredUser getById(int id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     public RegisteredUser getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
@@ -64,16 +63,8 @@ public class UserService {
         return null;
     }
 
-    public List<RegisteredUser> getAllUsers() {
-        return userDAO.getAllUsers();
-    }
-
     public RegisteredUser getUserByUsername(String username) {
         return userDAO.getUserByUsername(username);
-    }
-
-    public List<RegisteredUser> getAllUsersForProgram(Program program) {
-        return userDAO.getUsersForProgram(program);
     }
 
     public RegisteredUser getUserByEmail(String email) {
@@ -82,10 +73,6 @@ public class UserService {
 
     public RegisteredUser getUserByEmailIncludingDisabledAccounts(String email) {
         return userDAO.getUserByEmailIncludingDisabledAccounts(email);
-    }
-
-    public RegisteredUser getUserByEmailDisabledAccountsOnly(String email) {
-        return userDAO.getDisabledUserByEmail(email);
     }
 
     /**
@@ -125,36 +112,12 @@ public class UserService {
         return user;
     }
 
-
-    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, final Authority... authorities) {
-        RegisteredUser newUser = userDAO.getUserByEmail(email);
-
-        if (newUser != null) {
-            throw new IllegalStateException(String.format("user with email: %s already exists!", email));
-        }
-
-        for (Authority authority : authorities) {
-            if (Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER, Authority.STATEADMINISTRATOR).contains(authority)) {
-                applicationFormUserRoleService.insertUserRole(newUser, authority);
-            }
-        }
-
-        userDAO.save(newUser);
-        return newUser;
+    public RegisteredUser getUserByActivationCode(String activationCode) {
+        return userDAO.getUserByActivationCode(activationCode);
     }
 
-    public RegisteredUser createNewUserInRole(final String firstName, final String lastName, final String email, final DirectURLsEnum directURL,
-            final ApplicationForm application, final Authority... authorities) {
-        RegisteredUser newUser = createNewUserInRole(firstName, lastName, email, authorities);
-        setDirectURLAndSaveUser(directURL, application, newUser);
-        return newUser;
-    }
-
-    public void setDirectURLAndSaveUser(DirectURLsEnum directURL, ApplicationForm application, RegisteredUser newUser) {
-        if (directURL != null && application != null) {
-            newUser.setDirectToUrl(directURL.displayValue() + application.getApplicationNumber());
-        }
-        userDAO.save(newUser);
+    public List<RegisteredUser> getUsersWithUpi(final String upi) {
+        return userDAO.getUsersWithUpi(upi);
     }
 
     public void updateCurrentUser(RegisteredUser user) {
@@ -194,7 +157,7 @@ public class UserService {
         RegisteredUser secondAccount = getUserByEmail(secondAccountEmail);
         RegisteredUser currentAccount = getCurrentUser();
 
-        if (listContainsId(secondAccount, currentAccount.getLinkedAccounts())) {
+        if (HibernateUtils.containsEntity(currentAccount.getLinkedAccounts(), secondAccount)) {
             return;
         }
 
@@ -248,31 +211,6 @@ public class UserService {
         }
     }
 
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
-        for (RegisteredUser entry : users) {
-            if (entry.getId().equals(user.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public RegisteredUser getUserByActivationCode(String activationCode) {
-        return userDAO.getUserByActivationCode(activationCode);
-    }
-
-    private boolean listContainsId(Program program, HashSet<Program> programs) {
-        if (program == null) {
-            return false;
-        }
-        for (Program entry : programs) {
-            if (entry.getId().equals(program.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void setFiltering(final RegisteredUser user, final ApplicationsFiltering filtering) {
         ApplicationsFiltering mergedFilter = filteringDAO.merge(filtering);
         user.setFiltering(mergedFilter);
@@ -281,21 +219,6 @@ public class UserService {
 
     public Long getNumberOfActiveApplicationsForApplicant(final RegisteredUser applicant) {
         return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
-    }
-
-    public List<RegisteredUser> getUsersWithUpi(final String upi) {
-        return userDAO.getUsersWithUpi(upi);
-    }
-
-    public void setApplicationFormListLastAccessTimestamp(RegisteredUser registeredUser) {
-        registeredUser.setApplicationListLastAccessTimestamp(new Date());
-        userDAO.save(registeredUser);
-
-    }
-
-    public RegisteredUser getById(int id) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

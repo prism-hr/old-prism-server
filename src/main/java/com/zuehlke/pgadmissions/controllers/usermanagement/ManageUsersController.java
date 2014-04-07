@@ -139,6 +139,7 @@ public class ManageUsersController {
         if (result.hasErrors()) {
             return NEW_USER_VIEW_NAME;
         }
+
         manageUsersService.setUserRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true, true, roleService.getPrismSystem(),
                 userDTO.getSelectedAuthorities());
 

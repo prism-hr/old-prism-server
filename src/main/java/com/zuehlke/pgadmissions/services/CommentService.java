@@ -43,6 +43,9 @@ public class CommentService {
     private UserService userService;
     
     @Autowired
+    private ManageUsersService manageUsersService;
+    
+    @Autowired
     private StateDAO stateDAO;
 
     public void save(Comment comment) {
@@ -121,13 +124,8 @@ public class CommentService {
         // TODO check if has global administration rights (PermissionsService) 
         if (true) {
             if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
-                String delegateAdministratorEmail = stateChangeDTO.getDelegateEmail();
-                RegisteredUser userToSaveAsDelegate = userService.getUserByEmailIncludingDisabledAccounts(delegateAdministratorEmail);
-                
-                if (userToSaveAsDelegate == null) {
-                    userToSaveAsDelegate = userService.createNewUserInRole(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), 
-                            delegateAdministratorEmail, Authority.STATEADMINISTRATOR);
-                }
+                RegisteredUser  userToSaveAsDelegate = manageUsersService.setUserRoles(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), 
+                            stateChangeDTO.getDelegateEmail(), true, false, manageUsersService.getPrismSystem(), Authority.STATEADMINISTRATOR);
                 
                 stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
             }

@@ -54,7 +54,7 @@ public class ReportPorticoDocumentUploadFailureService {
 
     private void sendErrorMessageToSuperAdministrators(final String message, final ApplicationForm application) {
         try {
-            mailService.sendExportErrorMessage(roleService.getUsersInRole(Authority.SUPERADMINISTRATOR), message, new Date(), application);
+            mailService.sendExportErrorMessage(roleService.getUsersInSystemRole(Authority.SUPERADMINISTRATOR), message, new Date(), application);
         } catch (Exception e) {
             log.warn("{}", e);
         }

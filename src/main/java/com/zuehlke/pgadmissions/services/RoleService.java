@@ -92,25 +92,25 @@ public class RoleService {
         return hasRole(user, authority, null);
     }
 
-    public boolean hasRole(RegisteredUser user, Authority authority, Object discriminator) {
+    public boolean hasRole(RegisteredUser user, Authority authority, PrismScope scope) {
         Role role = roleDAO.getById(authority);
         switch (role.getAuthorityScope()) {
         case SYSTEM:
             return roleDAO.getSystemUserRoles(user).contains(roleDAO.getById(authority));
         case INSTITUTION:
-            return roleDAO.getInstitutionUserRoles((Institution) discriminator, user).contains(roleDAO.getById(authority));
+            return roleDAO.getInstitutionUserRoles((Institution) scope, user).contains(roleDAO.getById(authority));
         case PROGRAM:
-            return roleDAO.getProgramUserRoles((Program) discriminator, user).contains(roleDAO.getById(authority));
+            return roleDAO.getProgramUserRoles((Program) scope, user).contains(roleDAO.getById(authority));
         case PROJECT:
-            return roleDAO.getProjectUserRoles((Project) discriminator, user).contains(roleDAO.getById(authority));
+            return roleDAO.getProjectUserRoles((Project) scope, user).contains(roleDAO.getById(authority));
         case APPLICATION:
-            return roleDAO.getApplicationFormUserRoles((ApplicationForm) discriminator, user).contains(roleDAO.getById(authority));
+            return roleDAO.getApplicationFormUserRoles((ApplicationForm) scope, user).contains(roleDAO.getById(authority));
         }
         return roleDAO.getUserRoles(user).contains(roleDAO.getById(authority));
     }
 
-    public List<RegisteredUser> getUsersInRole(Authority... authorities) {
-        return roleDAO.getUsersInRole(authorities);
+    public List<RegisteredUser> getUsersInSystemRole(Authority... authorities) {
+        return roleDAO.getUsersInSystemRole(authorities);
     }
 
     public List<Program> getProgramsByUserAndRole(RegisteredUser currentUser, Authority administrator) {

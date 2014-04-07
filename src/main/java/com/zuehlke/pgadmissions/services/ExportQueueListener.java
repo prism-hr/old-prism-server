@@ -97,7 +97,7 @@ public class ExportQueueListener implements MessageListener {
             String messageCode = "An error occured during the export of Application " + application.getApplicationNumber() + ". " +
                     "The error has been reported to a system administrator and is currently under investigation. Should you wish to, " +
                     "you may login and correct data errors in the application and attempt to resend.";
-        	mailSendingService.sendExportErrorMessage(roleService.getUsersInRole(Authority.SUPERADMINISTRATOR, Authority.ADMITTER), messageCode, new Date(), application);
+        	mailSendingService.sendExportErrorMessage(roleService.getUsersInSystemRole(Authority.SUPERADMINISTRATOR, Authority.ADMITTER), messageCode, new Date(), application);
         } catch (Exception ex) {
             log.warn("{}", ex);
         }
@@ -122,7 +122,7 @@ public class ExportQueueListener implements MessageListener {
         String messageCode = "There was an issue with the PORTICO interfaces which needs attention by an administrator. "
                 + "PRISM is now not sending any more applications to PORTICO until this issue has been resolved";
         try {
-            mailSendingService.sendExportErrorMessage(roleService.getUsersInRole(Authority.SUPERADMINISTRATOR), messageCode, new Date(), null);
+            mailSendingService.sendExportErrorMessage(roleService.getUsersInSystemRole(Authority.SUPERADMINISTRATOR), messageCode, new Date(), null);
         } catch (Exception ex) {
             log.warn("{}", ex);
         }

@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionUserRole;
+import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramUserRole;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -20,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.ProjectUserRole;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SystemUserRole;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
@@ -36,6 +38,10 @@ public class RoleDAO {
         this.sessionFactory = sessionFactory;
     }
 
+    public PrismSystem getPrismSystem() {
+        return (PrismSystem) sessionFactory.getCurrentSession().createCriteria(PrismSystem.class).uniqueResult();
+    }
+
     public Role getById(final Authority id) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("id", id)).uniqueResult();
     }
@@ -44,24 +50,8 @@ public class RoleDAO {
         return (Role) sessionFactory.getCurrentSession().merge(role);
     }
 
-    public SystemUserRole saveSystemUserRole(SystemUserRole systemUserRole) {
-        return (SystemUserRole) sessionFactory.getCurrentSession().merge(systemUserRole);
-    }
-
-    public InstitutionUserRole saveInstitutionUserRole(InstitutionUserRole institutionUserRole) {
-        return (InstitutionUserRole) sessionFactory.getCurrentSession().merge(institutionUserRole);
-    }
-
-    public ProgramUserRole saveProgramUserRole(ProgramUserRole programUserRole) {
-        return (ProgramUserRole) sessionFactory.getCurrentSession().merge(programUserRole);
-    }
-
-    public ProjectUserRole saveProjectUserRole(ProjectUserRole projectUserRole) {
-        return (ProjectUserRole) sessionFactory.getCurrentSession().merge(projectUserRole);
-    }
-
-    public ApplicationFormUserRole saveApplicationFormUserRole(ApplicationFormUserRole applicationFormUserRole) {
-        return (ApplicationFormUserRole) sessionFactory.getCurrentSession().merge(applicationFormUserRole);
+    public <T extends UserRole> T saveUserRole(T userRole) {
+        return (T) sessionFactory.getCurrentSession().merge(userRole);
     }
 
     public List<Role> getSystemUserRoles(RegisteredUser user) {
@@ -79,8 +69,7 @@ public class RoleDAO {
 
     public List<Role> getProgramUserRoles(Program program, RegisteredUser user) {
         List<Role> programRoles = sessionFactory.getCurrentSession().createCriteria(ProgramUserRole.class).setProjection(Projections.groupProperty("id.role"))
-                .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("id.program", program))
+                .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("id.program", program))
                 .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
         programRoles.addAll(getInstitutionUserRoles(program.getInstitution(), user));
         return programRoles;

@@ -139,7 +139,8 @@ public class ManageUsersController {
         if (result.hasErrors()) {
             return NEW_USER_VIEW_NAME;
         }
-        manageUsersService.setUserSystemRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true, true, userDTO.getSelectedAuthorities());
+        manageUsersService.setUserRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true, true, roleService.getPrismSystem(),
+                userDTO.getSelectedAuthorities());
 
         return "redirect:/manageUsers/edit";
 
@@ -156,7 +157,7 @@ public class ManageUsersController {
             return NEW_USER_VIEW_NAME;
         }
 
-        manageUsersService.setUserProgramRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), userDTO.getSelectedProgram(), true, true,
+        manageUsersService.setUserRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true, true, userDTO.getSelectedProgram(),
                 userDTO.getSelectedAuthorities());
 
         return "redirect:/manageUsers/edit?programCode=" + userDTO.getSelectedProgram().getCode();

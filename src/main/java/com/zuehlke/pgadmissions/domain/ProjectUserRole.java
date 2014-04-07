@@ -10,9 +10,7 @@ import javax.persistence.Entity;
 import com.google.common.base.Objects;
 
 @Entity(name = "PROJECT_USER_ROLE")
-public class ProjectUserRole implements Serializable {
-
-    private static final long serialVersionUID = -2089766801386548745L;
+public class ProjectUserRole implements UserRole {
 
     @EmbeddedId
     ProjectUserRolePrimaryKey id;

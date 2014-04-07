@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -28,23 +29,13 @@ public class ManageUsersService {
     @Autowired
     private MailSendingService mailService;
 
-    public RegisteredUser setUserSystemRoles(final String firstname, final String lastname, final String email, boolean createIfNotExist, boolean replaceRoles,
+    public RegisteredUser setUserRoles(String firstname, String lastname, String email, boolean createIfNotExist, boolean replaceRoles, PrismScope scope,
             Authority... authorities) {
         RegisteredUser user = userService.getUser(firstname, lastname, email, createIfNotExist);
         if (replaceRoles) {
-            roleService.removeRoles(user, null);
+            roleService.removeRoles(user, scope);
         }
         roleService.createSystemUserRoles(user, authorities);
-        return user;
-    }
-
-    public RegisteredUser setUserProgramRoles(final String firstname, final String lastname, final String email, Program program, boolean createIfNotExist,
-            boolean replaceRoles, Authority... authority) {
-        RegisteredUser user = userService.getUser(firstname, lastname, email, createIfNotExist);
-        if (replaceRoles) {
-            roleService.removeRoles(user, program);
-        }
-        roleService.createProgramUserRoles(program, user, authority);
         return user;
     }
 

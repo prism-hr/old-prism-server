@@ -225,14 +225,10 @@ public class ProgramService {
 
     }
 
-    public Advert getValidProgramProjectAdvert(String programCode, Integer advertId) {
+    public Advert getValidProgramProjectAdvert(Integer advertId) {
         Advert advert = null;   
         if (advertId != null) {
             advert = programDAO.getAcceptingApplicationsById(advertId);
-        }
-
-        if (advert == null && programCode != null) {
-            advert = programDAO.getProgamAcceptingApplicationsByCode(programCode);
         }
 
         if (advert == null) {

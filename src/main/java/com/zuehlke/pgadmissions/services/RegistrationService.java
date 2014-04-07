@@ -70,7 +70,7 @@ public class RegistrationService {
         return user;
     }
 
-    public void sendConfirmationEmail(RegisteredUser newUser) {
+    public void resendConfirmationEmail(RegisteredUser newUser) {
         mailService.sendRegistrationConfirmation(newUser);
     }
 

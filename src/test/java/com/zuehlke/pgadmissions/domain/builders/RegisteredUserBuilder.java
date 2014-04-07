@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -27,7 +28,7 @@ public class RegisteredUserBuilder {
     private Date applicationListLastAccessTimestamp;
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
     private ApplicationsFiltering filtering;
-    private String originalApplicationQueryString;
+    private Advert advert;
     private RegisteredUser primaryAccount;
     private List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
 
@@ -66,8 +67,8 @@ public class RegisteredUserBuilder {
         return this;
     }
 
-    public RegisteredUserBuilder originalApplicationQueryString(String originalApplicationQueryString) {
-        this.originalApplicationQueryString = originalApplicationQueryString;
+    public RegisteredUserBuilder advert(Advert advert) {
+        this.advert = advert;
         return this;
     }
 
@@ -147,7 +148,7 @@ public class RegisteredUserBuilder {
         user.setConfirmPassword(confirmPassword);
         user.getPendingRoleNotifications().addAll(pendingRoleNotifications);
         user.setDirectToUrl(directURL);
-        user.setOriginalApplicationQueryString(originalApplicationQueryString);
+        user.setAdvert(advert);
         user.setFiltering(filtering);
         user.setUpi(upi);
         user.setApplicationListLastAccessTimestamp(applicationListLastAccessTimestamp);
@@ -155,5 +156,5 @@ public class RegisteredUserBuilder {
         user.setPrimaryAccount(primaryAccount);
         return user;
     }
-    
+
 }

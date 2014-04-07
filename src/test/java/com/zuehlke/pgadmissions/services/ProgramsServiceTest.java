@@ -294,60 +294,28 @@ public class ProgramsServiceTest {
     @Test(expected = CannotApplyException.class)
     public void shouldThrowCannotApplyExceptionIfProgramAndProjectAreNull() {
         replay();
-        programsService.getValidProgramProjectAdvert(null, null);
+        programsService.getValidProgramProjectAdvert(null);
         verify();
     }
 
     @Test(expected = CannotApplyException.class)
-    public void shouldThrowCannotApplyExceptionIfProgramAndProjectAreNotActive() {
-        String programCode = "test";
-        Integer advertId = 0;
-        EasyMock.expect(programDAOMock.getAcceptingApplicationsById(advertId)).andReturn(null);
-        EasyMock.expect(programDAOMock.getProgamAcceptingApplicationsByCode(programCode)).andReturn(null);
+    public void shouldThrowCannotApplyExceptionIfAdvertNotActive() {
+        EasyMock.expect(programDAOMock.getAcceptingApplicationsById(0)).andReturn(null);
         replay();
-        programsService.getValidProgramProjectAdvert(programCode, advertId);
+        programsService.getValidProgramProjectAdvert(0);
         verify();
-    }
-
-    @Test
-    public void shouldReturnAdvertByProgramCodeIfProgramIsActive() {
-        Program program = new ProgramBuilder().code("test").build();
-        EasyMock.expect(programDAOMock.getProgamAcceptingApplicationsByCode(program.getCode())).andReturn(program);
-        replay();
-        Advert advert = programsService.getValidProgramProjectAdvert(program.getCode(), null);
-        verify();
-        assertEquals(advert.getProgram(), program);
-    }
-
-    @Test
-    public void shouldReturnAdvertByProgramIdIfProgramIsActive() {
-        Program program = new ProgramBuilder().id(1).build();
-        EasyMock.expect(programDAOMock.getAcceptingApplicationsById(program.getId())).andReturn(program);
-        replay();
-        Advert advert = programsService.getValidProgramProjectAdvert(null, program.getId());
-        verify();
-        assertEquals(advert.getProgram(), program);
     }
 
     @Test
     public void shouldReturnAdvertByProjectIdIfProjectIsActive() {
-        Project project = new ProjectBuilder().id(1).build();
-        EasyMock.expect(programDAOMock.getAcceptingApplicationsById(project.getId())).andReturn(project);
+        Project project = new ProjectBuilder().build();
+        EasyMock.expect(programDAOMock.getAcceptingApplicationsById(8)).andReturn(project);
+        
         replay();
-        Advert advert = programsService.getValidProgramProjectAdvert(null, project.getId());
-        verify();
+        Advert advert = programsService.getValidProgramProjectAdvert(8);
+        
         assertEquals(advert.getProject(), project);
     }
 
-    @Test
-    public void shouldReturnAdvertByProgramIdInPreferenceOfProgramByProgramCode() {
-        Program program = new ProgramBuilder().id(1).code("one").build();
-        Program otherProgram = new ProgramBuilder().id(2).code("two").build();
-        EasyMock.expect(programDAOMock.getAcceptingApplicationsById(program.getId())).andReturn(program);
-        replay();
-        Advert advert = programsService.getValidProgramProjectAdvert(otherProgram.getCode(), program.getId());
-        verify();
-        assertEquals(advert.getProgram(), program);
-    }
 
 }

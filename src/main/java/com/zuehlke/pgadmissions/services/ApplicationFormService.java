@@ -160,8 +160,8 @@ public class ApplicationFormService {
 
     }
 
-    public ApplicationForm getOrCreateApplication(final RegisteredUser applicant, final String programCode, final Integer advertId) {
-        Advert advert = programService.getValidProgramProjectAdvert(programCode, advertId);
+    public ApplicationForm getOrCreateApplication(final RegisteredUser applicant, final Integer advertId) {
+        Advert advert = programService.getValidProgramProjectAdvert(advertId);
         ApplicationForm applicationForm = applicationFormDAO.getInProgressApplication(applicant, advert);
         if (applicationForm != null) {
             return applicationForm;
@@ -195,7 +195,6 @@ public class ApplicationFormService {
     }
 
     public void openApplicationForEdit(ApplicationForm application, RegisteredUser user) {
-        programService.getValidProgramProjectAdvert(application.getProgram().getCode(), application.getAdvert().getId());
         openApplicationForView(application, user);
     }
 

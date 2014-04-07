@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -28,7 +26,6 @@ import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.ApplicationQueryStringParser;
 import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 
 @Controller
@@ -51,9 +48,6 @@ public class RegistrationController {
 
     @Autowired
     private ProgramService programService;
-
-    @Autowired
-    private ApplicationQueryStringParser applicationQueryStringParser;
 
     @RequestMapping(value = "/submit", method = RequestMethod.GET)
     public String defaultGet(@ModelAttribute("pendingUser") RegisteredUser pendingUser, Model model, HttpSession session) {
@@ -83,7 +77,7 @@ public class RegistrationController {
         if (user == null) {
             throw new ResourceNotFoundException();
         }
-        registrationService.sendConfirmationEmail(user);
+        registrationService.resendConfirmationEmail(user);
         model.addAttribute("pendingUser", user);
         return TemplateLocation.REGISTRATION_SUCCESS_CONFIRMATION;
     }
@@ -100,8 +94,8 @@ public class RegistrationController {
 
         String redirectView = RedirectLocation.REDIRECT;
 
-        if (user.getOriginalApplicationQueryString() != null) {
-            redirectView = createApplicationAndReturnApplicationViewValue(user, redirectView);
+        if (user.getAdvert() != null) {
+            redirectView = createApplicationAndReturnApplicationViewValue(user);
         } else if (user.getDirectToUrl() != null) {
             redirectView += user.getDirectToUrl();
         } else if (StringUtils.isNotBlank((String) request.getSession().getAttribute("directToUrl"))) {
@@ -122,14 +116,8 @@ public class RegistrationController {
         return redirectView;
     }
 
-    private String createApplicationAndReturnApplicationViewValue(final RegisteredUser user, final String redirectView) {
-        Map<String, String> params = applicationQueryStringParser.parse(user.getOriginalApplicationQueryString());
-        String applyingAdvertId = params.get("advert");
-        Integer advertId = null;
-        if (applyingAdvertId != null) {
-            advertId = Integer.parseInt(applyingAdvertId);
-        }
-        ApplicationForm application = applicationFormService.getOrCreateApplication(user, params.get("program"), advertId);
+    private String createApplicationAndReturnApplicationViewValue(final RegisteredUser user) {
+        ApplicationForm application = applicationFormService.getOrCreateApplication(user, user.getAdvert().getId());
         return RedirectLocation.CREATE_APPLICATION + application.getApplicationNumber();
     }
 
@@ -148,10 +136,6 @@ public class RegistrationController {
 
         if (pendingUser != null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
             request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
-        }
-
-        if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
-            return RedirectLocation.LOGIN;
         }
 
         if (pendingUser == null) {

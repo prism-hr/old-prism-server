@@ -84,8 +84,8 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     @Transient
     private String confirmPassword;
 
-    @Column(name = "original_querystring")
-    private String originalApplicationQueryString;
+    @Column(name = "advert_id")
+    private Advert advert;
 
     @JoinColumn(name = "filtering_id")
     @OneToOne(fetch = FetchType.LAZY)
@@ -223,12 +223,12 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
         this.confirmPassword = confirmPassword;
     }
 
-    public String getOriginalApplicationQueryString() {
-        return originalApplicationQueryString;
+    public Advert getAdvert() {
+        return advert;
     }
 
-    public void setOriginalApplicationQueryString(String originalApplicationQueryString) {
-        this.originalApplicationQueryString = originalApplicationQueryString;
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     public ApplicationsFiltering getFiltering() {

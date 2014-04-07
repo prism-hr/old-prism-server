@@ -33,7 +33,7 @@ import org.hibernate.annotations.GenerationTime;
 @Entity(name = "APPLICATION_FORM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ApplicationForm implements Comparable<ApplicationForm>,
-		Serializable {
+		Serializable, PrismScope {
 
 	private static final long serialVersionUID = -7671357234815343496L;
 

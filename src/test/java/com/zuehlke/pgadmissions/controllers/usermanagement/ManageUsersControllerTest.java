@@ -23,6 +23,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -169,7 +170,7 @@ public class ManageUsersControllerTest {
         newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
         EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
         EasyMock.expect(
-                manageUsersService.setUserProgramRoles("Jane", "Doe", "jane.doe@test.com", program, true, true, Authority.REVIEWER, Authority.ADMINISTRATOR))
+                manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, true, program, Authority.REVIEWER, Authority.ADMINISTRATOR))
                 .andReturn(new RegisteredUserBuilder().id(4).build());
 
         replay();
@@ -298,6 +299,8 @@ public class ManageUsersControllerTest {
     @Test
     public void shouldCreateNewUserInRolesSuperAdmin() {
 
+        PrismSystem prismSystem = new PrismSystem();
+        
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 
@@ -306,7 +309,7 @@ public class ManageUsersControllerTest {
         userDTO.setLastName("Doe");
         userDTO.setEmail("jane.doe@test.com");
 
-        EasyMock.expect(manageUsersService.setUserProgramRoles("Jane", "Doe", "jane.doe@test.com", null, true, true, Authority.SUPERADMINISTRATOR)).andReturn(
+        EasyMock.expect(manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, true, prismSystem, Authority.SUPERADMINISTRATOR)).andReturn(
                 new RegisteredUserBuilder().id(4).build());
 
         replay();

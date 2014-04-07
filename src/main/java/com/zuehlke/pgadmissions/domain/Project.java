@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 
 @Entity(name = "PROJECT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Project extends Advert {
+public class Project extends Advert implements PrismScope {
 
     private static final long serialVersionUID = 5963260213501162814L;
 

@@ -33,7 +33,9 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.services.RoleService;
 
 @Service
 public class MailSendingService extends AbstractMailSendingService {
@@ -48,6 +50,8 @@ public class MailSendingService extends AbstractMailSendingService {
     @Autowired
     @Value("${ucl.prospectus.url}")
     private String uclProspectusLink;
+    
+    private RoleService roleService;
 
     private void sendReferenceRequest(Referee referee, ApplicationForm application) {
         PrismEmailMessage message = null;
@@ -77,7 +81,7 @@ public class MailSendingService extends AbstractMailSendingService {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(Authority.ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -103,7 +107,7 @@ public class MailSendingService extends AbstractMailSendingService {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(Authority.ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -129,7 +133,7 @@ public class MailSendingService extends AbstractMailSendingService {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), configurationService.getAllRegistryUsers(), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(Authority.ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -171,7 +175,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), application, application.getApplicant(),
-                            configurationService.getAllRegistryUsers(), getHostName(), admissionsOfferServiceLevel, application.getLastStatus().getId().displayValue() });
+                            roleService.getUsersInRole(Authority.ADMITTER), getHostName(), admissionsOfferServiceLevel, application.getLastStatus().getId().displayValue() });
 
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(application.getStatus())) {

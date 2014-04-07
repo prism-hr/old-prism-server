@@ -183,7 +183,7 @@
 																			<col  />
 																		</colgroup>
 																		<tbody>
-																			<#list superadmins as superadmin>
+																			<#list superadministrators as superadmin>
 																			<tr>
 																				<td><span class="arrow">&nbsp;</span></td>
 																				<td scope="col">${(superadmin.firstName?html)!} ${(superadmin.lastName?html)!} (${(superadmin.email?html)!})</td>
@@ -270,7 +270,7 @@
 	                                                                            <col style="width: 30px;" />
 	                                                                        </colgroup>
 	                                                                        <tbody>
-	                                                                            <#list allRegistryUsers! as regUser>
+	                                                                            <#list admitters as regUser>
 	                                                                            <tr>
 	                                                                               <td>
 	                                                                                   <span class="arrow"></span>

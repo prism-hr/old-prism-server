@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SystemUserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
 
 @Service
 @Transactional
@@ -121,6 +122,11 @@ public class RoleService {
     }
 
     public List<RegisteredUser> getProgramAdministrators(Program program) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public List<Authority> getAuthorities(AuthorityScope program) {
         // TODO Auto-generated method stub
         return null;
     }

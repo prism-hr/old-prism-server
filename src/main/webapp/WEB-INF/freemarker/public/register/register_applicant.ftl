@@ -124,7 +124,7 @@
               </div>
               <div class="control-group">
             		<div class="controls">
-            			<#if Session.applyRequest?has_content>
+            			<#if Session.requestAdvertId?has_content>
                 		<a href="/pgadmissions/alreadyRegistered">Already Registered?</a>
                   </#if>
                 </div>

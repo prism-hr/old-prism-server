@@ -70,8 +70,8 @@ public class RegistrationController {
             return TemplateLocation.REGISTRATION_FORM;
         }
 
-        String queryString = (String) request.getSession().getAttribute("applyRequest");
-        RegisteredUser registeredUser = registrationService.updateOrSaveUser(pendingUser, queryString);
+        Integer advertId = (Integer) request.getSession().getAttribute("requestAdvertId");
+        RegisteredUser registeredUser = registrationService.updateOrSaveUser(pendingUser, advertId);
         model.addAttribute("pendingUser", registeredUser);
         return TemplateLocation.REGISTRATION_SUCCESS_CONFIRMATION;
     }

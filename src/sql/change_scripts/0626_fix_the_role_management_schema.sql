@@ -397,13 +397,14 @@ CREATE TABLE APPLICATION_FORM_UPDATE (
 	application_form_id INT(10) UNSIGNED NOT NULL,
 	registered_user_id INT(10) UNSIGNED NOT NULL,
 	raises_update_flag INT(1) UNSIGNED NOT NULL,
+	created_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (application_form_id, registered_user_id),
 	UNIQUE INDEX (registered_user_id, application_form_id)
 ) ENGINE = INNODB
 ;
 
 INSERT INTO APPLICATION_FORM_UPDATE
-	SELECT application_form_id, registered_user_id, MIN(raises_update_flag)
+	SELECT application_form_id, registered_user_id, MIN(raises_update_flag), update_timestamp
 	FROM APPLICATION_FORM_USER_ROLE
 	GROUP BY application_form_id, registered_user_id
 ;

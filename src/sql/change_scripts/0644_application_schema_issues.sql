@@ -121,3 +121,19 @@ INSERT INTO USER_ROLE (program_id, user_id, role_id, requesting_user_id, assigne
 		"APPLICATION_REVIEWER_PREVIOUS", "APPLICATION_SECONDARY_SUPERVISOR_PREVIOUS")
 	GROUP BY APPLICATION.program_id, USER_ROLE.user_id
 ;
+
+ALTER TABLE ACTION_REQUIRED
+	ADD COLUMN system_id INT(10) UNSIGNED,
+	ADD COLUMN institution_id INT(10) UNSIGNED,
+	ADD COLUMN program_id INT(10) UNSIGNED,
+	ADD COLUMN project_id INT(10) UNSIGNED,
+	ADD UNIQUE INDEX (system_id, role_id, action_id),
+	ADD UNIQUE INDEX (institution_id, role_id, action_id),
+	ADD UNIQUE INDEX (program_id, role_id, action_id),
+	ADD UNIQUE INDEX (project_id, role_id, action_id),
+	ADD FOREIGN KEY (system_id) REFERENCES SYSTEM (id),
+	ADD FOREIGN KEY (institution_id) REFERENCES INSTITUTION (id),
+	ADD FOREIGN KEY (program_id) REFERENCES PROGRAM (id),
+	ADD FOREIGN KEY (project_id) REFERENCES PROJECT (id),
+	MODIFY COLUMN application_id INT(10) UNSIGNED
+;

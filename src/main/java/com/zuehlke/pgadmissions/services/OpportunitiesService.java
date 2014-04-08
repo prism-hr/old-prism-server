@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.mail.MailSendingService;
 public class OpportunitiesService {
 
     @Autowired
-    private RegistrationService registrationService;
+    private ManageUsersService manageUsersService;
 
     @Autowired
     private OpportunityRequestDAO opportunityRequestDAO;
@@ -53,7 +53,7 @@ public class OpportunitiesService {
         }
 
         if (createAuthorUser) {
-            registrationService.updateOrSaveUser(author, null);
+            userService.getUser(author.getFirstName(), author.getLastName(), author.getEmail(), true);
         }
 
         opportunityRequest.setCreatedDate(new Date());

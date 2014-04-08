@@ -123,10 +123,10 @@ INSERT INTO USER_ROLE (program_id, user_id, role_id, requesting_user_id, assigne
 ;
 
 ALTER TABLE ACTION_REQUIRED
-	ADD COLUMN system_id INT(10) UNSIGNED,
-	ADD COLUMN institution_id INT(10) UNSIGNED,
-	ADD COLUMN program_id INT(10) UNSIGNED,
-	ADD COLUMN project_id INT(10) UNSIGNED,
+	ADD COLUMN system_id INT(10) UNSIGNED AFTER id,
+	ADD COLUMN institution_id INT(10) UNSIGNED AFTER system_id,
+	ADD COLUMN program_id INT(10) UNSIGNED AFTER institution_id,
+	ADD COLUMN project_id INT(10) UNSIGNED AFTER program_id,
 	ADD UNIQUE INDEX (system_id, role_id, action_id),
 	ADD UNIQUE INDEX (institution_id, role_id, action_id),
 	ADD UNIQUE INDEX (program_id, role_id, action_id),

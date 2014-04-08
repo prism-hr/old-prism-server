@@ -44,7 +44,7 @@ public class OpportunitiesService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void createOpportunityRequest(OpportunityRequest opportunityRequest, boolean createAuthorUser) {
+    public OpportunityRequest createOpportunityRequest(OpportunityRequest opportunityRequest, boolean createAuthorUser) {
         Program program = opportunityRequest.getSourceProgram();
         RegisteredUser author = opportunityRequest.getAuthor();
 
@@ -75,6 +75,8 @@ public class OpportunitiesService {
         }
 
         opportunityRequestDAO.save(opportunityRequest);
+        return opportunityRequest;
+        
     }
 
     public List<OpportunityRequest> listOpportunityRequests(RegisteredUser user) {
@@ -85,7 +87,7 @@ public class OpportunitiesService {
         return opportunityRequestDAO.findById(requestId);
     }
 
-    public void respondToOpportunityRequest(Integer requestId, OpportunityRequest newOpportunityRequest, OpportunityRequestComment comment) {
+    public Program respondToOpportunityRequest(Integer requestId, OpportunityRequest newOpportunityRequest, OpportunityRequestComment comment) {
         OpportunitiesService thisBean = applicationContext.getBean(OpportunitiesService.class);
         OpportunityRequest opportunityRequest = getOpportunityRequest(requestId);
         OpportunityRequest lastRequest = thisBean.getAllRelatedOpportunityRequests(opportunityRequest).get(0);
@@ -121,11 +123,14 @@ public class OpportunitiesService {
         opportunityRequest.getComments().add(comment);
         comment.setOpportunityRequest(opportunityRequest);
 
+        
+        Program savedProgram = null;
         if (comment.getCommentType() == OpportunityRequestCommentType.APPROVE) {
-            Program savedProgram = programsService.saveProgramOpportunity(opportunityRequest);
+            savedProgram = programsService.saveProgramOpportunity(opportunityRequest);
             opportunityRequest.setSourceProgram(savedProgram);
         }
         mailSendingService.sendOpportunityRequestOutcome(comment);
+        return savedProgram;
     }
 
     public List<OpportunityRequest> getAllRelatedOpportunityRequests(OpportunityRequest opportunityRequest) {

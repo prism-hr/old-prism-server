@@ -230,7 +230,7 @@
 		            </form>
 		          	<#elseif user.canUpdateAsApplicant(applicationForm) || user.canUpdateAsSuperadministrator(applicationForm)>
 		            <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
-		              <input type="hidden" id="wapplicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
+		              <input type="hidden" id="applicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
 		              <button id="saveAndClose" type="button" class="btn btn-large btn-primary">Save &amp; Close</button>
 		            </form>
 		            </#if>

@@ -117,7 +117,9 @@ public class ApplicationFormService {
         return applicationFormDAO.getApplicationsByProject(project);
     }
 
-    public void submitApplication(ApplicationForm application, HttpServletRequest request) {
+    public void submitApplication(ApplicationForm application) {
+        // TODO set IP
+        
         setApplicationStatus(application, ApplicationFormStatus.VALIDATION);
         workflowService.applicationSubmitted(application);
         applicationFormDAO.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);

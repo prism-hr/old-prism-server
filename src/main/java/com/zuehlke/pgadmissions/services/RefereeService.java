@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;

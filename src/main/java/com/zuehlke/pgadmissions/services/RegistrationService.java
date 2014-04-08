@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
@@ -42,7 +43,7 @@ public class RegistrationService {
     @Autowired
     private MailSendingService mailService;
 
-    public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser, Integer advertId) {
+    public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser) {
         pendingApplicantUser.setUsername(pendingApplicantUser.getEmail());
         pendingApplicantUser.setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
         pendingApplicantUser.setEnabled(false);
@@ -52,21 +53,30 @@ public class RegistrationService {
         return pendingApplicantUser;
     }
 
-    public RegisteredUser updateOrSaveUser(RegisteredUser pendingUser, Integer advertId) {
+    public RegisteredUser submitRegistration(RegisteredUser pendingUser) {
         RegisteredUser user = null;
-        if (StringUtils.isNotEmpty(pendingUser.getActivationCode())) {
+        
+        // TODO use action ID instead of activation code
+        boolean isInvited = StringUtils.isNotEmpty(pendingUser.getActivationCode());
+        
+        if (isInvited) {
             // User has been invited to join PRISM
             user = userService.getUserByActivationCode(pendingUser.getActivationCode());
             user.setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
-            user.setUsername(user.getEmail());
         } else {
             // User is an applicant
-            user = processPendingApplicantUser(pendingUser, advertId);
+            user = processPendingApplicantUser(pendingUser);
             // FIXME add applicant role to the user
             userService.save(user);
         }
 
         mailService.sendRegistrationConfirmation(user);
+        return user;
+    }
+
+    public RegisteredUser activateAccount(String activationCode) {
+        RegisteredUser user = userService.getUserByActivationCode(activationCode);
+        user.setEnabled(true);
         return user;
     }
 
@@ -81,5 +91,6 @@ public class RegistrationService {
     Map<String, Object> modelMap() {
         return new HashMap<String, Object>();
     }
+
 
 }

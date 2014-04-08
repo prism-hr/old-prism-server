@@ -184,7 +184,7 @@ public class RegisterControllerTest {
         RegisteredUser pendingUser = new RegisteredUserBuilder().id(1).build();
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-        EasyMock.expect(registrationServiceMock.updateOrSaveUser(pendingUser, null)).andReturn(pendingUser);
+        EasyMock.expect(registrationServiceMock.submitRegistration(pendingUser)).andReturn(pendingUser);
 
         EasyMock.replay(registrationServiceMock);
 
@@ -200,7 +200,7 @@ public class RegisterControllerTest {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 
-        EasyMock.expect(registrationServiceMock.updateOrSaveUser(pendingUser, 84)).andReturn(pendingUser);
+        EasyMock.expect(registrationServiceMock.submitRegistration(pendingUser)).andReturn(pendingUser);
 
         EasyMock.replay(registrationServiceMock);
 

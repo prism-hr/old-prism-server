@@ -65,7 +65,7 @@ public class RegistrationController {
         }
 
         Integer advertId = (Integer) request.getSession().getAttribute("requestAdvertId");
-        RegisteredUser registeredUser = registrationService.updateOrSaveUser(pendingUser, advertId);
+        RegisteredUser registeredUser = registrationService.submitRegistration(pendingUser);
         model.addAttribute("pendingUser", registeredUser);
         return TemplateLocation.REGISTRATION_SUCCESS_CONFIRMATION;
     }
@@ -84,13 +84,12 @@ public class RegistrationController {
 
     @RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
     public String activateAccountSubmit(@RequestParam String activationCode, HttpServletRequest request) {
-        RegisteredUser user = userService.getUserByActivationCode(activationCode);
+        
+        RegisteredUser user = registrationService.activateAccount(activationCode);
+        
         if (user == null) {
             return TemplateLocation.REGISTRATION_FAILURE_CONFIRMATION;
         }
-
-        user.setEnabled(true);
-        userService.save(user);
 
         String redirectView = RedirectLocation.REDIRECT;
 

@@ -76,7 +76,7 @@ public class OpportunitiesServiceTest {
         RegisteredUser author = new RegisteredUser();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(author).programTitle("dupa").build();
 
-        expect(registrationService.updateOrSaveUser(author, null)).andReturn(null);
+        expect(registrationService.submitRegistration(author)).andReturn(null);
         opportunityRequestDAO.save(opportunityRequest);
 
         replay();

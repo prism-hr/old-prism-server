@@ -37,7 +37,7 @@ public class MoveToReviewController {
 
     public static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/reviewer/assign_reviewers_to_appl_page";
     public static final String REVIEWERS_SECTION_NAME = "/private/staff/reviewer/assign_reviewers_section";
-    
+
     @Autowired
     private ApplicationFormService applicationsService;
 
@@ -56,7 +56,6 @@ public class MoveToReviewController {
     @Autowired
     private WorkflowService applicationFormUserRoleService;
 
-
     @RequestMapping(method = RequestMethod.GET, value = "moveToReview")
     public String getReviewRoundDetailsPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
@@ -66,24 +65,24 @@ public class MoveToReviewController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "reviewersSection")
-    public String getReviewersSectionView() {
+    public String getReviewersSectionView(ModelMap modelMap) {
+        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        modelMap.put("comment", createAssignReviewersComment(application.getApplicationNumber()));
         return REVIEWERS_SECTION_NAME;
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") AssignReviewersComment assignReviewersComment, BindingResult bindingResult) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
-
+    public String moveToReview(@Valid AssignReviewersComment comment, BindingResult bindingResult, ModelMap modelMap) {
+        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         RegisteredUser user = getUser();
 
-        actionService.validateAction(applicationForm, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
+        actionService.validateAction(application, user, ApplicationFormAction.ASSIGN_REVIEWERS);
         if (bindingResult.hasErrors()) {
+            modelMap.put("comment", comment);
             return REVIEWERS_SECTION_NAME;
         }
 
-        assignReviewersComment.setUser(user);
-        assignReviewersComment.setApplication(applicationForm);
-        reviewService.moveApplicationToReview(applicationForm, assignReviewersComment);
+        reviewService.moveApplicationToReview(application.getId(), comment);
 
         return "/private/common/ajax_OK";
     }
@@ -100,28 +99,21 @@ public class MoveToReviewController {
         return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
     }
 
-    @ModelAttribute("assignReviewersComment")
-    public AssignReviewersComment getAssignReviewersComment(@RequestParam String applicationId) {
+    protected AssignReviewersComment createAssignReviewersComment(@RequestParam String applicationId) {
         AssignReviewersComment assignReviewersComment = new AssignReviewersComment();
-
-        List<RegisteredUser> usersInterestedInApplication = getUsersInterestedInApplication(applicationId);
-
-        if (usersInterestedInApplication != null) {
-            for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
-                CommentAssignedUser reviewer = new CommentAssignedUser();
-                reviewer.setUser(registeredUser);
-                assignReviewersComment.getAssignedUsers().add(reviewer);
-            }
+        
+        for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
+            assignReviewersComment.getAssignedUsers().add(new CommentAssignedUser().withUser(registeredUser));
         }
-
+        
         return assignReviewersComment;
     }
 
     @InitBinder(value = "reviewRound")
     public void registerReviewRoundValidator(WebDataBinder binder) {
-//        binder.setValidator(reviewRoundValidator);
+        // binder.setValidator(reviewRoundValidator);
         binder.registerCustomEditor(CommentAssignedUser.class, assignedUserPropertyEditor);
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
 
     @ModelAttribute("user")

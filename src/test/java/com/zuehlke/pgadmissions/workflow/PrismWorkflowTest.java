@@ -8,11 +8,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.PrismScope;
@@ -30,6 +32,7 @@ import com.zuehlke.pgadmissions.services.ManageUsersService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
+import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.importers.Importer;
 
@@ -61,6 +64,9 @@ public class PrismWorkflowTest {
     @Autowired
     private ApplicationFormService applicationFormService;
     
+    @Autowired
+    private ReviewService reviewService;
+    
     @Test
     public void initializeWorkflowTest() throws Exception {
         RegisteredUser superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, true,
@@ -88,7 +94,7 @@ public class PrismWorkflowTest {
                                 .confirmPassword("password").build()).build(), false);
 
         
-        authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken("jozek@oleksy.pl", "password"));
+        authenticationProvider.authenticate(new TestingAuthenticationToken("jozek@oleksy.pl", "password"));
         
         Program savedProgram = opportunitiesService.respondToOpportunityRequest(opportunityRequest.getId(), opportunityRequest,
                 new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.APPROVE).content("Ok!").build());
@@ -100,6 +106,9 @@ public class PrismWorkflowTest {
         applicationFormService.submitApplication(application);
         
         
+        AssignReviewersComment assignReviewerComment = new AssignReviewersComment();
+        assignReviewerComment.setContent("Assigning reviewers");
+        reviewService.moveApplicationToReview(application.getId(), assignReviewerComment);
         
 
     }

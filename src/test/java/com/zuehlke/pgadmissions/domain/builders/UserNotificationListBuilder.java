@@ -9,8 +9,8 @@ import org.hibernate.SessionFactory;
 
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
+import com.zuehlke.pgadmissions.domain.ActionRequired;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -163,7 +163,7 @@ public class UserNotificationListBuilder {
     private UserTestHarness buildInstanceThatRequiresTaskReminder(User user, NotificationListTestScenario testScenario,
             NotificationListTestCase testCase) {
         user.setLatestTaskNotificationDate(reminderBaselineDate);
-        ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithoutUpdateNotification, true,
+        UserRole applicationFormUserRole = getDummyUserRole(getDummyApplication(), user, roleWithoutUpdateNotification, true,
                 false, getDummyApplicationFormActionRequired(actionWithSyndicatedNotification));
         return new UserTestHarness(user, testScenario, applicationFormUserRole);
     }
@@ -186,7 +186,7 @@ public class UserNotificationListBuilder {
             break;
         }
         saveDummyObject(user);
-        ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithoutUpdateNotification, true,
+        UserRole applicationFormUserRole = getDummyUserRole(getDummyApplication(), user, roleWithoutUpdateNotification, true,
                 false, getDummyApplicationFormActionRequired(actionWithSyndicatedNotification));
         return new UserTestHarness(user, testScenario, applicationFormUserRole);
     }
@@ -210,14 +210,14 @@ public class UserNotificationListBuilder {
             break;
         }
         updateDummyObject(user);
-        ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithUpdateNotification, false, true);
+        UserRole applicationFormUserRole = getDummyUserRole(getDummyApplication(), user, roleWithUpdateNotification, false, true);
         return new UserTestHarness(user, testScenario, applicationFormUserRole);
     }
 
     private UserTestHarness buildInstanceThatDoesNotRequireUpdateNotification(User user, NotificationListTestScenario testScenario,
             NotificationListTestCase testCase) {
         user.setLatestUpdateNotificationDate(updateBaselineDate);
-        ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithUpdateNotification, true, false);
+        UserRole applicationFormUserRole = getDummyUserRole(getDummyApplication(), user, roleWithUpdateNotification, true, false);
 //        switch (testCase) {
 //        case RECEIVED_RECENT_UPDATE_NOTIFICATION:
 //            user.setLatestUpdateNotificationDate(baselineDate);
@@ -248,8 +248,8 @@ public class UserNotificationListBuilder {
     private UserTestHarness buildInstanceThatDoesNotRequiredTaskNotificationOrReminder(User user,
             NotificationListTestScenario testScenario, NotificationListTestCase testCase, Date instanceBaselineDate) {
         user.setLatestTaskNotificationDate(instanceBaselineDate);
-        ApplicationFormActionRequired applicationFormActionRequired = getDummyApplicationFormActionRequired(actionWithSyndicatedNotification);
-        ApplicationFormUserRole applicationFormUserRole = getDummyApplicationFormUserRole(getDummyApplication(), user, roleWithoutUpdateNotification, true,
+        ActionRequired applicationFormActionRequired = getDummyApplicationFormActionRequired(actionWithSyndicatedNotification);
+        UserRole applicationFormUserRole = getDummyUserRole(getDummyApplication(), user, roleWithoutUpdateNotification, true,
                 false, applicationFormActionRequired);
         switch (testCase) {
         case RECEIVED_RECENT_TASK_NOTIFICATION:
@@ -257,15 +257,15 @@ public class UserNotificationListBuilder {
             updateDummyObject(user);
             break;
         case NOTIFICATION_WINDOW_EXPIRED:
-            applicationFormActionRequired.setDeadlineTimestamp(expiryBaselineDate);
+//            applicationFormActionRequired.setDeadlineTimestamp(expiryBaselineDate);
             updateDummyObject(applicationFormActionRequired);
             break;
         case NO_URGENT_ACTIONS:
-            applicationFormUserRole.setRaisesUrgentFlag(false);
+//            applicationFormUserRole.setRaisesUrgentFlag(false);
             updateDummyObject(applicationFormUserRole);
             break;
         case ACTION_NOT_SYNDICATED:
-            applicationFormActionRequired.setId(actionWithIndividualNotification);
+//            applicationFormActionRequired.setId(actionWithIndividualNotification);
             updateDummyObject(applicationFormActionRequired);
             break;
         case USER_ACCOUNT_DISABLED:
@@ -313,13 +313,14 @@ public class UserNotificationListBuilder {
         return new UserTestHarness(user, testScenario);
     }
 
-    private ApplicationFormUserRole getDummyApplicationFormUserRole(ApplicationForm application, User user, Role role, Boolean raisesUrgentFlag,
-            Boolean raisesUpdateFlag, ApplicationFormActionRequired... applicationFormActionRequireds) {
-        ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRoleBuilder().applicationForm(application).user(user).role(role)
-                .raisesUrgentFlag(raisesUrgentFlag).raisesUpdateFlag(raisesUpdateFlag).updateTimestamp(expiryBaselineDate)
-                .actions(Arrays.asList(applicationFormActionRequireds)).build();
-        saveDummyObject(applicationFormUserRole);
-        return applicationFormUserRole;
+    private UserRole getDummyUserRole(ApplicationForm application, User user, Role role, Boolean raisesUrgentFlag,
+            Boolean raisesUpdateFlag, ActionRequired... applicationFormActionRequireds) {
+//        UserRole applicationFormUserRole = new UserRoleBuilder().applicationForm(application).user(user).role(role)
+//                .raisesUrgentFlag(raisesUrgentFlag).raisesUpdateFlag(raisesUpdateFlag).updateTimestamp(expiryBaselineDate)
+//                .actions(Arrays.asList(applicationFormActionRequireds)).build();
+//        saveDummyObject(applicationFormUserRole);
+//        return applicationFormUserRole;
+        return null;
     }
 
     private ApplicationForm getDummyApplication() {
@@ -345,9 +346,10 @@ public class UserNotificationListBuilder {
         return user;
     }
 
-    private ApplicationFormActionRequired getDummyApplicationFormActionRequired(Action action) {
-        ApplicationFormActionRequired applicationFormActionRequired = new ApplicationFormActionRequired(action, baselineDate, null, null);
-        return applicationFormActionRequired;
+    private ActionRequired getDummyApplicationFormActionRequired(Action action) {
+//        ApplicationFormActionRequired applicationFormActionRequired = new ApplicationFormActionRequired(action, baselineDate, null, null);
+//        return applicationFormActionRequired;
+        return null;
     }
 
     private void saveDummyObject(Object dummyObject) {

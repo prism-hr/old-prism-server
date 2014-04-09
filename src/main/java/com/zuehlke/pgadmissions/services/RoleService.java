@@ -6,24 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionUserRole;
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramUserRole;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.ProjectUserRole;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.SystemUserRole;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service
 @Transactional
@@ -36,47 +31,21 @@ public class RoleService {
         return roleDAO.getById(authority);
     }
 
-    public void createSystemUserRoles(User user, Authority... authorities) {
-        for (Authority authority : authorities) {
-            SystemUserRole systemUserRole = new SystemUserRole(user, roleDAO.getById(authority));
-            roleDAO.saveUserRole(systemUserRole);
+    public UserRole createUserRole(PrismScope scope, User user, Authority authority) {
+        UserRole userRole = new UserRole().withUser(user).withRole(getById(authority));
+        PrismScope unproxiedScope = HibernateUtils.unproxy(scope);
+        if (unproxiedScope instanceof PrismScope) {
+            userRole.setSystem((PrismSystem) scope);
+        } else if (unproxiedScope instanceof Institution) {
+            userRole.setInstitution((Institution) scope);
+        } else if (unproxiedScope instanceof Program) {
+            userRole.setProgram((Program) scope);
+        } else if (unproxiedScope instanceof Project) {
+            userRole.setProject((Project) scope);
+        } else if (unproxiedScope instanceof ApplicationForm) {
+            userRole.setApplication((ApplicationForm) scope);
         }
-    }
-
-    public void createInstitutionUserRoles(Institution institution, User user, Authority... authorities) {
-        for (Authority authority : authorities) {
-            InstitutionUserRole institutionUserRole = new InstitutionUserRole(institution, user, roleDAO.getById(authority));
-            roleDAO.saveUserRole(institutionUserRole);
-        }
-    }
-
-    public void createProgramUserRoles(Program program, User user, Authority... authorities) {
-        for (Authority authority : authorities) {
-            ProgramUserRole programUserRole = new ProgramUserRole(program, user, roleDAO.getById(authority));
-            roleDAO.saveUserRole(programUserRole);
-        }
-    }
-
-    public void createProjectUserRoles(Project project, User user, Authority... authorities) {
-        for (Authority authority : authorities) {
-            ProjectUserRole projectUserRole = new ProjectUserRole(project, user, roleDAO.getById(authority));
-            roleDAO.saveUserRole(projectUserRole);
-        }
-    }
-
-    public ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, User user, Authority authority,
-            Boolean interestedInApplicant, ApplicationFormActionRequired... actions) {
-        ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRole(applicationForm, user, roleDAO.getById(authority), interestedInApplicant,
-                Sets.newHashSet(actions));
-        ApplicationFormUserRole mergedApplicationFormUserRole = roleDAO.saveUserRole(applicationFormUserRole);
-        boolean raisesUrgentFlag = false;
-        for (ApplicationFormActionRequired action : mergedApplicationFormUserRole.getActions()) {
-            if (action.getRaisesUrgentFlag()) {
-                raisesUrgentFlag = true;
-            }
-        }
-        applicationFormUserRole.setRaisesUrgentFlag(raisesUrgentFlag);
-        return mergedApplicationFormUserRole;
+        return roleDAO.saveUserRole(userRole);
     }
 
     public boolean hasAnyRole(User user, Authority... authorities) {
@@ -105,8 +74,9 @@ public class RoleService {
             return roleDAO.getProjectUserRoles((Project) scope, user).contains(roleDAO.getById(authority));
         case APPLICATION:
             return roleDAO.getApplicationFormUserRoles((ApplicationForm) scope, user).contains(roleDAO.getById(authority));
+        default:
+            throw new IllegalStateException("Unkwown scope: " + role.getAuthorityScope());
         }
-        return roleDAO.getUserRoles(user).contains(roleDAO.getById(authority));
     }
 
     public List<User> getUsersInSystemRole(Authority... authorities) {

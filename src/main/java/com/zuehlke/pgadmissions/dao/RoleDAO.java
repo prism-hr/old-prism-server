@@ -10,17 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.InstitutionUserRole;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramUserRole;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.ProjectUserRole;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.SystemUserRole;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -50,17 +45,17 @@ public class RoleDAO {
         return (Role) sessionFactory.getCurrentSession().merge(role);
     }
 
-    public <T extends UserRole> T saveUserRole(T userRole) {
-        return (T) sessionFactory.getCurrentSession().merge(userRole);
+    public UserRole saveUserRole(UserRole userRole) {
+        return (UserRole) sessionFactory.getCurrentSession().merge(userRole);
     }
 
     public List<Role> getSystemUserRoles(User user) {
-        return sessionFactory.getCurrentSession().createCriteria(SystemUserRole.class).setProjection(Projections.groupProperty("id.role"))
+        return sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
     }
 
     public List<Role> getInstitutionUserRoles(Institution institution, User user) {
-        List<Role> institutionRoles = sessionFactory.getCurrentSession().createCriteria(InstitutionUserRole.class)
+        List<Role> institutionRoles = sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("id.role")).createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("id.institution", institution)).add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
         institutionRoles.addAll(getSystemUserRoles(user));
@@ -68,7 +63,7 @@ public class RoleDAO {
     }
 
     public List<Role> getProgramUserRoles(Program program, User user) {
-        List<Role> programRoles = sessionFactory.getCurrentSession().createCriteria(ProgramUserRole.class).setProjection(Projections.groupProperty("id.role"))
+        List<Role> programRoles = sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("id.program", program))
                 .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
         programRoles.addAll(getInstitutionUserRoles(program.getInstitution(), user));
@@ -76,7 +71,7 @@ public class RoleDAO {
     }
 
     public List<Role> getProjectUserRoles(Project project, User user) {
-        List<Role> projectRoles = sessionFactory.getCurrentSession().createCriteria(ProjectUserRole.class).setProjection(Projections.groupProperty("role"))
+        List<Role> projectRoles = sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("role"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("project", project))
                 .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
         projectRoles.addAll(getProgramUserRoles(project.getProgram(), user));
@@ -84,28 +79,9 @@ public class RoleDAO {
     }
 
     public List<Role> getApplicationFormUserRoles(ApplicationForm application, User user) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).setProjection(Projections.groupProperty("id.role"))
+        return sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("id.applicationForm", application))
                 .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
-    }
-
-    public List<Role> getUserRoles(User user) {
-        List<Role> roles = getSystemUserRoles(user);
-
-        roles.addAll(sessionFactory.getCurrentSession().createCriteria(InstitutionUserRole.class).setProjection(Projections.groupProperty("id.role"))
-                .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("registeredUser.primaryAccount", user)).list());
-
-        roles.addAll(sessionFactory.getCurrentSession().createCriteria(ProgramUserRole.class).setProjection(Projections.groupProperty("id.role"))
-                .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("registeredUser.primaryAccount", user)).list());
-
-        roles.addAll(sessionFactory.getCurrentSession().createCriteria(ProjectUserRole.class).setProjection(Projections.groupProperty("id.role"))
-                .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("registeredUser.primaryAccount", user)).list());
-
-        roles.addAll(sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).setProjection(Projections.groupProperty("id.role"))
-                .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).createAlias("id.role", "role", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list());
-
-        return roles;
     }
 
     public List<User> getUsersInSystemRole(Authority[] authorities) {

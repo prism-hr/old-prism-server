@@ -7,25 +7,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
+import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
@@ -33,10 +29,9 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -57,13 +52,10 @@ public class WorkflowService {
     };
 
     @Autowired
-    private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+    private RoleDAO roleDAO;
 
     @Autowired
     private ActionDAO actionDAO;
-
-    @Autowired
-    private RoleDAO roleDAO;
 
     @Autowired
     private UserDAO userDAO;
@@ -439,14 +431,14 @@ public class WorkflowService {
         for (Entry<User, Authority> administrator : administrators.entrySet()) {
             Boolean raisesUrgentFlag = dueDate.before(new Date());
 
-            List<ApplicationFormActionRequired> requiredActions = new ArrayList<ApplicationFormActionRequired>();
-            requiredActions.add(new ApplicationFormActionRequired(actionDAO.getById(action), dueDate, bindDeadlineToDueDate, raisesUrgentFlag));
-
-            if (INITIATE_STAGE_MAP.containsValue(action)) {
-                requiredActions.add(new ApplicationFormActionRequired(actionDAO.getById(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE), dueDate,
-                        bindDeadlineToDueDate, raisesUrgentFlag));
-            }
-
+            List<ActionRequired> requiredActions = new ArrayList<ActionRequired>();
+//            requiredActions.add(new ApplicationFormActionRequired(actionDAO.getById(action), dueDate, bindDeadlineToDueDate, raisesUrgentFlag));
+//
+//            if (INITIATE_STAGE_MAP.containsValue(action)) {
+//                requiredActions.add(new ApplicationFormActionRequired(actionDAO.getById(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE), dueDate,
+//                        bindDeadlineToDueDate, raisesUrgentFlag));
+//            }
+//
 //            createApplicationFormUserRole(applicationForm, administrator.getKey(), administrator.getValue(), false,
 //                    requiredActions.toArray(new ApplicationFormActionRequired[0]));
         }

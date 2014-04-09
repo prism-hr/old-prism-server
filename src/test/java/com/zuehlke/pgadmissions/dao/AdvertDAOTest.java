@@ -14,7 +14,7 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
@@ -87,7 +87,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
         User testUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
         String testUserUsername = testUser.getUsername();
         
-        List<Integer> advertIds = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        List<Integer> advertIds = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("program.id"))
                 .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
@@ -96,7 +96,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
                 .add(Restrictions.eq("program.enabled", true))
                 .add(Restrictions.eq("program.active", true)).list();
         
-        advertIds.addAll(sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        advertIds.addAll(sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("project.id"))
                 .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
@@ -126,7 +126,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
         testUser.setUpi(testUPI);
         save(testUser);
         
-        List<Integer> advertIds = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        List<Integer> advertIds = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("program.id"))
                 .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
@@ -135,7 +135,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
                 .add(Restrictions.eq("program.enabled", true))
                 .add(Restrictions.eq("program.active", true)).list();
         
-        advertIds.addAll(sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        advertIds.addAll(sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("project.id"))
                 .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)

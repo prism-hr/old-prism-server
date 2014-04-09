@@ -3,20 +3,20 @@ package com.zuehlke.pgadmissions.domain.helpers;
 import java.util.Arrays;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.User;
 
 public class UserTestHarness {
 
     private User registeredUser;
     private NotificationListTestScenario notificationListTestScenario;
-    private List<ApplicationFormUserRole> applicationFormUserRoles;
+    private List<UserRole> applicationFormUserRoles;
 
     public UserTestHarness(User registeredUser, NotificationListTestScenario notificationListTestScenario,
-            ApplicationFormUserRole... applicationFormUserRole) {
+            UserRole... applicationFormUserRole) {
         this.setRegisteredUser(registeredUser);
         this.setNotificationListTestScenario(notificationListTestScenario);
-        this.setApplicationFormUserRoles(Arrays.asList(applicationFormUserRole));
+        this.setUserRoles(Arrays.asList(applicationFormUserRole));
 
     }
 
@@ -24,7 +24,7 @@ public class UserTestHarness {
         return registeredUser;
     }
 
-    public void setApplicationFormUserRoles(List<ApplicationFormUserRole> applicationFormUserRoles) {
+    public void setUserRoles(List<UserRole> applicationFormUserRoles) {
         this.applicationFormUserRoles = applicationFormUserRoles;
     }
 
@@ -40,11 +40,11 @@ public class UserTestHarness {
         this.notificationListTestScenario = notificationListTestScenario;
     }
 
-    public List<ApplicationFormUserRole> getApplicationFormUserRoles() {
+    public List<UserRole> getUserRoles() {
         return applicationFormUserRoles;
     }
 
-    public void setApplicationFormUserRoles(ApplicationFormUserRole... applicationFormUserRoles) {
+    public void setUserRoles(UserRole... applicationFormUserRoles) {
         this.applicationFormUserRoles = Arrays.asList(applicationFormUserRoles);
     }
 

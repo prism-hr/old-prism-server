@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
@@ -94,7 +94,7 @@ public class ProgramDAO {
                 .add(Restrictions.eq("enabled", true)).addOrder(Order.asc("title")).list();
     }
 
-    public List<Program> getProgramsForWhichUserCanManageProjects(RegisteredUser user) {
+    public List<Program> getProgramsForWhichUserCanManageProjects(User user) {
         // TODO implement
         return null;
     }
@@ -153,7 +153,7 @@ public class ProgramDAO {
                 .add(Restrictions.eq("id", programTypeId)).uniqueResult();
     }
 
-    public List<Program> getEnabledProgramsForWhichUserHasProgramAuthority(RegisteredUser user) {
+    public List<Program> getEnabledProgramsForWhichUserHasProgramAuthority(User user) {
         HashSet<Program> programs = new HashSet<Program>();
         for (Authority authority : AuthorityGroup.INTERNAL_PROGRAM_AUTHORITIES.getAuthorities()) {
             programs.addAll((List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class)
@@ -163,7 +163,7 @@ public class ProgramDAO {
         return new ArrayList<Program>(programs);
     }
 
-    public List<Program> getEnabledProgramsForWhichUserHasProjectAuthority(RegisteredUser user) {
+    public List<Program> getEnabledProgramsForWhichUserHasProjectAuthority(User user) {
         return sessionFactory
                 .getCurrentSession()
                 .createCriteria(Project.class)
@@ -173,7 +173,7 @@ public class ProgramDAO {
                         .add(Restrictions.eq("secondarySupervisor", user)).add(Restrictions.eq("program.enabled", true))).list();
     }
 
-    public List<Program> getEnabledProgramsForWhichUserHasApplicationAuthority(RegisteredUser user) {
+    public List<Program> getEnabledProgramsForWhichUserHasApplicationAuthority(User user) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .setProjection(Projections.groupProperty("applicationForm.program")).createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN).createAlias("role", "applicationRole", JoinType.INNER_JOIN)
@@ -187,7 +187,7 @@ public class ProgramDAO {
                 .list();
     }
 
-    public List<Project> getProjectsForProgramOfWhichAuthor(Program program, RegisteredUser author) {
+    public List<Project> getProjectsForProgramOfWhichAuthor(Program program, User author) {
         return sessionFactory
                 .getCurrentSession()
                 .createCriteria(Project.class)

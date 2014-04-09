@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 public class AdvertBuilder {
 
@@ -12,7 +12,7 @@ public class AdvertBuilder {
     private String funding;
     private Boolean active = true;
     private Boolean enabled = true;
-    private RegisteredUser contactUser;
+    private User contactUser;
 
     public AdvertBuilder id(Integer id) {
         this.id = id;
@@ -49,7 +49,7 @@ public class AdvertBuilder {
         return this;
     }
     
-    public AdvertBuilder contactUser(RegisteredUser contactUser) {
+    public AdvertBuilder contactUser(User contactUser) {
         this.contactUser = contactUser;
         return this;
     }

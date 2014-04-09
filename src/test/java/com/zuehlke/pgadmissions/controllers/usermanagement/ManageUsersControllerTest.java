@@ -25,9 +25,9 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UserDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -88,7 +88,7 @@ public class ManageUsersControllerTest {
     @TestedObject
     private ManageUsersController controller;
 
-    private RegisteredUser currentUser = new RegisteredUser();
+    private User currentUser = new User();
 
     @Test
     public void shouldReturnCurrentUser() {
@@ -171,7 +171,7 @@ public class ManageUsersControllerTest {
         EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
         EasyMock.expect(
                 manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, true, program, Authority.REVIEWER, Authority.ADMINISTRATOR))
-                .andReturn(new RegisteredUserBuilder().id(4).build());
+                .andReturn(new UserBuilder().id(4).build());
 
         replay();
 
@@ -218,7 +218,7 @@ public class ManageUsersControllerTest {
 
         newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
 
-        RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
+        User existingUser = new UserBuilder().id(7).build();
 
         replay();
 
@@ -272,23 +272,23 @@ public class ManageUsersControllerTest {
 
     @Test
     public void shouldGetAdmitters() {
-        List<RegisteredUser> admitters = Lists.newArrayList();
+        List<User> admitters = Lists.newArrayList();
 
         EasyMock.expect(roleService.getUsersInSystemRole(Authority.ADMITTER)).andReturn(admitters);
         replay();
-        List<RegisteredUser> returned = controller.getAdmitters();
+        List<User> returned = controller.getAdmitters();
 
         assertSame(admitters, returned);
     }
 
     @Test
     public void shouldReturnAllSuperadministratorsOrderbylastnameFirstname() {
-        RegisteredUser userOne = new RegisteredUserBuilder().id(1).lastName("ZZZZ").firstName("BBBB").build();
-        RegisteredUser userTwo = new RegisteredUserBuilder().id(4).lastName("ZZZZ").firstName("AAAA").build();
-        RegisteredUser userThree = new RegisteredUserBuilder().id(5).lastName("AA").firstName("GGG").build();
+        User userOne = new UserBuilder().id(1).lastName("ZZZZ").firstName("BBBB").build();
+        User userTwo = new UserBuilder().id(4).lastName("ZZZZ").firstName("AAAA").build();
+        User userThree = new UserBuilder().id(5).lastName("AA").firstName("GGG").build();
         EasyMock.expect(roleService.getUsersInSystemRole(Authority.SUPERADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
         replay();
-        List<RegisteredUser> superadmins = controller.getSuperadministrators();
+        List<User> superadmins = controller.getSuperadministrators();
 
         assertEquals(3, superadmins.size());
         assertEquals(userThree, superadmins.get(0));
@@ -310,7 +310,7 @@ public class ManageUsersControllerTest {
         userDTO.setEmail("jane.doe@test.com");
 
         EasyMock.expect(manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, true, prismSystem, Authority.SUPERADMINISTRATOR)).andReturn(
-                new RegisteredUserBuilder().id(4).build());
+                new UserBuilder().id(4).build());
 
         replay();
 
@@ -328,7 +328,7 @@ public class ManageUsersControllerTest {
         userDTO.setLastName("Doe");
         userDTO.setEmail("jane.doe@test.com");
 
-        RegisteredUser existingUser = new RegisteredUserBuilder().id(7).build();
+        User existingUser = new UserBuilder().id(7).build();
 
         replay();
 

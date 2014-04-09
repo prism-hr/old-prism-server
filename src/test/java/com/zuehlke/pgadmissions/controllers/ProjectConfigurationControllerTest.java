@@ -15,11 +15,11 @@ import com.zuehlke.pgadmissions.converters.ProjectConverter;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
@@ -96,8 +96,8 @@ public class ProjectConfigurationControllerTest {
     private Project createProject() {
         Program program = new ProgramBuilder().code("KLOP").id(1).build();
         Advert advert = new AdvertBuilder().id(1).title("title").studyDuration(6).build();
-        RegisteredUser primarySupervisor = new RegisteredUserBuilder().firstName("Ezio").lastName("Imbecilo").email("ezio@mail.com").id(1).build();
-        RegisteredUser secondarySupervisor = new RegisteredUserBuilder().firstName("Genowefa").lastName("Pigwa").email("gienia@mail.com").id(2).build();
+        User primarySupervisor = new UserBuilder().firstName("Ezio").lastName("Imbecilo").email("ezio@mail.com").id(1).build();
+        User secondarySupervisor = new UserBuilder().firstName("Genowefa").lastName("Pigwa").email("gienia@mail.com").id(2).build();
         Project project = new ProjectBuilder().id(1).advert(advert).program(program).primarySupervisor(primarySupervisor)
                 .secondarySupervisor(secondarySupervisor).build();
         return project;

@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 
 public class SupervisionConfirmationCommentBuilder {
@@ -12,7 +12,7 @@ public class SupervisionConfirmationCommentBuilder {
     private String comment;
     private Integer id;
     private Date createdTimeStamp;
-    private RegisteredUser user;
+    private User user;
 
     private String projectTitle;
     private String projectAbstract;
@@ -65,7 +65,7 @@ public class SupervisionConfirmationCommentBuilder {
         return this;
     }
 
-    public SupervisionConfirmationCommentBuilder user(RegisteredUser user) {
+    public SupervisionConfirmationCommentBuilder user(User user) {
         this.user = user;
         return this;
     }

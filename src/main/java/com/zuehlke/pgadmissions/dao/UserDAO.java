@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -50,87 +50,87 @@ public class UserDAO {
         this.notificationsDurationDAO = notificationsDurationDAO;
     }
 
-    public void save(RegisteredUser user) {
+    public void save(User user) {
         Session session = sessionFactory.getCurrentSession();
         session.saveOrUpdate(user);
         session.flush();
     }
 
-    public RegisteredUser getById(Integer id) {
-        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+    public User getById(Integer id) {
+        return (User) sessionFactory.getCurrentSession().createCriteria(User.class)
                 .add(Restrictions.eq("id", id)).uniqueResult();
     }
     
-    public RegisteredUser getPrimaryById(Integer id) {
-        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+    public User getPrimaryById(Integer id) {
+        return (User) sessionFactory.getCurrentSession().createCriteria(User.class)
                 .createAlias("primaryAccount", "registeredUser", JoinType.INNER_JOIN)
                 .add(Restrictions.disjunction()
                         .add(Restrictions.eq("id", id))
                         .add(Restrictions.eq("registeredUser.id", id))).uniqueResult();
     }
 
-    public RegisteredUser getUserByUsername(String username) {
-        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("username", username))
+    public User getUserByUsername(String username) {
+        return (User) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("username", username))
                 .add(Restrictions.eq("enabled", true)).uniqueResult();
     }
 
-    public List<RegisteredUser> getAllUsers() {
-        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    public List<User> getAllUsers() {
+        return sessionFactory.getCurrentSession().createCriteria(User.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public RegisteredUser getUserByActivationCode(String activationCode) {
-        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("activationCode", activationCode))
+    public User getUserByActivationCode(String activationCode) {
+        return (User) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("activationCode", activationCode))
                 .uniqueResult();
     }
 
-    public Long getNumberOfActiveApplicationsForApplicant(final RegisteredUser applicant) {
+    public Long getNumberOfActiveApplicationsForApplicant(final User applicant) {
         return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicant", applicant))
                 .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.APPROVED)))
                 .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.REJECTED)))
                 .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.WITHDRAWN))).setProjection(Projections.rowCount()).uniqueResult();
     }
 
-    public List<RegisteredUser> getUsersWithUpi(final String upi) {
-        return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("upi", upi)).list();
+    public List<User> getUsersWithUpi(final String upi) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("upi", upi)).list();
     }
 
-    public List<RegisteredUser> getUsersForProgram(Program program) {
+    public List<User> getUsersForProgram(Program program) {
         // TODO implement using roleDAO
         return null;
     }
 
-    public RegisteredUser getUserByEmail(String email) {
-        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("enabled", true))
+    public User getUserByEmail(String email) {
+        return (User) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("enabled", true))
                 .add(Restrictions.eq("email", email)).uniqueResult();
     }
 
-    public RegisteredUser getDisabledUserByEmail(String email) {
-        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("enabled", false))
+    public User getDisabledUserByEmail(String email) {
+        return (User) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("enabled", false))
                 .add(Restrictions.eq("email", email)).uniqueResult();
     }
 
-    public RegisteredUser getUserByEmailIncludingDisabledAccounts(String email) {
-        return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("email", email)).uniqueResult();
+    public User getUserByEmailIncludingDisabledAccounts(String email) {
+        return (User) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("email", email)).uniqueResult();
     }
 
     public List<Integer> getUsersIdsWithPendingRoleNotifications() {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class, "user")
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class, "user")
                 .setProjection(Projections.distinct(Projections.property("id"))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .add(Restrictions.eq("enabled", false)).createAlias("pendingRoleNotifications", "pendingRoleNotification")
                 .add(Restrictions.isNull("pendingRoleNotification.notificationDate")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<RegisteredUser> getSuperadministrators() {
-        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createAlias("roles", "role")
+    public List<User> getSuperadministrators() {
+        return sessionFactory.getCurrentSession().createCriteria(User.class).createAlias("roles", "role")
                 .add(Restrictions.eq("role.id", Authority.SUPERADMINISTRATOR)).list();
     }
 
-    public List<RegisteredUser> getAdmitters() {
-        return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createAlias("roles", "role")
+    public List<User> getAdmitters() {
+        return sessionFactory.getCurrentSession().createCriteria(User.class).createAlias("roles", "role")
                 .add(Restrictions.eq("role.id", Authority.ADMITTER)).list();
     }
     
-    public void setApplicationFormListLastAccessTimestamp(RegisteredUser user) {
+    public void setApplicationFormListLastAccessTimestamp(User user) {
         user.setApplicationListLastAccessTimestamp(new Date());
         save(user);
     }
@@ -199,7 +199,7 @@ public class UserDAO {
     public List<Integer> getUsersDueOpportunityRequestNotification(Date seedDate) {
         Date baseline = getBaselineDate(seedDate);
         
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class)
                 .setProjection(Projections.groupProperty("primaryAccount.id"))
                 .createAlias("roles", "role")
                 .add(Restrictions.disjunction()
@@ -212,8 +212,8 @@ public class UserDAO {
                 .add(Restrictions.eq("credentialsNonExpired", true)).list();
     }
     
-    public List<RegisteredUser> getInterviewAdministrators(ApplicationForm application) {
-        return (List<RegisteredUser>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+    public List<User> getInterviewAdministrators(ApplicationForm application) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .setProjection(Projections.groupProperty("user"))
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
@@ -223,7 +223,7 @@ public class UserDAO {
                 .add(Restrictions.eq("action.id", ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
     }
     
-    public List<RegisteredUser> getUsersInterestedInApplication(ApplicationForm applicationForm) {
+    public List<User> getUsersInterestedInApplication(ApplicationForm applicationForm) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .setProjection(Projections.projectionList().add(Projections.groupProperty("primaryAccount"), "user"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
@@ -238,7 +238,7 @@ public class UserDAO {
                 .addOrder(Order.asc("registeredUser.firstName")).addOrder(Order.asc("registeredUser.id")).list();
     }
 
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
+    public List<User> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
         DetachedCriteria usersInterestedInApplicant = DetachedCriteria.forClass(ApplicationFormUserRole.class)
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("user")))

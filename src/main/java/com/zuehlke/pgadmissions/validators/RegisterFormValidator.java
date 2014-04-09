@@ -7,7 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
@@ -28,19 +28,19 @@ public class RegisterFormValidator extends AbstractValidator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return RegisteredUser.class.equals(clazz);
+		return User.class.equals(clazz);
 	}
 
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
-	    RegisteredUser user = (RegisteredUser) target;
+	    User user = (User) target;
 
 	    if (StringUtils.isEmpty(user.getActivationCode())) {
 	        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
 	        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);	        
 	        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", EMPTY_FIELD_ERROR_MESSAGE);	        
 	        if (!StringUtils.isBlank(user.getEmail())) {
-	            RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(user.getEmail());
+	            User userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(user.getEmail());
 	            if (userWithSameEmail != null && !userWithSameEmail.getId().equals(user.getId())) {
 	                errors.rejectValue("email", "user.email.alreadyexists");
 	            }

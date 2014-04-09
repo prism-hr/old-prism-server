@@ -15,9 +15,9 @@ import org.unitils.easymock.EasyMockUnitils;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -42,9 +42,9 @@ public class ReportPorticoDocumentUploadFailureServiceTest {
         final ApplicationFormTransfer applicationFormTransfer = new ApplicationFormTransfer();
         applicationFormTransfer.setApplicationForm(new ApplicationFormBuilder().applicationNumber("abcdefgh").build());
 
-        RegisteredUser superadmin1 = new RegisteredUserBuilder().id(12).build();
-        RegisteredUser superadmin2 = new RegisteredUserBuilder().id(13).build();
-        List<RegisteredUser> superadmins = Arrays.asList(superadmin1, superadmin2);
+        User superadmin1 = new UserBuilder().id(12).build();
+        User superadmin2 = new UserBuilder().id(13).build();
+        List<User> superadmins = Arrays.asList(superadmin1, superadmin2);
         EasyMock.expect(roleServiceMock.getUsersInSystemRole(Authority.SUPERADMINISTRATOR)).andReturn(superadmins);
         
         String messageCode = "Portico reported that there was an error uploading the documents for application abcdefgh [errorCode=110, bookingReference=P000001]: Document file, /u02/uat/docs/U_AD_REF_DOC/P000043~REF_DOC~1.PDF, for Reference 1 already exists for application with Booking Reference P000043";

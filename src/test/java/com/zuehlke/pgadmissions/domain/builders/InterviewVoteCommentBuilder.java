@@ -3,12 +3,12 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 public class InterviewVoteCommentBuilder {
 
     private Integer id;
-    private RegisteredUser user;
+    private User user;
     private Date createdTimeStamp;
 
     public InterviewVoteCommentBuilder id(Integer id) {
@@ -16,7 +16,7 @@ public class InterviewVoteCommentBuilder {
         return this;
     }
 
-    public InterviewVoteCommentBuilder user(RegisteredUser user) {
+    public InterviewVoteCommentBuilder user(User user) {
         this.user = user;
         return this;
     }

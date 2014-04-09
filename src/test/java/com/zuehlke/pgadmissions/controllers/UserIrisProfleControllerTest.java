@@ -10,14 +10,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.UclIrisProfileService;
 import com.zuehlke.pgadmissions.services.UserService;
 
-public class RegisteredUserIrisProfleControllerTest {
+public class UserIrisProfleControllerTest {
 
-    private RegisteredUserIrisProfileController controller;
+    private UserIrisProfileController controller;
     
     private UclIrisProfileService irisServiceMock;
     
@@ -30,7 +30,7 @@ public class RegisteredUserIrisProfleControllerTest {
         irisServiceMock = EasyMock.createMock(UclIrisProfileService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         messageSourceMock = EasyMock.createMock(MessageSource.class);
-        controller = new RegisteredUserIrisProfileController(irisServiceMock, userServiceMock, messageSourceMock);
+        controller = new UserIrisProfileController(irisServiceMock, userServiceMock, messageSourceMock);
     }
     
     @Test
@@ -65,7 +65,7 @@ public class RegisteredUserIrisProfleControllerTest {
     
     @Test
     public void shouldNotSetIrisProfileIfUpiIsNotAlphanumeric() {
-        RegisteredUser user = new RegisteredUserBuilder().id(10).build();
+        User user = new UserBuilder().id(10).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(messageSourceMock.getMessage("account.iris.upi.invalid", null, null)).andReturn("account.iris.upi.invalid");
         EasyMock.replay(messageSourceMock, userServiceMock);
@@ -78,11 +78,11 @@ public class RegisteredUserIrisProfleControllerTest {
     @Test
     public void shouldSetIrisProfileForUserWithMultipleAccounts() {
         final String upi = "ABCDXX4";
-        RegisteredUser linkedUser = new RegisteredUserBuilder().id(11).build();
-        RegisteredUser user = new RegisteredUserBuilder().id(10).linkedAccounts(linkedUser).build();
+        User linkedUser = new UserBuilder().id(11).build();
+        User user = new UserBuilder().id(10).linkedAccounts(linkedUser).build();
         EasyMock.expect(irisServiceMock.profileExists(upi)).andReturn(true);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
-        EasyMock.expect(userServiceMock.getUsersWithUpi(upi)).andReturn(new ArrayList<RegisteredUser>());
+        EasyMock.expect(userServiceMock.getUsersWithUpi(upi)).andReturn(new ArrayList<User>());
         userServiceMock.save(user);
         userServiceMock.save(user);
         userServiceMock.save(linkedUser);
@@ -97,8 +97,8 @@ public class RegisteredUserIrisProfleControllerTest {
     @Test
     public void shouldNotSetIrisProfileIfUserTriesToEnterAlreadyRegisteredIrisProfile() {
         final String upi = "ABCDXX4";
-        RegisteredUser impersonator = new RegisteredUserBuilder().id(10).build();
-        RegisteredUser existingIrisProfile = new RegisteredUserBuilder().id(11).upi(upi).build();
+        User impersonator = new UserBuilder().id(10).build();
+        User existingIrisProfile = new UserBuilder().id(11).upi(upi).build();
         EasyMock.expect(irisServiceMock.profileExists(upi)).andReturn(true);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(impersonator);
         EasyMock.expect(userServiceMock.getUsersWithUpi(upi)).andReturn(Arrays.asList(existingIrisProfile));
@@ -113,9 +113,9 @@ public class RegisteredUserIrisProfleControllerTest {
     @Test
     public void shouldUnlinkIrisProfileForCurrentUser(){
         
-        RegisteredUser primaryAccount = new RegisteredUserBuilder().upi("666").build();
-        RegisteredUser currentUser = new RegisteredUserBuilder().upi("666").primaryAccount(primaryAccount).build();
-        RegisteredUser linkedSecondaryAccount = new RegisteredUserBuilder().upi("666").primaryAccount(primaryAccount).build();
+        User primaryAccount = new UserBuilder().upi("666").build();
+        User currentUser = new UserBuilder().upi("666").primaryAccount(primaryAccount).build();
+        User linkedSecondaryAccount = new UserBuilder().upi("666").primaryAccount(primaryAccount).build();
         primaryAccount.getLinkedAccounts().addAll(Arrays.asList(currentUser, linkedSecondaryAccount));
         
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);

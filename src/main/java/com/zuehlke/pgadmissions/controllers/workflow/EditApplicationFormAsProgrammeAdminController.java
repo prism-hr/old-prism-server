@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -246,7 +246,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getCurrentUser() {
+    public User getCurrentUser() {
         return userService.getCurrentUser();
     }
 
@@ -266,7 +266,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getCurrentUser();
+        User user = getCurrentUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 

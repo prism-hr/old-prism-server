@@ -19,10 +19,10 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.QualificationInstitutionService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -80,7 +80,7 @@ public class QualificationInstitutionsControllerTest {
                 .code("ABC").build();
         Institution institution2 = new QualificationInstitutionBuilder().id(3).enabled(true).name("University of Cambridge").domicileCode("UK")
                 .code("ABCD").build();
-        RegisteredUser user = new RegisteredUser();
+        User user = new User();
 
         expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
         expect(domicileDAO.getDomicileById(0)).andReturn(domicile);

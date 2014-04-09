@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
@@ -49,19 +49,19 @@ public abstract class AbstractMailSendingService {
     @Autowired
     private MailSender mailSender;
     
-    protected String getAdminsEmailsCommaSeparatedAsString(final List<RegisteredUser> administrators) {
+    protected String getAdminsEmailsCommaSeparatedAsString(final List<User> administrators) {
         Set<String> administratorMails = new LinkedHashSet<String>();
-        for (RegisteredUser admin : administrators) {
+        for (User admin : administrators) {
             administratorMails.add(admin.getEmail());
         }
         return StringUtils.join(administratorMails.toArray(new String[] {}), ", ");
     }
 
-    protected PrismEmailMessage buildMessage(RegisteredUser recipient, String subject, Map<String, Object> model, EmailTemplateName templateName) {
+    protected PrismEmailMessage buildMessage(User recipient, String subject, Map<String, Object> model, EmailTemplateName templateName) {
         return buildMessage(recipient, null, subject, model, templateName);
     }
 
-    protected PrismEmailMessage buildMessage(RegisteredUser recipient, List<RegisteredUser> ccRecipients, String subject, Map<String, Object> model,
+    protected PrismEmailMessage buildMessage(User recipient, List<User> ccRecipients, String subject, Map<String, Object> model,
             EmailTemplateName templateName) {
         return new PrismEmailMessageBuilder().to(recipient).cc(ccRecipients).subject(subject).model(model).emailTemplate(templateName).build();
     }
@@ -83,7 +83,7 @@ public abstract class AbstractMailSendingService {
         if (previousStage == null) {
             return resolveMessage(templateName, form);
         }
-        RegisteredUser applicant = form.getApplicant();
+        User applicant = form.getApplicant();
         if (applicant == null) {
             throw new IllegalArgumentException("applicant must be provided!");
         }
@@ -94,7 +94,7 @@ public abstract class AbstractMailSendingService {
     }
 
     protected String resolveMessage(EmailTemplateName templateName, ApplicationForm applicationForm) {
-        RegisteredUser applicant = applicationForm.getApplicant();
+        User applicant = applicationForm.getApplicant();
         if (applicant == null) {
             return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm.getAdvert().getTitle());
         } else {

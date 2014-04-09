@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -115,7 +115,7 @@ public class ApprovalService {
             }
         } else if (project != null) {
             commentService.assignUser(approvalComment, project.getPrimarySupervisor(), true);
-            RegisteredUser secondarySupervisor = project.getSecondarySupervisor();
+            User secondarySupervisor = project.getSecondarySupervisor();
             if (secondarySupervisor != null) {
                 commentService.assignUser(approvalComment, secondarySupervisor, false);
             }
@@ -132,7 +132,7 @@ public class ApprovalService {
         return approvalComment;
     }
 
-    public void moveApplicationToApproval(ApplicationForm form, Comment newComment, RegisteredUser initiator) {
+    public void moveApplicationToApproval(ApplicationForm form, Comment newComment, User initiator) {
         checkSendToPorticoStatus(form);
 
         boolean sendReferenceRequest = form.getStatus().getId() == ApplicationFormStatus.VALIDATION;

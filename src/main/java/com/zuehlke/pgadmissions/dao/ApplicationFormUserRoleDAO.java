@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -50,14 +50,14 @@ public class ApplicationFormUserRoleDAO {
                 .add(Restrictions.in("role.id", authorities)).list();
     }
 
-    public List<ApplicationFormUserRole> getByApplicationFormAndUserAndAuthorities(ApplicationForm applicationForm, RegisteredUser user, Authority... authorities) {
+    public List<ApplicationFormUserRole> getByApplicationFormAndUserAndAuthorities(ApplicationForm applicationForm, User user, Authority... authorities) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("user", user))
                 .add(Restrictions.in("role.id", authorities)).list();
     }
     
-    public List<ApplicationFormUserRole> getByApplicationFormAndUserAndAuthoritiesWithActions(ApplicationForm applicationForm, RegisteredUser user, List<Authority> authorities) {
+    public List<ApplicationFormUserRole> getByApplicationFormAndUserAndAuthoritiesWithActions(ApplicationForm applicationForm, User user, List<Authority> authorities) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("applicationForm", applicationForm))

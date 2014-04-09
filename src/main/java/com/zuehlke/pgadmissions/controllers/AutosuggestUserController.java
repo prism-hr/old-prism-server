@@ -17,7 +17,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 
 @Controller
@@ -53,11 +53,11 @@ public class AutosuggestUserController {
         return convertToJson(searchService.getMatchingUsersWithEmailLike(searchTerm));
     }
     
-    private String convertToJson(final List<RegisteredUser> users) {
+    private String convertToJson(final List<User> users) {
         GsonBuilder gson = new GsonBuilder();
-        gson.registerTypeAdapter(RegisteredUser.class, new JsonSerializer<RegisteredUser>() {
+        gson.registerTypeAdapter(User.class, new JsonSerializer<User>() {
             @Override
-            public JsonElement serialize(final RegisteredUser src, final Type typeOfSrc, final JsonSerializationContext context) {
+            public JsonElement serialize(final User src, final Type typeOfSrc, final JsonSerializationContext context) {
                 JsonObject wrapper = new JsonObject();
                 wrapper.add("k", new JsonPrimitive(StringEscapeUtils.escapeHtml(src.getFirstName())));
                 wrapper.add("v", new JsonPrimitive(StringEscapeUtils.escapeHtml(src.getLastName())));

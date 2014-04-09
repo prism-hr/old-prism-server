@@ -20,10 +20,10 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -69,7 +69,7 @@ public class PrismWorkflowTest {
     
     @Test
     public void initializeWorkflowTest() throws Exception {
-        RegisteredUser superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, true,
+        User superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, true,
                 manageUsersService.getPrismSystem(), Authority.SUPERADMINISTRATOR);
 
         for (Importer importer : importers) {
@@ -90,7 +90,7 @@ public class PrismWorkflowTest {
                         .studyOptions("F++++,P++++")
                         .studyDuration(18)
                         .advertisingDeadlineYear(new DateTime().getYear() + 3)
-                        .author(new RegisteredUserBuilder().firstName("Jerzy").lastName("Urban").email("jerzy@urban.pl").password("password")
+                        .author(new UserBuilder().firstName("Jerzy").lastName("Urban").email("jerzy@urban.pl").password("password")
                                 .confirmPassword("password").build()).build(), false);
 
         
@@ -99,7 +99,7 @@ public class PrismWorkflowTest {
         Program savedProgram = opportunitiesService.respondToOpportunityRequest(opportunityRequest.getId(), opportunityRequest,
                 new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.APPROVE).content("Ok!").build());
         
-        RegisteredUser applicant = registrationService.submitRegistration(new RegisteredUserBuilder().firstName("Kuba").lastName("Fibinger").email("kuba@fibinger.pl").build());
+        User applicant = registrationService.submitRegistration(new UserBuilder().firstName("Kuba").lastName("Fibinger").email("kuba@fibinger.pl").build());
         applicant = registrationService.activateAccount(applicant.getActivationCode());
         
         ApplicationForm application = applicationFormService.getOrCreateApplication(applicant, savedProgram.getId());

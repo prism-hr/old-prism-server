@@ -19,10 +19,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormUserRoleBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -35,7 +35,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
     private Action comment;
     private Action eligibility;
     private Action reference;
-    private RegisteredUser user;
+    private User user;
     private Program program;
     private ApplicationForm application;
 
@@ -71,7 +71,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldFindApplicationFormUserRoleByApplicationFormAndUserAndAuthority() throws ParseException {
 
-        RegisteredUser secondUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@123.com").username("franek")
+        User secondUser = new UserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@123.com").username("franek")
                 .password("password").enabled(false).build();
         sessionFactory.getCurrentSession().save(secondUser);
 
@@ -238,7 +238,7 @@ public class ApplicationFormUserRoleDAOTest extends AutomaticRollbackTestCase {
         roleDAO = new RoleDAO(sessionFactory);
         applicationFormUserRoleDAO = new ApplicationFormUserRoleDAO(sessionFactory);
 
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
                 .build();
 
         Date lastUpdatedDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 06 2011 14:05:23");

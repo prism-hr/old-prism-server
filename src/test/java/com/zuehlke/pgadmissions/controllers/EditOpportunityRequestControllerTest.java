@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
@@ -165,7 +165,7 @@ public class EditOpportunityRequestControllerTest {
 
     @Test
     public void shouldRespondToOpportunityRequestWhenBindingErrors() {
-        RegisteredUser author = new RegisteredUser();
+        User author = new User();
         Date createdDate = new Date();
         Domicile institutionCountry = new DomicileBuilder().code("PL").build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).build();

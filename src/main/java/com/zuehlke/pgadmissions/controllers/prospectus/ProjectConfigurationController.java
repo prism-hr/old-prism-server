@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.converters.ProjectConverter;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -108,9 +108,9 @@ public class ProjectConfigurationController {
                     public JsonElement serialize(Program src, Type typeOfSrc, JsonSerializationContext context) {
                         return new JsonPrimitive(src.getCode());
                     }
-                }).registerTypeAdapter(RegisteredUser.class, new JsonSerializer<RegisteredUser>() {
+                }).registerTypeAdapter(User.class, new JsonSerializer<User>() {
                     @Override
-                    public JsonElement serialize(RegisteredUser supervisor, Type typeOfSrc, JsonSerializationContext context) {
+                    public JsonElement serialize(User supervisor, Type typeOfSrc, JsonSerializationContext context) {
                         Person person = new Person();
                         person.setEmail(supervisor.getEmail());
                         person.setFirstname(supervisor.getFirstName());
@@ -141,7 +141,7 @@ public class ProjectConfigurationController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public User getUser() {
         return userService.getCurrentUser();
     }
 
@@ -151,7 +151,7 @@ public class ProjectConfigurationController {
         Map<String, Object> map = getErrorValues(result, request);
 
         if (map.isEmpty()) {
-            RegisteredUser currentUser = getUser();
+            User currentUser = getUser();
             Project project = projectConverter.toDomainObject(projectDTO);
             project.setContactUser(currentUser);
             programsService.save(project);
@@ -180,7 +180,7 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/defaultPrimarySupervisor", method = RequestMethod.GET)
     @ResponseBody
     public String defaultSupervisor() {
-        RegisteredUser user = getUser();
+        User user = getUser();
         Person person = new Person();
         person.setFirstname(user.getFirstName());
         person.setLastname(user.getLastName());

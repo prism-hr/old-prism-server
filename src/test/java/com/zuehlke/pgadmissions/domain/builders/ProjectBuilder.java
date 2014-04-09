@@ -5,7 +5,7 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 public class ProjectBuilder {
 
@@ -16,12 +16,12 @@ public class ProjectBuilder {
     private String funding;
     private Boolean active = true;
     private Boolean enabled = true;
-    private RegisteredUser contactUser;
+    private User contactUser;
     private Program program;
     private Date closingDate;
-    private RegisteredUser administrator;
-    private RegisteredUser primarySupervisor;
-    private RegisteredUser secondarySupervisor;
+    private User administrator;
+    private User primarySupervisor;
+    private User secondarySupervisor;
 
     public ProjectBuilder id(Integer id) {
         this.id = id;
@@ -58,7 +58,7 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder contactUser(RegisteredUser contactUser) {
+    public ProjectBuilder contactUser(User contactUser) {
         this.contactUser = contactUser;
         return this;
     }
@@ -73,17 +73,17 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder administrator(RegisteredUser administrator) {
+    public ProjectBuilder administrator(User administrator) {
         this.administrator = administrator;
         return this;
     }
 
-    public ProjectBuilder primarySupervisor(RegisteredUser primarySupervisor) {
+    public ProjectBuilder primarySupervisor(User primarySupervisor) {
         this.primarySupervisor = primarySupervisor;
         return this;
     }
 
-    public ProjectBuilder secondarySupervisor(RegisteredUser secondarySupervisor) {
+    public ProjectBuilder secondarySupervisor(User secondarySupervisor) {
         this.secondarySupervisor = secondarySupervisor;
         return this;
     }

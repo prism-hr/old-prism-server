@@ -62,7 +62,7 @@ import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -97,7 +97,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private Boolean isOverseasStudent;
 
-    private RegisteredUser primarySupervisor;
+    private User primarySupervisor;
 
     private static class NoActiveProgrameInstanceFoundException extends RuntimeException {
         private final ProgrammeOccurrenceTp occurrenceTp;
@@ -152,7 +152,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         return this;
     }
 
-    public SubmitAdmissionsApplicationRequestBuilderV2 primarySupervisor(RegisteredUser primarySupervisor) {
+    public SubmitAdmissionsApplicationRequestBuilderV2 primarySupervisor(User primarySupervisor) {
         this.primarySupervisor = primarySupervisor;
         return this;
     }
@@ -217,7 +217,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private NameTp buildFullName() {
         NameTp nameTp = xmlFactory.createNameTp();
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        RegisteredUser applicant = applicationForm.getApplicant();
+        User applicant = applicationForm.getApplicant();
         nameTp.setSurname(applicant.getLastName());
         nameTp.setForename1(applicant.getFirstName());
         nameTp.setForename2(applicant.getFirstName2());

@@ -15,9 +15,9 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
@@ -25,7 +25,7 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
     private PendingRoleNotificationDAO pendingRoleNotificationDAO;
     private RoleDAO roleDAO;
     private Program program;
-    private RegisteredUser user;
+    private User user;
 
     @Test
     public void shouldReturAllPendingRoleNotifications() {
@@ -65,7 +65,7 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
     public void initialise() {
         pendingRoleNotificationDAO = new PendingRoleNotificationDAO(sessionFactory);
         roleDAO = new RoleDAO(sessionFactory);
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
                 .build();
         save(user);
         flushAndClearSession();

@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramUserRole;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ProjectUserRole;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SystemUserRole;
 import com.zuehlke.pgadmissions.domain.UserRole;
@@ -54,12 +54,12 @@ public class RoleDAO {
         return (T) sessionFactory.getCurrentSession().merge(userRole);
     }
 
-    public List<Role> getSystemUserRoles(RegisteredUser user) {
+    public List<Role> getSystemUserRoles(User user) {
         return sessionFactory.getCurrentSession().createCriteria(SystemUserRole.class).setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
     }
 
-    public List<Role> getInstitutionUserRoles(Institution institution, RegisteredUser user) {
+    public List<Role> getInstitutionUserRoles(Institution institution, User user) {
         List<Role> institutionRoles = sessionFactory.getCurrentSession().createCriteria(InstitutionUserRole.class)
                 .setProjection(Projections.groupProperty("id.role")).createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("id.institution", institution)).add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
@@ -67,7 +67,7 @@ public class RoleDAO {
         return institutionRoles;
     }
 
-    public List<Role> getProgramUserRoles(Program program, RegisteredUser user) {
+    public List<Role> getProgramUserRoles(Program program, User user) {
         List<Role> programRoles = sessionFactory.getCurrentSession().createCriteria(ProgramUserRole.class).setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("id.program", program))
                 .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
@@ -75,7 +75,7 @@ public class RoleDAO {
         return programRoles;
     }
 
-    public List<Role> getProjectUserRoles(Project project, RegisteredUser user) {
+    public List<Role> getProjectUserRoles(Project project, User user) {
         List<Role> projectRoles = sessionFactory.getCurrentSession().createCriteria(ProjectUserRole.class).setProjection(Projections.groupProperty("role"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("project", project))
                 .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
@@ -83,13 +83,13 @@ public class RoleDAO {
         return projectRoles;
     }
 
-    public List<Role> getApplicationFormUserRoles(ApplicationForm application, RegisteredUser user) {
+    public List<Role> getApplicationFormUserRoles(ApplicationForm application, User user) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class).setProjection(Projections.groupProperty("id.role"))
                 .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("id.applicationForm", application))
                 .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
     }
 
-    public List<Role> getUserRoles(RegisteredUser user) {
+    public List<Role> getUserRoles(User user) {
         List<Role> roles = getSystemUserRoles(user);
 
         roles.addAll(sessionFactory.getCurrentSession().createCriteria(InstitutionUserRole.class).setProjection(Projections.groupProperty("id.role"))
@@ -108,7 +108,7 @@ public class RoleDAO {
         return roles;
     }
 
-    public List<RegisteredUser> getUsersInSystemRole(Authority[] authorities) {
+    public List<User> getUsersInSystemRole(Authority[] authorities) {
         // TODO Auto-generated method stub, sort by first and last names
         return null;
     }

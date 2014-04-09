@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
@@ -116,7 +116,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldGetProgramsForWhichCanManageProjects() {
-        RegisteredUser userMock = EasyMockUnitils.createMock(RegisteredUser.class);
+        User userMock = EasyMockUnitils.createMock(User.class);
 
         List<Program> programs = Collections.emptyList();
         EasyMock.expect(programDAOMock.getProgramsForWhichUserCanManageProjects(userMock)).andReturn(programs);
@@ -182,7 +182,7 @@ public class ProgramsServiceTest {
         Domicile domicile = new Domicile();
         ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
 
-        RegisteredUser requestAuthor = new RegisteredUser();
+        User requestAuthor = new User();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, domicile).otherInstitution("other_name").build();
         Institution institution = new QualificationInstitutionBuilder().build();
 
@@ -208,7 +208,7 @@ public class ProgramsServiceTest {
     public void shouldGetCustomProgram() {
         ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
         Program program = new ProgramBuilder().institution(new QualificationInstitutionBuilder().code("any_inst").build()).build();
-        RegisteredUser requestAuthor = new RegisteredUser();
+        User requestAuthor = new User();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, null).institutionCode("any_inst")
                 .atasRequired(true).sourceProgram(program).acceptingApplications(true).build();
 

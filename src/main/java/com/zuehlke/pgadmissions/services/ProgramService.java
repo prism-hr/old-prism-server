@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -67,7 +67,7 @@ public class ProgramService {
         return programDAO.getProgramByCode(code);
     }
 
-    public List<Program> getProgramsForWhichCanManageProjects(RegisteredUser user) {
+    public List<Program> getProgramsForWhichCanManageProjects(User user) {
         return programDAO.getProgramsForWhichUserCanManageProjects(user);
     }
 
@@ -93,7 +93,7 @@ public class ProgramService {
         }
     }
 
-    public List<Project> listProjects(RegisteredUser user, Program program) {
+    public List<Project> listProjects(User user, Program program) {
         // TODO implement
         return null;
     }
@@ -168,7 +168,7 @@ public class ProgramService {
         return program;
     }
 
-    protected void grantAdminPermissionsForProgram(RegisteredUser user, Program program) {
+    protected void grantAdminPermissionsForProgram(User user, Program program) {
         // TODO try to reuse any method from RoleService
         throw new UnsupportedOperationException();
 //        if (!HibernateUtils.containsEntity(user.getInstitutions(), program.getInstitution())) {
@@ -204,7 +204,7 @@ public class ProgramService {
         return program;
     }
 
-    public boolean canChangeInstitution(RegisteredUser user, OpportunityRequest opportunityRequest) {
+    public boolean canChangeInstitution(User user, OpportunityRequest opportunityRequest) {
         if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
             return true;
         }
@@ -270,8 +270,8 @@ public class ProgramService {
         return programDAO.getNextClosingDate(program);
     }
     
-    protected RegisteredUser getContactUserForProgram(Program program, RegisteredUser candidateUser) {
-        List<RegisteredUser> administrators = roleService.getProgramAdministrators(program);
+    protected User getContactUserForProgram(Program program, User candidateUser) {
+        List<User> administrators = roleService.getProgramAdministrators(program);
         if (!administrators.isEmpty()) {
             if (administrators.contains(candidateUser)) {
                 return candidateUser;

@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
@@ -44,14 +44,14 @@ import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class ValidApplicationFormBuilder {
 
-    protected RegisteredUser user;
+    protected User user;
     protected Document cvDocument;
     protected Document referenceDocument;
     protected Document personalStatement;
     protected Document proofOfAwardDocument;
     protected Document languageQualificationDocument;
     protected Document fundingDocument;
-    protected RegisteredUser approverUser;
+    protected User approverUser;
     protected Country country;
     protected Address address;
     protected ReferenceComment referenceComment1;
@@ -80,7 +80,7 @@ public class ValidApplicationFormBuilder {
     public ValidApplicationFormBuilder() {
     }
 
-    protected Document getRandomDocument(DocumentType docType, String filename, RegisteredUser user) {
+    protected Document getRandomDocument(DocumentType docType, String filename, User user) {
         try {
             Resource testFileAsResurce = new ClassPathResource("/pdf/valid.pdf");
             Document document = new DocumentBuilder().dateUploaded(new Date()).contentType("application/pdf").fileName(filename)
@@ -108,7 +108,7 @@ public class ValidApplicationFormBuilder {
 
     public ApplicationForm build() {
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";
-        user = new RegisteredUserBuilder().firstName("Kevin").firstName2("Franciszek").firstName3("Duncan").lastName("Denver").username("denk@zhaw.ch")
+        user = new UserBuilder().firstName("Kevin").firstName2("Franciszek").firstName3("Duncan").lastName("Denver").username("denk@zhaw.ch")
                 .email("ked@zuhlke.com").enabled(true).build();
         cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);
         referenceDocument = getRandomDocument(DocumentType.REFERENCE, "My Reference.pdf", user);
@@ -116,7 +116,7 @@ public class ValidApplicationFormBuilder {
         proofOfAwardDocument = getRandomDocument(DocumentType.PROOF_OF_AWARD, "My Proof of Award.pdf", user);
         languageQualificationDocument = getRandomDocument(DocumentType.LANGUAGE_QUALIFICATION, "Language Qualification - My Name.pdf", user);
         fundingDocument = getRandomDocument(DocumentType.SUPPORTING_FUNDING, "Supporting Funding - My Name.pdf", user);
-        approverUser = new RegisteredUserBuilder().id(Integer.MAX_VALUE - 1).username("approver@zhaw.ch").enabled(true).build();
+        approverUser = new UserBuilder().id(Integer.MAX_VALUE - 1).username("approver@zhaw.ch").enabled(true).build();
         country = new CountryBuilder().code("XK").name("United Kingdom").enabled(true).build();
         domicile = new DomicileBuilder().code("XK").name("United Kingdom").enabled(true).build();
         address = new AddressBuilder().domicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1])

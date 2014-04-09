@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -23,9 +23,9 @@ public class ManageUsersService {
     @Autowired
     private MailSendingService mailService;
 
-    public RegisteredUser setUserRoles(String firstname, String lastname, String email, boolean createIfNotExist, boolean replaceRoles, PrismScope scope,
+    public User setUserRoles(String firstname, String lastname, String email, boolean createIfNotExist, boolean replaceRoles, PrismScope scope,
             Authority... authorities) {
-        RegisteredUser user = userService.getUser(firstname, lastname, email, createIfNotExist);
+        User user = userService.getUser(firstname, lastname, email, createIfNotExist);
         if (replaceRoles) {
             roleService.removeRoles(user, scope);
         }

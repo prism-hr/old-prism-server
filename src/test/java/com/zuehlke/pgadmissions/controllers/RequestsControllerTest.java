@@ -18,7 +18,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -45,7 +45,7 @@ public class RequestsControllerTest {
 	@Test
 	public void shouldListOpportunityRequests() {
 		ArrayList<OpportunityRequest> opportunityRequests = Lists.newArrayList();
-		RegisteredUser user = new RegisteredUser();
+		User user = new User();
 
 		expect(userService.getCurrentUser()).andReturn(user);
         expect(opportunitiesService.listOpportunityRequests(user)).andReturn(opportunityRequests);

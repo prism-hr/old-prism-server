@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -58,7 +58,7 @@ public class ApplicationsReportService {
     @Value("${application.host}") 
     private String host;
 
-    public DataTable getApplicationsReport(RegisteredUser user, ApplicationsFiltering filtering, ReportFormat reportType) {
+    public DataTable getApplicationsReport(User user, ApplicationsFiltering filtering, ReportFormat reportType) {
         // TODO implement report functionality (supposedly using query and write new tests)
         DataTable data = new DataTable();
 
@@ -170,7 +170,7 @@ public class ApplicationsReportService {
             }
 
             try {
-                RegisteredUser applicant = app.getApplicant();
+                User applicant = app.getApplicant();
                 PersonalDetails personalDetails = app.getPersonalDetails();
                 String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
                 Program program = app.getProgram();

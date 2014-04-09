@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Service
@@ -60,7 +60,7 @@ public class StateTransitionService {
 
     }
 
-    public List<ApplicationFormStatus> getAssignableNextStati(final ApplicationForm application, final RegisteredUser user) {
+    public List<ApplicationFormStatus> getAssignableNextStati(final ApplicationForm application, final User user) {
         ApplicationFormStatus status = application.getStatus().getId();
         // FIXME check permissions
         boolean canAdministerApplication = true; // permissionsService.canAdministerApplication(application, user);

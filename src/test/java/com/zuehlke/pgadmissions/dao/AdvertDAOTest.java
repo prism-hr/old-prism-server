@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.builders.ResearchOpportunitiesFeedBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -84,7 +84,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldGetAdvertsByUserUsername() {
-        RegisteredUser testUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        User testUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
         String testUserUsername = testUser.getUsername();
         
         List<Integer> advertIds = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
@@ -122,7 +122,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetAdvertsByUserUpi() {
         String testUPI = "testUPI";
-        RegisteredUser testUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        User testUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
         testUser.setUpi(testUPI);
         save(testUser);
         

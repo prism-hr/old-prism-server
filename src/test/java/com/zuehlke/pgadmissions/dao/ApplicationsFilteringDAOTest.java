@@ -9,16 +9,16 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 
 public class ApplicationsFilteringDAOTest extends AutomaticRollbackTestCase {
 
-    private RegisteredUser user;
+    private User user;
 
     @Test
     public void shouldMergeFiltering() {
@@ -40,7 +40,7 @@ public class ApplicationsFilteringDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .enabled(false).build();
         save(user);
         flushAndClearSession();

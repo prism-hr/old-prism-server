@@ -15,7 +15,7 @@ public class ProjectUserRole implements UserRole {
     @EmbeddedId
     ProjectUserRolePrimaryKey id;
 
-    public ProjectUserRole(Project project, RegisteredUser user, Role role) {
+    public ProjectUserRole(Project project, User user, Role role) {
         this.setId(project, user, role);
     }
 
@@ -23,7 +23,7 @@ public class ProjectUserRole implements UserRole {
         return id;
     }
 
-    public void setId(Project project, RegisteredUser user, Role role) {
+    public void setId(Project project, User user, Role role) {
         id.setProject(project);
         id.setUser(user);
         id.setRole(role);
@@ -38,7 +38,7 @@ public class ProjectUserRole implements UserRole {
         protected Project project;
 
         @Column(name = "registered_user_id")
-        protected RegisteredUser user;
+        protected User user;
 
         @Column(name = "application_role_id")
         protected Role role;
@@ -46,7 +46,7 @@ public class ProjectUserRole implements UserRole {
         public ProjectUserRolePrimaryKey() {
         }
 
-        public ProjectUserRolePrimaryKey(Project project, RegisteredUser user, Role role) {
+        public ProjectUserRolePrimaryKey(Project project, User user, Role role) {
             this.project = project;
             this.user = user;
             this.role = role;
@@ -60,11 +60,11 @@ public class ProjectUserRole implements UserRole {
             this.project = project;
         }
 
-        public RegisteredUser getUser() {
+        public User getUser() {
             return user;
         }
 
-        public void setUser(RegisteredUser user) {
+        public void setUser(User user) {
             this.user = user;
         }
 

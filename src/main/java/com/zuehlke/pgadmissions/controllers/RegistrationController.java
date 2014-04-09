@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -50,13 +50,13 @@ public class RegistrationController {
     private ProgramService programService;
 
     @RequestMapping(value = "/submit", method = RequestMethod.GET)
-    public String defaultGet(@ModelAttribute("pendingUser") RegisteredUser pendingUser, Model model, HttpSession session) {
+    public String defaultGet(@ModelAttribute("pendingUser") User pendingUser, Model model, HttpSession session) {
         model.addAttribute("pendingUser", pendingUser);
         return TemplateLocation.REGISTRATION_FORM;
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
-    public String submitRegistration(@ModelAttribute("pendingUser") RegisteredUser pendingUser, BindingResult result, Model model, HttpServletRequest request) {
+    public String submitRegistration(@ModelAttribute("pendingUser") User pendingUser, BindingResult result, Model model, HttpServletRequest request) {
         registerFormValidator.validate(pendingUser, result);
 
         if (result.hasErrors()) {
@@ -65,15 +65,15 @@ public class RegistrationController {
         }
 
         Integer advertId = (Integer) request.getSession().getAttribute("requestAdvertId");
-        RegisteredUser registeredUser = registrationService.submitRegistration(pendingUser);
-        model.addAttribute("pendingUser", registeredUser);
+        User user = registrationService.submitRegistration(pendingUser);
+        model.addAttribute("pendingUser", user);
         return TemplateLocation.REGISTRATION_SUCCESS_CONFIRMATION;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/resendConfirmation")
     public String resendConfirmation(@RequestParam String activationCode, Model model) {
 
-        RegisteredUser user = userService.getUserByActivationCode(activationCode);
+        User user = userService.getUserByActivationCode(activationCode);
         if (user == null) {
             throw new ResourceNotFoundException();
         }
@@ -85,7 +85,7 @@ public class RegistrationController {
     @RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
     public String activateAccountSubmit(@RequestParam String activationCode, HttpServletRequest request) {
         
-        RegisteredUser user = registrationService.activateAccount(activationCode);
+        User user = registrationService.activateAccount(activationCode);
         
         if (user == null) {
             return TemplateLocation.REGISTRATION_FAILURE_CONFIRMATION;
@@ -115,7 +115,7 @@ public class RegistrationController {
         return redirectView;
     }
 
-    private String createApplicationAndReturnApplicationViewValue(final RegisteredUser user) {
+    private String createApplicationAndReturnApplicationViewValue(final User user) {
         ApplicationForm application = applicationFormService.getOrCreateApplication(user, user.getAdvert().getId());
         return RedirectLocation.CREATE_APPLICATION + application.getApplicationNumber();
     }
@@ -124,7 +124,7 @@ public class RegistrationController {
     public String getRegisterPage(@RequestParam(required = false) String activationCode, @RequestParam(required = false) String directToUrl,
             @RequestParam(required = false) String advert, Model modelMap, HttpServletRequest request, HttpSession session) {
         session.removeAttribute("CLICKED_ON_ALREADY_REGISTERED");
-        RegisteredUser pendingUser = getPendingUser(activationCode, directToUrl);
+        User pendingUser = getPendingUser(activationCode, directToUrl);
         if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
             return RedirectLocation.LOGIN;
         }
@@ -138,7 +138,7 @@ public class RegistrationController {
         }
 
         if (pendingUser == null) {
-            pendingUser = new RegisteredUser();
+            pendingUser = new User();
         }
 
         pendingUser.setDirectToUrl(directToUrl);
@@ -155,12 +155,12 @@ public class RegistrationController {
         return TemplateLocation.REGISTRATION_FORM;
     }
 
-    public RegisteredUser getPendingUser(final String activationCode, final String directToUrl) {
+    public User getPendingUser(final String activationCode, final String directToUrl) {
         if (StringUtils.isBlank(activationCode)) {
             return null;
         }
 
-        RegisteredUser pendingUser = userService.getUserByActivationCode(activationCode);
+        User pendingUser = userService.getUserByActivationCode(activationCode);
         if (pendingUser == null) {
             throw new ResourceNotFoundException();
         }

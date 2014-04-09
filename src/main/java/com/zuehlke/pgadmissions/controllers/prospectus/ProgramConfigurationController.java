@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramType;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -134,13 +134,13 @@ public class ProgramConfigurationController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public User getUser() {
         return userService.getCurrentUser();
     }
 
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
-        RegisteredUser user = userService.getCurrentUser();
+        User user = userService.getCurrentUser();
         if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }
@@ -191,7 +191,7 @@ public class ProgramConfigurationController {
             }
         } else {
             map = Maps.newHashMap();
-            RegisteredUser currentUser = getUser();
+            User currentUser = getUser();
             opportunityRequest.setAuthor(currentUser);
             if (programsService.canChangeInstitution(currentUser, opportunityRequest)) {
                 Program program = programsService.saveProgramOpportunity(opportunityRequest);

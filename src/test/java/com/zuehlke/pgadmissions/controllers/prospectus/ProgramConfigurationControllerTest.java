@@ -33,7 +33,7 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
@@ -179,7 +179,7 @@ public class ProgramConfigurationControllerTest {
         Program program = new ProgramBuilder().code("p07").build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().sourceProgram(program).build();
         BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
-        RegisteredUser user = new RegisteredUser();
+        User user = new User();
 
         expect(userService.getCurrentUser()).andReturn(user);
         expect(programsService.canChangeInstitution(user, opportunityRequest)).andReturn(true);
@@ -198,7 +198,7 @@ public class ProgramConfigurationControllerTest {
         Program program = new ProgramBuilder().code("p07").build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().sourceProgram(program).build();
         BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
-        RegisteredUser user = new RegisteredUser();
+        User user = new User();
 
         expect(userService.getCurrentUser()).andReturn(user);
         expect(programsService.canChangeInstitution(user, opportunityRequest)).andReturn(false);

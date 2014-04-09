@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
@@ -110,7 +110,7 @@ public class PersonalDetailsController {
     }
 
     @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
-    public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult, @Valid RegisteredUser updatedUser,
+    public String editPersonalDetails(@Valid PersonalDetails personalDetails, BindingResult personalDetailsResult, @Valid User updatedUser,
             BindingResult userResult, ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
         if (personalDetailsResult.hasErrors() || userResult.hasErrors()) {
             returnView(modelMap, personalDetails, updatedUser);
@@ -187,7 +187,7 @@ public class PersonalDetailsController {
         return LanguageQualificationEnum.values();
     }
 
-    private String returnView(ModelMap modelMap, PersonalDetails personalDetails, RegisteredUser updatedUser) {
+    private String returnView(ModelMap modelMap, PersonalDetails personalDetails, User updatedUser) {
         modelMap.put("personalDetails", personalDetails);
         modelMap.put("updatedUser", updatedUser);
         return TemplateLocation.APPLICATION_APPLICANT_PERSONAL_DETAIL;

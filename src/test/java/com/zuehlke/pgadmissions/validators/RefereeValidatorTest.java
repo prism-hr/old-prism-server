@@ -14,11 +14,11 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -34,12 +34,12 @@ public class RefereeValidatorTest {
 	
 	private UserService userServiceMock;
 	
-	private RegisteredUser currentUser;
+	private User currentUser;
 	
 	@Before
     public void setup() {
 	    userServiceMock = EasyMock.createMock(UserService.class);
-        currentUser = new RegisteredUserBuilder().id(9).email("me@test.com").build();
+        currentUser = new UserBuilder().id(9).email("me@test.com").build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
         referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).build())

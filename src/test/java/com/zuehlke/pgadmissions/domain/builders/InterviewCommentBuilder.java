@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 public class InterviewCommentBuilder {
 
@@ -17,7 +17,7 @@ public class InterviewCommentBuilder {
     private String content;
     private Integer id;
     private Date createdTimeStamp;
-    private RegisteredUser user;
+    private User user;
 
     public InterviewCommentBuilder createdTimeStamp(Date createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
@@ -64,7 +64,7 @@ public class InterviewCommentBuilder {
         return this;
     }
 
-    public InterviewCommentBuilder user(RegisteredUser user) {
+    public InterviewCommentBuilder user(User user) {
         this.user = user;
         return this;
     }

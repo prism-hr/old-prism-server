@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -48,7 +48,7 @@ public class ViewEditApplicationFormController {
 
     @RequestMapping(method = RequestMethod.GET, value = "application")
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
-        RegisteredUser user = userService.getCurrentUser();
+        User user = userService.getCurrentUser();
         ApplicationFormAction viewEditAction = actionService.getPrecedentAction(applicationForm, user, ActionType.VIEW_EDIT);
 
         switch (viewEditAction) {
@@ -75,7 +75,7 @@ public class ViewEditApplicationFormController {
         return applicationFormService.getSecuredApplication(applicationId, viewActions.toArray(new ApplicationFormAction[viewActions.size()]));
     }
 
-    private String getApplicationView(ApplicationForm application, RegisteredUser user, HttpServletRequest request) {
+    private String getApplicationView(ApplicationForm application, User user, HttpServletRequest request) {
         applicationFormService.openApplicationForView(application, user);
         if (request != null && request.getParameter("embeddedApplication") != null && request.getParameter("embeddedApplication").equals("true")) {
             return TemplateLocation.APPLICATION_STAFF_EMBEDDED_FORM;

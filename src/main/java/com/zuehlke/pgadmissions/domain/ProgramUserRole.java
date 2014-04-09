@@ -15,7 +15,7 @@ public class ProgramUserRole implements UserRole {
     @EmbeddedId
     ProgramUserRolePrimaryKey id;
 
-    public ProgramUserRole(Program program, RegisteredUser user, Role role) {
+    public ProgramUserRole(Program program, User user, Role role) {
         setId(program, user, role);
     }
 
@@ -23,7 +23,7 @@ public class ProgramUserRole implements UserRole {
         return id;
     }
 
-    public void setId(Program program, RegisteredUser user, Role role) {
+    public void setId(Program program, User user, Role role) {
         id.setProgram(program);
         id.setUser(user);
         id.setRole(role);
@@ -38,7 +38,7 @@ public class ProgramUserRole implements UserRole {
         protected Program program;
 
         @Column(name = "registered_user_id")
-        protected RegisteredUser user;
+        protected User user;
 
         @Column(name = "application_role_id")
         protected Role role;
@@ -46,7 +46,7 @@ public class ProgramUserRole implements UserRole {
         public ProgramUserRolePrimaryKey() {
         }
 
-        public ProgramUserRolePrimaryKey(Program program, RegisteredUser user, Role role) {
+        public ProgramUserRolePrimaryKey(Program program, User user, Role role) {
             this.program = program;
             this.user = user;
             this.role = role;
@@ -60,11 +60,11 @@ public class ProgramUserRole implements UserRole {
             this.program = program;
         }
 
-        public RegisteredUser getUser() {
+        public User getUser() {
             return user;
         }
 
-        public void setUser(RegisteredUser user) {
+        public void setUser(User user) {
             this.user = user;
         }
 

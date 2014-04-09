@@ -24,11 +24,11 @@ import org.springframework.validation.Errors;
 
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectDTOBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -327,8 +327,8 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
         EasyMock.replay(userService);
     }
 
-    private RegisteredUser createRegisteredUser() {
-        RegisteredUserBuilder builder = new RegisteredUserBuilder();
+    private User createRegisteredUser() {
+        UserBuilder builder = new UserBuilder();
         builder.id(1).firstName(primarySupervisor.getFirstname()).lastName(primarySupervisor.getLastname()).email(primarySupervisor.getEmail());
         return builder.build();
     }

@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class UsersInProgrammeControllerTest {
 	private UserService userServiceMock;
 	private ProgramService programsServiceMock;
-	private RegisteredUser currentUserMock;
+	private User currentUserMock;
 	private UsersInProgrammeController controller;
 
 	@Test(expected = ResourceNotFoundException.class)

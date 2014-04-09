@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -48,7 +48,7 @@ public class InterviewService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void moveApplicationToInterview(RegisteredUser user, final AssignInterviewersComment interviewComment, ApplicationForm applicationForm) {
+    public void moveApplicationToInterview(User user, final AssignInterviewersComment interviewComment, ApplicationForm applicationForm) {
         interviewComment.setApplication(applicationForm);
         
         applicationsService.setApplicationStatus(applicationForm, ApplicationFormStatus.INTERVIEW);
@@ -85,18 +85,18 @@ public class InterviewService {
         applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
     }
 
-    public void postVote(InterviewVoteComment interviewVoteComment, RegisteredUser registeredUser) {
+    public void postVote(InterviewVoteComment interviewVoteComment, User user) {
         ApplicationForm application = interviewVoteComment.getApplication();
         AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(
                 application, ApplicationFormAction.ASSIGN_INTERVIEWERS);
         commentService.save(interviewVoteComment);
         applicationFormUserRoleService.interviewParticipantResponded(interviewVoteComment);
-        applicationFormUserRoleService.insertApplicationUpdate(interviewVoteComment.getApplication(), registeredUser,
+        applicationFormUserRoleService.insertApplicationUpdate(interviewVoteComment.getApplication(), user,
                 ApplicationUpdateScope.INTERNAL);
-        mailService.sendInterviewVoteConfirmationToAdministrators(application, registeredUser);
+        mailService.sendInterviewVoteConfirmationToAdministrators(application, user);
     }
 
-    public void confirmInterview(RegisteredUser user, ApplicationForm applicationForm, InterviewConfirmDTO interviewConfirmDTO) {
+    public void confirmInterview(User user, ApplicationForm applicationForm, InterviewConfirmDTO interviewConfirmDTO) {
         InterviewService thisBean = applicationContext.getBean(InterviewService.class);
 
         Integer timeslotId = interviewConfirmDTO.getTimeslotId();
@@ -144,7 +144,7 @@ public class InterviewService {
         final ApplicationForm applicationForm = comment.getApplication();
         try {
             mailService.sendInterviewConfirmationToApplicant(applicationForm);
-            List<RegisteredUser> interviewerUsers = Lists.newArrayList();
+            List<User> interviewerUsers = Lists.newArrayList();
             for (CommentAssignedUser interviewer : comment.getAssignedUsers()) {
                 interviewerUsers.add(interviewer.getUser());
             }
@@ -154,7 +154,7 @@ public class InterviewService {
         }
     }
 
-    private InterviewScheduleComment createInterviewScheduleComment(RegisteredUser user, ApplicationForm application, String interviewInstructions,
+    private InterviewScheduleComment createInterviewScheduleComment(User user, ApplicationForm application, String interviewInstructions,
             String locationUrl) {
         InterviewScheduleComment scheduleComment = new InterviewScheduleComment();
         scheduleComment.setContent("");

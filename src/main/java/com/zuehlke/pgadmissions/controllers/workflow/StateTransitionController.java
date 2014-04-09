@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -90,18 +90,18 @@ public class StateTransitionController {
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getCurrentUser();
+        User user = getCurrentUser();
         return applicationFormService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("stateChangeDTO")
     public StateChangeDTO getStateChangeDTO(@RequestParam String applicationId, @RequestParam(required = false) String action) {
-    	RegisteredUser registeredUser = getCurrentUser();
+    	User user = getCurrentUser();
     	ApplicationForm applicationForm = getApplicationForm(applicationId);
     	
     	StateChangeDTO stateChangeDTO = new StateChangeDTO();
     	stateChangeDTO.setAction(action);
-    	stateChangeDTO.setRegisteredUser(registeredUser);
+    	stateChangeDTO.setUser(user);
     	stateChangeDTO.setApplicationForm(applicationForm);
     	
     	if (applicationForm.getStatus().getId() == ApplicationFormStatus.VALIDATION) {
@@ -109,13 +109,13 @@ public class StateTransitionController {
 	    	stateChangeDTO.setHomeOrOverseasOptions(HomeOrOverseas.values());
     	}
 
-    	stateChangeDTO.setStati(stateTransitionService.getAssignableNextStati(applicationForm, registeredUser));
+    	stateChangeDTO.setStati(stateTransitionService.getAssignableNextStati(applicationForm, user));
     	return stateChangeDTO;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPage")
     public String getStateTransitionView(@ModelAttribute StateChangeDTO stateChangeDTO) {
-        RegisteredUser registeredUser = stateChangeDTO.getRegisteredUser();
+        User user = stateChangeDTO.getUser();
         ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
         String action = stateChangeDTO.getAction();
 
@@ -132,11 +132,11 @@ public class StateTransitionController {
                 latestStateChangeComment = applicationFormService.getLatestStateChangeComment(applicationForm, null);
             }
 
-            if (latestStateChangeComment.getUser() == registeredUser) {
+            if (latestStateChangeComment.getUser() == user) {
                 stateChangeDTO.setComment(latestStateChangeComment.getContent());
                 stateChangeDTO.setDocuments(latestStateChangeComment.getDocuments());
 
-                RegisteredUser delegateAdministrator = latestStateChangeComment.getDelegateAdministrator();
+                User delegateAdministrator = latestStateChangeComment.getDelegateAdministrator();
 
                 if (delegateAdministrator != null) {
                     stateChangeDTO.setDelegate(true);
@@ -156,7 +156,7 @@ public class StateTransitionController {
             stateChangeDTO.setDelegate(false);
         }
 
-        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, registeredUser);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return stateTransitionService.resolveView(applicationForm, action);
     }
 
@@ -185,8 +185,8 @@ public class StateTransitionController {
         	}
         }
 
-        RegisteredUser registeredUser = stateChangeDTO.getRegisteredUser();
-        actionService.validateAction(applicationForm, registeredUser, invokedAction);
+        User user = stateChangeDTO.getUser();
+        actionService.validateAction(applicationForm, user, invokedAction);
 
         if (result.hasErrors()) {
             return STATE_TRANSITION_VIEW;
@@ -210,7 +210,7 @@ public class StateTransitionController {
         return stateTransitionService.resolveView(applicationForm);
     }
 
-    public RegisteredUser getCurrentUser() {
+    public User getCurrentUser() {
         return userService.getCurrentUser();
     }
 

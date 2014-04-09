@@ -7,8 +7,8 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -22,7 +22,7 @@ public class UserPropertyEditorTest {
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
-		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
+		User user = new UserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
 		EasyMock.replay(userServiceMock, encryptionHelperMock);
 		
@@ -56,7 +56,7 @@ public class UserPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnNullIfValueIdIsNull(){			
-		editor.setValue(new RegisteredUserBuilder().build());
+		editor.setValue(new UserBuilder().build());
 		assertNull(editor.getAsText());
 	}
 	
@@ -64,7 +64,7 @@ public class UserPropertyEditorTest {
 	public void shouldReturnEncryptedIdAsString(){
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.replay(encryptionHelperMock);
-		editor.setValue(new RegisteredUserBuilder().id(5).build());
+		editor.setValue(new UserBuilder().id(5).build());
 		assertEquals("bob", editor.getAsText());
 	}
 	

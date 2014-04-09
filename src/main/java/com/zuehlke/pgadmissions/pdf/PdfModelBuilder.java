@@ -47,7 +47,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
@@ -224,7 +224,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newTableCell("Applicant", SMALL_BOLD_FONT));
 
-        RegisteredUser applicant = form.getApplicant();
+        User applicant = form.getApplicant();
         String fullName = Joiner.on(" ").skipNulls()
                 .join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3(), applicant.getLastName());
         table.addCell(newTableCell(fullName, SMALL_FONT));

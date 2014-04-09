@@ -14,8 +14,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -32,17 +32,17 @@ public class AccountValidatorTest {
 
     private UserService userServiceMock;
 
-    private RegisteredUser user;
+    private User user;
 
-    private RegisteredUser currentUser;
+    private User currentUser;
 
     @Before
     public void setup() {
         userServiceMock = EasyMock.createMock(UserService.class);
         encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
-        user = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678")
+        user = new UserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678")
                 .newPassword("12345678").password("5f4dcc3b5aa").build();
-        currentUser = new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com")
+        currentUser = new UserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com")
                 .confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
@@ -52,7 +52,7 @@ public class AccountValidatorTest {
 
     @Test
     public void shouldSupportApplicantRecordValidator() {
-        assertTrue(accountValidator.supports(RegisteredUser.class));
+        assertTrue(accountValidator.supports(User.class));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class AccountValidatorTest {
 
     @Test
     public void shouldRejectIfNewEmailAlreadyExists() {
-        RegisteredUser existingUser = new RegisteredUserBuilder().id(2).username("email2@test.com").firstName("bob").lastName("bobson")
+        User existingUser = new UserBuilder().id(2).username("email2@test.com").firstName("bob").lastName("bobson")
                 .email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
 
         user.setEmail("email2@test.com");
@@ -184,7 +184,7 @@ public class AccountValidatorTest {
 
     @Test
     public void shouldNotRejectIfuserWithEmailExistsButIsCUrrentUser() {
-        RegisteredUser existingUser = new RegisteredUserBuilder().id(1).username("email2@test.com").firstName("bob").lastName("bobson")
+        User existingUser = new UserBuilder().id(1).username("email2@test.com").firstName("bob").lastName("bobson")
                 .email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
         user.setEmail("email2@test.com");
 

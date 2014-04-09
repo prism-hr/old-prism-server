@@ -19,14 +19,14 @@ import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormUserRoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
@@ -41,11 +41,11 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     private UserDAO userDAO;
 
-    private RegisteredUser applicant;
+    private User applicant;
 
     private Program program;
 
-    private RegisteredUser currentUser;
+    private User currentUser;
 
     private ApplicationForm app1InApproval;
 
@@ -76,10 +76,10 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         role = roleDAO.getById(Authority.INTERVIEWER);
 
-        applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        applicant = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .enabled(false).applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
 
-        currentUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+        currentUser = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
                 .enabled(false).applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
 
         sessionFactory.getCurrentSession().flush();
@@ -217,7 +217,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Test
     public void shouldReturnAppsFilteredByApplicantName() {
-        RegisteredUser otherUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek")
+        User otherUser = new UserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek")
                 .password("franek123").enabled(false).build();
 
         ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(otherUser).status(new State().withId(ApplicationFormStatus.APPROVAL))
@@ -345,7 +345,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Test
     public void shouldReturnAppsFilteredByApplicantFirstNameAndLastName() {
-        RegisteredUser otherUser = new RegisteredUserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek")
+        User otherUser = new UserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek")
                 .password("franek123").enabled(false).build();
 
         ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(otherUser).status(new State().withId(ApplicationFormStatus.APPROVAL))

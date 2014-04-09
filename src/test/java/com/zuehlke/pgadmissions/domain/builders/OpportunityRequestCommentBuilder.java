@@ -4,13 +4,13 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 
 public class OpportunityRequestCommentBuilder {
 
     private Integer id;
-    private RegisteredUser author;
+    private User author;
     private OpportunityRequestCommentType commentType;
     private String content;
     private Date createdTimestamp;
@@ -21,7 +21,7 @@ public class OpportunityRequestCommentBuilder {
         return this;
     }
 
-    public OpportunityRequestCommentBuilder author(RegisteredUser author) {
+    public OpportunityRequestCommentBuilder author(User author) {
         this.author = author;
         return this;
     }
@@ -57,7 +57,7 @@ public class OpportunityRequestCommentBuilder {
         return comment;
     }
 
-    public static OpportunityRequestCommentBuilder aOpportunityRequestComment(RegisteredUser author, OpportunityRequest opportunityRequest) {
+    public static OpportunityRequestCommentBuilder aOpportunityRequestComment(User author, OpportunityRequest opportunityRequest) {
         return new OpportunityRequestCommentBuilder().author(author).commentType(OpportunityRequestCommentType.APPROVE).content("Approving!").opportunityRequest(opportunityRequest);
     }
 

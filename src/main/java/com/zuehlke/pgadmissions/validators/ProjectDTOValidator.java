@@ -11,7 +11,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 import com.zuehlke.pgadmissions.domain.Person;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
@@ -84,7 +84,7 @@ public class ProjectDTOValidator extends AbstractValidator {
         if (StringUtils.isBlank(primarySupervisor.getEmail())) {
             return;
         }
-        RegisteredUser user = userService.getUserByEmailIncludingDisabledAccounts(primarySupervisor.getEmail());
+        User user = userService.getUserByEmailIncludingDisabledAccounts(primarySupervisor.getEmail());
         if (user == null) {
             errors.rejectValue("primarySupervisor", PROSPECTUS_PERSON_NOT_EXISTS);
         }
@@ -104,7 +104,7 @@ public class ProjectDTOValidator extends AbstractValidator {
         if (StringUtils.isBlank(administrator.getEmail())) {
             return;
         }
-        RegisteredUser user = userService.getUserByEmailIncludingDisabledAccounts(administrator.getEmail());
+        User user = userService.getUserByEmailIncludingDisabledAccounts(administrator.getEmail());
         if (user == null) {
             errors.rejectValue("administrator", PROSPECTUS_PERSON_NOT_EXISTS);
         }
@@ -124,7 +124,7 @@ public class ProjectDTOValidator extends AbstractValidator {
         if (StringUtils.isBlank(secondarySupervisor.getEmail())) {
             return;
         }
-        RegisteredUser user = userService.getUserByEmailIncludingDisabledAccounts(secondarySupervisor.getEmail());
+        User user = userService.getUserByEmailIncludingDisabledAccounts(secondarySupervisor.getEmail());
         if (user == null) {
             errors.rejectValue("secondarySupervisor", PROSPECTUS_PERSON_NOT_EXISTS);
         }

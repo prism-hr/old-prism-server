@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 @Service
 public class PgAdmissionUserDetailsService implements UserDetailsService {
@@ -27,7 +27,7 @@ public class PgAdmissionUserDetailsService implements UserDetailsService {
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		RegisteredUser user = userDAO.getUserByUsername(username);
+		User user = userDAO.getUserByUsername(username);
 		if(user == null){
 			throw new UsernameNotFoundException(username);
 		}

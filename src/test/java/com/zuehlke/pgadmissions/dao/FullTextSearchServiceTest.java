@@ -27,9 +27,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 
@@ -52,9 +52,9 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
     @Autowired
     private RoleDAO roleDAO;
 
-    private RegisteredUser user1;
+    private User user1;
 
-    private RegisteredUser similiarToUser1;
+    private User similiarToUser1;
 
     @Before
     public void prepare() {
@@ -73,10 +73,10 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
                                         + "INSERT INTO APPLICATION_ROLE (id) VALUES ('SUPERVISOR');" + "INSERT INTO APPLICATION_ROLE (id) VALUES ('VIEWER');")
                         .executeUpdate();
 
-                user1 = new RegisteredUserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com").username("tyler@durden.com")
+                user1 = new UserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com").username("tyler@durden.com")
                         .password("password").enabled(true).build();
 
-                similiarToUser1 = new RegisteredUserBuilder().firstName("Taylor").lastName("Dordeen").email("taylor@dordeen.com").username("taylor@durden.com")
+                similiarToUser1 = new UserBuilder().firstName("Taylor").lastName("Dordeen").email("taylor@dordeen.com").username("taylor@durden.com")
                         .password("password").enabled(true).build();
 
                 registeredUserDAO.save(user1);
@@ -108,14 +108,14 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnAFuzzyMatchBasedOnAMisspelledFirstname() {
-        List<RegisteredUser> matchingUsersWithFirstnameLike = fullTextService.getMatchingUsersWithFirstnameLike("taylar");
+        List<User> matchingUsersWithFirstnameLike = fullTextService.getMatchingUsersWithFirstnameLike("taylar");
         assertEquals(1, matchingUsersWithFirstnameLike.size());
         assertTrue(contains(similiarToUser1, matchingUsersWithFirstnameLike));
     }
 
     @Test
     public void shouldReturnAFuzzyMatchBasedOnAMisspelledLastname() {
-        List<RegisteredUser> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("durdeen");
+        List<User> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("durdeen");
         assertEquals(2, matchingUsersWithLastnameLike.size());
         assertTrue(contains(user1, matchingUsersWithLastnameLike));
         assertTrue(contains(similiarToUser1, matchingUsersWithLastnameLike));
@@ -123,7 +123,7 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnAFuzzyMatchBasedOnAMisspelledEmail() {
-        List<RegisteredUser> matchingUsersWithEmailLike = fullTextService.getMatchingUsersWithEmailLike("tulor@durden.com");
+        List<User> matchingUsersWithEmailLike = fullTextService.getMatchingUsersWithEmailLike("tulor@durden.com");
         assertEquals(2, matchingUsersWithEmailLike.size());
         assertTrue(contains(user1, matchingUsersWithEmailLike));
         assertTrue(contains(similiarToUser1, matchingUsersWithEmailLike));
@@ -146,7 +146,7 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
 //            }
 //        });
 
-        List<RegisteredUser> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("Du");
+        List<User> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("Du");
         assertEquals(0, matchingUsersWithLastnameLike.size());
     }
 
@@ -167,7 +167,7 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
 //            }
 //        });
 
-        List<RegisteredUser> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("durden");
+        List<User> matchingUsersWithLastnameLike = fullTextService.getMatchingUsersWithLastnameLike("durden");
         assertEquals(0, matchingUsersWithLastnameLike.size());
     }
 
@@ -189,8 +189,8 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
         assertThat(result, hasItem(institution.getName()));
     }
 
-    private boolean contains(RegisteredUser user, List<RegisteredUser> users) {
-        for (RegisteredUser entry : users) {
+    private boolean contains(User user, List<User> users) {
+        for (User entry : users) {
             if (user.getId().equals(entry.getId())) {
                 return true;
             }

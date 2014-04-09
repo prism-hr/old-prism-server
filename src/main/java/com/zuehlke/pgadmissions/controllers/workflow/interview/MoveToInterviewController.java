@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -75,7 +75,7 @@ public class MoveToInterviewController {
     @RequestMapping(method = RequestMethod.GET, value = "moveToInterview")
     public String getInterviewDetailsPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_INTERVIEWERS);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_PAGE;
@@ -90,7 +90,7 @@ public class MoveToInterviewController {
     @RequestMapping(value = "/move", method = RequestMethod.POST)
     public String moveToInterview(@Valid @ModelAttribute("interview") AssignInterviewersComment interviewComment, BindingResult bindingResult, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_INTERVIEWERS);
 
         if (bindingResult.hasErrors()) {
@@ -110,19 +110,19 @@ public class MoveToInterviewController {
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
+        User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("usersInterestedInApplication")
-    public List<RegisteredUser> getUsersInterestedInApplication(@RequestParam String applicationId) {
+    public List<User> getUsersInterestedInApplication(@RequestParam String applicationId) {
         // FIXME isInterviewerInInterview method has been removed from RegisteredUser class, provide this information in other way (by moving the method into
         // aservice, or this method can return a map)
         return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
 
     @ModelAttribute("usersPotentiallyInterestedInApplication")
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
+    public List<User> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
         return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
     }
 
@@ -130,12 +130,12 @@ public class MoveToInterviewController {
     public AssignInterviewersComment getInterviewComment(@RequestParam String applicationId) {
         AssignInterviewersComment interviewComment = new AssignInterviewersComment();
 
-        List<RegisteredUser> usersInterestedInApplication = getUsersInterestedInApplication(applicationId);
+        List<User> usersInterestedInApplication = getUsersInterestedInApplication(applicationId);
 
         if (usersInterestedInApplication != null) {
-            for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
+            for (User user : getUsersInterestedInApplication(applicationId)) {
                 CommentAssignedUser interviewer = new CommentAssignedUser();
-                interviewer.setUser(registeredUser);
+                interviewer.setUser(user);
                 interviewComment.getAssignedUsers().add(interviewer);
             }
         }
@@ -144,7 +144,7 @@ public class MoveToInterviewController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public User getUser() {
         return userService.getCurrentUser();
     }
 

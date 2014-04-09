@@ -51,7 +51,7 @@ public class ApplicationFormUserRole implements UserRole {
     public ApplicationFormUserRole() {
     }
     
-    public ApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Role role, Boolean interestedInApplicant,
+    public ApplicationFormUserRole(ApplicationForm applicationForm, User user, Role role, Boolean interestedInApplicant,
             HashSet<ApplicationFormActionRequired> actions) {
         setId(applicationForm, user, role);
         this.interestedInApplicant = interestedInApplicant;
@@ -62,7 +62,7 @@ public class ApplicationFormUserRole implements UserRole {
         return id;
     }
 
-    public void setId(ApplicationForm applicationForm, RegisteredUser user, Role role) {
+    public void setId(ApplicationForm applicationForm, User user, Role role) {
         id.setApplicationForm(applicationForm);
         id.setUser(user);
         id.setRole(role);
@@ -113,7 +113,7 @@ public class ApplicationFormUserRole implements UserRole {
         protected ApplicationForm applicationForm;
 
         @Column(name = "registered_user_id")
-        protected RegisteredUser user;
+        protected User user;
 
         @Column(name = "application_role_id")
         protected Role role;
@@ -121,7 +121,7 @@ public class ApplicationFormUserRole implements UserRole {
         public ApplicationFormUserRolePrimaryKey() {
         }
 
-        public ApplicationFormUserRolePrimaryKey(ApplicationForm applicationForm, RegisteredUser user, Role role) {
+        public ApplicationFormUserRolePrimaryKey(ApplicationForm applicationForm, User user, Role role) {
             this.applicationForm = applicationForm;
             this.user = user;
             this.role = role;
@@ -135,11 +135,11 @@ public class ApplicationFormUserRole implements UserRole {
             this.applicationForm = applicationForm;
         }
 
-        public RegisteredUser getUser() {
+        public User getUser() {
             return user;
         }
 
-        public void setUser(RegisteredUser user) {
+        public void setUser(User user) {
             this.user = user;
         }
 

@@ -7,7 +7,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 public class RefereeBuilder {
 
@@ -29,7 +29,7 @@ public class RefereeBuilder {
     private ReferenceComment reference;
     private String email;
     private String messenger;
-    private RegisteredUser user;
+    private User user;
 
     private String phoneNumber;
     private boolean declined;
@@ -68,7 +68,7 @@ public class RefereeBuilder {
         return this;
     }
 
-    public RefereeBuilder user(RegisteredUser user) {
+    public RefereeBuilder user(User user) {
         this.user = user;
         return this;
     }

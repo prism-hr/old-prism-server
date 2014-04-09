@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -32,7 +32,7 @@ public class ApplicationFormBuilder {
     private PersonalDetails personalDetails;
     private ApplicationFormAddress applicationFormAddress;
     private Integer id;
-    private RegisteredUser applicant;
+    private User applicant;
     private String projectTitle;
     private Advert advert;
     private Date appDate;
@@ -133,7 +133,7 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder applicant(RegisteredUser applicant) {
+    public ApplicationFormBuilder applicant(User applicant) {
         this.applicant = applicant;
         return this;
     }

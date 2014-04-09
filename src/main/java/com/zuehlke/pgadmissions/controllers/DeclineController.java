@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -42,7 +42,7 @@ public class DeclineController {
 
 	@RequestMapping(value = "/review", method = RequestMethod.GET)
 	public String declineReview(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
-	    RegisteredUser reviewer = getReviewer(activationCode);
+	    User reviewer = getReviewer(activationCode);
 	    ApplicationForm application = getApplicationForm(applicationId);
 	    
 	    actionService.validateAction(application, reviewer, ApplicationFormAction.PROVIDE_REVIEW);
@@ -69,7 +69,7 @@ public class DeclineController {
 	}
 
 	public Referee getReferee(String activationCode, ApplicationForm applicationForm) {
-		RegisteredUser user = userService.getUserByActivationCode(activationCode);
+		User user = userService.getUserByActivationCode(activationCode);
 		if (user == null) {
 			throw new ResourceNotFoundException();
 		}
@@ -81,7 +81,7 @@ public class DeclineController {
 	public String declineReference(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
 	    ApplicationForm applicationForm = getApplicationForm(applicationId);
 	    Referee referee = getReferee(activationCode, applicationForm);
-	    RegisteredUser user = userService.getUserByActivationCode(activationCode);
+	    User user = userService.getUserByActivationCode(activationCode);
 	    
 	    actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
 	    
@@ -107,8 +107,8 @@ public class DeclineController {
 	    }
 	}
 
-	public RegisteredUser getReviewer(String activationCode) {
-		RegisteredUser reviewer = userService.getUserByActivationCode(activationCode);
+	public User getReviewer(String activationCode) {
+		User reviewer = userService.getUserByActivationCode(activationCode);
 		if (reviewer == null) {
 			throw new ResourceNotFoundException();
 		}

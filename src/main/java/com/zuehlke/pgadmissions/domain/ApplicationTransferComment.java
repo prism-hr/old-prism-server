@@ -30,14 +30,14 @@ public class ApplicationTransferComment extends Comment {
         super();
     }
     
-    public ApplicationTransferComment(ApplicationForm application, RegisteredUser user) {
+    public ApplicationTransferComment(ApplicationForm application, User user) {
         super();
         setUser(user);
         setApplication(application);
         setTransferSucceeded(true);
     }
 
-    public ApplicationTransferComment(ApplicationForm application, RegisteredUser user, ApplicationFormTransferError applicationFormTransferError) {
+    public ApplicationTransferComment(ApplicationForm application, User user, ApplicationFormTransferError applicationFormTransferError) {
         super();
         setUser(user);
         setApplication(application);

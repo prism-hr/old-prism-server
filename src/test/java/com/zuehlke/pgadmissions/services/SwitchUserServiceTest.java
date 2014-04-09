@@ -15,9 +15,9 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -25,9 +25,9 @@ public class SwitchUserServiceTest {
     
     private SwitchUserService authenticationProvider;
     
-    private RegisteredUser user1;
+    private User user1;
     
-    private RegisteredUser user2;
+    private User user2;
     
     private Role role1;
     
@@ -41,12 +41,12 @@ public class SwitchUserServiceTest {
         
         role2 = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         
-        user1 = new RegisteredUserBuilder().id(5).firstName("Jane").lastName("Doe").email("jane@doe.com")
+        user1 = new UserBuilder().id(5).firstName("Jane").lastName("Doe").email("jane@doe.com")
                 .username("janeUsername").password("password").enabled(true)
 //                .roles(role1)
                 .build();
         
-        user2 = new RegisteredUserBuilder().id(6).firstName("John").lastName("Doe").email("john@doe.com")
+        user2 = new UserBuilder().id(6).firstName("John").lastName("Doe").email("john@doe.com")
                 .username("johnUsername").password("password").enabled(true)
 //                .roles(role1, role2)
                 .build();

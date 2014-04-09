@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -52,7 +52,7 @@ public class CommentDAO {
                 .uniqueResult();
     }
 
-    public List<Comment> getVisibleComments(RegisteredUser user, ApplicationForm applicationForm) {
+    public List<Comment> getVisibleComments(User user, ApplicationForm applicationForm) {
         // TODO amend and add tests
         return sessionFactory.getCurrentSession().createCriteria(Comment.class)
                 .createAlias("application", "a")

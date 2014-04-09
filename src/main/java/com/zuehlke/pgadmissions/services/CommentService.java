@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
 import com.zuehlke.pgadmissions.domain.CompleteInterviewComment;
 import com.zuehlke.pgadmissions.domain.CompleteReviewComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -52,11 +52,11 @@ public class CommentService {
         commentDAO.save(comment);
     }
     
-    public List<Comment> getVisibleComments(RegisteredUser user, ApplicationForm applicationForm) {
+    public List<Comment> getVisibleComments(User user, ApplicationForm applicationForm) {
         return commentDAO.getVisibleComments(user, applicationForm);
     }
     
-    public void declineReview(RegisteredUser user, ApplicationForm application) {
+    public void declineReview(User user, ApplicationForm application) {
         // check if user has already responded 
 //        if (!commentDAO.getReviewCommentsForReviewerAndApplication(user, application).isEmpty()) {
 //            return;
@@ -75,7 +75,7 @@ public class CommentService {
         return commentDAO.getNotDecliningSupervisorsFromLatestApprovalStage(application);
     }
 
-    public CommentAssignedUser assignUser(AssignSupervisorsComment approvalComment, RegisteredUser user, boolean isPrimary) {
+    public CommentAssignedUser assignUser(AssignSupervisorsComment approvalComment, User user, boolean isPrimary) {
         CommentAssignedUser assignedUser = new CommentAssignedUser();
         assignedUser.setUser(user);
         assignedUser.setPrimary(isPrimary);
@@ -85,7 +85,7 @@ public class CommentService {
     
     public void postStateChangeComment(StateChangeDTO stateChangeDTO) {
         ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
-        RegisteredUser registeredUser = stateChangeDTO.getRegisteredUser();
+        User user = stateChangeDTO.getUser();
         ApplicationFormStatus status = applicationForm.getStatus().getId();
         Comment stateChangeComment = null;
         
@@ -112,7 +112,7 @@ public class CommentService {
         }
         
         stateChangeComment.setApplication(applicationForm);
-        stateChangeComment.setUser(registeredUser);
+        stateChangeComment.setUser(user);
         stateChangeComment.setContent(stateChangeDTO.getComment());
         stateChangeComment.getDocuments().addAll(stateChangeDTO.getDocuments());
         stateChangeComment.setUseCustomQuestions(BooleanUtils.toBoolean(stateChangeDTO.getUseCustomQuestions()));
@@ -124,14 +124,14 @@ public class CommentService {
         // TODO check if has global administration rights (PermissionsService) 
         if (true) {
             if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
-                RegisteredUser  userToSaveAsDelegate = manageUsersService.setUserRoles(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), 
+                User  userToSaveAsDelegate = manageUsersService.setUserRoles(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), 
                             stateChangeDTO.getDelegateEmail(), true, false, manageUsersService.getPrismSystem(), Authority.STATEADMINISTRATOR);
                 
                 stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
             }
         } else {
             if (status == nextStatus) {
-                stateChangeComment.setDelegateAdministrator(registeredUser);
+                stateChangeComment.setDelegateAdministrator(user);
             }
         }
         
@@ -140,7 +140,7 @@ public class CommentService {
         applicationsService.save(applicationForm);
         applicationsService.refresh(applicationForm);
         applicationFormUserRoleService.stateChanged(stateChangeComment);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);  
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);  
     }
 
     public <T extends Comment> T getLastCommentOfType(ApplicationForm applicationForm, Class<T> clazz) {

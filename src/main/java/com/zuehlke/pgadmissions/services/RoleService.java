@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramUserRole;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ProjectUserRole;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SystemUserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -36,35 +36,35 @@ public class RoleService {
         return roleDAO.getById(authority);
     }
 
-    public void createSystemUserRoles(RegisteredUser user, Authority... authorities) {
+    public void createSystemUserRoles(User user, Authority... authorities) {
         for (Authority authority : authorities) {
             SystemUserRole systemUserRole = new SystemUserRole(user, roleDAO.getById(authority));
             roleDAO.saveUserRole(systemUserRole);
         }
     }
 
-    public void createInstitutionUserRoles(Institution institution, RegisteredUser user, Authority... authorities) {
+    public void createInstitutionUserRoles(Institution institution, User user, Authority... authorities) {
         for (Authority authority : authorities) {
             InstitutionUserRole institutionUserRole = new InstitutionUserRole(institution, user, roleDAO.getById(authority));
             roleDAO.saveUserRole(institutionUserRole);
         }
     }
 
-    public void createProgramUserRoles(Program program, RegisteredUser user, Authority... authorities) {
+    public void createProgramUserRoles(Program program, User user, Authority... authorities) {
         for (Authority authority : authorities) {
             ProgramUserRole programUserRole = new ProgramUserRole(program, user, roleDAO.getById(authority));
             roleDAO.saveUserRole(programUserRole);
         }
     }
 
-    public void createProjectUserRoles(Project project, RegisteredUser user, Authority... authorities) {
+    public void createProjectUserRoles(Project project, User user, Authority... authorities) {
         for (Authority authority : authorities) {
             ProjectUserRole projectUserRole = new ProjectUserRole(project, user, roleDAO.getById(authority));
             roleDAO.saveUserRole(projectUserRole);
         }
     }
 
-    public ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, RegisteredUser user, Authority authority,
+    public ApplicationFormUserRole createApplicationFormUserRole(ApplicationForm applicationForm, User user, Authority authority,
             Boolean interestedInApplicant, ApplicationFormActionRequired... actions) {
         ApplicationFormUserRole applicationFormUserRole = new ApplicationFormUserRole(applicationForm, user, roleDAO.getById(authority), interestedInApplicant,
                 Sets.newHashSet(actions));
@@ -79,7 +79,7 @@ public class RoleService {
         return mergedApplicationFormUserRole;
     }
 
-    public boolean hasAnyRole(RegisteredUser user, Authority... authorities) {
+    public boolean hasAnyRole(User user, Authority... authorities) {
         for (Authority authority : authorities) {
             if (hasRole(user, authority, null)) {
                 return true;
@@ -88,11 +88,11 @@ public class RoleService {
         return false;
     }
 
-    public boolean hasRole(RegisteredUser user, Authority authority) {
+    public boolean hasRole(User user, Authority authority) {
         return hasRole(user, authority, null);
     }
 
-    public boolean hasRole(RegisteredUser user, Authority authority, PrismScope scope) {
+    public boolean hasRole(User user, Authority authority, PrismScope scope) {
         Role role = roleDAO.getById(authority);
         switch (role.getAuthorityScope()) {
         case SYSTEM:
@@ -109,11 +109,11 @@ public class RoleService {
         return roleDAO.getUserRoles(user).contains(roleDAO.getById(authority));
     }
 
-    public List<RegisteredUser> getUsersInSystemRole(Authority... authorities) {
+    public List<User> getUsersInSystemRole(Authority... authorities) {
         return roleDAO.getUsersInSystemRole(authorities);
     }
 
-    public List<Program> getProgramsByUserAndRole(RegisteredUser currentUser, Authority administrator) {
+    public List<Program> getProgramsByUserAndRole(User currentUser, Authority administrator) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -128,11 +128,11 @@ public class RoleService {
      * @param authorities
      *            role to remove, when <code>null</code> removes all the roles in given scope
      */
-    public void removeRoles(RegisteredUser user, PrismScope scope, Authority... authorities) {
+    public void removeRoles(User user, PrismScope scope, Authority... authorities) {
         // TODO Auto-generated method stub
     }
 
-    public List<RegisteredUser> getProgramAdministrators(Program program) {
+    public List<User> getProgramAdministrators(Program program) {
         // TODO Auto-generated method stub
         return null;
     }

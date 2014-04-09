@@ -18,8 +18,8 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -65,7 +65,7 @@ public class UserServiceResetPasswordTest {
     @Test
     public void generateNewPasswordAndSendMail() throws AddressException {
         String oldPassword = "i forget this every time";
-        RegisteredUser storedUser = new RegisteredUserBuilder().id(23).firstName("first").lastName("last").email("first@last.com").password(oldPassword)
+        User storedUser = new UserBuilder().id(23).firstName("first").lastName("last").email("first@last.com").password(oldPassword)
                 .build();
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("aaaa")).andReturn(storedUser);
 
@@ -89,7 +89,7 @@ public class UserServiceResetPasswordTest {
     @Test
     public void keepOldPasswordIfMailSendFails() throws AddressException {
         String oldPassword = "i forget this every time";
-        RegisteredUser storedUser = new RegisteredUserBuilder().id(23).firstName("first").lastName("last")//
+        User storedUser = new UserBuilder().id(23).firstName("first").lastName("last")//
                 .username("firstlast").email("first@last.com").password(oldPassword).build();
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("aaaa")).andReturn(storedUser);
 

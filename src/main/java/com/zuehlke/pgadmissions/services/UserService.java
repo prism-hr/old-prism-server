@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -45,33 +45,33 @@ public class UserService {
     @Autowired
     private WorkflowService applicationFormUserRoleService;
 
-    public void save(RegisteredUser user) {
+    public void save(User user) {
         userDAO.save(user);
     }
 
-    public RegisteredUser getById(int id) {
+    public User getById(int id) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public RegisteredUser getCurrentUser() {
+    public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
-            RegisteredUser currentUser = (RegisteredUser) authentication.getDetails();
+            User currentUser = (User) authentication.getDetails();
             return userDAO.getPrimaryById(currentUser.getId());
         }
         return null;
     }
 
-    public RegisteredUser getUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         return userDAO.getUserByUsername(username);
     }
 
-    public RegisteredUser getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userDAO.getUserByEmail(email);
     }
 
-    public RegisteredUser getUserByEmailIncludingDisabledAccounts(String email) {
+    public User getUserByEmailIncludingDisabledAccounts(String email) {
         return userDAO.getUserByEmailIncludingDisabledAccounts(email);
     }
 
@@ -88,8 +88,8 @@ public class UserService {
      *            if <code>true</code> creates non-existing user, otherwise throws {@link IllegalArgumentException} when user does not exist
      * @return found or created user
      */
-    public RegisteredUser getUser(final String firstname, final String lastname, final String email, boolean createIfNotExist) {
-        RegisteredUser existingUser = userDAO.getUserByEmail(email);
+    public User getUser(final String firstname, final String lastname, final String email, boolean createIfNotExist) {
+        User existingUser = userDAO.getUserByEmail(email);
         if (existingUser != null) {
             return existingUser;
         }
@@ -98,7 +98,7 @@ public class UserService {
             throw new IllegalArgumentException();
         }
 
-        RegisteredUser user = new RegisteredUser();
+        User user = new User();
         user.setFirstName(firstname);
         user.setLastName(lastname);
         user.setUsername(email);
@@ -112,16 +112,16 @@ public class UserService {
         return user;
     }
 
-    public RegisteredUser getUserByActivationCode(String activationCode) {
+    public User getUserByActivationCode(String activationCode) {
         return userDAO.getUserByActivationCode(activationCode);
     }
 
-    public List<RegisteredUser> getUsersWithUpi(final String upi) {
+    public List<User> getUsersWithUpi(final String upi) {
         return userDAO.getUsersWithUpi(upi);
     }
 
-    public void updateCurrentUser(RegisteredUser user) {
-        RegisteredUser currentUser = getCurrentUser();
+    public void updateCurrentUser(User user) {
+        User currentUser = getCurrentUser();
         currentUser.setFirstName(user.getFirstName());
         currentUser.setFirstName2(user.getFirstName2());
         currentUser.setFirstName3(user.getFirstName3());
@@ -135,7 +135,7 @@ public class UserService {
     }
 
     public void resetPassword(String email) {
-        RegisteredUser storedUser = userDAO.getUserByEmailIncludingDisabledAccounts(email);
+        User storedUser = userDAO.getUserByEmailIncludingDisabledAccounts(email);
         if (storedUser == null) { // user-mail not found -> ignore
             log.info("reset password request failed, e-mail not found: " + email);
             return;
@@ -154,8 +154,8 @@ public class UserService {
     }
 
     public void linkAccounts(String secondAccountEmail) throws LinkAccountsException {
-        RegisteredUser secondAccount = getUserByEmail(secondAccountEmail);
-        RegisteredUser currentAccount = getCurrentUser();
+        User secondAccount = getUserByEmail(secondAccountEmail);
+        User currentAccount = getCurrentUser();
 
         if (HibernateUtils.containsEntity(currentAccount.getLinkedAccounts(), secondAccount)) {
             return;
@@ -177,32 +177,32 @@ public class UserService {
             throw new LinkAccountsException("account.not.enabled");
         }
 
-        RegisteredUser primary = currentAccount.getPrimaryAccount();
+        User primary = currentAccount.getPrimaryAccount();
         if (primary == null) {
             primary = currentAccount;
         }
 
-        RegisteredUser secondPrimary = secondAccount.getPrimaryAccount();
+        User secondPrimary = secondAccount.getPrimaryAccount();
         if (secondPrimary != null) {
-            for (RegisteredUser u : secondPrimary.getLinkedAccounts()) {
+            for (User u : secondPrimary.getLinkedAccounts()) {
                 u.setPrimaryAccount(primary);
             }
             secondPrimary.setPrimaryAccount(primary);
         } else {
             secondAccount.setPrimaryAccount(primary);
-            for (RegisteredUser u : secondAccount.getLinkedAccounts()) {
+            for (User u : secondAccount.getLinkedAccounts()) {
                 u.setPrimaryAccount(primary);
             }
         }
     }
 
     public void deleteLinkedAccount(String accountToDeleteEmail) {
-        RegisteredUser currentAccount = getCurrentUser();
-        RegisteredUser accountToDelete = getUserByEmail(accountToDeleteEmail);
+        User currentAccount = getCurrentUser();
+        User accountToDelete = getUserByEmail(accountToDeleteEmail);
 
-        RegisteredUser primary = accountToDelete.getPrimaryAccount();
+        User primary = accountToDelete.getPrimaryAccount();
         if (primary == null) {
-            for (RegisteredUser u : accountToDelete.getLinkedAccounts()) {
+            for (User u : accountToDelete.getLinkedAccounts()) {
                 u.setPrimaryAccount(currentAccount);
             }
             currentAccount.setPrimaryAccount(null);
@@ -211,13 +211,13 @@ public class UserService {
         }
     }
 
-    public void setFiltering(final RegisteredUser user, final ApplicationsFiltering filtering) {
+    public void setFiltering(final User user, final ApplicationsFiltering filtering) {
         ApplicationsFiltering mergedFilter = filteringDAO.merge(filtering);
         user.setFiltering(mergedFilter);
         userDAO.save(user);
     }
 
-    public Long getNumberOfActiveApplicationsForApplicant(final RegisteredUser applicant) {
+    public Long getNumberOfActiveApplicationsForApplicant(final User applicant) {
         return userDAO.getNumberOfActiveApplicationsForApplicant(applicant);
     }
 

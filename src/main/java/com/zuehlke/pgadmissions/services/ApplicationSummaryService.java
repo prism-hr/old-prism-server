@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -67,7 +67,7 @@ public class ApplicationSummaryService {
         result.put("applicationNumber", form.getApplicationNumber());
     }
 
-    private void addActiveApplications(final RegisteredUser applicant, final Map<String, String> result) {
+    private void addActiveApplications(final User applicant, final Map<String, String> result) {
         result.put("numberOfActiveApplications", userService.getNumberOfActiveApplicationsForApplicant(applicant).toString());
     }
 

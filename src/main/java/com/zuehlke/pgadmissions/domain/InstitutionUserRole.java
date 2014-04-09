@@ -15,7 +15,7 @@ public class InstitutionUserRole implements UserRole {
     @EmbeddedId
     private InstitutionUserRolePrimaryKey id;
 
-    public InstitutionUserRole(Institution institution, RegisteredUser user, Role role) {
+    public InstitutionUserRole(Institution institution, User user, Role role) {
         setId(institution, user, role);
     }
 
@@ -23,7 +23,7 @@ public class InstitutionUserRole implements UserRole {
         return id;
     }
 
-    public void setId(Institution institution, RegisteredUser user, Role role) {
+    public void setId(Institution institution, User user, Role role) {
         id.setInstitution(institution);
         id.setUser(user);
         id.setRole(role);
@@ -38,7 +38,7 @@ public class InstitutionUserRole implements UserRole {
         protected Institution institution;
 
         @Column(name = "registered_user_id")
-        protected RegisteredUser user;
+        protected User user;
 
         @Column(name = "application_role_id")
         protected Role role;
@@ -46,7 +46,7 @@ public class InstitutionUserRole implements UserRole {
         public InstitutionUserRolePrimaryKey() {
         }
 
-        public InstitutionUserRolePrimaryKey(Institution institution, RegisteredUser user, Role role) {
+        public InstitutionUserRolePrimaryKey(Institution institution, User user, Role role) {
             this.institution = institution;
             this.user = user;
             this.role = role;
@@ -60,11 +60,11 @@ public class InstitutionUserRole implements UserRole {
             this.institution = institution;
         }
 
-        public RegisteredUser getUser() {
+        public User getUser() {
             return user;
         }
 
-        public void setUser(RegisteredUser user) {
+        public void setUser(User user) {
             this.user = user;
         }
 

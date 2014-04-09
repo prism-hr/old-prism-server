@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
 
@@ -23,7 +23,7 @@ public class OpportunityRequestBuilder {
     private String otherInstitution;
     private String programTitle;
     private String programDescription;
-    private RegisteredUser author;
+    private User author;
     private OpportunityRequestStatus status = OpportunityRequestStatus.NEW;
     private Date createdDate;
     private Integer studyDuration;
@@ -69,7 +69,7 @@ public class OpportunityRequestBuilder {
         return this;
     }
 
-    public OpportunityRequestBuilder author(RegisteredUser author) {
+    public OpportunityRequestBuilder author(User author) {
         this.author = author;
         return this;
     }
@@ -170,7 +170,7 @@ public class OpportunityRequestBuilder {
         return request;
     }
 
-    public static OpportunityRequestBuilder aOpportunityRequest(RegisteredUser author, Domicile institutionCountry) {
+    public static OpportunityRequestBuilder aOpportunityRequest(User author, Domicile institutionCountry) {
         DateTime date = new DateTime(2014, 3, 14, 0, 0);
 
         return new OpportunityRequestBuilder().author(author).createdDate(date.toDate()).institutionCode("AGH").institutionCountry(institutionCountry)

@@ -15,7 +15,7 @@ public class SystemUserRole implements UserRole {
     @EmbeddedId
     SystemUserRolePrimaryKey id;
 
-    public SystemUserRole(RegisteredUser user, Role role) {
+    public SystemUserRole(User user, Role role) {
         setId(user, role);
     }
 
@@ -23,7 +23,7 @@ public class SystemUserRole implements UserRole {
         return id;
     }
 
-    public void setId(RegisteredUser user, Role role) {
+    public void setId(User user, Role role) {
         id.setUser(user);
         id.setRole(role);
     }
@@ -34,7 +34,7 @@ public class SystemUserRole implements UserRole {
         private static final long serialVersionUID = -978454472437229221L;
 
         @Column(name = "registered_user_id")
-        protected RegisteredUser user;
+        protected User user;
 
         @Column(name = "application_role_id")
         protected Role role;
@@ -42,16 +42,16 @@ public class SystemUserRole implements UserRole {
         public SystemUserRolePrimaryKey() {
         }
 
-        public SystemUserRolePrimaryKey(RegisteredUser user, Role role) {
+        public SystemUserRolePrimaryKey(User user, Role role) {
             this.user = user;
             this.role = role;
         }
 
-        public RegisteredUser getUser() {
+        public User getUser() {
             return user;
         }
 
-        public void setUser(RegisteredUser user) {
+        public void setUser(User user) {
             this.user = user;
         }
 

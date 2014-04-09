@@ -17,12 +17,12 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectDTOBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -40,9 +40,9 @@ public class ProjectConverterTest {
 	private Person administratorPerson;
 	private Person primarySupervisorPerson;
 	private Person secondarySupervisorPerson;
-	private RegisteredUser administratorUser;
-	private RegisteredUser primarySupervisorUser;
-	private RegisteredUser secondarySupervisorUser;
+	private User administratorUser;
+	private User primarySupervisorUser;
+	private User secondarySupervisorUser;
 	private Program program;
 	private Project project;
 	private ProjectDTO projectDTO;
@@ -125,9 +125,9 @@ public class ProjectConverterTest {
 	}
 
 	private void setupSupervisorsUser() {
-	    administratorUser = new RegisteredUserBuilder().id(0).email(ADMINISTRATOR_EMAIL).build();
-		primarySupervisorUser = new RegisteredUserBuilder().id(1).email(PRIMARY_SUPERVISOR_EMAIL).build();
-		secondarySupervisorUser = new RegisteredUserBuilder().id(2).email(SECONDARY_SUPERVISOR_EMAIL).build();
+	    administratorUser = new UserBuilder().id(0).email(ADMINISTRATOR_EMAIL).build();
+		primarySupervisorUser = new UserBuilder().id(1).email(PRIMARY_SUPERVISOR_EMAIL).build();
+		secondarySupervisorUser = new UserBuilder().id(2).email(SECONDARY_SUPERVISOR_EMAIL).build();
 	}
 
 	private void setupProgram() {

@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -43,7 +43,7 @@ public class RegistrationService {
     @Autowired
     private MailSendingService mailService;
 
-    public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser) {
+    public User processPendingApplicantUser(User pendingApplicantUser) {
         pendingApplicantUser.setUsername(pendingApplicantUser.getEmail());
         pendingApplicantUser.setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
         pendingApplicantUser.setEnabled(false);
@@ -53,8 +53,8 @@ public class RegistrationService {
         return pendingApplicantUser;
     }
 
-    public RegisteredUser submitRegistration(RegisteredUser pendingUser) {
-        RegisteredUser user = null;
+    public User submitRegistration(User pendingUser) {
+        User user = null;
         
         // TODO use action ID instead of activation code
         boolean isInvited = StringUtils.isNotEmpty(pendingUser.getActivationCode());
@@ -74,17 +74,17 @@ public class RegistrationService {
         return user;
     }
 
-    public RegisteredUser activateAccount(String activationCode) {
-        RegisteredUser user = userService.getUserByActivationCode(activationCode);
+    public User activateAccount(String activationCode) {
+        User user = userService.getUserByActivationCode(activationCode);
         user.setEnabled(true);
         return user;
     }
 
-    public void resendConfirmationEmail(RegisteredUser newUser) {
+    public void resendConfirmationEmail(User newUser) {
         mailService.sendRegistrationConfirmation(newUser);
     }
 
-    public RegisteredUser findUserForActivationCode(String activationCode) {
+    public User findUserForActivationCode(String activationCode) {
         return userService.getUserByActivationCode(activationCode);
     }
 

@@ -15,10 +15,10 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -56,19 +56,19 @@ public class DeclineControllerTest {
 
     @Test
     public void shouldGetReviewerFromId() {
-        RegisteredUser reviewer = new RegisteredUserBuilder().id(5).build();
+        User reviewer = new UserBuilder().id(5).build();
         EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(reviewer);
         EasyMock.replay(userServiceMock);
-        RegisteredUser returnedReviewer = controller.getReviewer("5");
+        User returnedReviewer = controller.getReviewer("5");
         assertEquals(reviewer, returnedReviewer);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfUsernotFound() {
-        RegisteredUser reviewer = new RegisteredUserBuilder().id(5).build();
+        User reviewer = new UserBuilder().id(5).build();
         EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(null);
         EasyMock.replay(userServiceMock);
-        RegisteredUser returnedReviewer = controller.getReviewer("5");
+        User returnedReviewer = controller.getReviewer("5");
         assertEquals(reviewer, returnedReviewer);
     }
 
@@ -92,7 +92,7 @@ public class DeclineControllerTest {
 
     @Test
     public void shouldGetRefereeFromActivationCodeAndApplicationForm() {
-        RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+        User userMock = EasyMock.createMock(User.class);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
         EasyMock.expect(userServiceMock.getUserByActivationCode("5")).andReturn(userMock);
         Referee referee = new RefereeBuilder().id(5).build();
@@ -113,7 +113,7 @@ public class DeclineControllerTest {
     @Test
     public void shouldReturnConfirmationDialogForReference() {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC")
-                .applicant(new RegisteredUserBuilder().firstName("").lastName("").build()).id(5).build();
+                .applicant(new UserBuilder().firstName("").lastName("").build()).id(5).build();
         final Referee referee = new RefereeBuilder().application(applicationForm).id(5).build();
         EasyMock.replay(refereeServiceMock);
         String view = controller.declineReference("5", "ABC", null, new ModelMap());

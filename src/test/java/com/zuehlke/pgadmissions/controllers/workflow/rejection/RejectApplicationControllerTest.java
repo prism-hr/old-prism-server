@@ -24,10 +24,10 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -84,7 +84,7 @@ public class RejectApplicationControllerTest {
 
     @Test
     public void getRejectionPage() {
-        RegisteredUser admin = new RegisteredUserBuilder().id(1).username("admin").build();
+        User admin = new UserBuilder().id(1).username("admin").build();
         ApplicationForm application = new ApplicationForm();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
@@ -144,7 +144,7 @@ public class RejectApplicationControllerTest {
     @Test
     public void shouldGetCurrentUserAsUser() {
         EasyMock.reset(userServiceMock);
-        RegisteredUser user = new RegisteredUserBuilder().id(1).build();
+        User user = new UserBuilder().id(1).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
         EasyMock.replay(userServiceMock);
         assertEquals(user, controllerUT.getUser());
@@ -157,7 +157,7 @@ public class RejectApplicationControllerTest {
     @Test
     public void moveToRejectWithValidRejection() {
         ApplicationForm application = new ApplicationForm();
-        RegisteredUser admin = new RegisteredUserBuilder().id(1).username("admin").build();
+        User admin = new UserBuilder().id(1).username("admin").build();
         Rejection rejection = new RejectionBuilder().id(3).build();
         BindingResult result = new BeanPropertyBindingResult(rejection, "rejection");
 
@@ -179,7 +179,7 @@ public class RejectApplicationControllerTest {
     @Test
     public void returnToRejectViewWithInvalidRejection() {
         ApplicationForm application = new ApplicationForm();
-        RegisteredUser admin = new RegisteredUserBuilder().id(1).username("admin").build();
+        User admin = new UserBuilder().id(1).username("admin").build();
         Rejection rejection = new RejectionBuilder().id(3).build();
         BindingResult result = new DirectFieldBindingResult(rejection, "rejection");
         result.reject("error");

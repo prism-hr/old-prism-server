@@ -11,7 +11,7 @@ public class CommentAssignedUser {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private RegisteredUser user;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
@@ -20,11 +20,11 @@ public class CommentAssignedUser {
     @Column(name = "is_primary")
     private boolean primary;
 
-    public RegisteredUser getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(RegisteredUser user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -44,7 +44,7 @@ public class CommentAssignedUser {
         this.primary = primary;
     }
     
-    public CommentAssignedUser withUser(RegisteredUser user) {
+    public CommentAssignedUser withUser(User user) {
         this.user = user;
         return this;
     }

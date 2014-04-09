@@ -65,7 +65,7 @@ public class Comment implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private RegisteredUser user;
+    private User user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment")
     private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
@@ -160,11 +160,11 @@ public class Comment implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delegate_provider_id")
-    private RegisteredUser delegateProvider;
+    private User delegateProvider;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delegate_administrator_id")
-    private RegisteredUser delegateAdministrator;
+    private User delegateAdministrator;
 
     @Column(name = "use_custom_questions")
     private Boolean useCustomQuestions;
@@ -203,11 +203,11 @@ public class Comment implements Serializable {
         this.content = content;
     }
 
-    public RegisteredUser getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(RegisteredUser user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -395,19 +395,19 @@ public class Comment implements Serializable {
         this.nextStatus = nextStatus;
     }
 
-    public RegisteredUser getDelegateProvider() {
+    public User getDelegateProvider() {
         return delegateProvider;
     }
 
-    public void setDelegateProvider(RegisteredUser delegateProvider) {
+    public void setDelegateProvider(User delegateProvider) {
         this.delegateProvider = delegateProvider;
     }
 
-    public RegisteredUser getDelegateAdministrator() {
+    public User getDelegateAdministrator() {
         return delegateAdministrator;
     }
 
-    public void setDelegateAdministrator(RegisteredUser delegateAdministrator) {
+    public void setDelegateAdministrator(User delegateAdministrator) {
         this.delegateAdministrator = delegateAdministrator;
     }
 

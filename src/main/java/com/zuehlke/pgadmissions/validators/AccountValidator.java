@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -32,13 +32,13 @@ public class AccountValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return RegisteredUser.class.equals(clazz);
+        return User.class.equals(clazz);
     }
 
     @Override
     public void addExtraValidation(Object target, Errors errors) {
-        RegisteredUser updatedUser = (RegisteredUser) target;
-        RegisteredUser existingUser = getCurrentUser();
+        User updatedUser = (User) target;
+        User existingUser = getCurrentUser();
         
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", EMPTY_FIELD_ERROR_MESSAGE);
@@ -81,14 +81,14 @@ public class AccountValidator extends AbstractValidator {
         }else if (!EmailValidator.getInstance().isValid(updatedUser.getEmail())) {
             errors.rejectValue("email", "text.email.notvalid");
         } else {
-            RegisteredUser userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(updatedUser.getEmail());
+            User userWithSameEmail = userService.getUserByEmailIncludingDisabledAccounts(updatedUser.getEmail());
             if (userWithSameEmail != null && !userWithSameEmail.getId().equals(existingUser.getId())) {
                 errors.rejectValue("email", "user.email.alreadyexists");
             }
         }
     }  
 
-    public RegisteredUser getCurrentUser() {
+    public User getCurrentUser() {
         return userService.getCurrentUser();
     }
 }

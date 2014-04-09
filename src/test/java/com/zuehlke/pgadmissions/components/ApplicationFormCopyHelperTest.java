@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -145,7 +145,7 @@ public class ApplicationFormCopyHelperTest {
         applicationFormCopyHelper = new ApplicationFormCopyHelper();
         InjectionUtils.injectInto(documentService, applicationFormCopyHelper, "documentService");
 
-        expect(userServiceMock.getCurrentUser()).andReturn(new RegisteredUserBuilder().email("jfi@zuhlke.pl").build()).anyTimes();
+        expect(userServiceMock.getCurrentUser()).andReturn(new UserBuilder().email("jfi@zuhlke.pl").build()).anyTimes();
         replay(userServiceMock);
     }
 

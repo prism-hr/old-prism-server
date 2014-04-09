@@ -16,7 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
@@ -32,11 +32,11 @@ public final class PrismEmailMessage {
     
     private String subjectCode;
     
-    private List<RegisteredUser> to = new ArrayList<RegisteredUser>();
+    private List<User> to = new ArrayList<User>();
     
-    private List<RegisteredUser> cc = new ArrayList<RegisteredUser>();
+    private List<User> cc = new ArrayList<User>();
 
-    private List<RegisteredUser> bcc = new ArrayList<RegisteredUser>();
+    private List<User> bcc = new ArrayList<User>();
     
     private Map<String, Object> model;
     
@@ -49,7 +49,7 @@ public final class PrismEmailMessage {
     private static Transformer convertToInternetAddresses = new Transformer() {
         @Override
         public Object transform(final Object input) {
-            RegisteredUser target = (RegisteredUser) input;
+            User target = (User) input;
             try {
                 StringBuilder stringBuilder = new StringBuilder(target.getFirstName());
                 if (!StringUtils.isEmpty(target.getFirstName2())) {
@@ -92,27 +92,27 @@ public final class PrismEmailMessage {
         this.fromAddress = from;
     }
 
-    public List<RegisteredUser> getTo() {
+    public List<User> getTo() {
         return to;
     }
 
-    public void setTo(final List<RegisteredUser> to) {
+    public void setTo(final List<User> to) {
         this.to = to;
     }
 
-    public List<RegisteredUser> getCc() {
+    public List<User> getCc() {
         return cc;
     }
 
-    public void setCc(final List<RegisteredUser> cc) {
+    public void setCc(final List<User> cc) {
         this.cc = cc;
     }
 
-    public List<RegisteredUser> getBcc() {
+    public List<User> getBcc() {
         return bcc;
     }
 
-    public void setBcc(final List<RegisteredUser> bcc) {
+    public void setBcc(final List<User> bcc) {
         this.bcc = bcc;
     }
     

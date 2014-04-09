@@ -37,7 +37,7 @@ public class Referee implements Serializable, FormSectionObject {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "registered_user_id")
-	private RegisteredUser user;
+	private User user;
 
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "referee")
 	private ReferenceComment reference;
@@ -168,11 +168,11 @@ public class Referee implements Serializable, FormSectionObject {
 		this.messenger = messenger;
 	}
 
-	public RegisteredUser getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(RegisteredUser user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 

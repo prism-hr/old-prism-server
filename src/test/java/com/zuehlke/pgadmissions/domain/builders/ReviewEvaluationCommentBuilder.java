@@ -4,25 +4,25 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CompleteReviewComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class ReviewEvaluationCommentBuilder {
 
-	private RegisteredUser user;
+	private User user;
 	private ApplicationForm application;
 	private Date date;	
 	private String comment;	
 	private Integer id;
 	private ApplicationFormStatus nextStatus;
-	private RegisteredUser delegateAdministrator;
+	private User delegateAdministrator;
 
 	public ReviewEvaluationCommentBuilder nextStatus(ApplicationFormStatus nextStatus){
 		this.nextStatus = nextStatus;
 		return this;
 	}
 	
-	public ReviewEvaluationCommentBuilder user(RegisteredUser user){
+	public ReviewEvaluationCommentBuilder user(User user){
 		this.user = user;
 		return this;
 	}
@@ -48,7 +48,7 @@ public class ReviewEvaluationCommentBuilder {
 		return this;
 	}
 	
-	public ReviewEvaluationCommentBuilder delegateAdministrator(RegisteredUser delegateAdministrator){
+	public ReviewEvaluationCommentBuilder delegateAdministrator(User delegateAdministrator){
 	    this.delegateAdministrator = delegateAdministrator;
 	    return this;
 	}

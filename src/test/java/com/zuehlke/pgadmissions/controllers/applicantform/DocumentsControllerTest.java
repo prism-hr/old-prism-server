@@ -21,7 +21,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -102,7 +102,7 @@ public class DocumentsControllerTest {
 
     @Test
     public void shouldSaveAppplicationFormAndRedirectIfNoErrors() {
-        RegisteredUser currentUser = new RegisteredUser();
+        User currentUser = new User();
         ApplicationFormDocument documentsSectionDTO = new ApplicationFormDocument();
         BindingResult bindingResult = new BeanPropertyBindingResult(documentsSectionDTO, "documentsSectionDTO");
         ApplicationForm application = new ApplicationFormBuilder().id(666).applicationNumber("ABC").build();

@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
@@ -119,8 +119,8 @@ public class RefereeService {
         }
     }
 
-    public RegisteredUser processRefereeAndGetAsUser(Referee referee) {
-        RegisteredUser user = userService.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
+    public User processRefereeAndGetAsUser(Referee referee) {
+        User user = userService.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
         if (user == null) {
             createAndSaveNewUserWithRefereeRole(referee);
         } else {
@@ -142,8 +142,8 @@ public class RefereeService {
         return user;
     }
 
-    private RegisteredUser createAndSaveNewUserWithRefereeRole(Referee referee) {
-        RegisteredUser user = newRegisteredUser();
+    private User createAndSaveNewUserWithRefereeRole(Referee referee) {
+        User user = newRegisteredUser();
         user.setEmail(referee.getEmail());
         user.setFirstName(referee.getFirstname());
         user.setLastName(referee.getLastname());
@@ -154,12 +154,12 @@ public class RefereeService {
         return user;
     }
 
-    RegisteredUser newRegisteredUser() {
-        return new RegisteredUser();
+    User newRegisteredUser() {
+        return new User();
     }
 
     public void delete(Referee referee) {
-        RegisteredUser refereeUser = referee.getUser();
+        User refereeUser = referee.getUser();
         if (refereeUser != null) {
             referee.getUser().getReferees().remove(referee);
             applicationFormUserRoleService.deleteApplicationRole(referee.getApplication(), refereeUser, Authority.REFEREE);
@@ -270,7 +270,7 @@ public class RefereeService {
         return referee;
     }
 
-    public boolean isRefereeOfApplicationForm(RegisteredUser currentUser, ApplicationForm form) {
+    public boolean isRefereeOfApplicationForm(User currentUser, ApplicationForm form) {
         // TODO Auto-generated method stub
         return false;
     }

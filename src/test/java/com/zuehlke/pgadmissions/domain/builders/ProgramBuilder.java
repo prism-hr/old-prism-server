@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
@@ -28,7 +28,7 @@ public class ProgramBuilder {
     private String funding;
     private Boolean active = true;
     private Boolean enabled = true;
-    private RegisteredUser contactUser;
+    private User contactUser;
     private String code;
     private boolean atasRequired;
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
@@ -75,7 +75,7 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder contactUser(RegisteredUser contactUser) {
+    public ProgramBuilder contactUser(User contactUser) {
         this.contactUser = contactUser;
         return this;
     }

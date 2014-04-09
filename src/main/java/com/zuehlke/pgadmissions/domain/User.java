@@ -40,11 +40,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@AnalyzerDef(name = "registeredUserAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
+@AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
 @Indexed
 @Entity(name = "REGISTERED_USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, Serializable {
+public class User implements UserDetails, Comparable<User>, Serializable {
 
     private static final long serialVersionUID = 7913035836949510857L;
 
@@ -53,23 +53,23 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     private Integer id;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String firstName;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String firstName2;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String firstName3;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
-    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String lastName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
-    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String email;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
@@ -115,11 +115,11 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     private List<Referee> referees = new ArrayList<Referee>();
 
     @OneToMany(mappedBy = "primaryAccount")
-    private List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
+    private List<User> linkedAccounts = new ArrayList<User>();
 
     @ManyToOne
     @JoinColumn(name = "primary_account_id")
-    private RegisteredUser primaryAccount;
+    private User primaryAccount;
 
     @Column(name = "ucl_user_id")
     private String uclUserId;
@@ -283,15 +283,15 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
         return referees;
     }
 
-    public List<RegisteredUser> getLinkedAccounts() {
+    public List<User> getLinkedAccounts() {
         return linkedAccounts;
     }
 
-    public RegisteredUser getPrimaryAccount() {
+    public User getPrimaryAccount() {
         return primaryAccount;
     }
 
-    public void setPrimaryAccount(RegisteredUser primaryAccount) {
+    public void setPrimaryAccount(User primaryAccount) {
         this.primaryAccount = primaryAccount;
     }
 
@@ -364,7 +364,7 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     }
 
     @Override
-    public int compareTo(final RegisteredUser other) {
+    public int compareTo(final User other) {
         int firstNameResult = this.firstName.compareTo(other.firstName);
         if (firstNameResult == 0) {
             return this.lastName.compareTo(other.lastName);

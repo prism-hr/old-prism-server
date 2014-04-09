@@ -10,7 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 
 @Repository
@@ -36,14 +36,14 @@ public class ResearchOpportunitiesFeedDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ResearchOpportunitiesFeed> getAllFeedsForUser(final RegisteredUser user) {
+    public List<ResearchOpportunitiesFeed> getAllFeedsForUser(final User user) {
         return sessionFactory.getCurrentSession()
                 .createCriteria(ResearchOpportunitiesFeed.class).add(Restrictions.eq("user", user))
                 .addOrder(Order.asc("title")).list();
     }
 
     @SuppressWarnings("unchecked")
-    public boolean isUniqueFeedTitleForUser(final String title, final RegisteredUser user) {
+    public boolean isUniqueFeedTitleForUser(final String title, final User user) {
         List<Integer> list = sessionFactory.getCurrentSession().createCriteria(ResearchOpportunitiesFeed.class)
                 .setProjection(Projections.property("id")).add(Restrictions.ilike("title", title, MatchMode.EXACT))
                 .add(Restrictions.eq("user", user)).list();

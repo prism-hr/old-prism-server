@@ -34,13 +34,13 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ThrottleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
@@ -65,7 +65,7 @@ public class ConfigurationControllerTest {
     private static final String CONFIGURATION_SECTION_NAME = "/private/staff/superAdmin/configuration_section";
 
     private ConfigurationController controller;
-    private RegisteredUser superAdmin;
+    private User superAdmin;
     private JsonPropertyEditor stageDurationPropertyEditorMock;
     private JsonPropertyEditor reminderIntervalPropertyEditorMock;
     private JsonPropertyEditor notificationsDurationPropertyEditorMock;
@@ -73,7 +73,7 @@ public class ConfigurationControllerTest {
     private EmailTemplateService emailTemplateServiceMock;
     private ThrottleService throttleserviceMock;
     private ConfigurationService configurationServiceMock;
-    private RegisteredUser admin;
+    private User admin;
     private ExportQueueService queueServiceMock;
     private ProgramService programsServiceMock;
     private ScoringDefinitionParser scoringDefinitionParserMock;
@@ -81,7 +81,7 @@ public class ConfigurationControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundIfNotSuperAdminOrADmin() {
-        RegisteredUser applicant = new RegisteredUserBuilder().id(1).username("aa").email("aa@gmail.com").firstName("mark").lastName("ham")
+        User applicant = new UserBuilder().id(1).username("aa").email("aa@gmail.com").firstName("mark").lastName("ham")
                 .build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
@@ -391,7 +391,7 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldReturnCurrentUser() {
-        RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
+        User currentUserMock = EasyMock.createMock(User.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         EasyMock.replay(userServiceMock);
         assertEquals(currentUserMock, controller.getUser());

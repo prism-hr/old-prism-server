@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
@@ -95,7 +95,7 @@ public class ApplicationFormService {
         return applicationFormDAO.getByApplicationNumber(applicationNumber);
     }
 
-    public List<ApplicationDescriptor> getApplicationsForList(final RegisteredUser user, final ApplicationsFiltering filtering) {
+    public List<ApplicationDescriptor> getApplicationsForList(final User user, final ApplicationsFiltering filtering) {
         List<ApplicationDescriptor> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
         for (ApplicationDescriptor application : applications) {
             application.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getApplicationFormId()));
@@ -103,7 +103,7 @@ public class ApplicationFormService {
         return applications;
     }
 
-    public List<ApplicationForm> getApplicationsForReport(final RegisteredUser user, final ApplicationsFiltering filtering, final ReportFormat reportType) {
+    public List<ApplicationForm> getApplicationsForReport(final User user, final ApplicationsFiltering filtering, final ReportFormat reportType) {
         return applicationFormListDAO.getVisibleApplicationsForReport(user, filtering);
     }
 
@@ -160,7 +160,7 @@ public class ApplicationFormService {
 
     }
 
-    public ApplicationForm getOrCreateApplication(final RegisteredUser applicant, final Integer advertId) {
+    public ApplicationForm getOrCreateApplication(final User applicant, final Integer advertId) {
         Advert advert = programService.getValidProgramProjectAdvert(advertId);
         ApplicationForm applicationForm = applicationFormDAO.getInProgressApplication(applicant, advert);
         if (applicationForm != null) {
@@ -179,7 +179,7 @@ public class ApplicationFormService {
         if (application == null) {
             throw new MissingApplicationFormException(applicationId);
         }
-        RegisteredUser user = userService.getCurrentUser();
+        User user = userService.getCurrentUser();
         for (ApplicationFormAction action : actions) {
             if (actionService.checkActionAvailable(application, user, action)) {
                 return application;
@@ -189,16 +189,16 @@ public class ApplicationFormService {
     }
 
     public void saveOrUpdateApplicationSection(ApplicationForm application) {
-        RegisteredUser currentUser = userService.getCurrentUser();
+        User currentUser = userService.getCurrentUser();
         Action action = actionService.getById(actionService.getPrecedentAction(application, currentUser, ActionType.VIEW_EDIT));
         applicationFormDAO.insertApplicationUpdate(application, userService.getCurrentUser(), action.getUpdateVisibility());
     }
 
-    public void openApplicationForEdit(ApplicationForm application, RegisteredUser user) {
+    public void openApplicationForEdit(ApplicationForm application, User user) {
         openApplicationForView(application, user);
     }
 
-    public void openApplicationForView(ApplicationForm application, RegisteredUser user) {
+    public void openApplicationForView(ApplicationForm application, User user) {
         applicationFormDAO.deleteApplicationUpdate(application, user);
     }
 
@@ -218,13 +218,13 @@ public class ApplicationFormService {
     }
 
     public void applicationCreated(ApplicationForm application) {
-        RegisteredUser applicant = application.getApplicant();
+        User applicant = application.getApplicant();
         ApplicationFormActionRequired completeApplicationAction = new ApplicationFormActionRequired(
                 actionService.getById(ApplicationFormAction.COMPLETE_APPLICATION), application.getDueDate(), false, true);
         roleService.createApplicationFormUserRole(application, applicant, Authority.APPLICANT, false, completeApplicationAction);
     }
 
-    public ApplicationDescriptor getApplicationDescriptorForUser(final ApplicationForm application, final RegisteredUser user) {
+    public ApplicationDescriptor getApplicationDescriptorForUser(final ApplicationForm application, final User user) {
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
         applicationDescriptor.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getId()));
         applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormDAO.getRaisesUrgentFlagForUser(application, user));
@@ -237,7 +237,7 @@ public class ApplicationFormService {
     }
 
     private void autoPopulateApplication(ApplicationForm applicationForm) {
-        RegisteredUser user = userService.getCurrentUser();
+        User user = userService.getCurrentUser();
         if (user != null) {
             ApplicationForm previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(applicationForm, user);
             if (previousApplication != null) {
@@ -246,7 +246,7 @@ public class ApplicationFormService {
         }
     }
 
-    private ApplicationForm createApplication(RegisteredUser applicant, Advert advert) {
+    private ApplicationForm createApplication(User applicant, Advert advert) {
         String applicationNumber = generateApplicationNumber(advert.getProgram());
         ApplicationForm application = new ApplicationForm();
         application.setApplicant(applicant);
@@ -271,14 +271,14 @@ public class ApplicationFormService {
         if (project != null) {
             List<SuggestedSupervisor> suggestedSupervisors = application.getProgramDetails().getSuggestedSupervisors();
             suggestedSupervisors.add(createSuggestedSupervisor(project.getPrimarySupervisor()));
-            RegisteredUser secondarySupervisor = project.getSecondarySupervisor();
+            User secondarySupervisor = project.getSecondarySupervisor();
             if (secondarySupervisor != null) {
                 suggestedSupervisors.add(createSuggestedSupervisor(project.getSecondarySupervisor()));
             }
         }
     }
 
-    private SuggestedSupervisor createSuggestedSupervisor(RegisteredUser user) {
+    private SuggestedSupervisor createSuggestedSupervisor(User user) {
         SuggestedSupervisor supervisor = new SuggestedSupervisor();
         supervisor.setEmail(user.getEmail());
         supervisor.setFirstname(user.getFirstName());

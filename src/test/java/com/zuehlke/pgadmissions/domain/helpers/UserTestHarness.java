@@ -4,15 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
-public class RegisteredUserTestHarness {
+public class UserTestHarness {
 
-    private RegisteredUser registeredUser;
+    private User registeredUser;
     private NotificationListTestScenario notificationListTestScenario;
     private List<ApplicationFormUserRole> applicationFormUserRoles;
 
-    public RegisteredUserTestHarness(RegisteredUser registeredUser, NotificationListTestScenario notificationListTestScenario,
+    public UserTestHarness(User registeredUser, NotificationListTestScenario notificationListTestScenario,
             ApplicationFormUserRole... applicationFormUserRole) {
         this.setRegisteredUser(registeredUser);
         this.setNotificationListTestScenario(notificationListTestScenario);
@@ -20,7 +20,7 @@ public class RegisteredUserTestHarness {
 
     }
 
-    public RegisteredUser getRegisteredUser() {
+    public User getRegisteredUser() {
         return registeredUser;
     }
 
@@ -28,7 +28,7 @@ public class RegisteredUserTestHarness {
         this.applicationFormUserRoles = applicationFormUserRoles;
     }
 
-    public void setRegisteredUser(RegisteredUser registeredUser) {
+    public void setRegisteredUser(User registeredUser) {
         this.registeredUser = registeredUser;
     }
 

@@ -9,7 +9,7 @@ import org.springframework.ui.ModelMap;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -26,7 +26,7 @@ public class WithdrawControllerTest {
 
     private ApplicationFormService applicationsServiceMock;
     private WithdrawService withdrawServiceMock;
-    private RegisteredUser student;
+    private User student;
 
     private UserService userServiceMock;
     private WorkflowService applicationFormUserRoleServiceMock;
@@ -61,7 +61,7 @@ public class WithdrawControllerTest {
         EasyMock.expect(applicationsServiceMock.getByApplicationNumber("abc")).andReturn(applicationForm);
         EasyMock.replay(applicationsServiceMock);
         EasyMock.reset(userServiceMock);
-        RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
+        User currentUserMock = EasyMock.createMock(User.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
         EasyMock.replay(userServiceMock, currentUserMock);
         ApplicationForm returnedForm = controller.getApplicationForm(applicationNumber);

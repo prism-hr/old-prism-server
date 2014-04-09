@@ -26,8 +26,8 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -112,9 +112,9 @@ public class ExportQueueListenerTest {
         porticoExportServiceMock.sendToPortico(form, formTransferMock);
         EasyMock.expectLastCall().andThrow(uclExportServiceException);
         
-        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).build();
-        RegisteredUser admin2 = new RegisteredUserBuilder().id(2).build();
-        List<RegisteredUser> admins = asList(admin1, admin2);
+        User admin1 = new UserBuilder().id(1).build();
+        User admin2 = new UserBuilder().id(2).build();
+        List<User> admins = asList(admin1, admin2);
         expect(roleServiceMock.getUsersInSystemRole(Authority.SUPERADMINISTRATOR))
         	.andReturn(admins);
         

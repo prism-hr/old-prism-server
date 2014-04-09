@@ -8,7 +8,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
 
 public class ApplicationFormUserRoleBuilder {
@@ -21,7 +21,7 @@ public class ApplicationFormUserRoleBuilder {
     
     private ApplicationForm applicationForm;
 
-    private RegisteredUser user;
+    private User user;
 
     private Role role;
     
@@ -56,7 +56,7 @@ public class ApplicationFormUserRoleBuilder {
         return this;
     }
 
-    public ApplicationFormUserRoleBuilder user(RegisteredUser user) {
+    public ApplicationFormUserRoleBuilder user(User user) {
         this.user = user;
         return this;
     }

@@ -8,15 +8,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 
 public class PgAdmissionUserDetailsServiceTest {
 
 	@Test
 	public void shouldFindUserByUsername(){
 		UserDAO userDAOMock = EasyMock.createMock(UserDAO.class);
-		RegisteredUser user = new RegisteredUserBuilder().id(1).build();
+		User user = new UserBuilder().id(1).build();
 		
 		String username = "username";
 		EasyMock.expect(userDAOMock.getUserByUsername(username)).andReturn(user).anyTimes();

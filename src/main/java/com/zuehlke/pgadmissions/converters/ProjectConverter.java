@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -47,19 +47,19 @@ public class ProjectConverter {
         }
         project.setProgram(projectAdvertDTO.getProgram());
         
-        RegisteredUser administrator = loadPerson(projectAdvertDTO.getAdministrator());
+        User administrator = loadPerson(projectAdvertDTO.getAdministrator());
         project.setAdministrator(administrator);
 
-        RegisteredUser primarySupervisor = loadPerson(projectAdvertDTO.getPrimarySupervisor());
+        User primarySupervisor = loadPerson(projectAdvertDTO.getPrimarySupervisor());
         project.setPrimarySupervisor(primarySupervisor);
         project.setContactUser(primarySupervisor);
 
-        RegisteredUser secondarySupervisor = loadPerson(projectAdvertDTO.getSecondarySupervisor());
+        User secondarySupervisor = loadPerson(projectAdvertDTO.getSecondarySupervisor());
         project.setSecondarySupervisor(secondarySupervisor);
         
     }
 
-    private RegisteredUser loadPerson(Person person) {
+    private User loadPerson(Person person) {
         if (person == null || StringUtils.isBlank(person.getEmail())) {
             return null;
         }

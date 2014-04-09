@@ -18,16 +18,18 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
+import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -219,9 +221,12 @@ public class ApplicationFormService {
 
     public void applicationCreated(ApplicationForm application) {
         User applicant = application.getApplicant();
-        ApplicationFormActionRequired completeApplicationAction = new ApplicationFormActionRequired(
-                actionService.getById(ApplicationFormAction.COMPLETE_APPLICATION), application.getDueDate(), false, true);
-        roleService.createApplicationFormUserRole(application, applicant, Authority.APPLICANT, false, completeApplicationAction);
+        Action action = actionService.getById(ApplicationFormAction.COMPLETE_APPLICATION);
+        Role role = roleService.getById(Authority.APPLICANT);
+        ActionRequired completeApplicationAction = new ActionRequired().withApplication(application).withRole(role).withAction(action).withDeadlineDate(application.getDueDate())
+                .withBindDeadlineToDueDate(false).withRaisesUrgentFlag(true);
+        // TODO save action
+        roleService.createUserRole(application, applicant, Authority.APPLICANT);
     }
 
     public ApplicationDescriptor getApplicationDescriptorForUser(final ApplicationForm application, final User user) {

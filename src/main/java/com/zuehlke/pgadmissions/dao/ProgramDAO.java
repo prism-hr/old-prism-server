@@ -2,12 +2,9 @@ package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
@@ -23,18 +20,17 @@ import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
@@ -174,7 +170,7 @@ public class ProgramDAO {
     }
 
     public List<Program> getEnabledProgramsForWhichUserHasApplicationAuthority(User user) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        return sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("applicationForm.program")).createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN).createAlias("role", "applicationRole", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("user", user))

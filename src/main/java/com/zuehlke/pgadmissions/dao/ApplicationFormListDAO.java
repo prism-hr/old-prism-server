@@ -24,17 +24,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
+import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
-import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 
 @Repository
@@ -61,7 +61,7 @@ public class ApplicationFormListDAO {
         Integer blockCount = filtering.getBlockCount();
         updateLastAccessTimestamp(user, blockCount); 
         
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class)
     		.setReadOnly(true)
     		.setProjection(Projections.projectionList()
     			.add(Projections.groupProperty("applicationForm.id"), "applicationFormId")
@@ -99,7 +99,7 @@ public class ApplicationFormListDAO {
     
     @SuppressWarnings("unchecked")
     public List<ApplicationForm> getVisibleApplicationsForReport(final User user, final ApplicationsFiltering filtering) {
-    	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+    	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class)
         		.setReadOnly(true)
         		.setProjection(Projections.groupProperty("applicationForm"));
         

@@ -19,13 +19,13 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -174,7 +174,7 @@ public class ApplicationFormDAO {
 
     public Boolean getRaisesUrgentFlagForUser(ApplicationForm application, User user) {
         // FIXME: rewrite as HQL statement
-        Boolean raisesUrgentFlag = (Boolean) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        Boolean raisesUrgentFlag = (Boolean) sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .add(Restrictions.eq("applicationForm", application)).add(Restrictions.eq("user", user)).addOrder(Order.desc("raisesUrgentFlag"))
                 .setProjection(Projections.projectionList().add(Projections.max("raisesUrgentFlag"))).uniqueResult();
         return BooleanUtils.toBoolean(raisesUrgentFlag);

@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -140,7 +140,7 @@ public class UserDAO {
         Date reminderBaseline = getReminderBaseline(baselineDate, ReminderType.TASK);
         Date expiryBaseline = getExpiryBaseline(baselineDate);
         
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("primaryAccount.id"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
@@ -160,7 +160,7 @@ public class UserDAO {
         Date reminderBaseline = getReminderBaseline(baselineDate, ReminderType.TASK);
         Date expiryBaseline = getExpiryBaseline(baselineDate);
         
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("primaryAccount.id"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
@@ -180,7 +180,7 @@ public class UserDAO {
     public List<Integer> getUsersDueUpdateNotification(Date seedDate) {
         Date baseline = getBaselineDate(seedDate);
         
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("primaryAccount.id"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("role", "role", JoinType.INNER_JOIN)
@@ -213,7 +213,7 @@ public class UserDAO {
     }
     
     public List<User> getInterviewAdministrators(ApplicationForm application) {
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty("user"))
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
@@ -224,7 +224,7 @@ public class UserDAO {
     }
     
     public List<User> getUsersInterestedInApplication(ApplicationForm applicationForm) {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        return sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.projectionList().add(Projections.groupProperty("primaryAccount"), "user"))
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("applicationForm", applicationForm))
@@ -239,13 +239,13 @@ public class UserDAO {
     }
 
     public List<User> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
-        DetachedCriteria usersInterestedInApplicant = DetachedCriteria.forClass(ApplicationFormUserRole.class)
+        DetachedCriteria usersInterestedInApplicant = DetachedCriteria.forClass(UserRole.class)
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("user")))
                 .add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("interestedInApplicant", true));
 
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormUserRole.class)
+        return sessionFactory.getCurrentSession().createCriteria(UserRole.class)
                 .setProjection(Projections.groupProperty(""))
                 .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)

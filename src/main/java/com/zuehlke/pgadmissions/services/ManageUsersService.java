@@ -29,7 +29,9 @@ public class ManageUsersService {
         if (replaceRoles) {
             roleService.removeRoles(user, scope);
         }
-        roleService.createSystemUserRoles(user, authorities);
+        for (Authority authority : authorities) {
+            roleService.createUserRole(roleService.getPrismSystem(), user, authority);
+        }
         return user;
     }
 

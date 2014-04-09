@@ -3,17 +3,21 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.FetchType;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
-public class UserRole {
+@Entity(name = "ACTION_REQUIRED")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class ActionRequired {
 
     @Id
     private Long id;
@@ -39,16 +43,22 @@ public class UserRole {
     private ApplicationForm application;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
     @JoinColumn(name = "application_id", nullable = false)
     private Role role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requesting_user_id")
-    private User requestingUser;
+    @ManyToOne
+    @JoinColumn(name = "action_id", nullable = false)
+    private Action action;
+
+    @Column(name = "deadline_timestamp")
+    @Temporal(value = TemporalType.DATE)
+    private Date deadlineDate;
+
+    @Column(name = "bind_deadline_to_due_date")
+    private Boolean bindDeadlineToDueDate;
+
+    @Column(name = "raises_urgent_flag")
+    private Boolean raisesUrgentFlag = false;
 
     @Column(name = "assigned_timestamp", insertable = false, updatable = false, nullable = false)
     @Generated(GenerationTime.INSERT)
@@ -103,14 +113,6 @@ public class UserRole {
         this.application = application;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public Role getRole() {
         return role;
     }
@@ -119,12 +121,36 @@ public class UserRole {
         this.role = role;
     }
 
-    public User getRequestingUser() {
-        return requestingUser;
+    public Action getAction() {
+        return action;
     }
 
-    public void setRequestingUser(User requestingUser) {
-        this.requestingUser = requestingUser;
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public Date getDeadlineDate() {
+        return deadlineDate;
+    }
+
+    public void setDeadlineDate(Date deadlineDate) {
+        this.deadlineDate = deadlineDate;
+    }
+
+    public Boolean getBindDeadlineToDueDate() {
+        return bindDeadlineToDueDate;
+    }
+
+    public void setBindDeadlineToDueDate(Boolean bindDeadlineToDueDate) {
+        this.bindDeadlineToDueDate = bindDeadlineToDueDate;
+    }
+
+    public Boolean getRaisesUrgentFlag() {
+        return raisesUrgentFlag;
+    }
+
+    public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
+        this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
     public Date getAssignedTimestamp() {
@@ -135,44 +161,55 @@ public class UserRole {
         this.assignedTimestamp = assignedTimestamp;
     }
 
-    public UserRole withSystem(PrismSystem system) {
+    public ActionRequired withSystem(PrismSystem system) {
         this.system = system;
         return this;
     }
 
-    public UserRole withInstitution(Institution institution) {
+    public ActionRequired withInstitution(Institution institution) {
         this.institution = institution;
         return this;
     }
 
-    public UserRole withProgram(Program program) {
+    public ActionRequired withProgram(Program program) {
         this.program = program;
         return this;
     }
 
-    public UserRole withProject(Project project) {
+    public ActionRequired withProject(Project project) {
         this.project = project;
         return this;
     }
 
-    public UserRole withApplication(ApplicationForm application) {
+    public ActionRequired withApplication(ApplicationForm application) {
         this.application = application;
         return this;
     }
 
-    public UserRole withUser(User user) {
-        this.user = user;
-        return this;
-    }
 
-    public UserRole withRole(Role role) {
+    public ActionRequired withRole(Role role) {
         this.role = role;
         return this;
     }
 
-    public UserRole withRequestingUser(User user) {
-        this.user = user;
+    public ActionRequired withAction(Action action) {
+        this.action = action;
         return this;
     }
-
+    
+    public ActionRequired withDeadlineDate(Date deadlineDate) {
+        this.deadlineDate = deadlineDate;
+        return this;
+    }
+    
+    public ActionRequired withBindDeadlineToDueDate(Boolean bindDeadlineToDueDate) {
+        this.bindDeadlineToDueDate = bindDeadlineToDueDate;
+        return this;
+    }
+    
+    public ActionRequired withRaisesUrgentFlag(Boolean raisesUrgentFlag) {
+        this.raisesUrgentFlag = raisesUrgentFlag;
+        return this;
+    }
+    
 }

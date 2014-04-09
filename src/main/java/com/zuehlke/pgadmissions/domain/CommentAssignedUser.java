@@ -43,5 +43,10 @@ public class CommentAssignedUser {
     public void setPrimary(boolean primary) {
         this.primary = primary;
     }
+    
+    public CommentAssignedUser withUser(RegisteredUser user) {
+        this.user = user;
+        return this;
+    }
 
 }

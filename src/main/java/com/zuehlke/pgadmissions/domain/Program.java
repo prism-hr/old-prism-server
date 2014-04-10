@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 @Entity(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @DiscriminatorValue(value = "PROGRAM")
-public class Program extends Advert implements PrismScope{
+public class Program extends Advert implements PrismScope {
 
     private static final long serialVersionUID = -9073611033741317582L;
 

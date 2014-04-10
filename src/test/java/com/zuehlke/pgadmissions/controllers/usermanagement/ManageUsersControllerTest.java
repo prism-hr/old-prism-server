@@ -23,6 +23,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Person;
+import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
@@ -169,8 +170,7 @@ public class ManageUsersControllerTest {
         newUserDTO.setSelectedProgram(program);
         newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
         EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
-        EasyMock.expect(
-                manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, true, program, Authority.REVIEWER, Authority.ADMINISTRATOR))
+        EasyMock.expect(manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, true, program, Authority.REVIEWER, Authority.ADMINISTRATOR))
                 .andReturn(new UserBuilder().id(4).build());
 
         replay();
@@ -273,8 +273,9 @@ public class ManageUsersControllerTest {
     @Test
     public void shouldGetAdmitters() {
         List<User> admitters = Lists.newArrayList();
+        PrismSystem prismSystem = new PrismSystem();
 
-        EasyMock.expect(roleService.getUsersInSystemRole(Authority.ADMITTER)).andReturn(admitters);
+        EasyMock.expect(roleService.getUsersInRole(prismSystem, Authority.ADMITTER)).andReturn(admitters);
         replay();
         List<User> returned = controller.getAdmitters();
 
@@ -286,7 +287,9 @@ public class ManageUsersControllerTest {
         User userOne = new UserBuilder().id(1).lastName("ZZZZ").firstName("BBBB").build();
         User userTwo = new UserBuilder().id(4).lastName("ZZZZ").firstName("AAAA").build();
         User userThree = new UserBuilder().id(5).lastName("AA").firstName("GGG").build();
-        EasyMock.expect(roleService.getUsersInSystemRole(Authority.SUPERADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
+        PrismSystem prismSystem = new PrismSystem();
+        
+        EasyMock.expect(roleService.getUsersInRole(prismSystem, Authority.SUPERADMINISTRATOR)).andReturn(Arrays.asList(userOne, userTwo, userThree));
         replay();
         List<User> superadmins = controller.getSuperadministrators();
 
@@ -300,7 +303,7 @@ public class ManageUsersControllerTest {
     public void shouldCreateNewUserInRolesSuperAdmin() {
 
         PrismSystem prismSystem = new PrismSystem();
-        
+
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 

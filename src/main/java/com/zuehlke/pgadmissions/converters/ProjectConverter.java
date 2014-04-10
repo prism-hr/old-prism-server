@@ -53,11 +53,13 @@ public class ProjectConverter {
         // project.setAdministrator(administrator);
 
         User primarySupervisor = loadPerson(projectAdvertDTO.getPrimarySupervisor());
-        project.setPrimarySupervisor(primarySupervisor);
-        project.setContactUser(primarySupervisor);
-
         User secondarySupervisor = loadPerson(projectAdvertDTO.getSecondarySupervisor());
-        project.setSecondarySupervisor(secondarySupervisor);
+
+        project.setContactUser(primarySupervisor);
+        
+        // FIXME set primary and secondary supervisor roles
+//        project.setPrimarySupervisor(primarySupervisor);
+//        project.setSecondarySupervisor(secondarySupervisor);
 
     }
 

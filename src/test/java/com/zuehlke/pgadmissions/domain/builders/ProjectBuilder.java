@@ -18,8 +18,6 @@ public class ProjectBuilder {
     private AdvertState state;
     private User contactUser;
     private Program program;
-    private User primarySupervisor;
-    private User secondarySupervisor;
 
     public ProjectBuilder id(Integer id) {
         this.id = id;
@@ -61,16 +59,6 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder primarySupervisor(User primarySupervisor) {
-        this.primarySupervisor = primarySupervisor;
-        return this;
-    }
-
-    public ProjectBuilder secondarySupervisor(User secondarySupervisor) {
-        this.secondarySupervisor = secondarySupervisor;
-        return this;
-    }
-
     public ProjectBuilder advert(Advert advert) {
         return id(advert.getId()).title(advert.getTitle()).description(advert.getDescription()).studyDuration(advert.getStudyDuration())
                 .funding(advert.getFunding()).state(advert.getState()).contactUser(advert.getContactUser());
@@ -86,8 +74,6 @@ public class ProjectBuilder {
         project.setState(state);
         project.setContactUser(contactUser);
         project.setProgram(program);
-        project.setPrimarySupervisor(primarySupervisor);
-        project.setSecondarySupervisor(secondarySupervisor);
         return project;
     }
 

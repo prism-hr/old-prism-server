@@ -15,6 +15,8 @@ import org.unitils.easymock.EasyMockUnitils;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
+import com.zuehlke.pgadmissions.domain.PrismScope;
+import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
@@ -45,7 +47,9 @@ public class ReportPorticoDocumentUploadFailureServiceTest {
         User superadmin1 = new UserBuilder().id(12).build();
         User superadmin2 = new UserBuilder().id(13).build();
         List<User> superadmins = Arrays.asList(superadmin1, superadmin2);
-        EasyMock.expect(roleServiceMock.getUsersInSystemRole(Authority.SUPERADMINISTRATOR)).andReturn(superadmins);
+        PrismSystem prismSystem = new PrismSystem();
+        
+        EasyMock.expect(roleServiceMock.getUsersInRole(prismSystem, Authority.SUPERADMINISTRATOR)).andReturn(superadmins);
         
         String messageCode = "Portico reported that there was an error uploading the documents for application abcdefgh [errorCode=110, bookingReference=P000001]: Document file, /u02/uat/docs/U_AD_REF_DOC/P000043~REF_DOC~1.PDF, for Reference 1 already exists for application with Booking Reference P000043";
         mailServiceMock.sendExportErrorMessage(eq(superadmins), eq(messageCode), EasyMock.isA(Date.class), applicationFormTransfer.getApplicationForm());

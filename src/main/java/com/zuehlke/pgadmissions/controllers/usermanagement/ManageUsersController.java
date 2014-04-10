@@ -108,13 +108,13 @@ public class ManageUsersController {
 
     @ModelAttribute("superadministrators")
     public List<User> getSuperadministrators() {
-        List<User> superadmins = roleService.getUsersInSystemRole(Authority.SUPERADMINISTRATOR);
+        List<User> superadmins = roleService.getUsersInRole(roleService.getPrismSystem(), Authority.SUPERADMINISTRATOR);
         return superadmins;
     }
 
     @ModelAttribute("admitters")
     public List<User> getAdmitters() {
-        return roleService.getUsersInSystemRole(Authority.ADMITTER);
+        return roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/edit")

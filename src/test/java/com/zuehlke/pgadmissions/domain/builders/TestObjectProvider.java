@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
+import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 
 public class TestObjectProvider {
@@ -131,11 +132,11 @@ public class TestObjectProvider {
     }
 
     public Institution getEnabledInstitution() {
-        return getInstitution(true);
+        return getInstitution(InstitutionState.INSTITUTION_APPROVED);
     }
 
     public Institution getDisabledInstitution() {
-        return getInstitution(false);
+        return getInstitution(InstitutionState.INSTITUTION_DISABLED);
     }
 
     public ApplicationForm getEnabledProgramApplication() {
@@ -261,9 +262,9 @@ public class TestObjectProvider {
         return (Project) criteria.setMaxResults(1).uniqueResult();
     }
 
-    public Institution getInstitution(Boolean enabled) {
+    public Institution getInstitution(InstitutionState state) {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class)
-                .add(Restrictions.eq("enabled", enabled)).setMaxResults(1).uniqueResult();
+                .add(Restrictions.eq("state", state)).setMaxResults(1).uniqueResult();
     }
 
 }

@@ -45,6 +45,7 @@ public abstract class Advert implements Serializable {
     private String funding;
 
     @Column(name = "state_id")
+    @Enumerated(EnumType.STRING)
     private AdvertState state;
 
     @OneToOne(fetch = FetchType.LAZY)

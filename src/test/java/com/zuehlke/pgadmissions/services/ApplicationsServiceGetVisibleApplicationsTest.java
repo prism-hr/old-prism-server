@@ -50,6 +50,7 @@ import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
@@ -102,7 +103,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         sessionFactory.getCurrentSession().flush();
 
-        institution = new QualificationInstitutionBuilder().code("code").name("a20").domicileCode("AE").enabled(true).build();
+        institution = new QualificationInstitutionBuilder().code("code").name("a20").domicileCode("AE").state(InstitutionState.INSTITUTION_APPROVED).build();
         program = new ProgramBuilder().contactUser(superUser).code("doesntexist").title("another title").institution(institution).build();
 
         save(applicant, superUser, institution, program);

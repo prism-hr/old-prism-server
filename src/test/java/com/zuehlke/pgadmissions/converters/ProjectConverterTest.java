@@ -108,7 +108,6 @@ public class ProjectConverterTest {
 		assertThat(project.getTitle(), equalTo(dto.getTitle()));
 		assertThat(project.getProgram(), equalTo(dto.getProgram()));
 		assertThat(project.getClosingDate(), equalTo(dto.getClosingDate()));
-		assertThat(project.getAdministrator(), equalTo(administratorUser));
 		assertThat(project.getPrimarySupervisor(), equalTo(primarySupervisorUser));
 		assertThat(project.getSecondarySupervisor(), equalTo(secondarySupervisorUser));
 	}

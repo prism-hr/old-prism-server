@@ -49,7 +49,7 @@ public abstract class Advert implements Serializable {
     private AdvertState state;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "registered_user_id")
+    @JoinColumn(name = "user_id")
     private User contactUser;
 
     @Column(name = "advert_type")

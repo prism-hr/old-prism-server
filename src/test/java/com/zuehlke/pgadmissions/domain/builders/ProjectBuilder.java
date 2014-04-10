@@ -19,7 +19,6 @@ public class ProjectBuilder {
     private User contactUser;
     private Program program;
     private Date closingDate;
-    private User administrator;
     private User primarySupervisor;
     private User secondarySupervisor;
 
@@ -68,11 +67,6 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder administrator(User administrator) {
-        this.administrator = administrator;
-        return this;
-    }
-
     public ProjectBuilder primarySupervisor(User primarySupervisor) {
         this.primarySupervisor = primarySupervisor;
         return this;
@@ -99,7 +93,6 @@ public class ProjectBuilder {
         project.setContactUser(contactUser);
         project.setProgram(program);
         project.setClosingDate(closingDate);
-        project.setAdministrator(administrator);
         project.setPrimarySupervisor(primarySupervisor);
         project.setSecondarySupervisor(secondarySupervisor);
         return project;

@@ -30,10 +30,6 @@ public class Project extends Advert implements PrismScope {
     private Date closingDate;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "administrator_id", nullable = false)
-    private User administrator;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "primary_supervisor_id", nullable = false)
     private User primarySupervisor;
 
@@ -56,14 +52,6 @@ public class Project extends Advert implements PrismScope {
 
     public void setClosingDate(Date closingDate) {
         this.closingDate = closingDate;
-    }
-
-    public User getAdministrator() {
-        return administrator;
-    }
-
-    public void setAdministrator(User administrator) {
-        this.administrator = administrator;
     }
 
     public User getPrimarySupervisor() {

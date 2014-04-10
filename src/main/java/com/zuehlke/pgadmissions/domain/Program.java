@@ -38,7 +38,7 @@ public class Program extends Advert implements PrismScope {
     private Institution institution;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feed_id")
+    @JoinColumn(name = "program_import_id")
     private ProgramFeed programFeed;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")

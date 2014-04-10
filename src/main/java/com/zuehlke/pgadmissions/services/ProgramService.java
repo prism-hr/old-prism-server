@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -106,16 +106,16 @@ public class ProgramService {
         return formattedDate;
     }
 
-    public void updateClosingDate(ProgramClosingDate closingDate) {
+    public void updateClosingDate(AdvertClosingDate closingDate) {
         programDAO.updateClosingDate(closingDate);
     }
 
     public void deleteClosingDateById(Integer programClosingDateId) {
-        ProgramClosingDate programClosingDate = programDAO.getClosingDateById(programClosingDateId);
+        AdvertClosingDate programClosingDate = programDAO.getClosingDateById(programClosingDateId);
         programDAO.deleteClosingDate(programClosingDate);
     }
 
-    public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {
+    public void addClosingDateToProgram(Program program, AdvertClosingDate programClosingDate) {
         program.getClosingDates().add(programClosingDate);
         programDAO.save(program);
     }

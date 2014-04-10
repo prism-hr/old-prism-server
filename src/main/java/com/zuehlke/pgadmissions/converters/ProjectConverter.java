@@ -7,13 +7,14 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class ProjectConverter {
-    
+
     private final UserService userService;
     private ProgramService programService;
 
@@ -41,15 +42,15 @@ public class ProjectConverter {
         project.setStudyDuration(projectAdvertDTO.getStudyDuration());
         project.setFunding(projectAdvertDTO.getFunding());
         project.setState(projectAdvertDTO.getState());
-        
+
         if (projectAdvertDTO.getClosingDateSpecified()) {
-            project.setClosingDate(projectAdvertDTO.getClosingDate());
+            project.setClosingDate(new AdvertClosingDateBuilder().closingDate(projectAdvertDTO.getClosingDate()).build());
         }
         project.setProgram(projectAdvertDTO.getProgram());
-        
+
         // FIXME set project administrator using roles
-//        User administrator = loadPerson(projectAdvertDTO.getAdministrator());
-//        project.setAdministrator(administrator);
+        // User administrator = loadPerson(projectAdvertDTO.getAdministrator());
+        // project.setAdministrator(administrator);
 
         User primarySupervisor = loadPerson(projectAdvertDTO.getPrimarySupervisor());
         project.setPrimarySupervisor(primarySupervisor);
@@ -57,7 +58,7 @@ public class ProjectConverter {
 
         User secondarySupervisor = loadPerson(projectAdvertDTO.getSecondarySupervisor());
         project.setSecondarySupervisor(secondarySupervisor);
-        
+
     }
 
     private User loadPerson(Person person) {

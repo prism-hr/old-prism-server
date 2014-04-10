@@ -25,10 +25,6 @@ public class Project extends Advert implements PrismScope {
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
-    @Column(name = "closing_date")
-    @Temporal(value = TemporalType.DATE)
-    private Date closingDate;
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "primary_supervisor_id", nullable = false)
     private User primarySupervisor;
@@ -44,14 +40,6 @@ public class Project extends Advert implements PrismScope {
 
     public void setProgram(Program program) {
         this.program = program;
-    }
-
-    public Date getClosingDate() {
-        return closingDate;
-    }
-
-    public void setClosingDate(Date closingDate) {
-        this.closingDate = closingDate;
     }
 
     public User getPrimarySupervisor() {

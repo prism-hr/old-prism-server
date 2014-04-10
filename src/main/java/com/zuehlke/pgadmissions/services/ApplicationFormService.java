@@ -293,10 +293,7 @@ public class ApplicationFormService {
     }
 
     private Date getClosingDateForApplication(ApplicationForm application) {
-        if (application.getProject() != null) {
-            return application.getProject().getClosingDate();
-        }
-        return programService.getNextClosingDate(application.getProgram());
+        return application.getAdvert().getClosingDate().getClosingDate();
     }
 
     private Date getDueDateForApplication(ApplicationForm application) {

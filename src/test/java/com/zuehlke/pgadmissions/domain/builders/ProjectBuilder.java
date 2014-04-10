@@ -18,7 +18,6 @@ public class ProjectBuilder {
     private AdvertState state;
     private User contactUser;
     private Program program;
-    private Date closingDate;
     private User primarySupervisor;
     private User secondarySupervisor;
 
@@ -62,11 +61,6 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder closingDate(Date closingDate) {
-        this.closingDate = closingDate;
-        return this;
-    }
-
     public ProjectBuilder primarySupervisor(User primarySupervisor) {
         this.primarySupervisor = primarySupervisor;
         return this;
@@ -92,7 +86,6 @@ public class ProjectBuilder {
         project.setState(state);
         project.setContactUser(contactUser);
         project.setProgram(program);
-        project.setClosingDate(closingDate);
         project.setPrimarySupervisor(primarySupervisor);
         project.setSecondarySupervisor(secondarySupervisor);
         return project;

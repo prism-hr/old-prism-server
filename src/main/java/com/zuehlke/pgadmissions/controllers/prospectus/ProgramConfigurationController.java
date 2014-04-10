@@ -33,7 +33,7 @@ import com.google.gson.GsonBuilder;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -54,7 +54,7 @@ import com.zuehlke.pgadmissions.utils.GsonExclusionStrategies;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
 import com.zuehlke.pgadmissions.validators.AbstractValidator;
 import com.zuehlke.pgadmissions.validators.OpportunityRequestValidator;
-import com.zuehlke.pgadmissions.validators.ProgramClosingDateValidator;
+import com.zuehlke.pgadmissions.validators.AdvertClosingDateValidator;
 
 import freemarker.template.TemplateException;
 
@@ -81,7 +81,7 @@ public class ProgramConfigurationController {
     private OpportunityRequestValidator opportunityRequestValidator;
 
     @Autowired
-    private ProgramClosingDateValidator closingDateValidator;
+    private AdvertClosingDateValidator closingDateValidator;
 
     @Autowired
     private DatePropertyEditor datePropertyEditor;
@@ -207,9 +207,9 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/addClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String addClosingDate(@RequestParam String programCode, ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
+    public String addClosingDate(@RequestParam String programCode, AdvertClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
         Program program = programsService.getProgramByCode(programCode);
-        programClosingDate.setProgram(program);
+        programClosingDate.setAdvert(program);
 
         ValidationUtils.invokeValidator(closingDateValidator, programClosingDate, result);
 
@@ -226,9 +226,9 @@ public class ProgramConfigurationController {
 
     @RequestMapping(value = "/updateClosingDate", method = RequestMethod.POST)
     @ResponseBody
-    public String updateClosingDate(@RequestParam String programCode, ProgramClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
+    public String updateClosingDate(@RequestParam String programCode, AdvertClosingDate programClosingDate, BindingResult result, HttpServletRequest request) {
         Program program = programsService.getProgramByCode(programCode);
-        programClosingDate.setProgram(program);
+        programClosingDate.setAdvert(program);
 
         ValidationUtils.invokeValidator(closingDateValidator, programClosingDate, result);
 

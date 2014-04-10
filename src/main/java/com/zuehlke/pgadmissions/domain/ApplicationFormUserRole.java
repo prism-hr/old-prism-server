@@ -26,7 +26,7 @@ import com.google.common.base.Objects;
 @Entity(name = "APPLICATION_FORM_USER_ROLE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ApplicationFormUserRole implements UserRole {
-
+    
     @EmbeddedId
     private ApplicationFormUserRolePrimaryKey id;
 

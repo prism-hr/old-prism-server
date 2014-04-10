@@ -15,7 +15,7 @@ CREATE TABLE USER_ROLE (
 	application_id INT(10) UNSIGNED,
 	user_id INT(10) UNSIGNED NOT NULL,
 	role_id VARCHAR(50) NOT NULL,	
-	requesting_user_id INT(10) UNSIGNED,
+	requesting_user_id INT(10) UNSIGNED NOT NULL,
 	assigned_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (id),
 	UNIQUE INDEX (system_id, user_id, role_id),
@@ -39,28 +39,28 @@ INSERT INTO SYSTEM (name)
 VALUES ("PRiSM")
 ;
 
-INSERT INTO USER_ROLE (system_id, user_id, role_id)
-	SELECT LAST_INSERT_ID(), user_id, role_id
+INSERT INTO USER_ROLE (system_id, user_id, role_id, requesting_user_id)
+	SELECT LAST_INSERT_ID(), user_id, role_id, requesting_user_id
 	FROM SYSTEM_USER_ROLE
 ;
 
 INSERT INTO USER_ROLE (institution_id, user_id, role_id)
-	SELECT institution_id, user_id, role_id
+	SELECT institution_id, user_id, role_id, requesting_user_id
 	FROM INSTITUTION_USER_ROLE
 ;
 
 INSERT INTO USER_ROLE (program_id, user_id, role_id)
-	SELECT program_id, user_id, role_id
+	SELECT program_id, user_id, role_id, requesting_user_id
 	FROM PROGRAM_USER_ROLE
 ;
 
 INSERT INTO USER_ROLE (project_id, user_id, role_id)
-	SELECT project_id, user_id, role_id
+	SELECT project_id, user_id, role_id, requesting_user_id
 	FROM PROJECT_USER_ROLE
 ;
 
 INSERT INTO USER_ROLE (application_id, user_id, role_id)
-	SELECT application_id, user_id, role_id
+	SELECT application_id, user_id, role_id, requesting_user_id
 	FROM APPLICATION_USER_ROLE
 ;
 

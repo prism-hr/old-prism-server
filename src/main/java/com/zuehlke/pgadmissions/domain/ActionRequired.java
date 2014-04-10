@@ -43,7 +43,7 @@ public class ActionRequired {
     private ApplicationForm application;
 
     @ManyToOne
-    @JoinColumn(name = "application_id", nullable = false)
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
     @ManyToOne

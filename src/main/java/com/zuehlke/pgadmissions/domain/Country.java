@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-@Entity(name = "COUNTRIES")
+@Entity(name = "COUNTRY")
 public class Country implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = 2746228908173552617L;

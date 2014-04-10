@@ -148,7 +148,6 @@ public class RefereeService {
         user.setFirstName(referee.getFirstname());
         user.setLastName(referee.getLastname());
         user.setUsername(referee.getEmail());
-        user.setEnabled(false);
         
         user.setAction(ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
         user.setApplication(referee.getApplication());

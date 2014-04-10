@@ -136,7 +136,6 @@ public class UserBuilder {
         user.setLastName(lastName);
         user.setEmail(email);
         user.setUsername(username);
-        user.setEnabled(enabled);
         user.setActivationCode(activationCode);
         user.getPendingRoleNotifications().addAll(pendingRoleNotifications);
         user.setAdvert(advert);
@@ -150,6 +149,7 @@ public class UserBuilder {
         userAccount.setConfirmPassword(confirmPassword);
         userAccount.setFiltering(filtering);
         userAccount.setApplicationListLastAccessTimestamp(applicationListLastAccessTimestamp);
+        userAccount.setEnabled(enabled);
         user.setAccount(userAccount);
         return user;
     }

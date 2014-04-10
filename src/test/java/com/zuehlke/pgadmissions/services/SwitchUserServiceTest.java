@@ -80,7 +80,7 @@ public class SwitchUserServiceTest {
     
     @Test(expected = DisabledException.class)
     public void shouldThrowDisabledExceptionForDisabledAccount() {
-        user2.setEnabled(false);
+        user2.getAccount().setEnabled(false);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user1, user2);
         authenticationProvider.authenticate(authenticationToken);
     }

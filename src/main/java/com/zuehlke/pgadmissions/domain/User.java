@@ -57,18 +57,22 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Column(name = "first_name")
     private String firstName;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Column(name = "first_name_2")
     private String firstName2;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Column(name = "first_name_3")
     private String firstName3;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Column(name = "last_name")
     private String lastName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
@@ -83,8 +87,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     @Column(name = "upi")
     private String upi;
-
-    private boolean enabled;
 
     @Column(name = "activation_code")
     private String activationCode;
@@ -215,11 +217,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     }
 
     public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        return account != null && account.isEnabled();
     }
 
     public String getActivationCode() {

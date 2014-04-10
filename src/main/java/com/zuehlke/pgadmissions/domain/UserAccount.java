@@ -27,7 +27,7 @@ public class UserAccount {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
     private String password;
 
@@ -44,6 +44,8 @@ public class UserAccount {
     @Column(name = "application_list_last_access_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date applicationListLastAccessTimestamp;
+
+    private boolean enabled;
 
     public String getPassword() {
         return password;
@@ -83,6 +85,14 @@ public class UserAccount {
 
     public void setApplicationListLastAccessTimestamp(Date applicationListLastAccessTimestamp) {
         this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
 }

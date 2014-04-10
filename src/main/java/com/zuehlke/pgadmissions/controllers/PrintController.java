@@ -92,6 +92,7 @@ public class PrintController {
 			    pdfModelBuilder.includeDisability(true);
 			    pdfModelBuilder.includeEthnicity(true);
 			} else if (!refereeService.isRefereeOfApplicationForm(user, form)) {
+			    // TODO specify visible IDs of references
 	            pdfModelBuilder.includeReferences(true);
 	        }
 			

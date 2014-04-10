@@ -176,7 +176,7 @@ public class EditApplicationFormAsProgrammeAdminController {
         if (!"newReferee".equals(editedRefereeId)) {
             Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
             Referee referee = refereeService.getRefereeById(decryptedId);
-            if (referee.getReference() != null) {
+            if (referee.getComment() != null) {
                 return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
             }
         }

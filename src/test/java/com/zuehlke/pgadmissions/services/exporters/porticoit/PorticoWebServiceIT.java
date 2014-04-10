@@ -677,7 +677,7 @@ public class PorticoWebServiceIT {
         randomApplicationForm = applicationsService.getByApplicationNumber("RRDCIVSGEO01-2012-000032");
 
         for (Referee referee : randomApplicationForm.getReferees()) {
-            if (referee.getReference() != null) {
+            if (referee.getComment() != null) {
                 referee.setSendToUCL(true);
             }
         }
@@ -693,7 +693,7 @@ public class PorticoWebServiceIT {
                         .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.")
                         .jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true)
                         .reference(referenceComment1).build();
-        refereeOne.setReference(referenceComment1);
+        refereeOne.setComment(referenceComment1);
         randomApplicationForm.getReferees().add(refereeOne);
 
         applicationsService.save(randomApplicationForm);
@@ -754,7 +754,7 @@ public class PorticoWebServiceIT {
             }
 
             for (Referee referee : applicationForm.getReferees()) {
-                if (referee.getReference() != null) {
+                if (referee.getComment() != null) {
                     referee.setSendToUCL(true);
                     numberOfReferees++;
                     if (numberOfReferees == 2) {

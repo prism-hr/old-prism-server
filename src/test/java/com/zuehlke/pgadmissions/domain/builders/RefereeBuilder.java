@@ -153,7 +153,7 @@ public class RefereeBuilder {
         referee.setLastname(lastname);
         referee.setMessenger(messenger);
 
-        referee.setReference(reference);
+        referee.setComment(reference);
         referee.setUser(user);
         referee.setPhoneNumber(phoneNumber);
         referee.setDeclined(declined);

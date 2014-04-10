@@ -154,8 +154,7 @@ public class Comment implements Serializable {
     @Column(name = "recommend_alternative_opportunity")
     private Boolean recommendAlternativeOpportunity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "next_status")
+    @Column(name = "next_status")
     private ApplicationFormStatus nextStatus = null;
 
     @ManyToOne(fetch = FetchType.LAZY)

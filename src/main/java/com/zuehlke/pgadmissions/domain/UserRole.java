@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -13,6 +14,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
+@Entity(name = "USER_ROLE")
 public class UserRole {
 
     @Id
@@ -43,7 +45,7 @@ public class UserRole {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "application_id", nullable = false)
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
     @ManyToOne(fetch = FetchType.LAZY)

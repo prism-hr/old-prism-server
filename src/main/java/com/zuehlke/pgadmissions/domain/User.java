@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,7 +43,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
 @Indexed
-@Entity(name = "REGISTERED_USER")
+@Entity(name = "USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class User implements UserDetails, Comparable<User>, Serializable {
 
@@ -96,6 +97,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     private boolean enabled;
 
+    @Column(name = "activation_code")
     private String activationCode;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
@@ -139,6 +141,9 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Column(name = "latest_opportunity_request_notification_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date latestOpportunityRequestNotificationDate;
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserRole> userRoles;
 
     @OneToMany(mappedBy = "user")
     private List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds = new ArrayList<ResearchOpportunitiesFeed>();

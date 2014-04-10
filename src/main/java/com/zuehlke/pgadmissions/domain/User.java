@@ -11,6 +11,9 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -37,7 +40,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
@@ -86,13 +89,18 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Column(name = "activation_code")
     private String activationCode;
 
+    @Column(name = "action_id")
+    @Enumerated(EnumType.STRING)
+    private ApplicationFormAction action;
+
+    @JoinColumn(name = "application_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ApplicationForm application;
+
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     @Valid
     private List<Comment> comments = new ArrayList<Comment>();
-
-    @Column(name = "direct_to_url")
-    private String directToUrl;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -222,16 +230,24 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.activationCode = activationCode;
     }
 
+    public ApplicationFormAction getAction() {
+        return action;
+    }
+
+    public void setAction(ApplicationFormAction action) {
+        this.action = action;
+    }
+
+    public ApplicationForm getApplication() {
+        return application;
+    }
+
+    public void setApplication(ApplicationForm application) {
+        this.application = application;
+    }
+
     public List<Comment> getComments() {
         return comments;
-    }
-
-    public String getDirectToUrl() {
-        return directToUrl;
-    }
-
-    public void setDirectToUrl(String directToUrl) {
-        this.directToUrl = directToUrl;
     }
 
     public List<PendingRoleNotification> getPendingRoleNotifications() {

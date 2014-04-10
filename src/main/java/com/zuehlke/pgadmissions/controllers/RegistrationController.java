@@ -84,9 +84,9 @@ public class RegistrationController {
 
     @RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
     public String activateAccountSubmit(@RequestParam String activationCode, HttpServletRequest request) {
-        
+
         User user = registrationService.activateAccount(activationCode);
-        
+
         if (user == null) {
             return TemplateLocation.REGISTRATION_FAILURE_CONFIRMATION;
         }
@@ -95,8 +95,9 @@ public class RegistrationController {
 
         if (user.getAdvert() != null) {
             redirectView = createApplicationAndReturnApplicationViewValue(user);
-        } else if (user.getDirectToUrl() != null) {
-            redirectView += user.getDirectToUrl();
+            // TODO append redirect string based on action
+            // } else if (user.getDirectToUrl() != null) {
+            // redirectView += user.getDirectToUrl();
         } else if (StringUtils.isNotBlank((String) request.getSession().getAttribute("directToUrl"))) {
             redirectView += (String) request.getSession().getAttribute("directToUrl");
         } else {
@@ -121,27 +122,30 @@ public class RegistrationController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String getRegisterPage(@RequestParam(required = false) String activationCode, @RequestParam(required = false) String directToUrl,
-            @RequestParam(required = false) String advert, Model modelMap, HttpServletRequest request, HttpSession session) {
+    public String getRegisterPage(@RequestParam(required = false) String activationCode, @RequestParam(required = false) String advert, Model modelMap,
+            HttpServletRequest request, HttpSession session) {
         session.removeAttribute("CLICKED_ON_ALREADY_REGISTERED");
-        User pendingUser = getPendingUser(activationCode, directToUrl);
+        User pendingUser = getPendingUser(activationCode);
         if (pendingUser == null && !StringUtils.containsIgnoreCase(getReferrerFromHeader(request), "pgadmissions") && !isAnApplyNewRequest(request)) {
             return RedirectLocation.LOGIN;
         }
 
-        if (pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()) {
-            return RedirectLocation.REDIRECT + pendingUser.getDirectToUrl();
-        }
+        // TODO perform redirection based on action column
+        // if (pendingUser != null && pendingUser.getDirectToUrl() != null && pendingUser.isEnabled()) {
+        // return RedirectLocation.REDIRECT + pendingUser.getDirectToUrl();
+        // }
 
-        if (pendingUser != null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
-            request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
-        }
+        // TODO perform redirection based on action column
+        // if (pendingUser != null && !pendingUser.isEnabled() && StringUtils.isNotBlank(pendingUser.getDirectToUrl())) {
+        // request.getSession().setAttribute("directToUrl", pendingUser.getDirectToUrl());
+        // }
 
         if (pendingUser == null) {
             pendingUser = new User();
         }
 
-        pendingUser.setDirectToUrl(directToUrl);
+        // TODO set action instead direct to URL
+        // pendingUser.setDirectToUrl(directToUrl);
         modelMap.addAttribute("pendingUser", pendingUser);
 
         if (advert != null) {
@@ -155,7 +159,7 @@ public class RegistrationController {
         return TemplateLocation.REGISTRATION_FORM;
     }
 
-    public User getPendingUser(final String activationCode, final String directToUrl) {
+    public User getPendingUser(final String activationCode) {
         if (StringUtils.isBlank(activationCode)) {
             return null;
         }
@@ -163,10 +167,6 @@ public class RegistrationController {
         User pendingUser = userService.getUserByActivationCode(activationCode);
         if (pendingUser == null) {
             throw new ResourceNotFoundException();
-        }
-
-        if (directToUrl != null) {
-            pendingUser.setDirectToUrl(directToUrl);
         }
 
         return pendingUser;

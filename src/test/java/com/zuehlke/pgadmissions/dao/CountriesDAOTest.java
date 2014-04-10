@@ -23,7 +23,7 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetAllCountriesInAlhphabeticalOrder() {
         BigInteger numberOfCoutnries = (BigInteger) sessionFactory.getCurrentSession()
-                .createSQLQuery("select count(*) from COUNTRIES").uniqueResult();
+                .createSQLQuery("select count(*) from country").uniqueResult();
         Country country1 = new CountryBuilder().enabled(true).code("ZZ").name("ZZZZZZ").build();
         Country country2 = new CountryBuilder().enabled(true).code("AA").name("AAAAAAAA").build();
         save(country1, country2);
@@ -65,7 +65,7 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetAllEnabledCountries() {
-        BigInteger numberOfCoutnries = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from COUNTRIES WHERE enabled = true").uniqueResult();
+        BigInteger numberOfCoutnries = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from countries where enabled = true").uniqueResult();
         
         Country country1 = new CountryBuilder().enabled(true).code("ZZ").name("ZZZZZZ").build();
         Country country2 = new CountryBuilder().enabled(true).code("AA").name("mmmmmm").build();

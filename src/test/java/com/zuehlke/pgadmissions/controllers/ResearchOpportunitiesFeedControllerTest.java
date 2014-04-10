@@ -15,10 +15,10 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ResearchOpportunitiesFeedBuilder;
 import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -37,18 +37,18 @@ public class ResearchOpportunitiesFeedControllerTest {
     
     private ResearchOpportunitiesFeedController controller;
     
-    private RegisteredUser currentUser;
+    private User currentUser;
     
     @Before
     public void prepare() {
-        currentUser = new RegisteredUserBuilder().build();
+        currentUser = new UserBuilder().build();
         programsServiceMock = EasyMock.createMock(ProgramService.class);
         feedServiceMock = EasyMock.createMock(ResearchOpportunitiesFeedService.class);
         messageSourceMock = EasyMock.createNiceMock(MessageSource.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         controller = new ResearchOpportunitiesFeedController(userServiceMock, programsServiceMock, feedServiceMock, messageSourceMock) {
             @Override
-            protected RegisteredUser getCurrentUser() {
+            protected User getCurrentUser() {
                 return currentUser;
             }
         };

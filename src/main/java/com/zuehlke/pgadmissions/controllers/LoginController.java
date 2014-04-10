@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -110,7 +110,7 @@ public class LoginController {
         String[] activationCodeValues = defaultSavedRequest.getParameterValues(ACTIVATION_CODE_URL_PARAMETER);
         if (activationCodeValues.length == 1) {
             String activationCode = activationCodeValues[0];
-            RegisteredUser userByActivationCode = userService.getUserByActivationCode(activationCode);
+            User userByActivationCode = userService.getUserByActivationCode(activationCode);
             if (userByActivationCode != null) {
                 request.getSession().setAttribute(USER_EMAIL_SESSION_PARAMETER, userByActivationCode.getEmail());
             }

@@ -13,7 +13,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.UpdateUserForProgramWithRolesDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -59,7 +59,7 @@ public class UpdateUserForProgramWithRolesDTOValidatorTest {
 	public void setup() {
 		dto = new UpdateUserForProgramWithRolesDTO();
 		dto.setSelectedProgram(new Program());
-		dto.setSelectedUser(new RegisteredUser());
+		dto.setSelectedUser(new User());
 		
 		updateUserForProgramWithRolesDTOValidator = new UpdateUserForProgramWithRolesDTOValidator();
 		updateUserForProgramWithRolesDTOValidator.setValidator((javax.validation.Validator) validator);

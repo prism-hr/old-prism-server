@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
@@ -65,14 +65,14 @@ public class InterviewConfirmController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public User getUser() {
         return userService.getCurrentUser();
     }
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
+        User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
@@ -90,7 +90,7 @@ public class InterviewConfirmController {
     @RequestMapping(method = RequestMethod.GET)
     public String getInterviewConfirmPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
         
         AssignInterviewersComment latestComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.ASSIGN_INTERVIEWERS);
@@ -108,7 +108,7 @@ public class InterviewConfirmController {
     public String submitInterviewConfirmation(@ModelAttribute(value = "interviewConfirmDTO") @Valid InterviewConfirmDTO interviewConfirmDTO,
                     BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
 
         if (result.hasErrors()) {

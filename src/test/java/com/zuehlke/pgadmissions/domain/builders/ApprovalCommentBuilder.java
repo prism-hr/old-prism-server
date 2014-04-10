@@ -7,7 +7,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 public class ApprovalCommentBuilder {
 
@@ -15,7 +15,7 @@ public class ApprovalCommentBuilder {
     private String content;
     private Integer id;
     private Date createdTimeStamp;
-    private RegisteredUser user;
+    private User user;
 
     private Boolean projectDescriptionAvailable;
     private String projectTitle;
@@ -75,7 +75,7 @@ public class ApprovalCommentBuilder {
         return this;
     }
 
-    public ApprovalCommentBuilder user(RegisteredUser user) {
+    public ApprovalCommentBuilder user(User user) {
         this.user = user;
         return this;
     }

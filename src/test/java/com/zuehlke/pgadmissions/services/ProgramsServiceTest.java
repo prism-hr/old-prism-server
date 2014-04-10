@@ -31,17 +31,18 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
+import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
@@ -116,7 +117,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldGetProgramsForWhichCanManageProjects() {
-        RegisteredUser userMock = EasyMockUnitils.createMock(RegisteredUser.class);
+        User userMock = EasyMockUnitils.createMock(User.class);
 
         List<Program> programs = Collections.emptyList();
         EasyMock.expect(programDAOMock.getProgramsForWhichUserCanManageProjects(userMock)).andReturn(programs);
@@ -170,11 +171,10 @@ public class ProgramsServiceTest {
         programDAOMock.save(project);
 
         replay();
-        programsService.removeAdvert(1);
+        programsService.removeProject(1);
         verify();
 
-        assertFalse(project.isEnabled());
-        assertFalse(project.isActive());
+        assertEquals(AdvertState.PROJECT_DISABLED, project.getState());
     }
 
     @Test
@@ -182,7 +182,7 @@ public class ProgramsServiceTest {
         Domicile domicile = new Domicile();
         ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
 
-        RegisteredUser requestAuthor = new RegisteredUser();
+        User requestAuthor = new User();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, domicile).otherInstitution("other_name").build();
         Institution institution = new QualificationInstitutionBuilder().build();
 
@@ -208,7 +208,7 @@ public class ProgramsServiceTest {
     public void shouldGetCustomProgram() {
         ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
         Program program = new ProgramBuilder().institution(new QualificationInstitutionBuilder().code("any_inst").build()).build();
-        RegisteredUser requestAuthor = new RegisteredUser();
+        User requestAuthor = new User();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, null).institutionCode("any_inst")
                 .atasRequired(true).sourceProgram(program).acceptingApplications(true).build();
 
@@ -227,7 +227,7 @@ public class ProgramsServiceTest {
         assertEquals(program.getAtasRequired(), opportunityRequest.getAtasRequired());
         assertEquals(program.getStudyDuration(), opportunityRequest.getStudyDuration());
         assertEquals(program.getFunding(), opportunityRequest.getFunding());
-        assertTrue(program.isActive());
+        assertEquals(AdvertState.PROGRAM_APPROVED, program.getState());
         assertSame(program.getProgramType(), opportunityRequest.getProgramType());
         assertSame(program.getContactUser(), requestAuthor);
     }
@@ -248,9 +248,9 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldUpdateClosingDate() {
-        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
+        Advert advert = new AdvertBuilder().description("program").studyDuration(12).state(AdvertState.PROGRAM_APPROVED).build();
         Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
-        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
+        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new Date()).advert(program).build();
         programDAOMock.updateClosingDate(closingDate);
         replay();
         programsService.updateClosingDate(closingDate);
@@ -259,9 +259,9 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldAddClosingDateToProgram() {
-        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
+        Advert advert = new AdvertBuilder().description("program").studyDuration(12).state(AdvertState.PROGRAM_APPROVED).build();
         Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
-        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
+        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new Date()).advert(program).build();
         programDAOMock.save(program);
         replay();
         programsService.addClosingDateToProgram(program, closingDate);
@@ -270,7 +270,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldDeleteClosingDateById() {
-        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
+        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new Date()).build();
         expect(programDAOMock.getClosingDateById(closingDate.getId())).andReturn(closingDate);
         programDAOMock.deleteClosingDate(closingDate);
         replay();

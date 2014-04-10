@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -73,7 +73,7 @@ public class OpportunitiesServiceTest {
 
     @Test
     public void shouldCreateNewOpportunityRequest() {
-        RegisteredUser author = new RegisteredUser();
+        User author = new User();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(author).programTitle("dupa").build();
 
         expect(registrationService.submitRegistration(author)).andReturn(null);
@@ -93,7 +93,7 @@ public class OpportunitiesServiceTest {
     @Test
     public void shouldCreateOpportunityChangeRequest() {
         Program program = new ProgramBuilder().title("tytul").atasRequired(true).build();
-        RegisteredUser author = new RegisteredUser();
+        User author = new User();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(author).sourceProgram(program).build();
 
         expect(opportunityRequestDAO.findByProgramAndStatus(null, OpportunityRequestStatus.NEW)).andReturn(Collections.<OpportunityRequest> emptyList());
@@ -115,7 +115,7 @@ public class OpportunitiesServiceTest {
     @Test
     public void shouldlistOpportunityRequests() {
         List<OpportunityRequest> requests = Lists.newArrayList();
-        RegisteredUser user = new RegisteredUser();
+        User user = new User();
 
         expect(opportunityRequestDAO.listOpportunityRequests(user)).andReturn(requests);
 
@@ -141,8 +141,8 @@ public class OpportunitiesServiceTest {
 
     @Test
     public void shouldRespondToOpportunityRequest() {
-        RegisteredUser author = new RegisteredUser();
-        RegisteredUser currentUser = new RegisteredUser();
+        User author = new User();
+        User currentUser = new User();
         Program program = new ProgramBuilder().locked(true).build();
         Program savedProgram = new Program();
         OpportunityRequest request = new OpportunityRequestBuilder().id(666).author(author).sourceProgram(program).build();
@@ -200,7 +200,7 @@ public class OpportunitiesServiceTest {
         OpportunityRequest request = new OpportunityRequestBuilder().id(8).status(OpportunityRequestStatus.NEW).build();
         OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().content("ok").commentType(OpportunityRequestCommentType.REJECT).build();
         OpportunitiesService thisBeanMock = EasyMockUnitils.createMock(OpportunitiesService.class);
-        RegisteredUser currentUser = new RegisteredUser();
+        User currentUser = new User();
 
         expect(applicationContext.getBean(OpportunitiesService.class)).andReturn(thisBeanMock);
         expect(thisBeanMock.getAllRelatedOpportunityRequests(request)).andReturn(Lists.newArrayList(new OpportunityRequestBuilder().id(99).build(), request));

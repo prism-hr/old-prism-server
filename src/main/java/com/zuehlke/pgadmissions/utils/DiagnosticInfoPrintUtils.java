@@ -12,7 +12,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 public final class DiagnosticInfoPrintUtils {
 
@@ -27,7 +27,7 @@ public final class DiagnosticInfoPrintUtils {
         return buf.toString();
     }
 
-    public static String getRequestErrorLogMessage(HttpServletRequest request, RegisteredUser currentUser) {
+    public static String getRequestErrorLogMessage(HttpServletRequest request, User currentUser) {
         Map<String, String> parameterMap = Maps.transformValues(request.getParameterMap(), new Function<String[], String>() {
             public String apply(String[] input) {
                 return Joiner.on(",").join(input);

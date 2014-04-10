@@ -4,12 +4,12 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class ApprovalEvaluationCommentBuilder {
 
-    private RegisteredUser user;
+    private User user;
     private ApplicationForm application;
     private Date createdTimestamp;
     private String comment;
@@ -21,7 +21,7 @@ public class ApprovalEvaluationCommentBuilder {
         return this;
     }
 
-    public ApprovalEvaluationCommentBuilder user(RegisteredUser user) {
+    public ApprovalEvaluationCommentBuilder user(User user) {
         this.user = user;
         return this;
     }

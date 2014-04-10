@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
@@ -48,8 +48,8 @@ public class PersonalDetailsServiceTest {
         Document oldQualificationDocument = new Document();
         Document newQualificationDocument = new Document();
 
-        RegisteredUser applicant = new RegisteredUser();
-        RegisteredUser newApplicant = new RegisteredUser();
+        User applicant = new User();
+        User newApplicant = new User();
 
         PersonalDetails personalDetails = new PersonalDetailsBuilder().languageQualification(
                 new LanguageQualificationBuilder().languageQualificationDocument(oldQualificationDocument).build()).build();

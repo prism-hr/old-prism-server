@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -47,14 +47,14 @@ public class CommentDAO {
         return (ValidationComment) sessionFactory.getCurrentSession().createCriteria(ValidationComment.class) //
                 .add(Restrictions.eq("type", CommentType.VALIDATION)) //
                 .add(Restrictions.eq("application", applicationForm)) //
-                .addOrder(Order.desc("date"))
-                .setMaxResults(1)
-                .uniqueResult();
+                .addOrder(Order.desc("date")).setMaxResults(1).uniqueResult();
     }
 
-    public List<Comment> getVisibleComments(RegisteredUser user, ApplicationForm applicationForm) {
+    public List<Comment> getVisibleComments(User user, ApplicationForm applicationForm) {
         // TODO amend and add tests
-        return sessionFactory.getCurrentSession().createCriteria(Comment.class)
+        return sessionFactory
+                .getCurrentSession()
+                .createCriteria(Comment.class)
                 .createAlias("application", "a")
                 .createAlias("applicationFormUserRoles", "afur")
                 .createAlias("afur.actions", "afar")
@@ -62,23 +62,21 @@ public class CommentDAO {
                 .createAlias("role.actions", "afao")
                 .add(Restrictions.eq("application", applicationForm))
                 .add(Restrictions.eq("afur.user", user))
-                .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("user", user))
-                        .add(Restrictions.ge("r.internal", "afur.internal"))
-                        .add(Restrictions.ge("r.internal", "afao.internal")))
-                .addOrder(Order.desc("createdTimestamp"))
-                .list();
+                .add(Restrictions.disjunction().add(Restrictions.eq("user", user)).add(Restrictions.ge("r.internal", "afur.internal"))
+                        .add(Restrictions.ge("r.internal", "afao.internal"))).addOrder(Order.desc("createdTimestamp")).list();
     }
 
     public List<CommentAssignedUser> getNotDecliningSupervisorsFromLatestApprovalStage(ApplicationForm application) {
         // TODO implement
         return null;
     }
-    
-    public <T extends Comment> T getLastCommentOfType(ApplicationForm application, Class<T> clazz) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(clazz).add(Restrictions.eq("application", application))
-                .addOrder(Order.desc("createdTimestamp"))
-                .addOrder(Order.desc("id"))
-                .uniqueResult();
+
+    public <T extends Comment> T getLastCommentOfType(User user, ApplicationForm application, Class<T> clazz) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(clazz).add(Restrictions.eq("application", application))
+                .addOrder(Order.desc("createdTimestamp")).addOrder(Order.desc("id"));
+        if (user != null) {
+            criteria.add(Restrictions.eq("user", user));
+        }
+        return (T) criteria.uniqueResult();
     }
 }

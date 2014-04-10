@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -99,9 +99,9 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     @RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
     public String getMoveToApprovalPage(ModelMap modelMap, @RequestParam(required = false) String action) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser registeredUser = (RegisteredUser) modelMap.get("user");
+        User user = (User) modelMap.get("user");
 
-        actionService.validateAction(applicationForm, registeredUser, ApplicationFormAction.ASSIGN_SUPERVISORS);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
 
         modelMap.put("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
 
@@ -115,7 +115,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             modelMap.put("sendToPorticoData", porticoData);
         }
 
-        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, registeredUser);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return APPROVAL_PAGE;
     }
 
@@ -134,14 +134,14 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     }
 
     @ModelAttribute("usersInterestedInApplication")
-    public List<RegisteredUser> getUsersInterestedInApplication(@RequestParam String applicationId) {
+    public List<User> getUsersInterestedInApplication(@RequestParam String applicationId) {
         // FIXME isSupervisorInApprovalRound method has been removed from RegisteredUser class, provide this information in other way (by moving the method into
         // aservice, or this method can return a map)
         return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
 
     @ModelAttribute("usersPotentiallyInterestedInApplication")
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
+    public List<User> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
         return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
     }
 
@@ -174,7 +174,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
     public String assignSupervisors(ModelMap modelMap, @Valid @ModelAttribute("approvalComment") AssignSupervisorsComment approvalComment,
             BindingResult bindingResult, SessionStatus sessionStatus) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser initiator = getCurrentUser();
+        User initiator = getCurrentUser();
         actionService.validateAction(applicationForm, initiator, ApplicationFormAction.ASSIGN_SUPERVISORS);
 
         if (bindingResult.hasErrors()) {
@@ -236,7 +236,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         if (!"newReferee".equals(editedRefereeId)) {
             Integer decryptedId = encryptionHelper.decryptToInteger(editedRefereeId);
             Referee referee = refereeService.getRefereeById(decryptedId);
-            if (referee.getReference() != null) {
+            if (referee.getComment() != null) {
                 return REFERENCE_SECTION;
             }
         }

@@ -13,13 +13,13 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 
 public class QualificationDAOTest extends AutomaticRollbackTestCase {
 
-    private RegisteredUser user;
+    private User user;
     private Program program;
     private QualificationDAO qualificationDAO;
 
@@ -73,7 +73,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         qualificationDAO = new QualificationDAO(sessionFactory);
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
                 .build();
         save(user);
         flushAndClearSession();

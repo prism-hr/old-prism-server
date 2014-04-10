@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 public class OfferRecommendedCommentBuilder {
 
@@ -16,7 +16,7 @@ public class OfferRecommendedCommentBuilder {
     private String comment;
     private Integer id;
     private Date createdTimeStamp;
-    private RegisteredUser user;
+    private User user;
 
     private String projectTitle;
     private String projectAbstract;
@@ -70,7 +70,7 @@ public class OfferRecommendedCommentBuilder {
         return this;
     }
 
-    public OfferRecommendedCommentBuilder user(RegisteredUser user) {
+    public OfferRecommendedCommentBuilder user(User user) {
         this.user = user;
         return this;
     }

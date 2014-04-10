@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
@@ -30,17 +30,17 @@ public class ActionService {
         return actionDAO.getActionIdByActionType(actionType);
     }
     
-    public void validateAction(final ApplicationForm application, final RegisteredUser user, final ApplicationFormAction action) {
+    public void validateAction(final ApplicationForm application, final User user, final ApplicationFormAction action) {
         if (!checkActionAvailable(application, user, action)) {
             throw new ActionNoLongerRequiredException(application.getApplicationNumber());
         }
     }
 
-    public boolean checkActionAvailable(final ApplicationForm application, final RegisteredUser user, final ApplicationFormAction action) {
+    public boolean checkActionAvailable(final ApplicationForm application, final User user, final ApplicationFormAction action) {
         return !actionDAO.getUserActionById(application.getId(), user.getId(), action).isEmpty();
     }
 
-    public ApplicationFormAction getPrecedentAction(final ApplicationForm application, final RegisteredUser user, final ActionType actionType) {
+    public ApplicationFormAction getPrecedentAction(final ApplicationForm application, final User user, final ActionType actionType) {
         List<ActionDefinition> precedentAction = actionDAO.getUserActionByActionType(application.getId(), user.getId(), actionType);
         if (precedentAction.isEmpty()) {
             throw new ActionNoLongerRequiredException(application.getApplicationNumber());
@@ -48,8 +48,8 @@ public class ActionService {
         return precedentAction.get(0).getAction();
     }
     
-    public List<ActionDefinition> getUserActions(Integer applicationFormId, Integer registeredUserId) {
-        return actionDAO.getUserActions(applicationFormId, registeredUserId);
+    public List<ActionDefinition> getUserActions(Integer applicationFormId, Integer userId) {
+        return actionDAO.getUserActions(applicationFormId, userId);
     }
     
     public void deleteApplicationActions(ApplicationForm application) {

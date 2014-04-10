@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
@@ -22,6 +24,8 @@ import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
+
+import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
 
 @AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
@@ -44,8 +48,9 @@ public class Institution implements Serializable, PrismScope {
     @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String name;
 
-    @Column(name = "enabled")
-    private Boolean enabled;
+    @Column(name = "state_id")
+    @Enumerated(EnumType.STRING)
+    private InstitutionState state;
 
     @Column(name = "code")
     private String code;
@@ -66,12 +71,12 @@ public class Institution implements Serializable, PrismScope {
         this.name = name;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
+    public InstitutionState getState() {
+        return state;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setState(InstitutionState state) {
+        this.state = state;
     }
 
     public String getDomicileCode() {

@@ -4,12 +4,12 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CompleteInterviewComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class InterviewEvaluationCommentBuilder {
 
-    private RegisteredUser user;
+    private User user;
     private ApplicationForm application;
     private Date date;
     private String comment;
@@ -21,7 +21,7 @@ public class InterviewEvaluationCommentBuilder {
         return this;
     }
 
-    public InterviewEvaluationCommentBuilder user(RegisteredUser user) {
+    public InterviewEvaluationCommentBuilder user(User user) {
         this.user = user;
         return this;
     }

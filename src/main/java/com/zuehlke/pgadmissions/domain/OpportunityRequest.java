@@ -56,7 +56,7 @@ public class OpportunityRequest {
 
     @ManyToOne
     @JoinColumn(name = "author_id")
-    private RegisteredUser author;
+    private User author;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -164,11 +164,11 @@ public class OpportunityRequest {
         computeStudyDurationNumberAndUnit();
     }
 
-    public RegisteredUser getAuthor() {
+    public User getAuthor() {
         return author;
     }
 
-    public void setAuthor(RegisteredUser author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
 

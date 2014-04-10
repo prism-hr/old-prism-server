@@ -22,13 +22,13 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -66,14 +66,14 @@ public class RejectServiceTest {
 
     private RejectReason reason2;
 
-    private RegisteredUser admin;
+    private User admin;
 
-    private RegisteredUser approver;
+    private User approver;
 
     @Before
     public void setUp() {
-        admin = new RegisteredUserBuilder().id(324).username("admin").build();
-        approver = new RegisteredUserBuilder().id(22414).username("real approver").build();
+        admin = new UserBuilder().id(324).username("admin").build();
+        approver = new UserBuilder().id(22414).username("real approver").build();
         Program program = new ProgramBuilder().id(10023).build();
         application = new ApplicationFormBuilder().id(200).advert(program).status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
 

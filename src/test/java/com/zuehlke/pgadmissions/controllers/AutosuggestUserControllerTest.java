@@ -8,8 +8,8 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 
 public class AutosuggestUserControllerTest {
@@ -18,16 +18,16 @@ public class AutosuggestUserControllerTest {
 
     private AutosuggestUserController controller;
 
-    private RegisteredUser similiarToUser1;
+    private User similiarToUser1;
 
-    private RegisteredUser user1;
+    private User user1;
     
     @Before
     public void prepare() {
-        user1 = new RegisteredUserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com")
+        user1 = new UserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com")
                 .username("tyler@durden.com").password("password").enabled(false).build();
 
-        similiarToUser1 = new RegisteredUserBuilder().firstName("Taylor").lastName("Dordeen")
+        similiarToUser1 = new UserBuilder().firstName("Taylor").lastName("Dordeen")
                 .email("taylor@dordeen.com").username("taylor@durden.com").password("password")
                 .enabled(false).build();
         

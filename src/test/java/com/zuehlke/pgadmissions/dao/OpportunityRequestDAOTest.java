@@ -21,14 +21,14 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 
 public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldFindOpportunityRequestById() {
-        RegisteredUser user = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, 15);
+        User user = (User) sessionFactory.getCurrentSession().get(User.class, 15);
         Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
 
         OpportunityRequest request1 = aOpportunityRequest(user, domicile).build();
@@ -46,8 +46,8 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void shouldGetInitialOpportunityRequests() {
-        RegisteredUser currentUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, 28);
-        RegisteredUser otherUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, 15);
+        User currentUser = (User) sessionFactory.getCurrentSession().get(User.class, 28);
+        User otherUser = (User) sessionFactory.getCurrentSession().get(User.class, 15);
         Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
         Institution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
         Program program = testObjectProvider.getEnabledProgram();
@@ -74,7 +74,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetOpportunityRequestsForProgram() {
-        RegisteredUser user = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, 15);
+        User user = (User) sessionFactory.getCurrentSession().get(User.class, 15);
         Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
         Institution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
         Program program = testObjectProvider.getEnabledProgram();

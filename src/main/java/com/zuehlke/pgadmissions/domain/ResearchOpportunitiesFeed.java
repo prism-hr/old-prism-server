@@ -33,7 +33,7 @@ public class ResearchOpportunitiesFeed implements Serializable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registered_user_id")
-    private RegisteredUser user;
+    private User user;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "feed_format")
@@ -54,11 +54,11 @@ public class ResearchOpportunitiesFeed implements Serializable {
         this.id = id;
     }
 
-    public RegisteredUser getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(RegisteredUser user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

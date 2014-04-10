@@ -1,13 +1,13 @@
 package com.zuehlke.pgadmissions.dto;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 
 public class UpdateUserForProgramWithRolesDTO {
 	
 	private Program selectedProgram;
-	private RegisteredUser selectedUser;
+	private User selectedUser;
 	
 	public Program getSelectedProgram() {
 		return selectedProgram;
@@ -17,11 +17,11 @@ public class UpdateUserForProgramWithRolesDTO {
 		this.selectedProgram = selectedProgram;
 	}
 	
-	public RegisteredUser getSelectedUser() {
+	public User getSelectedUser() {
 		return selectedUser;
 	}
 	
-	public void setSelectedUser(RegisteredUser selectedUser) {
+	public void setSelectedUser(User selectedUser) {
 		this.selectedUser = selectedUser;
 	}
 }

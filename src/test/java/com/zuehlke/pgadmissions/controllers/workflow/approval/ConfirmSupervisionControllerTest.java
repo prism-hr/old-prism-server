@@ -16,7 +16,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
@@ -71,7 +71,7 @@ public class ConfirmSupervisionControllerTest {
     @Test
     public void testLoadConfirmSupervisionPage() {
         ApplicationForm applicationForm = new ApplicationForm();
-        RegisteredUser user = new RegisteredUser();
+        User user = new User();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
@@ -87,7 +87,7 @@ public class ConfirmSupervisionControllerTest {
 
     @Test
     public void testApplyConfirmSupervision() {
-        RegisteredUser user = new RegisteredUser();
+        User user = new User();
         ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").build();
 
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();

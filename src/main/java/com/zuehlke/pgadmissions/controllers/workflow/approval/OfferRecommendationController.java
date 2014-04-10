@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -71,7 +71,7 @@ public class OfferRecommendationController {
     @RequestMapping(method = RequestMethod.GET)
     public String getOfferRecommendationPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        User user = (User) modelMap.get("user");
         actionService.validateAction(application, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
 
         OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
@@ -104,7 +104,7 @@ public class OfferRecommendationController {
     public String recommendOffer(@Valid @ModelAttribute("offerRecommendedComment") OfferRecommendedComment offerRecommendedComment, BindingResult errors,
             ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        User user = (User) modelMap.get("user");
         actionService.validateAction(application, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
 
         if (errors.hasErrors()) {
@@ -136,11 +136,11 @@ public class OfferRecommendationController {
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
+        User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
-    protected RegisteredUser getCurrentUser() {
+    protected User getCurrentUser() {
         return userService.getCurrentUser();
     }
 
@@ -153,17 +153,17 @@ public class OfferRecommendationController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public User getUser() {
         return getCurrentUser();
     }
 
     @ModelAttribute("usersInterestedInApplication")
-    public List<RegisteredUser> getUsersInterestedInApplication(@RequestParam String applicationId) {
+    public List<User> getUsersInterestedInApplication(@RequestParam String applicationId) {
         return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
 
     @ModelAttribute("usersPotentiallyInterestedInApplication")
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
+    public List<User> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
         return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
     }
 

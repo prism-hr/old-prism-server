@@ -4,9 +4,8 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -16,7 +15,7 @@ public class StateChangeDTO {
 
     private String action;
 
-    private RegisteredUser registeredUser;
+    private User user;
 
     private ApplicationForm applicationForm;
 
@@ -68,12 +67,12 @@ public class StateChangeDTO {
         this.action = action;
     }
 
-    public RegisteredUser getRegisteredUser() {
-        return registeredUser;
+    public User getUser() {
+        return user;
     }
 
-    public void setRegisteredUser(RegisteredUser registeredUser) {
-        this.registeredUser = registeredUser;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public ApplicationForm getApplicationForm() {

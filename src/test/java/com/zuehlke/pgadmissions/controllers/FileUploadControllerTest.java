@@ -14,11 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -32,7 +32,7 @@ public class FileUploadControllerTest {
 
 	private FileUploadController controller;
 	private ApplicationFormService applicationsServiceMock;
-	private RegisteredUser currentUser;
+	private User currentUser;
 	private DocumentValidator documentValidatorMock;
 	private BindingResult errors;
 	private Document document;
@@ -70,7 +70,7 @@ public class FileUploadControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionIfCurrentUserNotApplicant() {
-		RegisteredUser applicant = new RegisteredUserBuilder().id(6).build();
+		User applicant = new UserBuilder().id(6).build();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant)
 				.build();
 		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
@@ -154,7 +154,7 @@ public class FileUploadControllerTest {
 //
 //		};
 
-		currentUser = new RegisteredUserBuilder().id(1).build();
+		currentUser = new UserBuilder().id(1).build();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 	}

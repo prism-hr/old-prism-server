@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -49,7 +49,7 @@ public class CommentAssignedUserPropertyEditor extends PropertyEditorSupport {
         }
         String appId = split[0];
         Integer userId = encryptionHelper.decryptToInteger(split[1]);
-        RegisteredUser user = userService.getById(userId);
+        User user = userService.getById(userId);
         if (user == null) {
             throw new IllegalArgumentException("no such user: " + split[1]);
         }

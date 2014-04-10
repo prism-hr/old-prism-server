@@ -6,10 +6,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,7 +22,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.apache.solr.analysis.LowerCaseFilterFactory;
@@ -38,13 +40,14 @@ import org.hibernate.search.annotations.TokenizerDef;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@AnalyzerDef(name = "registeredUserAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
+@AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
 @Indexed
-@Entity(name = "REGISTERED_USER")
+@Entity(name = "USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, Serializable {
+public class User implements UserDetails, Comparable<User>, Serializable {
 
     private static final long serialVersionUID = 7913035836949510857L;
 
@@ -53,58 +56,53 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     private Integer id;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Column(name = "first_name")
     private String firstName;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Column(name = "first_name_2")
     private String firstName2;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Column(name = "first_name_3")
     private String firstName3;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
-    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Column(name = "last_name")
     private String lastName;
 
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
-    @Field(analyzer = @Analyzer(definition = "registeredUserAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
+    @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String email;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
     private String username;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
-    private String password;
-
-    @Transient
-    private String newPassword;
-
-    @Transient
-    private String confirmPassword;
-
     @Column(name = "advert_id")
     private Advert advert;
-
-    @JoinColumn(name = "filtering_id")
-    @OneToOne(fetch = FetchType.LAZY)
-    private ApplicationsFiltering filtering;
 
     @Column(name = "upi")
     private String upi;
 
-    private boolean enabled;
-
+    @Column(name = "activation_code")
     private String activationCode;
+
+    @Column(name = "action_id")
+    @Enumerated(EnumType.STRING)
+    private ApplicationFormAction action;
+
+    @JoinColumn(name = "application_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ApplicationForm application;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     @Valid
     private List<Comment> comments = new ArrayList<Comment>();
-
-    @Column(name = "direct_to_url")
-    private String directToUrl;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -115,11 +113,11 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     private List<Referee> referees = new ArrayList<Referee>();
 
     @OneToMany(mappedBy = "primaryAccount")
-    private List<RegisteredUser> linkedAccounts = new ArrayList<RegisteredUser>();
+    private List<User> linkedAccounts = new ArrayList<User>();
 
     @ManyToOne
     @JoinColumn(name = "primary_account_id")
-    private RegisteredUser primaryAccount;
+    private User primaryAccount;
 
     @Column(name = "ucl_user_id")
     private String uclUserId;
@@ -132,16 +130,19 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     @Temporal(TemporalType.TIMESTAMP)
     private Date latestUpdateNotificationDate;
 
-    @Column(name = "application_list_last_access_timestamp")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date applicationListLastAccessTimestamp;
-
     @Column(name = "latest_opportunity_request_notification_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date latestOpportunityRequestNotificationDate;
 
     @OneToMany(mappedBy = "user")
+    private Set<UserRole> userRoles;
+
+    @OneToMany(mappedBy = "user")
     private List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds = new ArrayList<ResearchOpportunitiesFeed>();
+
+    @JoinColumn(name = "user_account_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserAccount account;
 
     public Integer getId() {
         return id;
@@ -199,44 +200,12 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
     public Advert getAdvert() {
         return advert;
     }
 
     public void setAdvert(Advert advert) {
         this.advert = advert;
-    }
-
-    public ApplicationsFiltering getFiltering() {
-        return filtering;
-    }
-
-    public void setFiltering(ApplicationsFiltering filtering) {
-        this.filtering = filtering;
     }
 
     public String getUpi() {
@@ -248,11 +217,7 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     }
 
     public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        return account != null && account.isEnabled();
     }
 
     public String getActivationCode() {
@@ -263,16 +228,24 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
         this.activationCode = activationCode;
     }
 
+    public ApplicationFormAction getAction() {
+        return action;
+    }
+
+    public void setAction(ApplicationFormAction action) {
+        this.action = action;
+    }
+
+    public ApplicationForm getApplication() {
+        return application;
+    }
+
+    public void setApplication(ApplicationForm application) {
+        this.application = application;
+    }
+
     public List<Comment> getComments() {
         return comments;
-    }
-
-    public String getDirectToUrl() {
-        return directToUrl;
-    }
-
-    public void setDirectToUrl(String directToUrl) {
-        this.directToUrl = directToUrl;
     }
 
     public List<PendingRoleNotification> getPendingRoleNotifications() {
@@ -283,15 +256,15 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
         return referees;
     }
 
-    public List<RegisteredUser> getLinkedAccounts() {
+    public List<User> getLinkedAccounts() {
         return linkedAccounts;
     }
 
-    public RegisteredUser getPrimaryAccount() {
+    public User getPrimaryAccount() {
         return primaryAccount;
     }
 
-    public void setPrimaryAccount(RegisteredUser primaryAccount) {
+    public void setPrimaryAccount(User primaryAccount) {
         this.primaryAccount = primaryAccount;
     }
 
@@ -319,14 +292,6 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
         this.latestUpdateNotificationDate = latestUpdateNotificationDate;
     }
 
-    public Date getApplicationListLastAccessTimestamp() {
-        return applicationListLastAccessTimestamp;
-    }
-
-    public void setApplicationListLastAccessTimestamp(Date applicationListLastAccessTimestamp) {
-        this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
-    }
-
     public Date getLatestOpportunityRequestNotificationDate() {
         return latestOpportunityRequestNotificationDate;
     }
@@ -337,6 +302,14 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
 
     public List<ResearchOpportunitiesFeed> getResearchOpportunitiesFeeds() {
         return researchOpportunitiesFeeds;
+    }
+
+    public UserAccount getAccount() {
+        return account;
+    }
+
+    public void setAccount(UserAccount account) {
+        this.account = account;
     }
 
     public String getDisplayName() {
@@ -364,11 +337,16 @@ public class RegisteredUser implements UserDetails, Comparable<RegisteredUser>, 
     }
 
     @Override
-    public int compareTo(final RegisteredUser other) {
+    public int compareTo(final User other) {
         int firstNameResult = this.firstName.compareTo(other.firstName);
         if (firstNameResult == 0) {
             return this.lastName.compareTo(other.lastName);
         }
         return firstNameResult;
+    }
+
+    @Override
+    public String getPassword() {
+        return account != null ? account.getPassword() : null;
     }
 }

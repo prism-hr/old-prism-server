@@ -12,7 +12,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
@@ -26,11 +26,11 @@ public class PrismEmailMessageBuilder {
     
     protected String subject;
     
-    protected HashMap<Integer, RegisteredUser> to = new HashMap<Integer, RegisteredUser>();
+    protected HashMap<Integer, User> to = new HashMap<Integer, User>();
     
-    protected HashMap<Integer, RegisteredUser> cc = new HashMap<Integer, RegisteredUser>();
+    protected HashMap<Integer, User> cc = new HashMap<Integer, User>();
 
-    protected HashMap<Integer, RegisteredUser> bcc = new HashMap<Integer, RegisteredUser>();
+    protected HashMap<Integer, User> bcc = new HashMap<Integer, User>();
     
     protected Map<String, Object> model = new HashMap<String, Object>();
     
@@ -39,15 +39,15 @@ public class PrismEmailMessageBuilder {
     protected List<PdfAttachmentInputSource> attachments = new ArrayList<PdfAttachmentInputSource>();
     
     private class CategoriseUsersClosure implements Closure {
-        private final Map<Integer, RegisteredUser> targetMap;
+        private final Map<Integer, User> targetMap;
 
-        public CategoriseUsersClosure(final Map<Integer, RegisteredUser> targetMap) {
+        public CategoriseUsersClosure(final Map<Integer, User> targetMap) {
             this.targetMap = targetMap;
         }
         
         @Override
         public void execute(final Object object) {
-            RegisteredUser user = (RegisteredUser) object;
+            User user = (User) object;
             if (isNotDuplicate(user)) {
                 targetMap.put(user.getId(), user);
             }
@@ -57,32 +57,32 @@ public class PrismEmailMessageBuilder {
     public PrismEmailMessageBuilder() {
     }
     
-    public PrismEmailMessageBuilder to(final RegisteredUser... users) {
+    public PrismEmailMessageBuilder to(final User... users) {
         to(Arrays.asList(users));
         return this;
     }
     
-    public PrismEmailMessageBuilder cc(final RegisteredUser... users) {
+    public PrismEmailMessageBuilder cc(final User... users) {
         cc(Arrays.asList(users));
         return this;
     }
     
-    public PrismEmailMessageBuilder bcc(final RegisteredUser... users) {
+    public PrismEmailMessageBuilder bcc(final User... users) {
         bcc(Arrays.asList(users));
         return this;
     }
 
-    public PrismEmailMessageBuilder to(final Collection<RegisteredUser> users) {
+    public PrismEmailMessageBuilder to(final Collection<User> users) {
         CollectionUtils.forAllDo(users, new CategoriseUsersClosure(to));
         return this;
     }
     
-    public PrismEmailMessageBuilder cc(final Collection<RegisteredUser> users) {
+    public PrismEmailMessageBuilder cc(final Collection<User> users) {
         CollectionUtils.forAllDo(users, new CategoriseUsersClosure(cc));
         return this;
     }
     
-    public PrismEmailMessageBuilder bcc(final Collection<RegisteredUser> users) {
+    public PrismEmailMessageBuilder bcc(final Collection<User> users) {
         CollectionUtils.forAllDo(users, new CategoriseUsersClosure(bcc));
         return this;
     }
@@ -175,11 +175,11 @@ public class PrismEmailMessageBuilder {
     
     public PrismEmailMessage build() {
         PrismEmailMessage msg = new PrismEmailMessage();
-        msg.setBcc(new ArrayList<RegisteredUser>(bcc.values()));
-        msg.setCc(new ArrayList<RegisteredUser>(cc.values()));
+        msg.setBcc(new ArrayList<User>(bcc.values()));
+        msg.setCc(new ArrayList<User>(cc.values()));
         msg.setFromAddress(fromAddress);
         msg.setSubjectCode(subject);
-        msg.setTo(new ArrayList<RegisteredUser>(to.values()));
+        msg.setTo(new ArrayList<User>(to.values()));
         msg.setModel(model);
         msg.setTemplateName(templateName);
         msg.setAttachments(new ArrayList<PdfAttachmentInputSource>(attachments));
@@ -191,19 +191,19 @@ public class PrismEmailMessageBuilder {
     public static PrismEmailMessageBuilder copyOf(final PrismEmailMessageBuilder builder) {
         PrismEmailMessageBuilder newCopy = new PrismEmailMessageBuilder();
         newCopy.attachments = new ArrayList<PdfAttachmentInputSource>(builder.attachments);
-        newCopy.bcc = new HashMap<Integer, RegisteredUser>(builder.bcc);
-        newCopy.cc = new HashMap<Integer, RegisteredUser>(builder.cc);
+        newCopy.bcc = new HashMap<Integer, User>(builder.bcc);
+        newCopy.cc = new HashMap<Integer, User>(builder.cc);
         newCopy.form = builder.form;
         newCopy.fromAddress = String.valueOf(builder.fromAddress);
         newCopy.model = new HashMap<String, Object>(builder.model);
         newCopy.subject = String.valueOf(builder.subject);
         newCopy.templateName = builder.templateName;
         newCopy.replyToAddress = String.valueOf(builder.replyToAddress);
-        newCopy.to = new HashMap<Integer, RegisteredUser>(builder.to);
+        newCopy.to = new HashMap<Integer, User>(builder.to);
         return newCopy;
     }
     
-    protected boolean isNotDuplicate(final RegisteredUser user) {
+    protected boolean isNotDuplicate(final User user) {
         if (to.containsKey(user.getId()) || cc.containsKey(user.getId()) || bcc.containsKey(user.getId())) {
             return false;
         }

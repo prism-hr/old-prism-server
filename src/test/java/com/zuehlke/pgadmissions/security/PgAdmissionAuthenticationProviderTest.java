@@ -15,9 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -37,7 +37,7 @@ public class PgAdmissionAuthenticationProviderTest {
 	public void shouldReturnPopulatedAuthenticationForValidCredentials() throws NoSuchAlgorithmException {
 		Role roleOne = new RoleBuilder().id(Authority.APPLICANT).build();
 		Role roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").id(1).build();
+		User user = new UserBuilder().username("bob").password("secret").id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
         EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
@@ -58,7 +58,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test(expected = BadCredentialsException.class)
 	public void shouldThrowBadCredentialsExceptionForMismatchingPassword() throws NoSuchAlgorithmException {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").id(1).build();
+		User user = new UserBuilder().username("bob").password("secret").id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.replay(userDetailsServiceMock);
 
@@ -88,7 +88,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test(expected = DisabledException.class)
 	public void shouldThrowDisabledExceptionForDisabledAccount() {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").enabled(false).id(1).build();
+		User user = new UserBuilder().username("bob").password("secret").enabled(false).id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
         EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);

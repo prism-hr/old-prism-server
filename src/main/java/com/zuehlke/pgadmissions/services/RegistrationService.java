@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -43,26 +43,26 @@ public class RegistrationService {
     @Autowired
     private MailSendingService mailService;
 
-    public RegisteredUser processPendingApplicantUser(RegisteredUser pendingApplicantUser) {
+    public User processPendingApplicantUser(User pendingApplicantUser) {
         pendingApplicantUser.setUsername(pendingApplicantUser.getEmail());
-        pendingApplicantUser.setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
-        pendingApplicantUser.setEnabled(false);
+        pendingApplicantUser.getAccount().setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
+        pendingApplicantUser.getAccount().setEnabled(false);
         // FIXME set advert ID
-//        pendingApplicantUser.setOriginalApplicationQueryString(advertId);
+        // pendingApplicantUser.setOriginalApplicationQueryString(advertId);
         pendingApplicantUser.setActivationCode(encryptionUtils.generateUUID());
         return pendingApplicantUser;
     }
 
-    public RegisteredUser submitRegistration(RegisteredUser pendingUser) {
-        RegisteredUser user = null;
-        
+    public User submitRegistration(User pendingUser) {
+        User user = null;
+
         // TODO use action ID instead of activation code
         boolean isInvited = StringUtils.isNotEmpty(pendingUser.getActivationCode());
-        
+
         if (isInvited) {
             // User has been invited to join PRISM
             user = userService.getUserByActivationCode(pendingUser.getActivationCode());
-            user.setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
+            user.getAccount().setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
         } else {
             // User is an applicant
             user = processPendingApplicantUser(pendingUser);
@@ -74,23 +74,22 @@ public class RegistrationService {
         return user;
     }
 
-    public RegisteredUser activateAccount(String activationCode) {
-        RegisteredUser user = userService.getUserByActivationCode(activationCode);
-        user.setEnabled(true);
+    public User activateAccount(String activationCode) {
+        User user = userService.getUserByActivationCode(activationCode);
+        user.getAccount().setEnabled(true);
         return user;
     }
 
-    public void resendConfirmationEmail(RegisteredUser newUser) {
+    public void resendConfirmationEmail(User newUser) {
         mailService.sendRegistrationConfirmation(newUser);
     }
 
-    public RegisteredUser findUserForActivationCode(String activationCode) {
+    public User findUserForActivationCode(String activationCode) {
         return userService.getUserByActivationCode(activationCode);
     }
 
     Map<String, Object> modelMap() {
         return new HashMap<String, Object>();
     }
-
 
 }

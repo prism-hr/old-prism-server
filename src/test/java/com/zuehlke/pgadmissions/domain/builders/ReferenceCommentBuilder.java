@@ -8,7 +8,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Score;
 
 public class ReferenceCommentBuilder {
@@ -20,8 +20,8 @@ public class ReferenceCommentBuilder {
     private boolean suitableForProgramme;
     private Integer applicantRating;
     private String comment;
-    private RegisteredUser user;
-    private RegisteredUser providedBy;
+    private User user;
+    private User providedBy;
     private List<Score> scores = new ArrayList<Score>();
 
     private ApplicationForm application;
@@ -42,7 +42,7 @@ public class ReferenceCommentBuilder {
         return this;
     }
 
-    public ReferenceCommentBuilder user(RegisteredUser user) {
+    public ReferenceCommentBuilder user(User user) {
         this.user = user;
         return this;
     }
@@ -72,7 +72,7 @@ public class ReferenceCommentBuilder {
         return this;
     }
 
-    public ReferenceCommentBuilder providedBy(RegisteredUser providedBy) {
+    public ReferenceCommentBuilder providedBy(User providedBy) {
         this.providedBy = providedBy;
         return this;
     }

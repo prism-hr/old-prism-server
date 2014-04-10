@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 
@@ -22,7 +22,7 @@ public class ErrorLogHandlerInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         if (ex != null) {
-            RegisteredUser currentUser = userService.getCurrentUser();
+            User currentUser = userService.getCurrentUser();
 
             log.error(DiagnosticInfoPrintUtils.getRequestErrorLogMessage(request, currentUser));
 

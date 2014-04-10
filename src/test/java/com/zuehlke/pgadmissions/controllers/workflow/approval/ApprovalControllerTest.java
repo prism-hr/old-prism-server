@@ -7,7 +7,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -41,7 +41,7 @@ public class ApprovalControllerTest {
 
     @Mock
     @InjectIntoByType
-    private RegisteredUser currentUserMock;
+    private User currentUserMock;
 
     @Mock
     @InjectIntoByType

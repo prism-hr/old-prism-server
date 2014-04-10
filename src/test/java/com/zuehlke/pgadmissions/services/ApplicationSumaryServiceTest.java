@@ -7,8 +7,8 @@ import java.util.Date;
 import org.joda.time.DateTime;
 import org.junit.Before;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -49,7 +49,7 @@ public class ApplicationSumaryServiceTest {
 
     private Date dateOfSubmission;
 
-    private RegisteredUser currentUser;
+    private User currentUser;
 
     private ApplicationDescriptor applicationDescriptorMock;
 
@@ -67,7 +67,7 @@ public class ApplicationSumaryServiceTest {
     public void setup() {
         dateOfSubmission = new DateTime(2013, 4, 23, 9, 20).toDate();
         dateOfLastUpdate = new DateTime(2013, 4, 20, 9, 20).toDate();
-        currentUser = new RegisteredUserBuilder().id(CURRENT_USER_ID).email(CURRENT_USER_EMAIL_ADDRESS).build();
+        currentUser = new UserBuilder().id(CURRENT_USER_ID).email(CURRENT_USER_EMAIL_ADDRESS).build();
         applicationDescriptorMock = createMock(ApplicationDescriptor.class);
         userServiceMock = createMock(UserService.class);
         encryptionHelperMock = createMock(EncryptionHelper.class);

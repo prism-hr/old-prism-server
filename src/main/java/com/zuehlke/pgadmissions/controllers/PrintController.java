@@ -22,7 +22,7 @@ import com.google.common.io.Closer;
 import com.google.common.io.Flushables;
 import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
@@ -58,7 +58,7 @@ public class PrintController {
 		    throw new ResourceNotFoundException();
 		}
 		
-		RegisteredUser user = userService.getCurrentUser();
+		User user = userService.getCurrentUser();
 		
 		PdfModelBuilder pdfModelBuilder = new PdfModelBuilder();
 		if (isApplicant(user, form)) {
@@ -76,7 +76,7 @@ public class PrintController {
 	public void printAll(final HttpServletRequest request, final HttpServletResponse response) throws ServletRequestBindingException, DocumentException, IOException {
 		String appListToPrint = ServletRequestUtils.getStringParameter(request, "appList");
 		String[] applicationIds = appListToPrint.split(";");
-		RegisteredUser user = userService.getCurrentUser();
+		User user = userService.getCurrentUser();
 		HashMap<PdfModelBuilder, ApplicationForm> formsToPrint = new HashMap<PdfModelBuilder, ApplicationForm>();
 		
 		for (String applicationId : applicationIds) {
@@ -92,6 +92,7 @@ public class PrintController {
 			    pdfModelBuilder.includeDisability(true);
 			    pdfModelBuilder.includeEthnicity(true);
 			} else if (!refereeService.isRefereeOfApplicationForm(user, form)) {
+			    // TODO specify visible IDs of references
 	            pdfModelBuilder.includeReferences(true);
 	        }
 			
@@ -126,7 +127,7 @@ public class PrintController {
 		return new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
 	}
 	
-	private boolean isApplicant(final RegisteredUser user, final ApplicationForm form) {
+	private boolean isApplicant(final User user, final ApplicationForm form) {
 	    return user.getId().equals(form.getApplicant().getId());
 	}
 }

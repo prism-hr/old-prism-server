@@ -26,9 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
@@ -164,7 +164,7 @@ public class AdvertDAO {
     }
     
     private Criteria getAdvertByUserAttributeCriteria (Session session) {
-        return session.createCriteria(ApplicationFormUserRole.class)
+        return session.createCriteria(UserRole.class)
                 .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
                 .createAlias("user", "registeredUser", JoinType.INNER_JOIN);

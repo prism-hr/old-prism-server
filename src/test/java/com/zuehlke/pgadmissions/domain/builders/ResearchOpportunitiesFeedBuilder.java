@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
 
@@ -15,7 +15,7 @@ public class ResearchOpportunitiesFeedBuilder {
 
     private String title;
     
-    private RegisteredUser user;
+    private User user;
     
     private FeedFormat feedFormat;
     
@@ -31,7 +31,7 @@ public class ResearchOpportunitiesFeedBuilder {
         return this;
     }
     
-    public ResearchOpportunitiesFeedBuilder user(final RegisteredUser user) {
+    public ResearchOpportunitiesFeedBuilder user(final User user) {
         this.user = user;
         return this;
     }

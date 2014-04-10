@@ -15,11 +15,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -45,7 +45,7 @@ public class GenericCommentControllerTest {
         Program program = new ProgramBuilder().id(7).build();
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).advert(program).build();
 
-        RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
+        User currentUser = EasyMock.createMock(User.class);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(currentUser, userServiceMock);
 
@@ -58,7 +58,7 @@ public class GenericCommentControllerTest {
     @Test
     public void shouldReturnGenericCommentPage() {
         ApplicationForm applicationForm = new ApplicationForm();
-        RegisteredUser user = new RegisteredUser();
+        User user = new User();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
@@ -72,7 +72,7 @@ public class GenericCommentControllerTest {
 
     @Test
     public void shouldReturnCurrentUser() {
-        RegisteredUser currentUser = new RegisteredUserBuilder().id(8).build();
+        User currentUser = new UserBuilder().id(8).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
         assertEquals(currentUser, controller.getUser());
@@ -81,7 +81,7 @@ public class GenericCommentControllerTest {
     @Test
     public void shouldCreateNewCommentForApplicationForm() {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-        RegisteredUser currentUser = new RegisteredUserBuilder().id(8).build();
+        User currentUser = new UserBuilder().id(8).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
         controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,

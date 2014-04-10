@@ -7,11 +7,11 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class ReferenceDAOTest extends AutomaticRollbackTestCase {
@@ -24,7 +24,7 @@ public class ReferenceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetReferenceById() {
-        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .enabled(false).build();
 
         save(user);

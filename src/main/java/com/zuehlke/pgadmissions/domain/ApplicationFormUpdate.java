@@ -26,8 +26,8 @@ public class ApplicationFormUpdate implements Serializable {
     @Column(name = "raises_update_flag")
     private Boolean raisesUpdateFlag;
     
-    public ApplicationFormUpdate(ApplicationForm applicationForm, RegisteredUser registeredUser, Boolean raisesUpdateFlag) {
-        setId(applicationForm, registeredUser);
+    public ApplicationFormUpdate(ApplicationForm applicationForm, User user, Boolean raisesUpdateFlag) {
+        setId(applicationForm, user);
         this.raisesUpdateFlag = raisesUpdateFlag;
     }
 
@@ -35,9 +35,9 @@ public class ApplicationFormUpdate implements Serializable {
         return id;
     }
 
-    public void setId(ApplicationForm applicationForm, RegisteredUser registeredUser) {
+    public void setId(ApplicationForm applicationForm, User user) {
         this.id.setApplicationForm(applicationForm);
-        this.id.setRegisteredUser(registeredUser);
+        this.id.setUser(user);
     }
 
     public Boolean getRaisesUpdateFlag() {
@@ -57,14 +57,14 @@ public class ApplicationFormUpdate implements Serializable {
         protected ApplicationForm applicationForm;
 
         @Column(name = "registered_user_id")
-        protected RegisteredUser registeredUser;
+        protected User user;
 
         public ApplicationFormUpdatePrimaryKey() {
         }
 
-        public ApplicationFormUpdatePrimaryKey(ApplicationForm applicationForm, RegisteredUser registeredUser) {
+        public ApplicationFormUpdatePrimaryKey(ApplicationForm applicationForm, User user) {
             this.applicationForm = applicationForm;
-            this.registeredUser = registeredUser;
+            this.user = user;
         }
 
         public ApplicationForm getApplicationForm() {
@@ -75,17 +75,17 @@ public class ApplicationFormUpdate implements Serializable {
             this.applicationForm = applicationForm;
         }
 
-        public RegisteredUser getRegisteredUser() {
-            return registeredUser;
+        public User getUser() {
+            return user;
         }
 
-        public void setRegisteredUser(RegisteredUser registeredUser) {
-            this.registeredUser = registeredUser;
+        public void setUser(User user) {
+            this.user = user;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(applicationForm, registeredUser);
+            return Objects.hashCode(applicationForm, user);
         }
 
         @Override
@@ -98,7 +98,7 @@ public class ApplicationFormUpdate implements Serializable {
             }
             final ApplicationFormUpdatePrimaryKey other = (ApplicationFormUpdatePrimaryKey) obj;
             return Objects.equal(applicationForm.getId(), other.getApplicationForm().getId())
-                    && Objects.equal(registeredUser.getId(), other.getRegisteredUser().getId());
+                    && Objects.equal(user.getId(), other.getUser().getId());
         }
 
     }

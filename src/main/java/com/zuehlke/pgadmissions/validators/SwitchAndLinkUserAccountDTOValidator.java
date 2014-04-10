@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.SwitchAndLinkUserAccountDTO;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -41,10 +41,10 @@ public class SwitchAndLinkUserAccountDTOValidator extends AbstractValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentPassword", EMPTY_FIELD_ERROR_MESSAGE);
         
         SwitchAndLinkUserAccountDTO userDTO = (SwitchAndLinkUserAccountDTO) target;
-        RegisteredUser currentAccount = userService.getCurrentUser();
+        User currentAccount = userService.getCurrentUser();
         
         if (currentAccount != null && StringUtils.isNotBlank(userDTO.getEmail())) {
-            RegisteredUser secondAccount = userService.getUserByEmail(userDTO.getEmail());
+            User secondAccount = userService.getUserByEmail(userDTO.getEmail());
             if(currentAccount.getEmail().equals(userDTO.getEmail())){
                 errors.rejectValue("email", "account.link.same.email");
             }

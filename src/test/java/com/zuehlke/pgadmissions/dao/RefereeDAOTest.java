@@ -23,14 +23,14 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReminderIntervalBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
 public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
-    private RegisteredUser user;
+    private User user;
     private Program program;
     private RefereeDAO refereeDAO;
     private ReminderInterval reminderInterval;
@@ -387,7 +387,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
                 .build();
         reminderInterval = new ReminderIntervalBuilder().id(1).reminderType(ReminderType.REFERENCE).duration(1).unit(DurationUnitEnum.WEEKS).build();
         sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);

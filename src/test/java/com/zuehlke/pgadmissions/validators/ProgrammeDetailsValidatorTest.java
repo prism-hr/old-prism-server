@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.State;
@@ -38,10 +38,11 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -377,10 +378,10 @@ public class ProgrammeDetailsValidatorTest {
     public void setup() throws ParseException {
         SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").build();
         Role role = new RoleBuilder().id(Authority.APPLICANT).build();
-        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).build();
+        User currentUser = new UserBuilder().id(1).build();
         SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().firstname("Mark").lastname("Johnson").email("mark@gmail.com").aware(true)
                 .build();
-        program = new ProgramBuilder().id(1).title("Program 1").enabled(true).build();
+        program = new ProgramBuilder().id(1).title("Program 1").state(AdvertState.PROGRAM_APPROVED).build();
         programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
                 .applicationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2025/08/06"))
                 .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).enabled(true).build();

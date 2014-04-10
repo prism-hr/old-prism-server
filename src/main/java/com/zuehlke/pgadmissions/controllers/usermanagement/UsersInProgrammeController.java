@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -36,14 +36,14 @@ public class UsersInProgrammeController {
     private RoleService roleService;
 
     @ModelAttribute("usersInRoles")
-    public List<RegisteredUser> getUsersInProgram(@RequestParam(required = false) String programCode) {
+    public List<User> getUsersInProgram(@RequestParam(required = false) String programCode) {
         // TODO implement
         return null;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/program")
     public String getUsersInProgramView() {
-        RegisteredUser user = userService.getCurrentUser();
+        User user = userService.getCurrentUser();
         if (!roleService.hasAnyRole(user, Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.xpath.operations.Bool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -237,7 +238,7 @@ public class ExportService {
 
                     if (BooleanUtils.isTrue(referee.getSendToUCL())) {
                         refereesToSend.put(referee.getId(), referee);
-                    } else if (referee.hasProvidedReference()) {
+                    } else if (referee.getComment() != null && !referee.getComment().getDeclined()) {
                         referee.setSendToUCL(true);
                         refereesToSend.put(referee.getId(), referee);
                     }

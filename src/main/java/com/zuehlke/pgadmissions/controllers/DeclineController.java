@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -42,7 +42,7 @@ public class DeclineController {
 
 	@RequestMapping(value = "/review", method = RequestMethod.GET)
 	public String declineReview(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
-	    RegisteredUser reviewer = getReviewer(activationCode);
+	    User reviewer = getReviewer(activationCode);
 	    ApplicationForm application = getApplicationForm(applicationId);
 	    
 	    actionService.validateAction(application, reviewer, ApplicationFormAction.PROVIDE_REVIEW);
@@ -50,7 +50,8 @@ public class DeclineController {
 		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 		    commentService.declineReview(reviewer, application);
 		    modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
-		    reviewer.setDirectToUrl(null);
+		    
+		    reviewer.setAction(null);
 		    userService.save(reviewer);
 		    return TemplateLocation.DECLINE_SUCCESS_VIEW_NAME;
 		} else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
@@ -69,7 +70,7 @@ public class DeclineController {
 	}
 
 	public Referee getReferee(String activationCode, ApplicationForm applicationForm) {
-		RegisteredUser user = userService.getUserByActivationCode(activationCode);
+		User user = userService.getUserByActivationCode(activationCode);
 		if (user == null) {
 			throw new ResourceNotFoundException();
 		}
@@ -81,7 +82,7 @@ public class DeclineController {
 	public String declineReference(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
 	    ApplicationForm applicationForm = getApplicationForm(applicationId);
 	    Referee referee = getReferee(activationCode, applicationForm);
-	    RegisteredUser user = userService.getUserByActivationCode(activationCode);
+	    User user = userService.getUserByActivationCode(activationCode);
 	    
 	    actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
 	    
@@ -89,7 +90,8 @@ public class DeclineController {
 	        // the user clicked on "Confirm"
     		refereeService.declineToActAsRefereeAndSendNotification(referee.getId());
     		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
-    		user.setDirectToUrl(null);
+
+            user.setAction(null);
             userService.save(user);
     		return TemplateLocation.DECLINE_SUCCESS_VIEW_NAME;
 	    } else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
@@ -107,8 +109,8 @@ public class DeclineController {
 	    }
 	}
 
-	public RegisteredUser getReviewer(String activationCode) {
-		RegisteredUser reviewer = userService.getUserByActivationCode(activationCode);
+	public User getReviewer(String activationCode) {
+		User reviewer = userService.getUserByActivationCode(activationCode);
 		if (reviewer == null) {
 			throw new ResourceNotFoundException();
 		}

@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -52,12 +52,12 @@ public class OpportunityRequestValidatorTest {
 
     private OpportunityRequest opportunityRequest;
 
-    private RegisteredUser author;
+    private User author;
 
     @Before
     public void setUp() {
         Domicile institutionCountry = new DomicileBuilder().code("PL").build();
-        author = new RegisteredUser();
+        author = new User();
         opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(author, institutionCountry).build();
 
         registerFormValidatorMock = EasyMock.createMock(RegisterFormValidator.class);
@@ -349,7 +349,7 @@ public class OpportunityRequestValidatorTest {
     }
 
     private void configureAndReplayRegisterFormValidator(Errors errors) {
-        expect(registerFormValidatorMock.supports(RegisteredUser.class)).andReturn(true);
+        expect(registerFormValidatorMock.supports(User.class)).andReturn(true);
         registerFormValidatorMock.validate(author, errors);
 
         replay(registerFormValidatorMock);

@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
@@ -46,7 +46,7 @@ public class OpportunitiesService {
 
     public OpportunityRequest createOpportunityRequest(OpportunityRequest opportunityRequest, boolean createAuthorUser) {
         Program program = opportunityRequest.getSourceProgram();
-        RegisteredUser author = opportunityRequest.getAuthor();
+        User author = opportunityRequest.getAuthor();
 
         if (program != null && !opportunityRequestDAO.findByProgramAndStatus(program, OpportunityRequestStatus.NEW).isEmpty()) {
             throw new RuntimeException("Cannot create new opprotunity request for a program if there is already a new one. Program: " + program);
@@ -79,7 +79,7 @@ public class OpportunitiesService {
         
     }
 
-    public List<OpportunityRequest> listOpportunityRequests(RegisteredUser user) {
+    public List<OpportunityRequest> listOpportunityRequests(User user) {
         return opportunityRequestDAO.listOpportunityRequests(user);
     }
 

@@ -5,7 +5,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.builders.ResearchOpportunitiesFeedBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -23,7 +23,7 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
 
     @Test
     public void shouldPersistAResearchOpportunitiesFeed() {
-        RegisteredUser user = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        User user = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(testObjectProvider.getEnabledProgram())
                 .title("Hello Feed").user(user).build();
         dao.save(feed);
@@ -37,7 +37,7 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
 
     @Test
     public void shouldReturnWhetherATitleIsUniqueForAUser() {
-        RegisteredUser user = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        User user = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(testObjectProvider.getEnabledProgram())
                 .title("Hello Feed2").user(user).build();
         dao.save(feed);
@@ -47,7 +47,7 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
 
     @Test
     public void shouldReturnAllFeedsForAUser() {
-        RegisteredUser user = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        User user = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(testObjectProvider.getEnabledProgram())
                 .title("Hello Feed3").user(user).build();
         dao.save(feed);

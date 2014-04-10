@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -95,19 +95,19 @@ public class ReferenceController {
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getCurrentUser();
+        User user = getCurrentUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("user")
-    RegisteredUser getCurrentUser() {
+    User getCurrentUser() {
         return userService.getCurrentUser();
     }
 
     @ModelAttribute("comment")
     public ReferenceComment getComment(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser currentUser = getCurrentUser();
+        User currentUser = getCurrentUser();
 
         ReferenceComment referenceComment = new ReferenceComment();
         referenceComment.setApplication(applicationForm);
@@ -140,7 +140,7 @@ public class ReferenceController {
     @RequestMapping(value = "/addReferences", method = RequestMethod.GET)
     public String getUploadReferencesPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return ADD_REFERENCES_VIEW_NAME;
@@ -150,7 +150,7 @@ public class ReferenceController {
     public String handleReferenceSubmission(@ModelAttribute("comment") ReferenceComment comment, BindingResult bindingResult, ModelMap modelMap)
             throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
 
         List<Score> scores = comment.getScores();

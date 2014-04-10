@@ -15,11 +15,12 @@ import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -44,6 +45,9 @@ public class ApprovalService {
 
     @Autowired
     private ProgramInstanceService programInstanceService;
+    
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private ApplicationFormService applicationsService;
@@ -114,8 +118,9 @@ public class ApprovalService {
                 approvalComment.setRecommendedConditions(latestApprovalComment.getRecommendedConditions());
             }
         } else if (project != null) {
-            commentService.assignUser(approvalComment, project.getPrimarySupervisor(), true);
-            RegisteredUser secondarySupervisor = project.getSecondarySupervisor();
+            User primarySupervisor = roleService.getUserInRole(project, Authority.PROJECT_PRIMARY_SUPERVISOR);
+            User secondarySupervisor = roleService.getUserInRole(project, Authority.PROJECT_SECONDARY_SUPERVISOR);
+            commentService.assignUser(approvalComment, primarySupervisor, true);
             if (secondarySupervisor != null) {
                 commentService.assignUser(approvalComment, secondarySupervisor, false);
             }
@@ -132,7 +137,7 @@ public class ApprovalService {
         return approvalComment;
     }
 
-    public void moveApplicationToApproval(ApplicationForm form, Comment newComment, RegisteredUser initiator) {
+    public void moveApplicationToApproval(ApplicationForm form, Comment newComment, User initiator) {
         checkSendToPorticoStatus(form);
 
         boolean sendReferenceRequest = form.getStatus().getId() == ApplicationFormStatus.VALIDATION;

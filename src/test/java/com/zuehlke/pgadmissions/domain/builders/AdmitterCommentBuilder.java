@@ -7,7 +7,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -18,7 +18,7 @@ public class AdmitterCommentBuilder {
     private ValidationQuestionOptions englishCompentencyOk;
     private HomeOrOverseas homeOrOverseas;
     private ApplicationForm application;
-    private RegisteredUser user;
+    private User user;
     private String strComment;
     private Integer id;
     private Date createdTimeStamp;
@@ -44,7 +44,7 @@ public class AdmitterCommentBuilder {
         return this;
     }
 
-    public AdmitterCommentBuilder user(RegisteredUser user) {
+    public AdmitterCommentBuilder user(User user) {
         this.user = user;
         return this;
     }

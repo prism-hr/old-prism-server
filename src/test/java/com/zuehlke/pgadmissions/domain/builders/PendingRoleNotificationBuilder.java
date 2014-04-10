@@ -4,16 +4,16 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
 
 public class PendingRoleNotificationBuilder {
 	
 	private Role role;
 	private Program program;
-	private RegisteredUser user;	
+	private User user;	
 	private Integer id;
-	private RegisteredUser addedByUser;
+	private User addedByUser;
 	private Date notificationDate;
 	
 	public PendingRoleNotificationBuilder notificationDate(Date notificationDate) {
@@ -21,7 +21,7 @@ public class PendingRoleNotificationBuilder {
         return this;
     }
 	
-	public PendingRoleNotificationBuilder addedByUser(RegisteredUser addedByUser) {
+	public PendingRoleNotificationBuilder addedByUser(User addedByUser) {
 		this.addedByUser = addedByUser;
 		return this;
 	}
@@ -37,7 +37,7 @@ public class PendingRoleNotificationBuilder {
 		return this;
 	}
 	
-	public PendingRoleNotificationBuilder user(RegisteredUser user) {
+	public PendingRoleNotificationBuilder user(User user) {
 		this.user = user;
 		return this;
 	}

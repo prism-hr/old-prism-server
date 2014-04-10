@@ -29,7 +29,7 @@ import com.google.visualization.datasource.base.DataSourceException;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
@@ -109,7 +109,7 @@ public class ApplicationListController {
     @RequestMapping(value = "/section", method = RequestMethod.GET)
     public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering,
     		@RequestParam Integer blockCount, @RequestParam(required = false) Boolean useDisjunction, final ModelMap model) {
-        RegisteredUser user = getUser();
+        User user = getUser();
         filtering.setBlockCount(blockCount);
         filtering.setUseDisjunction(useDisjunction);
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(user, filtering);
@@ -146,7 +146,7 @@ public class ApplicationListController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public User getUser() {
         return userService.getCurrentUser();
     }
 

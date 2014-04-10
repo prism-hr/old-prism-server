@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.QualificationInstitutionService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -57,9 +58,9 @@ public class QualificationInstitutionsControllerTest {
     @Test
     public void shouldGetInstitutions() {
         Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").build();
-        Institution institution1 = new QualificationInstitutionBuilder().id(2).enabled(true).name("University of London").domicileCode("UK")
+        Institution institution1 = new QualificationInstitutionBuilder().id(2).state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK")
                 .code("ABC").build();
-        Institution institution2 = new QualificationInstitutionBuilder().id(3).enabled(true).name("University of Cambridge").domicileCode("UK")
+        Institution institution2 = new QualificationInstitutionBuilder().id(3).state(InstitutionState.INSTITUTION_APPROVED).name("University of Cambridge").domicileCode("UK")
                 .code("ABCD").build();
 
         expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
@@ -76,9 +77,9 @@ public class QualificationInstitutionsControllerTest {
     @Test
     public void shouldGetUserCategorizedInstitutions() {
         Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").build();
-        Institution institution1 = new QualificationInstitutionBuilder().id(2).enabled(true).name("University of London").domicileCode("UK")
+        Institution institution1 = new QualificationInstitutionBuilder().id(2).state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK")
                 .code("ABC").build();
-        Institution institution2 = new QualificationInstitutionBuilder().id(3).enabled(true).name("University of Cambridge").domicileCode("UK")
+        Institution institution2 = new QualificationInstitutionBuilder().id(3).state(InstitutionState.INSTITUTION_APPROVED).name("University of Cambridge").domicileCode("UK")
                 .code("ABCD").build();
         User user = new User();
 

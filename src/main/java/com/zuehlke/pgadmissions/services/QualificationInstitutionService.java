@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
 
 @Service
 @Transactional
@@ -44,7 +45,7 @@ public class QualificationInstitutionService {
             if (persistentInstitution == null) {
                 persistentInstitution = new Institution();
                 persistentInstitution.setDomicileCode(domicile.getCode());
-                persistentInstitution.setEnabled(true);
+                persistentInstitution.setState(InstitutionState.INSTITUTION_APPROVED);
                 persistentInstitution.setName(institutionName);
                 persistentInstitution.setCode(generateNextInstitutionCode());
                 qualificationInstitutionDAO.save(persistentInstitution);

@@ -11,7 +11,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.User;
@@ -21,12 +22,12 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
-public class AccountValidatorTest {
+public class UserValidatorTest {
 
     @Autowired
     private Validator validator;
 
-    private AccountValidator accountValidator;
+    private UserValidator accountValidator;
 
     private EncryptionUtils encryptionUtilsMock;
 
@@ -46,7 +47,7 @@ public class AccountValidatorTest {
                 .confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        accountValidator = new AccountValidator(userServiceMock, encryptionUtilsMock);
+        accountValidator = new UserValidator(userServiceMock, encryptionUtilsMock);
         accountValidator.setValidator((javax.validation.Validator) validator);
     }
 
@@ -57,44 +58,44 @@ public class AccountValidatorTest {
 
     @Test
     public void shouldRejectIfNewPasswordIsNotSetAndCurrentAndConfirmAreSet() {
-        user.setNewPassword(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
+        user.getAccount().setNewPassword(null);
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "newPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.replay(userServiceMock);
         accountValidator.validate(user, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("newPassword").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("account.newPassword").getCode());
     }
 
     @Test
     public void shouldRejectIfCurrentPasswordIsNotSetAndConfirmAndNewPasswordAreSet() {
-        user.setPassword(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
+        user.getAccount().setPassword(null);
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "password");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.replay(userServiceMock);
         accountValidator.validate(user, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("password").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("account.password").getCode());
     }
 
     @Test
     public void shouldRejectIfConfirmPasswordIsNotSetAndCurrentAndNewPasswordAreSet() {
-        user.setConfirmPassword(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "confirmPassword");
+        user.getAccount().setConfirmPassword(null);
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "confirmPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.replay(userServiceMock);
         accountValidator.validate(user, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("confirmPassword").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("account.confirmPassword").getCode());
     }
 
     @Test
     public void shouldRejectIfCurrentPasswordNotSameWithExisting() {
-        user.setPassword("12345678");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "password");
+        user.getAccount().setPassword("12345678");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "password");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("25d55ad283aa400af464c76d713c07ad");
@@ -102,14 +103,14 @@ public class AccountValidatorTest {
         EasyMock.replay(userServiceMock, encryptionUtilsMock);
         accountValidator.validate(user, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("account.currentpassword.notmatch", mappingResult.getFieldError("password").getCode());
+        Assert.assertEquals("account.currentpassword.notmatch", mappingResult.getFieldError("account.password").getCode());
     }
 
     @Test
     @Ignore
     public void shouldRejectIfNewAndConfirmPasswordsNotSame() {
-        user.setConfirmPassword("password");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
+        user.getAccount().setConfirmPassword("password");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "newPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
@@ -117,15 +118,15 @@ public class AccountValidatorTest {
         EasyMock.replay(userServiceMock, encryptionUtilsMock);
         accountValidator.validate(user, mappingResult);
         Assert.assertEquals(2, mappingResult.getErrorCount());
-        Assert.assertEquals("user.passwords.notmatch", mappingResult.getFieldError("newPassword").getCode());
-        Assert.assertEquals("user.passwords.notmatch", mappingResult.getFieldError("confirmPassword").getCode());
+        Assert.assertEquals("user.passwords.notmatch", mappingResult.getFieldError("account.newPassword").getCode());
+        Assert.assertEquals("user.passwords.notmatch", mappingResult.getFieldError("account.confirmPassword").getCode());
     }
 
     @Test
     public void shouldRejectIfNewPasswordIsLessThan8Chars() {
-        user.setNewPassword("1234");
-        user.setConfirmPassword("1234");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
+        user.getAccount().setNewPassword("1234");
+        user.getAccount().setConfirmPassword("1234");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "newPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
@@ -133,14 +134,14 @@ public class AccountValidatorTest {
         EasyMock.replay(userServiceMock, encryptionUtilsMock);
         accountValidator.validate(user, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("user.password.small", mappingResult.getFieldError("newPassword").getCode());
+        Assert.assertEquals("user.password.small", mappingResult.getFieldError("account.newPassword").getCode());
     }
 
     @Test
     public void shouldRejectIfNewPasswordIsMoreThan15Chars() {
-        user.setNewPassword("1234567891234567");
-        user.setConfirmPassword("1234567891234567");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
+        user.getAccount().setNewPassword("1234567891234567");
+        user.getAccount().setConfirmPassword("1234567891234567");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "newPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
@@ -148,14 +149,14 @@ public class AccountValidatorTest {
         EasyMock.replay(userServiceMock, encryptionUtilsMock);
         accountValidator.validate(user, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("user.password.large", mappingResult.getFieldError("newPassword").getCode());
+        Assert.assertEquals("user.password.large", mappingResult.getFieldError("account.newPassword").getCode());
     }
 
     @Test
     public void shouldNotRejectIfContainsSpecialChars() {
-        user.setNewPassword(" 12o*-lala");
-        user.setConfirmPassword(" 12o*-lala");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "newPassword");
+        user.getAccount().setNewPassword(" 12o*-lala");
+        user.getAccount().setConfirmPassword(" 12o*-lala");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "newPassword");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
@@ -171,7 +172,7 @@ public class AccountValidatorTest {
                 .email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
 
         user.setEmail("email2@test.com");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "email");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email2@test.com")).andReturn(existingUser);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
@@ -188,7 +189,7 @@ public class AccountValidatorTest {
                 .email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
         user.setEmail("email2@test.com");
 
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "email");
 
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email2@test.com")).andReturn(existingUser);
@@ -203,7 +204,7 @@ public class AccountValidatorTest {
     @Test
     public void shouldRejectIfEmailNotValidEmail() {
         user.setEmail("notvalidemail");
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "email");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("notvalidemail")).andReturn(null);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
@@ -217,7 +218,7 @@ public class AccountValidatorTest {
     @Test
     public void shouldRejectIfEmailIsEmpty() {
         user.setEmail(null);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "email");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa")).andReturn("5f4dcc3b5aa");
         EasyMock.replay(userServiceMock, encryptionUtilsMock);
@@ -228,7 +229,7 @@ public class AccountValidatorTest {
 
     @Test
     public void shouldRejectIfFirstNameEmpty() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "firstName");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "firstName");
         user.setFirstName("");
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);
@@ -242,7 +243,7 @@ public class AccountValidatorTest {
 
     @Test
     public void shouldRejectIfLastNameNull() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "lastName");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "lastName");
         user.setLastName(null);
         EasyMock.expect(userServiceMock.getById(1)).andReturn(user);
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(null);

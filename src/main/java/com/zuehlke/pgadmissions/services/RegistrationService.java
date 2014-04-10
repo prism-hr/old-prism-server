@@ -45,24 +45,24 @@ public class RegistrationService {
 
     public User processPendingApplicantUser(User pendingApplicantUser) {
         pendingApplicantUser.setUsername(pendingApplicantUser.getEmail());
-        pendingApplicantUser.setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
+        pendingApplicantUser.getAccount().setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
         pendingApplicantUser.setEnabled(false);
         // FIXME set advert ID
-//        pendingApplicantUser.setOriginalApplicationQueryString(advertId);
+        // pendingApplicantUser.setOriginalApplicationQueryString(advertId);
         pendingApplicantUser.setActivationCode(encryptionUtils.generateUUID());
         return pendingApplicantUser;
     }
 
     public User submitRegistration(User pendingUser) {
         User user = null;
-        
+
         // TODO use action ID instead of activation code
         boolean isInvited = StringUtils.isNotEmpty(pendingUser.getActivationCode());
-        
+
         if (isInvited) {
             // User has been invited to join PRISM
             user = userService.getUserByActivationCode(pendingUser.getActivationCode());
-            user.setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
+            user.getAccount().setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
         } else {
             // User is an applicant
             user = processPendingApplicantUser(pendingUser);
@@ -91,6 +91,5 @@ public class RegistrationService {
     Map<String, Object> modelMap() {
         return new HashMap<String, Object>();
     }
-
 
 }

@@ -8,6 +8,7 @@ import org.springframework.validation.ValidationUtils;
 
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
@@ -34,6 +35,7 @@ public class RegisterFormValidator extends AbstractValidator {
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
 	    User user = (User) target;
+	    UserAccount account = user.getAccount();
 
 	    if (StringUtils.isEmpty(user.getActivationCode())) {
 	        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);
@@ -47,7 +49,8 @@ public class RegisterFormValidator extends AbstractValidator {
 	        }
 	    }
 
-		if(StringUtils.isBlank(user.getPassword())){
+	    errors.pushNestedPath("account");
+		if(StringUtils.isBlank(account.getPassword())){
 		    errors.rejectValue("password", EMPTY_FIELD_ERROR_MESSAGE);
 		} else if(user.getPassword().length() < MINIMUM_PASSWORD_CHARACTERS){
             errors.rejectValue("password", "user.password.small");
@@ -55,10 +58,11 @@ public class RegisterFormValidator extends AbstractValidator {
             errors.rejectValue("password", "user.password.large");
         }
 		
-        if (StringUtils.isBlank(user.getConfirmPassword())) {
+        if (StringUtils.isBlank(account.getConfirmPassword())) {
             errors.rejectValue("confirmPassword", EMPTY_FIELD_ERROR_MESSAGE);
-        } else if (!Objects.equal(user.getConfirmPassword(), user.getPassword())) {
+        } else if (!Objects.equal(account.getConfirmPassword(), user.getPassword())) {
             errors.rejectValue("confirmPassword", "user.passwords.notmatch");
         }
+        errors.popNestedPath();
 	}
 }

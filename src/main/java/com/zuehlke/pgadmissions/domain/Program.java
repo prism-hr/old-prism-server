@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -24,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 @Entity(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@DiscriminatorValue(value = "PROGRAM")
 public class Program extends Advert implements PrismScope {
 
     private static final long serialVersionUID = -9073611033741317582L;
@@ -63,7 +61,6 @@ public class Program extends Advert implements PrismScope {
     private boolean locked;
 
     public Program() {
-        super();
         super.setAdvertType(AdvertType.PROGRAM);
     }
 

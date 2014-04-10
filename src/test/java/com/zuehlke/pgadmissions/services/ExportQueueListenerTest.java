@@ -26,6 +26,8 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
+import com.zuehlke.pgadmissions.domain.PrismScope;
+import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
@@ -96,6 +98,13 @@ public class ExportQueueListenerTest {
         ApplicationFormTransfer formTransferMock = EasyMock.createMock(ApplicationFormTransfer.class);
         
         ApplicationForm form = new ValidApplicationFormBuilder().build();
+        ExportServiceException uclExportServiceException = new ExportServiceException("error",
+                new ApplicationFormTransferErrorBuilder().errorHandlingStrategy(
+                        ApplicationFormTransferErrorHandlingDecision.RETRY).build());
+        User admin1 = new UserBuilder().id(1).build();
+        User admin2 = new UserBuilder().id(2).build();
+        List<User> admins = asList(admin1, admin2);
+        PrismScope systemScope = new PrismSystem();
         
         EasyMock.expect(messageMock.getText()).andReturn("XX");
         EasyMock.expect(formDAOMock.getByApplicationNumber("XX")).andReturn(form);
@@ -105,17 +114,11 @@ public class ExportQueueListenerTest {
         EasyMock.expect(messageMock.getStringProperty("Status")).andReturn(form.getStatus().toString());
         expect(messageMock.getStringProperty("Added")).andReturn("xx");
         
-        ExportServiceException uclExportServiceException = new ExportServiceException("error",
-                new ApplicationFormTransferErrorBuilder().errorHandlingStrategy(
-                        ApplicationFormTransferErrorHandlingDecision.RETRY).build());
         
         porticoExportServiceMock.sendToPortico(form, formTransferMock);
         EasyMock.expectLastCall().andThrow(uclExportServiceException);
         
-        User admin1 = new UserBuilder().id(1).build();
-        User admin2 = new UserBuilder().id(2).build();
-        List<User> admins = asList(admin1, admin2);
-        expect(roleServiceMock.getUsersInSystemRole(Authority.SUPERADMINISTRATOR))
+        expect(roleServiceMock.getUsersInRole(systemScope, Authority.SUPERADMINISTRATOR))
         	.andReturn(admins);
         
         mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class), form);

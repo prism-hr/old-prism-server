@@ -79,8 +79,12 @@ public class RoleService {
         }
     }
 
-    public List<User> getUsersInSystemRole(Authority... authorities) {
-        return roleDAO.getUsersInSystemRole(authorities);
+    public List<User> getUsersInRole(PrismScope scope, Authority... authorities) {
+        return roleDAO.getUsersInRole(scope, authorities);
+    }
+    
+    public User getUserInRole(PrismScope scope, Authority... authorities) {
+        return roleDAO.getUserInRole(scope, authorities);
     }
 
     public List<Program> getProgramsByUserAndRole(User currentUser, Authority administrator) {

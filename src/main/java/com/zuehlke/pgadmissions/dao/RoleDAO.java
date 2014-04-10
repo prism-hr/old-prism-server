@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -84,8 +85,13 @@ public class RoleDAO {
                 .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
     }
 
-    public List<User> getUsersInSystemRole(Authority[] authorities) {
+    public List<User> getUsersInRole(PrismScope scope, Authority[] authorities) {
         // TODO Auto-generated method stub, sort by first and last names
+        return null;
+    }
+
+    public User getUserInRole(PrismScope scope, Authority[] authorities) {
+        // TODO Auto-generated method stub
         return null;
     }
 

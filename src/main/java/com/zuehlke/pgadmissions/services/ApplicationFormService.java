@@ -170,7 +170,7 @@ public class ApplicationFormService {
         }
         applicationForm = createApplication(applicant, advert);
         autoPopulateApplication(applicationForm);
-        AddSuggestedSupervisorsFromProject(applicationForm);
+        addSuggestedSupervisorsFromProject(applicationForm);
         workflowService.applicationCreated(applicationForm);
         log.info("New application form created: " + applicationForm.getApplicationNumber());
         return applicationForm;
@@ -271,15 +271,16 @@ public class ApplicationFormService {
         return applicationNumber;
     }
 
-    private void AddSuggestedSupervisorsFromProject(ApplicationForm application) {
+    private void addSuggestedSupervisorsFromProject(ApplicationForm application) {
         Project project = application.getProject();
         if (project != null) {
             List<SuggestedSupervisor> suggestedSupervisors = application.getProgramDetails().getSuggestedSupervisors();
-            suggestedSupervisors.add(createSuggestedSupervisor(project.getPrimarySupervisor()));
-            User secondarySupervisor = project.getSecondarySupervisor();
-            if (secondarySupervisor != null) {
-                suggestedSupervisors.add(createSuggestedSupervisor(project.getSecondarySupervisor()));
-            }
+            // FIXME add sugested supervisors
+//            suggestedSupervisors.add(createSuggestedSupervisor(project.getPrimarySupervisor()));
+//            User secondarySupervisor = project.getSecondarySupervisor();
+//            if (secondarySupervisor != null) {
+//                suggestedSupervisors.add(createSuggestedSupervisor(project.getSecondarySupervisor()));
+//            }
         }
     }
 

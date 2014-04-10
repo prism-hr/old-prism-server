@@ -52,7 +52,7 @@ public class WorkflowService {
     };
 
     @Autowired
-    private RoleDAO roleDAO;
+    private RoleService roleService;
 
     @Autowired
     private ActionDAO actionDAO;
@@ -412,7 +412,8 @@ public class WorkflowService {
 
         Project project = applicationForm.getProject();
         if (project != null) {
-            administrators.put(project.getPrimarySupervisor(), Authority.PROJECTADMINISTRATOR);
+            User primarySupervisor = roleService.getUserInRole(project, Authority.PROJECT_PRIMARY_SUPERVISOR);
+            administrators.put(primarySupervisor, Authority.PROJECTADMINISTRATOR);
 
             User projectAdministrator = project.getContactUser();
             if (projectAdministrator != null) {

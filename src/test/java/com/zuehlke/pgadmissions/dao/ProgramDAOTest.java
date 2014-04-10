@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
@@ -47,7 +48,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetAllPrograms() {
         List<Program> programs = (List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class)
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq("enabled", true))
+                .add(Restrictions.eq("state", AdvertState.PROGRAM_APPROVED))
                 .addOrder(Order.asc("title")).list();
         Program program1 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code1").title("another title").institution(institution).build();
         Program program2 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code2").title("another title").institution(institution).build();
@@ -218,8 +219,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotGetDisabledProjectsForProgram() {
-        project.setEnabled(false);
-        project.setActive(false);
+        project.setState(AdvertState.PROJECT_DISABLED);
         programDAO.save(project);
         flushAndClearSession();
 

@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -380,7 +381,7 @@ public class ProgrammeDetailsValidatorTest {
         User currentUser = new UserBuilder().id(1).build();
         SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().firstname("Mark").lastname("Johnson").email("mark@gmail.com").aware(true)
                 .build();
-        program = new ProgramBuilder().id(1).title("Program 1").enabled(true).build();
+        program = new ProgramBuilder().id(1).title("Program 1").state(AdvertState.PROGRAM_APPROVED).build();
         programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
                 .applicationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2025/08/06"))
                 .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).enabled(true).build();

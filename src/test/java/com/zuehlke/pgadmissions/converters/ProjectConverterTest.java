@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectDTOBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -100,7 +101,7 @@ public class ProjectConverterTest {
 		assertThat(project.getId(), equalTo(dto.getId()));
 		assertThat(project.getContactUser(), equalTo(primarySupervisorUser));
 		assertThat(project, notNullValue());
-		assertThat(project.isActive(), equalTo(dto.getActive()));
+		assertThat(project.getState(), equalTo(dto.getState()));
 		assertThat(project.getDescription(), equalTo(dto.getDescription()));
 		assertThat(project.getFunding(), equalTo(dto.getFunding()));
 		assertThat(project.getStudyDuration(), nullValue());
@@ -143,7 +144,7 @@ public class ProjectConverterTest {
 		.administrator(administrator)
 		.primarySupervisor(primarySupervisor)
 		.secondarySupervisorSpecified(true).secondarySupervisor(secondarySupervisor)
-		.active(true);
+		.state(AdvertState.PROJECT_APPROVED);
 		projectDTO = builder.build();
 	}
 

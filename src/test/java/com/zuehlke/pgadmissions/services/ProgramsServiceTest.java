@@ -42,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
@@ -170,11 +171,10 @@ public class ProgramsServiceTest {
         programDAOMock.save(project);
 
         replay();
-        programsService.removeAdvert(1);
+        programsService.removeProject(1);
         verify();
 
-        assertFalse(project.isEnabled());
-        assertFalse(project.isActive());
+        assertEquals(AdvertState.PROJECT_DISABLED, project.getState());
     }
 
     @Test
@@ -227,7 +227,7 @@ public class ProgramsServiceTest {
         assertEquals(program.getAtasRequired(), opportunityRequest.getAtasRequired());
         assertEquals(program.getStudyDuration(), opportunityRequest.getStudyDuration());
         assertEquals(program.getFunding(), opportunityRequest.getFunding());
-        assertTrue(program.isActive());
+        assertEquals(AdvertState.PROGRAM_APPROVED, program.getState());
         assertSame(program.getProgramType(), opportunityRequest.getProgramType());
         assertSame(program.getContactUser(), requestAuthor);
     }
@@ -248,7 +248,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldUpdateClosingDate() {
-        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
+        Advert advert = new AdvertBuilder().description("program").studyDuration(12).state(AdvertState.PROGRAM_APPROVED).build();
         Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
         ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
         programDAOMock.updateClosingDate(closingDate);
@@ -259,7 +259,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldAddClosingDateToProgram() {
-        Advert advert = new AdvertBuilder().description("program").studyDuration(12).active(true).build();
+        Advert advert = new AdvertBuilder().description("program").studyDuration(12).state(AdvertState.PROGRAM_APPROVED).build();
         Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
         ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
         programDAOMock.save(program);

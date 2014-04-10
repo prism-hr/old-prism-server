@@ -164,7 +164,7 @@ public class ProgramConfigurationController {
         result.put("programDescription", program.getDescription());
         result.put("programStudyDuration", program.getStudyDuration());
         result.put("programFunding", program.getFunding());
-        result.put("programIsActive", program.isActive());
+        result.put("programState", program.getState());
         result.put("isCustomProgram", program.getProgramFeed() == null);
         result.put("atasRequired", program.getAtasRequired());
         result.put("programType", program.getProgramType().getId());

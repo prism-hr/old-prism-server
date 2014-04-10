@@ -28,18 +28,18 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
     private ApplicationFormDAO applicationDAO;
-    private RegisteredUser user;
+    private User user;
     private Program program;
 
     private ApplicationForm application;
@@ -47,7 +47,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         applicationDAO = new ApplicationFormDAO(sessionFactory);
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
                 .enabled(false).build();
         save(user);
         flushAndClearSession();
@@ -225,7 +225,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetPreviousApplicationForApplicant() {
         DateTime initialDate = new DateTime(2014, 5, 13, 15, 56);
 
-        RegisteredUser otherApplicant = new RegisteredUserBuilder().firstName("Other").lastName("Applicant").email("other@applicant.com").username("other")
+        User otherApplicant = new UserBuilder().firstName("Other").lastName("Applicant").email("other@applicant.com").username("other")
                 .password("password").enabled(false).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).toDate()).advert(program).applicant(user)

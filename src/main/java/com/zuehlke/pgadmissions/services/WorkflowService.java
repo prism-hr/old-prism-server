@@ -7,25 +7,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormUserRoleDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormActionRequired;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
+import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
@@ -33,10 +29,9 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
@@ -57,13 +52,10 @@ public class WorkflowService {
     };
 
     @Autowired
-    private ApplicationFormUserRoleDAO applicationFormUserRoleDAO;
+    private RoleService roleService;
 
     @Autowired
     private ActionDAO actionDAO;
-
-    @Autowired
-    private RoleDAO roleDAO;
 
     @Autowired
     private UserDAO userDAO;
@@ -338,46 +330,46 @@ public class WorkflowService {
 //        deleteRoleAction(application, Authority.SUPERADMINISTRATOR, ApplicationFormAction.CORRECT_APPLICATION);
     }
     
-    public Boolean getRaisesUrgentFlagByUserAndApplicationForm(RegisteredUser user, ApplicationForm applicationForm) {
+    public Boolean getRaisesUrgentFlagByUserAndApplicationForm(User user, ApplicationForm applicationForm) {
 //        return applicationFormUserRoleDAO.getRaisesUrgentFlagByUserAndApplicationForm(user, applicationForm);
         return false;
     }
 
-    public List<RegisteredUser> getUsersInterestedInApplication(ApplicationForm applicationForm) {
+    public List<User> getUsersInterestedInApplication(ApplicationForm applicationForm) {
         return userDAO.getUsersInterestedInApplication(applicationForm);
     }
 
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
+    public List<User> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
         return userDAO.getUsersPotentiallyInterestedInApplication(applicationForm);
     }
     
-    public void deleteApplicationUpdate(ApplicationForm applicationForm, RegisteredUser registeredUser) {
+    public void deleteApplicationUpdate(ApplicationForm applicationForm, User user) {
 //        applicationFormUserRoleDAO.deleteApplicationUpdate(applicationForm, registeredUser);
     }
     
-    public void deleteApplicationRole(ApplicationForm application, RegisteredUser user, Authority authority) {
+    public void deleteApplicationRole(ApplicationForm application, User user, Authority authority) {
 //        applicationFormUserRoleDAO.deleteApplicationRole(application, user, authority);
     }
     
-    public void deleteProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {
+    public void deleteProgramRole(User user, Program program, Authority authority) {
 //        applicationFormUserRoleDAO.deleteProgramRole(registeredUser, program, authority);
     }
 
-    public void deleteUserRole(RegisteredUser registeredUser, Authority authority) {
+    public void deleteUserRole(User user, Authority authority) {
 //        applicationFormUserRoleDAO.deleteUserRole(registeredUser, authority);
     }
 
-    public void insertApplicationUpdate(ApplicationForm applicationForm, RegisteredUser author, ApplicationUpdateScope updateVisibility) {
+    public void insertApplicationUpdate(ApplicationForm applicationForm, User author, ApplicationUpdateScope updateVisibility) {
 //        Date updateTimestamp = new Date();
 //        applicationFormUserRoleDAO.insertApplicationUpdate(applicationForm, author, updateTimestamp, updateVisibility);
 //        applicationForm.setLastUpdated(updateTimestamp);
     }
 
-    public void insertProgramRole(RegisteredUser registeredUser, Program program, Authority authority) {
+    public void insertProgramRole(User user, Program program, Authority authority) {
 //        applicationFormUserRoleDAO.insertProgramRole(registeredUser, program, authority);
     }
 
-    public void insertUserRole(RegisteredUser registeredUser, Authority authority) {
+    public void insertUserRole(User user, Authority authority) {
 //        applicationFormUserRoleDAO.insertUserRole(registeredUser, authority);
     }
 
@@ -389,11 +381,11 @@ public class WorkflowService {
 //        applicationFormUserRoleDAO.updateApplicationDueDate(applicationForm, deadlineTimestamp);
     }
 
-    private void updateApplicationInterest(ApplicationForm applicationForm, RegisteredUser registeredUser, Boolean interested) {
+    private void updateApplicationInterest(ApplicationForm applicationForm, User user, Boolean interested) {
 //        applicationFormUserRoleDAO.updateApplicationInterest(applicationForm, registeredUser, interested);
     }
 
-    private void deleteProvideInterviewAvailabilityAction(ApplicationForm applicationForm, RegisteredUser registeredUser) {
+    private void deleteProvideInterviewAvailabilityAction(ApplicationForm applicationForm, User user) {
 //        Authority authority = Authority.INTERVIEWER;
 //        if (registeredUser.isApplicant(applicationForm)) {
 //            authority = Authority.APPLICANT;
@@ -408,9 +400,9 @@ public class WorkflowService {
     }
 
     private void assignToAdministrators(ApplicationForm applicationForm, ApplicationFormAction action, Date dueDate, Boolean bindDeadlineToDueDate) {
-        Map<RegisteredUser, Authority> administrators = Maps.newHashMap();
+        Map<User, Authority> administrators = Maps.newHashMap();
 
-        for (RegisteredUser superAdministrator : userDAO.getSuperadministrators()) {
+        for (User superAdministrator : userDAO.getSuperadministrators()) {
             administrators.put(superAdministrator, Authority.SUPERADMINISTRATOR);
         }
 
@@ -420,9 +412,10 @@ public class WorkflowService {
 
         Project project = applicationForm.getProject();
         if (project != null) {
-            administrators.put(project.getPrimarySupervisor(), Authority.PROJECTADMINISTRATOR);
+            User primarySupervisor = roleService.getUserInRole(project, Authority.PROJECT_PRIMARY_SUPERVISOR);
+            administrators.put(primarySupervisor, Authority.PROJECTADMINISTRATOR);
 
-            RegisteredUser projectAdministrator = project.getContactUser();
+            User projectAdministrator = project.getContactUser();
             if (projectAdministrator != null) {
                 administrators.put(projectAdministrator, Authority.PROJECTADMINISTRATOR);
             }
@@ -430,23 +423,23 @@ public class WorkflowService {
 
         Comment latestStateChangeComment = applicationFormService.getLatestStateChangeComment(applicationForm, null);
         if (latestStateChangeComment != null) {
-            RegisteredUser stateAdministrator = latestStateChangeComment.getDelegateAdministrator();
+            User stateAdministrator = latestStateChangeComment.getDelegateAdministrator();
             if (stateAdministrator != null) {
                 administrators.put(stateAdministrator, Authority.STATEADMINISTRATOR);
             }
         }
 
-        for (Entry<RegisteredUser, Authority> administrator : administrators.entrySet()) {
+        for (Entry<User, Authority> administrator : administrators.entrySet()) {
             Boolean raisesUrgentFlag = dueDate.before(new Date());
 
-            List<ApplicationFormActionRequired> requiredActions = new ArrayList<ApplicationFormActionRequired>();
-            requiredActions.add(new ApplicationFormActionRequired(actionDAO.getById(action), dueDate, bindDeadlineToDueDate, raisesUrgentFlag));
-
-            if (INITIATE_STAGE_MAP.containsValue(action)) {
-                requiredActions.add(new ApplicationFormActionRequired(actionDAO.getById(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE), dueDate,
-                        bindDeadlineToDueDate, raisesUrgentFlag));
-            }
-
+            List<ActionRequired> requiredActions = new ArrayList<ActionRequired>();
+//            requiredActions.add(new ApplicationFormActionRequired(actionDAO.getById(action), dueDate, bindDeadlineToDueDate, raisesUrgentFlag));
+//
+//            if (INITIATE_STAGE_MAP.containsValue(action)) {
+//                requiredActions.add(new ApplicationFormActionRequired(actionDAO.getById(ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE), dueDate,
+//                        bindDeadlineToDueDate, raisesUrgentFlag));
+//            }
+//
 //            createApplicationFormUserRole(applicationForm, administrator.getKey(), administrator.getValue(), false,
 //                    requiredActions.toArray(new ApplicationFormActionRequired[0]));
         }

@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 @Service
 public class SwitchUserService {
@@ -30,10 +30,10 @@ public class SwitchUserService {
         
         UsernamePasswordAuthenticationToken authentication = null;
         
-        RegisteredUser currentAccount = (RegisteredUser) preProcessToken.getPrincipal();
-        RegisteredUser desiredAccount = (RegisteredUser) preProcessToken.getCredentials();
+        User currentAccount = (User) preProcessToken.getPrincipal();
+        User desiredAccount = (User) preProcessToken.getCredentials();
         
-        RegisteredUser primary = currentAccount.getPrimaryAccount();
+        User primary = currentAccount.getPrimaryAccount();
         if (primary == null) {
             primary = currentAccount;
         }
@@ -64,8 +64,8 @@ public class SwitchUserService {
         return authentication;
     }
 
-    private boolean listContainsId(RegisteredUser user, List<RegisteredUser> users) {
-        for (RegisteredUser entry : users) {
+    private boolean listContainsId(User user, List<User> users) {
+        for (User entry : users) {
             if (entry.getId().equals(user.getId())) {
                 return true;
             }

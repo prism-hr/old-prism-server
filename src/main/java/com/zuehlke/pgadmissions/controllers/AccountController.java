@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.SwitchAndLinkUserAccountDTO;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.services.SwitchUserService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.AccountValidator;
+import com.zuehlke.pgadmissions.validators.UserValidator;
 import com.zuehlke.pgadmissions.validators.SwitchAndLinkUserAccountDTOValidator;
 
 @Controller
@@ -41,7 +41,7 @@ public class AccountController {
     private UserService userService;
 
     @Autowired
-    private AccountValidator accountValidator;
+    private UserValidator accountValidator;
 
     @Autowired
     private SwitchUserService switchUserService;
@@ -61,7 +61,7 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
-    public String saveAccountDetails(@Valid @ModelAttribute("updatedUser") RegisteredUser user, BindingResult bindingResult) {
+    public String saveAccountDetails(@Valid @ModelAttribute("updatedUser") User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return TemplateLocation.MY_ACCOUNT_SECTION;
         }
@@ -70,20 +70,20 @@ public class AccountController {
     }
 
     @ModelAttribute(value = "updatedUser")
-    public RegisteredUser getUpdatedUser() {
-        RegisteredUser registeredUser = new RegisteredUser();
-        RegisteredUser currentUser = getUser();
-        registeredUser.setFirstName(currentUser.getFirstName());
-        registeredUser.setFirstName2(currentUser.getFirstName2());
-        registeredUser.setFirstName3(currentUser.getFirstName3());
-        registeredUser.setLastName(currentUser.getLastName());
-        registeredUser.setEmail(currentUser.getEmail());
-        registeredUser.setPassword(currentUser.getPassword());
-        return registeredUser;
+    public User getUpdatedUser() {
+        User user = new User();
+        User currentUser = getUser();
+        user.setFirstName(currentUser.getFirstName());
+        user.setFirstName2(currentUser.getFirstName2());
+        user.setFirstName3(currentUser.getFirstName3());
+        user.setLastName(currentUser.getLastName());
+        user.setEmail(currentUser.getEmail());
+        user.getAccount().setPassword(currentUser.getPassword());
+        return user;
     }
 
     @ModelAttribute(value = "user")
-    public RegisteredUser getUser() {
+    public User getUser() {
         return userService.getCurrentUser();
     }
 
@@ -123,8 +123,8 @@ public class AccountController {
     @ResponseBody
     public String switchAccounts(@RequestParam String email, HttpServletRequest request) {
         try {
-            RegisteredUser desiredAccount = userService.getUserByEmail(email);
-            RegisteredUser currentAccount = userService.getCurrentUser();
+            User desiredAccount = userService.getUserByEmail(email);
+            User currentAccount = userService.getCurrentUser();
             
             request.getSession().removeAttribute("applicationSearchDTO");
             

@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.services.UclIrisProfileService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping("/users")
-public class RegisteredUserIrisProfileController {
+public class UserIrisProfileController {
 
     private final UclIrisProfileService irisService;
 
@@ -31,13 +31,13 @@ public class RegisteredUserIrisProfileController {
     private final MessageSource messageSource;
     
     @Autowired
-    public RegisteredUserIrisProfileController(final UclIrisProfileService irisService, final UserService userService, final MessageSource messageSource) {
+    public UserIrisProfileController(final UclIrisProfileService irisService, final UserService userService, final MessageSource messageSource) {
         this.irisService = irisService;
         this.userService = userService;
         this.messageSource = messageSource;
     }
     
-    public RegisteredUserIrisProfileController() {
+    public UserIrisProfileController() {
         this(null, null, null);
     }
     
@@ -76,7 +76,7 @@ public class RegisteredUserIrisProfileController {
     @ResponseBody
     public Map<String, Object> setIrisProfileForCurrentUser(final @RequestParam String upi) {
         Map<String, Object> result = new HashMap<String, Object>();
-        RegisteredUser currentUser = userService.getCurrentUser();
+        User currentUser = userService.getCurrentUser();
         
         if (isNotValidUpi(upi)) {
             result.put("success", false);
@@ -90,14 +90,14 @@ public class RegisteredUserIrisProfileController {
             return result;
         }
         
-        List<RegisteredUser> usersWithUpi = userService.getUsersWithUpi(upi);
-        List<RegisteredUser> linkedAccounts = currentUser.getLinkedAccounts();
-        List<RegisteredUser> intersection = ListUtils.subtract(usersWithUpi, linkedAccounts);
+        List<User> usersWithUpi = userService.getUsersWithUpi(upi);
+        List<User> linkedAccounts = currentUser.getLinkedAccounts();
+        List<User> intersection = ListUtils.subtract(usersWithUpi, linkedAccounts);
         
         if (intersection.isEmpty()) {
             currentUser.setUpi(upi);
             userService.save(currentUser);
-            for (RegisteredUser linkedAccount : linkedAccounts) {
+            for (User linkedAccount : linkedAccounts) {
                 linkedAccount.setUpi(upi);
                 userService.save(linkedAccount);
             }
@@ -112,9 +112,9 @@ public class RegisteredUserIrisProfileController {
     @RequestMapping(value = "/IRIS/", method = RequestMethod.DELETE, produces = "application/json")
     @ResponseBody
     public void unlinkIrisProfileForCurrentUser() {
-        RegisteredUser currentUser = userService.getCurrentUser();
-        List<RegisteredUser> linkedAccounts = currentUser.getLinkedAccounts();
-        for(RegisteredUser account : linkedAccounts){
+        User currentUser = userService.getCurrentUser();
+        List<User> linkedAccounts = currentUser.getLinkedAccounts();
+        for(User account : linkedAccounts){
             account.setUpi(null);
             userService.save(account);
         }

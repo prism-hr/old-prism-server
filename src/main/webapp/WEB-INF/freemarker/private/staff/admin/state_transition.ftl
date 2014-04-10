@@ -42,7 +42,7 @@
 			<#include "/private/common/global_header.ftl"/>
 			<!-- Middle Starts -->
 			<div id="middle">
-				<#assign user = stateChangeDTO.registeredUser>
+				<#assign user = stateChangeDTO.user>
 				<#include "/private/common/parts/nav_with_user_info_toggle.ftl"/>
 				<@header/>
 				<!-- Main content area. -->

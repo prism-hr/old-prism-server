@@ -22,208 +22,196 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Entity(name = "APPLICATION_FORM_REFEREE")
 public class Referee implements Serializable, FormSectionObject {
 
-	private static final long serialVersionUID = 4591043630090924738L;
+    private static final long serialVersionUID = 4591043630090924738L;
 
-	@Id
-	@GeneratedValue
-	private Integer id;
-	
-	@Transient
-	private boolean acceptedTerms;
-	
-	@Column(name = "last_notified")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastNotified;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "registered_user_id")
-	private RegisteredUser user;
+    @Transient
+    private boolean acceptedTerms;
 
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "referee")
-	private ReferenceComment reference;
+    @Column(name = "last_notified")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastNotified;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application_form_id")
-	private ApplicationForm application;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "registered_user_id")
+    private User user;
 
-	@ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
-	@Column(name = "phone")
-	private String phoneNumber;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_form_id")
+    private ApplicationForm application;
 
-	@Column(name = "skype")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
-	private String messenger;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private ReferenceComment comment;
 
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-	@Column(name = "firstname")
-	private String firstname;
+    @ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
+    @Column(name = "phone")
+    private String phoneNumber;
 
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
-	@Column(name = "lastname")
-	private String lastname;
+    @Column(name = "skype")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
+    private String messenger;
 
-	@Column(name = "job_employer")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
-	private String jobEmployer;
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
+    @Column(name = "firstname")
+    private String firstname;
 
-	@Column(name = "job_title")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
-	private String jobTitle;
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
+    @Column(name = "lastname")
+    private String lastname;
+
+    @Column(name = "job_employer")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
+    private String jobEmployer;
+
+    @Column(name = "job_title")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
+    private String jobTitle;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "address_id")
-	@Valid
-	private Address addressLocation;
+    @JoinColumn(name = "address_id")
+    @Valid
+    private Address addressLocation;
 
-	@Column(name = "email")
-	@ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
-	private String email;
-	
-	@Column(name="send_to_ucl")
-	private Boolean sendToUCL;
+    @Column(name = "email")
+    @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
+    private String email;
 
-	private boolean declined = false;
+    @Column(name = "send_to_ucl")
+    private Boolean sendToUCL;
 
-	public ApplicationForm getApplication() {
-		return application;
-	}
+    private boolean declined = false;
 
-	public void setApplication(ApplicationForm application) {
-		this.application = application;
-	}
+    public ApplicationForm getApplication() {
+        return application;
+    }
 
-	public String getFirstname() {
-		return firstname;
-	}
+    public void setApplication(ApplicationForm application) {
+        this.application = application;
+    }
 
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
+    public ReferenceComment getComment() {
+        return comment;
+    }
 
-	public String getLastname() {
-		return lastname;
-	}
+    public void setComment(ReferenceComment comment) {
+        this.comment = comment;
+    }
 
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
-	}
+    public String getFirstname() {
+        return firstname;
+    }
 
-	public String getJobEmployer() {
-		return jobEmployer;
-	}
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
 
-	public void setJobEmployer(String jobEmployer) {
-		this.jobEmployer = jobEmployer;
-	}
+    public String getLastname() {
+        return lastname;
+    }
 
-	public String getJobTitle() {
-		return jobTitle;
-	}
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
 
-	public void setJobTitle(String jobTitle) {
-		this.jobTitle = jobTitle;
-	}
+    public String getJobEmployer() {
+        return jobEmployer;
+    }
 
-	public Address getAddressLocation() {
-		return addressLocation;
-	}
+    public void setJobEmployer(String jobEmployer) {
+        this.jobEmployer = jobEmployer;
+    }
 
-	public void setAddressLocation(Address addressLocation) {
-		this.addressLocation = addressLocation;
-	}
+    public String getJobTitle() {
+        return jobTitle;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public Address getAddressLocation() {
+        return addressLocation;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setAddressLocation(Address addressLocation) {
+        this.addressLocation = addressLocation;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public boolean hasProvidedReference() {
-		return reference != null;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public ReferenceComment getReference() {
-		return reference;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setReference(ReferenceComment reference) {
-		this.reference = reference;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getMessenger() {
-		return messenger;
-	}
+    public String getMessenger() {
+        return messenger;
+    }
 
-	public void setMessenger(String messenger) {
-		this.messenger = messenger;
-	}
+    public void setMessenger(String messenger) {
+        this.messenger = messenger;
+    }
 
-	public RegisteredUser getUser() {
-		return user;
-	}
+    public User getUser() {
+        return user;
+    }
 
-	public void setUser(RegisteredUser user) {
-		this.user = user;
-	}
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-	public boolean isDeclined() {
-		return declined;
-	}
+    public boolean isDeclined() {
+        return declined;
+    }
 
-	public void setDeclined(boolean declined) {
-		this.declined = declined;
-	}
+    public void setDeclined(boolean declined) {
+        this.declined = declined;
+    }
 
-	public Date getLastNotified() {
-		return lastNotified;
-	}
+    public Date getLastNotified() {
+        return lastNotified;
+    }
 
-	public void setLastNotified(Date lastNotified) {
-	    // TODO reimplement that using new actions
-		this.lastNotified = lastNotified;
-	}
+    public void setLastNotified(Date lastNotified) {
+        // TODO reimplement that using new actions
+        this.lastNotified = lastNotified;
+    }
 
-	public boolean isEditable() {
-		return !hasProvidedReference() && !declined && (application == null || application.getStatus().isModifiable());
-	}
+    public boolean isAcceptedTerms() {
+        return acceptedTerms;
+    }
 
-	public boolean hasResponded() {
-		return isDeclined() || hasProvidedReference();
-		
-	}
+    public void setAcceptedTerms(boolean acceptedTerms) {
+        this.acceptedTerms = acceptedTerms;
+    }
 
-	public boolean isAcceptedTerms() {
-		return acceptedTerms;
-	}
+    public void setSendToUCL(Boolean sendToUCL) {
+        this.sendToUCL = sendToUCL;
+    }
 
-	public void setAcceptedTerms(boolean acceptedTerms) {
-		this.acceptedTerms = acceptedTerms;
-	}
-	
-	public void setSendToUCL(Boolean sendToUCL) {
-		this.sendToUCL = sendToUCL;
-	}
-	
-	public Boolean getSendToUCL() {
-		return sendToUCL;
-	}
+    public Boolean getSendToUCL() {
+        return sendToUCL;
+    }
 
 }

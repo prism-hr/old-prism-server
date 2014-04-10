@@ -17,7 +17,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ResearchOpportunitiesFeedDAO;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
 
@@ -83,7 +83,7 @@ public class ResearchOpportunitiesFeedService {
     }
 
     @Transactional
-    public ResearchOpportunitiesFeed saveNewFeed(final List<Integer> selectedProgramIds, final RegisteredUser user, final FeedFormat format, final String title) {
+    public ResearchOpportunitiesFeed saveNewFeed(final List<Integer> selectedProgramIds, final User user, final FeedFormat format, final String title) {
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeed();
         for (Integer programId : selectedProgramIds) {
             feed.getPrograms().add((Program) programService.getById(programId));
@@ -96,7 +96,7 @@ public class ResearchOpportunitiesFeedService {
     }
 
     @Transactional(readOnly = true)
-    public List<ResearchOpportunitiesFeed> getAllFeedsForUser(final RegisteredUser user) {
+    public List<ResearchOpportunitiesFeed> getAllFeedsForUser(final User user) {
         ResearchOpportunitiesFeed defaultFeedSmall = getDefaultOpportunitiesFeed(user, FeedFormat.SMALL);
         ResearchOpportunitiesFeed defaultFeedLarge = getDefaultOpportunitiesFeed(user, FeedFormat.LARGE);
         List<ResearchOpportunitiesFeed> savedFeeds = dao.getAllFeedsForUser(user);
@@ -109,7 +109,7 @@ public class ResearchOpportunitiesFeedService {
         return allFeeds;
     }
 
-    private ResearchOpportunitiesFeed getDefaultOpportunitiesFeed(final RegisteredUser user, FeedFormat format) {
+    private ResearchOpportunitiesFeed getDefaultOpportunitiesFeed(final User user, FeedFormat format) {
         List<Program> defaultPrograms = programService.getProgramsForWhichCanManageProjects(user);
 
         ResearchOpportunitiesFeed defaultFeedSmall = new ResearchOpportunitiesFeed();
@@ -122,16 +122,16 @@ public class ResearchOpportunitiesFeedService {
         return defaultFeedSmall;
     }
 
-    private List<ResearchOpportunitiesFeed> getDefaultOpportunitiesFeeds(List<RegisteredUser> users, FeedFormat format) {
+    private List<ResearchOpportunitiesFeed> getDefaultOpportunitiesFeeds(List<User> users, FeedFormat format) {
         LinkedList<ResearchOpportunitiesFeed> feeds = Lists.newLinkedList();
-        for (RegisteredUser linkedUser : users) {
+        for (User linkedUser : users) {
             feeds.add(getDefaultOpportunitiesFeed(linkedUser, format));
         }
         return feeds;
     }
 
     public List<ResearchOpportunitiesFeed> getDefaultOpportunitiesFeedsByUsername(String username, FeedFormat format) {
-        RegisteredUser user = userService.getUserByUsername(username);
+        User user = userService.getUserByUsername(username);
         Assert.notNull(user);
         return getDefaultOpportunitiesFeeds(user.getLinkedAccounts(), format);
     }
@@ -141,7 +141,7 @@ public class ResearchOpportunitiesFeedService {
     }
 
     @Transactional(readOnly = true)
-    public boolean isUniqueFeedTitleForUser(final String title, final RegisteredUser user) {
+    public boolean isUniqueFeedTitleForUser(final String title, final User user) {
         return dao.isUniqueFeedTitleForUser(title, user);
     }
 
@@ -152,7 +152,7 @@ public class ResearchOpportunitiesFeedService {
     }
 
     private boolean isOwner(ResearchOpportunitiesFeed feed) {
-        RegisteredUser currentUser = userService.getCurrentUser();
+        User currentUser = userService.getCurrentUser();
         return feed.getUser().getId().equals(currentUser.getId());
     }
 
@@ -167,7 +167,7 @@ public class ResearchOpportunitiesFeedService {
     }
 
     @Transactional
-    public ResearchOpportunitiesFeed updateFeed(final Integer feedId, final List<Integer> selectedProgramIds, final RegisteredUser currentUser,
+    public ResearchOpportunitiesFeed updateFeed(final Integer feedId, final List<Integer> selectedProgramIds, final User currentUser,
             final FeedFormat format, final String title) {
         ResearchOpportunitiesFeed feed = dao.getById(feedId);
         Assert.isTrue(isOwner(feed));

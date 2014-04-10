@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.services.DomicileService;
@@ -47,13 +47,13 @@ public class ProspectusController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public User getUser() {
         return userService.getCurrentUser();
     }
 
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
-        RegisteredUser currentUser = userService.getCurrentUser();
+        User currentUser = userService.getCurrentUser();
         if (roleService.hasRole(currentUser, Authority.SUPERADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }

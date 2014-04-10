@@ -30,7 +30,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
-@Entity(name = "APPLICATION_FORM")
+@Entity(name = "APPLICATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ApplicationForm implements Comparable<ApplicationForm>,
 		Serializable, PrismScope {
@@ -97,7 +97,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>,
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "applicant_id")
-	private RegisteredUser applicant = null;
+	private User applicant = null;
 
 	@Column(name = "project_title")
 	private String projectTitle;
@@ -297,11 +297,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>,
 		this.lastUpdated = lastUpdated;
 	}
 
-	public RegisteredUser getApplicant() {
+	public User getApplicant() {
 		return applicant;
 	}
 
-	public void setApplicant(RegisteredUser applicant) {
+	public void setApplicant(User applicant) {
 		this.applicant = applicant;
 	}
 

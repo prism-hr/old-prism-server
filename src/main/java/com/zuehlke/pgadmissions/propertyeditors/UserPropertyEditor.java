@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -39,10 +39,10 @@ public class UserPropertyEditor extends PropertyEditorSupport {
 
     @Override
     public String getAsText() {
-        if (getValue() == null || ((RegisteredUser) getValue()).getId() == null) {
+        if (getValue() == null || ((User) getValue()).getId() == null) {
             return null;
         }
-        return encryptionHelper.encrypt(((RegisteredUser) getValue()).getId());
+        return encryptionHelper.encrypt(((User) getValue()).getId());
     }
 
 }

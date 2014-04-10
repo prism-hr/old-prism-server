@@ -7,13 +7,13 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Score;
 
 public class CommentBuilder {
 	
 	private ApplicationForm application;
-	private RegisteredUser user;
+	private User user;
 	private String strComment;
 	private Integer id;
 	private Date createdTimeStamp;
@@ -39,7 +39,7 @@ public class CommentBuilder {
 		return this;
 	}
 	
-	public CommentBuilder user (RegisteredUser user){
+	public CommentBuilder user (User user){
 		this.user = user;
 		return this;
 	}

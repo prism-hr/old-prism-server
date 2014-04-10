@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
@@ -17,10 +17,10 @@ import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 @Transactional
 public class ApplicationsFilteringService {
 
-    public ApplicationsFiltering getDefaultApplicationFiltering(RegisteredUser user) {
+    public ApplicationsFiltering getDefaultApplicationFiltering(User user) {
         ApplicationsFiltering filtering;
-        if (user.getFiltering() != null) {
-            filtering = user.getFiltering();
+        if (user.getAccount().getFiltering() != null) {
+            filtering = user.getAccount().getFiltering();
         } else {
             filtering = getActiveApplicationFiltering();
         }

@@ -1,7 +1,11 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,10 +16,14 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -31,7 +39,7 @@ public abstract class Advert implements Serializable {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title")
     private String title;
-    
+
     @Size(max = 3000, message = "A maximum of 2000 characters are allowed.")
     @Column(name = "description", nullable = false)
     private String description = "Advert coming soon!";
@@ -43,20 +51,26 @@ public abstract class Advert implements Serializable {
     @Column(name = "funding")
     private String funding;
 
-    @Column(name = "active")
-    private Boolean active = true;
-    
-    @Column(name = "enabled")
-    private Boolean enabled = true;
-    
+    @Column(name = "state_id")
+    @Enumerated(EnumType.STRING)
+    private AdvertState state;
+
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "registered_user_id")
-    private RegisteredUser contactUser;
-    
+    @JoinColumn(name = "user_id")
+    private User contactUser;
+
     @Column(name = "advert_type")
     @Enumerated(EnumType.STRING)
     private AdvertType advertType;
-    
+
+    @OneToOne
+    @JoinColumn(name = "advert_closing_date_id")
+    private AdvertClosingDate closingDate;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_id", nullable = false)
+    private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();
+
     public Integer getId() {
         return id;
     }
@@ -97,67 +111,68 @@ public abstract class Advert implements Serializable {
         this.funding = funding;
     }
 
-    public Boolean isActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-    
-    public Boolean isEnabled() {
-        return enabled;
-    }
-    
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public String getDescriptionForFacebook() {
-    	return getStudyDurationToRead().toLowerCase().replace("s", "") + " research study programme delivered by UCL Engineering at London's global University. " +
-    			"Click to find out more about the programme and apply for your place.";
+        return getStudyDurationToRead().toLowerCase().replace("s", "")
+                + " research study programme delivered by UCL Engineering at London's global University. "
+                + "Click to find out more about the programme and apply for your place.";
     }
 
     public String getStudyDurationToRead() {
-    	Integer studyDurationToRead = studyDuration;
-    	String timeIntervalToRead = "Month";
-    	
-    	if (studyDuration % 12 == 0) {
-    		studyDurationToRead = studyDuration / 12;
-    		timeIntervalToRead = "Year";
-    	}
-    	
-    	if (studyDurationToRead > 1) {
-    		timeIntervalToRead = timeIntervalToRead + "s";
-    	}
-    	
-    	return studyDurationToRead.toString() + " " + timeIntervalToRead;
+        Integer studyDurationToRead = studyDuration;
+        String timeIntervalToRead = "Month";
+
+        if (studyDuration % 12 == 0) {
+            studyDurationToRead = studyDuration / 12;
+            timeIntervalToRead = "Year";
+        }
+
+        if (studyDurationToRead > 1) {
+            timeIntervalToRead = timeIntervalToRead + "s";
+        }
+
+        return studyDurationToRead.toString() + " " + timeIntervalToRead;
     }
 
-    public RegisteredUser getContactUser() {
+    public User getContactUser() {
         return contactUser;
     }
 
-    public void setContactUser(RegisteredUser contactUser) {
+    public void setContactUser(User contactUser) {
         this.contactUser = contactUser;
     }
-    
+
     public AdvertType getAdvertType() {
         return advertType;
     }
-    
+
     public void setAdvertType(AdvertType advertType) {
         this.advertType = advertType;
     }
 
-    public Boolean getActive() {
-        return active;
+    public AdvertClosingDate getClosingDate() {
+        return closingDate;
     }
 
-    public Boolean getEnabled() {
-        return enabled;
+    public void setClosingDate(AdvertClosingDate closingDate) {
+        this.closingDate = closingDate;
     }
-    
+
+    public List<AdvertClosingDate> getClosingDates() {
+        return closingDates;
+    }
+
+    public AdvertState getState() {
+        return state;
+    }
+
+    public void setState(AdvertState state) {
+        this.state = state;
+    }
+
+    public boolean isEnabled() {
+        return state == AdvertState.PROGRAM_APPROVED || state == AdvertState.PROJECT_APPROVED;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
@@ -176,7 +191,7 @@ public abstract class Advert implements Serializable {
     }
 
     public abstract Program getProgram();
-    
+
     public abstract Project getProject();
-    
+
 }

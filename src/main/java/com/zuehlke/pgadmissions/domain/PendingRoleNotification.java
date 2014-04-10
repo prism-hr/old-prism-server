@@ -22,7 +22,7 @@ public class PendingRoleNotification implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "added_by_user_id")
-	private RegisteredUser addedByUser;
+	private User addedByUser;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "role_id")
@@ -34,7 +34,7 @@ public class PendingRoleNotification implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
-	private RegisteredUser user;
+	private User user;
 
 	@Column(name = "notification_date")
 	private Date notificationDate;
@@ -63,19 +63,19 @@ public class PendingRoleNotification implements Serializable {
 		this.program = program;
 	}
 
-	public RegisteredUser getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(RegisteredUser user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 
-	public RegisteredUser getAddedByUser() {
+	public User getAddedByUser() {
 		return addedByUser;
 	}
 
-	public void setAddedByUser(RegisteredUser addedByUser) {
+	public void setAddedByUser(User addedByUser) {
 		this.addedByUser = addedByUser;
 	}
 

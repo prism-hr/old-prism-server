@@ -34,12 +34,12 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
@@ -50,7 +50,7 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class UserServiceTest {
 
-    private RegisteredUser currentUser;
+    private User currentUser;
 
     @Mock
     @InjectIntoByType
@@ -64,7 +64,7 @@ public class UserServiceTest {
     @InjectIntoByType
     private ApplicationsFilteringDAO filteringDAOMock;
 
-    private RegisteredUser currentUserMock;
+    private User currentUserMock;
 
     @Mock
     @InjectIntoByType

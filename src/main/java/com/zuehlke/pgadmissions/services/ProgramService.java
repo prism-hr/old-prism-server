@@ -15,13 +15,14 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -67,7 +68,7 @@ public class ProgramService {
         return programDAO.getProgramByCode(code);
     }
 
-    public List<Program> getProgramsForWhichCanManageProjects(RegisteredUser user) {
+    public List<Program> getProgramsForWhichCanManageProjects(User user) {
         return programDAO.getProgramsForWhichUserCanManageProjects(user);
     }
 
@@ -84,16 +85,14 @@ public class ProgramService {
         program.getScoringDefinitions().put(scoringStage, null);
     }
 
-    public void removeAdvert(Integer advertId) {
-        Advert advert = getById(advertId);
-        if (advert != null) {
-            advert.setEnabled(false);
-            advert.setActive(false);
-            programDAO.save(advert);
+    public void removeProject(Integer projectId) {
+        Project project = (Project) getById(projectId);
+        if (project != null) {
+            project.setState(AdvertState.PROJECT_DISABLED);
         }
     }
 
-    public List<Project> listProjects(RegisteredUser user, Program program) {
+    public List<Project> listProjects(User user, Program program) {
         // TODO implement
         return null;
     }
@@ -107,16 +106,16 @@ public class ProgramService {
         return formattedDate;
     }
 
-    public void updateClosingDate(ProgramClosingDate closingDate) {
+    public void updateClosingDate(AdvertClosingDate closingDate) {
         programDAO.updateClosingDate(closingDate);
     }
 
     public void deleteClosingDateById(Integer programClosingDateId) {
-        ProgramClosingDate programClosingDate = programDAO.getClosingDateById(programClosingDateId);
+        AdvertClosingDate programClosingDate = programDAO.getClosingDateById(programClosingDateId);
         programDAO.deleteClosingDate(programClosingDate);
     }
 
-    public void addClosingDateToProgram(Program program, ProgramClosingDate programClosingDate) {
+    public void addClosingDateToProgram(Program program, AdvertClosingDate programClosingDate) {
         program.getClosingDates().add(programClosingDate);
         programDAO.save(program);
     }
@@ -143,7 +142,7 @@ public class ProgramService {
             program.setContactUser(thisBean.getContactUserForProgram(program, opportunityRequest.getAuthor()));
         } else {
             program = new Program();
-            program.setEnabled(true);
+            program.setState(AdvertState.PROGRAM_APPROVED);
             program.setContactUser(opportunityRequest.getAuthor());
         }
 
@@ -162,32 +161,33 @@ public class ProgramService {
         program.setDescription(opportunityRequest.getProgramDescription());
         program.setStudyDuration(opportunityRequest.getStudyDuration());
         program.setFunding(opportunityRequest.getFunding());
-        program.setActive(opportunityRequest.getAcceptingApplications());
+        // FIXME set the right state, not that it can be overridden by programInstanceService#createRemoveProgramInstances() (when there are no active instanes)
+        // program.setActive(opportunityRequest.getAcceptingApplications());
 
         save(program);
         return program;
     }
 
-    protected void grantAdminPermissionsForProgram(RegisteredUser user, Program program) {
+    protected void grantAdminPermissionsForProgram(User user, Program program) {
         // TODO try to reuse any method from RoleService
         throw new UnsupportedOperationException();
-//        if (!HibernateUtils.containsEntity(user.getInstitutions(), program.getInstitution())) {
-//            user.getInstitutions().add(program.getInstitution());
-//        }
-//        Role adminRole = roleService.getById(Authority.ADMINISTRATOR);
-//        Role approverRole = roleService.getById(Authority.APPROVER);
-//        if (!HibernateUtils.containsEntity(user.getRoles(), adminRole)) {
-//            user.getRoles().add(adminRole);
-//        }
-//        if (!HibernateUtils.containsEntity(user.getRoles(), approverRole)) {
-//            user.getRoles().add(approverRole);
-//        }
-//        if (!HibernateUtils.containsEntity(user.getProgramsOfWhichAdministrator(), program)) {
-//            user.getProgramsOfWhichAdministrator().add(program);
-//        }
-//        if (!HibernateUtils.containsEntity(user.getProgramsOfWhichApprover(), program)) {
-//            user.getProgramsOfWhichApprover().add(program);
-//        }
+        // if (!HibernateUtils.containsEntity(user.getInstitutions(), program.getInstitution())) {
+        // user.getInstitutions().add(program.getInstitution());
+        // }
+        // Role adminRole = roleService.getById(Authority.ADMINISTRATOR);
+        // Role approverRole = roleService.getById(Authority.APPROVER);
+        // if (!HibernateUtils.containsEntity(user.getRoles(), adminRole)) {
+        // user.getRoles().add(adminRole);
+        // }
+        // if (!HibernateUtils.containsEntity(user.getRoles(), approverRole)) {
+        // user.getRoles().add(approverRole);
+        // }
+        // if (!HibernateUtils.containsEntity(user.getProgramsOfWhichAdministrator(), program)) {
+        // user.getProgramsOfWhichAdministrator().add(program);
+        // }
+        // if (!HibernateUtils.containsEntity(user.getProgramsOfWhichApprover(), program)) {
+        // user.getProgramsOfWhichApprover().add(program);
+        // }
     }
 
     public Program saveProgramOpportunity(OpportunityRequest opportunityRequest) {
@@ -204,7 +204,7 @@ public class ProgramService {
         return program;
     }
 
-    public boolean canChangeInstitution(RegisteredUser user, OpportunityRequest opportunityRequest) {
+    public boolean canChangeInstitution(User user, OpportunityRequest opportunityRequest) {
         if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
             return true;
         }
@@ -215,18 +215,18 @@ public class ProgramService {
         }
 
         // TODO reimplement
-//        for (Institution institution : user.getInstitutions()) {
-//            if (institution.getCode().equals(opportunityRequest.getInstitutionCode())) {
-//                return true;
-//            }
-//        }
+        // for (Institution institution : user.getInstitutions()) {
+        // if (institution.getCode().equals(opportunityRequest.getInstitutionCode())) {
+        // return true;
+        // }
+        // }
 
         return false;
 
     }
 
     public Advert getValidProgramProjectAdvert(Integer advertId) {
-        Advert advert = null;   
+        Advert advert = null;
         if (advertId != null) {
             advert = programDAO.getAcceptingApplicationsById(advertId);
         }
@@ -249,29 +249,29 @@ public class ProgramService {
     public void deleteInactiveAdverts() {
         programDAO.deleteInactiveAdverts();
     }
-    
+
     public Date getDefaultStartDate(Program program, StudyOption studyOption) {
         return programDAO.getDefaultStartDate(program, studyOption);
     }
-    
+
     public List<ProgramInstance> getActiveProgramInstances(Program program) {
         return programDAO.getActiveProgramInstances(program);
     }
-    
+
     public List<ProgramInstance> getActiveProgramInstancesForStudyOption(Program program, StudyOption studyOption) {
         return programDAO.getActiveProgramInstancesForStudyOption(program, studyOption);
     }
-    
+
     public List<StudyOption> getAvailableStudyOptions(Program program) {
         return programDAO.getAvailableStudyOptions(program);
     }
-    
+
     public Date getNextClosingDate(Program program) {
         return programDAO.getNextClosingDate(program);
     }
-    
-    protected RegisteredUser getContactUserForProgram(Program program, RegisteredUser candidateUser) {
-        List<RegisteredUser> administrators = roleService.getProgramAdministrators(program);
+
+    protected User getContactUserForProgram(Program program, User candidateUser) {
+        List<User> administrators = roleService.getProgramAdministrators(program);
         if (!administrators.isEmpty()) {
             if (administrators.contains(candidateUser)) {
                 return candidateUser;
@@ -281,6 +281,5 @@ public class ProgramService {
         }
         return program.getContactUser();
     }
-
 
 }

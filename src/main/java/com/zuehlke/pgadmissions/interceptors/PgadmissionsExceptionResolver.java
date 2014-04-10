@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
@@ -42,7 +42,7 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
             log.debug("Exception catched during request processing ", ex);
             return handlePgadmissionsException((PgadmissionsException) ex, request);
         }
-        RegisteredUser currentUser = null;
+        User currentUser = null;
         try {
             currentUser = userService.getCurrentUser();
         } catch (Exception e) {

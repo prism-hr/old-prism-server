@@ -10,13 +10,14 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 public class ProgramBuilder {
@@ -26,13 +27,12 @@ public class ProgramBuilder {
     private String description = "Description.";
     private Integer studyDuration = 12;
     private String funding;
-    private Boolean active = true;
-    private Boolean enabled = true;
-    private RegisteredUser contactUser;
+    private AdvertState state;
+    private User contactUser;
     private String code;
     private boolean atasRequired;
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
-    private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
+    private List<AdvertClosingDate> programClosingDates = new ArrayList<AdvertClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
     private List<Project> projects = Lists.newArrayList();
     private Institution institution;
@@ -65,17 +65,12 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder active(boolean active) {
-        this.active = active;
+    public ProgramBuilder state(AdvertState state) {
+        this.state = state;
         return this;
     }
 
-    public ProgramBuilder enabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
-    }
-
-    public ProgramBuilder contactUser(RegisteredUser contactUser) {
+    public ProgramBuilder contactUser(User contactUser) {
         this.contactUser = contactUser;
         return this;
     }
@@ -102,7 +97,7 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder closingDates(ProgramClosingDate... programClosingDates) {
+    public ProgramBuilder closingDates(AdvertClosingDate... programClosingDates) {
         this.programClosingDates.addAll(Arrays.asList(programClosingDates));
         return this;
     }
@@ -134,7 +129,7 @@ public class ProgramBuilder {
 
     public ProgramBuilder advert(Advert advert) {
         return id(advert.getId()).title(advert.getTitle()).description(advert.getDescription()).studyDuration(advert.getStudyDuration())
-                .funding(advert.getFunding()).active(advert.isActive()).enabled(advert.isEnabled()).contactUser(advert.getContactUser());
+                .funding(advert.getFunding()).state(advert.getState()).contactUser(advert.getContactUser());
     }
 
     public Program build() {
@@ -144,8 +139,6 @@ public class ProgramBuilder {
         program.setDescription(description);
         program.setStudyDuration(studyDuration);
         program.setFunding(funding);
-        program.setActive(active);
-        program.setEnabled(enabled);
         program.setContactUser(contactUser);
         program.setCode(code);
         program.getInstances().addAll(instances);
@@ -157,10 +150,11 @@ public class ProgramBuilder {
         program.setProgramFeed(programFeed);
         program.setProgramType(programType);
         program.setLocked(locked);
+        program.setState(state);
         return program;
     }
 
     public static ProgramBuilder aProgram(Institution institution) {
-        return new ProgramBuilder().code("AAA").title("Amazing program!").enabled(true).atasRequired(false).institution(institution);
+        return new ProgramBuilder().code("AAA").title("Amazing program!").state(AdvertState.PROGRAM_APPROVED).atasRequired(false).institution(institution);
     }
 }

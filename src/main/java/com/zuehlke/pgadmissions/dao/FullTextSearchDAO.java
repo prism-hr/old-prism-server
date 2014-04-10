@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
@@ -35,9 +35,9 @@ public class FullTextSearchDAO {
 
     private SessionFactory sessionFactory;
 
-    private static Comparator<RegisteredUser> LASTNAME_COMPARATOR = new Comparator<RegisteredUser>() {
+    private static Comparator<User> LASTNAME_COMPARATOR = new Comparator<User>() {
         @Override
-        public int compare(final RegisteredUser o1, final RegisteredUser o2) {
+        public int compare(final User o1, final User o2) {
             return o1.getLastName().compareTo(o2.getLastName());
         }
     };
@@ -50,15 +50,15 @@ public class FullTextSearchDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    public List<RegisteredUser> getMatchingUsersWithFirstnameLike(final String searchTerm) {
+    public List<User> getMatchingUsersWithFirstnameLike(final String searchTerm) {
         return getMatchingUsers(searchTerm, "firstName", LASTNAME_COMPARATOR);
     }
 
-    public List<RegisteredUser> getMatchingUsersWithLastnameLike(final String searchTerm) {
+    public List<User> getMatchingUsersWithLastnameLike(final String searchTerm) {
         return getMatchingUsers(searchTerm, "lastName", LASTNAME_COMPARATOR);
     }
 
-    public List<RegisteredUser> getMatchingUsersWithEmailLike(final String searchTerm) {
+    public List<User> getMatchingUsersWithEmailLike(final String searchTerm) {
         return getMatchingUsers(searchTerm, "email", LASTNAME_COMPARATOR);
     }
 
@@ -90,7 +90,7 @@ public class FullTextSearchDAO {
         return getMatchingRefereeJobTitles(searchTerm, "position");
     }
 
-    private List<RegisteredUser> getMatchingUsers(final String searchTerm, final String propertyName, final Comparator<RegisteredUser> comparator) {
+    private List<User> getMatchingUsers(final String searchTerm, final String propertyName, final Comparator<User> comparator) {
 
         Criterion notAnApplicantCriterion = Restrictions.in("r.id", new Authority[] { Authority.ADMINISTRATOR, Authority.APPROVER, Authority.INTERVIEWER,
                 Authority.REFEREE, Authority.REVIEWER, Authority.SUPERADMINISTRATOR, Authority.SUPERVISOR });
@@ -101,9 +101,9 @@ public class FullTextSearchDAO {
             return Collections.emptyList();
         }
 
-        TreeSet<RegisteredUser> uniqueResults = new TreeSet<RegisteredUser>(comparator);
+        TreeSet<User> uniqueResults = new TreeSet<User>(comparator);
 
-        Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("enabled", true))
+        Criteria wildcardCriteria = sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("enabled", true))
                 .add(Restrictions.isNull("primaryAccount")).add(Restrictions.ilike(propertyName, trimmedSearchTerm, MatchMode.START)).createAlias("roles", "r")
                 .add(notAnApplicantCriterion).addOrder(Order.asc("lastName")).setMaxResults(25);
 
@@ -112,19 +112,19 @@ public class FullTextSearchDAO {
         if (StringUtils.length(trimmedSearchTerm) >= 3) {
             FullTextSession fullTextSession = Search.getFullTextSession(sessionFactory.getCurrentSession());
 
-            QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(RegisteredUser.class).get();
+            QueryBuilder queryBuilder = fullTextSession.getSearchFactory().buildQueryBuilder().forEntity(User.class).get();
 
-            Criteria notApplicantCriteria = fullTextSession.createCriteria(RegisteredUser.class).add(Restrictions.eq("enabled", true))
+            Criteria notApplicantCriteria = fullTextSession.createCriteria(User.class).add(Restrictions.eq("enabled", true))
                     .add(Restrictions.isNull("primaryAccount")).createAlias("roles", "r").add(notAnApplicantCriterion);
 
             FullTextQuery fuzzyQuery = fullTextSession.createFullTextQuery(
                     queryBuilder.keyword().fuzzy().withThreshold(.7f).withPrefixLength(0).onField(propertyName).matching(trimmedSearchTerm).createQuery(),
-                    RegisteredUser.class).setCriteriaQuery(notApplicantCriteria);
+                    User.class).setCriteriaQuery(notApplicantCriteria);
 
             uniqueResults.addAll(fuzzyQuery.list());
         }
 
-        return new ArrayList<RegisteredUser>(uniqueResults);
+        return new ArrayList<User>(uniqueResults);
     }
 
     private List<String> getMatchingQualificationTitles(final String searchTerm, final String propertyName) {

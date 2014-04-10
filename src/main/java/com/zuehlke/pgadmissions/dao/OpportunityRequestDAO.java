@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 
 @SuppressWarnings("unchecked")
@@ -35,7 +35,7 @@ public class OpportunityRequestDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(opportunityRequest);
     }
 
-    public List<OpportunityRequest> listOpportunityRequests(RegisteredUser user) {
+    public List<OpportunityRequest> listOpportunityRequests(User user) {
         DetachedCriteria initialRequestsWithProgramsCriteria = DetachedCriteria.forClass(OpportunityRequest.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("sourceProgram")) //
@@ -85,7 +85,7 @@ public class OpportunityRequestDAO {
                 .list();
     }
 
-    public List<OpportunityRequest> getOpportunityRequestsForAuthor(RegisteredUser author) {
+    public List<OpportunityRequest> getOpportunityRequestsForAuthor(User author) {
         return sessionFactory.getCurrentSession() //
                 .createCriteria(OpportunityRequest.class).add(Restrictions.eq("author", author)).list();
     }

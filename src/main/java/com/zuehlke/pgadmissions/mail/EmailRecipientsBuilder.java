@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.mail;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 public interface EmailRecipientsBuilder {
 
-    List<RegisteredUser> build();
+    List<User> build();
 }

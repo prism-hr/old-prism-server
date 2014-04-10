@@ -339,7 +339,7 @@ public class PorticoDocumentUploadPhase2IT {
     private void addReferres(ApplicationForm form) {
         int numberOfReferences = 0;
         for (Referee referee : form.getReferees()) {
-            if (referee.getReference() != null) {
+            if (referee.getComment() != null) {
                 referee.setSendToUCL(true);
                 numberOfReferences++;
             }

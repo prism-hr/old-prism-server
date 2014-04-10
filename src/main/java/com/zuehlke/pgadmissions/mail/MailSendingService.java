@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
@@ -77,11 +77,11 @@ public class MailSendingService extends AbstractMailSendingService {
     public void sendSubmissionConfirmationToApplicant(ApplicationForm form) {
         PrismEmailMessage message = null;
         try {
-            RegisteredUser applicant = form.getApplicant();
+            User applicant = form.getApplicant();
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInSystemRole(Authority.ADMITTER), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -103,11 +103,11 @@ public class MailSendingService extends AbstractMailSendingService {
     public void sendRejectionConfirmationToApplicant(ApplicationForm form) {
         PrismEmailMessage message = null;
         try {
-            RegisteredUser applicant = form.getApplicant();
+            User applicant = form.getApplicant();
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInSystemRole(Authority.ADMITTER), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -129,11 +129,11 @@ public class MailSendingService extends AbstractMailSendingService {
     public void sendApprovedNotification(ApplicationForm form) {
         PrismEmailMessage message = null;
         try {
-            RegisteredUser applicant = form.getApplicant();
+            User applicant = form.getApplicant();
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInSystemRole(Authority.ADMITTER), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
@@ -150,12 +150,12 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewConfirmationToInterviewers(ApplicationForm application, List<RegisteredUser> interviewers) {
+    public void sendInterviewConfirmationToInterviewers(ApplicationForm application, List<User> interviewers) {
         PrismEmailMessage message = null;
-        for (RegisteredUser interviewer : interviewers) {
+        for (User interviewer : interviewers) {
             try {
                 String subject = resolveMessage(INTERVIEWER_NOTIFICATION, application);
-                List<RegisteredUser> admins = roleService.getProgramAdministrators(application.getProgram());
+                List<User> admins = roleService.getProgramAdministrators(application.getProgram());
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "interviewer", "application", "applicant", "host" },
                         new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), interviewer, application, application.getApplicant(),
                                 getHostName() });
@@ -171,11 +171,11 @@ public class MailSendingService extends AbstractMailSendingService {
         PrismEmailMessage message = null;
         try {
             String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, application, application.getLastStatus().getId().displayValue() );
-            List<RegisteredUser> admins = roleService.getProgramAdministrators(application.getProgram());
+            List<User> admins = roleService.getProgramAdministrators(application.getProgram());
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), application, application.getApplicant(),
-                            roleService.getUsersInSystemRole(Authority.ADMITTER), getHostName(), admissionsOfferServiceLevel, application.getLastStatus().getId().displayValue() });
+                            roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(), admissionsOfferServiceLevel, application.getLastStatus().getId().displayValue() });
 
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(application.getStatus())) {
@@ -197,11 +197,11 @@ public class MailSendingService extends AbstractMailSendingService {
         String subject = resolveMessage(EmailTemplateName.INTERVIEW_VOTE_NOTIFICATION, application);
         PrismEmailMessage message = null;
         
-        List<RegisteredUser> recipients = Lists.newLinkedList();
+        List<User> recipients = Lists.newLinkedList();
         
         for (CommentAssignedUser assignedUser : assignInterviewersComment.getAssignedUsers()) {
             try {
-                List<RegisteredUser> admins = roleService.getProgramAdministrators(application.getProgram());
+                List<User> admins = roleService.getProgramAdministrators(application.getProgram());
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "participant", "application", "host" }, new Object[] {
                         getAdminsEmailsCommaSeparatedAsString(admins), assignedUser.getUser(), application, getHostName() });
                 message = buildMessage(assignedUser.getUser(), subject, modelBuilder.build(), INTERVIEW_VOTE_NOTIFICATION);
@@ -212,11 +212,11 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewVoteConfirmationToAdministrators(ApplicationForm application, RegisteredUser user) {
-        Collection<RegisteredUser> administrators = userDAO.getInterviewAdministrators(application);
+    public void sendInterviewVoteConfirmationToAdministrators(ApplicationForm application, User user) {
+        Collection<User> administrators = userDAO.getInterviewAdministrators(application);
         PrismEmailMessage message = null;
         String subject = resolveMessage(INTERVIEW_VOTE_CONFIRMATION, application);
-        for (RegisteredUser administrator : administrators) {
+        for (User administrator : administrators) {
             if (administrator.getId() == user.getId()) {
                 continue;
             }
@@ -232,7 +232,7 @@ public class MailSendingService extends AbstractMailSendingService {
     }
 
     public void sendOpportunityRequestOutcome(OpportunityRequestComment comment) {
-        RegisteredUser user = comment.getOpportunityRequest().getAuthor();
+        User user = comment.getOpportunityRequest().getAuthor();
         PrismEmailMessage message = null;
         String subject = resolveMessage(OPPORTUNITY_REQUEST_OUTCOME);
         try {
@@ -244,14 +244,14 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendExportErrorMessage(List<RegisteredUser> recipients, String messageCode, Date timestamp, ApplicationForm application) {
+    public void sendExportErrorMessage(List<User> recipients, String messageCode, Date timestamp, ApplicationForm application) {
         PrismEmailMessage message = null;
         if (messageCode == null) {
             log.error("Error while sending export error message: messageCode is null");
             return;
         }
         String subject = resolveMessage(EXPORT_ERROR);
-        for (RegisteredUser user : recipients) {
+        for (User user : recipients) {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host", "application" }, new Object[] { user,
                         messageCode, timestamp, getHostName(), application });
@@ -263,14 +263,14 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendImportErrorMessage(List<RegisteredUser> recipients, String messageCode, Date timestamp) {
+    public void sendImportErrorMessage(List<User> recipients, String messageCode, Date timestamp) {
         PrismEmailMessage message = null;
         if (messageCode == null) {
             log.error("Error while sending import error message: messageCode is null");
             return;
         }
         String subject = resolveMessage(IMPORT_ERROR);
-        for (RegisteredUser user : recipients) {
+        for (User user : recipients) {
             try {
                 EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageCode,
                         timestamp, getHostName() });
@@ -282,7 +282,7 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendRegistrationConfirmation(RegisteredUser user) {
+    public void sendRegistrationConfirmation(User user) {
         PrismEmailMessage message = null;
         try {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "host" }, new Object[] { user, getHostName() });
@@ -294,7 +294,7 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendResetPasswordMessage(final RegisteredUser user, final String newPassword) throws PrismMailMessageException {
+    public void sendResetPasswordMessage(final User user, final String newPassword) throws PrismMailMessageException {
         PrismEmailMessage message = null;
         try {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "newPassword", "host" }, new Object[] { user, newPassword, getHostName() });

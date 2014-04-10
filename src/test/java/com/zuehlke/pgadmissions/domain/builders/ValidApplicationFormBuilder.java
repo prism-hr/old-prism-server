@@ -31,27 +31,29 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class ValidApplicationFormBuilder {
 
-    protected RegisteredUser user;
+    protected User user;
     protected Document cvDocument;
     protected Document referenceDocument;
     protected Document personalStatement;
     protected Document proofOfAwardDocument;
     protected Document languageQualificationDocument;
     protected Document fundingDocument;
-    protected RegisteredUser approverUser;
+    protected User approverUser;
     protected Country country;
     protected Address address;
     protected ReferenceComment referenceComment1;
@@ -80,7 +82,7 @@ public class ValidApplicationFormBuilder {
     public ValidApplicationFormBuilder() {
     }
 
-    protected Document getRandomDocument(DocumentType docType, String filename, RegisteredUser user) {
+    protected Document getRandomDocument(DocumentType docType, String filename, User user) {
         try {
             Resource testFileAsResurce = new ClassPathResource("/pdf/valid.pdf");
             Document document = new DocumentBuilder().dateUploaded(new Date()).contentType("application/pdf").fileName(filename)
@@ -108,7 +110,7 @@ public class ValidApplicationFormBuilder {
 
     public ApplicationForm build() {
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";
-        user = new RegisteredUserBuilder().firstName("Kevin").firstName2("Franciszek").firstName3("Duncan").lastName("Denver").username("denk@zhaw.ch")
+        user = new UserBuilder().firstName("Kevin").firstName2("Franciszek").firstName3("Duncan").lastName("Denver").username("denk@zhaw.ch")
                 .email("ked@zuhlke.com").enabled(true).build();
         cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);
         referenceDocument = getRandomDocument(DocumentType.REFERENCE, "My Reference.pdf", user);
@@ -116,7 +118,7 @@ public class ValidApplicationFormBuilder {
         proofOfAwardDocument = getRandomDocument(DocumentType.PROOF_OF_AWARD, "My Proof of Award.pdf", user);
         languageQualificationDocument = getRandomDocument(DocumentType.LANGUAGE_QUALIFICATION, "Language Qualification - My Name.pdf", user);
         fundingDocument = getRandomDocument(DocumentType.SUPPORTING_FUNDING, "Supporting Funding - My Name.pdf", user);
-        approverUser = new RegisteredUserBuilder().id(Integer.MAX_VALUE - 1).username("approver@zhaw.ch").enabled(true).build();
+        approverUser = new UserBuilder().id(Integer.MAX_VALUE - 1).username("approver@zhaw.ch").enabled(true).build();
         country = new CountryBuilder().code("XK").name("United Kingdom").enabled(true).build();
         domicile = new DomicileBuilder().code("XK").name("United Kingdom").enabled(true).build();
         address = new AddressBuilder().domicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1])
@@ -133,8 +135,8 @@ public class ValidApplicationFormBuilder {
                 .addressDomicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
                 .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer")
                 .messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment2).build();
-        refereeOne.setReference(referenceComment1);
-        refereeTwo.setReference(referenceComment2);
+        refereeOne.setComment(referenceComment1);
+        refereeTwo.setComment(referenceComment2);
         employmentPosition = new EmploymentPositionBuilder().current(true).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1])
                 .address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).domicile(domicile)
                 .position("Software Engineer").current(true).startDate(DateUtils.addYears(new Date(), -2)).remit("Developer").employerName("Zuhlke Ltd.")
@@ -165,8 +167,8 @@ public class ValidApplicationFormBuilder {
         instance = new ProgramInstanceBuilder().academicYear("2013").applicationDeadline(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 1))
                 .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 5)).enabled(true).studyOption("F+++++", "Full-time")
                 .identifier("0009").build();
-        institution = new QualificationInstitutionBuilder().code("code").name("jakas instytucja").domicileCode("AE").enabled(true).build();
-        program = new ProgramBuilder().contactUser(approverUser).code("TMRMBISING99").enabled(true).instances(instance)
+        institution = new QualificationInstitutionBuilder().code("code").name("jakas instytucja").domicileCode("AE").state(InstitutionState.INSTITUTION_APPROVED).build();
+        program = new ProgramBuilder().contactUser(approverUser).code("TMRMBISING99").state(AdvertState.PROGRAM_APPROVED).instances(instance)
                 .title("MRes Medical and Biomedical Imaging").institution(institution).build();
         interest = new SourcesOfInterestBuilder().code("BRIT_COUN").name("British Council").build();
         programDetails = new ProgrammeDetailsBuilder().sourcesOfInterest(interest).startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))

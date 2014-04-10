@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
+import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class QualificationInstitutionServiceTest {
@@ -111,7 +112,7 @@ public class QualificationInstitutionServiceTest {
 
         assertSame(returned, institutionCapture.getValue());
         assertEquals("PL", returned.getDomicileCode());
-        assertTrue(returned.getEnabled());
+        assertEquals(InstitutionState.INSTITUTION_APPROVED, returned.getState());
         assertEquals(opportunityRequest.getOtherInstitution(), returned.getName());
         assertEquals("00008", returned.getCode());
     }

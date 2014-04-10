@@ -16,12 +16,14 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
+import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 
 public class TestObjectProvider {
@@ -41,51 +43,51 @@ public class TestObjectProvider {
                 .setMaxResults(1).uniqueResult();
     }
 
-    public RegisteredUser getEnabledUserInRole(Authority authority) {
+    public User getEnabledUserInRole(Authority authority) {
         return getUser(authority, true, true);
     }
 
-    public RegisteredUser getDisabledUserInRole(Authority authority) {
+    public User getDisabledUserInRole(Authority authority) {
         return getUser(authority, true, false);
     }
 
-    public RegisteredUser getEnabledUserNotInRole(Authority authority) {
+    public User getEnabledUserNotInRole(Authority authority) {
         return getUser(authority, false, true);
     }
 
-    public RegisteredUser getDisabledUserNotInRole(Authority authority) {
+    public User getDisabledUserNotInRole(Authority authority) {
         return getUser(authority, false, false);
     }
 
-    public RegisteredUser getEnabledUserInRoleInEnabledProgram(Program program, Authority authority) {
+    public User getEnabledUserInRoleInEnabledProgram(Program program, Authority authority) {
         return getProgramUser(program, true, authority, true, true);
     }
 
-    public RegisteredUser getDisabledUserInRoleInEnabledProgram(Program program, Authority authority) {
+    public User getDisabledUserInRoleInEnabledProgram(Program program, Authority authority) {
         return getProgramUser(program, true, authority, true, false);
     }
 
-    public RegisteredUser getEnabledUserNotInRoleInEnabledProgram(Program program, Authority authority) {
+    public User getEnabledUserNotInRoleInEnabledProgram(Program program, Authority authority) {
         return getProgramUser(program, true, authority, false, true);
     }
 
-    public RegisteredUser getDisabledUserNotInRoleInEnabledProgram(Program program, Authority authority) {
+    public User getDisabledUserNotInRoleInEnabledProgram(Program program, Authority authority) {
         return getProgramUser(program, true, authority, false, false);
     }
 
-    public RegisteredUser getEnabledUserInRoleInDisabledProgram(Program program, Authority authority) {
+    public User getEnabledUserInRoleInDisabledProgram(Program program, Authority authority) {
         return getProgramUser(program, false, authority, true, true);
     }
 
-    public RegisteredUser getDisabledUserInRoleInDisabledProgram(Program program, Authority authority) {
+    public User getDisabledUserInRoleInDisabledProgram(Program program, Authority authority) {
         return getProgramUser(program, false, authority, true, false);
     }
 
-    public RegisteredUser getEnabledUserNotInRoleInDisabledProgram(Program program, Authority authority) {
+    public User getEnabledUserNotInRoleInDisabledProgram(Program program, Authority authority) {
         return getProgramUser(program, false, authority, false, true);
     }
 
-    public RegisteredUser getDisabledUserNotInRoleInDisabledProgram(Program program, Authority authority) {
+    public User getDisabledUserNotInRoleInDisabledProgram(Program program, Authority authority) {
         return getProgramUser(program, false, authority, false, false);
     }
 
@@ -98,11 +100,11 @@ public class TestObjectProvider {
     }
 
     public Project getEnabledProject() {
-        return getProject(true, null);
+        return getProject(AdvertState.PROJECT_APPROVED);
     }
 
     public Project getDisabledProject() {
-        return getProject(true, null);
+        return getProject(AdvertState.PROJECT_DISABLED);
     }
 
     public Program getAlternativeEnabledProgram(Program program) {
@@ -111,14 +113,6 @@ public class TestObjectProvider {
 
     public Program getAlternativeDisabledProgram(Program program) {
         return getProgram(true, program);
-    }
-
-    public Project getAlternativeEnabledProject(Project project) {
-        return getProject(true, project);
-    }
-
-    public Project getAlternativeDisabledProject(Project project) {
-        return getProject(true, project);
     }
 
     public Role getRole(Authority authority) {
@@ -131,11 +125,11 @@ public class TestObjectProvider {
     }
 
     public Institution getEnabledInstitution() {
-        return getInstitution(true);
+        return getInstitution(InstitutionState.INSTITUTION_APPROVED);
     }
 
     public Institution getDisabledInstitution() {
-        return getInstitution(false);
+        return getInstitution(InstitutionState.INSTITUTION_DISABLED);
     }
 
     public ApplicationForm getEnabledProgramApplication() {
@@ -159,10 +153,11 @@ public class TestObjectProvider {
                 .createAlias("program", "program", JoinType.INNER_JOIN).add(Restrictions.eq("status", status)).setMaxResults(1).uniqueResult();
     }
 
-    private RegisteredUser getUser(Authority authority, Boolean isInRole, Boolean userEnabled) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-                .createAlias("applicationFormUserRoles", "applicationFormUserRole", JoinType.INNER_JOIN)
-                .createAlias("applicationFormUserRole.role", "role", JoinType.INNER_JOIN);
+    private User getUser(Authority authority, Boolean isInRole, Boolean userEnabled) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class)
+                .createAlias("account", "account", JoinType.INNER_JOIN)
+                .createAlias("userRoles", "userRole", JoinType.INNER_JOIN)
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN);
 
         if (BooleanUtils.isTrue(isInRole)) {
             criteria.add(Restrictions.eq("role.id", authority));
@@ -171,10 +166,7 @@ public class TestObjectProvider {
         }
 
         List<Criterion> userCriteria = new ArrayList<Criterion>(4);
-        userCriteria.add(Restrictions.eq("accountNonExpired", userEnabled));
-        userCriteria.add(Restrictions.eq("accountNonLocked", userEnabled));
-        userCriteria.add(Restrictions.eq("credentialsNonExpired", userEnabled));
-        userCriteria.add(Restrictions.eq("enabled", userEnabled));
+        userCriteria.add(Restrictions.eq("account.enabled", userEnabled));
 
         if (BooleanUtils.isTrue(userEnabled)) {
             for (Criterion userCriterion : userCriteria) {
@@ -188,15 +180,15 @@ public class TestObjectProvider {
             criteria.add(disjunction);
         }
 
-        return (RegisteredUser) criteria.setMaxResults(1).uniqueResult();
+        return (User) criteria.setMaxResults(1).uniqueResult();
     }
 
-    private RegisteredUser getProgramUser(Program program, Boolean programEnabled, Authority authority, Boolean isInRole, Boolean userEnabled) {
+    private User getProgramUser(Program program, Boolean programEnabled, Authority authority, Boolean isInRole, Boolean userEnabled) {
         if (AuthorityGroup.getAllProgramAuthorities().contains(authority)) {
             String authorityString = authority.toString();
             String capitalisedAuthorityString = authorityString.substring(0, 1).toUpperCase() + authorityString.substring(1);
 
-            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class)
                     .createAlias("programsOfWhich" + capitalisedAuthorityString, "program", JoinType.INNER_JOIN);
 
             if (BooleanUtils.isTrue(isInRole)) {
@@ -223,7 +215,7 @@ public class TestObjectProvider {
                 criteria.add(disjunction);
             }
 
-            return (RegisteredUser) criteria.setMaxResults(1).uniqueResult();
+            return (User) criteria.setMaxResults(1).uniqueResult();
         }
 
         return null;
@@ -250,20 +242,16 @@ public class TestObjectProvider {
                 .createAlias("project", "project", JoinType.INNER_JOIN).add(Restrictions.eq("project.active", enabled)).setMaxResults(1).uniqueResult();
     }
 
-    private Project getProject(Boolean enabled, Project alternativeOf) {
+    private Project getProject(AdvertState state) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Project.class).createAlias("program", "program", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("active", enabled)).add(Restrictions.eq("program.active", enabled));
-
-        if (alternativeOf != null) {
-            criteria.add(Restrictions.eq("id", alternativeOf.getId()));
-        }
+                .add(Restrictions.eq("state", state));
 
         return (Project) criteria.setMaxResults(1).uniqueResult();
     }
 
-    public Institution getInstitution(Boolean enabled) {
+    public Institution getInstitution(InstitutionState state) {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class)
-                .add(Restrictions.eq("enabled", enabled)).setMaxResults(1).uniqueResult();
+                .add(Restrictions.eq("state", state)).setMaxResults(1).uniqueResult();
     }
 
 }

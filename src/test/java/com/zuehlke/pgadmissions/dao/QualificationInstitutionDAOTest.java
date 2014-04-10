@@ -13,21 +13,22 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.QualificationInstitutionReference;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
+import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
 
 public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnInstitutionForDomicileCode() {
-        Institution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK").code("ABC")
+        Institution institution1 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK").code("ABC")
                 .build();
-        Institution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").domicileCode("UK")
+        Institution institution2 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_DISABLED).name("University of Cambridge").domicileCode("UK")
                 .code("ABCD").build();
-        Institution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").domicileCode("CH")
+        Institution institution3 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of Zurich").domicileCode("CH")
                 .code("ABCDE").build();
 
-        QualificationInstitutionReference institution4 = new QualificationInstitutionBuilder().enabled(false).name("University of   Cambridge .")
+        QualificationInstitutionReference institution4 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_DISABLED).name("University of   Cambridge .")
                 .domicileCode("UK").code("ABCD").buildAsReference();
-        QualificationInstitutionReference institution5 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").domicileCode("CH")
+        QualificationInstitutionReference institution5 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of Zurich").domicileCode("CH")
                 .code("ABCDE").buildAsReference();
 
         Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").build();
@@ -49,11 +50,11 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetInstitutionByCode() {
-        Institution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK").code("ABC")
+        Institution institution1 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK").code("ABC")
                 .build();
-        Institution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").domicileCode("UK")
+        Institution institution2 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_DISABLED).name("University of Cambridge").domicileCode("UK")
                 .code("ABCD").build();
-        Institution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").domicileCode("CH")
+        Institution institution3 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of Zurich").domicileCode("CH")
                 .code("ABCDE").build();
 
         save(institution1, institution2, institution3);
@@ -70,11 +71,11 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetLastCustomInstitution() {
-        Institution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK")
+        Institution institution1 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK")
                 .code("CUST00005").build();
-        Institution institution2 = new QualificationInstitutionBuilder().enabled(false).name("University of Cambridge").domicileCode("UK")
+        Institution institution2 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_DISABLED).name("University of Cambridge").domicileCode("UK")
                 .code("CUST00006").build();
-        Institution institution3 = new QualificationInstitutionBuilder().enabled(true).name("University of Zurich").domicileCode("CH")
+        Institution institution3 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of Zurich").domicileCode("CH")
                 .code("CUST00004").build();
 
         save(institution1, institution2, institution3);
@@ -91,11 +92,11 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetInstitutionByDomicileAndName() {
-        Institution institution1 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("UK").code("ABC")
+        Institution institution1 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK").code("ABC")
                 .build();
-        Institution institution2 = new QualificationInstitutionBuilder().enabled(true).name("University of London").domicileCode("PL")
+        Institution institution2 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("PL")
                 .code("ABCD").build();
-        Institution institution3 = new QualificationInstitutionBuilder().enabled(true).name("Akademia Gorniczo-Hutnicza").domicileCode("PL")
+        Institution institution3 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("Akademia Gorniczo-Hutnicza").domicileCode("PL")
                 .code("ABCDE").build();
 
         save(institution1, institution2, institution3);

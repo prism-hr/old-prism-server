@@ -18,14 +18,14 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoreBuilder;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
@@ -33,7 +33,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     private CommentDAO commentDAO;
-    private RegisteredUser user;
+    private User user;
     private Program program;
 
     @Test(expected = NullPointerException.class)
@@ -46,7 +46,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         commentDAO = new CommentDAO(sessionFactory);
-        user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
                 .build();
         save(user);
         flushAndClearSession();
@@ -111,7 +111,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnNoValidationCommentForApplication() {
-        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
                 .password("password").enabled(false).build();
 
         ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
@@ -125,7 +125,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnCommentWithTwoScores() {
-        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
                 .password("password").enabled(false).build();
 
         ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();

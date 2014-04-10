@@ -4,14 +4,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 @Component
 public class PersonalDetailsUserValidator extends AbstractValidator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return RegisteredUser.class.equals(clazz);
+        return User.class.equals(clazz);
     }
 
     @Override

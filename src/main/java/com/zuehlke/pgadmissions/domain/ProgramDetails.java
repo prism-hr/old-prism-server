@@ -52,7 +52,7 @@ public class ProgramDetails implements Serializable, FormSectionObject {
 	@Valid
 	private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
     
-    @OneToOne(mappedBy = "programmeDetails", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "programDetails", fetch = FetchType.LAZY)
     private ApplicationForm application;
 
     @Transient

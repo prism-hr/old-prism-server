@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UserDTO;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -63,8 +63,8 @@ public class CreateNewApplicationUserController {
             }
         }
 
-        RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
-        RegisteredUser user = userService.getUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true);
+        User existingUser = userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
+        User user = userService.getUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true);
 
         modelMap.put("isNew", existingUser == null);
         modelMap.put("user", user);

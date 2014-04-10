@@ -19,10 +19,10 @@ import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
@@ -47,7 +47,7 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldBeAbleToSeeOpportunityRequestsIfSuperadmin() {
-        RegisteredUser registeredUser = new RegisteredUserBuilder()
+        User registeredUser = new UserBuilder()
         // .role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build())
                 .build();
 
@@ -60,7 +60,7 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldBeAbleToSeeOpportunityRequestsIfRequestAuthor() {
-        RegisteredUser registeredUser = new RegisteredUser();
+        User registeredUser = new User();
 
         expect(userService.getCurrentUser()).andReturn(registeredUser);
         expect(opportunityRequestDAO.getOpportunityRequestsForAuthor(registeredUser)).andReturn(Collections.singletonList(new OpportunityRequest()));
@@ -72,7 +72,7 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldNotBeAbleToSeeOpportunityRequests() {
-        RegisteredUser registeredUser = new RegisteredUser();
+        User registeredUser = new User();
 
         expect(userService.getCurrentUser()).andReturn(registeredUser);
         expect(opportunityRequestDAO.getOpportunityRequestsForAuthor(registeredUser)).andReturn(Collections.<OpportunityRequest> emptyList());
@@ -84,7 +84,7 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldRequestAuthorNotBeAbleToApproveOpportunityRequest() {
-        RegisteredUser registeredUser = new RegisteredUserBuilder().id(53425345).build();
+        User registeredUser = new UserBuilder().id(53425345).build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
         OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.APPROVE).build();
 
@@ -97,7 +97,7 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldRequestAuthorBeAbleToReviseOpportunityRequest() {
-        RegisteredUser registeredUser = new RegisteredUserBuilder().id(53425345).build();
+        User registeredUser = new UserBuilder().id(53425345).build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
         OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.REVISE).build();
 
@@ -110,7 +110,7 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldRequestAuthorBeAbleToSeeOpportunityRequest() {
-        RegisteredUser registeredUser = new RegisteredUserBuilder().id(53425345).build();
+        User registeredUser = new UserBuilder().id(53425345).build();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
 
         expect(userService.getCurrentUser()).andReturn(registeredUser);
@@ -122,7 +122,7 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldBeAbleToManageProjects() {
-        RegisteredUser registeredUser = new RegisteredUser();
+        User registeredUser = new User();
 
         expect(userService.getCurrentUser()).andReturn(registeredUser);
         expect(programsService.getProgramsForWhichCanManageProjects(registeredUser)).andReturn(Collections.singletonList(new Program()));

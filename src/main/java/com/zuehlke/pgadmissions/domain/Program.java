@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -24,8 +23,7 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 @Entity(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@DiscriminatorValue(value = "PROGRAM")
-public class Program extends Advert implements PrismScope{
+public class Program extends Advert implements PrismScope {
 
     private static final long serialVersionUID = -9073611033741317582L;
 
@@ -40,16 +38,12 @@ public class Program extends Advert implements PrismScope{
     private Institution institution;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feed_id")
+    @JoinColumn(name = "program_import_id")
     private ProgramFeed programFeed;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     @OrderBy("applicationStartDate")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "program_id", nullable = false)
-    private List<ProgramClosingDate> closingDates = new ArrayList<ProgramClosingDate>();
 
     @MapKey(name = "stage")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -67,7 +61,6 @@ public class Program extends Advert implements PrismScope{
     private boolean locked;
 
     public Program() {
-        super();
         super.setAdvertType(AdvertType.PROGRAM);
     }
 
@@ -93,10 +86,6 @@ public class Program extends Advert implements PrismScope{
 
     public Map<ScoringStage, ScoringDefinition> getScoringDefinitions() {
         return scoringDefinitions;
-    }
-
-    public List<ProgramClosingDate> getClosingDates() {
-        return closingDates;
     }
 
     public Institution getInstitution() {

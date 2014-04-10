@@ -15,8 +15,8 @@ import javax.persistence.TemporalType;
 
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
-@Entity(name = "PROGRAM_CLOSING_DATES")
-public class ProgramClosingDate implements Serializable {
+@Entity(name = "ADVERT_CLOSING_DATE")
+public class AdvertClosingDate implements Serializable {
 
     private static final long serialVersionUID = -1883742652445622591L;
 
@@ -25,8 +25,8 @@ public class ProgramClosingDate implements Serializable {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "program_id", nullable = false, updatable = false, insertable = false)
-    private Program program;
+    @JoinColumn(name = "advert_id", nullable = false, updatable = false, insertable = false)
+    private Advert advert;
 
     @Column(name = "closing_date")
     @Temporal(value = TemporalType.DATE)
@@ -35,12 +35,12 @@ public class ProgramClosingDate implements Serializable {
     @Column(name = "study_places")
     private Integer studyPlaces;
 
-    public Program getProgram() {
-        return program;
+    public Advert getAdvert() {
+        return advert;
     }
 
-    public void setProgram(Program program) {
-        this.program = program;
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     public Date getClosingDate() {

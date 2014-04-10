@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 
 public class ReviewCommentBuilder {
@@ -18,7 +18,7 @@ public class ReviewCommentBuilder {
     private String content;
     private Integer id;
     private Date createdTimeStamp;
-    private RegisteredUser user;
+    private User user;
 
     public ReviewCommentBuilder willingToWorkWithApplicant(Boolean willingToWorkWithApplicant) {
         this.willingToWorkWithApplicant = willingToWorkWithApplicant;
@@ -70,7 +70,7 @@ public class ReviewCommentBuilder {
         return this;
     }
 
-    public ReviewCommentBuilder user(RegisteredUser user) {
+    public ReviewCommentBuilder user(User user) {
         this.user = user;
         return this;
     }

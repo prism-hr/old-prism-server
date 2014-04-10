@@ -3,32 +3,32 @@ package com.zuehlke.pgadmissions.domain.helpers;
 import java.util.Arrays;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.ApplicationFormUserRole;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.User;
 
-public class RegisteredUserTestHarness {
+public class UserTestHarness {
 
-    private RegisteredUser registeredUser;
+    private User registeredUser;
     private NotificationListTestScenario notificationListTestScenario;
-    private List<ApplicationFormUserRole> applicationFormUserRoles;
+    private List<UserRole> applicationFormUserRoles;
 
-    public RegisteredUserTestHarness(RegisteredUser registeredUser, NotificationListTestScenario notificationListTestScenario,
-            ApplicationFormUserRole... applicationFormUserRole) {
+    public UserTestHarness(User registeredUser, NotificationListTestScenario notificationListTestScenario,
+            UserRole... applicationFormUserRole) {
         this.setRegisteredUser(registeredUser);
         this.setNotificationListTestScenario(notificationListTestScenario);
-        this.setApplicationFormUserRoles(Arrays.asList(applicationFormUserRole));
+        this.setUserRoles(Arrays.asList(applicationFormUserRole));
 
     }
 
-    public RegisteredUser getRegisteredUser() {
+    public User getRegisteredUser() {
         return registeredUser;
     }
 
-    public void setApplicationFormUserRoles(List<ApplicationFormUserRole> applicationFormUserRoles) {
+    public void setUserRoles(List<UserRole> applicationFormUserRoles) {
         this.applicationFormUserRoles = applicationFormUserRoles;
     }
 
-    public void setRegisteredUser(RegisteredUser registeredUser) {
+    public void setRegisteredUser(User registeredUser) {
         this.registeredUser = registeredUser;
     }
 
@@ -40,11 +40,11 @@ public class RegisteredUserTestHarness {
         this.notificationListTestScenario = notificationListTestScenario;
     }
 
-    public List<ApplicationFormUserRole> getApplicationFormUserRoles() {
+    public List<UserRole> getUserRoles() {
         return applicationFormUserRoles;
     }
 
-    public void setApplicationFormUserRoles(ApplicationFormUserRole... applicationFormUserRoles) {
+    public void setUserRoles(UserRole... applicationFormUserRoles) {
         this.applicationFormUserRoles = Arrays.asList(applicationFormUserRoles);
     }
 

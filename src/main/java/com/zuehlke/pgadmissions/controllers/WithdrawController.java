@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -41,7 +41,7 @@ public class WithdrawController {
     @RequestMapping(method = RequestMethod.POST)
     public String withdrawApplicationAndGetApplicationList(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = (RegisteredUser) modelMap.get("user");
+        User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.WITHDRAW);
 
         withdrawService.withdrawApplication(applicationForm);
@@ -51,7 +51,7 @@ public class WithdrawController {
         return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();
     }
 
-    protected RegisteredUser getCurrentUser() {
+    protected User getCurrentUser() {
         return userService.getCurrentUser();
     }
 
@@ -65,7 +65,7 @@ public class WithdrawController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public User getUser() {
         return getCurrentUser();
     }
 }

@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
 import com.zuehlke.pgadmissions.domain.CompleteInterviewComment;
 import com.zuehlke.pgadmissions.domain.CompleteReviewComment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -29,45 +29,45 @@ import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredExc
 @Service
 @Transactional
 public class CommentService {
-    
+
     @Autowired
     private CommentDAO commentDAO;
-    
+
     @Autowired
     private ApplicationFormService applicationsService;
-    
-    @Autowired 
+
+    @Autowired
     private WorkflowService applicationFormUserRoleService;
-    
-    @Autowired 
+
+    @Autowired
     private UserService userService;
-    
+
     @Autowired
     private ManageUsersService manageUsersService;
-    
+
     @Autowired
     private StateDAO stateDAO;
 
     public void save(Comment comment) {
         commentDAO.save(comment);
     }
-    
-    public List<Comment> getVisibleComments(RegisteredUser user, ApplicationForm applicationForm) {
+
+    public List<Comment> getVisibleComments(User user, ApplicationForm applicationForm) {
         return commentDAO.getVisibleComments(user, applicationForm);
     }
-    
-    public void declineReview(RegisteredUser user, ApplicationForm application) {
-        // check if user has already responded 
-//        if (!commentDAO.getReviewCommentsForReviewerAndApplication(user, application).isEmpty()) {
-//            return;
-//        }
+
+    public void declineReview(User user, ApplicationForm application) {
+        // check if user has already responded
+        // if (!commentDAO.getReviewCommentsForReviewerAndApplication(user, application).isEmpty()) {
+        // return;
+        // }
 
         ReviewComment reviewComment = new ReviewComment();
         reviewComment.setApplication(application);
         reviewComment.setUser(user);
         reviewComment.setDeclined(true);
         reviewComment.setContent(StringUtils.EMPTY);
-        
+
         save(reviewComment);
     }
 
@@ -75,76 +75,80 @@ public class CommentService {
         return commentDAO.getNotDecliningSupervisorsFromLatestApprovalStage(application);
     }
 
-    public CommentAssignedUser assignUser(AssignSupervisorsComment approvalComment, RegisteredUser user, boolean isPrimary) {
+    public CommentAssignedUser assignUser(AssignSupervisorsComment approvalComment, User user, boolean isPrimary) {
         CommentAssignedUser assignedUser = new CommentAssignedUser();
         assignedUser.setUser(user);
         assignedUser.setPrimary(isPrimary);
         approvalComment.getAssignedUsers().add(assignedUser);
         return assignedUser;
     }
-    
+
     public void postStateChangeComment(StateChangeDTO stateChangeDTO) {
         ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
-        RegisteredUser registeredUser = stateChangeDTO.getRegisteredUser();
+        User user = stateChangeDTO.getUser();
         ApplicationFormStatus status = applicationForm.getStatus().getId();
         Comment stateChangeComment = null;
-        
+
         switch (status) {
-            case VALIDATION:
-                ValidationComment validationComment = new ValidationComment();
-                validationComment.setQualifiedForPhd(stateChangeDTO.getQualifiedForPhd());
-                validationComment.setEnglishCompetencyOk(stateChangeDTO.getEnglishCompentencyOk());
-                validationComment.setHomeOrOverseas(stateChangeDTO.getHomeOrOverseas());
-                stateChangeComment = validationComment;
-                stateChangeComment.setUseCustomReferenceQuestions(BooleanUtils.toBooleanObject(stateChangeDTO.getUseCustomReferenceQuestions()));
-                break;
-            case REVIEW:
-                stateChangeComment = new CompleteReviewComment();
-                break;
-            case INTERVIEW:
-                stateChangeComment = new CompleteInterviewComment();
-                break;
-            case APPROVAL:
-                stateChangeComment = new CompleteApprovalComment();
-                break;
-            default:
-                throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
+        case VALIDATION:
+            ValidationComment validationComment = new ValidationComment();
+            validationComment.setQualifiedForPhd(stateChangeDTO.getQualifiedForPhd());
+            validationComment.setEnglishCompetencyOk(stateChangeDTO.getEnglishCompentencyOk());
+            validationComment.setHomeOrOverseas(stateChangeDTO.getHomeOrOverseas());
+            stateChangeComment = validationComment;
+            stateChangeComment.setUseCustomReferenceQuestions(BooleanUtils.toBooleanObject(stateChangeDTO.getUseCustomReferenceQuestions()));
+            break;
+        case REVIEW:
+            stateChangeComment = new CompleteReviewComment();
+            break;
+        case INTERVIEW:
+            stateChangeComment = new CompleteInterviewComment();
+            break;
+        case APPROVAL:
+            stateChangeComment = new CompleteApprovalComment();
+            break;
+        default:
+            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
         }
-        
+
         stateChangeComment.setApplication(applicationForm);
-        stateChangeComment.setUser(registeredUser);
+        stateChangeComment.setUser(user);
         stateChangeComment.setContent(stateChangeDTO.getComment());
         stateChangeComment.getDocuments().addAll(stateChangeDTO.getDocuments());
         stateChangeComment.setUseCustomQuestions(BooleanUtils.toBoolean(stateChangeDTO.getUseCustomQuestions()));
-        
+
         ApplicationFormStatus nextStatus = stateChangeDTO.getNextStatus();
         stateChangeComment.setNextStatus(nextStatus);
         stateChangeComment.setDelegateAdministrator(null);
-        
-        // TODO check if has global administration rights (PermissionsService) 
+
+        // TODO check if has global administration rights (PermissionsService)
         if (true) {
             if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
-                RegisteredUser  userToSaveAsDelegate = manageUsersService.setUserRoles(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(), 
-                            stateChangeDTO.getDelegateEmail(), true, false, manageUsersService.getPrismSystem(), Authority.STATEADMINISTRATOR);
-                
+                User userToSaveAsDelegate = manageUsersService.setUserRoles(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(),
+                        stateChangeDTO.getDelegateEmail(), true, false, manageUsersService.getPrismSystem(), Authority.STATEADMINISTRATOR);
+
                 stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
             }
         } else {
             if (status == nextStatus) {
-                stateChangeComment.setDelegateAdministrator(registeredUser);
+                stateChangeComment.setDelegateAdministrator(user);
             }
         }
-        
+
         applicationForm.setNextStatus(stateDAO.getById(nextStatus));
         save(stateChangeComment);
         applicationsService.save(applicationForm);
         applicationsService.refresh(applicationForm);
         applicationFormUserRoleService.stateChanged(stateChangeComment);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, registeredUser, ApplicationUpdateScope.ALL_USERS);  
+        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+    }
+
+    public <T extends Comment> T getLastCommentOfType(User user, ApplicationForm applicationForm, Class<T> clazz) {
+        return commentDAO.getLastCommentOfType(user, applicationForm, clazz);
     }
 
     public <T extends Comment> T getLastCommentOfType(ApplicationForm applicationForm, Class<T> clazz) {
-        return commentDAO.getLastCommentOfType(applicationForm, clazz);
+        return getLastCommentOfType(null, applicationForm, clazz);
     }
-    
+
 }

@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
@@ -124,7 +124,7 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getConfigurationPage() {
-        RegisteredUser user = userService.getCurrentUser();
+        User user = userService.getCurrentUser();
         if (!roleService.hasRole(user, Authority.SUPERADMINISTRATOR) && !roleService.hasRole(user, Authority.ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
@@ -141,7 +141,7 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute ServiceLevelsDTO serviceLevelsDTO) {
-        RegisteredUser user = userService.getCurrentUser();
+        User user = userService.getCurrentUser();
         if (!roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
@@ -314,7 +314,7 @@ public class ConfigurationController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public User getUser() {
         return userService.getCurrentUser();
     }
 
@@ -340,7 +340,7 @@ public class ConfigurationController {
 
     @ModelAttribute("programs")
     public List<Program> getPrograms() {
-        RegisteredUser user = userService.getCurrentUser();
+        User user = userService.getCurrentUser();
         if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }

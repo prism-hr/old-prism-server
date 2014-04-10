@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -67,7 +67,7 @@ public class CommentTimelineController {
 	}
 
 	@ModelAttribute("user")
-	public RegisteredUser getUser() {		
+	public User getUser() {		
 		return userService.getCurrentUser();
 	}
 

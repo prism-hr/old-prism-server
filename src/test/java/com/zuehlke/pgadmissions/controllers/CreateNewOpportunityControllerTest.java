@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
@@ -150,7 +150,7 @@ public class CreateNewOpportunityControllerTest {
 
 	@Test
 	public void shouldPostOpportunityRequest() {
-	    RegisteredUser author = new RegisteredUser();
+	    User author = new User();
 		OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().studyDurationNumber(2).studyDurationUnit("YEARS").author(author).build();
 		BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 		Model model = new ExtendedModelMap();

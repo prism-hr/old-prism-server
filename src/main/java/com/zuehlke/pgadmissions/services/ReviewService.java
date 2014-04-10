@@ -9,7 +9,7 @@ import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -41,7 +41,7 @@ public class ReviewService {
 
 	public void moveApplicationToReview(int applicationId, AssignReviewersComment comment) {
 	    ApplicationForm application = applicationsService.getById(applicationId);
-	    RegisteredUser user = userService.getCurrentUser();
+	    User user = userService.getCurrentUser();
 	    Comment latestAssignReviewersComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.ASSIGN_REVIEWERS);
 	    
 	    DateTime baseDate;

@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
 
-@Entity(name = "APPLICATION_ROLE")
+@Entity(name = "ROLE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class Role implements GrantedAuthority, Serializable {
 

@@ -14,11 +14,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormTransferBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 
@@ -33,7 +33,7 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         applicationFormTransferDAO = new ApplicationFormTransferDAO(sessionFactory);
-        RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .username("username").password("password")
                 .enabled(false).build();
 
@@ -77,7 +77,7 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         }
         flushAndClearSession();
         
-        RegisteredUser applicant = new RegisteredUserBuilder().id(Integer.MAX_VALUE).username("ked9999@zuhlke.com").email("ked@zuhlke.com").build();
+        User applicant = new UserBuilder().id(Integer.MAX_VALUE).username("ked9999@zuhlke.com").email("ked@zuhlke.com").build();
         
         program = testObjectProvider.getEnabledProgram();
         
@@ -127,7 +127,7 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         }
         flushAndClearSession();
         
-        RegisteredUser applicant = new RegisteredUserBuilder().id(Integer.MAX_VALUE).username("ked9999@zuhlke.com").email("ked@zuhlke.com").build();
+        User applicant = new UserBuilder().id(Integer.MAX_VALUE).username("ked9999@zuhlke.com").email("ked@zuhlke.com").build();
         
         program = testObjectProvider.getEnabledProgram();
         

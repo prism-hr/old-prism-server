@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -211,7 +211,7 @@ public class StateChangeValidatorTest {
 		stateChangeDTO.setEnglishCompentencyOk(ValidationQuestionOptions.YES);
 		stateChangeDTO.setQualifiedForPhd(ValidationQuestionOptions.NO);
 		stateChangeDTO.setHomeOrOverseas(HomeOrOverseas.HOME);
-		stateChangeDTO.setRegisteredUser(new RegisteredUserBuilder().build());
+		stateChangeDTO.setUser(new UserBuilder().build());
 		stateChangeValidator = new StateChangeValidator();
 		stateChangeValidator.setValidator((javax.validation.Validator) validator);
 	}

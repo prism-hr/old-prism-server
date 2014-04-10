@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
@@ -109,11 +109,11 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendDigestEmail(Integer userId, DigestNotificationType digestNotificationType) {
-        final RegisteredUser user = userDAO.getById(userId);
+        final User user = userDAO.getById(userId);
         return sendDigest(user, digestNotificationType);
     }
 
-    private boolean sendDigest(final RegisteredUser user, DigestNotificationType digestNotificationType) {
+    private boolean sendDigest(final User user, DigestNotificationType digestNotificationType) {
         try {
             EmailModelBuilder modelBuilder = new EmailModelBuilder() {
 
@@ -244,14 +244,14 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public boolean sendNewUserInvitation(Integer userId) {
         PrismEmailMessage message = null;
-        RegisteredUser user = userDAO.getById(userId);
+        User user = userDAO.getById(userId);
         String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[]) null);
         for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
             if (notification.getNotificationDate() == null) {
                 notification.setNotificationDate(new Date());
             }
         }
-        RegisteredUser admin = user.getPendingRoleNotifications().get(0).getAddedByUser();
+        User admin = user.getPendingRoleNotifications().get(0).getAddedByUser();
 
         try {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "newUser", "admin", "host" }, new Object[] { user, admin, getHostName() });

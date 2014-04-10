@@ -20,11 +20,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.SwitchUserService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.AccountValidator;
+import com.zuehlke.pgadmissions.validators.UserValidator;
 import com.zuehlke.pgadmissions.validators.SwitchAndLinkUserAccountDTOValidator;
 
 @RunWith(PowerMockRunner.class)
@@ -35,7 +35,7 @@ public class AccountControllerTest {
     private SwitchUserService switchUserService;
     private SwitchAndLinkUserAccountDTOValidator switchAndLinkAccountDTOValidatorMock;
 
-    private AccountValidator accountValidatorMock;
+    private UserValidator accountValidatorMock;
     private BindingResult bindingResultMock;
 
     @Test
@@ -60,7 +60,7 @@ public class AccountControllerTest {
 
     @Test
     public void shouldReturnToAccountPageAndNotSaveIfErrors() {
-        RegisteredUser student = new RegisteredUser();
+        User student = new User();
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(true);
         EasyMock.replay(bindingResultMock);
         assertEquals("/private/my_account_section", accountController.saveAccountDetails(student, bindingResultMock));
@@ -68,7 +68,7 @@ public class AccountControllerTest {
 
     @Test
     public void shouldSaveUserIfNoErrorsAccountIsChangedAndReturnAjaxOk() {
-        RegisteredUser student = new RegisteredUser();
+        User student = new User();
         EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
         userServiceMock.updateCurrentUser(student);
         EasyMock.replay(bindingResultMock, userServiceMock);
@@ -78,10 +78,10 @@ public class AccountControllerTest {
 
     @Test
     public void shouldReturnCloneOfCurrentUserAsUpdatedUser() {
-        RegisteredUser student = new RegisteredUser();
+        User student = new User();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(student);
         EasyMock.replay(userServiceMock);
-        RegisteredUser updateUser = accountController.getUpdatedUser();
+        User updateUser = accountController.getUpdatedUser();
         assertNotSame(updateUser, student);
         assertEquals(updateUser.getFirstName(), student.getFirstName());
         assertEquals(updateUser.getFirstName2(), student.getFirstName2());
@@ -96,9 +96,9 @@ public class AccountControllerTest {
     public void shouldSwitchUserAccount() {
         PowerMock.mockStatic(SecurityContextHolder.class);
 
-        RegisteredUser currentAccount = new RegisteredUserBuilder().id(1).enabled(true).activationCode("abc").email("B@A.com").password("password").build();
+        User currentAccount = new UserBuilder().id(1).enabled(true).activationCode("abc").email("B@A.com").password("password").build();
 
-        RegisteredUser desiredAccount = new RegisteredUserBuilder().id(2).enabled(true).activationCode("abcd").email("A@B.com").password("password").build();
+        User desiredAccount = new UserBuilder().id(2).enabled(true).activationCode("abcd").email("A@B.com").password("password").build();
 
         desiredAccount.setPrimaryAccount(currentAccount);
 

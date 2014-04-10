@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -87,7 +87,7 @@ public class ResearchOpportunitiesFeedController {
     @ResponseBody
     @SuppressWarnings("unchecked")
     public Map<String, Object> updateFeedById(@PathVariable final Integer feedId, @RequestBody final HashMap<String, Object> json) {
-        RegisteredUser currentUser = getCurrentUser();
+        User currentUser = getCurrentUser();
         List<Integer> selectedProgramIds = (List<Integer>) json.get("selectedPrograms");
         String feedFormat = (String) json.get("feedSize");
         String title = (String) json.get("feedTitle");
@@ -114,7 +114,7 @@ public class ResearchOpportunitiesFeedController {
     @SuppressWarnings("unchecked")
     public Map<String, Object> saveFeed(@RequestBody final HashMap<String, Object> json) {
         Map<String, Object> responseMap = new HashMap<String, Object>();
-        RegisteredUser currentUser = getCurrentUser();
+        User currentUser = getCurrentUser();
         List<Integer> selectedProgramIds = (List<Integer>) json.get("selectedPrograms");
         String feedFormat = (String) json.get("feedSize");
         String title = (String) json.get("feedTitle");
@@ -127,7 +127,7 @@ public class ResearchOpportunitiesFeedController {
         return responseMap;
     }
     
-    protected RegisteredUser getCurrentUser() {
+    protected User getCurrentUser() {
         return userService.getCurrentUser();
     }
     
@@ -146,12 +146,12 @@ public class ResearchOpportunitiesFeedController {
     }
     
     private Map<String, Object> validate(final List<Integer> selectedProgramIds, final String feedFormat,
-            final String title, final RegisteredUser currentUser) {
+            final String title, final User currentUser) {
         return validate(selectedProgramIds, feedFormat, title, currentUser, false);
     }
     
     private Map<String, Object> validate(final List<Integer> selectedProgramIds, final String feedFormat,
-            final String title, final RegisteredUser currentUser, boolean ignoreUniqueTitleContraint) {
+            final String title, final User currentUser, boolean ignoreUniqueTitleContraint) {
         HashMap<String, Object> responseMap = new HashMap<String, Object>();
         responseMap.put(SUCCESS, true);
         

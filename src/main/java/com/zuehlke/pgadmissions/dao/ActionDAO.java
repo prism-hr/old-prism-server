@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -48,16 +48,16 @@ public class ActionDAO {
                 .add(Restrictions.eq("actionType", actionType)).list();
     }
     
-    public List<ActionDefinition> getUserActions(Integer applicationFormId, Integer registeredUserId) {
-        return getUserActionsAbstract(applicationFormId, registeredUserId, null, null);
+    public List<ActionDefinition> getUserActions(Integer applicationFormId, Integer userId) {
+        return getUserActionsAbstract(applicationFormId, userId, null, null);
     }
     
-    public List<ActionDefinition> getUserActionById(Integer applicationFormId, Integer registeredUserId, ApplicationFormAction action) {
-        return getUserActionsAbstract(applicationFormId, registeredUserId, action, null);
+    public List<ActionDefinition> getUserActionById(Integer applicationFormId, Integer userId, ApplicationFormAction action) {
+        return getUserActionsAbstract(applicationFormId, userId, action, null);
     }
     
-    public List<ActionDefinition> getUserActionByActionType(Integer applicationFormId, Integer registeredUserId, ActionType actionType) {
-        return getUserActionsAbstract(applicationFormId, registeredUserId, null, actionType);
+    public List<ActionDefinition> getUserActionByActionType(Integer applicationFormId, Integer userId, ActionType actionType) {
+        return getUserActionsAbstract(applicationFormId, userId, null, actionType);
     }
     
     public void deleteApplicationActions(ApplicationForm applicationForm) {
@@ -77,15 +77,15 @@ public class ActionDAO {
                 .setString(2, action.toString()).executeUpdate();
     }
 
-    public void deleteUserAction(ApplicationForm applicationForm, RegisteredUser registeredUser, Authority authority, ApplicationFormAction action) {
+    public void deleteUserAction(ApplicationForm applicationForm, User user, Authority authority, ApplicationFormAction action) {
        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_USER_ACTION(?, ?, ?, ?);")
                 .setInteger(0, applicationForm.getId())
-                .setInteger(1, registeredUser.getId())
+                .setInteger(1, user.getId())
                 .setString(2, authority.toString())
                 .setString(3, action.toString()).executeUpdate();
     }
     
-    private List<ActionDefinition> getUserActionsAbstract(Integer applicationFormId, Integer registeredUserId, ApplicationFormAction action, ActionType actionType) {
+    private List<ActionDefinition> getUserActionsAbstract(Integer applicationFormId, Integer userId, ApplicationFormAction action, ActionType actionType) {
         Properties customDTOProperties = new Properties();
         customDTOProperties.put("enumClass", ApplicationFormAction.class.getCanonicalName());
         customDTOProperties.put("type", "12");
@@ -95,7 +95,7 @@ public class ActionDAO {
                 .addScalar("action_id", actionEnum)
                 .addScalar("raises_urgent_flag", BooleanType.INSTANCE)
                 .setInteger(0, applicationFormId)
-                .setInteger(1, registeredUserId))
+                .setInteger(1, userId))
                 .setString(2, action.toString())
                 .setString(3, actionType.toString())
                 .setResultTransformer(Transformers.aliasToBean(ActionDefinition.class)).list();

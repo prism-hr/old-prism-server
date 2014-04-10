@@ -40,10 +40,10 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
@@ -59,7 +59,7 @@ import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 public class ApplicationListControllerTest {
 
     private ApplicationListController controller;
-    private RegisteredUser user;
+    private User user;
     private ApplicationFormService applicationsServiceMock;
     private ApplicationsReportService applicationsReportServiceMock;
     private UserService userServiceMock;
@@ -76,7 +76,7 @@ public class ApplicationListControllerTest {
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        user.setFiltering(filtering);
+        user.getAccount().setFiltering(filtering);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(filteringServiceMock.getDefaultApplicationFiltering(user)).andReturn(filtering);
@@ -280,7 +280,7 @@ public class ApplicationListControllerTest {
 
     @Before
     public void setUp() {
-        user = new RegisteredUserBuilder().id(1).build();
+        user = new UserBuilder().id(1).build();
         userServiceMock = EasyMock.createMock(UserService.class);
         applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         applicationsReportServiceMock = EasyMock.createMock(ApplicationsReportService.class);

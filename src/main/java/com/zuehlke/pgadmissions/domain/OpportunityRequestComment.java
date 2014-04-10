@@ -30,7 +30,7 @@ public class OpportunityRequestComment {
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
-    private RegisteredUser author;
+    private User author;
 
     @ManyToOne
     @JoinColumn(name = "opportunity_request_id", insertable = false, updatable = false)
@@ -60,11 +60,11 @@ public class OpportunityRequestComment {
         this.id = id;
     }
 
-    public RegisteredUser getAuthor() {
+    public User getAuthor() {
         return author;
     }
 
-    public void setAuthor(RegisteredUser author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
 

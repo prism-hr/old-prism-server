@@ -39,5 +39,5 @@ public enum Authority {
     STATEADMINISTRATOR,
     
     /* A user that an applicant suggests as their supervisor */
-    SUGGESTEDSUPERVISOR
+    SUGGESTEDSUPERVISOR, PROJECT_PRIMARY_SUPERVISOR, PROJECT_SECONDARY_SUPERVISOR
 }

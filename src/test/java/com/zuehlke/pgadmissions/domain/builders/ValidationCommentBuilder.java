@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
 public class ValidationCommentBuilder {
 
-    private RegisteredUser user;
+    private User user;
     private ApplicationForm application;
     private ValidationQuestionOptions qualifiedForPhd;
     private ValidationQuestionOptions englishCompentencyOk;
@@ -31,7 +31,7 @@ public class ValidationCommentBuilder {
         return this;
     }
 
-    public ValidationCommentBuilder user(RegisteredUser user) {
+    public ValidationCommentBuilder user(User user) {
         this.user = user;
         return this;
     }

@@ -20,10 +20,10 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ResearchOpportunitiesFeedDAO;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ResearchOpportunitiesFeedBuilder;
 import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
 
@@ -56,7 +56,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldReturnSmallIframeCodeByFeedId() throws IOException, TemplateException {
-        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed")
                 .user(user).build();
@@ -79,7 +79,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldReturnLargeDefaultIframeCodeForCurrentUser() throws IOException, TemplateException {
-        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(-2).feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed")
                 .user(user).build();
@@ -103,7 +103,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldSaveNewFeed() {
-        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
 
         EasyMock.expect(programServiceMock.getById(1)).andReturn(program);
@@ -122,7 +122,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldGetAllFeedsForUser() {
-        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
         EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(user)).andReturn(null).times(2);
         EasyMock.expect(daoMock.getAllFeedsForUser(user)).andReturn(Collections.<ResearchOpportunitiesFeed> emptyList());
 
@@ -133,7 +133,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldAskIsUniqueFeedTitleForUser() {
-        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
         EasyMock.expect(daoMock.isUniqueFeedTitleForUser("hello", user)).andReturn(false);
         EasyMock.replay(daoMock);
         service.isUniqueFeedTitleForUser("hello", user);
@@ -142,7 +142,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldDeleteFeedById() {
-        RegisteredUser user = new RegisteredUserBuilder().id(1).email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().id(1).email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed")
                 .user(user).build();
@@ -157,7 +157,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldGetFeedById() {
-        RegisteredUser user = new RegisteredUserBuilder().id(1).email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().id(1).email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed")
                 .user(user).build();
@@ -170,7 +170,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldUpdateFeed() {
-        RegisteredUser user = new RegisteredUserBuilder().email("fooBarZ@fooBarZ.com").id(1).username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").id(1).username("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed")
                 .user(user).build();
@@ -192,9 +192,9 @@ public class ResearchOpportunitiesFeedServiceTest {
     
     @Test
     public void shouldGetDefaultOpportunitiesFeedsByUsername(){
-        RegisteredUser primaryUser = new RegisteredUserBuilder().id(1).build();
-        RegisteredUser secondaryUser = new RegisteredUserBuilder().id(2).primaryAccount(primaryUser).build();
-        RegisteredUser ternaryUser = new RegisteredUserBuilder().id(3).primaryAccount(primaryUser).build();
+        User primaryUser = new UserBuilder().id(1).build();
+        User secondaryUser = new UserBuilder().id(2).primaryAccount(primaryUser).build();
+        User ternaryUser = new UserBuilder().id(3).primaryAccount(primaryUser).build();
         
         primaryUser.getLinkedAccounts().addAll(Lists.newArrayList(secondaryUser, ternaryUser));
         

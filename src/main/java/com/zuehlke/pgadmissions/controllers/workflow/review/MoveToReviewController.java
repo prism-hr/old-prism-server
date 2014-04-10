@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -74,7 +74,7 @@ public class MoveToReviewController {
     @RequestMapping(value = "/move", method = RequestMethod.POST)
     public String moveToReview(@Valid AssignReviewersComment comment, BindingResult bindingResult, ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-        RegisteredUser user = getUser();
+        User user = getUser();
 
         actionService.validateAction(application, user, ApplicationFormAction.ASSIGN_REVIEWERS);
         if (bindingResult.hasErrors()) {
@@ -88,22 +88,22 @@ public class MoveToReviewController {
     }
 
     @ModelAttribute("usersInterestedInApplication")
-    public List<RegisteredUser> getUsersInterestedInApplication(@RequestParam String applicationId) {
+    public List<User> getUsersInterestedInApplication(@RequestParam String applicationId) {
         // FIXME isReviewerInReviewRound method has been removed from RegisteredUser class, provide this information in other way (by moving the method into
         // aservice, or this method can return a map)
         return applicationFormUserRoleService.getUsersInterestedInApplication(getApplicationForm(applicationId));
     }
 
     @ModelAttribute("usersPotentiallyInterestedInApplication")
-    public List<RegisteredUser> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
+    public List<User> getUsersPotentiallyInterestedInApplication(@RequestParam String applicationId) {
         return applicationFormUserRoleService.getUsersPotentiallyInterestedInApplication(getApplicationForm(applicationId));
     }
 
     protected AssignReviewersComment createAssignReviewersComment(@RequestParam String applicationId) {
         AssignReviewersComment assignReviewersComment = new AssignReviewersComment();
         
-        for (RegisteredUser registeredUser : getUsersInterestedInApplication(applicationId)) {
-            assignReviewersComment.getAssignedUsers().add(new CommentAssignedUser().withUser(registeredUser));
+        for (User user : getUsersInterestedInApplication(applicationId)) {
+            assignReviewersComment.getAssignedUsers().add(new CommentAssignedUser().withUser(user));
         }
         
         return assignReviewersComment;
@@ -117,7 +117,7 @@ public class MoveToReviewController {
     }
 
     @ModelAttribute("user")
-    public RegisteredUser getUser() {
+    public User getUser() {
         return userService.getCurrentUser();
     }
 
@@ -133,7 +133,7 @@ public class MoveToReviewController {
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        RegisteredUser user = getUser();
+        User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 

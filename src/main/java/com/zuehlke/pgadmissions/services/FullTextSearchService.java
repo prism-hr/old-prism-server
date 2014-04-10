@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.FullTextSearchDAO;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 
 @Service
 public class FullTextSearchService {
@@ -36,17 +36,17 @@ public class FullTextSearchService {
     }
     
     @Transactional(readOnly = true)
-    public List<RegisteredUser> getMatchingUsersWithFirstnameLike(final String searchTerm) {
+    public List<User> getMatchingUsersWithFirstnameLike(final String searchTerm) {
         return fullTextSearchDAO.getMatchingUsersWithFirstnameLike(searchTerm);
     }
 
     @Transactional(readOnly = true)
-    public List<RegisteredUser> getMatchingUsersWithLastnameLike(final String searchTerm) {
+    public List<User> getMatchingUsersWithLastnameLike(final String searchTerm) {
         return fullTextSearchDAO.getMatchingUsersWithLastnameLike(searchTerm);
     }
 
     @Transactional(readOnly = true)
-    public List<RegisteredUser> getMatchingUsersWithEmailLike(final String searchTerm) {
+    public List<User> getMatchingUsersWithEmailLike(final String searchTerm) {
         return fullTextSearchDAO.getMatchingUsersWithEmailLike(searchTerm);
     }
     

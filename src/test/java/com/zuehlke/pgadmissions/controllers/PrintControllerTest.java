@@ -20,9 +20,9 @@ import org.unitils.inject.annotation.InjectIntoByType;
 
 import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
@@ -78,7 +78,7 @@ public class PrintControllerTest {
 
     @Test
     public void shouldBuildPDFForApplicationAndSend() throws IOException, ServletRequestBindingException {
-        RegisteredUser applicant = new RegisteredUser();
+        User applicant = new User();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("applicationFormId", "23");
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -111,8 +111,8 @@ public class PrintControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setOutputStreamAccessAllowed(true);
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(new RegisteredUserBuilder().id(4).build()).build();
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(new RegisteredUserBuilder().id(5).build()).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(new UserBuilder().id(4).build()).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(new UserBuilder().id(5).build()).build();
         // EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(true);
         // EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
         EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();
@@ -136,7 +136,7 @@ public class PrintControllerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldSkipNullApplications() throws ServletRequestBindingException, DocumentException, IOException {
-        RegisteredUser applicant = new RegisteredUser();
+        User applicant = new User();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("appList", "23;34;");
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -166,7 +166,7 @@ public class PrintControllerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSkipApplicationsUserCannotSees() throws ServletRequestBindingException, DocumentException, IOException {
-        RegisteredUser applicant = new RegisteredUser();
+        User applicant = new User();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("appList", "23;34;");
         MockHttpServletResponse response = new MockHttpServletResponse();

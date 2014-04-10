@@ -6,6 +6,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 
 public class ProjectBuilder {
 
@@ -14,8 +15,7 @@ public class ProjectBuilder {
     private String description = "Description.";
     private Integer studyDuration = 12;
     private String funding;
-    private Boolean active = true;
-    private Boolean enabled = true;
+    private AdvertState state;
     private User contactUser;
     private Program program;
     private Date closingDate;
@@ -48,13 +48,8 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder active(boolean active) {
-        this.active = active;
-        return this;
-    }
-
-    public ProjectBuilder enabled(boolean enabled) {
-        this.enabled = enabled;
+    public ProjectBuilder state(AdvertState state) {
+        this.state = state;
         return this;
     }
 
@@ -90,7 +85,7 @@ public class ProjectBuilder {
 
     public ProjectBuilder advert(Advert advert) {
         return id(advert.getId()).title(advert.getTitle()).description(advert.getDescription()).studyDuration(advert.getStudyDuration())
-                .funding(advert.getFunding()).active(advert.isActive()).enabled(advert.isEnabled()).contactUser(advert.getContactUser());
+                .funding(advert.getFunding()).state(advert.getState()).contactUser(advert.getContactUser());
     }
 
     public Project build() {
@@ -100,8 +95,7 @@ public class ProjectBuilder {
         project.setDescription(description);
         project.setStudyDuration(studyDuration);
         project.setFunding(funding);
-        project.setActive(active);
-        project.setEnabled(enabled);
+        project.setState(state);
         project.setContactUser(contactUser);
         project.setProgram(program);
         project.setClosingDate(closingDate);

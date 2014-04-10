@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.StudyOption;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 
 @Service
 public class ProgramInstanceService {
@@ -101,7 +102,7 @@ public class ProgramInstanceService {
         for (ProgramInstance existingInstance : program.getInstances()) {
             existingInstance.setEnabled(false);
         }
-        program.setEnabled(false);
+        program.setState(AdvertState.PROGRAM_DEACTIVATED);
 
         List<ProgramInstance> instances = Lists.newLinkedList();
 
@@ -112,7 +113,7 @@ public class ProgramInstanceService {
             for (StudyOption studyOption : studyOptions) {
                 ProgramInstance programInstance = thisBean.createOrUpdateProgramInstance(program, startYear, studyOption);
                 instances.add(programInstance);
-                program.setEnabled(true);
+                program.setState(AdvertState.PROGRAM_APPROVED);
             }
         }
         return instances;

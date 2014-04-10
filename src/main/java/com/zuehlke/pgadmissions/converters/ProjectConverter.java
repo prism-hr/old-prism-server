@@ -40,7 +40,7 @@ public class ProjectConverter {
         project.setDescription(projectAdvertDTO.getDescription());
         project.setStudyDuration(projectAdvertDTO.getStudyDuration());
         project.setFunding(projectAdvertDTO.getFunding());
-        project.setActive(projectAdvertDTO.getActive());
+        project.setState(projectAdvertDTO.getState());
         
         if (projectAdvertDTO.getClosingDateSpecified()) {
             project.setClosingDate(projectAdvertDTO.getClosingDate());

@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -193,7 +194,7 @@ public class ProjectConfigurationController {
     public String getProject(@PathVariable("projectId") int projectId) throws TemplateException, IOException {
         Map<String, Object> map = Maps.newHashMap();
         Project project = (Project) programsService.getById(projectId);
-        if (project == null || !project.isEnabled()) {
+        if (project == null || project.getState() != AdvertState.PROGRAM_APPROVED) {
             throw new ResourceNotFoundException();
         }
         map.put("project", project);
@@ -239,7 +240,7 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
     @ResponseBody
     public String removeProject(@PathVariable("projectId") int projectId) {
-        programsService.removeAdvert(projectId);
+        programsService.removeProject(projectId);
         return "ok";
     }
 

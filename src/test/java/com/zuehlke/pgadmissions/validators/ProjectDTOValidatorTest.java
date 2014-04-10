@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectDTOBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -126,8 +127,8 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
 
     @Test
     public void shouldRejectIf_Active_IsMissing() {
-        projectDTO.setActive(null);
-        assertThatObjectFieldHasErrorCode(projectDTO, "active", EMPTY_DROPDOWN_ERROR_MESSAGE);
+        projectDTO.setState(null);
+        assertThatObjectFieldHasErrorCode(projectDTO, "state", EMPTY_DROPDOWN_ERROR_MESSAGE);
     }
 
     @Test
@@ -259,13 +260,13 @@ public class ProjectDTOValidatorTest extends ValidatorTest<ProjectDTO> {
         Program program = createValidProgram();
         Date futureClosingDate = DateUtils.addMonths(new Date(), 1);
         builder.id(1).title("title").description("description").studyDuration(12).funding("funding").closingDateSpecified(true).closingDate(futureClosingDate)
-                .primarySupervisor(primarySupervisor).program(program).secondarySupervisorSpecified(false).active(true).administratorSpecified(false);
+                .primarySupervisor(primarySupervisor).program(program).secondarySupervisorSpecified(false).state(AdvertState.PROGRAM_APPROVED).administratorSpecified(false);
         return builder.build();
     }
 
     private Program createValidProgram() {
         ProgramBuilder builder = new ProgramBuilder();
-        builder.id(1).title("Program 1").enabled(true);
+        builder.id(1).title("Program 1").state(AdvertState.PROGRAM_APPROVED);
         return builder.build();
     }
 

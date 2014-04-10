@@ -6,6 +6,7 @@ import javax.validation.constraints.Size;
 
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.validators.ATASConstraint;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -26,7 +27,7 @@ public class ProjectDTO {
     @Size(max = 3000, message = "A maximum of 2000 characters are allowed.")
     @ATASConstraint
     private String description;
-    
+
     private Integer studyDuration;
 
     @Size(max = 2000, message = "A maximum of 1000 characters are allowed.")
@@ -36,7 +37,7 @@ public class ProjectDTO {
 
     private Date closingDate;
 
-    private Boolean active;
+    private AdvertState state;
 
     private Person primarySupervisor;
 
@@ -108,12 +109,12 @@ public class ProjectDTO {
         this.closingDate = closingDate == null ? closingDate : DateUtils.truncateToDay(closingDate);
     }
 
-    public Boolean getActive() {
-        return active;
+    public AdvertState getState() {
+        return state;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setState(AdvertState state) {
+        this.state = state;
     }
 
     public Integer getId() {

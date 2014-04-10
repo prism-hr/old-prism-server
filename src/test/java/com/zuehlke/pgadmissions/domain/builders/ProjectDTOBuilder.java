@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 
 public class ProjectDTOBuilder {
@@ -16,7 +17,7 @@ public class ProjectDTOBuilder {
     private String funding;
     private Boolean closingDateSpecified;
     private Date closingDate;
-    private Boolean active;
+    private AdvertState state;
     private Person administrator;
     private Boolean administratorSpecified;
     private Person primarySupervisor;
@@ -33,7 +34,7 @@ public class ProjectDTOBuilder {
         projectDTO.setFunding(funding);
         projectDTO.setClosingDateSpecified(closingDateSpecified);
         projectDTO.setClosingDate(closingDate);
-        projectDTO.setActive(active);
+        projectDTO.setState(state);
         projectDTO.setAdministratorSpecified(administratorSpecified);
         projectDTO.setAdministrator(administrator);
         projectDTO.setPrimarySupervisor(primarySupervisor);
@@ -82,8 +83,8 @@ public class ProjectDTOBuilder {
         return this;
     }
 
-    public ProjectDTOBuilder active(Boolean active) {
-        this.active = active;
+    public ProjectDTOBuilder state(AdvertState state) {
+        this.state = state;
         return this;
     }
 

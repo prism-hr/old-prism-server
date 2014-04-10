@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 
 public class AdvertBuilder {
 
@@ -10,7 +11,7 @@ public class AdvertBuilder {
     private String description;
     private Integer studyDuration;
     private String funding;
-    private Boolean active = true;
+    private AdvertState state;
     private Boolean enabled = true;
     private User contactUser;
 
@@ -39,8 +40,8 @@ public class AdvertBuilder {
         return this;
     }
 
-    public AdvertBuilder active(boolean active) {
-        this.active = active;
+    public AdvertBuilder state(AdvertState state) {
+        this.state = state;
         return this;
     }
     
@@ -61,8 +62,7 @@ public class AdvertBuilder {
         advert.setDescription(description);
         advert.setStudyDuration(studyDuration);
         advert.setFunding(funding);
-        advert.setActive(active);
-        advert.setEnabled(enabled);
+        advert.setState(state);
         advert.setContactUser(contactUser);
         return advert;
     }

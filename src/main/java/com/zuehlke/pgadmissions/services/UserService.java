@@ -103,7 +103,6 @@ public class UserService {
         user.setLastName(lastname);
         user.setUsername(email);
         user.setEmail(email);
-        user.setEnabled(false);
         user.setActivationCode(encryptionUtils.generateUUID());
 
         // FIXME specify inviting user

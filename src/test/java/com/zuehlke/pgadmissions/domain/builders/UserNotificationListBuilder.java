@@ -269,7 +269,7 @@ public class UserNotificationListBuilder {
             updateDummyObject(applicationFormActionRequired);
             break;
         case USER_ACCOUNT_DISABLED:
-            user.setEnabled(false);
+            user.getAccount().setEnabled(false);
             updateDummyObject(user);
             break;
         default:

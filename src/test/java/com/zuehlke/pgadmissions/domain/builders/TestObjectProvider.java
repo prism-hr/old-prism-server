@@ -155,6 +155,7 @@ public class TestObjectProvider {
 
     private User getUser(Authority authority, Boolean isInRole, Boolean userEnabled) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class)
+                .createAlias("account", "account", JoinType.INNER_JOIN)
                 .createAlias("userRoles", "userRole", JoinType.INNER_JOIN)
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN);
 
@@ -165,7 +166,7 @@ public class TestObjectProvider {
         }
 
         List<Criterion> userCriteria = new ArrayList<Criterion>(4);
-        userCriteria.add(Restrictions.eq("enabled", userEnabled));
+        userCriteria.add(Restrictions.eq("account.enabled", userEnabled));
 
         if (BooleanUtils.isTrue(userEnabled)) {
             for (Criterion userCriterion : userCriteria) {

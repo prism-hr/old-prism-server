@@ -46,7 +46,7 @@ public class RegistrationService {
     public User processPendingApplicantUser(User pendingApplicantUser) {
         pendingApplicantUser.setUsername(pendingApplicantUser.getEmail());
         pendingApplicantUser.getAccount().setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
-        pendingApplicantUser.setEnabled(false);
+        pendingApplicantUser.getAccount().setEnabled(false);
         // FIXME set advert ID
         // pendingApplicantUser.setOriginalApplicationQueryString(advertId);
         pendingApplicantUser.setActivationCode(encryptionUtils.generateUUID());
@@ -76,7 +76,7 @@ public class RegistrationService {
 
     public User activateAccount(String activationCode) {
         User user = userService.getUserByActivationCode(activationCode);
-        user.setEnabled(true);
+        user.getAccount().setEnabled(true);
         return user;
     }
 

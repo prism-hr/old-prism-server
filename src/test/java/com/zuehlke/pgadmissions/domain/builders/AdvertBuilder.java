@@ -1,6 +1,12 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 
@@ -12,8 +18,9 @@ public class AdvertBuilder {
     private Integer studyDuration;
     private String funding;
     private AdvertState state;
-    private Boolean enabled = true;
     private User contactUser;
+    private AdvertClosingDate closingDate;
+    private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();
 
     public AdvertBuilder id(Integer id) {
         this.id = id;
@@ -45,13 +52,18 @@ public class AdvertBuilder {
         return this;
     }
     
-    public AdvertBuilder enabled(boolean enabled) {
-        this.enabled = enabled;
+    public AdvertBuilder contactUser(User contactUser) {
+        this.contactUser = contactUser;
         return this;
     }
     
-    public AdvertBuilder contactUser(User contactUser) {
-        this.contactUser = contactUser;
+    public AdvertBuilder closingDate(AdvertClosingDate closingDate) {
+        this.closingDate = closingDate;
+        return this;
+    }
+    
+    public AdvertBuilder closingDates(AdvertClosingDate... closingDates) {
+        this.closingDates.addAll(Arrays.asList(closingDates));
         return this;
     }
 
@@ -64,6 +76,8 @@ public class AdvertBuilder {
         advert.setFunding(funding);
         advert.setState(state);
         advert.setContactUser(contactUser);
+        advert.setClosingDate(closingDate);
+        advert.getClosingDates().addAll(closingDates);
         return advert;
     }
 }

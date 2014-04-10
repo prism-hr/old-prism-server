@@ -23,7 +23,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
@@ -102,36 +102,36 @@ public class ProgramDAO {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Property.forName("code").eq(maxCustomCode)).uniqueResult();
     }
 
-    public ProgramClosingDate getClosingDateById(final Integer id) {
-        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class).add(Restrictions.eq("id", id)).uniqueResult();
+    public AdvertClosingDate getClosingDateById(final Integer id) {
+        return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).add(Restrictions.eq("id", id)).uniqueResult();
     }
 
-    public ProgramClosingDate getClosingDateByDate(final Program program, final Date date) {
-        return (ProgramClosingDate) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class).add(Restrictions.eq("program", program))
+    public AdvertClosingDate getClosingDateByDate(final Program program, final Date date) {
+        return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).add(Restrictions.eq("program", program))
                 .add(Restrictions.eq("closingDate", date)).addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
     }
 
     public Date getNextClosingDate(Program program) {
-        return (Date) sessionFactory.getCurrentSession().createCriteria(ProgramClosingDate.class).setProjection(Projections.min("closingDate"))
+        return (Date) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).setProjection(Projections.min("closingDate"))
                 .add(Restrictions.eq("program", program)).add(Restrictions.ge("closingDate", new Date())).uniqueResult();
     }
 
-    public void updateClosingDate(ProgramClosingDate closingDate) {
+    public void updateClosingDate(AdvertClosingDate closingDate) {
         if (closingDate != null) {
-            Program program = closingDate.getProgram();
-            if (program != null) {
+            Advert advert = closingDate.getAdvert();
+            if (advert != null) {
                 sessionFactory.getCurrentSession().update(closingDate);
-                save(program);
+                save(advert);
             }
         }
     }
 
-    public void deleteClosingDate(ProgramClosingDate closingDate) {
+    public void deleteClosingDate(AdvertClosingDate closingDate) {
         if (closingDate != null) {
-            Program program = closingDate.getProgram();
-            if (program != null) {
+            Advert advert = closingDate.getAdvert();
+            if (advert != null) {
                 sessionFactory.getCurrentSession().delete(closingDate);
-                save(program);
+                save(advert);
             }
         }
     }

@@ -47,10 +47,6 @@ public class Program extends Advert implements PrismScope {
     @OrderBy("applicationStartDate")
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "program_id", nullable = false)
-    private List<ProgramClosingDate> closingDates = new ArrayList<ProgramClosingDate>();
-
     @MapKey(name = "stage")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id")
@@ -93,10 +89,6 @@ public class Program extends Advert implements PrismScope {
 
     public Map<ScoringStage, ScoringDefinition> getScoringDefinitions() {
         return scoringDefinitions;
-    }
-
-    public List<ProgramClosingDate> getClosingDates() {
-        return closingDates;
     }
 
     public Institution getInstitution() {

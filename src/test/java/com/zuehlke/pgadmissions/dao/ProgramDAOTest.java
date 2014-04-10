@@ -18,12 +18,12 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
+import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -110,13 +110,13 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnNextClosingDateForProgram() {
         DateTime closingDates = new DateTime();
-        ProgramClosingDate badge1 = new ProgramClosingDateBuilder().closingDate(closingDates.minusMonths(1).toDate()).build();
-        ProgramClosingDate badge2 = new ProgramClosingDateBuilder().closingDate(closingDates.plusMonths(1).toDate()).build();
-        ProgramClosingDate badge3 = new ProgramClosingDateBuilder().closingDate(closingDates.plusMonths(2).toDate()).build();
+        AdvertClosingDate badge1 = new AdvertClosingDateBuilder().closingDate(closingDates.minusMonths(1).toDate()).build();
+        AdvertClosingDate badge2 = new AdvertClosingDateBuilder().closingDate(closingDates.plusMonths(1).toDate()).build();
+        AdvertClosingDate badge3 = new AdvertClosingDateBuilder().closingDate(closingDates.plusMonths(2).toDate()).build();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code2").institution(institution).closingDates(badge1, badge2, badge3).build();
-        badge1.setProgram(program);
-        badge2.setProgram(program);
-        badge3.setProgram(program);
+        badge1.setAdvert(program);
+        badge2.setAdvert(program);
+        badge3.setAdvert(program);
         save(program, badge1, badge2, badge3);
         flushAndClearSession();
         Date result = programDAO.getNextClosingDate(program);
@@ -137,22 +137,22 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetClosingDateById() {
-        ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
+        AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(new Date()).build();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        ProgramClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDate.getId());
+        AdvertClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDate.getId());
         assertEquals(putClosingDate, gotClosingDate);
     }
 
     @Test
     public void shouldGetClosingDateByDate() {
         Date closingDate = new Date();
-        ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(closingDate).build();
+        AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(closingDate).build();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        ProgramClosingDate gotClosingDate = programDAO.getClosingDateByDate(program, closingDate);
+        AdvertClosingDate gotClosingDate = programDAO.getClosingDateByDate(program, closingDate);
         assertEquals(putClosingDate, gotClosingDate);
     }
 
@@ -163,13 +163,13 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         DateTime truncatedDateTomorrow = truncatedDateToday.plusDays(1);
         Date testDateOne = truncatedDateToday.toDate();
         Date testDateTwo = truncatedDateTomorrow.toDate();
-        ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(testDateOne).build();
+        AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(testDateOne).build();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
         sessionFactory.getCurrentSession().flush();
         sessionFactory.getCurrentSession().clear();
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-        ProgramClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDate.getId());
+        AdvertClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDate.getId());
         gotClosingDate.setClosingDate(testDateTwo);
         programDAO.updateClosingDate(gotClosingDate);
         sessionFactory.getCurrentSession().flush();
@@ -179,7 +179,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldDeleteClosingDate() {
-        ProgramClosingDate putClosingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
+        AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(new Date()).build();
         Integer putClosingDateId = putClosingDate.getId();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
@@ -189,7 +189,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         programDAO.deleteClosingDate(putClosingDate);
         sessionFactory.getCurrentSession().flush();
         sessionFactory.getCurrentSession().clear();
-        ProgramClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDateId);
+        AdvertClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDateId);
         assertEquals(gotClosingDate, null);
     }
     

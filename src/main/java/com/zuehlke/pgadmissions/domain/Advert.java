@@ -1,7 +1,11 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,7 +16,10 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 import com.google.common.base.Objects;
@@ -55,6 +62,14 @@ public abstract class Advert implements Serializable {
     @Column(name = "advert_type")
     @Enumerated(EnumType.STRING)
     private AdvertType advertType;
+
+    @OneToOne
+    @JoinColumn(name = "advert_closing_date_id")
+    private AdvertClosingDate closingDate;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_id", nullable = false)
+    private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();
 
     public Integer getId() {
         return id;
@@ -134,6 +149,18 @@ public abstract class Advert implements Serializable {
         this.advertType = advertType;
     }
 
+    public AdvertClosingDate getClosingDate() {
+        return closingDate;
+    }
+
+    public void setClosingDate(AdvertClosingDate closingDate) {
+        this.closingDate = closingDate;
+    }
+
+    public List<AdvertClosingDate> getClosingDates() {
+        return closingDates;
+    }
+
     public AdvertState getState() {
         return state;
     }
@@ -141,8 +168,8 @@ public abstract class Advert implements Serializable {
     public void setState(AdvertState state) {
         this.state = state;
     }
-    
-    public boolean isEnabled(){
+
+    public boolean isEnabled() {
         return state == AdvertState.PROGRAM_APPROVED || state == AdvertState.PROJECT_APPROVED;
     }
 

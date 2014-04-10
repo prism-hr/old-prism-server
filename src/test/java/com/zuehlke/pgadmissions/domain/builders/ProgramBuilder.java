@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramFeed;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
@@ -32,7 +32,7 @@ public class ProgramBuilder {
     private String code;
     private boolean atasRequired;
     private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
-    private List<ProgramClosingDate> programClosingDates = new ArrayList<ProgramClosingDate>();
+    private List<AdvertClosingDate> programClosingDates = new ArrayList<AdvertClosingDate>();
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
     private List<Project> projects = Lists.newArrayList();
     private Institution institution;
@@ -97,7 +97,7 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder closingDates(ProgramClosingDate... programClosingDates) {
+    public ProgramBuilder closingDates(AdvertClosingDate... programClosingDates) {
         this.programClosingDates.addAll(Arrays.asList(programClosingDates));
         return this;
     }

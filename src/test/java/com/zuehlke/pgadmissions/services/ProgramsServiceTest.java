@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramClosingDate;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.User;
@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramClosingDateBuilder;
+import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AdvertState;
@@ -250,7 +250,7 @@ public class ProgramsServiceTest {
     public void shouldUpdateClosingDate() {
         Advert advert = new AdvertBuilder().description("program").studyDuration(12).state(AdvertState.PROGRAM_APPROVED).build();
         Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
-        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
+        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new Date()).advert(program).build();
         programDAOMock.updateClosingDate(closingDate);
         replay();
         programsService.updateClosingDate(closingDate);
@@ -261,7 +261,7 @@ public class ProgramsServiceTest {
     public void shouldAddClosingDateToProgram() {
         Advert advert = new AdvertBuilder().description("program").studyDuration(12).state(AdvertState.PROGRAM_APPROVED).build();
         Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
-        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).program(program).build();
+        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new Date()).advert(program).build();
         programDAOMock.save(program);
         replay();
         programsService.addClosingDateToProgram(program, closingDate);
@@ -270,7 +270,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldDeleteClosingDateById() {
-        ProgramClosingDate closingDate = new ProgramClosingDateBuilder().closingDate(new Date()).build();
+        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new Date()).build();
         expect(programDAOMock.getClosingDateById(closingDate.getId())).andReturn(closingDate);
         programDAOMock.deleteClosingDate(closingDate);
         replay();

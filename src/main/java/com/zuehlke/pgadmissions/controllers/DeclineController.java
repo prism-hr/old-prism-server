@@ -50,7 +50,8 @@ public class DeclineController {
 		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 		    commentService.declineReview(reviewer, application);
 		    modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
-		    reviewer.setDirectToUrl(null);
+		    
+		    reviewer.setAction(null);
 		    userService.save(reviewer);
 		    return TemplateLocation.DECLINE_SUCCESS_VIEW_NAME;
 		} else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
@@ -89,7 +90,8 @@ public class DeclineController {
 	        // the user clicked on "Confirm"
     		refereeService.declineToActAsRefereeAndSendNotification(referee.getId());
     		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
-    		user.setDirectToUrl(null);
+
+            user.setAction(null);
             userService.save(user);
     		return TemplateLocation.DECLINE_SUCCESS_VIEW_NAME;
 	    } else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {

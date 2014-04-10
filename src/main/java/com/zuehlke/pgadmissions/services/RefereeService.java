@@ -16,8 +16,8 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -149,7 +149,9 @@ public class RefereeService {
         user.setLastName(referee.getLastname());
         user.setUsername(referee.getEmail());
         user.setEnabled(false);
-        user.setDirectToUrl(DirectURLsEnum.ADD_REFERENCE.displayValue() + referee.getApplication().getApplicationNumber());
+        
+        user.setAction(ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
+        user.setApplication(referee.getApplication());
         userService.save(user);
         return user;
     }

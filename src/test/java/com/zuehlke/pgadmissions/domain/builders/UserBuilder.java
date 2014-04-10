@@ -21,7 +21,6 @@ public class UserBuilder {
     private String password;
     private String confirmPassword;
     private String newPassword;
-    private String directURL;
     private Integer id;
     private boolean enabled = true;
     private String activationCode;
@@ -60,11 +59,6 @@ public class UserBuilder {
 
     public UserBuilder email(String email) {
         this.email = email;
-        return this;
-    }
-
-    public UserBuilder directURL(String directURL) {
-        this.directURL = directURL;
         return this;
     }
 
@@ -145,7 +139,6 @@ public class UserBuilder {
         user.setEnabled(enabled);
         user.setActivationCode(activationCode);
         user.getPendingRoleNotifications().addAll(pendingRoleNotifications);
-        user.setDirectToUrl(directURL);
         user.setAdvert(advert);
         user.setUpi(upi);
         user.getLinkedAccounts().addAll(linkedAccounts);

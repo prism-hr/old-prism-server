@@ -848,9 +848,9 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
                 if (includeReferences) {
                     table.addCell(newTableCell("Reference", SMALL_BOLD_FONT));
-                    if (referee.getReference() != null) {
+                    if (referee.getComment() != null) {
                         table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                        bookmarkMap.put(appendixCounter++, referee.getReference());
+                        bookmarkMap.put(appendixCounter++, referee.getComment());
                     } else {
                         table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
                     }

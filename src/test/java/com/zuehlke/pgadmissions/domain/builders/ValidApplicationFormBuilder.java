@@ -133,8 +133,8 @@ public class ValidApplicationFormBuilder {
                 .addressDomicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
                 .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer")
                 .messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment2).build();
-        refereeOne.setReference(referenceComment1);
-        refereeTwo.setReference(referenceComment2);
+        refereeOne.setComment(referenceComment1);
+        refereeTwo.setComment(referenceComment2);
         employmentPosition = new EmploymentPositionBuilder().current(true).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1])
                 .address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).domicile(domicile)
                 .position("Software Engineer").current(true).startDate(DateUtils.addYears(new Date(), -2)).remit("Developer").employerName("Zuhlke Ltd.")

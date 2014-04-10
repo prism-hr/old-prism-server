@@ -329,7 +329,7 @@ public class ApplicationsReportService {
     private int[] getNumberOfReceivedAndDeclinedReferences(ApplicationForm app) {
         int[] reicevedAndDeclinedCount = new int[2];
         for (Referee referee : app.getReferees()) {
-            if (referee.hasResponded() && referee.getReference() != null) {
+            if (referee.getComment() != null) {
                 reicevedAndDeclinedCount[0]++;
             } else if (referee.isDeclined()) {
                 reicevedAndDeclinedCount[1]++;
@@ -341,8 +341,8 @@ public class ApplicationsReportService {
     private int[] getNumberOfPositiveAndNegativeReferenceEndorsements(ApplicationForm app) {
         int[] endorsements = new int[2];
         for (Referee referee : app.getReferees()) {
-            if (referee.hasResponded() && referee.getReference() != null) {
-                ReferenceComment reference = referee.getReference();
+            if (referee.getComment() != null) {
+                ReferenceComment reference = referee.getComment();
                 if (BooleanUtils.isTrue(reference.getSuitableForProgramme())) {
                     endorsements[0]++;
                 } else if (BooleanUtils.isFalse(reference.getSuitableForProgramme())) {

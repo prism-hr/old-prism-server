@@ -1037,7 +1037,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             referee.setSendToUCL(false);
         }
 
-        applicationForm.getReferees().get(0).setReference(null);
+        applicationForm.getReferees().get(0).setComment(null);
 
         applicationsServiceMock.save(applicationForm);
 

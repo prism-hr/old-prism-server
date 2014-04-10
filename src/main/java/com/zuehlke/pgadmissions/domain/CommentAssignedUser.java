@@ -3,12 +3,16 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity(name = "COMMENT_ASSIGNED_REGISTERED_USER")
 public class CommentAssignedUser {
 
+    @Id
+    private Integer id;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

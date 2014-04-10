@@ -47,8 +47,9 @@ public class ProjectConverter {
         }
         project.setProgram(projectAdvertDTO.getProgram());
         
-        User administrator = loadPerson(projectAdvertDTO.getAdministrator());
-        project.setAdministrator(administrator);
+        // FIXME set project administrator using roles
+//        User administrator = loadPerson(projectAdvertDTO.getAdministrator());
+//        project.setAdministrator(administrator);
 
         User primarySupervisor = loadPerson(projectAdvertDTO.getPrimarySupervisor());
         project.setPrimarySupervisor(primarySupervisor);

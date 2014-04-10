@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -99,11 +100,11 @@ public class TestObjectProvider {
     }
 
     public Project getEnabledProject() {
-        return getProject(true, null);
+        return getProject(AdvertState.PROJECT_APPROVED);
     }
 
     public Project getDisabledProject() {
-        return getProject(true, null);
+        return getProject(AdvertState.PROJECT_DISABLED);
     }
 
     public Program getAlternativeEnabledProgram(Program program) {
@@ -112,14 +113,6 @@ public class TestObjectProvider {
 
     public Program getAlternativeDisabledProgram(Program program) {
         return getProgram(true, program);
-    }
-
-    public Project getAlternativeEnabledProject(Project project) {
-        return getProject(true, project);
-    }
-
-    public Project getAlternativeDisabledProject(Project project) {
-        return getProject(true, project);
     }
 
     public Role getRole(Authority authority) {
@@ -251,13 +244,9 @@ public class TestObjectProvider {
                 .createAlias("project", "project", JoinType.INNER_JOIN).add(Restrictions.eq("project.active", enabled)).setMaxResults(1).uniqueResult();
     }
 
-    private Project getProject(Boolean enabled, Project alternativeOf) {
+    private Project getProject(AdvertState state) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Project.class).createAlias("program", "program", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("active", enabled)).add(Restrictions.eq("program.active", enabled));
-
-        if (alternativeOf != null) {
-            criteria.add(Restrictions.eq("id", alternativeOf.getId()));
-        }
+                .add(Restrictions.eq("state", state));
 
         return (Project) criteria.setMaxResults(1).uniqueResult();
     }

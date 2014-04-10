@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 
 public class UserBuilder {
     private String firstName;
@@ -141,19 +142,22 @@ public class UserBuilder {
         user.setLastName(lastName);
         user.setEmail(email);
         user.setUsername(username);
-        user.setPassword(password);
-        user.setNewPassword(newPassword);
         user.setEnabled(enabled);
         user.setActivationCode(activationCode);
-        user.setConfirmPassword(confirmPassword);
         user.getPendingRoleNotifications().addAll(pendingRoleNotifications);
         user.setDirectToUrl(directURL);
         user.setAdvert(advert);
-        user.setFiltering(filtering);
         user.setUpi(upi);
-        user.setApplicationListLastAccessTimestamp(applicationListLastAccessTimestamp);
         user.getLinkedAccounts().addAll(linkedAccounts);
         user.setPrimaryAccount(primaryAccount);
+
+        UserAccount userAccount = new UserAccount();
+        userAccount.setPassword(password);
+        userAccount.setNewPassword(newPassword);
+        userAccount.setConfirmPassword(confirmPassword);
+        userAccount.setFiltering(filtering);
+        userAccount.setApplicationListLastAccessTimestamp(applicationListLastAccessTimestamp);
+        user.setAccount(userAccount);
         return user;
     }
 

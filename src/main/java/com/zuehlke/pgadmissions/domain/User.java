@@ -11,7 +11,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -20,7 +19,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.Valid;
 
 import org.apache.solr.analysis.LowerCaseFilterFactory;
@@ -39,6 +37,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
@@ -76,21 +75,8 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
     private String username;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
-    private String password;
-
-    @Transient
-    private String newPassword;
-
-    @Transient
-    private String confirmPassword;
-
     @Column(name = "advert_id")
     private Advert advert;
-
-    @JoinColumn(name = "filtering_id")
-    @OneToOne(fetch = FetchType.LAZY)
-    private ApplicationsFiltering filtering;
 
     @Column(name = "upi")
     private String upi;
@@ -134,10 +120,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date latestUpdateNotificationDate;
 
-    @Column(name = "application_list_last_access_timestamp")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date applicationListLastAccessTimestamp;
-
     @Column(name = "latest_opportunity_request_notification_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date latestOpportunityRequestNotificationDate;
@@ -147,6 +129,10 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     @OneToMany(mappedBy = "user")
     private List<ResearchOpportunitiesFeed> researchOpportunitiesFeeds = new ArrayList<ResearchOpportunitiesFeed>();
+
+    @JoinColumn(name = "user_account_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserAccount account;
 
     public Integer getId() {
         return id;
@@ -204,44 +190,12 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
     public Advert getAdvert() {
         return advert;
     }
 
     public void setAdvert(Advert advert) {
         this.advert = advert;
-    }
-
-    public ApplicationsFiltering getFiltering() {
-        return filtering;
-    }
-
-    public void setFiltering(ApplicationsFiltering filtering) {
-        this.filtering = filtering;
     }
 
     public String getUpi() {
@@ -324,14 +278,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.latestUpdateNotificationDate = latestUpdateNotificationDate;
     }
 
-    public Date getApplicationListLastAccessTimestamp() {
-        return applicationListLastAccessTimestamp;
-    }
-
-    public void setApplicationListLastAccessTimestamp(Date applicationListLastAccessTimestamp) {
-        this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
-    }
-
     public Date getLatestOpportunityRequestNotificationDate() {
         return latestOpportunityRequestNotificationDate;
     }
@@ -342,6 +288,14 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     public List<ResearchOpportunitiesFeed> getResearchOpportunitiesFeeds() {
         return researchOpportunitiesFeeds;
+    }
+
+    public UserAccount getAccount() {
+        return account;
+    }
+
+    public void setAccount(UserAccount account) {
+        this.account = account;
     }
 
     public String getDisplayName() {
@@ -375,5 +329,10 @@ public class User implements UserDetails, Comparable<User>, Serializable {
             return this.lastName.compareTo(other.lastName);
         }
         return firstNameResult;
+    }
+
+    @Override
+    public String getPassword() {
+        return account != null ? account.getPassword() : null;
     }
 }

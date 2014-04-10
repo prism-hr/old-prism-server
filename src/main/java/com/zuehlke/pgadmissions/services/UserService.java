@@ -127,8 +127,8 @@ public class UserService {
         currentUser.setFirstName3(user.getFirstName3());
         currentUser.setLastName(user.getLastName());
         currentUser.setEmail(user.getEmail());
-        if (StringUtils.isNotBlank(user.getNewPassword())) {
-            currentUser.setPassword(encryptionUtils.getMD5Hash(user.getNewPassword()));
+        if (StringUtils.isNotBlank(user.getAccount().getNewPassword())) {
+            currentUser.getAccount().setPassword(encryptionUtils.getMD5Hash(user.getAccount().getNewPassword()));
         }
         currentUser.setUsername(user.getEmail());
         save(currentUser);
@@ -146,7 +146,7 @@ public class UserService {
             mailService.sendResetPasswordMessage(storedUser, newPassword);
 
             String hashPassword = encryptionUtils.getMD5Hash(newPassword);
-            storedUser.setPassword(hashPassword);
+            storedUser.getAccount().setPassword(hashPassword);
             userDAO.save(storedUser);
         } catch (Exception e) {
             log.warn("error while sending email", e);
@@ -213,7 +213,7 @@ public class UserService {
 
     public void setFiltering(final User user, final ApplicationsFiltering filtering) {
         ApplicationsFiltering mergedFilter = filteringDAO.merge(filtering);
-        user.setFiltering(mergedFilter);
+        user.getAccount().setFiltering(mergedFilter);
         userDAO.save(user);
     }
 

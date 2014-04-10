@@ -131,7 +131,7 @@ public class UserDAO {
     }
     
     public void setApplicationFormListLastAccessTimestamp(User user) {
-        user.setApplicationListLastAccessTimestamp(new Date());
+        user.getAccount().setApplicationListLastAccessTimestamp(new Date());
         save(user);
     }
     

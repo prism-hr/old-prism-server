@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.dto.SwitchAndLinkUserAccountDTO;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.services.SwitchUserService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.AccountValidator;
+import com.zuehlke.pgadmissions.validators.UserValidator;
 import com.zuehlke.pgadmissions.validators.SwitchAndLinkUserAccountDTOValidator;
 
 @Controller
@@ -41,7 +41,7 @@ public class AccountController {
     private UserService userService;
 
     @Autowired
-    private AccountValidator accountValidator;
+    private UserValidator accountValidator;
 
     @Autowired
     private SwitchUserService switchUserService;
@@ -78,7 +78,7 @@ public class AccountController {
         user.setFirstName3(currentUser.getFirstName3());
         user.setLastName(currentUser.getLastName());
         user.setEmail(currentUser.getEmail());
-        user.setPassword(currentUser.getPassword());
+        user.getAccount().setPassword(currentUser.getPassword());
         return user;
     }
 

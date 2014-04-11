@@ -55,7 +55,7 @@ public class OpportunityRequest {
     private Integer studyDuration;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "user_id")
     private User author;
 
     @Column(name = "status")

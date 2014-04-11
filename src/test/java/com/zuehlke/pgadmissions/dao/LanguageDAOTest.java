@@ -22,7 +22,7 @@ public class LanguageDAOTest extends AutomaticRollbackTestCase{
 	
 	@Test
 	public void shouldGetAllLanguagesInAlhphabeticalOrder() {
-		BigInteger numberOfLanguages = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from LANGUAGE").uniqueResult();
+		BigInteger numberOfLanguages = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from NATIONALITY").uniqueResult();
 		Language language1 = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).build();
 		Language language2 = new LanguageBuilder().name("AAAAAA").code("AA").enabled(true).build();
 		save(language1,  language2);
@@ -51,7 +51,7 @@ public class LanguageDAOTest extends AutomaticRollbackTestCase{
 	
     @Test
     public void shouldGetAllEnabledLanguages() {
-        BigInteger numberOfLanguages = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from LANGUAGE WHERE enabled = true").uniqueResult();
+        BigInteger numberOfLanguages = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from NATIONALITY WHERE enabled = true").uniqueResult();
         Language language1 = new LanguageBuilder().name("ZZZZZZ").code("ZZ").enabled(true).build();
         Language language2 = new LanguageBuilder().name("AAAAAA").code("AA").enabled(false).build();
         save(language1,  language2);

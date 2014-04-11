@@ -39,7 +39,7 @@ public class TestObjectProvider {
     }
 
     public Action getAction(NotificationMethod notificationMethod) {
-        return (Action) sessionFactory.getCurrentSession().createCriteria(Action.class).add(Restrictions.eq("notification", notificationMethod))
+        return (Action) sessionFactory.getCurrentSession().createCriteria(Action.class).add(Restrictions.eq("notificationMethod", notificationMethod))
                 .setMaxResults(1).uniqueResult();
     }
 
@@ -92,11 +92,11 @@ public class TestObjectProvider {
     }
 
     public Program getEnabledProgram() {
-        return getProgram(true, null);
+        return getProgram(AdvertState.PROGRAM_APPROVED, null);
     }
 
     public Program getDisabledProgram() {
-        return getProgram(true, null);
+        return getProgram(AdvertState.PROGRAM_DISABLED, null);
     }
 
     public Project getEnabledProject() {
@@ -108,11 +108,11 @@ public class TestObjectProvider {
     }
 
     public Program getAlternativeEnabledProgram(Program program) {
-        return getProgram(true, program);
+        return getProgram(AdvertState.PROGRAM_APPROVED, program);
     }
 
     public Program getAlternativeDisabledProgram(Program program) {
-        return getProgram(true, program);
+        return getProgram(AdvertState.PROGRAM_DISABLED, program);
     }
 
     public Role getRole(Authority authority) {
@@ -221,8 +221,8 @@ public class TestObjectProvider {
         return null;
     }
 
-    private Program getProgram(Boolean enabled, Program alternativeOf) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("active", enabled));
+    private Program getProgram(AdvertState state, Program alternativeOf) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("state", state));
 
         if (alternativeOf != null) {
             criteria.add(Restrictions.ne("id", alternativeOf.getId()));

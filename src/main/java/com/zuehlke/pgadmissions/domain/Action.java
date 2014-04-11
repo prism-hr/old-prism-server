@@ -33,9 +33,9 @@ public class Action implements Serializable {
     @Column(name = "precedence")
     private Integer precedence = 0;
     
-    @Column(name = "notification")
+    @Column(name = "notification_method_id")
     @Enumerated(EnumType.STRING)
-    private NotificationMethod notification = null;
+    private NotificationMethod notificationMethod = null;
     
     public ApplicationFormAction getId() {
         return id;
@@ -61,12 +61,12 @@ public class Action implements Serializable {
         this.precedence = precedence;
     }
 
-    public NotificationMethod getNotification() {
-        return notification;
+    public NotificationMethod getNotificationMethod() {
+        return notificationMethod;
     }
 
-    public void setNotification(NotificationMethod notification) {
-        this.notification = notification;
+    public void setNotificationMethod(NotificationMethod notification) {
+        this.notificationMethod = notification;
     }
 
 }

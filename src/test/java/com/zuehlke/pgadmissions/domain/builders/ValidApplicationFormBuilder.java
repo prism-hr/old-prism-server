@@ -183,7 +183,7 @@ public class ValidApplicationFormBuilder {
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
                 .type(FundingType.SCHOLARSHIP).value("5").build();
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
-                .appDate(new Date()).applicant(user).applicationNumber("TMRMBISING01-2012-999999")
+                .createdTimestamp(new Date()).applicant(user).applicationNumber("TMRMBISING01-2012-999999")
                 .closingDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1))
                 .applicationFormAddress(new ApplicationAddress().withCurrentAddress(address).withContactAddress(address))
                 .dueDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).employmentPositions(employmentPosition).fundings(funding)

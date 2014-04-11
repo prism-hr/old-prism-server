@@ -73,10 +73,10 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     @Column(name = "due_date")
     private Date dueDate;
 
-    @Column(name = "app_date_time", insertable = false)
+    @Column(name = "created_timestamp", insertable = false, updatable = false)
     @Generated(GenerationTime.INSERT)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date applicationTimestamp;
+    private Date createdTimestamp;
 
     @Column(name = "submitted_on_timestamp")
     private Date submittedDate;
@@ -262,12 +262,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.acceptedTermsOnSubmission = acceptedTermsOnSubmission;
     }
 
-    public Date getApplicationTimestamp() {
-        return applicationTimestamp;
+    public Date getCreatedTimestamp() {
+        return createdTimestamp;
     }
 
-    public void setApplicationTimestamp(Date applicationTimestamp) {
-        this.applicationTimestamp = applicationTimestamp;
+    public void setCreatedTimestamp(Date createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
     }
 
     public Date getSubmittedDate() {
@@ -455,7 +455,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
             return 1;
         }
         if (appForm.getSubmittedDate() == null && this.getSubmittedDate() == null) {
-            return this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
+            return this.createdTimestamp.compareTo(appForm.getCreatedTimestamp());
         }
         return this.submittedDate.compareTo(appForm.getSubmittedDate());
     }

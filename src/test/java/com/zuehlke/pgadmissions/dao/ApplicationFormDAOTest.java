@@ -106,7 +106,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         Integer id = inApplication.getId();
         ApplicationForm reloadedApplication = applicationDAO.getById(id);
-        assertNotNull(reloadedApplication.getApplicationTimestamp());
+        assertNotNull(reloadedApplication.getCreatedTimestamp());
     }
 
     @Test

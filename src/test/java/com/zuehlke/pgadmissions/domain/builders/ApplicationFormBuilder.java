@@ -35,7 +35,7 @@ public class ApplicationFormBuilder {
     private User applicant;
     private String projectTitle;
     private Advert advert;
-    private Date appDate;
+    private Date createdTimestamp;
     private Date submittedDate;
     private Date closingDate;
     private Date dueDate;
@@ -200,8 +200,8 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder appDate(Date date) {
-        this.appDate = date;
+    public ApplicationFormBuilder createdTimestamp(Date date) {
+        this.createdTimestamp = date;
         return this;
     }
 
@@ -236,7 +236,7 @@ public class ApplicationFormBuilder {
         application.setApplicant(applicant);
         application.setSubmittedDate(submittedDate);
         application.getReferees().addAll(referees);
-        application.setApplicationTimestamp(appDate);
+        application.setCreatedTimestamp(createdTimestamp);
         application.getQualifications().addAll(qualifications);
         application.setProgramDetails(programmeDetails);
         application.getFundings().addAll(fundings);

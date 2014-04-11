@@ -69,11 +69,6 @@ public class UserDAO {
                         .add(Restrictions.eq("registeredUser.id", id))).uniqueResult();
     }
 
-    public User getUserByUsername(String username) {
-        return (User) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("username", username))
-                .add(Restrictions.eq("enabled", true)).uniqueResult();
-    }
-
     public List<User> getAllUsers() {
         return sessionFactory.getCurrentSession().createCriteria(User.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
@@ -122,12 +117,12 @@ public class UserDAO {
 
     public List<User> getSuperadministrators() {
         return sessionFactory.getCurrentSession().createCriteria(User.class).createAlias("roles", "role")
-                .add(Restrictions.eq("role.id", Authority.SUPERADMINISTRATOR)).list();
+                .add(Restrictions.eq("role.id", Authority.SYSTEM_ADMINISTRATOR)).list();
     }
 
     public List<User> getAdmitters() {
         return sessionFactory.getCurrentSession().createCriteria(User.class).createAlias("roles", "role")
-                .add(Restrictions.eq("role.id", Authority.ADMITTER)).list();
+                .add(Restrictions.eq("role.id", Authority.INSTITUTION_ADMITTER)).list();
     }
     
     public void setApplicationFormListLastAccessTimestamp(User user) {
@@ -205,7 +200,7 @@ public class UserDAO {
                 .add(Restrictions.disjunction()
                         .add(Restrictions.isNull("latestOpportunityRequestNotificationDate"))
                         .add(Restrictions.lt("latestOpportunityRequestNotificationDate", baseline)))
-                .add(Restrictions.eq("role.id", Authority.SUPERADMINISTRATOR))
+                .add(Restrictions.eq("role.id", Authority.SYSTEM_ADMINISTRATOR))
                 .add(Restrictions.eq("enabled", true))
                 .add(Restrictions.eq("accountNonExpired", true))
                 .add(Restrictions.eq("accountNonLocked", true))
@@ -219,8 +214,8 @@ public class UserDAO {
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN)
                 .createAlias("role", "applicationRole", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("applicationForm", application))
-                .add(Restrictions.ne("applicationRole.id", Authority.SUPERADMINISTRATOR))
-                .add(Restrictions.eq("action.id", ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
+                .add(Restrictions.ne("applicationRole.id", Authority.SYSTEM_ADMINISTRATOR))
+                .add(Restrictions.eq("action.id", ApplicationFormAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
     }
     
     public List<User> getUsersInterestedInApplication(ApplicationForm applicationForm) {

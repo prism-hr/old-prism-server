@@ -10,10 +10,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-@Entity(name = "PROGRAM_INSTANCE")
+@Entity
+@Table(name = "PROGRAM_INSTANCE")
 public class ProgramInstance implements ProgramInstanceInterface, ImportedObject, Serializable {
 
     private static final long serialVersionUID = -5414750352686318033L;
@@ -135,7 +137,7 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
-    
+
     public boolean isDateWithinBounds(Date date) {
         boolean afterStartDate = !date.before(getApplicationStartDate());
         boolean beforeEndDate = date.before(getApplicationDeadline());

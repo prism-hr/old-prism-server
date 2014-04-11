@@ -92,8 +92,8 @@ public class FullTextSearchDAO {
 
     private List<User> getMatchingUsers(final String searchTerm, final String propertyName, final Comparator<User> comparator) {
 
-        Criterion notAnApplicantCriterion = Restrictions.in("r.id", new Authority[] { Authority.ADMINISTRATOR, Authority.APPROVER, Authority.INTERVIEWER,
-                Authority.REFEREE, Authority.REVIEWER, Authority.SUPERADMINISTRATOR, Authority.SUPERVISOR });
+        Criterion notAnApplicantCriterion = Restrictions.in("r.id", new Authority[] { Authority.PROGRAM_ADMINISTRATOR, Authority.PROGRAM_APPROVER, Authority.APPLICATION_INTERVIEWER,
+                Authority.APPLICATION_REFEREE, Authority.APPLICATION_REVIEWER, Authority.SYSTEM_ADMINISTRATOR, Authority.SUPERVISOR });
 
         String trimmedSearchTerm = StringUtils.trimToEmpty(searchTerm);
 

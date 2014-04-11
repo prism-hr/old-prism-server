@@ -6,8 +6,10 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity(name = "COMMENT_ASSIGNED_REGISTERED_USER")
+@Entity
+@Table(name = "COMMENT_ASSIGNED_REGISTERED_USER")
 public class CommentAssignedUser {
 
     @Id

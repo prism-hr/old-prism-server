@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -86,7 +86,7 @@ public class ConfirmSupervisionController {
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
 
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        CompleteApprovalComment comment = (CompleteApprovalComment) applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
+        CompleteApprovalComment comment = (CompleteApprovalComment) applicationsService.getLatestStateChangeComment(applicationForm, ActionType.APPLICATION_COMPLETE_APPROVAL_STAGE);
 
         confirmSupervisionDTO.setProjectTitle(comment.getProjectTitle());
         confirmSupervisionDTO.setProjectAbstract(comment.getProjectAbstract());
@@ -120,7 +120,7 @@ public class ConfirmSupervisionController {
     public String confirmSupervision(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION);
         workflowService.deleteApplicationUpdate(applicationForm, user);
         return CONFIRM_SUPERVISION_PAGE;
     }
@@ -129,14 +129,14 @@ public class ConfirmSupervisionController {
     public String applyConfirmSupervision(@Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION);
 
         if (result.hasErrors()) {
             return CONFIRM_SUPERVISION_PAGE;
         }
 
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
-        workflowService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
+        workflowService.applicationUpdated(applicationForm, user);
 
         if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
             return "redirect:/applications?messageCode=supervision.confirmed&application=" + applicationForm.getApplicationNumber();

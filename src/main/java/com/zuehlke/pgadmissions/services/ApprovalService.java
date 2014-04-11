@@ -15,11 +15,11 @@ import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -59,7 +59,7 @@ public class ApprovalService {
         ApprovalService thisBean = applicationContext.getBean(ApprovalService.class);
 
         AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService
-                .getLatestStateChangeComment(form, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
+                .getLatestStateChangeComment(form, ActionType.APPLICATION_COMPLETE_APPROVAL_STAGE);
         SupervisionConfirmationComment supervisionConfirmationComment = thisBean.createSupervisionConfirmationComment(approvalComment, confirmSupervisionDTO);
 
         if (BooleanUtils.isTrue(supervisionConfirmationComment.getDeclined())) {
@@ -101,7 +101,7 @@ public class ApprovalService {
     public AssignSupervisorsComment initiateApprovalComment(String applicationId) {
         ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
         AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
-        Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
+        Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, ActionType.APPLICATION_COMPLETE_APPROVAL_STAGE);
         Project project = application.getProject();
         Date startDate = application.getProgramDetails().getStartDate();
         if (latestApprovalComment != null) {
@@ -165,7 +165,7 @@ public class ApprovalService {
 
         commentService.save(approvalComment);
         applicationFormUserRoleService.movedToApprovalStage(approvalComment);
-        applicationFormUserRoleService.insertApplicationUpdate(form, initiator, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationUpdated(form, initiator);
     }
 
     private void checkSendToPorticoStatus(ApplicationForm form) {

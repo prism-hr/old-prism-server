@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -111,7 +110,7 @@ public class AdmitterCommentController {
     public String getConfirmEligibilityPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_ELIGIBILITY);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_ELIGIBILITY);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return GENERIC_COMMENT_PAGE;
     }
@@ -120,7 +119,7 @@ public class AdmitterCommentController {
     public String confirmEligibility(ModelMap modelMap, @Valid @ModelAttribute("comment") AdmitterComment comment, BindingResult result) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(application, user, ApplicationFormAction.CONFIRM_ELIGIBILITY);
+        actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_CONFIRM_ELIGIBILITY);
 
         if (result.hasErrors()) {
             return GENERIC_COMMENT_PAGE;
@@ -133,7 +132,7 @@ public class AdmitterCommentController {
         commentService.save(comment);
         applicationsService.save(application);
         applicationFormUserRoleService.admitterCommentPosted(comment);
-        applicationFormUserRoleService.insertApplicationUpdate(application, user, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.applicationUpdated(application, user);
         return "redirect:/applications?messageCode=validation.comment.success&application=" + application.getApplicationNumber();
     }
 

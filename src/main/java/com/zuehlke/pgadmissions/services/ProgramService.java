@@ -146,7 +146,7 @@ public class ProgramService {
             program.setContactUser(opportunityRequest.getAuthor());
         }
 
-        if (program.getProgramFeed() == null) {
+        if (program.getProgramImport() == null) {
             if (program.getInstitution() == null || !Objects.equal(program.getInstitution().getCode(), opportunityRequest.getInstitutionCode())) {
                 Institution institution = qualificationInstitutionService.getOrCreate(opportunityRequest.getInstitutionCode(),
                         opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
@@ -195,7 +195,7 @@ public class ProgramService {
 
         Program program = thisBean.createOrGetProgram(opportunityRequest);
 
-        if (program.getProgramFeed() == null) {
+        if (program.getProgramImport() == null) {
             programInstanceService.createRemoveProgramInstances(program, opportunityRequest.getStudyOptions(), opportunityRequest.getAdvertisingDeadlineYear());
         }
 
@@ -205,7 +205,7 @@ public class ProgramService {
     }
 
     public boolean canChangeInstitution(User user, OpportunityRequest opportunityRequest) {
-        if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
+        if (roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
             return true;
         }
 

@@ -69,7 +69,7 @@ public class RejectService {
 	}
 	
 	public void sendToPortico(ApplicationForm form) {
-	    if (form.getProgram().getProgramFeed() != null) {
+	    if (form.getProgram().getProgramImport() != null) {
 	        porticoQueueService.createOrReturnExistingApplicationFormTransfer(form);
 	    }
 	}

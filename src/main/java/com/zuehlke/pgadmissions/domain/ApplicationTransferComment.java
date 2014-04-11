@@ -7,10 +7,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
-@Entity(name = "APPLICATION_TRANSFER_COMMENT")
+@Entity
+@Table(name = "APPLICATION_TRANSFER_COMMENT")
 public class ApplicationTransferComment extends Comment {
 
     private static final long serialVersionUID = 9120577563568889651L;
@@ -21,15 +23,15 @@ public class ApplicationTransferComment extends Comment {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_form_transfer_error_id")
     private ApplicationFormTransferError applicationFormTransferError = null;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "comment_type", insertable = false, updatable = false)
     private CommentType type = CommentType.APPLICATION_TRANSFER_COMMENT;
-    
+
     public ApplicationTransferComment() {
         super();
     }
-    
+
     public ApplicationTransferComment(ApplicationForm application, User user) {
         super();
         setUser(user);

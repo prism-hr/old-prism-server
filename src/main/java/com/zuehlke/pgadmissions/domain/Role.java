@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -18,11 +19,10 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
 
-@Entity(name = "ROLE")
+@Entity
+@Table(name = "ROLE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class Role implements GrantedAuthority, Serializable {
 
@@ -31,14 +31,6 @@ public class Role implements GrantedAuthority, Serializable {
     @Id
     @Enumerated(EnumType.STRING)
     private Authority id;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "application_role_scope_id")
-    private AuthorityScope authorityScope;
-    
-    @Column(name = "update_visibility")
-    @Enumerated(EnumType.ORDINAL)
-    private ApplicationUpdateScope updateVisibility = ApplicationUpdateScope.ALL_USERS;
 
     @Column(name = "do_send_update_notification")
     private Boolean doSendUpdateNotification = false;
@@ -58,21 +50,6 @@ public class Role implements GrantedAuthority, Serializable {
     @Override
     public String getAuthority() {
         return id.toString();
-    }
-    public AuthorityScope getAuthorityScope() {
-        return authorityScope;
-    }
-
-    public void setAuthorityScope(AuthorityScope authorityScope) {
-        this.authorityScope = authorityScope;
-    }
-
-    public ApplicationUpdateScope getUpdateVisibility() {
-        return updateVisibility;
-    }
-
-    public void setUpdateVisibility(ApplicationUpdateScope updateVisibility) {
-        this.updateVisibility = updateVisibility;
     }
 
     public Boolean getDoSendUpdateNotification() {

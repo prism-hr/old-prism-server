@@ -130,12 +130,6 @@ public class ResearchOpportunitiesFeedService {
         return feeds;
     }
 
-    public List<ResearchOpportunitiesFeed> getDefaultOpportunitiesFeedsByUsername(String username, FeedFormat format) {
-        User user = userService.getUserByUsername(username);
-        Assert.notNull(user);
-        return getDefaultOpportunitiesFeeds(user.getLinkedAccounts(), format);
-    }
-
     public List<ResearchOpportunitiesFeed> getDefaultOpportunitiesFeedsByUpi(String upi, FeedFormat format) {
         return getDefaultOpportunitiesFeeds(userService.getUsersWithUpi(upi), format);
     }

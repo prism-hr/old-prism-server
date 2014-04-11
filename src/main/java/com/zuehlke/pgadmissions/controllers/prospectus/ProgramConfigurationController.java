@@ -141,10 +141,10 @@ public class ProgramConfigurationController {
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
         User user = userService.getCurrentUser();
-        if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
+        if (roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }
-        return roleService.getProgramsByUserAndRole(user, Authority.ADMINISTRATOR);
+        return roleService.getProgramsByUserAndRole(user, Authority.PROGRAM_ADMINISTRATOR);
     }
 
     @RequestMapping(value = "/getAdvertData", method = RequestMethod.GET)
@@ -165,7 +165,7 @@ public class ProgramConfigurationController {
         result.put("programStudyDuration", program.getStudyDuration());
         result.put("programFunding", program.getFunding());
         result.put("programState", program.getState());
-        result.put("isCustomProgram", program.getProgramFeed() == null);
+        result.put("isCustomProgram", program.getProgramImport() == null);
         result.put("atasRequired", program.getAtasRequired());
         result.put("programType", program.getProgramType().getId());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));

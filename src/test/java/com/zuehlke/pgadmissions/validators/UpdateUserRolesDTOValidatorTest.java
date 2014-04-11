@@ -35,7 +35,7 @@ public class UpdateUserRolesDTOValidatorTest {
 		user = new UpdateUserRolesDTO();
 		user.setSelectedUser(new UserBuilder().id(5).build());
 		user.setSelectedProgram(new ProgramBuilder().id(4).build());
-		user.setSelectedAuthorities(Authority.REVIEWER);
+		user.setSelectedAuthorities(Authority.APPLICATION_REVIEWER);
 		
 		updateUserRolesDTOValidator = new UpdateUserRolesDTOValidator();
 		updateUserRolesDTOValidator.setValidator((javax.validation.Validator) validator);
@@ -67,7 +67,7 @@ public class UpdateUserRolesDTOValidatorTest {
 	public void shouldRejectIfProgramIsNullAndAuthoritiesNotSuperadminOnly() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "selectedProgram");
 		user.setSelectedProgram(null);
-		user.setSelectedAuthorities(Authority.REVIEWER, Authority.SUPERADMINISTRATOR);
+		user.setSelectedAuthorities(Authority.APPLICATION_REVIEWER, Authority.SYSTEM_ADMINISTRATOR);
 		updateUserRolesDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("selectedProgram").getCode());
@@ -76,7 +76,7 @@ public class UpdateUserRolesDTOValidatorTest {
 	public void shouldNotRejectIfProgramIsNullAndAuthoritiesIsSuperadmin() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "selectedProgram");
 		user.setSelectedProgram(null);
-		user.setSelectedAuthorities(Authority.SUPERADMINISTRATOR);
+		user.setSelectedAuthorities(Authority.SYSTEM_ADMINISTRATOR);
 		updateUserRolesDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 		

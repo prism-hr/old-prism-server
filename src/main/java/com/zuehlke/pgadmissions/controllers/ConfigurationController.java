@@ -125,7 +125,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET)
     public String getConfigurationPage() {
         User user = userService.getCurrentUser();
-        if (!roleService.hasRole(user, Authority.SUPERADMINISTRATOR) && !roleService.hasRole(user, Authority.ADMINISTRATOR)) {
+        if (!roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR) && !roleService.hasRole(user, Authority.PROGRAM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
         return CONFIGURATION_VIEW_NAME;
@@ -133,7 +133,7 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET, value = "config_section")
     public String getConfigurationSection() {
-        if (!roleService.hasRole(getUser(), Authority.SUPERADMINISTRATOR)) {
+        if (!roleService.hasRole(getUser(), Authority.SYSTEM_ADMINISTRATOR)) {
             return "/private/common/simpleMessage";
         }
         return CONFIGURATION_SECTION_NAME;
@@ -142,7 +142,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute ServiceLevelsDTO serviceLevelsDTO) {
         User user = userService.getCurrentUser();
-        if (!roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
+        if (!roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
         configurationService.saveConfigurations(serviceLevelsDTO);
@@ -341,10 +341,10 @@ public class ConfigurationController {
     @ModelAttribute("programs")
     public List<Program> getPrograms() {
         User user = userService.getCurrentUser();
-        if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
+        if (roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }
-        return roleService.getProgramsByUserAndRole(user, Authority.ADMINISTRATOR);
+        return roleService.getProgramsByUserAndRole(user, Authority.PROGRAM_ADMINISTRATOR);
     }
 
     private Map<String, String> validateScoringDefinition(String programCode, String scoringContent) {

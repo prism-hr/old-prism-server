@@ -9,10 +9,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
-@Entity(name = "SCORING_DEFINITION")
+@Entity
+@Table(name = "SCORING_DEFINITION")
 public class ScoringDefinition implements Serializable {
 
     private static final long serialVersionUID = -8059348702240864331L;

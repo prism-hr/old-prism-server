@@ -76,7 +76,7 @@ public class MoveToInterviewController {
     public String getInterviewDetailsPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_INTERVIEWERS);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_ASSIGN_INTERVIEWERS);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_PAGE;
     }
@@ -91,7 +91,7 @@ public class MoveToInterviewController {
     public String moveToInterview(@Valid @ModelAttribute("interview") AssignInterviewersComment interviewComment, BindingResult bindingResult, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_INTERVIEWERS);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_ASSIGN_INTERVIEWERS);
 
         if (bindingResult.hasErrors()) {
             return INTERVIEWERS_SECTION;

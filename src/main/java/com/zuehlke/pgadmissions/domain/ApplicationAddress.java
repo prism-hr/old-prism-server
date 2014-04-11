@@ -9,11 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.search.indexes.serialization.javaserialization.impl.Add;
-
-@Entity(name="APPLICATION_ADDRESS")
+@Entity
+@Table(name="APPLICATION_ADDRESS")
 public class ApplicationAddress implements Serializable, FormSectionObject {
 
     private static final long serialVersionUID = -9022421958392952549L;

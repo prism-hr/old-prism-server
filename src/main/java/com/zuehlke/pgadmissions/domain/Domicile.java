@@ -10,8 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity(name = "DOMICILE")
+@Entity
+@Table(name = "DOMICILE")
 public class Domicile implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = -8250449282720149478L;

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import com.zuehlke.pgadmissions.domain.ProgramFeed;
+import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.Institution;
 
 public class ProgramFeedBuilder {
@@ -24,8 +24,8 @@ public class ProgramFeedBuilder {
         return this;
     }
 
-    public ProgramFeed build() {
-        ProgramFeed programFeed = new ProgramFeed();
+    public ProgramImport build() {
+        ProgramImport programFeed = new ProgramImport();
         programFeed.setId(id);
         programFeed.setFeedUrl(feedUrl);
         programFeed.setInstitution(institution);

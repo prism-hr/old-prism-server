@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
@@ -59,7 +60,7 @@ public class UserNotificationListBuilder {
         this.actionWithIndividualNotification = testObjectProvider.getAction(NotificationMethod.INDIVIDUAL);
         this.roleWithUpdateNotification = testObjectProvider.getRole(true);
         this.roleWithoutUpdateNotification = testObjectProvider.getRole(false);
-        this.superadministratorRole = testObjectProvider.getRole(Authority.SUPERADMINISTRATOR);
+        this.superadministratorRole = testObjectProvider.getRole(Authority.SYSTEM_ADMINISTRATOR);
     }
 
     public HashMap<Integer, UserTestHarness> builtTestInstances() {
@@ -340,7 +341,7 @@ public class UserNotificationListBuilder {
     }
 
     private User getDummyUser() {
-        User user = new UserBuilder().email(encryptionUtils.generateUUID()).enabled(true).build();
+        User user = new UserBuilder().email(encryptionUtils.generateUUID()).userAccount(new UserAccount().withEnabled(true)).build();
         saveDummyObject(user);
         return user;
     }

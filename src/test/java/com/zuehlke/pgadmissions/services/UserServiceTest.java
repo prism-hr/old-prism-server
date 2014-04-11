@@ -452,9 +452,9 @@ public class UserServiceTest {
 //
 //    @Test
 //    public void shouldUpdateCurrentUserAndSendEmailConfirmation() throws UnsupportedEncodingException {
-//        final RegisteredUser currentUser = new RegisteredUserBuilder().firstName("f").lastName("l").id(7).password("12").email("em").username("em").build();
-//        RegisteredUser userOne = new RegisteredUserBuilder().firstName("a").firstName2("a2").firstName3("a3").lastName("o").email("two").password("12")
-//                .newPassword("newpass").build();
+//        final RegisteredUser currentUser = new RegisteredUserBuilder().firstName("f").lastName("l").id(7).withPassword("12").email("em").username("em").build();
+//        RegisteredUser userOne = new RegisteredUserBuilder().firstName("a").firstName2("a2").firstName3("a3").lastName("o").email("two").withPassword("12")
+//                .withNewPassword("newpass").build();
 //
 //        EasyMock.expect(encryptionUtilsMock.getMD5Hash("newpass")).andReturn("encryptednewpass");
 //        expect(authenticationService.getCurrentUser()).andReturn(currentUser);
@@ -475,8 +475,8 @@ public class UserServiceTest {
 //
 //    @Test
 //    public void shouldNotChangePassIfPasswordIsBlank() {
-//        final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em").build();
-//        RegisteredUser userOne = new RegisteredUserBuilder().username("one").email("two").password("").id(5).build();
+//        final RegisteredUser currentUser = new RegisteredUserBuilder().withPassword("12").email("em").username("em").build();
+//        RegisteredUser userOne = new RegisteredUserBuilder().username("one").email("two").withPassword("").id(5).build();
 //
 //        expect(authenticationService.getCurrentUser()).andReturn(currentUser);
 //        userDAOMock.save(currentUser);
@@ -493,10 +493,10 @@ public class UserServiceTest {
 //    @Test
 //    public void shouldReturnIfAccountsHaveAlreadyBeenLinked() {
 //        final RegisteredUser currentAccount = new RegisteredUserBuilder().id(1).accountNonExpired(true).accountNonLocked(true).enabled(true)
-//                .activationCode("abc").email("B@A.com").password("password").build();
+//                .activationCode("abc").email("B@A.com").withPassword("password").build();
 //
 //        final RegisteredUser secondAccount = new RegisteredUserBuilder().id(2).accountNonExpired(true).accountNonLocked(true).enabled(true)
-//                .activationCode("abcd").email("A@B.com").password("password").build();
+//                .activationCode("abcd").email("A@B.com").withPassword("password").build();
 //
 //        secondAccount.setPrimaryAccount(currentAccount);
 //
@@ -505,10 +505,10 @@ public class UserServiceTest {
 //    @Test(expected = LinkAccountsException.class)
 //    public void shouldReturnFalseIfAccountsDisabled() throws LinkAccountsException {
 //        final RegisteredUser currentAccount = new RegisteredUserBuilder().id(1).accountNonExpired(true).accountNonLocked(true).enabled(true)
-//                .activationCode("abc").email("B@A.com").password("password").build();
+//                .activationCode("abc").email("B@A.com").withPassword("password").build();
 //
 //        final RegisteredUser secondAccount = new RegisteredUserBuilder().id(2).accountNonExpired(true).accountNonLocked(true).enabled(false)
-//                .activationCode("abcd").email("A@B.com").password("password").build();
+//                .activationCode("abcd").email("A@B.com").withPassword("password").build();
 //
 //        expect(authenticationService.getCurrentUser()).andReturn(currentAccount);
 //        expect(userDAOMock.getUserByEmail(secondAccount.getEmail())).andReturn(secondAccount);
@@ -520,10 +520,10 @@ public class UserServiceTest {
 //    @Test(expected = LinkAccountsException.class)
 //    public void shouldReturnFalseIfAccountsIsExpired() throws LinkAccountsException {
 //        final RegisteredUser currentAccount = new RegisteredUserBuilder().id(1).accountNonExpired(true).accountNonLocked(true).enabled(true)
-//                .activationCode("abc").email("B@A.com").password("password").build();
+//                .activationCode("abc").email("B@A.com").withPassword("password").build();
 //
 //        final RegisteredUser secondAccount = new RegisteredUserBuilder().id(2).accountNonExpired(false).accountNonLocked(true).enabled(true)
-//                .activationCode("abcd").email("A@B.com").password("password").build();
+//                .activationCode("abcd").email("A@B.com").withPassword("password").build();
 //
 //        expect(authenticationService.getCurrentUser()).andReturn(currentAccount);
 //        expect(userDAOMock.getUserByEmail(secondAccount.getEmail())).andReturn(secondAccount);

@@ -63,10 +63,6 @@ public class UserService {
         return null;
     }
 
-    public User getUserByUsername(String username) {
-        return userDAO.getUserByUsername(username);
-    }
-
     public User getUserByEmail(String email) {
         return userDAO.getUserByEmail(email);
     }
@@ -210,7 +206,7 @@ public class UserService {
 
     public void setFiltering(final User user, final ApplicationsFiltering filtering) {
         ApplicationsFiltering mergedFilter = filteringDAO.merge(filtering);
-        user.getAccount().setFiltering(mergedFilter);
+        user.getAccount().setFilterGroup(mergedFilter);
         userDAO.save(user);
     }
 

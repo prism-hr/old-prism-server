@@ -8,11 +8,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "ADDRESS")
+@Entity
+@Table(name = "ADDRESS")
 public class Address implements Serializable {
 
     private static final long serialVersionUID = 2746228908173552617L;

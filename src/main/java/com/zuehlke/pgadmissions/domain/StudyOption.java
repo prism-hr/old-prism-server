@@ -5,15 +5,17 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-@Entity(name = "STUDY_OPTION")
+@Entity
+@Table(name = "STUDY_OPTION")
 public class StudyOption implements Serializable {
 
     private static final long serialVersionUID = 2838801786303182881L;
 
     @Id
     private String id;
-    
+
     @Column(name = "display_name")
     private String displayName;
 
@@ -21,10 +23,10 @@ public class StudyOption implements Serializable {
         setId(id);
         setDisplayName(displayName);
     }
-    
+
     public StudyOption() {
     }
-    
+
     public String getId() {
         return id;
     }
@@ -40,5 +42,5 @@ public class StudyOption implements Serializable {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-    
+
 }

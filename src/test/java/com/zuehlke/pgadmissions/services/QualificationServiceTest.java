@@ -66,7 +66,6 @@ public class QualificationServiceTest {
     public void shouldSaveNewQualification() {
         ApplicationForm applicationForm = new ApplicationForm();
         Qualification qualification = new Qualification();
-        qualificationDAOMock.save(qualification);
 
         replay();
         service.saveOrUpdate(applicationForm, null, qualification);

@@ -8,10 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 
 import com.google.common.collect.Lists;
 
 @Entity
+@Table
 @DiscriminatorValue(value = "ASSIGN_INTERVIEWERS")
 public class AssignInterviewersComment extends Comment {
 

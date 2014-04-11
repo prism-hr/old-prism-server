@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -21,7 +22,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
-@Entity(name = "PROGRAM")
+@Entity
+@Table(name = "PROGRAM")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Program extends Advert implements PrismScope {
 
@@ -39,7 +41,7 @@ public class Program extends Advert implements PrismScope {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_import_id")
-    private ProgramFeed programFeed;
+    private ProgramImport programImport;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     @OrderBy("applicationStartDate")
@@ -96,12 +98,12 @@ public class Program extends Advert implements PrismScope {
         this.institution = institution;
     }
 
-    public ProgramFeed getProgramFeed() {
-        return programFeed;
+    public ProgramImport getProgramImport() {
+        return programImport;
     }
 
-    public void setProgramFeed(ProgramFeed programFeed) {
-        this.programFeed = programFeed;
+    public void setProgramImport(ProgramImport programImport) {
+        this.programImport = programImport;
     }
 
     public List<ScoringStage> getCustomQuestionCoverage() {

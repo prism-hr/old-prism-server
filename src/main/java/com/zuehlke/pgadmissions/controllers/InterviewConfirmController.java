@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
@@ -91,9 +92,9 @@ public class InterviewConfirmController {
     public String getInterviewConfirmPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
         
-        AssignInterviewersComment latestComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.ASSIGN_INTERVIEWERS);
+        AssignInterviewersComment latestComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm, ActionType.APPLICATION_ASSIGN_INTERVIEWERS);
         
         InterviewConfirmDTO interviewConfirmDTO = new InterviewConfirmDTO();
         
@@ -109,7 +110,7 @@ public class InterviewConfirmController {
                     BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
 
         if (result.hasErrors()) {
             return INTERVIEW_CONFIRM_PAGE;

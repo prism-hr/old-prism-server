@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 
@@ -35,19 +36,6 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         assertEquals(qualification.getId(), qualificationDAO.getById(id).getId());
-    }
-
-    @Test
-    public void shouldSaveQualification() throws ParseException {
-        QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
-        DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
-        Qualification qualification = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").title("")
-                .languageOfStudy("Abkhazian").subject("").isCompleted(true).startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
-                .type(qualificationTypeDAO.getAllQualificationTypes().get(0)).build();
-        qualificationDAO.save(qualification);
-        flushAndClearSession();
-        Integer id = qualification.getId();
-        assertEquals(qualification.getId(), ((Qualification) sessionFactory.getCurrentSession().get(Qualification.class, id)).getId());
     }
 
     @Test
@@ -73,7 +61,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         qualificationDAO = new QualificationDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").enabled(false)
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withEnabled(false))
                 .build();
         save(user);
         flushAndClearSession();

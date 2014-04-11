@@ -25,7 +25,7 @@ public class ApplicationFormUpdate implements Serializable {
 
     @Column(name = "raises_update_flag")
     private Boolean raisesUpdateFlag;
-    
+
     public ApplicationFormUpdate(ApplicationForm applicationForm, User user, Boolean raisesUpdateFlag) {
         setId(applicationForm, user);
         this.raisesUpdateFlag = raisesUpdateFlag;
@@ -97,8 +97,7 @@ public class ApplicationFormUpdate implements Serializable {
                 return false;
             }
             final ApplicationFormUpdatePrimaryKey other = (ApplicationFormUpdatePrimaryKey) obj;
-            return Objects.equal(applicationForm.getId(), other.getApplicationForm().getId())
-                    && Objects.equal(user.getId(), other.getUser().getId());
+            return Objects.equal(applicationForm.getId(), other.getApplicationForm().getId()) && Objects.equal(user.getId(), other.getUser().getId());
         }
 
     }

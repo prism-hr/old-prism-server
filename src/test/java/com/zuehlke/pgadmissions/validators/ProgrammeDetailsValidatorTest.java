@@ -377,7 +377,7 @@ public class ProgrammeDetailsValidatorTest {
     @Before
     public void setup() throws ParseException {
         SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").build();
-        Role role = new RoleBuilder().id(Authority.APPLICANT).build();
+        Role role = new RoleBuilder().id(Authority.APPLICATION_APPLICANT).build();
         User currentUser = new UserBuilder().id(1).build();
         SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().firstname("Mark").lastname("Johnson").email("mark@gmail.com").aware(true)
                 .build();

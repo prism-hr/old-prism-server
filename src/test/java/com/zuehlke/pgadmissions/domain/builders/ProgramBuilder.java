@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.ProgramFeed;
+import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -36,7 +36,7 @@ public class ProgramBuilder {
     private Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
     private List<Project> projects = Lists.newArrayList();
     private Institution institution;
-    private ProgramFeed programFeed;
+    private ProgramImport programFeed;
     private ProgramType programType = ProgramTypeBuilder.aProgramType().build();
     private boolean locked;
 
@@ -112,7 +112,7 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder programFeed(ProgramFeed programFeed) {
+    public ProgramBuilder programFeed(ProgramImport programFeed) {
         this.programFeed = programFeed;
         return this;
     }
@@ -147,7 +147,7 @@ public class ProgramBuilder {
         program.getClosingDates().addAll(programClosingDates);
         program.getProjects().addAll(projects);
         program.setInstitution(institution);
-        program.setProgramFeed(programFeed);
+        program.setProgramImport(programFeed);
         program.setProgramType(programType);
         program.setLocked(locked);
         program.setState(state);

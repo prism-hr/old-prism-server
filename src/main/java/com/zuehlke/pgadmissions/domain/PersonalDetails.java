@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -25,7 +26,8 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL")
+@Entity
+@Table(name = "APPLICATION_FORM_PERSONAL_DETAIL")
 public class PersonalDetails implements FormSectionObject, Serializable {
 
     private static final long serialVersionUID = 6549850558507667533L;
@@ -55,18 +57,18 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     @JoinColumn(name = "application_form_language_qualification_id")
     @Valid
     private LanguageQualification languageQualification = null;
-    
+
     @Column(name = "requires_visa")
     private Boolean requiresVisa;
 
     @Column(name = "passport_available")
     private Boolean passportAvailable;
-    
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_form_passport")
     @Valid
     private Passport passport = null;
-    
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "first_nationality")
     private Language firstNationality;
@@ -259,7 +261,7 @@ public class PersonalDetails implements FormSectionObject, Serializable {
     public void setLanguageQualificationAvailable(Boolean languageQualificationAvailable) {
         this.languageQualificationAvailable = languageQualificationAvailable;
     }
-    
+
     public LanguageQualification getLanguageQualification() {
         return languageQualification;
     }

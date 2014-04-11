@@ -23,7 +23,7 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
 
     @Test
     public void shouldPersistAResearchOpportunitiesFeed() {
-        User user = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        User user = testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR);
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(testObjectProvider.getEnabledProgram())
                 .title("Hello Feed").user(user).build();
         dao.save(feed);
@@ -37,7 +37,7 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
 
     @Test
     public void shouldReturnWhetherATitleIsUniqueForAUser() {
-        User user = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        User user = testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR);
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(testObjectProvider.getEnabledProgram())
                 .title("Hello Feed2").user(user).build();
         dao.save(feed);
@@ -47,7 +47,7 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
 
     @Test
     public void shouldReturnAllFeedsForAUser() {
-        User user = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        User user = testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR);
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(testObjectProvider.getEnabledProgram())
                 .title("Hello Feed3").user(user).build();
         dao.save(feed);

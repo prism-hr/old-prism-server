@@ -12,13 +12,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-@Entity(name = "PROGRAM_FEED")
+@Entity
+@Table(name = "PROGRAM_IMPORT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ProgramFeed implements Serializable {
+public class ProgramImport implements Serializable {
 
     private static final long serialVersionUID = -9073611033741317582L;
 
@@ -33,7 +35,7 @@ public class ProgramFeed implements Serializable {
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @OneToMany(mappedBy = "programFeed")
+    @OneToMany(mappedBy = "programImport")
     private List<Program> programs = new ArrayList<Program>();
 
     public Integer getId() {

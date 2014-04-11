@@ -26,9 +26,9 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
@@ -204,12 +204,6 @@ public class ApplicationFormDAO {
                 .setString(1, authority.toString()).executeUpdate();
     }
 
-    public void insertApplicationUpdate(ApplicationForm applicationForm, User user, ApplicationUpdateScope updateVisibility) {
-        // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_INSERT_APPLICATION_UPDATE(?, ?, ?, ?);").setInteger(0, applicationForm.getId())
-                .setInteger(1, user.getId()).setInteger(3, ApplicationUpdateScope.valueOf(updateVisibility.toString()).ordinal()).executeUpdate();
-    }
-
     public void insertProgramRole(User user, Program program, Authority authority) {
         // FIXME: rewrite as HQL statement
         sessionFactory.getCurrentSession().createSQLQuery("CALL SP_INSERT_PROGRAM_ROLE(?, ?, ?);").setInteger(0, user.getId())
@@ -239,7 +233,7 @@ public class ApplicationFormDAO {
         sessionFactory.getCurrentSession().createSQLQuery("CALL SP_UPDATE_URGENT_APPLICATIONS();").executeUpdate();
     }
 
-    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ApplicationFormAction completeStageAction) {
+    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ActionType applicationCompleteApprovalStage) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class).uniqueResult();
     }
 

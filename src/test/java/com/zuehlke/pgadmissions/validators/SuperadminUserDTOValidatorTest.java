@@ -49,7 +49,7 @@ public class SuperadminUserDTOValidatorTest {
 		user.setLastName("Smith");
 		user.setEmail("email@test.com");
 		user.setSelectedProgram(new ProgramBuilder().id(4).build());
-		user.setSelectedAuthorities(Authority.REVIEWER);
+		user.setSelectedAuthorities(Authority.APPLICATION_REVIEWER);
 		
 		superadminUserDTOValidator = new SuperadminUserDTOValidator();
 		superadminUserDTOValidator.setValidator((javax.validation.Validator) validator);

@@ -22,7 +22,7 @@ public class ActionBuilder {
     public Action build() {
         Action action = new Action();
         action.setId(id);
-        action.setNotification(notification);
+        action.setNotificationMethod(notification);
         return action;
     }
 

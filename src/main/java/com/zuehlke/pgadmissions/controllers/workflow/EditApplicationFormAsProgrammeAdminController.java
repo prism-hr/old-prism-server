@@ -132,7 +132,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute ApplicationForm applicationForm) {
-    	actionService.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.EDIT_AS_ADMINISTRATOR);
+    	actionService.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.APPLICATION_EDIT_AS_ADMINISTRATOR);
     	applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }

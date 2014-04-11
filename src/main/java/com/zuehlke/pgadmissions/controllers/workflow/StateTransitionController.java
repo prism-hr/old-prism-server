@@ -165,25 +165,26 @@ public class StateTransitionController {
         ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
         ApplicationFormAction invokedAction = null;
 
-        if (stateChangeDTO.getAction() != null) {
-            invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
-        } else {
-        	switch (applicationForm.getState().getId()) {
-		    	case VALIDATION:
-		    		invokedAction = ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
-		    		break;
-		    	case REVIEW:
-		    		invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
-		    		break;
-		    	case INTERVIEW:
-		    		invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
-		    		break;
-		    	case APPROVAL:
-		    		invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
-		    		break;
-		    	default:
-        	}
-        }
+        // TODO reimplement
+//        if (stateChangeDTO.getAction() != null) {
+//            invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
+//        } else {
+//        	switch (applicationForm.getState().getId()) {
+//		    	case VALIDATION:
+//		    		invokedAction = ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
+//		    		break;
+//		    	case REVIEW:
+//		    		invokedAction = ApplicationFormAction.COMPLETE_REVIEW_STAGE;
+//		    		break;
+//		    	case INTERVIEW:
+//		    		invokedAction = ApplicationFormAction.COMPLETE_INTERVIEW_STAGE;
+//		    		break;
+//		    	case APPROVAL:
+//		    		invokedAction = ApplicationFormAction.COMPLETE_APPROVAL_STAGE;
+//		    		break;
+//		    	default:
+//        	}
+//        }
 
         User user = stateChangeDTO.getUser();
         actionService.validateAction(applicationForm, user, invokedAction);

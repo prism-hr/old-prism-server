@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewScheduleComment;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
@@ -87,7 +88,7 @@ public class InterviewService {
     public void postVote(InterviewVoteComment interviewVoteComment, User user) {
         ApplicationForm application = interviewVoteComment.getApplication();
         AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(application,
-                ApplicationFormAction.ASSIGN_INTERVIEWERS);
+                ActionType.APPLICATION_ASSIGN_INTERVIEWERS);
         commentService.save(interviewVoteComment);
         applicationFormUserRoleService.interviewParticipantResponded(interviewVoteComment);
         applicationFormUserRoleService.applicationUpdated(interviewVoteComment.getApplication(), user);
@@ -100,7 +101,7 @@ public class InterviewService {
         Integer timeslotId = interviewConfirmDTO.getTimeslotId();
         AppointmentTimeslot timeslot = null;
         AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(applicationForm,
-                ApplicationFormAction.ASSIGN_INTERVIEWERS);
+                ActionType.APPLICATION_ASSIGN_INTERVIEWERS);
         for (AppointmentTimeslot t : assignInterviewersComment.getAvailableAppointmentTimeslots()) {
             if (t.getId().equals(timeslotId)) {
                 timeslot = t;

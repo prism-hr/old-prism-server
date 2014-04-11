@@ -49,19 +49,19 @@ public class ViewEditApplicationFormController {
     @RequestMapping(method = RequestMethod.GET, value = "application")
     public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
         User user = userService.getCurrentUser();
-        ApplicationFormAction viewEditAction = actionService.getPrecedentAction(applicationForm, user, ActionType.VIEW_EDIT);
+        ApplicationFormAction viewEditAction = actionService.getPrecedentAction(applicationForm, user, ActionType.APPLICATION_VIEW_EDIT);
 
         switch (viewEditAction) {
-        case COMPLETE_APPLICATION:
-        case CORRECT_APPLICATION:
-        case EDIT_AS_APPLICANT:
+        case APPLICATION_COMPLETE_APPLICATION:
+        case APPLICATION_CORRECT_APPLICATION:
+        case APPLICATION_EDIT_AS_APPLICANT:
             applicationFormService.openApplicationForEdit(applicationForm, user);
             return TemplateLocation.APPLICATION_APPLICANT_FORM;
-        case EDIT_AS_ADMINISTRATOR:
+        case APPLICATION_EDIT_AS_ADMINISTRATOR:
             return RedirectLocation.UPDATE_APPLICATION_AS_STAFF + applicationForm.getApplicationNumber();
-        case VIEW_AS_APPLICANT:
-        case VIEW_AS_REFEREE:
-        case VIEW_AS_RECRUITER:
+        case APPLICATION_VIEW_AS_APPLICANT:
+        case APPLICATION_VIEW_AS_REFEREE:
+        case APPLICATION_VIEW_AS_RECRUITER:
             return getApplicationView(applicationForm, user, request);
         default:
             throw new ResourceNotFoundException();
@@ -71,7 +71,7 @@ public class ViewEditApplicationFormController {
 
     @ModelAttribute
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        List<ApplicationFormAction> viewActions = actionService.getActionIdByActionType(ActionType.VIEW_EDIT);
+        List<ApplicationFormAction> viewActions = actionService.getActionIdByActionType(ActionType.APPLICATION_VIEW_EDIT);
         return applicationFormService.getSecuredApplication(applicationId, viewActions.toArray(new ApplicationFormAction[viewActions.size()]));
     }
 

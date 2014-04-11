@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -232,7 +233,7 @@ public class ApplicationFormDAO {
         sessionFactory.getCurrentSession().createSQLQuery("CALL SP_UPDATE_URGENT_APPLICATIONS();").executeUpdate();
     }
 
-    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ApplicationFormAction completeStageAction) {
+    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ActionType applicationCompleteApprovalStage) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class).uniqueResult();
     }
 

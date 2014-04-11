@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
@@ -100,11 +101,11 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
 
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.ASSIGN_SUPERVISORS);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_ASSIGN_SUPERVISORS);
 
         modelMap.put("approvalRound", getApprovalRound(applicationForm.getApplicationNumber()));
 
-        Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
+        Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(applicationForm, ActionType.APPLICATION_COMPLETE_APPROVAL_STAGE);
         if (latestApprovalComment != null) {
             SendToPorticoDataDTO porticoData = new SendToPorticoDataDTO();
             porticoData.setApplicationNumber(applicationForm.getApplicationNumber());
@@ -174,7 +175,7 @@ public class ApprovalController extends EditApplicationFormAsProgrammeAdminContr
             BindingResult bindingResult, SessionStatus sessionStatus) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User initiator = getCurrentUser();
-        actionService.validateAction(applicationForm, initiator, ApplicationFormAction.ASSIGN_SUPERVISORS);
+        actionService.validateAction(applicationForm, initiator, ApplicationFormAction.APPLICATION_ASSIGN_SUPERVISORS);
 
         if (bindingResult.hasErrors()) {
             return PROPOSE_OFFER_RECOMMENDATION_SECTION;

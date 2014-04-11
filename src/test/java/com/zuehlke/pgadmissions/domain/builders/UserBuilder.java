@@ -141,7 +141,7 @@ public class UserBuilder {
         user.setAdvert(advert);
         user.setUpi(upi);
         user.getLinkedAccounts().addAll(linkedAccounts);
-        user.setPrimaryAccount(primaryAccount);
+        user.setParentUser(primaryAccount);
 
         UserAccount userAccount = new UserAccount();
         userAccount.setPassword(password);

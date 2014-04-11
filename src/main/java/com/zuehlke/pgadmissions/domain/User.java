@@ -112,12 +112,12 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @JoinColumn(name = "registered_user_id")
     private List<Referee> referees = new ArrayList<Referee>();
 
-    @OneToMany(mappedBy = "primaryAccount")
+    @OneToMany(mappedBy = "parentUser")
     private List<User> linkedAccounts = new ArrayList<User>();
 
     @ManyToOne
-    @JoinColumn(name = "primary_account_id")
-    private User primaryAccount;
+    @JoinColumn(name = "parent_user_id")
+    private User parentUser;
 
     @Column(name = "ucl_user_id")
     private String uclUserId;
@@ -248,12 +248,12 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         return linkedAccounts;
     }
 
-    public User getPrimaryAccount() {
-        return primaryAccount;
+    public User getParentUser() {
+        return parentUser;
     }
 
-    public void setPrimaryAccount(User primaryAccount) {
-        this.primaryAccount = primaryAccount;
+    public void setParentUser(User parentUser) {
+        this.parentUser = parentUser;
     }
 
     public String getUclUserId() {

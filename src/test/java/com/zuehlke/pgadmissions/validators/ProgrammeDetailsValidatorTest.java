@@ -347,7 +347,7 @@ public class ProgrammeDetailsValidatorTest {
     public void shouldRejectIfApplicationSubmittedAndTermsAcceptedIsFalse() {
         State validationState = new State();
         validationState.setId(ApplicationFormStatus.VALIDATION);
-        form.setStatus(validationState);
+        form.setState(validationState);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
 

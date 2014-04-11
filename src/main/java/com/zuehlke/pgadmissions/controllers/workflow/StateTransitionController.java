@@ -104,7 +104,7 @@ public class StateTransitionController {
     	stateChangeDTO.setUser(user);
     	stateChangeDTO.setApplicationForm(applicationForm);
     	
-    	if (applicationForm.getStatus().getId() == ApplicationFormStatus.VALIDATION) {
+    	if (applicationForm.getState().getId() == ApplicationFormStatus.VALIDATION) {
 	    	stateChangeDTO.setValidationQuestionOptions(ValidationQuestionOptions.values());
 	    	stateChangeDTO.setHomeOrOverseasOptions(HomeOrOverseas.values());
     	}
@@ -122,7 +122,7 @@ public class StateTransitionController {
         if (action != null) {
             Comment latestStateChangeComment = null;
 
-            if (applicationForm.getStatus().getId() == ApplicationFormStatus.VALIDATION) {
+            if (applicationForm.getState().getId() == ApplicationFormStatus.VALIDATION) {
                 ValidationComment validationComment = commentService.getLastCommentOfType(applicationForm, ValidationComment.class);
                 stateChangeDTO.setQualifiedForPhd(validationComment.getQualifiedForPhd());
                 stateChangeDTO.setEnglishCompentencyOk(validationComment.getEnglishCompetencyOk());
@@ -168,7 +168,7 @@ public class StateTransitionController {
         if (stateChangeDTO.getAction() != null) {
             invokedAction = ApplicationFormAction.MOVE_TO_DIFFERENT_STAGE;
         } else {
-        	switch (applicationForm.getStatus().getId()) {
+        	switch (applicationForm.getState().getId()) {
 		    	case VALIDATION:
 		    		invokedAction = ApplicationFormAction.COMPLETE_VALIDATION_STAGE;
 		    		break;
@@ -203,7 +203,7 @@ public class StateTransitionController {
             if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
                 return "redirect:/applications?messageCode=delegate.success&application=" + applicationForm.getApplicationNumber();
             }
-        } else if (applicationForm.getStatus().getId() != stateChangeDTO.getNextStatus()) {
+        } else if (applicationForm.getState().getId() != stateChangeDTO.getNextStatus()) {
             return "redirect:/applications?messageCode=state.change.suggestion&application=" + applicationForm.getApplicationNumber();
         }
 

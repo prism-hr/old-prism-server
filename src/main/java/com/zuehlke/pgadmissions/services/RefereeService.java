@@ -81,7 +81,7 @@ public class RefereeService {
         }
         applicationFormCopyHelper.copyReferee(persistentReferee, referee, false);
         applicationFormService.saveOrUpdateApplicationSection(application);
-        if (application.getStatus().isModifiable()) {
+        if (application.getState().isModifiable()) {
             processRefereeAndGetAsUser(referee);
         }
     }

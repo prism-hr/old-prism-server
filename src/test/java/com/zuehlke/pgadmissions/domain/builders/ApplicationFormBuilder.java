@@ -53,7 +53,6 @@ public class ApplicationFormBuilder {
     private String applicationNumber;
     private String uclBookingReferenceNumber;
     private String ipAddress;
-    private BigDecimal averageRating;
     private Boolean useCustomReferenceQuestions = false;
     private State nextStatus;
     private State lastStatus;
@@ -92,12 +91,12 @@ public class ApplicationFormBuilder {
         this.status = status;
         return this;
     }
-    
+
     public ApplicationFormBuilder nextStatus(State nextStatus) {
         this.nextStatus = nextStatus;
         return this;
     }
-    
+
     public ApplicationFormBuilder previousStatus(State previousStatus) {
         this.lastStatus = previousStatus;
         return this;
@@ -220,11 +219,6 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder averageRating(BigDecimal averageRating) {
-        this.averageRating = averageRating;
-        return this;
-    }
-
     public ApplicationFormBuilder useCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
         this.useCustomReferenceQuestions = useCustomReferenceQuestions;
         return this;
@@ -246,9 +240,9 @@ public class ApplicationFormBuilder {
         application.setDueDate(dueDate);
         application.setAdvert(advert);
         application.setProjectTitle(projectTitle);
-        application.setStatus(status);
-        application.setNextStatus(nextStatus);
-        application.setLastStatus(lastStatus);
+        application.setState(status);
+        application.setNextState(nextStatus);
+        application.setLastState(lastStatus);
         application.setAdditionalInformation(info);
         application.setLastUpdated(lastUpdated);
         application.setAcceptedTermsOnSubmission(acceptedTerms);
@@ -259,7 +253,6 @@ public class ApplicationFormBuilder {
         application.setRejectNotificationDate(rejectNotificationDate);
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         application.getEmploymentPositions().addAll(employmentPositions);
-        application.setAverageRating(averageRating);
         application.setUseCustomReferenceQuestions(useCustomReferenceQuestions);
 
         try {

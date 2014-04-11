@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -48,16 +47,16 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     private Rejection rejection;
 
     @ManyToOne
-    @JoinColumn(name = "status")
-    private State status;
+    @JoinColumn(name = "state")
+    private State state;
 
     @ManyToOne
-    @JoinColumn(name = "next_status")
-    private State nextStatus = null;
+    @JoinColumn(name = "next_state")
+    private State nextState = null;
 
     @ManyToOne
-    @JoinColumn(name = "last_status")
-    private State lastStatus = null;
+    @JoinColumn(name = "last_state_id")
+    private State lastState = null;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_address_id")
@@ -150,14 +149,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date rejectNotificationDate;
 
-    @Column(name = "ip_address")
-    private byte[] ipAddress;
+    @Column(name = "submitted_ip_address")
+    private byte[] submittedIpAddress;
 
     @Column(name = "ucl_booking_ref_number")
     private String uclBookingReferenceNumber;
-
-    @Column(name = "avg_rating", precision = 3, scale = 2)
-    private BigDecimal averageRating;
 
     @Column(name = "use_custom_reference_questions")
     private Boolean useCustomReferenceQuestions = false;
@@ -206,28 +202,28 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.rejection = rejection;
     }
 
-    public State getStatus() {
-        return status;
+    public State getState() {
+        return state;
     }
 
-    public void setStatus(State status) {
-        this.status = status;
+    public void setState(State status) {
+        this.state = status;
     }
 
-    public State getNextStatus() {
-        return nextStatus;
+    public State getNextState() {
+        return nextState;
     }
 
-    public void setNextStatus(State nextStatus) {
-        this.nextStatus = nextStatus;
+    public void setNextState(State nextStatus) {
+        this.nextState = nextStatus;
     }
 
-    public State getLastStatus() {
-        return lastStatus;
+    public State getLastState() {
+        return lastState;
     }
 
-    public void setLastStatus(State lastStatus) {
-        this.lastStatus = lastStatus;
+    public void setLastState(State lastStatus) {
+        this.lastState = lastStatus;
     }
 
     public ApplicationAddress getApplicationAddress() {
@@ -366,12 +362,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.rejectNotificationDate = rejectNotificationDate;
     }
 
-    public byte[] getIpAddress() {
-        return ipAddress;
+    public byte[] getSubmittedIpAddress() {
+        return submittedIpAddress;
     }
 
-    public void setIpAddress(byte[] ipAddress) {
-        this.ipAddress = ipAddress;
+    public void setSubmittedIpAddress(byte[] ipAddress) {
+        this.submittedIpAddress = ipAddress;
     }
 
     public String getUclBookingReferenceNumber() {
@@ -380,14 +376,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
 
     public void setUclBookingReferenceNumber(String uclBookingReferenceNumber) {
         this.uclBookingReferenceNumber = uclBookingReferenceNumber;
-    }
-
-    public BigDecimal getAverageRating() {
-        return averageRating;
-    }
-
-    public void setAverageRating(BigDecimal averageRating) {
-        this.averageRating = averageRating;
     }
 
     public Boolean getUseCustomReferenceQuestions() {
@@ -436,14 +424,14 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
 
     public String getIpAddressAsString() {
         try {
-            return InetAddress.getByAddress(ipAddress).getHostAddress();
+            return InetAddress.getByAddress(submittedIpAddress).getHostAddress();
         } catch (UnknownHostException e) {
             return StringUtils.EMPTY;
         }
     }
 
     public void setIpAddressAsString(String ipAddress) throws UnknownHostException {
-        this.ipAddress = InetAddress.getByName(ipAddress).getAddress();
+        this.submittedIpAddress = InetAddress.getByName(ipAddress).getAddress();
     }
 
     @Override

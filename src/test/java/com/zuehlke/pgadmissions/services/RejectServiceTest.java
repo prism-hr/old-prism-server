@@ -95,7 +95,7 @@ public class RejectServiceTest {
         rejectService.moveApplicationToReject(application, rejection);
         verify();
 
-        assertEquals(ApplicationFormStatus.REJECTED, application.getStatus());
+        assertEquals(ApplicationFormStatus.REJECTED, application.getState());
         assertEquals(rejection, application.getRejection());
     }
 

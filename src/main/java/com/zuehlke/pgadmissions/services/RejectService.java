@@ -51,7 +51,7 @@ public class RejectService {
 
 	public void moveApplicationToReject(final ApplicationForm form, final Rejection rejection) {
 
-		form.setStatus(stateDAO.getById(ApplicationFormStatus.REJECTED));		
+		form.setState(stateDAO.getById(ApplicationFormStatus.REJECTED));		
 		form.setRejection(rejection);
 		
 		sendRejectNotificationToApplicant(form);

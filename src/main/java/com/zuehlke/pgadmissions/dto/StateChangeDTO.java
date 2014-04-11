@@ -81,7 +81,7 @@ public class StateChangeDTO {
 
     public void setApplicationForm(ApplicationForm applicationForm) {
         this.applicationForm = applicationForm;
-        this.status = applicationForm.getStatus().getId();
+        this.status = applicationForm.getState().getId();
     }
 
     public String getApplicationNumber() {
@@ -96,7 +96,7 @@ public class StateChangeDTO {
     }
 
     public Boolean isInState(String applicationFormStatus) {
-        return applicationForm.getStatus().getId().toString().equals(applicationFormStatus);
+        return applicationForm.getState().getId().toString().equals(applicationFormStatus);
     }
 
     public String getComment() {

@@ -5,18 +5,20 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity(name = "SUGGESTED_SUPERVISOR")
+@Entity
+@Table(name = "SUGGESTED_SUPERVISOR")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class SuggestedSupervisor extends Person {
 
     private static final long serialVersionUID = -4309091276524405556L;
-	
+
     @ManyToOne
-    @JoinColumn(name="application_form_id")
+    @JoinColumn(name = "application_form_id")
     private ApplicationForm application;
-    
-	public ApplicationForm getApplication() {
+
+    public ApplicationForm getApplication() {
         return application;
     }
 
@@ -26,12 +28,12 @@ public class SuggestedSupervisor extends Person {
 
     private boolean aware;
 
-	public boolean isAware() {
-		return aware;
-	}
+    public boolean isAware() {
+        return aware;
+    }
 
-	public void setAware(boolean aware) {
-		this.aware = aware;
-	}
-	
+    public void setAware(boolean aware) {
+        this.aware = aware;
+    }
+
 }

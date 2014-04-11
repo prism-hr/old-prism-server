@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -19,7 +20,8 @@ import javax.validation.Valid;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "APPLICATION_FORM_REFEREE")
+@Entity
+@Table(name = "APPLICATION_FORM_REFEREE")
 public class Referee implements Serializable, FormSectionObject {
 
     private static final long serialVersionUID = 4591043630090924738L;

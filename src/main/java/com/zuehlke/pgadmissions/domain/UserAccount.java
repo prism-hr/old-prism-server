@@ -9,13 +9,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "USER_ACCOUNT")
+@Entity
+@Table(name = "USER_ACCOUNT")
 public class UserAccount {
 
     @Id
@@ -93,11 +95,12 @@ public class UserAccount {
         this.password = password;
         return this;
     }
-    
+
     public UserAccount withNewPassword(String newPassword) {
         this.newPassword = newPassword;
         return this;
     }
+
     public UserAccount withConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
         return this;
@@ -107,15 +110,14 @@ public class UserAccount {
         this.filterGroup = filterGroup;
         return this;
     }
-    
+
     public UserAccount withApplicationListLastAccessTimestamp(Date applicationListLastAccessTimestamp) {
         this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
         return this;
     }
-    
+
     public UserAccount withEnabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 }
-

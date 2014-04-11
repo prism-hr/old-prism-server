@@ -7,10 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-@Entity(name = "COMMENT_APPOINTMENT_TIMESLOT")
+@Entity
+@Table(name = "COMMENT_APPOINTMENT_TIMESLOT")
 public class AppointmentTimeslot implements Serializable {
 
     private static final long serialVersionUID = -730673777949846236L;

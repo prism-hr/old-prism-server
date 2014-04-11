@@ -13,11 +13,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "APPLICATION_FORM_LANGUAGE_QUALIFICATION")
+@Entity
+@Table(name = "APPLICATION_FORM_LANGUAGE_QUALIFICATION")
 public class LanguageQualification implements Serializable {
 
     private static final long serialVersionUID = -2695332340505084549L;

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -21,7 +22,8 @@ import org.hibernate.annotations.GenerationTime;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "OPPORTUNITY_REQUEST_COMMENT")
+@Entity
+@Table(name = "OPPORTUNITY_REQUEST_COMMENT")
 public class OpportunityRequestComment {
 
     @Id

@@ -8,11 +8,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
-@Entity(name = "REMINDER_INTERVAL")
+@Entity
+@Table(name = "REMINDER_INTERVAL")
 public class ReminderInterval {
 
     @Id

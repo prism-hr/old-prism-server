@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -15,7 +16,8 @@ import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 
-@Entity(name = "ACTION")
+@Entity
+@Table(name = "ACTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class Action implements Serializable {
 
@@ -25,18 +27,18 @@ public class Action implements Serializable {
     @Column(name = "id")
     @Enumerated(EnumType.STRING)
     private ApplicationFormAction id;
-    
+
     @Column(name = "action_type_id")
     @Enumerated(EnumType.STRING)
     private ActionType actionType;
-    
+
     @Column(name = "precedence")
     private Integer precedence = 0;
-    
+
     @Column(name = "notification_method_id")
     @Enumerated(EnumType.STRING)
     private NotificationMethod notificationMethod = null;
-    
+
     public ApplicationFormAction getId() {
         return id;
     }

@@ -10,8 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity(name = "COUNTRY")
+@Entity
+@Table(name = "COUNTRY")
 public class Country implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = 2746228908173552617L;
@@ -68,7 +70,7 @@ public class Country implements SelfReferringImportedObject, Serializable {
     public String getStringCode() {
         return code;
     }
-    
+
     public String getEnabledCode() {
         if (!enabled && enabledObject != null) {
             return enabledObject.getEnabledCode();

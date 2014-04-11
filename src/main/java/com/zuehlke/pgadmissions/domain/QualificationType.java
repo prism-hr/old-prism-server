@@ -10,8 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity(name = "QUALIFICATION_TYPE")
+@Entity
+@Table(name = "QUALIFICATION_TYPE")
 public class QualificationType implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = 2746228908173552617L;
@@ -75,7 +77,7 @@ public class QualificationType implements SelfReferringImportedObject, Serializa
         }
         return code;
     }
-    
+
     public void setCode(String code) {
         this.code = code;
     }

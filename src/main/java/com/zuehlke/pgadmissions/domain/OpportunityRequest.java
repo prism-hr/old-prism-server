@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -24,7 +25,8 @@ import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "OPPORTUNITY_REQUEST")
+@Entity
+@Table(name = "OPPORTUNITY_REQUEST")
 public class OpportunityRequest {
 
     @Id

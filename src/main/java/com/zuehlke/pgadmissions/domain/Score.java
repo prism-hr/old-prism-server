@@ -10,6 +10,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -17,7 +18,8 @@ import javax.persistence.Transient;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
-@Entity(name = "SCORE")
+@Entity
+@Table(name = "SCORE")
 public class Score implements Serializable {
 
     private static final long serialVersionUID = -8059348702240864331L;
@@ -119,6 +121,5 @@ public class Score implements Serializable {
     public void setOriginalQuestion(Question originalQuestion) {
         this.originalQuestion = originalQuestion;
     }
-
 
 }

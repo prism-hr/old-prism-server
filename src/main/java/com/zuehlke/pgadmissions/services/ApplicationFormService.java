@@ -203,7 +203,7 @@ public class ApplicationFormService {
     }
 
     public void queueApplicationForExport(ApplicationForm application) {
-        if (application.getLastState().isSubmitted() && application.getProgram().getProgramFeed() != null) {
+        if (application.getLastState().isSubmitted() && application.getProgram().getProgramImport() != null) {
             exportQueueService.createOrReturnExistingApplicationFormTransfer(application);
         }
     }

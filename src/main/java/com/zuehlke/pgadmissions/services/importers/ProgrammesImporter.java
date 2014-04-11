@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProgramFeedDAO;
 import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramFeed;
+import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
@@ -69,8 +69,8 @@ public class ProgrammesImporter implements IProgrammesImporter {
     @Override
     public void importData() throws XMLDataImportException {
         IProgrammesImporter thisBean = applicationContext.getBean(IProgrammesImporter.class);
-        List<ProgramFeed> programFeeds = thisBean.getProgramFeeds();
-        for (ProgramFeed programFeed : programFeeds) {
+        List<ProgramImport> programFeeds = thisBean.getProgramFeeds();
+        for (ProgramImport programFeed : programFeeds) {
             log.info("Starting the import from xml file: " + programFeed.getFeedUrl());
             try {
                 thisBean.importData(programFeed);
@@ -82,13 +82,13 @@ public class ProgrammesImporter implements IProgrammesImporter {
 
     @Override
     @Transactional
-    public List<ProgramFeed> getProgramFeeds() {
+    public List<ProgramImport> getProgramFeeds() {
         return programFeedDAO.getAllProgramFeeds();
     }
 
     @Override
     @Transactional
-    public void importData(ProgramFeed programFeed) throws JAXBException, MalformedURLException {
+    public void importData(ProgramImport programFeed) throws JAXBException, MalformedURLException {
         String feedUrl = programFeed.getFeedUrl();
         ProgrammeOccurrences programmes = unmarshallXML(feedUrl);
         List<PrismProgrammeAdapter> importData = createAdapter(programmes);
@@ -99,7 +99,7 @@ public class ProgrammesImporter implements IProgrammesImporter {
             programDAO.saveStudyOption(programInstance.getStudyOption());
             Program program = programInstance.getProgram();
             if (program.getId() == null) {
-                program.setProgramFeed(programFeed);
+                program.setProgramImport(programFeed);
                 program.setInstitution(programFeed.getInstitution());
                 ProgramTypeId programTypeId = ProgramTypeId.findValueFromString(program.getTitle());
                 Preconditions.checkNotNull(programTypeId, "Tried to import a program: " + program.getCode() + " with no known type");

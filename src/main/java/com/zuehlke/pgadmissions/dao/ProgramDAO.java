@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.ProgramFeed;
+import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -226,7 +226,7 @@ public class ProgramDAO {
                 .addOrder(Order.asc("applicationStartDate")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<ProgramInstance> getAllProgramInstances(ProgramFeed programFeed) {
+    public List<ProgramInstance> getAllProgramInstances(ProgramImport programFeed) {
         // TODO Auto-generated method stub
         return null;
     }

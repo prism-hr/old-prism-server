@@ -75,7 +75,7 @@ public class OfferRecommendationService {
     }
     
     public void sendToPortico(ApplicationForm form) {
-        if (form.getProgram().getProgramFeed() != null) {
+        if (form.getProgram().getProgramImport() != null) {
             approvedSenderService.sendToPortico(form);
         }
     }

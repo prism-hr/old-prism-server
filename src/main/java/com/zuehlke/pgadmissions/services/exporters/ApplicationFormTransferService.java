@@ -66,7 +66,8 @@ public class ApplicationFormTransferService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateApplicationFormPorticoIds(final ApplicationForm form, final AdmissionsApplicationResponse response) {
         form.setUclBookingReferenceNumber(response.getReference().getApplicationID());
-        form.getApplicant().setUclUserId(response.getReference().getApplicantID());
+        // FIXME update user with his new UCL ID
+//        form.getApplicant().setUclUserId(response.getReference().getApplicantID());
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

@@ -123,7 +123,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetAdvertsByUserUpi() {
         String testUPI = "testUPI";
         User testUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
-        testUser.setUpi(testUPI);
+//        testUser.setUpi(testUPI);
         save(testUser);
         
         List<Integer> advertIds = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class)

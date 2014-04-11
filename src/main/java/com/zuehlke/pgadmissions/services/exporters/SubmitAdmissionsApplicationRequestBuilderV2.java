@@ -202,7 +202,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             printLanguageQualificationAdmissionsNote = true;
         }
 
-        applicant.setApplicantID(StringUtils.trimToNull(applicationForm.getApplicant().getUclUserId()));
+        //FIXME set applicant UCL ID
+//        applicant.setApplicantID(StringUtils.trimToNull(applicationForm.getApplicant().getUclUserId()));
 
         return applicant;
     }

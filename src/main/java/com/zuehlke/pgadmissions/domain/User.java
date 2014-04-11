@@ -85,9 +85,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Column(name = "advert_id")
     private Advert advert;
 
-    @Column(name = "upi")
-    private String upi;
-
     @Column(name = "activation_code")
     private String activationCode;
 
@@ -118,9 +115,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @ManyToOne
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
-
-    @Column(name = "ucl_user_id")
-    private String uclUserId;
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles;
@@ -196,14 +190,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.advert = advert;
     }
 
-    public String getUpi() {
-        return upi;
-    }
-
-    public void setUpi(String upi) {
-        this.upi = upi;
-    }
-
     public boolean isEnabled() {
         return account != null && account.isEnabled();
     }
@@ -254,14 +240,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     public void setParentUser(User parentUser) {
         this.parentUser = parentUser;
-    }
-
-    public String getUclUserId() {
-        return uclUserId;
-    }
-
-    public void setUclUserId(String uclUserId) {
-        this.uclUserId = uclUserId;
     }
 
     public List<ResearchOpportunitiesFeed> getResearchOpportunitiesFeeds() {

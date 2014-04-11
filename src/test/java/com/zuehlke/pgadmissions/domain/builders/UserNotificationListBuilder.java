@@ -59,7 +59,7 @@ public class UserNotificationListBuilder {
         this.actionWithIndividualNotification = testObjectProvider.getAction(NotificationMethod.INDIVIDUAL);
         this.roleWithUpdateNotification = testObjectProvider.getRole(true);
         this.roleWithoutUpdateNotification = testObjectProvider.getRole(false);
-        this.superadministratorRole = testObjectProvider.getRole(Authority.SUPERADMINISTRATOR);
+        this.superadministratorRole = testObjectProvider.getRole(Authority.SYSTEM_ADMINISTRATOR);
     }
 
     public HashMap<Integer, UserTestHarness> builtTestInstances() {

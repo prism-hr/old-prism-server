@@ -68,7 +68,7 @@ public class XMLDataImportTask {
                     message += "\n" + cause.toString();
                 }
                 try {
-                    mailService.sendImportErrorMessage(roleService.getUsersInRole(roleService.getPrismSystem(), Authority.SUPERADMINISTRATOR), message, new Date());
+                    mailService.sendImportErrorMessage(roleService.getUsersInRole(roleService.getPrismSystem(), Authority.SYSTEM_ADMINISTRATOR), message, new Date());
                 } catch (PrismMailMessageException pmme) {
                     log.warn("{}", pmme);
                 }

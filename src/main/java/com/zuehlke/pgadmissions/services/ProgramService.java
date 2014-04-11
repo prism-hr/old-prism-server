@@ -205,7 +205,7 @@ public class ProgramService {
     }
 
     public boolean canChangeInstitution(User user, OpportunityRequest opportunityRequest) {
-        if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
+        if (roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
             return true;
         }
 

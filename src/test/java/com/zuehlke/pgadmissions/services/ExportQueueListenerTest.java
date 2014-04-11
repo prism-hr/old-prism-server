@@ -118,7 +118,7 @@ public class ExportQueueListenerTest {
         porticoExportServiceMock.sendToPortico(form, formTransferMock);
         EasyMock.expectLastCall().andThrow(uclExportServiceException);
         
-        expect(roleServiceMock.getUsersInRole(systemScope, Authority.SUPERADMINISTRATOR))
+        expect(roleServiceMock.getUsersInRole(systemScope, Authority.SYSTEM_ADMINISTRATOR))
         	.andReturn(admins);
         
         mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class), form);

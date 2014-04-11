@@ -37,9 +37,9 @@ public class SwitchUserServiceTest {
     public void setup() {
         authenticationProvider = new SwitchUserService();
         
-        role1 = new RoleBuilder().id(Authority.APPLICANT).build();
+        role1 = new RoleBuilder().id(Authority.APPLICATION_APPLICANT).build();
         
-        role2 = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
+        role2 = new RoleBuilder().id(Authority.PROGRAM_ADMINISTRATOR).build();
         
         user1 = new UserBuilder().id(5).firstName("Jane").lastName("Doe").email("jane@doe.com")
                 .enabled(true)

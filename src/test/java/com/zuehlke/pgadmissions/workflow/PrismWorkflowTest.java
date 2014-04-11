@@ -70,7 +70,7 @@ public class PrismWorkflowTest {
     @Test
     public void initializeWorkflowTest() throws Exception {
         User superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, true,
-                manageUsersService.getPrismSystem(), Authority.SUPERADMINISTRATOR);
+                manageUsersService.getPrismSystem(), Authority.SYSTEM_ADMINISTRATOR);
 
         for (Importer importer : importers) {
             importer.importData();

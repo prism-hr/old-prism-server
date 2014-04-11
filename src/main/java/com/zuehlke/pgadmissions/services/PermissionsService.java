@@ -31,7 +31,7 @@ public class PermissionsService {
 
     public boolean canSeeOpportunityRequests() {
         User user = userService.getCurrentUser();
-        return roleService.hasRole(user, Authority.SUPERADMINISTRATOR) || !opportunityRequestDAO.getOpportunityRequestsForAuthor(user).isEmpty();
+        return roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR) || !opportunityRequestDAO.getOpportunityRequestsForAuthor(user).isEmpty();
     }
 
     public boolean canManageProjects() {
@@ -41,7 +41,7 @@ public class PermissionsService {
 
     public boolean canSeeOpportunityRequest(OpportunityRequest opportunityRequest) {
         User user = userService.getCurrentUser();
-        return roleService.hasRole(user, Authority.SUPERADMINISTRATOR) || HibernateUtils.sameEntities(user, opportunityRequest.getAuthor());
+        return roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR) || HibernateUtils.sameEntities(user, opportunityRequest.getAuthor());
     }
 
     public boolean canPostOpportunityRequestComment(OpportunityRequest opportunityRequest, OpportunityRequestComment comment) {
@@ -51,7 +51,7 @@ public class PermissionsService {
             return false;
         }
 
-        if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
+        if (roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
             return true;
         }
 

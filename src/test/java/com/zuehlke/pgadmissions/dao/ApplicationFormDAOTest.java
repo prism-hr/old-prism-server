@@ -118,7 +118,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         Institution institution = testObjectProvider.getEnabledInstitution();
         Program program = new ProgramBuilder().code("test").title("test").description("test")
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).institution(institution).build();
+                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).institution(institution).build();
         save(program);
         
         long number = applicationDAO.getApplicationsInProgramThisYear(program, thisYear);

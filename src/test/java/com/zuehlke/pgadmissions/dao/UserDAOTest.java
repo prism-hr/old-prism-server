@@ -135,11 +135,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnUserWithPendingNotifications() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role reviewerRole = roleDAO.getById(Authority.REVIEWER);
-        Role interviewerRole = roleDAO.getById(Authority.INTERVIEWER);
+        Role reviewerRole = roleDAO.getById(Authority.APPLICATION_REVIEWER);
+        Role interviewerRole = roleDAO.getById(Authority.APPLICATION_INTERVIEWER);
 
         Institution institution = new QualificationInstitutionBuilder().code("code").name("a10").domicileCode("AE").state(InstitutionState.INSTITUTION_APPROVED).build();
-        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("doesntexist")
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("doesntexist")
                 .title("another title").institution(institution).build();
         save(institution, program);
 
@@ -160,11 +160,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
         int previousNumberOfUsers = users.size();
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role reviewerRole = roleDAO.getById(Authority.REVIEWER);
-        Role interviewerRole = roleDAO.getById(Authority.INTERVIEWER);
+        Role reviewerRole = roleDAO.getById(Authority.APPLICATION_REVIEWER);
+        Role interviewerRole = roleDAO.getById(Authority.APPLICATION_INTERVIEWER);
 
         Institution institution = new QualificationInstitutionBuilder().code("code").name("a66").domicileCode("AE").state(InstitutionState.INSTITUTION_APPROVED).build();
-        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("doesntexist")
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("doesntexist")
                 .title("another title").institution(institution).build();
         save(institution, program);
 
@@ -184,8 +184,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldNotReturnUserWithPendingNotificationsIfDateIsNull() {
         List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role reviewerRole = roleDAO.getById(Authority.REVIEWER);
-        Role interviewerRole = roleDAO.getById(Authority.INTERVIEWER);
+        Role reviewerRole = roleDAO.getById(Authority.APPLICATION_REVIEWER);
+        Role interviewerRole = roleDAO.getById(Authority.APPLICATION_INTERVIEWER);
 
         Program program = (Program) sessionFactory.getCurrentSession().get(Program.class, 63);
 
@@ -206,8 +206,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldNotReturnEnalbedUserWithPendingNotifications() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role reviewerRole = roleDAO.getById(Authority.REVIEWER);
-        Role interviewerRole = roleDAO.getById(Authority.INTERVIEWER);
+        Role reviewerRole = roleDAO.getById(Authority.APPLICATION_REVIEWER);
+        Role interviewerRole = roleDAO.getById(Authority.APPLICATION_INTERVIEWER);
 
         Program program = (Program) sessionFactory.getCurrentSession().get(Program.class, 63);
 
@@ -275,7 +275,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetAllSuperAdministrators() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role superadministratorRole = roleDAO.getById(Authority.SUPERADMINISTRATOR);
+        Role superadministratorRole = roleDAO.getById(Authority.SYSTEM_ADMINISTRATOR);
 
         User superadmin = new UserBuilder()
 //        .role(superadministratorRole)
@@ -290,7 +290,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetAllAdmitters() {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role admitterRole = roleDAO.getById(Authority.ADMITTER);
+        Role admitterRole = roleDAO.getById(Authority.INSTITUTION_ADMITTER);
 
         User admitter = new UserBuilder()
 //        .role(admitterRole)

@@ -153,13 +153,14 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             PrismEmailMessage message = messageBuilder.build();
             sendEmail(message);
 
-            if (digestNotificationType == DigestNotificationType.TASK_NOTIFICATION || digestNotificationType == DigestNotificationType.TASK_REMINDER) {
-                user.setLatestTaskNotificationDate(new Date());
-            } else if (digestNotificationType == DigestNotificationType.UPDATE_NOTIFICATION) {
-                user.setLatestUpdateNotificationDate(new Date());
-            } else {
-                user.setLatestOpportunityRequestNotificationDate(new Date());
-            }
+            // FIXME mark notications using user_batch_notification table
+//            if (digestNotificationType == DigestNotificationType.TASK_NOTIFICATION || digestNotificationType == DigestNotificationType.TASK_REMINDER) {
+//                user.setLatestTaskNotificationDate(new Date());
+//            } else if (digestNotificationType == DigestNotificationType.UPDATE_NOTIFICATION) {
+//                user.setLatestUpdateNotificationDate(new Date());
+//            } else {
+//                user.setLatestOpportunityRequestNotificationDate(new Date());
+//            }
 
             return true;
         } catch (Exception e) {

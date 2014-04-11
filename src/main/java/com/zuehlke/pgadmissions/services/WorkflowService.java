@@ -13,11 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
@@ -34,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -359,12 +357,6 @@ public class WorkflowService {
 //        applicationFormUserRoleDAO.deleteUserRole(registeredUser, authority);
     }
 
-    public void insertApplicationUpdate(ApplicationForm applicationForm, User author, ApplicationUpdateScope updateVisibility) {
-//        Date updateTimestamp = new Date();
-//        applicationFormUserRoleDAO.insertApplicationUpdate(applicationForm, author, updateTimestamp, updateVisibility);
-//        applicationForm.setLastUpdated(updateTimestamp);
-    }
-
     public void insertProgramRole(User user, Program program, Authority authority) {
 //        applicationFormUserRoleDAO.insertProgramRole(registeredUser, program, authority);
     }
@@ -443,6 +435,11 @@ public class WorkflowService {
 //            createApplicationFormUserRole(applicationForm, administrator.getKey(), administrator.getValue(), false,
 //                    requiredActions.toArray(new ApplicationFormActionRequired[0]));
         }
+    }
+
+    public void applicationUpdated(ApplicationForm applicationForm, User user) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

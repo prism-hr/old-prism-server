@@ -17,11 +17,10 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
 import com.zuehlke.pgadmissions.domain.CompleteInterviewComment;
 import com.zuehlke.pgadmissions.domain.CompleteReviewComment;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.StateChangeDTO;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
@@ -140,7 +139,7 @@ public class CommentService {
         applicationsService.save(applicationForm);
         applicationsService.refresh(applicationForm);
         applicationFormUserRoleService.stateChanged(stateChangeComment);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationUpdated(applicationForm, user);
     }
 
     public <T extends Comment> T getLastCommentOfType(User user, ApplicationForm applicationForm, Class<T> clazz) {

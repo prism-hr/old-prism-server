@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -125,7 +124,7 @@ public class GenericCommentController {
         
         commentService.save(comment);
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getUser(), ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.applicationUpdated(applicationForm, getUser());
         return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
     }
 

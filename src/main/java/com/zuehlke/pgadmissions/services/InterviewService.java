@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -50,7 +49,7 @@ public class InterviewService {
 
     public void moveApplicationToInterview(User user, final AssignInterviewersComment interviewComment, ApplicationForm applicationForm) {
         interviewComment.setApplication(applicationForm);
-        
+
         applicationsService.setApplicationStatus(applicationForm, ApplicationFormStatus.INTERVIEW);
 
         // TODO add interview status transient field to the comment and use it here
@@ -74,25 +73,24 @@ public class InterviewService {
         commentService.save(interviewComment);
 
         // TODO move into common place
-//        if (previousStatus == ApplicationFormStatus.VALIDATION) {
-//            mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
-//            applicationForm.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
-//            applicationsService.save(applicationForm);
-//            applicationFormUserRoleService.validationStageCompleted(applicationForm);
-//        }
+        // if (previousStatus == ApplicationFormStatus.VALIDATION) {
+        // mailService.sendReferenceRequest(applicationForm.getReferees(), applicationForm);
+        // applicationForm.setUseCustomReferenceQuestions(latestStateChangeComment.getUseCustomReferenceQuestions());
+        // applicationsService.save(applicationForm);
+        // applicationFormUserRoleService.validationStageCompleted(applicationForm);
+        // }
 
         applicationFormUserRoleService.movedToInterviewStage(interviewComment);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationUpdated(applicationForm, user);
     }
 
     public void postVote(InterviewVoteComment interviewVoteComment, User user) {
         ApplicationForm application = interviewVoteComment.getApplication();
-        AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(
-                application, ApplicationFormAction.ASSIGN_INTERVIEWERS);
+        AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(application,
+                ApplicationFormAction.ASSIGN_INTERVIEWERS);
         commentService.save(interviewVoteComment);
         applicationFormUserRoleService.interviewParticipantResponded(interviewVoteComment);
-        applicationFormUserRoleService.insertApplicationUpdate(interviewVoteComment.getApplication(), user,
-                ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.applicationUpdated(interviewVoteComment.getApplication(), user);
         mailService.sendInterviewVoteConfirmationToAdministrators(application, user);
     }
 
@@ -118,27 +116,26 @@ public class InterviewService {
         commentService.save(scheduleComment);
 
         // TODO set due date
-//        thisBean.assignInterviewDueDate(scheduleComment, applicationForm);
+        // thisBean.assignInterviewDueDate(scheduleComment, applicationForm);
         thisBean.sendConfirmationEmails(scheduleComment);
         applicationFormUserRoleService.interviewConfirmed(scheduleComment);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationUpdated(applicationForm, user);
     }
 
-    
     // FIXME change to createAssignedUsers, used in moveApplicationToInterview() method
-//    private void createParticipants(final Interview interview) {
-//        List<InterviewParticipant> participants = Lists.newLinkedList();
-//        InterviewParticipant applicant = new InterviewParticipant();
-//        applicant.setUser(interview.getApplication().getApplicant());
-//        participants.add(applicant);
-//
-//        for (Interviewer interviewer : interview.getInterviewers()) {
-//            InterviewParticipant participant = new InterviewParticipant();
-//            participant.setUser(interviewer.getUser());
-//            participants.add(participant);
-//        }
-//        interview.getParticipants().addAll(participants);
-//    }
+    // private void createParticipants(final Interview interview) {
+    // List<InterviewParticipant> participants = Lists.newLinkedList();
+    // InterviewParticipant applicant = new InterviewParticipant();
+    // applicant.setUser(interview.getApplication().getApplicant());
+    // participants.add(applicant);
+    //
+    // for (Interviewer interviewer : interview.getInterviewers()) {
+    // InterviewParticipant participant = new InterviewParticipant();
+    // participant.setUser(interviewer.getUser());
+    // participants.add(participant);
+    // }
+    // interview.getParticipants().addAll(participants);
+    // }
 
     protected void sendConfirmationEmails(InterviewScheduleComment comment) {
         final ApplicationForm applicationForm = comment.getApplication();
@@ -154,8 +151,7 @@ public class InterviewService {
         }
     }
 
-    private InterviewScheduleComment createInterviewScheduleComment(User user, ApplicationForm application, String interviewInstructions,
-            String locationUrl) {
+    private InterviewScheduleComment createInterviewScheduleComment(User user, ApplicationForm application, String interviewInstructions, String locationUrl) {
         InterviewScheduleComment scheduleComment = new InterviewScheduleComment();
         scheduleComment.setContent("");
         scheduleComment.setAppointmentInstructions(interviewInstructions);

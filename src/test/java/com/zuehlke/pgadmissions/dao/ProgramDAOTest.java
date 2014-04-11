@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AdvertState;
@@ -50,8 +51,9 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .add(Restrictions.eq("state", AdvertState.PROGRAM_APPROVED))
                 .addOrder(Order.asc("title")).list();
-        Program program1 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code1").title("another title").institution(institution).build();
-        Program program2 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code2").title("another title").institution(institution).build();
+        User enabledUserInRole = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        Program program1 = new ProgramBuilder().contactUser(enabledUserInRole).id(1).code("code1").title("another title").institution(institution).build();
+        Program program2 = new ProgramBuilder().contactUser(enabledUserInRole).id(1).code("code2").title("another title").institution(institution).build();
         sessionFactory.getCurrentSession().save(program1);
         sessionFactory.getCurrentSession().save(program2);
         flushAndClearSession();

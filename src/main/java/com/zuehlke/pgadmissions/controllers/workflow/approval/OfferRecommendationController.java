@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
@@ -116,7 +115,7 @@ public class OfferRecommendationController {
             offerRecommendedService.sendToPortico(application);
             modelMap.put("messageCode", "move.approved");
             modelMap.put("application", application.getApplicationNumber());
-            applicationFormUserRoleService.insertApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
+            applicationFormUserRoleService.applicationUpdated(application, user);
             return "redirect:/applications";
         } else {
             return "redirect:/rejectApplication?applicationId=" + application.getApplicationNumber() + "&rejectionId=7";

@@ -12,68 +12,70 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name="APPLICATION_FORM_QUALIFICATION")
+@Entity
+@Table(name = "APPLICATION_FORM_QUALIFICATION")
 public class Qualification implements Serializable, FormSectionObject {
 
-	private static final long serialVersionUID = -8949535622435302565L;
-	
-	@Id
+    private static final long serialVersionUID = -8949535622435302565L;
+
+    @Id
     @GeneratedValue
-	private Integer id;
-	
+    private Integer id;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "proof_of_award_id")
-	private Document proofOfAward;
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name="award_date")
-	private Date qualificationAwardDate;
-	
-	@Column(name="subject")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
-	private String qualificationSubject;
-	
-	@Column(name="title")
+    @JoinColumn(name = "proof_of_award_id")
+    private Document proofOfAward;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "award_date")
+    private Date qualificationAwardDate;
+
+    @Column(name = "subject")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
+    private String qualificationSubject;
+
+    @Column(name = "title")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
     private String qualificationTitle;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "institution_id")
-	private Institution institution;
-    
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
-	@Column(name="qualification_language")
-	private String qualificationLanguage;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="qualification_type_id")
-	private QualificationType qualificationType;
-	
-	@Column(name="grade")
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
-	private String qualificationGrade;
-	
-	@Column(name="start_date")
-	@Temporal(TemporalType.DATE)
-	private Date qualificationStartDate;
-	
-	@Column(name="completed")
-	private Boolean completed;
-	
-	@Column(name="send_to_ucl")
-	private Boolean sendToUCL;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="application_form_id")
-	private ApplicationForm application;
 
-	@Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "institution_id")
+    private Institution institution;
+
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
+    @Column(name = "qualification_language")
+    private String qualificationLanguage;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "qualification_type_id")
+    private QualificationType qualificationType;
+
+    @Column(name = "grade")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
+    private String qualificationGrade;
+
+    @Column(name = "start_date")
+    @Temporal(TemporalType.DATE)
+    private Date qualificationStartDate;
+
+    @Column(name = "completed")
+    private Boolean completed;
+
+    @Column(name = "send_to_ucl")
+    private Boolean sendToUCL;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_form_id")
+    private ApplicationForm application;
+
+    @Transient
     private boolean acceptedTerms;
 
     public Integer getId() {
@@ -187,5 +189,5 @@ public class Qualification implements Serializable, FormSectionObject {
     public void setAcceptedTerms(boolean acceptedTerms) {
         this.acceptedTerms = acceptedTerms;
     }
-    
+
 }

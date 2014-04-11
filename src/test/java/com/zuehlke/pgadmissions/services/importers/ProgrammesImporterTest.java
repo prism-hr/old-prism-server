@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.ProgramFeedDAO;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramFeed;
+import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramFeedBuilder;
@@ -58,8 +58,8 @@ public class ProgrammesImporterTest {
     public void shouldImportPrograms() throws Exception{
         IProgrammesImporter importerMock = EasyMock.createMock(IProgrammesImporter.class);
         
-        ProgramFeed programFeed1 = new ProgramFeed();
-        ProgramFeed programFeed2 = new ProgramFeed();
+        ProgramImport programFeed1 = new ProgramImport();
+        ProgramImport programFeed2 = new ProgramImport();
         
         expect(applicationContext.getBean(IProgrammesImporter.class)).andReturn(importerMock);
         expect(importerMock.getProgramFeeds()).andReturn(Lists.newArrayList(programFeed1, programFeed2));
@@ -73,11 +73,11 @@ public class ProgrammesImporterTest {
     
     @Test
     public void shouldGetProgramFeeds(){
-        List<ProgramFeed> feeds = Collections.emptyList();
+        List<ProgramImport> feeds = Collections.emptyList();
         expect(programFeedDAO.getAllProgramFeeds()).andReturn(feeds);
         
         replay(programFeedDAO);
-        List<ProgramFeed> returnedFeeds = importer.getProgramFeeds();
+        List<ProgramImport> returnedFeeds = importer.getProgramFeeds();
         verify(programFeedDAO);
         assertSame(feeds, returnedFeeds);
     }
@@ -87,7 +87,7 @@ public class ProgrammesImporterTest {
     public void shouldImportProgramsForProgramFeed() throws Exception {
         List<ProgramInstance> currentData = new ArrayList<ProgramInstance>();
         URL xmlFileLocation = new File("src/test/resources/reference_data/programme_feed_atas.xml").toURI().toURL();
-        ProgramFeed programFeed = new ProgramFeedBuilder().feedUrl(xmlFileLocation.toExternalForm()).build();
+        ProgramImport programFeed = new ProgramFeedBuilder().feedUrl(xmlFileLocation.toExternalForm()).build();
         Program p1 = new ProgramBuilder().programFeed(programFeed).code("DDNBENSING09").title("A").atasRequired(false).id(1).build();
         Program p2 = new ProgramBuilder().programFeed(programFeed).code("DDNCIVSUSR09").title("B").atasRequired(true).id(2).build();
         Date deadline = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
@@ -114,7 +114,7 @@ public class ProgrammesImporterTest {
 
         EasyMock.verify(programDAO, importService);
 
-        assertSame(programFeed, p2.getProgramFeed());
+        assertSame(programFeed, p2.getProgramImport());
         Assert.assertTrue("The ATAS flag should have been updated to be true", p1.getAtasRequired());
         Assert.assertFalse("The ATAS flag should have been updated to be false", p2.getAtasRequired());
     }

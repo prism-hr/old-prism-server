@@ -18,12 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -135,7 +134,7 @@ public class ReviewCommentController {
     public String getReviewFeedbackPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_REVIEW);
         WorkflowService.deleteApplicationUpdate(applicationForm, user);
         return REVIEW_FEEDBACK_PAGE;
     }
@@ -144,7 +143,7 @@ public class ReviewCommentController {
     public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result, ModelMap modelMap) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_REVIEW);
 
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {
@@ -165,7 +164,7 @@ public class ReviewCommentController {
         commentService.save(comment);
         applicationForm.getApplicationComments().add(comment);
         WorkflowService.reviewPosted(comment);
-        WorkflowService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
+        WorkflowService.applicationUpdated(applicationForm, user);
 
         return "redirect:/applications?messageCode=review.feedback&application=" + applicationForm.getApplicationNumber();
     }

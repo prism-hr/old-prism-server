@@ -2,8 +2,10 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table
 @DiscriminatorValue(value = "ASSIGN_SUPERVISORS")
 public class AssignSupervisorsComment extends Comment {
 

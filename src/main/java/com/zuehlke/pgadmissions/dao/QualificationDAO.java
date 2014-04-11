@@ -24,10 +24,6 @@ public class QualificationDAO {
         return (Qualification) sessionFactory.getCurrentSession().get(Qualification.class, id);
     }
 
-    public void save(Qualification qualification) {
-        sessionFactory.getCurrentSession().saveOrUpdate(qualification);
-    }
-
     public void delete(Qualification qualification) {
         sessionFactory.getCurrentSession().delete(qualification);
     }

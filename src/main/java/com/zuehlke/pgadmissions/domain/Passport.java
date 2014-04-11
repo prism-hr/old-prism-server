@@ -7,12 +7,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "APPLICATION_PASSPORT")
+@Entity
+@Table(name = "APPLICATION_PASSPORT")
 public class Passport implements Serializable {
 
     private static final long serialVersionUID = 633405865707537799L;
@@ -20,19 +22,19 @@ public class Passport implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @ESAPIConstraint(rule = "LettersAndNumbersOnly", maxLength = 35, message = "{text.field.nonlettersandnumbers}")
     @Column(name = "number")
     private String number;
-    
+
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
     @Column(name = "name")
     private String name;
-    
+
     @Column(name = "issue_date")
     @Temporal(TemporalType.DATE)
     private Date issueDate;
-    
+
     @Column(name = "expiry_date")
     @Temporal(TemporalType.DATE)
     private Date expiryDate;

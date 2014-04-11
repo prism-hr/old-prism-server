@@ -131,7 +131,7 @@ public class RefereeService {
             user.setActivationCode(encryptionUtils.generateUUID());
         }
 
-        if (!roleService.hasRole(user, Authority.REFEREE, referee.getApplication())) {
+        if (!roleService.hasRole(user, Authority.APPLICATION_REFEREE, referee.getApplication())) {
 //            user.getRoles().add(refereeRole);
             if (user.getActivationCode() == null) {
                 
@@ -162,7 +162,7 @@ public class RefereeService {
         User refereeUser = referee.getUser();
         if (refereeUser != null) {
             referee.getUser().getReferees().remove(referee);
-            applicationFormUserRoleService.deleteApplicationRole(referee.getApplication(), refereeUser, Authority.REFEREE);
+            applicationFormUserRoleService.deleteApplicationRole(referee.getApplication(), refereeUser, Authority.APPLICATION_REFEREE);
         }
         refereeDAO.delete(referee);
     }

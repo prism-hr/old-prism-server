@@ -10,8 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity(name = "DISABILITY")
+@Entity
+@Table(name = "DISABILITY")
 public class Disability implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = 6141410638125684970L;
@@ -75,7 +77,7 @@ public class Disability implements SelfReferringImportedObject, Serializable {
         }
         return code;
     }
-    
+
     public void setCode(String code) {
         this.code = code;
     }
@@ -99,5 +101,5 @@ public class Disability implements SelfReferringImportedObject, Serializable {
     public void setDisabledDate(Date disabledDate) {
         // ignore
     }
-    
+
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -42,12 +41,12 @@ public class WithdrawController {
     public String withdrawApplicationAndGetApplicationList(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.WITHDRAW);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_WITHDRAW);
 
         withdrawService.withdrawApplication(applicationForm);
         withdrawService.sendToPortico(applicationForm);
         actionService.deleteApplicationActions(applicationForm);
-        workflowService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.ALL_USERS);
+        workflowService.applicationUpdated(applicationForm, user);
         return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();
     }
 

@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Score;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
@@ -46,7 +47,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         commentDAO = new CommentDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").enabled(false)
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("code").userAccount(new UserAccount().withEnabled(false).withPassword("haslo"))
                 .build();
         save(user);
         flushAndClearSession();
@@ -112,7 +113,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnNoValidationCommentForApplication() {
         User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .password("password").enabled(false).build();
+                .userAccount(new UserAccount().withPassword("password").withEnabled(false)).build();
 
         ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
 
@@ -126,7 +127,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldReturnCommentWithTwoScores() {
         User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .password("password").enabled(false).build();
+                .userAccount(new UserAccount().withPassword("password").withEnabled(false)).build();
 
         ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
         Score score1 = new ScoreBuilder().dateResponse(new Date()).question("1??").questionType(QuestionType.RATING).ratingResponse(4).build();

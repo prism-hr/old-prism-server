@@ -44,7 +44,7 @@ public class UsersInProgrammeController {
     @RequestMapping(method = RequestMethod.GET, value = "/program")
     public String getUsersInProgramView() {
         User user = userService.getCurrentUser();
-        if (!roleService.hasAnyRole(user, Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR)) {
+        if (!roleService.hasAnyRole(user, Authority.SYSTEM_ADMINISTRATOR, Authority.PROGRAM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
         return USERS_ROLES_VIEW;

@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -18,8 +17,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import com.google.common.base.Objects;
@@ -27,7 +25,8 @@ import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "ADVERT")
+@Entity
+@Table(name = "ADVERT")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Advert implements Serializable {
     private static final long serialVersionUID = 5963260213501162814L;

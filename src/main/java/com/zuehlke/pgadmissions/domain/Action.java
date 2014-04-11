@@ -7,16 +7,17 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 
-@Entity(name = "ACTION")
+@Entity
+@Table(name = "ACTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class Action implements Serializable {
 
@@ -26,22 +27,18 @@ public class Action implements Serializable {
     @Column(name = "id")
     @Enumerated(EnumType.STRING)
     private ApplicationFormAction id;
-    
+
     @Column(name = "action_type_id")
     @Enumerated(EnumType.STRING)
     private ActionType actionType;
-    
+
     @Column(name = "precedence")
     private Integer precedence = 0;
-    
-    @Column(name = "notification")
+
+    @Column(name = "notification_method_id")
     @Enumerated(EnumType.STRING)
-    private NotificationMethod notification = null;
-    
-    @Column(name = "update_visibility")
-    @Enumerated(EnumType.ORDINAL)
-    private ApplicationUpdateScope updateVisibility = null;
-    
+    private NotificationMethod notificationMethod = null;
+
     public ApplicationFormAction getId() {
         return id;
     }
@@ -66,20 +63,12 @@ public class Action implements Serializable {
         this.precedence = precedence;
     }
 
-    public NotificationMethod getNotification() {
-        return notification;
+    public NotificationMethod getNotificationMethod() {
+        return notificationMethod;
     }
 
-    public void setNotification(NotificationMethod notification) {
-        this.notification = notification;
-    }
-
-    public ApplicationUpdateScope getUpdateVisibility() {
-        return updateVisibility;
-    }
-
-    public void setUpdateVisibility(ApplicationUpdateScope updateVisibility) {
-        this.updateVisibility = updateVisibility;
+    public void setNotificationMethod(NotificationMethod notification) {
+        this.notificationMethod = notification;
     }
 
 }

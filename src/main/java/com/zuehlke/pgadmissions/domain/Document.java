@@ -10,9 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -25,7 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
-@Entity(name = "DOCUMENT")
+@Entity
+@Table(name = "DOCUMENT")
 public class Document implements Serializable {
 
     private static final long serialVersionUID = -6396463075916267580L;

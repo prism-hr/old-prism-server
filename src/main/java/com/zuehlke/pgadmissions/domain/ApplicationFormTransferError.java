@@ -12,19 +12,21 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
 
 /**
- * I represent the error situation recognized during transfer of application form (PRISM ----> PORTICO).
- * Remark: This enties actually constitute a log that can be accessed by application administrator on UCL side.
+ * I represent the error situation recognized during transfer of application form (PRISM ----> PORTICO). Remark: This enties actually constitute a log that can
+ * be accessed by application administrator on UCL side.
  */
-@Entity(name = "APPLICATION_FORM_TRANSFER_ERROR")
+@Entity
+@Table(name = "APPLICATION_FORM_TRANSFER_ERROR")
 public class ApplicationFormTransferError implements Serializable {
 
     private static final long serialVersionUID = -8609731063290824582L;
-    
+
     @Id
     @GeneratedValue
     private Long id;
@@ -34,7 +36,7 @@ public class ApplicationFormTransferError implements Serializable {
     @JoinColumn(name = "transfer_id")
     private ApplicationFormTransfer transfer;
 
-    /** Time point when the error happened.*/
+    /** Time point when the error happened. */
     @Column(name = "handling_time")
     private Date timepoint;
 

@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AdvertState;
@@ -50,8 +51,9 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .add(Restrictions.eq("state", AdvertState.PROGRAM_APPROVED))
                 .addOrder(Order.asc("title")).list();
-        Program program1 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code1").title("another title").institution(institution).build();
-        Program program2 = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code2").title("another title").institution(institution).build();
+        User enabledUserInRole = testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR);
+        Program program1 = new ProgramBuilder().contactUser(enabledUserInRole).id(1).code("code1").title("another title").institution(institution).build();
+        Program program2 = new ProgramBuilder().contactUser(enabledUserInRole).id(1).code("code2").title("another title").institution(institution).build();
         sessionFactory.getCurrentSession().save(program1);
         sessionFactory.getCurrentSession().save(program2);
         flushAndClearSession();
@@ -61,7 +63,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetProgramById() {
-        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code1").title("another title").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).id(1).code("code1").title("another title").institution(institution).build();
         sessionFactory.getCurrentSession().save(program);
         flushAndClearSession();
         assertEquals(program.getId(), programDAO.getById(program.getId()).getId());
@@ -69,7 +71,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetProgramByCode() {
-        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).id(1).code("code1").title("another title").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).id(1).code("code1").title("another title").institution(institution).build();
         sessionFactory.getCurrentSession().save(program);
         flushAndClearSession();
         assertEquals(program.getId(), programDAO.getProgramByCode("code1").getId());
@@ -77,14 +79,14 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveProgram() {
-        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code1").title("another title").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("code1").title("another title").institution(institution).build();
         programDAO.save(program);
         Assert.assertNotNull(program.getId());
     }
 
     @Test
     public void shouldGetProgramWithScoringDefinitions() {
-        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code1").title("another title").institution(institution).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("code1").title("another title").institution(institution).build();
         ScoringDefinition scoringDef1 = new ScoringDefinition();
         scoringDef1.setContent("aaa");
         scoringDef1.setStage(ScoringStage.INTERVIEW);
@@ -113,7 +115,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         AdvertClosingDate badge1 = new AdvertClosingDateBuilder().closingDate(closingDates.minusMonths(1).toDate()).build();
         AdvertClosingDate badge2 = new AdvertClosingDateBuilder().closingDate(closingDates.plusMonths(1).toDate()).build();
         AdvertClosingDate badge3 = new AdvertClosingDateBuilder().closingDate(closingDates.plusMonths(2).toDate()).build();
-        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code2").institution(institution).closingDates(badge1, badge2, badge3).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("code2").institution(institution).closingDates(badge1, badge2, badge3).build();
         badge1.setAdvert(program);
         badge2.setAdvert(program);
         badge3.setAdvert(program);
@@ -126,9 +128,9 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetLastCustomProgram() {
-        Program program1 = ProgramBuilder.aProgram(institution).contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code(institution.getCode() + "_00006").build();
-        Program program2 = ProgramBuilder.aProgram(institution).contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code(institution.getCode() + "_00008").build();
-        Program program3 = ProgramBuilder.aProgram(institution).contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code(institution.getCode() + "_00007").build();
+        Program program1 = ProgramBuilder.aProgram(institution).contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code(institution.getCode() + "_00006").build();
+        Program program2 = ProgramBuilder.aProgram(institution).contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code(institution.getCode() + "_00008").build();
+        Program program3 = ProgramBuilder.aProgram(institution).contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code(institution.getCode() + "_00007").build();
         save(program1, program2, program3);
         flushAndClearSession();
         Program returned = programDAO.getLastCustomProgram(institution);
@@ -138,7 +140,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetClosingDateById() {
         AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(new Date()).build();
-        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
         AdvertClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDate.getId());
@@ -149,7 +151,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetClosingDateByDate() {
         Date closingDate = new Date();
         AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(closingDate).build();
-        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
         AdvertClosingDate gotClosingDate = programDAO.getClosingDateByDate(program, closingDate);
@@ -164,7 +166,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         Date testDateOne = truncatedDateToday.toDate();
         Date testDateTwo = truncatedDateTomorrow.toDate();
         AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(testDateOne).build();
-        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
         sessionFactory.getCurrentSession().flush();
         sessionFactory.getCurrentSession().clear();
@@ -181,7 +183,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     public void shouldDeleteClosingDate() {
         AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(new Date()).build();
         Integer putClosingDateId = putClosingDate.getId();
-        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
+        Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("code").institution(institution).closingDates(putClosingDate).build();
         sessionFactory.getCurrentSession().save(program);
         sessionFactory.getCurrentSession().flush();
         sessionFactory.getCurrentSession().clear();

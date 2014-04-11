@@ -6,10 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.hibernate.search.annotations.Indexed;
 
-@Entity(name = "SYSTEM")
+@Entity
+@Table(name = "SYSTEM")
 @Indexed
 public class PrismSystem implements Serializable, PrismScope {
 

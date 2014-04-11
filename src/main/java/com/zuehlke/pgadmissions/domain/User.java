@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -20,8 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Table;
 import javax.validation.Valid;
 
 import org.apache.solr.analysis.LowerCaseFilterFactory;
@@ -45,7 +43,8 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
 @Indexed
-@Entity(name = "USER")
+@Entity
+@Table(name = "USER")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class User implements UserDetails, Comparable<User>, Serializable {
 
@@ -280,7 +279,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     public String getPassword() {
         return account != null ? account.getPassword() : null;
     }
-    
+
     @Override
     public String getUsername() {
         return email;

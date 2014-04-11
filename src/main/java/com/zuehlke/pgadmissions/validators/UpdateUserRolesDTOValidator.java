@@ -18,7 +18,7 @@ public class UpdateUserRolesDTOValidator extends AbstractValidator {
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
 		UpdateUserRolesDTO userDTO = (UpdateUserRolesDTO) target;
-		if( !(userDTO.getSelectedAuthorities().length == 1 && userDTO.getSelectedAuthorities()[0] == Authority.SUPERADMINISTRATOR)){
+		if( !(userDTO.getSelectedAuthorities().length == 1 && userDTO.getSelectedAuthorities()[0] == Authority.SYSTEM_ADMINISTRATOR)){
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", EMPTY_DROPDOWN_ERROR_MESSAGE);		
 		}
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedUser", EMPTY_DROPDOWN_ERROR_MESSAGE);

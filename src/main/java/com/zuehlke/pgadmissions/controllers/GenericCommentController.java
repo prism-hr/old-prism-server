@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
@@ -109,7 +108,7 @@ public class GenericCommentController {
     public String getGenericCommentPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_COMMENT);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return GENERIC_COMMENT_PAGE;
     }
@@ -118,14 +117,14 @@ public class GenericCommentController {
     public String addComment(@Valid @ModelAttribute("comment") Comment comment, BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_COMMENT);
         if (result.hasErrors()) {
             return GENERIC_COMMENT_PAGE;
         }
         
         commentService.save(comment);
         applicationsService.save(applicationForm);
-        applicationFormUserRoleService.insertApplicationUpdate(applicationForm, getUser(), ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.applicationUpdated(applicationForm, getUser());
         return "redirect:/comment?applicationId=" + applicationForm.getApplicationNumber();
     }
 

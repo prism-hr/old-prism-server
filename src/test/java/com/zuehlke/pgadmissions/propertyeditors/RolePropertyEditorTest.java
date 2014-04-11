@@ -20,8 +20,8 @@ public class RolePropertyEditorTest {
 	
 	@Test	
 	public void shouldLoadByAuthorityAndSetAsValue(){
-		Role role = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
-		EasyMock.expect(roleServiceMock.getById(Authority.ADMINISTRATOR)).andReturn(role);
+		Role role = new RoleBuilder().id(Authority.PROGRAM_ADMINISTRATOR).build();
+		EasyMock.expect(roleServiceMock.getById(Authority.PROGRAM_ADMINISTRATOR)).andReturn(role);
 		EasyMock.replay(roleServiceMock);
 		
 		editor.setAsText("ADMINISTRATOR");
@@ -42,7 +42,7 @@ public class RolePropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnAuthorityAsEnum(){			
-		editor.setValue(new RoleBuilder().id(Authority.ADMINISTRATOR).build());
+		editor.setValue(new RoleBuilder().id(Authority.PROGRAM_ADMINISTRATOR).build());
 		assertEquals("ADMINISTRATOR", editor.getAsText());
 	}
 	

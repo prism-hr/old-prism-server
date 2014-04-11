@@ -16,24 +16,22 @@ import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -122,7 +120,7 @@ public class ApplicationFormService {
         
         setApplicationStatus(application, ApplicationFormStatus.VALIDATION);
         workflowService.applicationSubmitted(application);
-        applicationFormDAO.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        workflowService.applicationUpdated(application, userService.getCurrentUser());
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -192,8 +190,8 @@ public class ApplicationFormService {
 
     public void saveOrUpdateApplicationSection(ApplicationForm application) {
         User currentUser = userService.getCurrentUser();
-        Action action = actionService.getById(actionService.getPrecedentAction(application, currentUser, ActionType.VIEW_EDIT));
-        applicationFormDAO.insertApplicationUpdate(application, userService.getCurrentUser(), action.getUpdateVisibility());
+        Action action = actionService.getById(actionService.getPrecedentAction(application, currentUser, ActionType.APPLICATION_VIEW_EDIT));
+        workflowService.applicationUpdated(application, userService.getCurrentUser());
     }
 
     public void openApplicationForEdit(ApplicationForm application, User user) {
@@ -205,7 +203,7 @@ public class ApplicationFormService {
     }
 
     public void queueApplicationForExport(ApplicationForm application) {
-        if (application.getLastState().isSubmitted() && application.getProgram().getProgramFeed() != null) {
+        if (application.getLastState().isSubmitted() && application.getProgram().getProgramImport() != null) {
             exportQueueService.createOrReturnExistingApplicationFormTransfer(application);
         }
     }
@@ -221,12 +219,12 @@ public class ApplicationFormService {
 
     public void applicationCreated(ApplicationForm application) {
         User applicant = application.getApplicant();
-        Action action = actionService.getById(ApplicationFormAction.COMPLETE_APPLICATION);
-        Role role = roleService.getById(Authority.APPLICANT);
+        Action action = actionService.getById(ApplicationFormAction.APPLICATION_COMPLETE_APPLICATION);
+        Role role = roleService.getById(Authority.APPLICATION_APPLICANT);
         ActionRequired completeApplicationAction = new ActionRequired().withApplication(application).withRole(role).withAction(action).withDeadlineDate(application.getDueDate())
                 .withBindDeadlineToDueDate(false).withRaisesUrgentFlag(true);
         // TODO save action
-        roleService.createUserRole(application, applicant, Authority.APPLICANT);
+        roleService.createUserRole(application, applicant, Authority.APPLICATION_APPLICANT);
     }
 
     public ApplicationDescriptor getApplicationDescriptorForUser(final ApplicationForm application, final User user) {
@@ -237,8 +235,8 @@ public class ApplicationFormService {
         return applicationDescriptor;
     }
 
-    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ApplicationFormAction completeStageAction) {
-        return applicationFormDAO.getLatestStateChangeComment(applicationForm, completeStageAction);
+    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ActionType applicationCompleteApprovalStage) {
+        return applicationFormDAO.getLatestStateChangeComment(applicationForm, applicationCompleteApprovalStage);
     }
 
     private void autoPopulateApplication(ApplicationForm applicationForm) {

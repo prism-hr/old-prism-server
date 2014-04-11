@@ -41,12 +41,12 @@ public class CreateNewApplicationUserController {
 
     @RequestMapping(value = "/createInterviewer", method = RequestMethod.POST)
     public String createNewInterviewerUser(@Valid @ModelAttribute("suggestedUser") UserDTO userDTO, BindingResult bindingResult, ModelMap modelMap) {
-        return createNewUser(Authority.INTERVIEWER, userDTO, bindingResult, modelMap);
+        return createNewUser(Authority.APPLICATION_INTERVIEWER, userDTO, bindingResult, modelMap);
     }
 
     @RequestMapping(value = "/createReviewer", method = RequestMethod.POST)
     public String createNewReviewerUser(@Valid @ModelAttribute("suggestedUser") UserDTO userDTO, BindingResult bindingResult, ModelMap modelMap) {
-        return createNewUser(Authority.REVIEWER, userDTO, bindingResult, modelMap);
+        return createNewUser(Authority.APPLICATION_REVIEWER, userDTO, bindingResult, modelMap);
     }
 
     private String createNewUser(Authority userType, UserDTO userDTO, BindingResult bindingResult, ModelMap modelMap) {
@@ -54,9 +54,9 @@ public class CreateNewApplicationUserController {
             switch (userType) {
             case SUPERVISOR:
                 return CREATE_SUPERVISOR_SECTION;
-            case INTERVIEWER:
+            case APPLICATION_INTERVIEWER:
                 return CREATE_INTERVIEWER_SECTION;
-            case REVIEWER:
+            case APPLICATION_REVIEWER:
                 return CREATE_REVIEWER_SECTION;
             default:
                 throw new RuntimeException();

@@ -84,7 +84,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldGetAdvertsByUserUsername() {
-        User testUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        User testUser = testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR);
         String testUserUsername = testUser.getUsername();
         
         List<Integer> advertIds = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class)
@@ -122,7 +122,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetAdvertsByUserUpi() {
         String testUPI = "testUPI";
-        User testUser = testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR);
+        User testUser = testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR);
 //        testUser.setUpi(testUPI);
         save(testUser);
         
@@ -163,7 +163,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
         Program otherProgram = testObjectProvider.getAlternativeEnabledProgram(program);
         
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(program, otherProgram)
-                .title("feed").user(testObjectProvider.getEnabledUserInRole(Authority.SUPERADMINISTRATOR)).build();
+                .title("feed").user(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
         save(feed);
         
         List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.OPPORTUNITIESBYFEEDID, feed.getId().toString(), null);
@@ -213,7 +213,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetRecommendedAdverts() {
-        String testUserId = new Integer(testObjectProvider.getEnabledUserInRole(Authority.APPLICANT).getId()).toString();
+        String testUserId = new Integer(testObjectProvider.getEnabledUserInRole(Authority.APPLICATION_APPLICANT).getId()).toString();
         List<AdvertDTO> gotAdverts = advertDAO.getAdvertFeed(OpportunityListType.RECOMMENDEDOPPORTUNTIIESBYAPPLICANTID, testUserId, null);
         assertTrue(gotAdverts.size() > 0);
     }

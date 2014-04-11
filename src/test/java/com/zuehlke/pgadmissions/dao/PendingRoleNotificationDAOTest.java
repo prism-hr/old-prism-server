@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -29,9 +30,9 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturAllPendingRoleNotifications() {
-        PendingRoleNotification pendingNotificationOne = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.ADMINISTRATOR)).program(program)
+        PendingRoleNotification pendingNotificationOne = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.PROGRAM_ADMINISTRATOR)).program(program)
                 .build();
-        PendingRoleNotification pendingNotificationTwo = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.REFEREE)).program(program).build();
+        PendingRoleNotification pendingNotificationTwo = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.APPLICATION_REFEREE)).program(program).build();
         user.getPendingRoleNotifications().addAll(Arrays.asList(pendingNotificationOne, pendingNotificationTwo));
         sessionFactory.getCurrentSession().saveOrUpdate(user);
 
@@ -48,7 +49,7 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldDeletePendingNotification() {
-        PendingRoleNotification pendingNotification = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.ADMINISTRATOR)).program(program)
+        PendingRoleNotification pendingNotification = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.PROGRAM_ADMINISTRATOR)).program(program)
                 .build();
 
         user.getPendingRoleNotifications().addAll(Arrays.asList(pendingNotification));
@@ -65,7 +66,7 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
     public void initialise() {
         pendingRoleNotificationDAO = new PendingRoleNotificationDAO(sessionFactory);
         roleDAO = new RoleDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").enabled(false)
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withEnabled(false))
                 .build();
         save(user);
         flushAndClearSession();

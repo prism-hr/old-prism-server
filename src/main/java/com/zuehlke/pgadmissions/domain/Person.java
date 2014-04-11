@@ -7,22 +7,24 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "PERSON")
+@Entity
+@Table(name = "PERSON")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Person implements Serializable {
 
     private static final long serialVersionUID = 1747305941073095458L;
-    
+
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
     private String email;
-    
+
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
     private String firstname;
 

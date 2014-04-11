@@ -7,10 +7,12 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
-@Entity(name = "NOTIFICATIONS_DURATION")
+@Entity
+@Table(name = "NOTIFICATIONS_DURATION")
 public class NotificationsDuration {
 
     @Id

@@ -13,11 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
@@ -34,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -45,10 +43,10 @@ public class WorkflowService {
     private static final HashMap<ApplicationFormStatus, ApplicationFormAction> INITIATE_STAGE_MAP;
     static {
         INITIATE_STAGE_MAP = new HashMap<ApplicationFormStatus, ApplicationFormAction>(4);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.REVIEW, ApplicationFormAction.ASSIGN_REVIEWERS);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.INTERVIEW, ApplicationFormAction.ASSIGN_INTERVIEWERS);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.REJECTED, ApplicationFormAction.CONFIRM_REJECTION);
+        INITIATE_STAGE_MAP.put(ApplicationFormStatus.REVIEW, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS);
+        INITIATE_STAGE_MAP.put(ApplicationFormStatus.INTERVIEW, ApplicationFormAction.APPLICATION_ASSIGN_INTERVIEWERS);
+        INITIATE_STAGE_MAP.put(ApplicationFormStatus.APPROVAL, ApplicationFormAction.APPLICATION_ASSIGN_SUPERVISORS);
+        INITIATE_STAGE_MAP.put(ApplicationFormStatus.REJECTED, ApplicationFormAction.APPLICATION_CONFIRM_REJECTION);
     };
 
     @Autowired
@@ -359,12 +357,6 @@ public class WorkflowService {
 //        applicationFormUserRoleDAO.deleteUserRole(registeredUser, authority);
     }
 
-    public void insertApplicationUpdate(ApplicationForm applicationForm, User author, ApplicationUpdateScope updateVisibility) {
-//        Date updateTimestamp = new Date();
-//        applicationFormUserRoleDAO.insertApplicationUpdate(applicationForm, author, updateTimestamp, updateVisibility);
-//        applicationForm.setLastUpdated(updateTimestamp);
-    }
-
     public void insertProgramRole(User user, Program program, Authority authority) {
 //        applicationFormUserRoleDAO.insertProgramRole(registeredUser, program, authority);
     }
@@ -403,7 +395,7 @@ public class WorkflowService {
         Map<User, Authority> administrators = Maps.newHashMap();
 
         for (User superAdministrator : userDAO.getSuperadministrators()) {
-            administrators.put(superAdministrator, Authority.SUPERADMINISTRATOR);
+            administrators.put(superAdministrator, Authority.SYSTEM_ADMINISTRATOR);
         }
 
 //        for (RegisteredUser administrator : applicationForm.getProgram().getAdministrators()) {
@@ -425,7 +417,7 @@ public class WorkflowService {
         if (latestStateChangeComment != null) {
             User stateAdministrator = latestStateChangeComment.getDelegateAdministrator();
             if (stateAdministrator != null) {
-                administrators.put(stateAdministrator, Authority.STATEADMINISTRATOR);
+                administrators.put(stateAdministrator, Authority.APPLICATION_ADMINISTRATOR);
             }
         }
 
@@ -443,6 +435,11 @@ public class WorkflowService {
 //            createApplicationFormUserRole(applicationForm, administrator.getKey(), administrator.getValue(), false,
 //                    requiredActions.toArray(new ApplicationFormActionRequired[0]));
         }
+    }
+
+    public void applicationUpdated(ApplicationForm applicationForm, User user) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

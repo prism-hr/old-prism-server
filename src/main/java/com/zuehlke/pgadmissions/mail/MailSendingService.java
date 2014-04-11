@@ -81,7 +81,7 @@ public class MailSendingService extends AbstractMailSendingService {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastState().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getState())) {
@@ -107,7 +107,7 @@ public class MailSendingService extends AbstractMailSendingService {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastState().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getState())) {
@@ -133,7 +133,7 @@ public class MailSendingService extends AbstractMailSendingService {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(form.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
-                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(),
+                    new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
                             admissionsOfferServiceLevel, form.getLastState().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(form.getState())) {
@@ -175,7 +175,7 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), application, application.getApplicant(),
-                            roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(), admissionsOfferServiceLevel, application.getLastState().getId().displayValue() });
+                            roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(), admissionsOfferServiceLevel, application.getLastState().getId().displayValue() });
 
             Map<String, Object> model = modelBuilder.build();
             if (ApplicationFormStatus.REJECTED.equals(application.getState())) {

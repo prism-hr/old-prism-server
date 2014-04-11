@@ -21,8 +21,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
@@ -72,11 +72,11 @@ public class OfferRecommendationController {
     public String getOfferRecommendationPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(application, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
+        actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
 
         OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
         AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(application,
-                ApplicationFormAction.COMPLETE_APPROVAL_STAGE);
+                ActionType.APPLICATION_COMPLETE_APPROVAL_STAGE);
         if (approvalComment != null) {
             offerRecommendedComment.setProjectTitle(approvalComment.getProjectTitle());
             offerRecommendedComment.setProjectAbstract(approvalComment.getProjectAbstract());
@@ -105,7 +105,7 @@ public class OfferRecommendationController {
             ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(application, user, ApplicationFormAction.CONFIRM_OFFER_RECOMMENDATION);
+        actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
 
         if (errors.hasErrors()) {
             modelMap.put("offerRecommendedComment", offerRecommendedComment);
@@ -116,7 +116,7 @@ public class OfferRecommendationController {
             offerRecommendedService.sendToPortico(application);
             modelMap.put("messageCode", "move.approved");
             modelMap.put("application", application.getApplicationNumber());
-            applicationFormUserRoleService.insertApplicationUpdate(application, user, ApplicationUpdateScope.ALL_USERS);
+            applicationFormUserRoleService.applicationUpdated(application, user);
             return "redirect:/applications";
         } else {
             return "redirect:/rejectApplication?applicationId=" + application.getApplicationNumber() + "&rejectionId=7";

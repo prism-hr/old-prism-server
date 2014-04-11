@@ -8,6 +8,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -15,7 +16,8 @@ import org.springframework.format.annotation.NumberFormat;
 
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
-@Entity(name = "THROTTLE")
+@Entity
+@Table(name = "THROTTLE")
 public class Throttle implements Serializable {
 
     private static final long serialVersionUID = 6043305345938615563L;

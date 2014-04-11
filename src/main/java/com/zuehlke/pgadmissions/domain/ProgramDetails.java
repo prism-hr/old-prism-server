@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -22,7 +23,8 @@ import javax.validation.Valid;
 
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
-@Entity(name = "APPLICATION_FORM_PROGRAM_DETAIL")
+@Entity
+@Table(name = "APPLICATION_FORM_PROGRAM_DETAIL")
 public class ProgramDetails implements Serializable, FormSectionObject {
 
     private static final long serialVersionUID = -5997103825068065955L;
@@ -30,28 +32,28 @@ public class ProgramDetails implements Serializable, FormSectionObject {
     @Id
     @GeneratedValue
     protected Integer id;
-	
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_option_id")
     private StudyOption studyOption;
 
-	@Temporal(value = TemporalType.DATE)
-	@Column(name = "start_date")
-	private Date startDate;
-	
-	@OneToOne(fetch = FetchType.LAZY)
+    @Temporal(value = TemporalType.DATE)
+    @Column(name = "start_date")
+    private Date startDate;
+
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sources_of_interest_id")
     private SourcesOfInterest sourceOfInterest;
-	
-	@ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
-	@Column (name = "sources_of_interest_text")
-	private String sourceOfInterestText;
+
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 100)
+    @Column(name = "sources_of_interest_text")
+    private String sourceOfInterestText;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "programme_detail_id")
-	@Valid
-	private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
-    
+    @JoinColumn(name = "programme_detail_id")
+    @Valid
+    private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
+
     @OneToOne(mappedBy = "programDetails", fetch = FetchType.LAZY)
     private ApplicationForm application;
 
@@ -105,7 +107,7 @@ public class ProgramDetails implements Serializable, FormSectionObject {
     public void setSuggestedSupervisors(List<SuggestedSupervisor> suggestedSupervisors) {
         this.suggestedSupervisors = suggestedSupervisors;
     }
-    
+
     public ApplicationForm getApplication() {
         return application;
     }
@@ -121,5 +123,5 @@ public class ProgramDetails implements Serializable, FormSectionObject {
     public void setAcceptedTerms(boolean acceptedTerms) {
         this.acceptedTerms = acceptedTerms;
     }
-    
+
 }

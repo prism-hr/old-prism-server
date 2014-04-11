@@ -12,10 +12,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -39,8 +39,7 @@ public class RegisterFormValidatorTest {
 
     @Before
     public void setup() {
-        user = new UserBuilder().id(4)
-                .confirmPassword("12345678").password("12345678").build();
+        user = new UserBuilder().id(4).userAccount(new UserAccount().withConfirmPassword("12345678").withPassword("12345678")).build();
         userServiceMock = EasyMock.createMock(UserService.class);
         recordValidator = new RegisterFormValidator(userServiceMock);
         recordValidator.setValidator((javax.validation.Validator) validator);
@@ -84,7 +83,7 @@ public class RegisterFormValidatorTest {
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("You must enter a valid email address.", mappingResult.getFieldError("email").getDefaultMessage());
     }
-    
+
     @Test
     @DirtiesContext
     public void shouldRejectIfNoConfirmPassword() {

@@ -63,7 +63,7 @@ public class GenericCommentControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.COMMENT);
+        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_COMMENT);
 
         EasyMock.replay(actionsProviderMock);
         assertEquals("private/staff/admin/comment/genericcomment", controller.getGenericCommentPage(modelMap));

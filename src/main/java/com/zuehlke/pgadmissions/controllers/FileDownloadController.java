@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.ReferenceService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -37,7 +38,7 @@ public class FileDownloadController {
     private DocumentService documentService;
 
     @Autowired
-    private ReferenceService referenceService;
+    private CommentService commentService;
 
     @Autowired
     private UserService userService;
@@ -57,7 +58,7 @@ public class FileDownloadController {
 
     @RequestMapping(value = "/reference", method = RequestMethod.GET)
     public void downloadReferenceDocument(@RequestParam("referenceId") String encryptedReferenceId, HttpServletResponse response) throws IOException {
-        ReferenceComment reference = referenceService.getReferenceById(encryptionHelper.decryptToInteger(encryptedReferenceId));
+        ReferenceComment reference = (ReferenceComment) commentService.getById(encryptionHelper.decryptToInteger(encryptedReferenceId));
         User currentUser = userService.getCurrentUser();
         // FIXME check if user can see reference
         if (reference == null /* || !currentUser.canSeeReference(reference) */) {

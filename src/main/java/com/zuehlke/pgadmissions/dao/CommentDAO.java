@@ -79,4 +79,9 @@ public class CommentDAO {
         }
         return (T) criteria.uniqueResult();
     }
+
+    public Comment getById(int id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

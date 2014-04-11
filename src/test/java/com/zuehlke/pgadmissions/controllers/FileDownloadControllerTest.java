@@ -24,8 +24,8 @@ import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.ReferenceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 
@@ -42,7 +42,7 @@ public class FileDownloadControllerTest {
 
     @Mock
     @InjectIntoByType
-    private ReferenceService referenceServiceMock;
+    private CommentService commentServiceMock;
 
     @Mock
     @InjectIntoByType
@@ -117,8 +117,8 @@ public class FileDownloadControllerTest {
         ReferenceComment reference = new ReferenceCommentBuilder().id(1).document(document).build();
         HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 
-        EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
-        EasyMock.replay(referenceServiceMock);
+        EasyMock.expect(commentServiceMock.getById(1)).andReturn(reference);
+        EasyMock.replay(commentServiceMock);
 
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ServletOutputStream servletOutputStream = new ServletOutputStream() {
@@ -139,7 +139,7 @@ public class FileDownloadControllerTest {
         EasyMock.replay(responseMock);
         controller.downloadReferenceDocument("encryptedId", responseMock);
 
-        EasyMock.verify(referenceServiceMock, responseMock);
+        EasyMock.verify(commentServiceMock, responseMock);
 
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         assertEquals("aaaa", new String(byteArray));
@@ -151,11 +151,11 @@ public class FileDownloadControllerTest {
         EasyMock.replay(encryptionHelperMock);
         ReferenceComment reference = new ReferenceCommentBuilder().id(1).build();
         HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
-        EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
-        EasyMock.replay(referenceServiceMock);
+        EasyMock.expect(commentServiceMock.getById(1)).andReturn(reference);
+        EasyMock.replay(commentServiceMock);
         controller.downloadReferenceDocument("encryptedId", responseMock);
 
-        EasyMock.verify(referenceServiceMock);
+        EasyMock.verify(commentServiceMock);
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -163,11 +163,11 @@ public class FileDownloadControllerTest {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
         EasyMock.replay(encryptionHelperMock);
         HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
-        EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(null);
-        EasyMock.replay(referenceServiceMock);
+        EasyMock.expect(commentServiceMock.getById(1)).andReturn(null);
+        EasyMock.replay(commentServiceMock);
         controller.downloadReferenceDocument("encryptedId", responseMock);
 
-        EasyMock.verify(referenceServiceMock);
+        EasyMock.verify(commentServiceMock);
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -177,11 +177,11 @@ public class FileDownloadControllerTest {
         Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).build();
         ReferenceComment reference = new ReferenceCommentBuilder().id(1).document(document).build();
         HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
-        EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
-        EasyMock.replay(referenceServiceMock);
+        EasyMock.expect(commentServiceMock.getById(1)).andReturn(reference);
+        EasyMock.replay(commentServiceMock);
 
         controller.downloadReferenceDocument("encryptedId", responseMock);
 
-        EasyMock.verify(referenceServiceMock);
+        EasyMock.verify(commentServiceMock);
     }
 }

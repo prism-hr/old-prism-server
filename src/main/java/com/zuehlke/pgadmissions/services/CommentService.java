@@ -50,6 +50,10 @@ public class CommentService {
     public void save(Comment comment) {
         commentDAO.save(comment);
     }
+    
+    public Comment getById(int id) {
+        return commentDAO.getById(id);
+    }
 
     public List<Comment> getVisibleComments(User user, ApplicationForm applicationForm) {
         return commentDAO.getVisibleComments(user, applicationForm);

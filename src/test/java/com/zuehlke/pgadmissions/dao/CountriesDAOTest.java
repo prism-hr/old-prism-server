@@ -65,7 +65,7 @@ public class CountriesDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetAllEnabledCountries() {
-        BigInteger numberOfCoutnries = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from countries where enabled = true").uniqueResult();
+        BigInteger numberOfCoutnries = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from country where enabled = true").uniqueResult();
         
         Country country1 = new CountryBuilder().enabled(true).code("ZZ").name("ZZZZZZ").build();
         Country country2 = new CountryBuilder().enabled(true).code("AA").name("mmmmmm").build();

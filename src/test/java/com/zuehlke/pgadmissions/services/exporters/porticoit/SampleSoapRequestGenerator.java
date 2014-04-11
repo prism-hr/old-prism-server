@@ -84,13 +84,13 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
                 idx++;
 
                 if (idx % 2 == 0) {
-                    form.setStatus(approvedState);
+                    form.setState(approvedState);
                 } else {
-                    form.setStatus(rejectedState);
+                    form.setState(rejectedState);
                 }
 
                 if (idx % 3 == 0) {
-                    form.setStatus(withdrawnState);
+                    form.setState(withdrawnState);
                 }
 
                 // Generate request

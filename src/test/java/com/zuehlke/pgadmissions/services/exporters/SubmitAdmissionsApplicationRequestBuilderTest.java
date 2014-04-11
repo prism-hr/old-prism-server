@@ -76,7 +76,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldThrowExceptionIfApplicationIsInReviewState() {
-        applicationForm.setStatus(new State().withId(ApplicationFormStatus.REVIEW));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.REVIEW));
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage(CoreMatchers.equalTo("Application is in wrong state " + ApplicationFormStatus.REVIEW.displayValue()));
         requestBuilder.applicationForm(applicationForm).build();
@@ -84,7 +84,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldThrowExceptionIfApplicationIsInUnsubmittedState() {
-        applicationForm.setStatus(new State().withId(ApplicationFormStatus.UNSUBMITTED));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.UNSUBMITTED));
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage(CoreMatchers.equalTo("Application is in wrong state " + ApplicationFormStatus.UNSUBMITTED.displayValue()));
         requestBuilder.applicationForm(applicationForm).build();
@@ -92,7 +92,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldThrowExceptionIfApplicationIsInApprovalState() {
-        applicationForm.setStatus(new State().withId(ApplicationFormStatus.APPROVAL));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.APPROVAL));
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage(CoreMatchers.equalTo("Application is in wrong state " + ApplicationFormStatus.APPROVAL.displayValue()));
         requestBuilder.applicationForm(applicationForm).build();
@@ -100,7 +100,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldThrowExceptionIfApplicationIsInValidationState() {
-        applicationForm.setStatus(new State().withId(ApplicationFormStatus.VALIDATION));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.VALIDATION));
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage(CoreMatchers.equalTo("Application is in wrong state " + ApplicationFormStatus.VALIDATION.displayValue()));
         requestBuilder.applicationForm(applicationForm).build();
@@ -108,7 +108,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldThrowExceptionIfApplicationIsInRequestRestartInterviewState() {
-        applicationForm.setStatus(new State().withId(ApplicationFormStatus.INTERVIEW));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.INTERVIEW));
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage(CoreMatchers.equalTo("Application is in wrong state " + ApplicationFormStatus.INTERVIEW.displayValue()));
         requestBuilder.applicationForm(applicationForm).build();
@@ -133,7 +133,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldSetDepartmentalDecisionToOffer() {
-        applicationForm.setStatus(new State().withId(ApplicationFormStatus.APPROVED));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.APPROVED));
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
         assertEquals("ACTIVE", request.getApplication().getCourseApplication().getApplicationStatus());
         assertEquals("OFFER", request.getApplication().getCourseApplication().getDepartmentalDecision());
@@ -141,7 +141,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldSetDepartmentalDecisionToReject() {
-        applicationForm.setStatus(new State().withId(ApplicationFormStatus.REJECTED));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.REJECTED));
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
         assertEquals("ACTIVE", request.getApplication().getCourseApplication().getApplicationStatus());
         assertEquals("REJECT", request.getApplication().getCourseApplication().getDepartmentalDecision());
@@ -149,7 +149,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldNotSetDepartmentalDecisionWhenWithdrawn() {
-        applicationForm.setStatus(new State().withId(ApplicationFormStatus.WITHDRAWN));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.WITHDRAWN));
         SubmitAdmissionsApplicationRequest request = requestBuilder.applicationForm(applicationForm).build();
         assertEquals("WITHDRAWN", request.getApplication().getCourseApplication().getApplicationStatus());
         assertNull(request.getApplication().getCourseApplication().getDepartmentalDecision());
@@ -157,7 +157,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
 
     @Test
     public void shouldNotSendDecimalValueForLanguageScores() {
-        applicationForm.setStatus(new State().withId(ApplicationFormStatus.WITHDRAWN));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.WITHDRAWN));
         LanguageQualification qualification = applicationForm.getPersonalDetails().getLanguageQualification();
         qualification.setListeningScore("4.0");
         qualification.setOverallScore("4.5");

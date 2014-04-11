@@ -400,7 +400,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
         applicationTp.setRefereeList(buildReferee());
 
-        switch (applicationForm.getStatus().getId()) {
+        switch (applicationForm.getState().getId()) {
         case WITHDRAWN:
             applicationTp.setApplicationStatus("WITHDRAWN");
             break;
@@ -413,7 +413,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             applicationTp.setDepartmentalDecision("REJECT");
             break;
         default:
-            throw new IllegalArgumentException("Application is in wrong state " + applicationForm.getStatus().getId().displayValue());
+            throw new IllegalArgumentException("Application is in wrong state " + applicationForm.getState().getId().displayValue());
         }
 
         try {
@@ -424,7 +424,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             throw new IllegalArgumentException(exp.getMessage(), exp);
         }
 
-        if (printLanguageQualificationAdmissionsNote && applicationForm.getStatus().getId() == ApplicationFormStatus.APPROVED) {
+        if (printLanguageQualificationAdmissionsNote && applicationForm.getState().getId() == ApplicationFormStatus.APPROVED) {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
         }
 
@@ -436,7 +436,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             }
         }
 
-        if (offerRecommendedComment != null && applicationForm.getStatus().getId() == ApplicationFormStatus.APPROVED) {
+        if (offerRecommendedComment != null && applicationForm.getState().getId() == ApplicationFormStatus.APPROVED) {
             String departmentalOfferConditions = "Recommended Offer Type: ";
             if (BooleanUtils.isTrue(offerRecommendedComment.getRecommendedConditionsAvailable())) {
                 departmentalOfferConditions += "Conditional\n\nRecommended Conditions: ";

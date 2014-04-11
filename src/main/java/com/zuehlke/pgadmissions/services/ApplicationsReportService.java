@@ -165,7 +165,7 @@ public class ApplicationsReportService {
 
         for (ApplicationForm app : applications) {
 
-            if (!app.getStatus().isSubmitted() || app.getLastStatus().getId() == ApplicationFormStatus.UNSUBMITTED || app.getPersonalDetails() == null) {
+            if (!app.getState().isSubmitted() || app.getLastState().getId() == ApplicationFormStatus.UNSUBMITTED || app.getPersonalDetails() == null) {
                 continue;
             }
 
@@ -201,7 +201,7 @@ public class ApplicationsReportService {
 
                     // overall rating
 //                    row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
-                    row.addCell(app.getStatus().getId().displayValue());
+                    row.addCell(app.getState().getId().displayValue());
 
                     // reference report
                     row.addCell(receivedAndDeclinedReferences[0]);
@@ -240,7 +240,7 @@ public class ApplicationsReportService {
 //                    row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
                     row.addCell(canSeeRating ? String.valueOf(overallPositiveEndorsements) : N_R);
 
-                    row.addCell(app.getStatus().getId().displayValue());
+                    row.addCell(app.getState().getId().displayValue());
                     row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
                     row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
                     row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
@@ -273,7 +273,7 @@ public class ApplicationsReportService {
 //                    row.addCell(new NumberValue(app.getApprovalRounds().size()));
                     row.addCell(getPrintablePrimarySupervisor(app));
                     row.addCell(getPrintableSecondarySupervisor(app));
-                    row.addCell(app.getStatus().getId() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
+                    row.addCell(app.getState().getId() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
                     row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
                     row.addCell(approveDate != null ? getConditionalType(app) : StringUtils.EMPTY);
                     row.addCell(approveDate != null ? getOfferConditions(app) : StringUtils.EMPTY);

@@ -82,9 +82,9 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(),
-                            admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
+                            admissionsOfferServiceLevel, form.getLastState().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
+            if (ApplicationFormStatus.REJECTED.equals(form.getState())) {
                 model.put("reason", form.getRejection().getRejectionReason());
                 if (form.getRejection().isIncludeProspectusLink()) {
                     model.put("prospectusLink", uclProspectusLink);
@@ -108,16 +108,16 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(),
-                            admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
+                            admissionsOfferServiceLevel, form.getLastState().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
+            if (ApplicationFormStatus.REJECTED.equals(form.getState())) {
                 model.put("reason", form.getRejection().getRejectionReason());
                 if (form.getRejection().isIncludeProspectusLink()) {
                     model.put("prospectusLink", uclProspectusLink);
                 }
             }
             Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
-                    form.getLastStatus().getId().displayValue() };
+                    form.getLastState().getId().displayValue() };
             String subject = resolveMessage(REJECTED_NOTIFICATION, args);
             message = buildMessage(applicant, subject, model, REJECTED_NOTIFICATION);
             sendEmail(message);
@@ -134,15 +134,15 @@ public class MailSendingService extends AbstractMailSendingService {
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host",
                     "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { adminsEmails, form, form.getApplicant(), roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(),
-                            admissionsOfferServiceLevel, form.getLastStatus().getId().displayValue() });
+                            admissionsOfferServiceLevel, form.getLastState().getId().displayValue() });
             Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
+            if (ApplicationFormStatus.REJECTED.equals(form.getState())) {
                 model.put("reason", form.getRejection().getRejectionReason());
                 if (form.getRejection().isIncludeProspectusLink()) {
                     model.put("prospectusLink", uclProspectusLink);
                 }
             }
-            String subject = resolveMessage(MOVED_TO_APPROVED_NOTIFICATION, form, form.getLastStatus().getId().displayValue());
+            String subject = resolveMessage(MOVED_TO_APPROVED_NOTIFICATION, form, form.getLastState().getId().displayValue());
             message = buildMessage(applicant, subject, model, MOVED_TO_APPROVED_NOTIFICATION);
             sendEmail(message);
         } catch (Exception e) {
@@ -170,15 +170,15 @@ public class MailSendingService extends AbstractMailSendingService {
     public void sendInterviewConfirmationToApplicant(ApplicationForm application) {
         PrismEmailMessage message = null;
         try {
-            String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, application, application.getLastStatus().getId().displayValue() );
+            String subject = resolveMessage(MOVED_TO_INTERVIEW_NOTIFICATION, application, application.getLastState().getId().displayValue() );
             List<User> admins = roleService.getProgramAdministrators(application.getProgram());
             EmailModelBuilder modelBuilder = getModelBuilder(
                     new String[] { "adminsEmails", "application", "applicant", "registryContacts", "host", "admissionOfferServiceLevel", "previousStage" },
                     new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), application, application.getApplicant(),
-                            roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(), admissionsOfferServiceLevel, application.getLastStatus().getId().displayValue() });
+                            roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER), getHostName(), admissionsOfferServiceLevel, application.getLastState().getId().displayValue() });
 
             Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.REJECTED.equals(application.getStatus())) {
+            if (ApplicationFormStatus.REJECTED.equals(application.getState())) {
                 model.put("reason", application.getRejection().getRejectionReason());
                 if (application.getRejection().isIncludeProspectusLink()) {
                     model.put("prospectusLink", uclProspectusLink);

@@ -56,8 +56,8 @@ public class ReviewService {
         Integer durationInMinutes = state.getDurationInMinutes();
 		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, durationInMinutes);
         application.setDueDate(dueDate.toDate());
-        boolean sendReferenceRequest = application.getStatus().getId() == ApplicationFormStatus.VALIDATION;
-        application.setStatus(state);
+        boolean sendReferenceRequest = application.getState().getId() == ApplicationFormStatus.VALIDATION;
+        application.setState(state);
 		
         if (sendReferenceRequest) {
             mailService.sendReferenceRequest(application.getReferees(), application);

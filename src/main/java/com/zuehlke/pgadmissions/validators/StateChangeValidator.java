@@ -23,7 +23,7 @@ public class StateChangeValidator extends AbstractValidator {
     	
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
     	
-        if (stateChangeDTO.getApplicationForm().getStatus().getId() == ApplicationFormStatus.VALIDATION) {
+        if (stateChangeDTO.getApplicationForm().getState().getId() == ApplicationFormStatus.VALIDATION) {
             if (stateChangeDTO.getQualifiedForPhd() == null) {
                 errors.rejectValue("qualifiedForPhd", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }
@@ -60,7 +60,7 @@ public class StateChangeValidator extends AbstractValidator {
             errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
         }
         
-        if (stateChangeDTO.getApplicationForm().getStatus().equals(ApplicationFormStatus.VALIDATION)
+        if (stateChangeDTO.getApplicationForm().getState().equals(ApplicationFormStatus.VALIDATION)
                 && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.REFERENCE)
                 && stateChangeDTO.getUseCustomReferenceQuestions() == null) {
             errors.rejectValue("useCustomReferenceQuestions", EMPTY_DROPDOWN_ERROR_MESSAGE);

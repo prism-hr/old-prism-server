@@ -127,9 +127,9 @@ public class ApplicationFormService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void setApplicationStatus(ApplicationForm application, ApplicationFormStatus newStatus) {
-        application.setLastStatus(application.getStatus());
-        application.setStatus(stateService.getById(newStatus));
-        application.setNextStatus(null);
+        application.setLastState(application.getState());
+        application.setState(stateService.getById(newStatus));
+        application.setNextState(null);
 
         // TODO add referee roles and send referee notifications
         // TODO add admitter roles
@@ -148,7 +148,7 @@ public class ApplicationFormService {
             application.setClosingDate(null);
         case REVIEW:
             application.setDueDate(getDueDateForApplication(application));
-            if (application.getLastStatus().getId() == newStatus) {
+            if (application.getLastState().getId() == newStatus) {
                 application.setClosingDate(null);
             }
         case APPROVED:
@@ -205,7 +205,7 @@ public class ApplicationFormService {
     }
 
     public void queueApplicationForExport(ApplicationForm application) {
-        if (application.getLastStatus().isSubmitted() && application.getProgram().getProgramFeed() != null) {
+        if (application.getLastState().isSubmitted() && application.getProgram().getProgramFeed() != null) {
             exportQueueService.createOrReturnExistingApplicationFormTransfer(application);
         }
     }
@@ -300,7 +300,7 @@ public class ApplicationFormService {
     private Date getDueDateForApplication(ApplicationForm application) {
         LocalDate baselineDate = new LocalDate();
         Date closingDate = application.getClosingDate();
-        State status = application.getStatus();
+        State status = application.getState();
         if (status.getId() == ApplicationFormStatus.REVIEW && closingDate != null) {
             if (closingDate.after(baselineDate.toDate())) {
                 baselineDate = new LocalDate(closingDate);

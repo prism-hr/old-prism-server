@@ -39,7 +39,7 @@ public class StateTransitionService {
         } else if ("abort".equals(action)) {
             return STATE_TRANSITION_VIEW;
         } else {
-            ApplicationFormStatus nextStatus = application.getNextStatus().getId();
+            ApplicationFormStatus nextStatus = application.getNextState().getId();
             if (nextStatus != null) {
                 switch (nextStatus) {
                 case REVIEW:
@@ -61,7 +61,7 @@ public class StateTransitionService {
     }
 
     public List<ApplicationFormStatus> getAssignableNextStati(final ApplicationForm application, final User user) {
-        ApplicationFormStatus status = application.getStatus().getId();
+        ApplicationFormStatus status = application.getState().getId();
         // FIXME check permissions
         boolean canAdministerApplication = true; // permissionsService.canAdministerApplication(application, user);
         boolean canApproveApplication = true; // permissionsService.canApproveApplication(application, user);
@@ -72,7 +72,7 @@ public class StateTransitionService {
 
             for (ApplicationFormStatus assignableNextStatus : assignableNextStati) {
                 if ((canApproveApplication || (assignableNextStatus != ApplicationFormStatus.APPROVAL && canAdministerApplication))
-                        && assignableNextStatus != application.getNextStatus().getId()) {
+                        && assignableNextStatus != application.getNextState().getId()) {
                     nextStati.add(assignableNextStatus);
                 }
             }

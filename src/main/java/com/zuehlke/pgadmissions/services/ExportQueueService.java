@@ -52,11 +52,11 @@ public class ExportQueueService {
         createOrReturnExistingApplicationFormTransfer(form);
 
         if (throttleService.isPorticoInterfaceEnabled()) {
-            log.info(String.format("Sending JMS message to the portico queue [applicationNumber=%s, status=%s]", form.getApplicationNumber(), form.getStatus()));
+            log.info(String.format("Sending JMS message to the portico queue [applicationNumber=%s, status=%s]", form.getApplicationNumber(), form.getState()));
 
             template.convertAndSend(queue, form.getApplicationNumber(), new MessagePostProcessor() {
                 public Message postProcessMessage(Message message) throws JMSException {
-                    message.setStringProperty("Status", form.getStatus().toString());
+                    message.setStringProperty("Status", form.getState().toString());
                     message.setStringProperty("Added", new DateTime().toString("yyyy-MM-dd HH:mm:ss"));
                     return message;
                 }
@@ -69,7 +69,7 @@ public class ExportQueueService {
         List<ApplicationFormTransfer> applications = formTransferService.getAllTransfersWaitingToBeSentToPorticoOldestFirst();
         for (ApplicationFormTransfer transfer : applications) {
             ApplicationForm form = transfer.getApplicationForm();
-            if (form.getStatus().equals(ApplicationFormStatus.APPROVED)) {
+            if (form.getState().equals(ApplicationFormStatus.APPROVED)) {
                 sendToPortico(form);
             }
         }

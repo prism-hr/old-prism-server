@@ -29,9 +29,9 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturAllPendingRoleNotifications() {
-        PendingRoleNotification pendingNotificationOne = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.ADMINISTRATOR)).program(program)
+        PendingRoleNotification pendingNotificationOne = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.PROGRAM_ADMINISTRATOR)).program(program)
                 .build();
-        PendingRoleNotification pendingNotificationTwo = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.REFEREE)).program(program).build();
+        PendingRoleNotification pendingNotificationTwo = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.APPLICATION_REFEREE)).program(program).build();
         user.getPendingRoleNotifications().addAll(Arrays.asList(pendingNotificationOne, pendingNotificationTwo));
         sessionFactory.getCurrentSession().saveOrUpdate(user);
 
@@ -48,7 +48,7 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldDeletePendingNotification() {
-        PendingRoleNotification pendingNotification = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.ADMINISTRATOR)).program(program)
+        PendingRoleNotification pendingNotification = new PendingRoleNotificationBuilder().role(roleDAO.getById(Authority.PROGRAM_ADMINISTRATOR)).program(program)
                 .build();
 
         user.getPendingRoleNotifications().addAll(Arrays.asList(pendingNotification));

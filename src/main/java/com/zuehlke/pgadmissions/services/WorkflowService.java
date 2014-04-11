@@ -395,7 +395,7 @@ public class WorkflowService {
         Map<User, Authority> administrators = Maps.newHashMap();
 
         for (User superAdministrator : userDAO.getSuperadministrators()) {
-            administrators.put(superAdministrator, Authority.SUPERADMINISTRATOR);
+            administrators.put(superAdministrator, Authority.SYSTEM_ADMINISTRATOR);
         }
 
 //        for (RegisteredUser administrator : applicationForm.getProgram().getAdministrators()) {
@@ -417,7 +417,7 @@ public class WorkflowService {
         if (latestStateChangeComment != null) {
             User stateAdministrator = latestStateChangeComment.getDelegateAdministrator();
             if (stateAdministrator != null) {
-                administrators.put(stateAdministrator, Authority.STATEADMINISTRATOR);
+                administrators.put(stateAdministrator, Authority.APPLICATION_ADMINISTRATOR);
             }
         }
 

@@ -22,7 +22,7 @@ public class UserDTOValidator extends AbstractValidator {
 	@Override
 	public void addExtraValidation(Object target, Errors errors) {
 		UserDTO user = (UserDTO) target;
-		if (!(user.getSelectedAuthorities().length == 1 && user.getSelectedAuthorities()[0] == Authority.SUPERADMINISTRATOR)) {
+		if (!(user.getSelectedAuthorities().length == 1 && user.getSelectedAuthorities()[0] == Authority.SYSTEM_ADMINISTRATOR)) {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgram", EMPTY_DROPDOWN_ERROR_MESSAGE);
 		}
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", EMPTY_FIELD_ERROR_MESSAGE);

@@ -6,24 +6,24 @@ import java.util.List;
 
 public enum AuthorityGroup {
 
-    INTERNAL_SYSTEM_AUTHORITIES(Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMITTER)), 
+    INTERNAL_SYSTEM_AUTHORITIES(Arrays.asList(Authority.SYSTEM_ADMINISTRATOR, Authority.INSTITUTION_ADMITTER)), 
     EXTERNAL_SYSTEM_AUTHORITIES(new ArrayList<Authority>(0)),
 
-    INTERNAL_PROGRAM_AUTHORITIES(Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.VIEWER)),
+    INTERNAL_PROGRAM_AUTHORITIES(Arrays.asList(Authority.PROGRAM_ADMINISTRATOR, Authority.PROGRAM_APPROVER, Authority.PROGRAM_VIEWER)),
     EXTERNAL_PROGRAM_AUTHORITIES(new ArrayList<Authority>(0)),
 
     INTERNAL_PROJECT_AUTHORITIES(Arrays.asList(Authority.PROJECTADMINISTRATOR)),
     EXTERNAL_PROJECT_AUTHORITIES(new ArrayList<Authority>(0)),
 
-    INTERNAL_APPLICATION_AUTHORITIES(Arrays.asList(Authority.INTERVIEWER, Authority.REVIEWER, Authority.SUPERVISOR)),
+    INTERNAL_APPLICATION_AUTHORITIES(Arrays.asList(Authority.APPLICATION_INTERVIEWER, Authority.APPLICATION_REVIEWER, Authority.SUPERVISOR)),
     EXTERNAL_APPLICATION_AUTHORITIES(new ArrayList<Authority>(0)),
 
-    INTERNAL_STATE_AUTHORITIES(Arrays.asList(Authority.STATEADMINISTRATOR)), 
+    INTERNAL_STATE_AUTHORITIES(Arrays.asList(Authority.APPLICATION_ADMINISTRATOR)), 
     EXTERNAL_STATE_AUTHORITIES(new ArrayList<Authority>(0)),
     
-    ADMINISTRATOR_AUTHORITIES(Arrays.asList(Authority.ADMINISTRATOR, Authority.PROJECTADMINISTRATOR, Authority.STATEADMINISTRATOR, Authority.SUPERADMINISTRATOR)),
+    ADMINISTRATOR_AUTHORITIES(Arrays.asList(Authority.PROGRAM_ADMINISTRATOR, Authority.PROJECTADMINISTRATOR, Authority.APPLICATION_ADMINISTRATOR, Authority.SYSTEM_ADMINISTRATOR)),
     
-    APPROVER_AUTHORITIES(Arrays.asList(Authority.APPROVER, Authority.SUPERADMINISTRATOR));
+    APPROVER_AUTHORITIES(Arrays.asList(Authority.PROGRAM_APPROVER, Authority.SYSTEM_ADMINISTRATOR));
 
     private List<Authority> authorities;
 
@@ -67,7 +67,7 @@ public enum AuthorityGroup {
 
     public static List<Authority> getAllInternalRecruiterAuthorities() {
         List<Authority> inclusions = getAllProgramAuthorities();
-        List<Authority> exclusions = Arrays.asList(Authority.ADMINISTRATOR, Authority.APPLICANT, Authority.REFEREE);
+        List<Authority> exclusions = Arrays.asList(Authority.PROGRAM_ADMINISTRATOR, Authority.APPLICATION_APPLICANT, Authority.APPLICATION_REFEREE);
         inclusions.addAll(getAllProjectAuthorities());
         inclusions.addAll(getAllApplicationAuthorities());
         inclusions.addAll(getAllStateAuthorities());

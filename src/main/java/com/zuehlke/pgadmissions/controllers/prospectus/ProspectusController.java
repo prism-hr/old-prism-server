@@ -54,10 +54,10 @@ public class ProspectusController {
     @ModelAttribute("programmes")
     public List<Program> getProgrammes() {
         User currentUser = userService.getCurrentUser();
-        if (roleService.hasRole(currentUser, Authority.SUPERADMINISTRATOR)) {
+        if (roleService.hasRole(currentUser, Authority.SYSTEM_ADMINISTRATOR)) {
             return programsService.getAllEnabledPrograms();
         }
-        return roleService.getProgramsByUserAndRole(currentUser, Authority.ADMINISTRATOR);
+        return roleService.getProgramsByUserAndRole(currentUser, Authority.PROGRAM_ADMINISTRATOR);
     }
 
     @ModelAttribute("projectProgrammes")

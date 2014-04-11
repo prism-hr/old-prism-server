@@ -90,10 +90,10 @@ public class ManageUsersController {
     @ModelAttribute("programs")
     public List<Program> getPrograms() {
         User currentUser = userService.getCurrentUser();
-        if (roleService.hasRole(currentUser, Authority.SUPERADMINISTRATOR)) {
+        if (roleService.hasRole(currentUser, Authority.SYSTEM_ADMINISTRATOR)) {
             return programService.getAllEnabledPrograms();
         }
-        return roleService.getProgramsByUserAndRole(currentUser, Authority.ADMINISTRATOR);
+        return roleService.getProgramsByUserAndRole(currentUser, Authority.PROGRAM_ADMINISTRATOR);
     }
 
     @ModelAttribute("user")
@@ -108,19 +108,19 @@ public class ManageUsersController {
 
     @ModelAttribute("superadministrators")
     public List<User> getSuperadministrators() {
-        List<User> superadmins = roleService.getUsersInRole(roleService.getPrismSystem(), Authority.SUPERADMINISTRATOR);
+        List<User> superadmins = roleService.getUsersInRole(roleService.getPrismSystem(), Authority.SYSTEM_ADMINISTRATOR);
         return superadmins;
     }
 
     @ModelAttribute("admitters")
     public List<User> getAdmitters() {
-        return roleService.getUsersInRole(roleService.getPrismSystem(), Authority.ADMITTER);
+        return roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/edit")
     public String getAddUsersView() {
         User user = userService.getCurrentUser();
-        if (!roleService.hasAnyRole(user, Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.ADMITTER)) {
+        if (!roleService.hasAnyRole(user, Authority.SYSTEM_ADMINISTRATOR, Authority.PROGRAM_ADMINISTRATOR, Authority.INSTITUTION_ADMITTER)) {
             throw new ResourceNotFoundException();
         }
         return NEW_USER_VIEW_NAME;
@@ -129,11 +129,11 @@ public class ManageUsersController {
     @RequestMapping(method = RequestMethod.POST, value = "/edit/saveSuperadmin")
     public String handleAddSuperadmin(@Valid @ModelAttribute("adminDTO") UserDTO userDTO, BindingResult result) {
         User user = userService.getCurrentUser();
-        if (Arrays.asList(userDTO.getSelectedAuthorities()).contains(Authority.SUPERADMINISTRATOR) && !roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
+        if (Arrays.asList(userDTO.getSelectedAuthorities()).contains(Authority.SYSTEM_ADMINISTRATOR) && !roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
 
-        if (roleService.hasRole(user, Authority.SUPERADMINISTRATOR)) {
+        if (roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
         if (result.hasErrors()) {
@@ -150,7 +150,7 @@ public class ManageUsersController {
     @RequestMapping(method = RequestMethod.POST, value = "/edit/saveUser")
     public String handleEditUserRoles(@Valid @ModelAttribute("userDTO") UserDTO userDTO, BindingResult result) {
         User user = userService.getCurrentUser();
-        if (!roleService.hasAnyRole(user, Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR)) {
+        if (!roleService.hasAnyRole(user, Authority.SYSTEM_ADMINISTRATOR, Authority.PROGRAM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
 

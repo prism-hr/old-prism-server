@@ -36,7 +36,7 @@ public class UserDTOValidatorTest {
 		user.setLastName("Smith");
 		user.setEmail("email@test.com");
 		user.setSelectedProgram(new ProgramBuilder().id(4).build());
-		user.setSelectedAuthorities(Authority.REVIEWER);
+		user.setSelectedAuthorities(Authority.APPLICATION_REVIEWER);
 		
 		userDTOValidator = new UserDTOValidator();
 		userDTOValidator.setValidator((javax.validation.Validator) validator);
@@ -85,7 +85,7 @@ public class UserDTOValidatorTest {
 	public void shouldRejectIfProgramIsNullAndAuthoritiesNotSuperadminOnly() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "selectedProgram");
 		user.setSelectedProgram(null);
-		user.setSelectedAuthorities(Authority.REVIEWER, Authority.SUPERADMINISTRATOR);
+		user.setSelectedAuthorities(Authority.APPLICATION_REVIEWER, Authority.SYSTEM_ADMINISTRATOR);
 		userDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("selectedProgram").getCode());
@@ -95,7 +95,7 @@ public class UserDTOValidatorTest {
 	public void shouldNotRejectIfProgramIsNullAndAuthoritiesIsSuperadmin() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "selectedProgram");
 		user.setSelectedProgram(null);
-		user.setSelectedAuthorities(Authority.SUPERADMINISTRATOR);
+		user.setSelectedAuthorities(Authority.SYSTEM_ADMINISTRATOR);
 		userDTOValidator.validate(user, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 

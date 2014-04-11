@@ -24,7 +24,6 @@ public class UserBuilder {
     private Integer id;
     private boolean enabled = true;
     private String activationCode;
-    private String upi;
     private Date applicationListLastAccessTimestamp;
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
     private ApplicationsFiltering filtering;
@@ -39,11 +38,6 @@ public class UserBuilder {
 
     public UserBuilder applicationListLastAccessTimestamp(Date applicationListLastAccessTimestamp) {
         this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
-        return this;
-    }
-
-    public UserBuilder upi(final String upi) {
-        this.upi = upi;
         return this;
     }
 
@@ -139,7 +133,6 @@ public class UserBuilder {
         user.setActivationCode(activationCode);
         user.getPendingRoleNotifications().addAll(pendingRoleNotifications);
         user.setAdvert(advert);
-        user.setUpi(upi);
         user.getLinkedAccounts().addAll(linkedAccounts);
         user.setParentUser(primaryAccount);
 

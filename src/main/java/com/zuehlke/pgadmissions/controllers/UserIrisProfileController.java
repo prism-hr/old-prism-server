@@ -48,7 +48,9 @@ public class UserIrisProfileController {
     @RequestMapping(value = "/IRIS/", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public Map<String, Object> getUpiForCurrentUser() {
-        return Collections.<String, Object>singletonMap("upi", StringUtils.trimToEmpty(userService.getCurrentUser().getUpi()));
+        // FIXME return UPI for a user
+        return null;
+//        return Collections.<String, Object>singletonMap("upi", StringUtils.trimToEmpty(userService.getCurrentUser().getUpi()));
     }
     
     @RequestMapping(value = "/IRIS/{upi}", method = RequestMethod.GET, produces = "application/json")
@@ -94,19 +96,21 @@ public class UserIrisProfileController {
         List<User> linkedAccounts = currentUser.getLinkedAccounts();
         List<User> intersection = ListUtils.subtract(usersWithUpi, linkedAccounts);
         
-        if (intersection.isEmpty()) {
-            currentUser.setUpi(upi);
-            userService.save(currentUser);
-            for (User linkedAccount : linkedAccounts) {
-                linkedAccount.setUpi(upi);
-                userService.save(linkedAccount);
-            }
-            return Collections.<String, Object>singletonMap("success", true);            
-        } else {
-            result.put("success", false);
-            result.put("irisProfile", messageSource.getMessage("account.iris.upi.registered", null, null));
-            return result;
-        }
+        // FIXME apply UPI
+//        if (intersection.isEmpty()) {
+//            currentUser.setUpi(upi);
+//            userService.save(currentUser);
+//            for (User linkedAccount : linkedAccounts) {
+//                linkedAccount.setUpi(upi);
+//                userService.save(linkedAccount);
+//            }
+//            return Collections.<String, Object>singletonMap("success", true);            
+//        } else {
+//            result.put("success", false);
+//            result.put("irisProfile", messageSource.getMessage("account.iris.upi.registered", null, null));
+//            return result;
+//        }
+        return null;
     }
     
     @RequestMapping(value = "/IRIS/", method = RequestMethod.DELETE, produces = "application/json")
@@ -115,7 +119,8 @@ public class UserIrisProfileController {
         User currentUser = userService.getCurrentUser();
         List<User> linkedAccounts = currentUser.getLinkedAccounts();
         for(User account : linkedAccounts){
-            account.setUpi(null);
+            // FIXME clear current's user UPI number
+//            account.setUpi(null);
             userService.save(account);
         }
         

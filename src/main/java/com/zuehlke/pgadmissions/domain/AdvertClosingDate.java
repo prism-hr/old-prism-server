@@ -10,12 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
-@Entity(name = "ADVERT_CLOSING_DATE")
+@Entity
+@Table(name = "ADVERT_CLOSING_DATE")
 public class AdvertClosingDate implements Serializable {
 
     private static final long serialVersionUID = -1883742652445622591L;

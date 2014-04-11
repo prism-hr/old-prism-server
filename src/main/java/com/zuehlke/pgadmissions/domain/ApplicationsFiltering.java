@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.IndexColumn;
@@ -20,7 +21,8 @@ import org.hibernate.annotations.IndexColumn;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
-@Entity(name = "APPLICATIONS_FILTERING")
+@Entity
+@Table(name = "APPLICATIONS_FILTERING")
 public class ApplicationsFiltering implements Serializable {
 
     private static final long serialVersionUID = 7913035836949510857L;
@@ -36,7 +38,7 @@ public class ApplicationsFiltering implements Serializable {
 
     @Column(name = "use_disjunction")
     private Boolean useDisjunction = false;
-    
+
     @Column(name = "sort_category")
     @Enumerated(EnumType.STRING)
     private SortCategory sortCategory = SortCategory.APPLICATION_DATE;
@@ -47,14 +49,14 @@ public class ApplicationsFiltering implements Serializable {
 
     @Transient
     private Integer blockCount = 1;
-    
+
     @Transient
     private Integer latestConsideredFlagIndex = 0;
-    
+
     public Integer getLatestConsideredFlagIndex() {
         return latestConsideredFlagIndex;
     }
-    
+
     public void setLatestConsideredFlagIndex(final Integer index) {
         this.latestConsideredFlagIndex = index;
     }
@@ -62,11 +64,11 @@ public class ApplicationsFiltering implements Serializable {
     public Integer getId() {
         return id;
     }
-    
+
     public Boolean getUseDisjunction() {
         return useDisjunction;
     }
-    
+
     public void setUseDisjunction(Boolean useDisjunction) {
         this.useDisjunction = useDisjunction;
     }

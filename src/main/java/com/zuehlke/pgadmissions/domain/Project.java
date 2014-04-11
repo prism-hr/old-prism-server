@@ -4,13 +4,15 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 
-@Entity(name = "PROJECT")
+@Entity
+@Table(name = "PROJECT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Project extends Advert implements PrismScope {
 
@@ -32,10 +34,10 @@ public class Project extends Advert implements PrismScope {
     public Program getProgram() {
         return program;
     }
-    
+
     @Override
     public Project getProject() {
         return this;
     }
-    
+
 }

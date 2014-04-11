@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -20,7 +21,8 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
-@Entity(name = "ROLE")
+@Entity
+@Table(name = "ROLE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class Role implements GrantedAuthority, Serializable {
 
@@ -29,7 +31,7 @@ public class Role implements GrantedAuthority, Serializable {
     @Id
     @Enumerated(EnumType.STRING)
     private Authority id;
-    
+
     @Column(name = "do_send_update_notification")
     private Boolean doSendUpdateNotification = false;
 

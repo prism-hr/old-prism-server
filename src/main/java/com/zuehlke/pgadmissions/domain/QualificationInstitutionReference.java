@@ -10,8 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity(name = "INSTITUTION_REFERENCE")
+@Entity
+@Table(name = "INSTITUTION_REFERENCE")
 public class QualificationInstitutionReference implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = 2746228908173552617L;
@@ -78,7 +80,7 @@ public class QualificationInstitutionReference implements SelfReferringImportedO
         }
         return code;
     }
-    
+
     public void setCode(String code) {
         this.code = code;
     }

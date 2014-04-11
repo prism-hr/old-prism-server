@@ -15,10 +15,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
 
-@Entity(name = "RESEARCH_OPPORTUNITIES_FEED")
+@Entity
+@Table(name = "RESEARCH_OPPORTUNITIES_FEED")
 public class ResearchOpportunitiesFeed implements Serializable {
 
     private static final long serialVersionUID = 2739581666640036046L;
@@ -30,22 +32,22 @@ public class ResearchOpportunitiesFeed implements Serializable {
 
     @Column(name = "title")
     private String title;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registered_user_id")
     private User user;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "feed_format")
     private FeedFormat feedFormat;
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "RESEARCH_OPPORTUNITIES_FEED_PROGRAM_LINK", joinColumns = @JoinColumn(name = "feed_id"), inverseJoinColumns = @JoinColumn(name = "program_id"))
     private List<Program> programs = new ArrayList<Program>();
-    
+
     public ResearchOpportunitiesFeed() {
     }
-    
+
     public Integer getId() {
         return id;
     }

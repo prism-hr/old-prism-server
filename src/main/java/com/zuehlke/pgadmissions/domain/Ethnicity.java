@@ -10,8 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-@Entity(name = "ETHNICITY")
+@Entity
+@Table(name = "ETHNICITY")
 public class Ethnicity implements SelfReferringImportedObject, Serializable {
 
     private static final long serialVersionUID = -3605895863492842105L;

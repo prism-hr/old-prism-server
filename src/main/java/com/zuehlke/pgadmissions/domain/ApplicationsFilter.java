@@ -8,12 +8,14 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 
-@Entity(name = "APPLICATIONS_FILTER")
+@Entity
+@Table(name = "APPLICATIONS_FILTER")
 public class ApplicationsFilter implements Serializable {
 
     private static final long serialVersionUID = -2766208328669781519L;

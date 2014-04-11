@@ -2,8 +2,10 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table
 @DiscriminatorValue(value = "COMPLETE_INTERVIEW_STAGE")
 public class CompleteInterviewComment extends Comment {
 

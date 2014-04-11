@@ -7,10 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 
-@Entity(name = "PROGRAM_TYPE")
+@Entity
+@Table(name = "PROGRAM_TYPE")
 public class ProgramType implements Serializable {
 
     private static final long serialVersionUID = 6250099599688273995L;
@@ -18,7 +20,7 @@ public class ProgramType implements Serializable {
     @Id
     @Enumerated(EnumType.STRING)
     private ProgramTypeId id;
-    
+
     @Column(name = "default_study_duration")
     private Integer defaultStudyDuration;
 
@@ -37,9 +39,9 @@ public class ProgramType implements Serializable {
     public void setDefaultStudyDuration(Integer defaultStudyDuration) {
         this.defaultStudyDuration = defaultStudyDuration;
     }
-    
+
     public String getDisplayValue() {
         return id.getDisplayValue();
     }
-    
+
 }

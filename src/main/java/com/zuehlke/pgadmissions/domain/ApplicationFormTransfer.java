@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -29,7 +30,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
  * several transfers may happen during the history of the system. Business logic is deciding that at some point given application form should be transferred to
  * UCL by creating an ApplicationFormTransfer instance with status set to QUEUED_FOR_WEBSERVICE_CALL.
  */
-@Entity(name = "APPLICATION_FORM_TRANSFER")
+@Entity
+@Table(name = "APPLICATION_FORM_TRANSFER")
 public class ApplicationFormTransfer implements Serializable {
 
     private static final long serialVersionUID = 9133196638104217546L;
@@ -81,7 +83,7 @@ public class ApplicationFormTransfer implements Serializable {
     public void setCreatedTimestamp(Date createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }
-    
+
     public ApplicationForm getApplicationForm() {
         return applicationForm;
     }

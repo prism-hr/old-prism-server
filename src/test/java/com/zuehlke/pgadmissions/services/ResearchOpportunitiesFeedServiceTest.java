@@ -189,24 +189,5 @@ public class ResearchOpportunitiesFeedServiceTest {
         assertEquals(saveNewFeed.getTitle(), "hello1");
         assertEquals(saveNewFeed.getFeedFormat(), FeedFormat.SMALL);
     }
-    
-    @Test
-    public void shouldGetDefaultOpportunitiesFeedsByUsername(){
-        User primaryUser = new UserBuilder().id(1).build();
-        User secondaryUser = new UserBuilder().id(2).primaryAccount(primaryUser).build();
-        User ternaryUser = new UserBuilder().id(3).primaryAccount(primaryUser).build();
-        
-        primaryUser.getLinkedAccounts().addAll(Lists.newArrayList(secondaryUser, ternaryUser));
-        
-        EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(primaryUser)).andReturn(null);
-        EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(secondaryUser)).andReturn(null);
-        EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(ternaryUser)).andReturn(null);
-        EasyMock.expect(userServiceMock.getUserByUsername("pojebe")).andReturn(secondaryUser);
 
-        EasyMock.replay(userServiceMock, programServiceMock);
-        List<ResearchOpportunitiesFeed> feeds = service.getDefaultOpportunitiesFeedsByUsername("pojebe", null);
-        EasyMock.verify(userServiceMock, programServiceMock);
-        
-        assertEquals(3, feeds.size());
-    }
 }

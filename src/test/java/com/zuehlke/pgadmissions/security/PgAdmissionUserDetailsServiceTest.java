@@ -19,7 +19,7 @@ public class PgAdmissionUserDetailsServiceTest {
 		User user = new UserBuilder().id(1).build();
 		
 		String username = "username";
-		EasyMock.expect(userDAOMock.getUserByUsername(username)).andReturn(user).anyTimes();
+		EasyMock.expect(userDAOMock.getUserByEmail(username)).andReturn(user).anyTimes();
 		EasyMock.replay(userDAOMock);
 		
 		PgAdmissionUserDetailsService service = new PgAdmissionUserDetailsService(userDAOMock);
@@ -34,7 +34,7 @@ public class PgAdmissionUserDetailsServiceTest {
 		UserDAO userDAOMock = EasyMock.createMock(UserDAO.class);		
 		
 		String username = "username";
-		EasyMock.expect(userDAOMock.getUserByUsername(username)).andReturn(null).anyTimes();
+		EasyMock.expect(userDAOMock.getUserByEmail(username)).andReturn(null).anyTimes();
 		EasyMock.replay(userDAOMock);
 		
 		PgAdmissionUserDetailsService service = new PgAdmissionUserDetailsService(userDAOMock);

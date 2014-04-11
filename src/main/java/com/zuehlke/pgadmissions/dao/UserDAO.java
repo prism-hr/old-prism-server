@@ -69,11 +69,6 @@ public class UserDAO {
                         .add(Restrictions.eq("registeredUser.id", id))).uniqueResult();
     }
 
-    public User getUserByUsername(String username) {
-        return (User) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("username", username))
-                .add(Restrictions.eq("enabled", true)).uniqueResult();
-    }
-
     public List<User> getAllUsers() {
         return sessionFactory.getCurrentSession().createCriteria(User.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }

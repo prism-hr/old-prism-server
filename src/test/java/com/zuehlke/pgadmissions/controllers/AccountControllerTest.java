@@ -21,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.SwitchUserService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -96,9 +97,11 @@ public class AccountControllerTest {
     public void shouldSwitchUserAccount() {
         PowerMock.mockStatic(SecurityContextHolder.class);
 
-        User currentAccount = new UserBuilder().id(1).enabled(true).activationCode("abc").email("B@A.com").password("password").build();
+        User currentAccount = new UserBuilder().id(1).activationCode("abc").email("B@A.com")
+                .userAccount(new UserAccount().withEnabled(true).withPassword("password")).build();
 
-        User desiredAccount = new UserBuilder().id(2).enabled(true).activationCode("abcd").email("A@B.com").password("password").build();
+        User desiredAccount = new UserBuilder().id(2).activationCode("abcd").email("A@B.com")
+                .userAccount(new UserAccount().withEnabled(true).withPassword("password")).build();
 
         desiredAccount.setParentUser(currentAccount);
 

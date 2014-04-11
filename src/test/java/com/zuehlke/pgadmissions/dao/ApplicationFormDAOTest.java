@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
@@ -47,8 +48,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         applicationDAO = new ApplicationFormDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").password("password")
-                .enabled(false).build();
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withPassword("password")
+                .withEnabled(false)).build();
         save(user);
         flushAndClearSession();
         program = testObjectProvider.getEnabledProgram();
@@ -226,7 +227,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         DateTime initialDate = new DateTime(2014, 5, 13, 15, 56);
 
         User otherApplicant = new UserBuilder().firstName("Other").lastName("Applicant").email("other@applicant.com")
-                .password("password").enabled(false).build();
+                .userAccount(new UserAccount().withPassword("password").withEnabled(false)).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).toDate()).advert(program).applicant(user)
                 .status(new State().withId(ApplicationFormStatus.APPROVAL)).build();

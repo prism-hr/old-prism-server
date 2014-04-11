@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
@@ -57,20 +58,20 @@ public class PrismWorkflowTest {
 
     @Autowired
     private OpportunitiesService opportunitiesService;
-    
+
     @Autowired
     private AuthenticationProvider authenticationProvider;
 
     @Autowired
     private ApplicationFormService applicationFormService;
-    
+
     @Autowired
     private ReviewService reviewService;
-    
+
     @Test
     public void initializeWorkflowTest() throws Exception {
-        User superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, true,
-                manageUsersService.getPrismSystem(), Authority.SYSTEM_ADMINISTRATOR);
+        User superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, true, manageUsersService.getPrismSystem(),
+                Authority.SYSTEM_ADMINISTRATOR);
 
         for (Importer importer : importers) {
             importer.importData();
@@ -79,37 +80,28 @@ public class PrismWorkflowTest {
         Domicile polishDomicile = domicileService.getEnabledDomicileByCode("PL");
         ProgramType programType = programService.getProgramTypes().iterator().next();
 
+        User programCreator = new UserBuilder().firstName("Jerzy").lastName("Urban").email("jerzy@urban.pl")
+                .userAccount(new UserAccount().withPassword("password").withConfirmPassword("password")).build();
         OpportunityRequest opportunityRequest = opportunitiesService.createOpportunityRequest(
-                new OpportunityRequestBuilder()
-                        .institutionCountry(polishDomicile)
-                        .institutionCode(null)
-                        .otherInstitution("Akademia Gorniczo-Hutnicza")
-                        .programType(programType)
-                        .programTitle("Zywienie zbiorowe")
-                        .programDescription("I tak pracy po tym nie znajdziesz.")
-                        .studyOptions("F++++,P++++")
-                        .studyDuration(18)
-                        .advertisingDeadlineYear(new DateTime().getYear() + 3)
-                        .author(new UserBuilder().firstName("Jerzy").lastName("Urban").email("jerzy@urban.pl").password("password")
-                                .confirmPassword("password").build()).build(), false);
+                new OpportunityRequestBuilder().institutionCountry(polishDomicile).institutionCode(null).otherInstitution("Akademia Gorniczo-Hutnicza")
+                        .programType(programType).programTitle("Zywienie zbiorowe").programDescription("I tak pracy po tym nie znajdziesz.")
+                        .studyOptions("F++++,P++++").studyDuration(18).advertisingDeadlineYear(new DateTime().getYear() + 3).author(programCreator).build(),
+                false);
 
-        
         authenticationProvider.authenticate(new TestingAuthenticationToken("jozek@oleksy.pl", "password"));
-        
+
         Program savedProgram = opportunitiesService.respondToOpportunityRequest(opportunityRequest.getId(), opportunityRequest,
                 new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.APPROVE).content("Ok!").build());
-        
+
         User applicant = registrationService.submitRegistration(new UserBuilder().firstName("Kuba").lastName("Fibinger").email("kuba@fibinger.pl").build());
         applicant = registrationService.activateAccount(applicant.getActivationCode());
-        
+
         ApplicationForm application = applicationFormService.getOrCreateApplication(applicant, savedProgram.getId());
         applicationFormService.submitApplication(application);
-        
-        
+
         AssignReviewersComment assignReviewerComment = new AssignReviewersComment();
         assignReviewerComment.setContent("Assigning reviewers");
         reviewService.moveApplicationToReview(application.getId(), assignReviewerComment);
-        
 
     }
 

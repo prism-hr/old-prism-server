@@ -38,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
@@ -95,11 +96,11 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         applicant = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .enabled(true).applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
+                .userAccount(new UserAccount().withEnabled(true).withApplicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1))).build();
 
         superUser = new UserBuilder().firstName("John").lastName("Doe").email("email@test.com")
         // .withRole(roleDAO.getById(Authority.SUPERADMINISTRATOR))
-                .enabled(true).applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
+                .userAccount(new UserAccount().withEnabled(true).withApplicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1))).build();
 
         sessionFactory.getCurrentSession().flush();
 
@@ -315,7 +316,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingFirstNameFred() {
-        User applicant = new UserBuilder().firstName("FredzzZZZZZerick").lastName("Doe").email("email@test.com").password("password").enabled(true).build();
+        User applicant = new UserBuilder().firstName("FredzzZZZZZerick").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withPassword("password").withEnabled(true)).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(applicant)
                 .status(new State().withId(ApplicationFormStatus.APPROVAL)).build();
@@ -338,7 +339,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingLastName() {
 
-        User applicant = new UserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com").enabled(true).build();
+        User applicant = new UserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com").userAccount(new UserAccount().withEnabled(true)).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(applicant)
                 .status(new State().withId(ApplicationFormStatus.APPROVAL)).build();
@@ -361,7 +362,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldNotReturnAppIfTermNotInApplicantNameFirstOrLastName() {
 
-        User applicant = new UserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").enabled(true).build();
+        User applicant = new UserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").userAccount(new UserAccount().withEnabled(true)).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(applicant)
                 .status(new State().withId(ApplicationFormStatus.APPROVAL)).build();

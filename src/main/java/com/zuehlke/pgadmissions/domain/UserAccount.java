@@ -13,12 +13,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Store;
-
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity(name = "USER_ACCOUNT")
@@ -39,7 +33,7 @@ public class UserAccount {
 
     @JoinColumn(name = "application_filter_group_id")
     @OneToOne(fetch = FetchType.LAZY)
-    private ApplicationsFiltering filtering;
+    private ApplicationsFiltering filterGroup;
 
     @Column(name = "application_list_last_access_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
@@ -71,12 +65,12 @@ public class UserAccount {
         this.confirmPassword = confirmPassword;
     }
 
-    public ApplicationsFiltering getFiltering() {
-        return filtering;
+    public ApplicationsFiltering getFilterGroup() {
+        return filterGroup;
     }
 
-    public void setFiltering(ApplicationsFiltering filtering) {
-        this.filtering = filtering;
+    public void setFilterGroup(ApplicationsFiltering filterGroup) {
+        this.filterGroup = filterGroup;
     }
 
     public Date getApplicationListLastAccessTimestamp() {
@@ -95,4 +89,33 @@ public class UserAccount {
         this.enabled = enabled;
     }
 
+    public UserAccount withPassword(String password) {
+        this.password = password;
+        return this;
+    }
+    
+    public UserAccount withNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+        return this;
+    }
+    public UserAccount withConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+        return this;
+    }
+
+    public UserAccount withFilterGroup(ApplicationsFiltering filterGroup) {
+        this.filterGroup = filterGroup;
+        return this;
+    }
+    
+    public UserAccount withApplicationListLastAccessTimestamp(Date applicationListLastAccessTimestamp) {
+        this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
+        return this;
+    }
+    
+    public UserAccount withEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
 }
+

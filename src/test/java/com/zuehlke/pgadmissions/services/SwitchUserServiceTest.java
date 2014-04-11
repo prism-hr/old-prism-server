@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -42,12 +43,12 @@ public class SwitchUserServiceTest {
         role2 = new RoleBuilder().id(Authority.PROGRAM_ADMINISTRATOR).build();
         
         user1 = new UserBuilder().id(5).firstName("Jane").lastName("Doe").email("jane@doe.com")
-                .enabled(true)
+                .userAccount(new UserAccount().withEnabled(true))
 //                .roles(role1)
                 .build();
         
         user2 = new UserBuilder().id(6).firstName("John").lastName("Doe").email("john@doe.com")
-                .enabled(true)
+                .userAccount(new UserAccount().withEnabled(true))
 //                .roles(role1, role2)
                 .build();
         

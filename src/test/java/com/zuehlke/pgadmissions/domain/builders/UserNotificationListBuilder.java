@@ -162,7 +162,7 @@ public class UserNotificationListBuilder {
 
     private UserTestHarness buildInstanceThatRequiresTaskReminder(User user, NotificationListTestScenario testScenario,
             NotificationListTestCase testCase) {
-        user.setLatestTaskNotificationDate(reminderBaselineDate);
+//        user.setLatestTaskNotificationDate(reminderBaselineDate);
         UserRole applicationFormUserRole = getDummyUserRole(getDummyApplication(), user, roleWithoutUpdateNotification, true,
                 false, getDummyApplicationFormActionRequired(actionWithSyndicatedNotification));
         return new UserTestHarness(user, testScenario, applicationFormUserRole);
@@ -177,10 +177,10 @@ public class UserNotificationListBuilder {
             NotificationListTestCase testCase) {
         switch (testCase) {
         case DUE_TASK_NOTIFICATION_NEVER_RECEIVED:
-            user.setLatestTaskNotificationDate(null);
+//            user.setLatestTaskNotificationDate(null);
             break;
         case DUE_TASK_NOTIFICATION_RECEIVED_AGES_AGO:
-            user.setLatestTaskNotificationDate(DateUtils.addDays((Date) expiryBaselineDate.clone(), 1));
+//            user.setLatestTaskNotificationDate(DateUtils.addDays((Date) expiryBaselineDate.clone(), 1));
             break;
         default:
             break;
@@ -201,10 +201,10 @@ public class UserNotificationListBuilder {
             NotificationListTestCase testCase) {
         switch (testCase) {
         case DUE_UPDATE_NOTIFICATION_NEVER_RECEIVED:
-            user.setLatestUpdateNotificationDate(null);
+//            user.setLatestUpdateNotificationDate(null);
             break;
         case DUE_UPDATE_NOTIFICATION_RECEIVED_AGES_AGO:
-            user.setLatestUpdateNotificationDate(DateUtils.addDays((Date) baselineDate.clone(), -1));
+//            user.setLatestUpdateNotificationDate(DateUtils.addDays((Date) baselineDate.clone(), -1));
             break;
         default:
             break;
@@ -216,7 +216,7 @@ public class UserNotificationListBuilder {
 
     private UserTestHarness buildInstanceThatDoesNotRequireUpdateNotification(User user, NotificationListTestScenario testScenario,
             NotificationListTestCase testCase) {
-        user.setLatestUpdateNotificationDate(updateBaselineDate);
+//        user.setLatestUpdateNotificationDate(updateBaselineDate);
         UserRole applicationFormUserRole = getDummyUserRole(getDummyApplication(), user, roleWithUpdateNotification, true, false);
 //        switch (testCase) {
 //        case RECEIVED_RECENT_UPDATE_NOTIFICATION:
@@ -247,13 +247,13 @@ public class UserNotificationListBuilder {
 
     private UserTestHarness buildInstanceThatDoesNotRequiredTaskNotificationOrReminder(User user,
             NotificationListTestScenario testScenario, NotificationListTestCase testCase, Date instanceBaselineDate) {
-        user.setLatestTaskNotificationDate(instanceBaselineDate);
+//        user.setLatestTaskNotificationDate(instanceBaselineDate);
         ActionRequired applicationFormActionRequired = getDummyApplicationFormActionRequired(actionWithSyndicatedNotification);
         UserRole applicationFormUserRole = getDummyUserRole(getDummyApplication(), user, roleWithoutUpdateNotification, true,
                 false, applicationFormActionRequired);
         switch (testCase) {
         case RECEIVED_RECENT_TASK_NOTIFICATION:
-            user.setLatestTaskNotificationDate(DateUtils.addDays(instanceBaselineDate, 1));
+//            user.setLatestTaskNotificationDate(DateUtils.addDays(instanceBaselineDate, 1));
             updateDummyObject(user);
             break;
         case NOTIFICATION_WINDOW_EXPIRED:

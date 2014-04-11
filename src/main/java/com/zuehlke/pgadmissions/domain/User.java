@@ -122,18 +122,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Column(name = "ucl_user_id")
     private String uclUserId;
 
-    @Column(name = "latest_task_notification_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date latestTaskNotificationDate;
-
-    @Column(name = "latest_update_notification_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date latestUpdateNotificationDate;
-
-    @Column(name = "latest_opportunity_request_notification_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date latestOpportunityRequestNotificationDate;
-
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles;
 
@@ -274,30 +262,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     public void setUclUserId(String uclUserId) {
         this.uclUserId = uclUserId;
-    }
-
-    public Date getLatestTaskNotificationDate() {
-        return latestTaskNotificationDate;
-    }
-
-    public void setLatestTaskNotificationDate(Date latestTaskNotificationDate) {
-        this.latestTaskNotificationDate = latestTaskNotificationDate;
-    }
-
-    public Date getLatestUpdateNotificationDate() {
-        return latestUpdateNotificationDate;
-    }
-
-    public void setLatestUpdateNotificationDate(Date latestUpdateNotificationDate) {
-        this.latestUpdateNotificationDate = latestUpdateNotificationDate;
-    }
-
-    public Date getLatestOpportunityRequestNotificationDate() {
-        return latestOpportunityRequestNotificationDate;
-    }
-
-    public void setLatestOpportunityRequestNotificationDate(Date latestOpportunityRequestNotificationDate) {
-        this.latestOpportunityRequestNotificationDate = latestOpportunityRequestNotificationDate;
     }
 
     public List<ResearchOpportunitiesFeed> getResearchOpportunitiesFeeds() {

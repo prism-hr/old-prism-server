@@ -47,11 +47,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     private Rejection rejection;
 
     @ManyToOne
-    @JoinColumn(name = "state")
+    @JoinColumn(name = "state_id")
     private State state;
 
     @ManyToOne
-    @JoinColumn(name = "next_state")
+    @JoinColumn(name = "next_state_id")
     private State nextState = null;
 
     @ManyToOne
@@ -77,22 +77,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTimestamp;
 
-    @Column(name = "submitted_on_timestamp")
-    private Date submittedDate;
+    @Column(name = "submitted_timestamp")
+    private Date submittedTimestamp;
 
     @Column(name = "closing_date")
     private Date closingDate = null;
 
-    @Column(name = "last_updated")
+    @Column(name = "update_timestamp")
     @Temporal(value = TemporalType.TIMESTAMP)
-    private Date lastUpdated;
+    private Date updateTimestamp;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User applicant = null;
-
-    @Column(name = "project_title")
-    private String projectTitle;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advert_id")
@@ -107,11 +104,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     private Project project;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "personal_detail_id")
+    @JoinColumn(name = "application_personal_detail_id")
     private PersonalDetails personalDetails;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "program_details_id")
+    @JoinColumn(name = "application_program_detail_id")
     @Valid
     private ProgramDetails programDetails;
 
@@ -266,12 +263,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.createdTimestamp = createdTimestamp;
     }
 
-    public Date getSubmittedDate() {
-        return submittedDate;
+    public Date getSubmittedTimestamp() {
+        return submittedTimestamp;
     }
 
-    public void setSubmittedDate(Date submittedDate) {
-        this.submittedDate = submittedDate;
+    public void setSubmittedTimestamp(Date submittedTimestamp) {
+        this.submittedTimestamp = submittedTimestamp;
     }
 
     public Date getClosingDate() {
@@ -282,12 +279,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.closingDate = closingDate;
     }
 
-    public Date getLastUpdated() {
-        return lastUpdated;
+    public Date getUpdateTimestamp() {
+        return updateTimestamp;
     }
 
-    public void setLastUpdated(Date lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setUpdateTimestamp(Date updateTimestamp) {
+        this.updateTimestamp = updateTimestamp;
     }
 
     public User getApplicant() {
@@ -296,14 +293,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
 
     public void setApplicant(User applicant) {
         this.applicant = applicant;
-    }
-
-    public String getProjectTitle() {
-        return projectTitle;
-    }
-
-    public void setProjectTitle(String projectTitle) {
-        this.projectTitle = projectTitle;
     }
 
     public Advert getAdvert() {
@@ -436,16 +425,16 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
 
     @Override
     public int compareTo(ApplicationForm appForm) {
-        if (appForm.getSubmittedDate() != null && this.getSubmittedDate() == null) {
+        if (appForm.getSubmittedTimestamp() != null && this.getSubmittedTimestamp() == null) {
             return -1;
         }
-        if (appForm.getSubmittedDate() == null && this.getSubmittedDate() != null) {
+        if (appForm.getSubmittedTimestamp() == null && this.getSubmittedTimestamp() != null) {
             return 1;
         }
-        if (appForm.getSubmittedDate() == null && this.getSubmittedDate() == null) {
+        if (appForm.getSubmittedTimestamp() == null && this.getSubmittedTimestamp() == null) {
             return this.createdTimestamp.compareTo(appForm.getCreatedTimestamp());
         }
-        return this.submittedDate.compareTo(appForm.getSubmittedDate());
+        return this.submittedTimestamp.compareTo(appForm.getSubmittedTimestamp());
     }
 
 }

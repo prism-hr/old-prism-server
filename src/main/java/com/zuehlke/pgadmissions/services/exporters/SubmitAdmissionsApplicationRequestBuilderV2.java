@@ -389,7 +389,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicationTp.setPersonalStatement(REFER_TO_ATTACHED_DOCUMENT);
 
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
-        applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
+        applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedTimestamp()));
         applicationTp.setIpAddress(applicationForm.getIpAddressAsString());
         applicationTp.setExternalApplicationID(applicationForm.getApplicationNumber());
 
@@ -397,7 +397,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             applicationTp.setIpAddress(IP_ADDRESS_NOT_PROVIDED_VALUE);
         }
 
-        applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
+        applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedTimestamp()));
         applicationTp.setRefereeList(buildReferee());
 
         switch (applicationForm.getState().getId()) {

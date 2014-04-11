@@ -145,23 +145,25 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         applicationDescriptorOne.setApplicationFormStatus(ApplicationFormStatus.VALIDATION);
 
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().advert(program).applicant(applicant)
-                .status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).createdTimestamp(format.parse("01 01 2012")).submittedDate(format.parse("01 04 2012"))
-                .build();
+                .status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).createdTimestamp(format.parse("01 01 2012"))
+                .submittedDate(format.parse("01 04 2012")).build();
         ApplicationDescriptor applicationDescriptorTwo = new ApplicationDescriptor();
         applicationDescriptorTwo.setApplicationFormId(applicationFormTwo.getId());
         applicationDescriptorTwo.setApplicationFormStatus(ApplicationFormStatus.UNSUBMITTED);
 
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().advert(program).applicant(applicant)
-                .status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012")) // this is insertable=false. We can not
-                                                                                                                   // properly test this?
+                .status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012")) // this is insertable=false. We can
+                                                                                                                            // not
+                // properly test this?
                 .build();
         ApplicationDescriptor applicationDescriptorThree = new ApplicationDescriptor();
         applicationDescriptorThree.setApplicationFormId(applicationFormThree.getId());
         applicationDescriptorThree.setApplicationFormStatus(ApplicationFormStatus.UNSUBMITTED);
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().advert(program).applicant(applicant)
-                .status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012")) // this is insertable=false. We can not
-                                                                                                                   // properly test this?
+                .status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012")) // this is insertable=false. We can
+                                                                                                                            // not
+                // properly test this?
                 .submittedDate(format.parse("01 03 2012")).build();
         ApplicationDescriptor applicationDescriptorFour = new ApplicationDescriptor();
         applicationDescriptorFour.setApplicationFormId(applicationFormFour.getId());
@@ -336,8 +338,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingLastName() {
 
-        User applicant = new UserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com")
-                .enabled(true).build();
+        User applicant = new UserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com").enabled(true).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(applicant)
                 .status(new State().withId(ApplicationFormStatus.APPROVAL)).build();
@@ -360,8 +361,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldNotReturnAppIfTermNotInApplicantNameFirstOrLastName() {
 
-        User applicant = new UserBuilder().firstName("Frederick").lastName("unique").email("email@test.com")
-                .enabled(true).build();
+        User applicant = new UserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").enabled(true).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(applicant)
                 .status(new State().withId(ApplicationFormStatus.APPROVAL)).build();
@@ -392,7 +392,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.VALIDATION))
-                .applicationNumber("ABCD").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
+                .applicationNumber("ABCD").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
+                .build();
         ApplicationDescriptor applicationDescriptorThree = new ApplicationDescriptor();
         applicationDescriptorThree.setApplicationFormId(applicationFormThree.getId());
 
@@ -431,7 +432,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.VALIDATION))
-                .applicationNumber("ABCD").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
+                .applicationNumber("ABCD").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
+                .build();
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").advert(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
@@ -467,7 +469,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.VALIDATION))
-                .applicationNumber("ABCD").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
+                .applicationNumber("ABCD").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
+                .build();
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").advert(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
@@ -501,7 +504,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
 
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.VALIDATION))
-                .applicationNumber("ABCD").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
+                .applicationNumber("ABCD").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant)
+                .build();
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").advert(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
@@ -527,14 +531,15 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldSearchAndSort() throws ParseException {
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.INTERVIEW))
-                .applicationNumber("zzzFooBarzzz").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant).build();
+                .applicationNumber("zzzFooBarzzz").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03"))
+                .applicant(applicant).build();
 
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").advert(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/04")).applicant(applicant).build();
 
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.VALIDATION))
-                .applicationNumber("zzzFooBarzzz1").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/05")).applicant(applicant)
-                .build();
+                .applicationNumber("zzzFooBarzzz1").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/05"))
+                .applicant(applicant).build();
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").advert(program)
                 .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/06")).applicant(applicant).build();
@@ -619,8 +624,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .applicationNumber("ABCDE3").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).build();
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicant(applicant4).applicationNumber("ABCDE4")
-                .status(new State().withId(ApplicationFormStatus.APPROVED)).advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03"))
-                .build();
+                .status(new State().withId(ApplicationFormStatus.APPROVED)).advert(program)
+                .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03")).build();
 
         Role role = roleDAO.getById(Authority.SUPERADMINISTRATOR);
         UserRole applicationFormUserRole1 = new UserRole().withApplication(applicationFormOne).withRole(role).withUser(superUser);
@@ -669,8 +674,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .applicationNumber("ABCDE3").advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).build();
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicant(applicant4).applicationNumber("ABCDE4")
-                .status(new State().withId(ApplicationFormStatus.WITHDRAWN)).advert(program).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03"))
-                .build();
+                .status(new State().withId(ApplicationFormStatus.WITHDRAWN)).advert(program)
+                .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03")).build();
 
         Role superadministratorRole = roleDAO.getById(Authority.SUPERADMINISTRATOR);
         UserRole applicationFormUserRole1 = new UserRole().withApplication(applicationFormOne).withRole(superadministratorRole).withUser(superUser);
@@ -729,8 +734,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .applicationNumber("ABCDE3").advert(program3).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).build();
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicant(applicant4).applicationNumber("ABCDE4")
-                .status(new State().withId(ApplicationFormStatus.WITHDRAWN)).advert(program4).createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03"))
-                .build();
+                .status(new State().withId(ApplicationFormStatus.WITHDRAWN)).advert(program4)
+                .createdTimestamp(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03")).build();
 
         Role superadministratorRole = roleDAO.getById(Authority.SUPERADMINISTRATOR);
         UserRole applicationFormUserRole1 = new UserRole().withApplication(applicationFormOne).withRole(superadministratorRole).withUser(superUser);
@@ -849,15 +854,15 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 .closingDate(format.parse("01 01 2050")).build();
 
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().advert(program).applicant(applicant)
-                .status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).createdTimestamp(format.parse("01 01 2012")).closingDate(format.parse("01 01 2050"))
-                .submittedDate(format.parse("01 04 2012")).build();
+                .status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).createdTimestamp(format.parse("01 01 2012"))
+                .closingDate(format.parse("01 01 2050")).submittedDate(format.parse("01 04 2012")).build();
 
         ApplicationForm applicationFormThree = new ApplicationFormBuilder().advert(program).applicant(applicant).closingDate(format.parse("01 01 2050"))
                 .status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012")).build();
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().advert(program).applicant(applicant)
-                .status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012")).closingDate(format.parse("01 01 2050"))
-                .submittedDate(format.parse("01 03 2012")).build();
+                .status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012"))
+                .closingDate(format.parse("01 01 2050")).submittedDate(format.parse("01 03 2012")).build();
 
         Role role = roleDAO.getById(Authority.APPLICANT);
         UserRole applicationFormUserRole1 = new UserRole().withApplication(applicationFormOne).withRole(role).withUser(applicant);
@@ -886,8 +891,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     public void shouldReturnApplicationWithProjectTitle() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.REVIEW)).advert(program)
-                .projectTitle("another title").applicant(applicant).submittedDate(new Date()).createdTimestamp(format.parse("01 01 2012"))
-                .dueDate(format.parse("01 01 2050")).build();
+                .applicant(applicant).submittedDate(new Date()).createdTimestamp(format.parse("01 01 2012")).dueDate(format.parse("01 01 2050")).build();
 
         Role role = roleDAO.getById(Authority.SUPERADMINISTRATOR);
         UserRole applicationFormUserRole = new UserRole().withApplication(applicationFormOne).withRole(role).withUser(superUser);

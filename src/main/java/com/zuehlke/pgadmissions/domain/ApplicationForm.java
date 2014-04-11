@@ -32,414 +32,408 @@ import org.hibernate.annotations.GenerationTime;
 
 @Entity(name = "APPLICATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ApplicationForm implements Comparable<ApplicationForm>,
-		Serializable, PrismScope {
+public class ApplicationForm implements Comparable<ApplicationForm>, Serializable, PrismScope {
+
+    private static final long serialVersionUID = -7671357234815343496L;
+
+    @Id
+    @GeneratedValue
+    private Integer id;
+
+    @Column(name = "application_number")
+    private String applicationNumber;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "rejection_id")
+    private Rejection rejection;
+
+    @ManyToOne
+    @JoinColumn(name = "status")
+    private State status;
+
+    @ManyToOne
+    @JoinColumn(name = "next_status")
+    private State nextStatus = null;
+
+    @ManyToOne
+    @JoinColumn(name = "last_status")
+    private State lastStatus = null;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_address_id")
+    @Valid
+    private ApplicationAddress applicationAddress;
 
-	private static final long serialVersionUID = -7671357234815343496L;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_document_id")
+    @Valid
+    private ApplicationDocument applicationDocument;
 
-	@Id
-	@GeneratedValue
-	private Integer id;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "due_date")
+    private Date dueDate;
 
-	@Transient
-	private boolean acceptedTerms;
+    @Column(name = "app_date_time", insertable = false)
+    @Generated(GenerationTime.INSERT)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date applicationTimestamp;
 
-	@Column(name = "application_number")
-	private String applicationNumber;
-
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "rejection_id")
-	private Rejection rejection;
-
-	@ManyToOne
-	@JoinColumn(name = "status")
-	private State status;
-
-	@ManyToOne
-	@JoinColumn(name = "next_status")
-	private State nextStatus = null;
-
-	@ManyToOne
-	@JoinColumn(name = "last_status")
-	private State lastStatus = null;
-
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "application_form_address_id")
-	@Valid
-	private ApplicationFormAddress applicationFormAddress;
+    @Column(name = "submitted_on_timestamp")
+    private Date submittedDate;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "application_form_document_id")
-	@Valid
-	private ApplicationFormDocument applicationFormDocument;
+    @Column(name = "closing_date")
+    private Date closingDate = null;
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "due_date")
-	private Date dueDate;
+    @Column(name = "last_updated")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date lastUpdated;
 
-	@Column(name = "accepted_terms")
-	private Boolean acceptedTermsOnSubmission;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User applicant = null;
 
-	@Column(name = "app_date_time", insertable = false)
-	@Generated(GenerationTime.INSERT)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date applicationTimestamp;
+    @Column(name = "project_title")
+    private String projectTitle;
 
-	@Column(name = "submitted_on_timestamp")
-	private Date submittedDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "advert_id")
+    private Advert advert;
 
-	@Column(name = "closing_date")
-	private Date closingDate = null;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "program_id")
+    private Program program;
 
-	@Column(name = "last_updated")
-	@Temporal(value = TemporalType.TIMESTAMP)
-	private Date lastUpdated;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "applicant_id")
-	private User applicant = null;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "personal_detail_id")
+    private PersonalDetails personalDetails;
 
-	@Column(name = "project_title")
-	private String projectTitle;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "program_details_id")
+    @Valid
+    private ProgramDetails programDetails;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "advert_id")
-	private Advert advert;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("date")
+    @JoinColumn(name = "application_form_id")
+    private List<Comment> applicationComments = new ArrayList<Comment>();
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "program_id")
-	private Program program;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_form_id")
+    @Valid
+    private List<Qualification> qualifications = new ArrayList<Qualification>();
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "project_id")
-	private Project project;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_form_id")
+    @Valid
+    private List<Funding> fundings = new ArrayList<Funding>();
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "personal_detail_id")
-	private PersonalDetails personalDetails;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_form_id")
+    @Valid
+    private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "program_details_id")
-	@Valid
-	private ProgramDetails programDetails;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_form_id")
+    @Valid
+    private List<Referee> referees = new ArrayList<Referee>();
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("date")
-	@JoinColumn(name = "application_form_id")
-	private List<Comment> applicationComments = new ArrayList<Comment>();
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_additional_information_id")
+    @Valid
+    private AdditionalInformation additionalInformation;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "application_form_id")
-	@Valid
-	private List<Qualification> qualifications = new ArrayList<Qualification>();
+    @Column(name = "reject_notification_date")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date rejectNotificationDate;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "application_form_id")
-	@Valid
-	private List<Funding> fundings = new ArrayList<Funding>();
+    @Column(name = "ip_address")
+    private byte[] ipAddress;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "application_form_id")
-	@Valid
-	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
+    @Column(name = "ucl_booking_ref_number")
+    private String uclBookingReferenceNumber;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "application_form_id")
-	@Valid
-	private List<Referee> referees = new ArrayList<Referee>();
+    @Column(name = "avg_rating", precision = 3, scale = 2)
+    private BigDecimal averageRating;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "additional_info_id")
-	@Valid
-	private AdditionalInformation additionalInformation;
+    @Column(name = "use_custom_reference_questions")
+    private Boolean useCustomReferenceQuestions = false;
 
-	@Column(name = "reject_notification_date")
-	@Temporal(value = TemporalType.TIMESTAMP)
-	private Date rejectNotificationDate;
+    @Column(name = "is_exported")
+    private Boolean exported = null;
 
-	@Column(name = "ip_address")
-	private byte[] ipAddress;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "applicationForm")
+    private ApplicationFormTransfer applicationFormTransfer;
 
-	@Column(name = "ucl_booking_ref_number")
-	private String uclBookingReferenceNumber;
+    @Transient
+    private boolean acceptedTerms;
 
-	@Column(name = "avg_rating", precision = 3, scale = 2)
-	private BigDecimal averageRating;
+    @Transient
+    private Boolean acceptedTermsOnSubmission;
 
-	@Column(name = "use_custom_reference_questions")
-	private Boolean useCustomReferenceQuestions = false;
+    public Integer getId() {
+        return id;
+    }
 
-	@Column(name = "is_exported")
-	private Boolean exported = null;
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "applicationForm")
-	private ApplicationFormTransfer applicationFormTransfer;
+    public boolean isAcceptedTerms() {
+        return acceptedTerms;
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public void setAcceptedTerms(boolean acceptedTerms) {
+        this.acceptedTerms = acceptedTerms;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
 
-	public boolean isAcceptedTerms() {
-		return acceptedTerms;
-	}
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
 
-	public void setAcceptedTerms(boolean acceptedTerms) {
-		this.acceptedTerms = acceptedTerms;
-	}
+    public Rejection getRejection() {
+        return rejection;
+    }
 
-	public String getApplicationNumber() {
-		return applicationNumber;
-	}
+    public void setRejection(Rejection rejection) {
+        this.rejection = rejection;
+    }
 
-	public void setApplicationNumber(String applicationNumber) {
-		this.applicationNumber = applicationNumber;
-	}
+    public State getStatus() {
+        return status;
+    }
 
-	public Rejection getRejection() {
-		return rejection;
-	}
+    public void setStatus(State status) {
+        this.status = status;
+    }
 
-	public void setRejection(Rejection rejection) {
-		this.rejection = rejection;
-	}
+    public State getNextStatus() {
+        return nextStatus;
+    }
 
-	public State getStatus() {
-		return status;
-	}
+    public void setNextStatus(State nextStatus) {
+        this.nextStatus = nextStatus;
+    }
 
-	public void setStatus(State status) {
-		this.status = status;
-	}
+    public State getLastStatus() {
+        return lastStatus;
+    }
 
-	public State getNextStatus() {
-		return nextStatus;
-	}
+    public void setLastStatus(State lastStatus) {
+        this.lastStatus = lastStatus;
+    }
 
-	public void setNextStatus(State nextStatus) {
-		this.nextStatus = nextStatus;
-	}
+    public ApplicationAddress getApplicationAddress() {
+        return applicationAddress;
+    }
 
-	public State getLastStatus() {
-		return lastStatus;
-	}
+    public void setApplicationAddress(ApplicationAddress applicationAddress) {
+        this.applicationAddress = applicationAddress;
+    }
 
-	public void setLastStatus(State lastStatus) {
-		this.lastStatus = lastStatus;
-	}
+    public ApplicationDocument getApplicationDocument() {
+        return applicationDocument;
+    }
 
-	public ApplicationFormAddress getApplicationFormAddress() {
-		return applicationFormAddress;
-	}
+    public void setApplicationDocument(ApplicationDocument applicationDocument) {
+        this.applicationDocument = applicationDocument;
+    }
 
-	public void setApplicationFormAddress(
-			ApplicationFormAddress applicationFormAddress) {
-		this.applicationFormAddress = applicationFormAddress;
-	}
+    public Date getDueDate() {
+        return dueDate;
+    }
 
-	public ApplicationFormDocument getApplicationFormDocument() {
-		return applicationFormDocument;
-	}
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
 
-	public void setApplicationFormDocument(
-			ApplicationFormDocument applicationFormDocument) {
-		this.applicationFormDocument = applicationFormDocument;
-	}
+    public Boolean getAcceptedTermsOnSubmission() {
+        return acceptedTermsOnSubmission;
+    }
 
-	public Date getDueDate() {
-		return dueDate;
-	}
+    public void setAcceptedTermsOnSubmission(Boolean acceptedTermsOnSubmission) {
+        this.acceptedTermsOnSubmission = acceptedTermsOnSubmission;
+    }
 
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
-	}
+    public Date getApplicationTimestamp() {
+        return applicationTimestamp;
+    }
 
-	public Boolean getAcceptedTermsOnSubmission() {
-		return acceptedTermsOnSubmission;
-	}
+    public void setApplicationTimestamp(Date applicationTimestamp) {
+        this.applicationTimestamp = applicationTimestamp;
+    }
 
-	public void setAcceptedTermsOnSubmission(Boolean acceptedTermsOnSubmission) {
-		this.acceptedTermsOnSubmission = acceptedTermsOnSubmission;
-	}
+    public Date getSubmittedDate() {
+        return submittedDate;
+    }
 
-	public Date getApplicationTimestamp() {
-		return applicationTimestamp;
-	}
+    public void setSubmittedDate(Date submittedDate) {
+        this.submittedDate = submittedDate;
+    }
 
-	public void setApplicationTimestamp(Date applicationTimestamp) {
-		this.applicationTimestamp = applicationTimestamp;
-	}
+    public Date getClosingDate() {
+        return closingDate;
+    }
 
-	public Date getSubmittedDate() {
-		return submittedDate;
-	}
+    public void setClosingDate(Date closingDate) {
+        this.closingDate = closingDate;
+    }
 
-	public void setSubmittedDate(Date submittedDate) {
-		this.submittedDate = submittedDate;
-	}
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
 
-	public Date getClosingDate() {
-		return closingDate;
-	}
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 
-	public void setClosingDate(Date closingDate) {
-		this.closingDate = closingDate;
-	}
+    public User getApplicant() {
+        return applicant;
+    }
 
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
+    public void setApplicant(User applicant) {
+        this.applicant = applicant;
+    }
 
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
+    public String getProjectTitle() {
+        return projectTitle;
+    }
 
-	public User getApplicant() {
-		return applicant;
-	}
+    public void setProjectTitle(String projectTitle) {
+        this.projectTitle = projectTitle;
+    }
 
-	public void setApplicant(User applicant) {
-		this.applicant = applicant;
-	}
+    public Advert getAdvert() {
+        return advert;
+    }
 
-	public String getProjectTitle() {
-		return projectTitle;
-	}
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
+    }
 
-	public void setProjectTitle(String projectTitle) {
-		this.projectTitle = projectTitle;
-	}
+    public Program getProgram() {
+        return program;
+    }
 
-	public Advert getAdvert() {
-		return advert;
-	}
+    public void setProgram(Program program) {
+        this.program = program;
+    }
 
-	public void setAdvert(Advert advert) {
-		this.advert = advert;
-	}
+    public Project getProject() {
+        return project;
+    }
 
-	public Program getProgram() {
-		return program;
-	}
+    public void setProject(Project project) {
+        this.project = project;
+    }
 
-	public void setProgram(Program program) {
-		this.program = program;
-	}
+    public PersonalDetails getPersonalDetails() {
+        return personalDetails;
+    }
 
-	public Project getProject() {
-		return project;
-	}
+    public void setPersonalDetails(PersonalDetails personalDetails) {
+        this.personalDetails = personalDetails;
+    }
 
-	public void setProject(Project project) {
-		this.project = project;
-	}
+    public ProgramDetails getProgramDetails() {
+        return programDetails;
+    }
 
-	public PersonalDetails getPersonalDetails() {
-		return personalDetails;
-	}
-
-	public void setPersonalDetails(PersonalDetails personalDetails) {
-		this.personalDetails = personalDetails;
-	}
-
-	public ProgramDetails getProgramDetails() {
-		return programDetails;
-	}
-
-	public void setProgramDetails(ProgramDetails programDetails) {
-		this.programDetails = programDetails;
-	}
-
-	public AdditionalInformation getAdditionalInformation() {
-		return additionalInformation;
-	}
-
-	public void setAdditionalInformation(
-			AdditionalInformation additionalInformation) {
-		this.additionalInformation = additionalInformation;
-	}
-
-	public Date getRejectNotificationDate() {
-		return rejectNotificationDate;
-	}
-
-	public void setRejectNotificationDate(Date rejectNotificationDate) {
-		this.rejectNotificationDate = rejectNotificationDate;
-	}
-
-	public byte[] getIpAddress() {
-		return ipAddress;
-	}
-
-	public void setIpAddress(byte[] ipAddress) {
-		this.ipAddress = ipAddress;
-	}
-
-	public String getUclBookingReferenceNumber() {
-		return uclBookingReferenceNumber;
-	}
-
-	public void setUclBookingReferenceNumber(String uclBookingReferenceNumber) {
-		this.uclBookingReferenceNumber = uclBookingReferenceNumber;
-	}
-
-	public BigDecimal getAverageRating() {
-		return averageRating;
-	}
-
-	public void setAverageRating(BigDecimal averageRating) {
-		this.averageRating = averageRating;
-	}
-
-	public Boolean getUseCustomReferenceQuestions() {
-		return useCustomReferenceQuestions;
-	}
-
-	public void setUseCustomReferenceQuestions(
-			Boolean useCustomReferenceQuestions) {
-		this.useCustomReferenceQuestions = useCustomReferenceQuestions;
-	}
-
-	public Boolean getExported() {
-		return exported;
-	}
-
-	public void setExported(Boolean exported) {
-		this.exported = exported;
-	}
-
-	public ApplicationFormTransfer getApplicationFormTransfer() {
-		return applicationFormTransfer;
-	}
-
-	public void setApplicationFormTransfer(
-			ApplicationFormTransfer applicationFormTransfer) {
-		this.applicationFormTransfer = applicationFormTransfer;
-	}
-
-	public List<Comment> getApplicationComments() {
-		return applicationComments;
-	}
-
-	public List<Qualification> getQualifications() {
-		return qualifications;
-	}
-
-	public List<Funding> getFundings() {
-		return fundings;
-	}
-
-	public List<EmploymentPosition> getEmploymentPositions() {
-		return employmentPositions;
-	}
-
-	public List<Referee> getReferees() {
-		return referees;
-	}
-	
+    public void setProgramDetails(ProgramDetails programDetails) {
+        this.programDetails = programDetails;
+    }
+
+    public AdditionalInformation getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(AdditionalInformation additionalInformation) {
+        this.additionalInformation = additionalInformation;
+    }
+
+    public Date getRejectNotificationDate() {
+        return rejectNotificationDate;
+    }
+
+    public void setRejectNotificationDate(Date rejectNotificationDate) {
+        this.rejectNotificationDate = rejectNotificationDate;
+    }
+
+    public byte[] getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(byte[] ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public String getUclBookingReferenceNumber() {
+        return uclBookingReferenceNumber;
+    }
+
+    public void setUclBookingReferenceNumber(String uclBookingReferenceNumber) {
+        this.uclBookingReferenceNumber = uclBookingReferenceNumber;
+    }
+
+    public BigDecimal getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(BigDecimal averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public Boolean getUseCustomReferenceQuestions() {
+        return useCustomReferenceQuestions;
+    }
+
+    public void setUseCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
+        this.useCustomReferenceQuestions = useCustomReferenceQuestions;
+    }
+
+    public Boolean getExported() {
+        return exported;
+    }
+
+    public void setExported(Boolean exported) {
+        this.exported = exported;
+    }
+
+    public ApplicationFormTransfer getApplicationFormTransfer() {
+        return applicationFormTransfer;
+    }
+
+    public void setApplicationFormTransfer(ApplicationFormTransfer applicationFormTransfer) {
+        this.applicationFormTransfer = applicationFormTransfer;
+    }
+
+    public List<Comment> getApplicationComments() {
+        return applicationComments;
+    }
+
+    public List<Qualification> getQualifications() {
+        return qualifications;
+    }
+
+    public List<Funding> getFundings() {
+        return fundings;
+    }
+
+    public List<EmploymentPosition> getEmploymentPositions() {
+        return employmentPositions;
+    }
+
+    public List<Referee> getReferees() {
+        return referees;
+    }
+
     public String getIpAddressAsString() {
         try {
             return InetAddress.getByAddress(ipAddress).getHostAddress();
@@ -447,27 +441,23 @@ public class ApplicationForm implements Comparable<ApplicationForm>,
             return StringUtils.EMPTY;
         }
     }
-    
+
     public void setIpAddressAsString(String ipAddress) throws UnknownHostException {
         this.ipAddress = InetAddress.getByName(ipAddress).getAddress();
     }
 
-	@Override
-	public int compareTo(ApplicationForm appForm) {
-		if (appForm.getSubmittedDate() != null
-				&& this.getSubmittedDate() == null) {
-			return -1;
-		}
-		if (appForm.getSubmittedDate() == null
-				&& this.getSubmittedDate() != null) {
-			return 1;
-		}
-		if (appForm.getSubmittedDate() == null
-				&& this.getSubmittedDate() == null) {
-			return this.applicationTimestamp.compareTo(appForm
-					.getApplicationTimestamp());
-		}
-		return this.submittedDate.compareTo(appForm.getSubmittedDate());
-	}
+    @Override
+    public int compareTo(ApplicationForm appForm) {
+        if (appForm.getSubmittedDate() != null && this.getSubmittedDate() == null) {
+            return -1;
+        }
+        if (appForm.getSubmittedDate() == null && this.getSubmittedDate() != null) {
+            return 1;
+        }
+        if (appForm.getSubmittedDate() == null && this.getSubmittedDate() == null) {
+            return this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
+        }
+        return this.submittedDate.compareTo(appForm.getSubmittedDate());
+    }
 
 }

@@ -13,7 +13,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
@@ -29,11 +29,11 @@ public class ApplicationFormDocumentValidatorTest {
 
     private ApplicationFormDocumentValidator documentSectionValidator;
 
-    private ApplicationFormDocument documentsSectionDTO;
+    private ApplicationDocument documentsSectionDTO;
 
     @Test
     public void shouldSupportApplicationForm() {
-        assertTrue(documentSectionValidator.supports(ApplicationFormDocument.class));
+        assertTrue(documentSectionValidator.supports(ApplicationDocument.class));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class ApplicationFormDocumentValidatorTest {
     @Before
     public void setup() {
         ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).build();
-        documentsSectionDTO = new ApplicationFormDocument();
+        documentsSectionDTO = new ApplicationDocument();
         documentsSectionDTO.setCv(new DocumentBuilder().type(DocumentType.CV).build());
         documentsSectionDTO.setPersonalStatement(new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).build());
         documentsSectionDTO.setApplication(application);

@@ -19,7 +19,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -60,7 +60,7 @@ public class DocumentsControllerTest {
     @Test
     public void shouldReturnApplicationFormView() {
         ModelMap modelMap = new ModelMap();
-        ApplicationForm application = new ApplicationFormBuilder().applicationFormDocument(new ApplicationFormDocument().withPersonalStatement(new Document()).withCv(new Document())).build();
+        ApplicationForm application = new ApplicationFormBuilder().applicationFormDocument(new ApplicationDocument().withPersonalStatement(new Document()).withCv(new Document())).build();
         modelMap.put("applicationForm", application);
 
         assertEquals("/private/pgStudents/form/components/documents", controller.getDocumentsView(null, modelMap));
@@ -103,7 +103,7 @@ public class DocumentsControllerTest {
     @Test
     public void shouldSaveAppplicationFormAndRedirectIfNoErrors() {
         User currentUser = new User();
-        ApplicationFormDocument documentsSectionDTO = new ApplicationFormDocument();
+        ApplicationDocument documentsSectionDTO = new ApplicationDocument();
         BindingResult bindingResult = new BeanPropertyBindingResult(documentsSectionDTO, "documentsSectionDTO");
         ApplicationForm application = new ApplicationFormBuilder().id(666).applicationNumber("ABC").build();
         ModelMap modelMap = new ModelMap();
@@ -120,7 +120,7 @@ public class DocumentsControllerTest {
 
     @Test
     public void shouldNotSaveAndReturnToViewIfErrors() {
-        ApplicationFormDocument documentsSectionDTO = new ApplicationFormDocument();
+        ApplicationDocument documentsSectionDTO = new ApplicationDocument();
         BindingResult bindingResult = new BeanPropertyBindingResult(documentsSectionDTO, "documentsSectionDTO");
         ModelMap modelMap = new ModelMap();
         

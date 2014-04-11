@@ -10,8 +10,8 @@ import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -30,7 +30,7 @@ public class ApplicationFormBuilder {
     private State status;
     private ProgramDetails programmeDetails;
     private PersonalDetails personalDetails;
-    private ApplicationFormAddress applicationFormAddress;
+    private ApplicationAddress applicationFormAddress;
     private Integer id;
     private User applicant;
     private String projectTitle;
@@ -45,7 +45,7 @@ public class ApplicationFormBuilder {
     private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
     private List<Comment> comments = new ArrayList<Comment>();
     private List<Funding> fundings = new ArrayList<Funding>();
-    private ApplicationFormDocument applicationFormDocument;
+    private ApplicationDocument applicationFormDocument;
     private AdditionalInformation info;
     private Date lastUpdated;
     private Date rejectNotificationDate;
@@ -123,12 +123,12 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder applicationFormAddress(ApplicationFormAddress applicationFormAddress) {
+    public ApplicationFormBuilder applicationFormAddress(ApplicationAddress applicationFormAddress) {
         this.applicationFormAddress = applicationFormAddress;
         return this;
     }
 
-    public ApplicationFormBuilder applicationFormDocument(ApplicationFormDocument applicationFormDocument) {
+    public ApplicationFormBuilder applicationFormDocument(ApplicationDocument applicationFormDocument) {
         this.applicationFormDocument = applicationFormDocument;
         return this;
     }
@@ -240,8 +240,8 @@ public class ApplicationFormBuilder {
         application.getQualifications().addAll(qualifications);
         application.setProgramDetails(programmeDetails);
         application.getFundings().addAll(fundings);
-        application.setApplicationFormAddress(applicationFormAddress);
-        application.setApplicationFormDocument(applicationFormDocument);
+        application.setApplicationAddress(applicationFormAddress);
+        application.setApplicationDocument(applicationFormDocument);
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
         application.setAdvert(advert);

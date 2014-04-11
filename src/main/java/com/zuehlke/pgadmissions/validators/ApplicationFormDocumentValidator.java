@@ -5,14 +5,14 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 
 @Component
 public class ApplicationFormDocumentValidator extends FormSectionObjectValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return clazz.isAssignableFrom(ApplicationFormDocument.class);
+		return clazz.isAssignableFrom(ApplicationDocument.class);
 	}
 
 	@Override

@@ -9,8 +9,8 @@ import org.springframework.validation.Errors;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -47,9 +47,9 @@ public class ApplicationFormValidator extends AbstractValidator {
         ApplicationForm applicationForm = (ApplicationForm) target;
         ProgramDetails programDetails = applicationForm.getProgramDetails();
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        ApplicationFormAddress applicationFormAddress = applicationForm.getApplicationFormAddress();
+        ApplicationAddress applicationFormAddress = applicationForm.getApplicationAddress();
         AdditionalInformation additionalInformation = applicationForm.getAdditionalInformation();
-        ApplicationFormDocument applicationFormDocument = applicationForm.getApplicationFormDocument();
+        ApplicationDocument applicationFormDocument = applicationForm.getApplicationDocument();
 
         if (!programDetailsValidator.isValid(programDetails)) {
             errors.rejectValue("programDetails", "user.programDetails.incomplete");

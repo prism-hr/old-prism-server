@@ -12,8 +12,8 @@ import org.springframework.core.io.Resource;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -185,11 +185,11 @@ public class ValidApplicationFormBuilder {
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
                 .appDate(new Date()).applicant(user).applicationNumber("TMRMBISING01-2012-999999")
                 .closingDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1))
-                .applicationFormAddress(new ApplicationFormAddress().withCurrentAddress(address).withContactAddress(address))
+                .applicationFormAddress(new ApplicationAddress().withCurrentAddress(address).withContactAddress(address))
                 .dueDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).employmentPositions(employmentPosition).fundings(funding)
                 .lastUpdated(new Date()).personalDetails(personalDetails).advert(program).programmeDetails(programDetails).projectTitle("Project Title")
                 .qualification(qualification1, qualification2).status(new State().withId(ApplicationFormStatus.APPROVED)).submittedDate(new Date())
-                .applicationFormDocument(new ApplicationFormDocument().withPersonalStatement(personalStatement).withCv(cvDocument))
+                .applicationFormDocument(new ApplicationDocument().withPersonalStatement(personalStatement).withCv(cvDocument))
                 .referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");
         applicationForm = getApplicationFormBuilder().build();
 

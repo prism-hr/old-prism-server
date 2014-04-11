@@ -320,7 +320,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
 
         AddressTp addressTp = xmlFactory.createAddressTp();
-        Address currentAddress = applicationForm.getApplicationFormAddress().getCurrentAddress();
+        Address currentAddress = applicationForm.getApplicationAddress().getCurrentAddress();
         addressTp.setAddressLine1(currentAddress.getAddress1());
         addressTp.setAddressLine2(currentAddress.getAddress2());
         addressTp.setAddressLine3(currentAddress.getAddress3());
@@ -347,7 +347,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private ContactDtlsTp buildCorrespondenceAddress() {
-        Address contactAddress = applicationForm.getApplicationFormAddress().getContactAddress();
+        Address contactAddress = applicationForm.getApplicationAddress().getContactAddress();
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
         AddressTp addressTp = xmlFactory.createAddressTp();
         addressTp.setAddressLine1(contactAddress.getAddress1());

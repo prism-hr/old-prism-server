@@ -19,7 +19,7 @@ import com.google.gson.GsonBuilder;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -172,7 +172,7 @@ public class ApplicationSummaryService {
     }
 
     private void addPersonalStatement(ApplicationForm form, Map<String, String> result) {
-        ApplicationFormDocument applicationFormDocument = form.getApplicationFormDocument();
+        ApplicationDocument applicationFormDocument = form.getApplicationDocument();
         if (applicationFormDocument == null) {
             result.put("personalStatementProvided", "false");
             result.put("cvProvided", "false");

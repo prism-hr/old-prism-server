@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 
 @Service
 @Transactional
@@ -18,20 +18,20 @@ public class ApplicationFormDocumentService {
     @Autowired
     private ApplicationFormCopyHelper applicationFormCopyHelper;
 
-    public ApplicationFormDocument getOrCreate(ApplicationForm application) {
-        ApplicationFormDocument applicationFormDocument = application.getApplicationFormDocument();
+    public ApplicationDocument getOrCreate(ApplicationForm application) {
+        ApplicationDocument applicationFormDocument = application.getApplicationDocument();
         if (applicationFormDocument  == null) {
-            applicationFormDocument = new ApplicationFormDocument();
+            applicationFormDocument = new ApplicationDocument();
         }
         return applicationFormDocument;
     }
     
-	public void saveOrUpdate(ApplicationForm application, ApplicationFormDocument applicationFormDocument) {
-	    ApplicationFormDocument persistentApplicationFormDocument = application.getApplicationFormDocument();
+	public void saveOrUpdate(ApplicationForm application, ApplicationDocument applicationFormDocument) {
+	    ApplicationDocument persistentApplicationFormDocument = application.getApplicationDocument();
         if (persistentApplicationFormDocument == null) {
-            persistentApplicationFormDocument = new ApplicationFormDocument();
+            persistentApplicationFormDocument = new ApplicationDocument();
             persistentApplicationFormDocument.setApplication(application);
-            application.setApplicationFormDocument(persistentApplicationFormDocument);
+            application.setApplicationDocument(persistentApplicationFormDocument);
             applicationFormService.save(application);
         }
         applicationFormCopyHelper.copyApplicationFormDocument(persistentApplicationFormDocument, applicationFormDocument, false);

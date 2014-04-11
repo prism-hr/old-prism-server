@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -50,7 +50,7 @@ public class DocumentsController {
     }
 
     @RequestMapping(value = "/editDocuments", method = RequestMethod.POST)
-    public String editDocuments(@Valid ApplicationFormDocument applicationFormDocument, BindingResult result, @ModelAttribute ApplicationForm applicationForm,
+    public String editDocuments(@Valid ApplicationDocument applicationFormDocument, BindingResult result, @ModelAttribute ApplicationForm applicationForm,
             ModelMap modelMap) {
         if (result.hasErrors()) {
             return returnView(modelMap, applicationFormDocument);
@@ -77,7 +77,7 @@ public class DocumentsController {
         binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
     }
 
-    private String returnView(ModelMap modelMap, ApplicationFormDocument applicationFormDocument) {
+    private String returnView(ModelMap modelMap, ApplicationDocument applicationFormDocument) {
         modelMap.put("applicationFormDocument", applicationFormDocument);
         return TemplateLocation.APPLICATION_APPLICANT_DOCUMENT;
     }

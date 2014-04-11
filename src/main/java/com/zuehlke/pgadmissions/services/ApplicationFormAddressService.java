@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 
 @Service
 @Transactional
@@ -18,20 +18,20 @@ public class ApplicationFormAddressService {
     @Autowired
     private ApplicationFormCopyHelper applicationFormCopyHelper;
 
-    public ApplicationFormAddress getOrCreate(ApplicationForm application) {
-        ApplicationFormAddress applicationFormAddress = application.getApplicationFormAddress();
+    public ApplicationAddress getOrCreate(ApplicationForm application) {
+        ApplicationAddress applicationFormAddress = application.getApplicationAddress();
         if (applicationFormAddress == null) {
-            applicationFormAddress = new ApplicationFormAddress();
+            applicationFormAddress = new ApplicationAddress();
         }
         return applicationFormAddress;
     }
     
-	public void saveOrUpdate(ApplicationForm application, ApplicationFormAddress applicationFormAddress) {
-	    ApplicationFormAddress persistentApplicationFormAddress = application.getApplicationFormAddress();
+	public void saveOrUpdate(ApplicationForm application, ApplicationAddress applicationFormAddress) {
+	    ApplicationAddress persistentApplicationFormAddress = application.getApplicationAddress();
         if (persistentApplicationFormAddress == null) {
-            persistentApplicationFormAddress = new ApplicationFormAddress();         
+            persistentApplicationFormAddress = new ApplicationAddress();         
             persistentApplicationFormAddress.setApplication(application);
-            application.setApplicationFormAddress(persistentApplicationFormAddress);
+            application.setApplicationAddress(persistentApplicationFormAddress);
             applicationFormService.save(application);
         }
         applicationFormCopyHelper.copyApplicationFormAddress(persistentApplicationFormAddress, applicationFormAddress, false);

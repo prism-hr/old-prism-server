@@ -202,7 +202,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             printLanguageQualificationAdmissionsNote = true;
         }
 
-        applicant.setApplicantID(StringUtils.trimToNull(applicationForm.getApplicant().getUclUserId()));
+        //FIXME set applicant UCL ID
+//        applicant.setApplicantID(StringUtils.trimToNull(applicationForm.getApplicant().getUclUserId()));
 
         return applicant;
     }
@@ -319,7 +320,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
 
         AddressTp addressTp = xmlFactory.createAddressTp();
-        Address currentAddress = applicationForm.getApplicationFormAddress().getCurrentAddress();
+        Address currentAddress = applicationForm.getApplicationAddress().getCurrentAddress();
         addressTp.setAddressLine1(currentAddress.getAddress1());
         addressTp.setAddressLine2(currentAddress.getAddress2());
         addressTp.setAddressLine3(currentAddress.getAddress3());
@@ -346,7 +347,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     }
 
     private ContactDtlsTp buildCorrespondenceAddress() {
-        Address contactAddress = applicationForm.getApplicationFormAddress().getContactAddress();
+        Address contactAddress = applicationForm.getApplicationAddress().getContactAddress();
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
         AddressTp addressTp = xmlFactory.createAddressTp();
         addressTp.setAddressLine1(contactAddress.getAddress1());
@@ -388,7 +389,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicationTp.setPersonalStatement(REFER_TO_ATTACHED_DOCUMENT);
 
         applicationTp.setSourcesOfInterest(buildSourcesOfInterest(applicationTp));
-        applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
+        applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedTimestamp()));
         applicationTp.setIpAddress(applicationForm.getIpAddressAsString());
         applicationTp.setExternalApplicationID(applicationForm.getApplicationNumber());
 
@@ -396,10 +397,10 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             applicationTp.setIpAddress(IP_ADDRESS_NOT_PROVIDED_VALUE);
         }
 
-        applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedDate()));
+        applicationTp.setCreationDate(buildXmlDate(applicationForm.getSubmittedTimestamp()));
         applicationTp.setRefereeList(buildReferee());
 
-        switch (applicationForm.getStatus().getId()) {
+        switch (applicationForm.getState().getId()) {
         case WITHDRAWN:
             applicationTp.setApplicationStatus("WITHDRAWN");
             break;
@@ -412,7 +413,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             applicationTp.setDepartmentalDecision("REJECT");
             break;
         default:
-            throw new IllegalArgumentException("Application is in wrong state " + applicationForm.getStatus().getId().displayValue());
+            throw new IllegalArgumentException("Application is in wrong state " + applicationForm.getState().getId().displayValue());
         }
 
         try {
@@ -423,7 +424,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             throw new IllegalArgumentException(exp.getMessage(), exp);
         }
 
-        if (printLanguageQualificationAdmissionsNote && applicationForm.getStatus().getId() == ApplicationFormStatus.APPROVED) {
+        if (printLanguageQualificationAdmissionsNote && applicationForm.getState().getId() == ApplicationFormStatus.APPROVED) {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
         }
 
@@ -435,7 +436,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             }
         }
 
-        if (offerRecommendedComment != null && applicationForm.getStatus().getId() == ApplicationFormStatus.APPROVED) {
+        if (offerRecommendedComment != null && applicationForm.getState().getId() == ApplicationFormStatus.APPROVED) {
             String departmentalOfferConditions = "Recommended Offer Type: ";
             if (BooleanUtils.isTrue(offerRecommendedComment.getRecommendedConditionsAvailable())) {
                 departmentalOfferConditions += "Conditional\n\nRecommended Conditions: ";

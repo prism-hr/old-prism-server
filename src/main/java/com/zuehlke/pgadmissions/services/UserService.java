@@ -101,7 +101,6 @@ public class UserService {
         User user = new User();
         user.setFirstName(firstname);
         user.setLastName(lastname);
-        user.setUsername(email);
         user.setEmail(email);
         user.setActivationCode(encryptionUtils.generateUUID());
 
@@ -129,7 +128,6 @@ public class UserService {
         if (StringUtils.isNotBlank(user.getAccount().getNewPassword())) {
             currentUser.getAccount().setPassword(encryptionUtils.getMD5Hash(user.getAccount().getNewPassword()));
         }
-        currentUser.setUsername(user.getEmail());
         save(currentUser);
     }
 
@@ -176,21 +174,21 @@ public class UserService {
             throw new LinkAccountsException("account.not.enabled");
         }
 
-        User primary = currentAccount.getPrimaryAccount();
+        User primary = currentAccount.getParentUser();
         if (primary == null) {
             primary = currentAccount;
         }
 
-        User secondPrimary = secondAccount.getPrimaryAccount();
+        User secondPrimary = secondAccount.getParentUser();
         if (secondPrimary != null) {
             for (User u : secondPrimary.getLinkedAccounts()) {
-                u.setPrimaryAccount(primary);
+                u.setParentUser(primary);
             }
-            secondPrimary.setPrimaryAccount(primary);
+            secondPrimary.setParentUser(primary);
         } else {
-            secondAccount.setPrimaryAccount(primary);
+            secondAccount.setParentUser(primary);
             for (User u : secondAccount.getLinkedAccounts()) {
-                u.setPrimaryAccount(primary);
+                u.setParentUser(primary);
             }
         }
     }
@@ -199,14 +197,14 @@ public class UserService {
         User currentAccount = getCurrentUser();
         User accountToDelete = getUserByEmail(accountToDeleteEmail);
 
-        User primary = accountToDelete.getPrimaryAccount();
+        User primary = accountToDelete.getParentUser();
         if (primary == null) {
             for (User u : accountToDelete.getLinkedAccounts()) {
-                u.setPrimaryAccount(currentAccount);
+                u.setParentUser(currentAccount);
             }
-            currentAccount.setPrimaryAccount(null);
+            currentAccount.setParentUser(null);
         } else {
-            accountToDelete.setPrimaryAccount(null);
+            accountToDelete.setParentUser(null);
         }
     }
 

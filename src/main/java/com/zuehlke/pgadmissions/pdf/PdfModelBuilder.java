@@ -36,8 +36,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -188,8 +188,8 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
     protected void addHeaderEvent(final ApplicationForm form, final PdfWriter writer) {
         Chunk submittedDateHeader = null;
 
-        if (form.getSubmittedDate() != null) {
-            submittedDateHeader = new Chunk(dateFormat.format(form.getSubmittedDate()), SMALLER_FONT);
+        if (form.getSubmittedTimestamp() != null) {
+            submittedDateHeader = new Chunk(dateFormat.format(form.getSubmittedTimestamp()), SMALLER_FONT);
         } else {
             submittedDateHeader = new Chunk("", SMALLER_FONT);
         }
@@ -237,9 +237,9 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newTableCell("Application Number", SMALL_BOLD_FONT));
         table.addCell(newTableCell(form.getApplicationNumber(), SMALL_FONT));
 
-        if (form.getSubmittedDate() != null) {
+        if (form.getSubmittedTimestamp() != null) {
             table.addCell(newTableCell("Submission date", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(dateFormat.format(form.getSubmittedDate()), SMALL_FONT));
+            table.addCell(newTableCell(dateFormat.format(form.getSubmittedTimestamp()), SMALL_FONT));
         }
 
         pdfDocument.add(table);
@@ -553,7 +553,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 
-        ApplicationFormAddress address = form.getApplicationFormAddress();
+        ApplicationAddress address = form.getApplicationAddress();
         table.addCell(newTableCell("Current Address", SMALL_BOLD_FONT));
         if (address.getCurrentAddress() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
@@ -872,7 +872,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 
-        ApplicationFormDocument documents = form.getApplicationFormDocument();
+        ApplicationDocument documents = form.getApplicationDocument();
 
         table.addCell(newTableCell("Personal Statement", SMALL_BOLD_FONT));
         if (includeAttachments) {
@@ -1049,9 +1049,9 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
     private void addProjectTitleToTable(PdfPTable table, final ApplicationForm form) {
         table.addCell(newTableCell("Project", SMALL_BOLD_FONT));
-        String projectTitle = form.getProjectTitle();
-        if (StringUtils.isBlank(projectTitle)) {
-            projectTitle = NOT_REQUIRED;
+        String projectTitle = NOT_REQUIRED;
+        if(form.getProject() != null) {
+            projectTitle = form.getProject().getTitle();
         }
         table.addCell(newTableCell(projectTitle, SMALL_FONT));
     }

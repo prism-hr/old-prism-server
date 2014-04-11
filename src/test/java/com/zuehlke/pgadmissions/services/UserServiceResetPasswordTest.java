@@ -90,7 +90,7 @@ public class UserServiceResetPasswordTest {
     public void keepOldPasswordIfMailSendFails() throws AddressException {
         String oldPassword = "i forget this every time";
         User storedUser = new UserBuilder().id(23).firstName("first").lastName("last")//
-                .username("firstlast").email("first@last.com").password(oldPassword).build();
+                .password(oldPassword).build();
         EasyMock.expect(userDAOMock.getUserByEmailIncludingDisabledAccounts("aaaa")).andReturn(storedUser);
 
         String newPassword = "this is better";

@@ -72,8 +72,8 @@ public class RejectServiceTest {
 
     @Before
     public void setUp() {
-        admin = new UserBuilder().id(324).username("admin").build();
-        approver = new UserBuilder().id(22414).username("real approver").build();
+        admin = new UserBuilder().id(324).build();
+        approver = new UserBuilder().id(22414).build();
         Program program = new ProgramBuilder().id(10023).build();
         application = new ApplicationFormBuilder().id(200).advert(program).status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
 
@@ -95,7 +95,7 @@ public class RejectServiceTest {
         rejectService.moveApplicationToReject(application, rejection);
         verify();
 
-        assertEquals(ApplicationFormStatus.REJECTED, application.getStatus());
+        assertEquals(ApplicationFormStatus.REJECTED, application.getState());
         assertEquals(rejection, application.getRejection());
     }
 

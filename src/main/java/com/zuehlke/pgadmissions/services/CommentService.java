@@ -86,7 +86,7 @@ public class CommentService {
     public void postStateChangeComment(StateChangeDTO stateChangeDTO) {
         ApplicationForm applicationForm = stateChangeDTO.getApplicationForm();
         User user = stateChangeDTO.getUser();
-        ApplicationFormStatus status = applicationForm.getStatus().getId();
+        ApplicationFormStatus status = applicationForm.getState().getId();
         Comment stateChangeComment = null;
 
         switch (status) {
@@ -135,7 +135,7 @@ public class CommentService {
             }
         }
 
-        applicationForm.setNextStatus(stateDAO.getById(nextStatus));
+        applicationForm.setNextState(stateDAO.getById(nextStatus));
         save(stateChangeComment);
         applicationsService.save(applicationForm);
         applicationsService.refresh(applicationForm);

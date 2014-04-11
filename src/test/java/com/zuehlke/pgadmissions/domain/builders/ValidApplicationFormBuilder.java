@@ -12,8 +12,8 @@ import org.springframework.core.io.Resource;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -110,15 +110,15 @@ public class ValidApplicationFormBuilder {
 
     public ApplicationForm build() {
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";
-        user = new UserBuilder().firstName("Kevin").firstName2("Franciszek").firstName3("Duncan").lastName("Denver").username("denk@zhaw.ch")
-                .email("ked@zuhlke.com").enabled(true).build();
+        user = new UserBuilder().firstName("Kevin").firstName2("Franciszek").firstName3("Duncan").lastName("Denver").email("ked@zuhlke.com").enabled(true)
+                .build();
         cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);
         referenceDocument = getRandomDocument(DocumentType.REFERENCE, "My Reference.pdf", user);
         personalStatement = getRandomDocument(DocumentType.PERSONAL_STATEMENT, "My Personal Statement (v1.0).pdf", user);
         proofOfAwardDocument = getRandomDocument(DocumentType.PROOF_OF_AWARD, "My Proof of Award.pdf", user);
         languageQualificationDocument = getRandomDocument(DocumentType.LANGUAGE_QUALIFICATION, "Language Qualification - My Name.pdf", user);
         fundingDocument = getRandomDocument(DocumentType.SUPPORTING_FUNDING, "Supporting Funding - My Name.pdf", user);
-        approverUser = new UserBuilder().id(Integer.MAX_VALUE - 1).username("approver@zhaw.ch").enabled(true).build();
+        approverUser = new UserBuilder().id(Integer.MAX_VALUE - 1).email("approver@zhaw.ch").enabled(true).build();
         country = new CountryBuilder().code("XK").name("United Kingdom").enabled(true).build();
         domicile = new DomicileBuilder().code("XK").name("United Kingdom").enabled(true).build();
         address = new AddressBuilder().domicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1])
@@ -167,7 +167,8 @@ public class ValidApplicationFormBuilder {
         instance = new ProgramInstanceBuilder().academicYear("2013").applicationDeadline(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 1))
                 .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 5)).enabled(true).studyOption("F+++++", "Full-time")
                 .identifier("0009").build();
-        institution = new QualificationInstitutionBuilder().code("code").name("jakas instytucja").domicileCode("AE").state(InstitutionState.INSTITUTION_APPROVED).build();
+        institution = new QualificationInstitutionBuilder().code("code").name("jakas instytucja").domicileCode("AE")
+                .state(InstitutionState.INSTITUTION_APPROVED).build();
         program = new ProgramBuilder().contactUser(approverUser).code("TMRMBISING99").state(AdvertState.PROGRAM_APPROVED).instances(instance)
                 .title("MRes Medical and Biomedical Imaging").institution(institution).build();
         interest = new SourcesOfInterestBuilder().code("BRIT_COUN").name("British Council").build();
@@ -183,13 +184,13 @@ public class ValidApplicationFormBuilder {
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
                 .type(FundingType.SCHOLARSHIP).value("5").build();
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
-                .appDate(new Date()).applicant(user).applicationNumber("TMRMBISING01-2012-999999")
+                .createdTimestamp(new Date()).applicant(user).applicationNumber("TMRMBISING01-2012-999999")
                 .closingDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1))
-                .applicationFormAddress(new ApplicationFormAddress().withCurrentAddress(address).withContactAddress(address))
+                .applicationFormAddress(new ApplicationAddress().withCurrentAddress(address).withContactAddress(address))
                 .dueDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).employmentPositions(employmentPosition).fundings(funding)
-                .lastUpdated(new Date()).personalDetails(personalDetails).advert(program).programmeDetails(programDetails).projectTitle("Project Title")
+                .lastUpdated(new Date()).personalDetails(personalDetails).advert(program).programmeDetails(programDetails)
                 .qualification(qualification1, qualification2).status(new State().withId(ApplicationFormStatus.APPROVED)).submittedDate(new Date())
-                .applicationFormDocument(new ApplicationFormDocument().withPersonalStatement(personalStatement).withCv(cvDocument))
+                .applicationFormDocument(new ApplicationDocument().withPersonalStatement(personalStatement).withCv(cvDocument))
                 .referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");
         applicationForm = getApplicationFormBuilder().build();
 

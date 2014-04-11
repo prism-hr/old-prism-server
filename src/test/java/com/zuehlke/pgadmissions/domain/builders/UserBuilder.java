@@ -17,14 +17,12 @@ public class UserBuilder {
     private String firstName3;
     private String lastName;
     private String email;
-    private String username;
     private String password;
     private String confirmPassword;
     private String newPassword;
     private Integer id;
     private boolean enabled = true;
     private String activationCode;
-    private String upi;
     private Date applicationListLastAccessTimestamp;
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
     private ApplicationsFiltering filtering;
@@ -39,11 +37,6 @@ public class UserBuilder {
 
     public UserBuilder applicationListLastAccessTimestamp(Date applicationListLastAccessTimestamp) {
         this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
-        return this;
-    }
-
-    public UserBuilder upi(final String upi) {
-        this.upi = upi;
         return this;
     }
 
@@ -92,11 +85,6 @@ public class UserBuilder {
         return this;
     }
 
-    public UserBuilder username(String username) {
-        this.username = username;
-        return this;
-    }
-
     public UserBuilder password(String password) {
         this.password = password;
         return this;
@@ -135,13 +123,11 @@ public class UserBuilder {
         user.setFirstName3(firstName3);
         user.setLastName(lastName);
         user.setEmail(email);
-        user.setUsername(username);
         user.setActivationCode(activationCode);
         user.getPendingRoleNotifications().addAll(pendingRoleNotifications);
         user.setAdvert(advert);
-        user.setUpi(upi);
         user.getLinkedAccounts().addAll(linkedAccounts);
-        user.setPrimaryAccount(primaryAccount);
+        user.setParentUser(primaryAccount);
 
         UserAccount userAccount = new UserAccount();
         userAccount.setPassword(password);

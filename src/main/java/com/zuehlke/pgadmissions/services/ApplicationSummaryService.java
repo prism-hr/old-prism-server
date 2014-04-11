@@ -19,7 +19,7 @@ import com.google.gson.GsonBuilder;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -60,8 +60,8 @@ public class ApplicationSummaryService {
 
     private void addApplicationProperties(final ApplicationForm form, final Map<String, String> result) {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedDate()));
-        result.put("applicationUpdateDate", dateFormat.format(form.getLastUpdated()));
+        result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedTimestamp()));
+        result.put("applicationUpdateDate", dateFormat.format(form.getUpdateTimestamp()));
         ApplicationDescriptor applicationDescriptor = applicationsService.getApplicationDescriptorForUser(form, userService.getCurrentUser());
         result.put("requiresAttention", BooleanUtils.toStringTrueFalse(applicationDescriptor.getNeedsToSeeUrgentFlag()));
         result.put("applicationNumber", form.getApplicationNumber());
@@ -76,7 +76,7 @@ public class ApplicationSummaryService {
         result.put("name", form.getApplicant().getDisplayName());
         result.put("phoneNumber", form.getPersonalDetails() == null   ? "" : form.getPersonalDetails().getPhoneNumber());
         result.put("email", form.getApplicant().getEmail());
-        result.put("applicationStatus", form.getStatus().getId().displayValue());
+        result.put("applicationStatus", form.getState().getId().displayValue());
     }
 
     private void addQualifications(final ApplicationForm form, final Map<String, String> result) {
@@ -172,7 +172,7 @@ public class ApplicationSummaryService {
     }
 
     private void addPersonalStatement(ApplicationForm form, Map<String, String> result) {
-        ApplicationFormDocument applicationFormDocument = form.getApplicationFormDocument();
+        ApplicationDocument applicationFormDocument = form.getApplicationDocument();
         if (applicationFormDocument == null) {
             result.put("personalStatementProvided", "false");
             result.put("cvProvided", "false");
@@ -200,7 +200,7 @@ public class ApplicationSummaryService {
     public Map<String, String> getSummary(final String applicationNumber) {
         ApplicationForm form = applicationsService.getByApplicationNumber(applicationNumber);
 
-        if (form.getStatus().equals(ApplicationFormStatus.WITHDRAWN) || form.getStatus().equals(ApplicationFormStatus.UNSUBMITTED)) {
+        if (form.getState().equals(ApplicationFormStatus.WITHDRAWN) || form.getState().equals(ApplicationFormStatus.UNSUBMITTED)) {
             return Collections.emptyMap();
         }
 

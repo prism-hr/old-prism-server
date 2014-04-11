@@ -56,7 +56,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldReturnSmallIframeCodeByFeedId() throws IOException, TemplateException {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed")
                 .user(user).build();
@@ -79,7 +79,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldReturnLargeDefaultIframeCodeForCurrentUser() throws IOException, TemplateException {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(-2).feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed")
                 .user(user).build();
@@ -103,7 +103,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldSaveNewFeed() {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
 
         EasyMock.expect(programServiceMock.getById(1)).andReturn(program);
@@ -122,7 +122,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldGetAllFeedsForUser() {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
         EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(user)).andReturn(null).times(2);
         EasyMock.expect(daoMock.getAllFeedsForUser(user)).andReturn(Collections.<ResearchOpportunitiesFeed> emptyList());
 
@@ -133,7 +133,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldAskIsUniqueFeedTitleForUser() {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
         EasyMock.expect(daoMock.isUniqueFeedTitleForUser("hello", user)).andReturn(false);
         EasyMock.replay(daoMock);
         service.isUniqueFeedTitleForUser("hello", user);
@@ -142,7 +142,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldDeleteFeedById() {
-        User user = new UserBuilder().id(1).email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().id(1).email("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed")
                 .user(user).build();
@@ -157,7 +157,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldGetFeedById() {
-        User user = new UserBuilder().id(1).email("fooBarZ@fooBarZ.com").username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().id(1).email("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed")
                 .user(user).build();
@@ -170,7 +170,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     @Test
     public void shouldUpdateFeed() {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").id(1).username("fooBarZ@fooBarZ.com").build();
+        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").id(1).build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
         ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed")
                 .user(user).build();

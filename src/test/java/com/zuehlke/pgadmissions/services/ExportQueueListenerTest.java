@@ -77,7 +77,7 @@ public class ExportQueueListenerTest {
         EasyMock.expect(applicationFormTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(formTransferMock);
         
         EasyMock.expect(messageMock.getJMSMessageID()).andReturn("1");
-        EasyMock.expect(messageMock.getStringProperty("Status")).andReturn(form.getStatus().toString());
+        EasyMock.expect(messageMock.getStringProperty("Status")).andReturn(form.getState().toString());
         EasyMock.expect(messageMock.getStringProperty("Added")).andReturn("xx");
         
         try {
@@ -111,7 +111,7 @@ public class ExportQueueListenerTest {
         EasyMock.expect(applicationFormTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(formTransferMock);
         
         EasyMock.expect(messageMock.getJMSMessageID()).andReturn("1");
-        EasyMock.expect(messageMock.getStringProperty("Status")).andReturn(form.getStatus().toString());
+        EasyMock.expect(messageMock.getStringProperty("Status")).andReturn(form.getState().toString());
         expect(messageMock.getStringProperty("Added")).andReturn("xx");
         
         

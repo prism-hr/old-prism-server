@@ -81,7 +81,7 @@ public class RefereeService {
         }
         applicationFormCopyHelper.copyReferee(persistentReferee, referee, false);
         applicationFormService.saveOrUpdateApplicationSection(application);
-        if (application.getStatus().isModifiable()) {
+        if (application.getState().isModifiable()) {
             processRefereeAndGetAsUser(referee);
         }
     }
@@ -147,7 +147,6 @@ public class RefereeService {
         user.setEmail(referee.getEmail());
         user.setFirstName(referee.getFirstname());
         user.setLastName(referee.getLastname());
-        user.setUsername(referee.getEmail());
         
         user.setAction(ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
         user.setApplication(referee.getApplication());

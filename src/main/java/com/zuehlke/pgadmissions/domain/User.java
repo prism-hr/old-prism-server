@@ -79,14 +79,8 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String email;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
-    private String username;
-
     @Column(name = "advert_id")
     private Advert advert;
-
-    @Column(name = "upi")
-    private String upi;
 
     @Column(name = "activation_code")
     private String activationCode;
@@ -112,15 +106,12 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @JoinColumn(name = "registered_user_id")
     private List<Referee> referees = new ArrayList<Referee>();
 
-    @OneToMany(mappedBy = "primaryAccount")
+    @OneToMany(mappedBy = "parentUser")
     private List<User> linkedAccounts = new ArrayList<User>();
 
     @ManyToOne
-    @JoinColumn(name = "primary_account_id")
-    private User primaryAccount;
-
-    @Column(name = "ucl_user_id")
-    private String uclUserId;
+    @JoinColumn(name = "parent_user_id")
+    private User parentUser;
 
     @OneToMany(mappedBy = "user")
     private Set<UserRole> userRoles;
@@ -180,28 +171,12 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public Advert getAdvert() {
         return advert;
     }
 
     public void setAdvert(Advert advert) {
         this.advert = advert;
-    }
-
-    public String getUpi() {
-        return upi;
-    }
-
-    public void setUpi(String upi) {
-        this.upi = upi;
     }
 
     public boolean isEnabled() {
@@ -248,20 +223,12 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         return linkedAccounts;
     }
 
-    public User getPrimaryAccount() {
-        return primaryAccount;
+    public User getParentUser() {
+        return parentUser;
     }
 
-    public void setPrimaryAccount(User primaryAccount) {
-        this.primaryAccount = primaryAccount;
-    }
-
-    public String getUclUserId() {
-        return uclUserId;
-    }
-
-    public void setUclUserId(String uclUserId) {
-        this.uclUserId = uclUserId;
+    public void setParentUser(User parentUser) {
+        this.parentUser = parentUser;
     }
 
     public List<ResearchOpportunitiesFeed> getResearchOpportunitiesFeeds() {
@@ -312,5 +279,10 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Override
     public String getPassword() {
         return account != null ? account.getPassword() : null;
+    }
+    
+    @Override
+    public String getUsername() {
+        return email;
     }
 }

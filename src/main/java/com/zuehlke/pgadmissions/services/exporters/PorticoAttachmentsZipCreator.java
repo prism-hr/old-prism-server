@@ -106,7 +106,7 @@ public class PorticoAttachmentsZipCreator {
     }
 
     protected void addCV(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos) throws IOException {
-        Document document = applicationForm.getApplicationFormDocument().getCv();
+        Document document = applicationForm.getApplicationDocument().getCv();
         if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));
@@ -134,7 +134,7 @@ public class PorticoAttachmentsZipCreator {
 
     protected void addReserchProposal(ApplicationForm applicationForm, String referenceNumber, Properties contentsProperties, ZipOutputStream zos)
             throws IOException {
-        Document document = applicationForm.getApplicationFormDocument().getPersonalStatement();
+        Document document = applicationForm.getApplicationDocument().getPersonalStatement();
         if (document != null) {
             String filename = getRandomFilename();
             zos.putNextEntry(new ZipEntry(filename));

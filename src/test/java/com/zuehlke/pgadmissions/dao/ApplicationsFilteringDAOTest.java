@@ -40,7 +40,7 @@ public class ApplicationsFilteringDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .enabled(false).build();
         save(user);
         flushAndClearSession();

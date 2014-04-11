@@ -1,41 +1,36 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import java.math.BigDecimal;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.User;
 
 public class ApplicationFormBuilder {
 
     private State status;
     private ProgramDetails programmeDetails;
     private PersonalDetails personalDetails;
-    private ApplicationFormAddress applicationFormAddress;
+    private ApplicationAddress applicationFormAddress;
     private Integer id;
     private User applicant;
-    private String projectTitle;
     private Advert advert;
-    private Date appDate;
+    private Date createdTimestamp;
     private Date submittedDate;
     private Date closingDate;
     private Date dueDate;
@@ -45,7 +40,7 @@ public class ApplicationFormBuilder {
     private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
     private List<Comment> comments = new ArrayList<Comment>();
     private List<Funding> fundings = new ArrayList<Funding>();
-    private ApplicationFormDocument applicationFormDocument;
+    private ApplicationDocument applicationFormDocument;
     private AdditionalInformation info;
     private Date lastUpdated;
     private Date rejectNotificationDate;
@@ -53,7 +48,6 @@ public class ApplicationFormBuilder {
     private String applicationNumber;
     private String uclBookingReferenceNumber;
     private String ipAddress;
-    private BigDecimal averageRating;
     private Boolean useCustomReferenceQuestions = false;
     private State nextStatus;
     private State lastStatus;
@@ -92,19 +86,14 @@ public class ApplicationFormBuilder {
         this.status = status;
         return this;
     }
-    
+
     public ApplicationFormBuilder nextStatus(State nextStatus) {
         this.nextStatus = nextStatus;
         return this;
     }
-    
+
     public ApplicationFormBuilder previousStatus(State previousStatus) {
         this.lastStatus = previousStatus;
-        return this;
-    }
-
-    public ApplicationFormBuilder projectTitle(String projectTitle) {
-        this.projectTitle = projectTitle;
         return this;
     }
 
@@ -123,12 +112,12 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder applicationFormAddress(ApplicationFormAddress applicationFormAddress) {
+    public ApplicationFormBuilder applicationFormAddress(ApplicationAddress applicationFormAddress) {
         this.applicationFormAddress = applicationFormAddress;
         return this;
     }
 
-    public ApplicationFormBuilder applicationFormDocument(ApplicationFormDocument applicationFormDocument) {
+    public ApplicationFormBuilder applicationFormDocument(ApplicationDocument applicationFormDocument) {
         this.applicationFormDocument = applicationFormDocument;
         return this;
     }
@@ -200,8 +189,8 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder appDate(Date date) {
-        this.appDate = date;
+    public ApplicationFormBuilder createdTimestamp(Date date) {
+        this.createdTimestamp = date;
         return this;
     }
 
@@ -220,11 +209,6 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder averageRating(BigDecimal averageRating) {
-        this.averageRating = averageRating;
-        return this;
-    }
-
     public ApplicationFormBuilder useCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
         this.useCustomReferenceQuestions = useCustomReferenceQuestions;
         return this;
@@ -234,23 +218,22 @@ public class ApplicationFormBuilder {
         ApplicationForm application = new ApplicationForm();
         application.setId(id);
         application.setApplicant(applicant);
-        application.setSubmittedDate(submittedDate);
+        application.setSubmittedTimestamp(submittedDate);
         application.getReferees().addAll(referees);
-        application.setApplicationTimestamp(appDate);
+        application.setCreatedTimestamp(createdTimestamp);
         application.getQualifications().addAll(qualifications);
         application.setProgramDetails(programmeDetails);
         application.getFundings().addAll(fundings);
-        application.setApplicationFormAddress(applicationFormAddress);
-        application.setApplicationFormDocument(applicationFormDocument);
+        application.setApplicationAddress(applicationFormAddress);
+        application.setApplicationDocument(applicationFormDocument);
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
         application.setAdvert(advert);
-        application.setProjectTitle(projectTitle);
-        application.setStatus(status);
-        application.setNextStatus(nextStatus);
-        application.setLastStatus(lastStatus);
+        application.setState(status);
+        application.setNextState(nextStatus);
+        application.setLastState(lastStatus);
         application.setAdditionalInformation(info);
-        application.setLastUpdated(lastUpdated);
+        application.setUpdateTimestamp(lastUpdated);
         application.setAcceptedTermsOnSubmission(acceptedTerms);
         application.getApplicationComments().addAll(comments);
         application.setRejection(rejection);
@@ -259,7 +242,6 @@ public class ApplicationFormBuilder {
         application.setRejectNotificationDate(rejectNotificationDate);
         application.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         application.getEmploymentPositions().addAll(employmentPositions);
-        application.setAverageRating(averageRating);
         application.setUseCustomReferenceQuestions(useCustomReferenceQuestions);
 
         try {

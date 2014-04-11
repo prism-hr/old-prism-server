@@ -24,9 +24,9 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -63,7 +63,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadUser() throws Exception {
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("kod_aktywacyjny").userAccount(new UserAccount().withEnabled(false).withPassword("dupa")).build();
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("kod_aktywacyjny")
+                .userAccount(new UserAccount().withEnabled(false).withPassword("dupa")).build();
 
         assertNull(user.getId());
 
@@ -79,23 +80,6 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         reloadedUser = userDAO.getById(id);
         assertNotSame(user, reloadedUser);
         assertEquals(user.getId(), reloadedUser.getId());
-
-    }
-
-    @Test
-    public void shouldFindUsersByUsername() throws Exception {
-
-        User userOne = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .userAccount(new UserAccount().withPassword("password").withEnabled(true)).build();
-        User userTwo = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .userAccount(new UserAccount().withPassword("password").withEnabled(true)).build();
-
-        save(userOne, userTwo);
-
-        flushAndClearSession();
-
-        User foundUser = userDAO.getUserByUsername("username");
-        assertEquals(userOne.getId(), foundUser.getId());
 
     }
 

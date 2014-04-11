@@ -39,7 +39,7 @@ public class Program extends Advert implements PrismScope {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_import_id")
-    private ProgramFeed programFeed;
+    private ProgramImport programImport;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     @OrderBy("applicationStartDate")
@@ -96,12 +96,12 @@ public class Program extends Advert implements PrismScope {
         this.institution = institution;
     }
 
-    public ProgramFeed getProgramFeed() {
-        return programFeed;
+    public ProgramImport getProgramImport() {
+        return programImport;
     }
 
-    public void setProgramFeed(ProgramFeed programFeed) {
-        this.programFeed = programFeed;
+    public void setProgramImport(ProgramImport programImport) {
+        this.programImport = programImport;
     }
 
     public List<ScoringStage> getCustomQuestionCoverage() {

@@ -6,7 +6,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ProgramFeed;
+import com.zuehlke.pgadmissions.domain.ProgramImport;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -23,8 +23,8 @@ public class ProgramFeedDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    public List<ProgramFeed> getAllProgramFeeds() {
-        return sessionFactory.getCurrentSession().createCriteria(ProgramFeed.class).list();
+    public List<ProgramImport> getAllProgramFeeds() {
+        return sessionFactory.getCurrentSession().createCriteria(ProgramImport.class).list();
     }
 
 }

@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramFeed;
+import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
@@ -309,7 +309,7 @@ public class OpportunityRequestValidatorTest {
 
     @Test
     public void shouldIgnoreSomeFieldsIfValidatingRequestForBuiltInProgram() {
-        opportunityRequest.setSourceProgram(new ProgramBuilder().programFeed(new ProgramFeed()).build());
+        opportunityRequest.setSourceProgram(new ProgramBuilder().programFeed(new ProgramImport()).build());
         opportunityRequest.setProgramTitle(null);
         opportunityRequest.setAuthor(null);
         opportunityRequest.setStudyOptions(null);

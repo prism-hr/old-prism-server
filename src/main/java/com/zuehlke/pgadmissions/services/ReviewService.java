@@ -9,11 +9,10 @@ import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -71,7 +70,7 @@ public class ReviewService {
         commentService.save(comment);
         
         applicationFormUserRoleService.movedToReviewStage(comment);
-        applicationFormUserRoleService.insertApplicationUpdate(application, comment.getUser(), ApplicationUpdateScope.ALL_USERS);
+        applicationFormUserRoleService.applicationUpdated(application, comment.getUser());
 	}
 
 }

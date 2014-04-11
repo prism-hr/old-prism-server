@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -136,7 +135,7 @@ public class ConfirmSupervisionController {
         }
 
         approvalService.confirmOrDeclineSupervision(applicationForm, confirmSupervisionDTO);
-        workflowService.insertApplicationUpdate(applicationForm, user, ApplicationUpdateScope.INTERNAL);
+        workflowService.applicationUpdated(applicationForm, user);
 
         if (BooleanUtils.isTrue(confirmSupervisionDTO.getConfirmedSupervision())) {
             return "redirect:/applications?messageCode=supervision.confirmed&application=" + applicationForm.getApplicationNumber();

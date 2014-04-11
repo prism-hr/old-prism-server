@@ -16,24 +16,22 @@ import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.Action;
+import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -122,7 +120,7 @@ public class ApplicationFormService {
         
         setApplicationStatus(application, ApplicationFormStatus.VALIDATION);
         workflowService.applicationSubmitted(application);
-        applicationFormDAO.insertApplicationUpdate(application, userService.getCurrentUser(), ApplicationUpdateScope.ALL_USERS);
+        workflowService.applicationUpdated(application, userService.getCurrentUser());
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -193,7 +191,7 @@ public class ApplicationFormService {
     public void saveOrUpdateApplicationSection(ApplicationForm application) {
         User currentUser = userService.getCurrentUser();
         Action action = actionService.getById(actionService.getPrecedentAction(application, currentUser, ActionType.VIEW_EDIT));
-        applicationFormDAO.insertApplicationUpdate(application, userService.getCurrentUser(), action.getUpdateVisibility());
+        workflowService.applicationUpdated(application, userService.getCurrentUser());
     }
 
     public void openApplicationForEdit(ApplicationForm application, User user) {

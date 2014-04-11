@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationUpdateScope;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -133,7 +132,7 @@ public class AdmitterCommentController {
         commentService.save(comment);
         applicationsService.save(application);
         applicationFormUserRoleService.admitterCommentPosted(comment);
-        applicationFormUserRoleService.insertApplicationUpdate(application, user, ApplicationUpdateScope.INTERNAL);
+        applicationFormUserRoleService.applicationUpdated(application, user);
         return "redirect:/applications?messageCode=validation.comment.success&application=" + application.getApplicationNumber();
     }
 

@@ -24,7 +24,7 @@ public class ReferenceDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetReferenceById() {
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .enabled(false).build();
 
         save(user);

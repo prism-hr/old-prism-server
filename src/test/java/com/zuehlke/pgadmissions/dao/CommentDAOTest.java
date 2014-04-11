@@ -46,7 +46,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         commentDAO = new CommentDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").enabled(false)
                 .build();
         save(user);
         flushAndClearSession();
@@ -111,7 +111,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnNoValidationCommentForApplication() {
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .password("password").enabled(false).build();
 
         ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
@@ -125,7 +125,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnCommentWithTwoScores() {
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("834734374lksdh")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .password("password").enabled(false).build();
 
         ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();

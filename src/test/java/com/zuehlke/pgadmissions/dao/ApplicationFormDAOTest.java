@@ -47,7 +47,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         applicationDAO = new ApplicationFormDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").password("password")
                 .enabled(false).build();
         save(user);
         flushAndClearSession();
@@ -225,7 +225,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetPreviousApplicationForApplicant() {
         DateTime initialDate = new DateTime(2014, 5, 13, 15, 56);
 
-        User otherApplicant = new UserBuilder().firstName("Other").lastName("Applicant").email("other@applicant.com").username("other")
+        User otherApplicant = new UserBuilder().firstName("Other").lastName("Applicant").email("other@applicant.com")
                 .password("password").enabled(false).build();
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).toDate()).advert(program).applicant(user)

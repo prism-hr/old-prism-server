@@ -73,7 +73,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         qualificationDAO = new QualificationDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").enabled(false)
                 .build();
         save(user);
         flushAndClearSession();

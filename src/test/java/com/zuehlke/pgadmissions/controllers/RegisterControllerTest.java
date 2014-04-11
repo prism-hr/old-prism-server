@@ -219,7 +219,7 @@ public class RegisterControllerTest {
     @Test
     public void shouldActivateAccountAndRedirectToApplicationListIfNoDirectURL() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
-        User user = new UserBuilder().id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234")
+        User user = new UserBuilder().id(1).activationCode(activationCode).enabled(false)
                 .build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         userServiceMock.save(user);
@@ -233,7 +233,7 @@ public class RegisterControllerTest {
     @Test
     public void shouldActivateAccountAndRedirectToDirectURLIfProvided() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
-        User user = new UserBuilder().id(1).activationCode(activationCode).enabled(false).username("email@email.com")
+        User user = new UserBuilder().id(1).activationCode(activationCode).enabled(false)
                 .email("email@email.com").password("1234").build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         userServiceMock.save(user);
@@ -248,7 +248,7 @@ public class RegisterControllerTest {
     public void shouldActivateAccountAndRedirectToDirectURLIfProvidedAtRegistrationTime() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
 
-        User user = new UserBuilder().id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com")
+        User user = new UserBuilder().id(1).activationCode(activationCode).enabled(false)
                 .password("1234").build();
 
         MockHttpServletRequest requestMock = new MockHttpServletRequest();
@@ -275,7 +275,7 @@ public class RegisterControllerTest {
         String activationCode = "ul5oaij68186jbcg";
         Advert advert = new Program();
         Program program = new ProgramBuilder().id(1).build();
-        User user = new UserBuilder().id(1).advert(advert).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com")
+        User user = new UserBuilder().id(1).advert(advert).activationCode(activationCode).enabled(false)
                 .password("1234").build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         Map<String, String> parsedParams = new HashMap<String, String>(3);
@@ -294,7 +294,7 @@ public class RegisterControllerTest {
         String activationCode = "ul5oaij68186jbcg";
         Advert advert = new Program();
         Project project = new ProjectBuilder().id(1).advert(new AdvertBuilder().id(1).build()).build();
-        User user = new UserBuilder().id(1).advert(advert).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com")
+        User user = new UserBuilder().id(1).advert(advert).activationCode(activationCode).enabled(false)
                 .password("1234").build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         Map<String, String> parsedParams = new HashMap<String, String>(3);
@@ -313,7 +313,7 @@ public class RegisterControllerTest {
     public void shouldThrowExceptionIfRegisteringForAnInvalidOpportunity() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
         Advert advert = new Program();
-        User user = new UserBuilder().id(1).advert(advert).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com")
+        User user = new UserBuilder().id(1).advert(advert).activationCode(activationCode).enabled(false)
                 .password("1234").build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         Map<String, String> parsedParams = new HashMap<String, String>(3);

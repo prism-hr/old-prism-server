@@ -25,10 +25,10 @@ public class AutosuggestUserControllerTest {
     @Before
     public void prepare() {
         user1 = new UserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com")
-                .username("tyler@durden.com").password("password").enabled(false).build();
+                .enabled(false).build();
 
         similiarToUser1 = new UserBuilder().firstName("Taylor").lastName("Dordeen")
-                .email("taylor@dordeen.com").username("taylor@durden.com").password("password")
+                .email("taylor@dordeen.com")
                 .enabled(false).build();
         
         searchServiceMock = EasyMock.createMock(FullTextSearchService.class);

@@ -73,10 +73,10 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
                                         + "INSERT INTO APPLICATION_ROLE (id) VALUES ('SUPERVISOR');" + "INSERT INTO APPLICATION_ROLE (id) VALUES ('VIEWER');")
                         .executeUpdate();
 
-                user1 = new UserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com").username("tyler@durden.com")
+                user1 = new UserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com")
                         .password("password").enabled(true).build();
 
-                similiarToUser1 = new UserBuilder().firstName("Taylor").lastName("Dordeen").email("taylor@dordeen.com").username("taylor@durden.com")
+                similiarToUser1 = new UserBuilder().firstName("Taylor").lastName("Dordeen").email("taylor@dordeen.com")
                         .password("password").enabled(true).build();
 
                 registeredUserDAO.save(user1);

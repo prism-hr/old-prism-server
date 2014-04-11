@@ -17,7 +17,6 @@ public class UserBuilder {
     private String firstName3;
     private String lastName;
     private String email;
-    private String username;
     private String password;
     private String confirmPassword;
     private String newPassword;
@@ -86,11 +85,6 @@ public class UserBuilder {
         return this;
     }
 
-    public UserBuilder username(String username) {
-        this.username = username;
-        return this;
-    }
-
     public UserBuilder password(String password) {
         this.password = password;
         return this;
@@ -129,7 +123,6 @@ public class UserBuilder {
         user.setFirstName3(firstName3);
         user.setLastName(lastName);
         user.setEmail(email);
-        user.setUsername(username);
         user.setActivationCode(activationCode);
         user.getPendingRoleNotifications().addAll(pendingRoleNotifications);
         user.setAdvert(advert);

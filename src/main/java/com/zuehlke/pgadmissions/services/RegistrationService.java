@@ -44,7 +44,6 @@ public class RegistrationService {
     private MailSendingService mailService;
 
     public User processPendingApplicantUser(User pendingApplicantUser) {
-        pendingApplicantUser.setUsername(pendingApplicantUser.getEmail());
         pendingApplicantUser.getAccount().setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
         pendingApplicantUser.getAccount().setEnabled(false);
         // FIXME set advert ID

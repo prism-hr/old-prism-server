@@ -37,7 +37,7 @@ public class PgAdmissionAuthenticationProviderTest {
 	public void shouldReturnPopulatedAuthenticationForValidCredentials() throws NoSuchAlgorithmException {
 		Role roleOne = new RoleBuilder().id(Authority.APPLICANT).build();
 		Role roleTwo = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
-		User user = new UserBuilder().username("bob").password("secret").id(1).build();
+		User user = new UserBuilder().id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
         EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
@@ -58,7 +58,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test(expected = BadCredentialsException.class)
 	public void shouldThrowBadCredentialsExceptionForMismatchingPassword() throws NoSuchAlgorithmException {
-		User user = new UserBuilder().username("bob").password("secret").id(1).build();
+		User user = new UserBuilder().id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.replay(userDetailsServiceMock);
 
@@ -88,7 +88,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
 	@Test(expected = DisabledException.class)
 	public void shouldThrowDisabledExceptionForDisabledAccount() {
-		User user = new UserBuilder().username("bob").password("secret").enabled(false).id(1).build();
+		User user = new UserBuilder().enabled(false).id(1).build();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
         EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);

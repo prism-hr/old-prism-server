@@ -196,7 +196,7 @@ public class ApplicationsReportService {
                     row.addCell(getProjectTitle(app));
                     row.addCell(getSuggestedSupervisors(programmeDetails));
                     row.addCell(getAcademicYear(app));
-                    row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
+                    row.addCell(app.getSubmittedTimestamp() != null ? getDateValue(app.getSubmittedTimestamp()) : DateValue.getNullValue());
                     row.addCell(getFundingTotal(app));
 
                     // overall rating
@@ -232,8 +232,8 @@ public class ApplicationsReportService {
                     row.addCell(StringUtils.trimToEmpty(programmeDetails.getSourceOfInterestText()));
                     row.addCell(getSuggestedSupervisors(programmeDetails));
                     row.addCell(getAcademicYear(app));
-                    row.addCell(app.getSubmittedDate() != null ? getDateValue(app.getSubmittedDate()) : DateValue.getNullValue());
-                    row.addCell(app.getLastUpdated() != null ? getDateValue(app.getLastUpdated()) : DateValue.getNullValue());
+                    row.addCell(app.getSubmittedTimestamp() != null ? getDateValue(app.getSubmittedTimestamp()) : DateValue.getNullValue());
+                    row.addCell(app.getUpdateTimestamp() != null ? getDateValue(app.getUpdateTimestamp()) : DateValue.getNullValue());
                     row.addCell(getFundingTotal(app));
 
                     // overall rating

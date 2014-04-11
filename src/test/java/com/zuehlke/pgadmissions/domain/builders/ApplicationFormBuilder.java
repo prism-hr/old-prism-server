@@ -1,29 +1,25 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import java.math.BigDecimal;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.User;
 
 public class ApplicationFormBuilder {
 
@@ -33,7 +29,6 @@ public class ApplicationFormBuilder {
     private ApplicationAddress applicationFormAddress;
     private Integer id;
     private User applicant;
-    private String projectTitle;
     private Advert advert;
     private Date createdTimestamp;
     private Date submittedDate;
@@ -99,11 +94,6 @@ public class ApplicationFormBuilder {
 
     public ApplicationFormBuilder previousStatus(State previousStatus) {
         this.lastStatus = previousStatus;
-        return this;
-    }
-
-    public ApplicationFormBuilder projectTitle(String projectTitle) {
-        this.projectTitle = projectTitle;
         return this;
     }
 
@@ -228,7 +218,7 @@ public class ApplicationFormBuilder {
         ApplicationForm application = new ApplicationForm();
         application.setId(id);
         application.setApplicant(applicant);
-        application.setSubmittedDate(submittedDate);
+        application.setSubmittedTimestamp(submittedDate);
         application.getReferees().addAll(referees);
         application.setCreatedTimestamp(createdTimestamp);
         application.getQualifications().addAll(qualifications);
@@ -239,12 +229,11 @@ public class ApplicationFormBuilder {
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
         application.setAdvert(advert);
-        application.setProjectTitle(projectTitle);
         application.setState(status);
         application.setNextState(nextStatus);
         application.setLastState(lastStatus);
         application.setAdditionalInformation(info);
-        application.setLastUpdated(lastUpdated);
+        application.setUpdateTimestamp(lastUpdated);
         application.setAcceptedTermsOnSubmission(acceptedTerms);
         application.getApplicationComments().addAll(comments);
         application.setRejection(rejection);

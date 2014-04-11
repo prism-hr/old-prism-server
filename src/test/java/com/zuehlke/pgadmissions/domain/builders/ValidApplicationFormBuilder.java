@@ -110,8 +110,8 @@ public class ValidApplicationFormBuilder {
 
     public ApplicationForm build() {
         String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";
-        user = new UserBuilder().firstName("Kevin").firstName2("Franciszek").firstName3("Duncan").lastName("Denver")
-                .email("ked@zuhlke.com").enabled(true).build();
+        user = new UserBuilder().firstName("Kevin").firstName2("Franciszek").firstName3("Duncan").lastName("Denver").email("ked@zuhlke.com").enabled(true)
+                .build();
         cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);
         referenceDocument = getRandomDocument(DocumentType.REFERENCE, "My Reference.pdf", user);
         personalStatement = getRandomDocument(DocumentType.PERSONAL_STATEMENT, "My Personal Statement (v1.0).pdf", user);
@@ -167,7 +167,8 @@ public class ValidApplicationFormBuilder {
         instance = new ProgramInstanceBuilder().academicYear("2013").applicationDeadline(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 1))
                 .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 5)).enabled(true).studyOption("F+++++", "Full-time")
                 .identifier("0009").build();
-        institution = new QualificationInstitutionBuilder().code("code").name("jakas instytucja").domicileCode("AE").state(InstitutionState.INSTITUTION_APPROVED).build();
+        institution = new QualificationInstitutionBuilder().code("code").name("jakas instytucja").domicileCode("AE")
+                .state(InstitutionState.INSTITUTION_APPROVED).build();
         program = new ProgramBuilder().contactUser(approverUser).code("TMRMBISING99").state(AdvertState.PROGRAM_APPROVED).instances(instance)
                 .title("MRes Medical and Biomedical Imaging").institution(institution).build();
         interest = new SourcesOfInterestBuilder().code("BRIT_COUN").name("British Council").build();
@@ -187,7 +188,7 @@ public class ValidApplicationFormBuilder {
                 .closingDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1))
                 .applicationFormAddress(new ApplicationAddress().withCurrentAddress(address).withContactAddress(address))
                 .dueDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).employmentPositions(employmentPosition).fundings(funding)
-                .lastUpdated(new Date()).personalDetails(personalDetails).advert(program).programmeDetails(programDetails).projectTitle("Project Title")
+                .lastUpdated(new Date()).personalDetails(personalDetails).advert(program).programmeDetails(programDetails)
                 .qualification(qualification1, qualification2).status(new State().withId(ApplicationFormStatus.APPROVED)).submittedDate(new Date())
                 .applicationFormDocument(new ApplicationDocument().withPersonalStatement(personalStatement).withCv(cvDocument))
                 .referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");

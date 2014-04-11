@@ -60,8 +60,8 @@ public class ApplicationSummaryService {
 
     private void addApplicationProperties(final ApplicationForm form, final Map<String, String> result) {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedDate()));
-        result.put("applicationUpdateDate", dateFormat.format(form.getLastUpdated()));
+        result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedTimestamp()));
+        result.put("applicationUpdateDate", dateFormat.format(form.getUpdateTimestamp()));
         ApplicationDescriptor applicationDescriptor = applicationsService.getApplicationDescriptorForUser(form, userService.getCurrentUser());
         result.put("requiresAttention", BooleanUtils.toStringTrueFalse(applicationDescriptor.getNeedsToSeeUrgentFlag()));
         result.put("applicationNumber", form.getApplicationNumber());

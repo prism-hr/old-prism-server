@@ -138,7 +138,7 @@ public class ApplicationFormService {
             application.setDueDate(getDueDateForApplication(application));
             application.setClosingDate(getClosingDateForApplication(application));
         case VALIDATION:
-            application.setSubmittedDate(new LocalDate().toDate());
+            application.setSubmittedTimestamp(new LocalDate().toDate());
             application.setDueDate(getDueDateForApplication(application));
         case INTERVIEW:
             application.setDueDate(getDueDateForApplication(application));

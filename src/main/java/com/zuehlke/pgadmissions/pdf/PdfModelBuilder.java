@@ -188,8 +188,8 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
     protected void addHeaderEvent(final ApplicationForm form, final PdfWriter writer) {
         Chunk submittedDateHeader = null;
 
-        if (form.getSubmittedDate() != null) {
-            submittedDateHeader = new Chunk(dateFormat.format(form.getSubmittedDate()), SMALLER_FONT);
+        if (form.getSubmittedTimestamp() != null) {
+            submittedDateHeader = new Chunk(dateFormat.format(form.getSubmittedTimestamp()), SMALLER_FONT);
         } else {
             submittedDateHeader = new Chunk("", SMALLER_FONT);
         }
@@ -237,9 +237,9 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newTableCell("Application Number", SMALL_BOLD_FONT));
         table.addCell(newTableCell(form.getApplicationNumber(), SMALL_FONT));
 
-        if (form.getSubmittedDate() != null) {
+        if (form.getSubmittedTimestamp() != null) {
             table.addCell(newTableCell("Submission date", SMALL_BOLD_FONT));
-            table.addCell(newTableCell(dateFormat.format(form.getSubmittedDate()), SMALL_FONT));
+            table.addCell(newTableCell(dateFormat.format(form.getSubmittedTimestamp()), SMALL_FONT));
         }
 
         pdfDocument.add(table);
@@ -1049,9 +1049,9 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
 
     private void addProjectTitleToTable(PdfPTable table, final ApplicationForm form) {
         table.addCell(newTableCell("Project", SMALL_BOLD_FONT));
-        String projectTitle = form.getProjectTitle();
-        if (StringUtils.isBlank(projectTitle)) {
-            projectTitle = NOT_REQUIRED;
+        String projectTitle = NOT_REQUIRED;
+        if(form.getProject() != null) {
+            projectTitle = form.getProject().getTitle();
         }
         table.addCell(newTableCell(projectTitle, SMALL_FONT));
     }

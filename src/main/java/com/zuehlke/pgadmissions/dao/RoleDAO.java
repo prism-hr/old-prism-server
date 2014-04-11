@@ -50,41 +50,6 @@ public class RoleDAO {
         return (UserRole) sessionFactory.getCurrentSession().merge(userRole);
     }
 
-    public List<Role> getSystemUserRoles(User user) {
-        return sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("id.role"))
-                .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
-    }
-
-    public List<Role> getInstitutionUserRoles(Institution institution, User user) {
-        List<Role> institutionRoles = sessionFactory.getCurrentSession().createCriteria(UserRole.class)
-                .setProjection(Projections.groupProperty("id.role")).createAlias("id.user", "registeredUser", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("id.institution", institution)).add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
-        institutionRoles.addAll(getSystemUserRoles(user));
-        return institutionRoles;
-    }
-
-    public List<Role> getProgramUserRoles(Program program, User user) {
-        List<Role> programRoles = sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("id.role"))
-                .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("id.program", program))
-                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
-        programRoles.addAll(getInstitutionUserRoles(program.getInstitution(), user));
-        return programRoles;
-    }
-
-    public List<Role> getProjectUserRoles(Project project, User user) {
-        List<Role> projectRoles = sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("role"))
-                .createAlias("user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("project", project))
-                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
-        projectRoles.addAll(getProgramUserRoles(project.getProgram(), user));
-        return projectRoles;
-    }
-
-    public List<Role> getApplicationFormUserRoles(ApplicationForm application, User user) {
-        return sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("id.role"))
-                .createAlias("id.user", "registeredUser", JoinType.INNER_JOIN).add(Restrictions.eq("id.applicationForm", application))
-                .add(Restrictions.eq("registeredUser.primaryAccount", user)).list();
-    }
-
     public List<User> getUsersInRole(PrismScope scope, Authority[] authorities) {
         // TODO Auto-generated method stub, sort by first and last names
         return null;
@@ -93,6 +58,11 @@ public class RoleDAO {
     public User getUserInRole(PrismScope scope, Authority[] authorities) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public boolean hasRole(User user, Authority authority, PrismScope scope) {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

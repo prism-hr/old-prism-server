@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
@@ -62,8 +63,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadUser() throws Exception {
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .enabled(false).build();
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("kod_aktywacyjny").userAccount(new UserAccount().withEnabled(false).withPassword("dupa")).build();
 
         assertNull(user.getId());
 
@@ -86,9 +86,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldFindUsersByUsername() throws Exception {
 
         User userOne = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .password("password").enabled(true).build();
+                .userAccount(new UserAccount().withPassword("password").withEnabled(true)).build();
         User userTwo = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .password("password").enabled(true).build();
+                .userAccount(new UserAccount().withPassword("password").withEnabled(true)).build();
 
         save(userOne, userTwo);
 
@@ -103,9 +103,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     public void shouldFindUsersByActivationCode() throws Exception {
 
         User userOne = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .password("password").enabled(false).activationCode("xyz").build();
+                .userAccount(new UserAccount().withPassword("password").withEnabled(false)).activationCode("xyz").build();
         User userTwo = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .password("password").enabled(false).activationCode("def").build();
+                .userAccount(new UserAccount().withPassword("password").withEnabled(false)).activationCode("def").build();
 
         save(userOne, userTwo);
 
@@ -119,10 +119,10 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldFindDisabledUsersByEmail() throws Exception {
         User userOne = new UserBuilder().firstName("Jane").lastName("Doe").email("email1@test.com")
-                .password("password").enabled(false).activationCode("xyz").build();
+                .userAccount(new UserAccount().withPassword("password").withEnabled(false)).activationCode("xyz").build();
 
         User userTwo = new UserBuilder().firstName("Jane").lastName("Doe").email("email1@test.com")
-                .password("password").enabled(true).activationCode("def").build();
+                .userAccount(new UserAccount().withPassword("password").withEnabled(true)).activationCode("def").build();
 
         save(userOne, userTwo);
 
@@ -138,7 +138,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getById(Authority.APPLICATION_REVIEWER);
         Role interviewerRole = roleDAO.getById(Authority.APPLICATION_INTERVIEWER);
 
-        Institution institution = new QualificationInstitutionBuilder().code("code").name("a10").domicileCode("AE").state(InstitutionState.INSTITUTION_APPROVED).build();
+        Institution institution = new QualificationInstitutionBuilder().code("code").name("a10").domicileCode("AE")
+                .state(InstitutionState.INSTITUTION_APPROVED).build();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("doesntexist")
                 .title("another title").institution(institution).build();
         save(institution, program);
@@ -146,8 +147,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).build();
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withEnabled(false))
+                .pendingRoleNotifications(pendingOne, pendingTwo).build();
         save(user);
         flushAndClearSession();
 
@@ -163,7 +164,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getById(Authority.APPLICATION_REVIEWER);
         Role interviewerRole = roleDAO.getById(Authority.APPLICATION_INTERVIEWER);
 
-        Institution institution = new QualificationInstitutionBuilder().code("code").name("a66").domicileCode("AE").state(InstitutionState.INSTITUTION_APPROVED).build();
+        Institution institution = new QualificationInstitutionBuilder().code("code").name("a66").domicileCode("AE")
+                .state(InstitutionState.INSTITUTION_APPROVED).build();
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("doesntexist")
                 .title("another title").institution(institution).build();
         save(institution, program);
@@ -171,8 +173,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).build();
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withEnabled(false))
+                .pendingRoleNotifications(pendingOne, pendingTwo).build();
         save(user);
         flushAndClearSession();
 
@@ -194,8 +196,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).notificationDate(now).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).notificationDate(now).build();
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).build();
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withEnabled(false))
+                .pendingRoleNotifications(pendingOne, pendingTwo).build();
         save(user);
         flushAndClearSession();
 
@@ -214,8 +216,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .enabled(true).pendingRoleNotifications(pendingOne, pendingTwo).build();
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withEnabled(true))
+                .pendingRoleNotifications(pendingOne, pendingTwo).build();
         save(user);
         flushAndClearSession();
 
@@ -226,8 +228,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldNotReturnUserWithNoPendingNotifications() {
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .enabled(false).build();
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withEnabled(false)).build();
         save(user);
         flushAndClearSession();
 
@@ -278,9 +279,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role superadministratorRole = roleDAO.getById(Authority.SYSTEM_ADMINISTRATOR);
 
         User superadmin = new UserBuilder()
-//        .role(superadministratorRole)
-        .firstName("Jane").lastName("Doe").email("somethingelse@test.com")
-                .enabled(false).build();
+        // .role(superadministratorRole)
+                .firstName("Jane").lastName("Doe").email("somethingelse@test.com").userAccount(new UserAccount().withEnabled(false)).build();
         sessionFactory.getCurrentSession().save(superadmin);
 
         List<User> superadministrators = userDAO.getSuperadministrators();
@@ -293,9 +293,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role admitterRole = roleDAO.getById(Authority.INSTITUTION_ADMITTER);
 
         User admitter = new UserBuilder()
-//        .role(admitterRole)
-        .firstName("Jane").lastName("Doe").email("somethingelse@test.com")
-                .enabled(false).build();
+        // .role(admitterRole)
+                .firstName("Jane").lastName("Doe").email("somethingelse@test.com").userAccount(new UserAccount().withEnabled(false)).build();
         sessionFactory.getCurrentSession().save(admitter);
 
         List<User> admitters = userDAO.getAdmitters();

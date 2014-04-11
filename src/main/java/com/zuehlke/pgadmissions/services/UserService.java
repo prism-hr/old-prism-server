@@ -210,7 +210,7 @@ public class UserService {
 
     public void setFiltering(final User user, final ApplicationsFiltering filtering) {
         ApplicationsFiltering mergedFilter = filteringDAO.merge(filtering);
-        user.getAccount().setFiltering(mergedFilter);
+        user.getAccount().setFilterGroup(mergedFilter);
         userDAO.save(user);
     }
 

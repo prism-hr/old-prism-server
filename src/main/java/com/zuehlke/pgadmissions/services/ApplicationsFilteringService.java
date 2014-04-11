@@ -19,8 +19,8 @@ public class ApplicationsFilteringService {
 
     public ApplicationsFiltering getDefaultApplicationFiltering(User user) {
         ApplicationsFiltering filtering;
-        if (user.getAccount().getFiltering() != null) {
-            filtering = user.getAccount().getFiltering();
+        if (user.getAccount().getFilterGroup() != null) {
+            filtering = user.getAccount().getFilterGroup();
         } else {
             filtering = getActiveApplicationFiltering();
         }

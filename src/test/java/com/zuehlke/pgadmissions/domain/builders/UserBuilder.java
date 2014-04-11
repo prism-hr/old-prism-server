@@ -2,11 +2,9 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
@@ -17,36 +15,22 @@ public class UserBuilder {
     private String firstName3;
     private String lastName;
     private String email;
-    private String password;
-    private String confirmPassword;
-    private String newPassword;
     private Integer id;
-    private boolean enabled = true;
     private String activationCode;
-    private Date applicationListLastAccessTimestamp;
     private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
-    private ApplicationsFiltering filtering;
     private Advert advert;
     private User primaryAccount;
     private List<User> linkedAccounts = new ArrayList<User>();
+
+    private UserAccount userAccount;
 
     public UserBuilder linkedAccounts(final User... user) {
         linkedAccounts.addAll(Arrays.asList(user));
         return this;
     }
 
-    public UserBuilder applicationListLastAccessTimestamp(Date applicationListLastAccessTimestamp) {
-        this.applicationListLastAccessTimestamp = applicationListLastAccessTimestamp;
-        return this;
-    }
-
     public UserBuilder pendingRoleNotifications(PendingRoleNotification... pendingRoleNotifications) {
         this.pendingRoleNotifications.addAll(Arrays.asList(pendingRoleNotifications));
-        return this;
-    }
-
-    public UserBuilder filtering(ApplicationsFiltering filtering) {
-        this.filtering = filtering;
         return this;
     }
 
@@ -85,33 +69,17 @@ public class UserBuilder {
         return this;
     }
 
-    public UserBuilder password(String password) {
-        this.password = password;
-        return this;
-    }
-
-    public UserBuilder newPassword(String newPassword) {
-        this.newPassword = newPassword;
-        return this;
-    }
-
-    public UserBuilder confirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-        return this;
-    }
-
     public UserBuilder id(Integer id) {
         this.id = id;
         return this;
     }
-
-    public UserBuilder enabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
-    }
-
+    
     public UserBuilder primaryAccount(User primaryAccount) {
         this.primaryAccount = primaryAccount;
+        return this;
+    }
+    public UserBuilder userAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
         return this;
     }
 
@@ -128,14 +96,6 @@ public class UserBuilder {
         user.setAdvert(advert);
         user.getLinkedAccounts().addAll(linkedAccounts);
         user.setParentUser(primaryAccount);
-
-        UserAccount userAccount = new UserAccount();
-        userAccount.setPassword(password);
-        userAccount.setNewPassword(newPassword);
-        userAccount.setConfirmPassword(confirmPassword);
-        userAccount.setFiltering(filtering);
-        userAccount.setApplicationListLastAccessTimestamp(applicationListLastAccessTimestamp);
-        userAccount.setEnabled(enabled);
         user.setAccount(userAccount);
         return user;
     }

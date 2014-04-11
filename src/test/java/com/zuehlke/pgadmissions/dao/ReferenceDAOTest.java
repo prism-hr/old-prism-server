@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
@@ -25,7 +26,7 @@ public class ReferenceDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetReferenceById() {
         User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .enabled(false).build();
+                .userAccount(new UserAccount().withEnabled(false)).build();
 
         save(user);
 

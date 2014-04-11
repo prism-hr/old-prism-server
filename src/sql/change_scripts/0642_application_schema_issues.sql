@@ -44,22 +44,22 @@ INSERT INTO USER_ROLE (system_id, user_id, role_id, requesting_user_id)
 	FROM SYSTEM_USER_ROLE
 ;
 
-INSERT INTO USER_ROLE (institution_id, user_id, role_id)
+INSERT INTO USER_ROLE (institution_id, user_id, role_id, requesting_user_id)
 	SELECT institution_id, user_id, role_id, requesting_user_id
 	FROM INSTITUTION_USER_ROLE
 ;
 
-INSERT INTO USER_ROLE (program_id, user_id, role_id)
+INSERT INTO USER_ROLE (program_id, user_id, role_id, requesting_user_id)
 	SELECT program_id, user_id, role_id, requesting_user_id
 	FROM PROGRAM_USER_ROLE
 ;
 
-INSERT INTO USER_ROLE (project_id, user_id, role_id)
+INSERT INTO USER_ROLE (project_id, user_id, role_id, requesting_user_id)
 	SELECT project_id, user_id, role_id, requesting_user_id
 	FROM PROJECT_USER_ROLE
 ;
 
-INSERT INTO USER_ROLE (application_id, user_id, role_id)
+INSERT INTO USER_ROLE (application_id, user_id, role_id, requesting_user_id)
 	SELECT application_id, user_id, role_id, requesting_user_id
 	FROM APPLICATION_USER_ROLE
 ;

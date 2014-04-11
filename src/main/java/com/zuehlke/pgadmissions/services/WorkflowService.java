@@ -43,10 +43,10 @@ public class WorkflowService {
     private static final HashMap<ApplicationFormStatus, ApplicationFormAction> INITIATE_STAGE_MAP;
     static {
         INITIATE_STAGE_MAP = new HashMap<ApplicationFormStatus, ApplicationFormAction>(4);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.REVIEW, ApplicationFormAction.ASSIGN_REVIEWERS);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.INTERVIEW, ApplicationFormAction.ASSIGN_INTERVIEWERS);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.APPROVAL, ApplicationFormAction.ASSIGN_SUPERVISORS);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.REJECTED, ApplicationFormAction.CONFIRM_REJECTION);
+        INITIATE_STAGE_MAP.put(ApplicationFormStatus.REVIEW, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS);
+        INITIATE_STAGE_MAP.put(ApplicationFormStatus.INTERVIEW, ApplicationFormAction.APPLICATION_ASSIGN_INTERVIEWERS);
+        INITIATE_STAGE_MAP.put(ApplicationFormStatus.APPROVAL, ApplicationFormAction.APPLICATION_ASSIGN_SUPERVISORS);
+        INITIATE_STAGE_MAP.put(ApplicationFormStatus.REJECTED, ApplicationFormAction.APPLICATION_CONFIRM_REJECTION);
     };
 
     @Autowired

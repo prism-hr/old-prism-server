@@ -17,9 +17,9 @@ public class ActionDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetActionById() {
-        Action action = new ActionBuilder().id(ApplicationFormAction.PROVIDE_REFERENCE).notification(NotificationMethod.INDIVIDUAL).build();
+        Action action = new ActionBuilder().id(ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE).notification(NotificationMethod.INDIVIDUAL).build();
         sessionFactory.getCurrentSession().update(action);
-        Action returnedAction = actionDAO.getById(ApplicationFormAction.PROVIDE_REFERENCE);
+        Action returnedAction = actionDAO.getById(ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
         assertSame(action, returnedAction);
     }
     

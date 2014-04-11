@@ -137,7 +137,7 @@ public class InterviewCommentController {
     public String getInterviewFeedbackPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
         return INTERVIEW_FEEDBACK_PAGE;
     }
@@ -147,7 +147,7 @@ public class InterviewCommentController {
             throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_INTERVIEW_FEEDBACK);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK);
 
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {

@@ -140,7 +140,7 @@ public class ReferenceController {
     public String getUploadReferencesPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return ADD_REFERENCES_VIEW_NAME;
     }
@@ -150,7 +150,7 @@ public class ReferenceController {
             throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
 
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {

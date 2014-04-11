@@ -42,7 +42,7 @@ public class WithdrawControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", student);
 
-        actionsProviderMock.validateAction(applicationForm, student, ApplicationFormAction.WITHDRAW);
+        actionsProviderMock.validateAction(applicationForm, student, ApplicationFormAction.APPLICATION_WITHDRAW);
         withdrawServiceMock.withdrawApplication(applicationForm);
 
         withdrawServiceMock.sendToPortico(applicationForm);

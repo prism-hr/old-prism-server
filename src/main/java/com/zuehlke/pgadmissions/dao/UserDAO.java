@@ -220,7 +220,7 @@ public class UserDAO {
                 .createAlias("role", "applicationRole", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("applicationForm", application))
                 .add(Restrictions.ne("applicationRole.id", Authority.SUPERADMINISTRATOR))
-                .add(Restrictions.eq("action.id", ApplicationFormAction.CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
+                .add(Restrictions.eq("action.id", ApplicationFormAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
     }
     
     public List<User> getUsersInterestedInApplication(ApplicationForm applicationForm) {

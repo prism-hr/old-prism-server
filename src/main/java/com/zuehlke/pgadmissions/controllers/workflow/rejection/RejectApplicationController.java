@@ -64,7 +64,7 @@ public class RejectApplicationController {
     public String getRejectPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
+        actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_CONFIRM_REJECTION);
         applicationFormUserRoleService.deleteApplicationUpdate(application, user);
         return REJECT_VIEW_NAME;
     }
@@ -73,7 +73,7 @@ public class RejectApplicationController {
     public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors, ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(application, user, ApplicationFormAction.CONFIRM_REJECTION);
+        actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_CONFIRM_REJECTION);
         
         if (errors.hasErrors()) {
             return REJECT_VIEW_NAME;

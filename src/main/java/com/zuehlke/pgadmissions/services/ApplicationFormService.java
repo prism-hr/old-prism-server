@@ -190,7 +190,7 @@ public class ApplicationFormService {
 
     public void saveOrUpdateApplicationSection(ApplicationForm application) {
         User currentUser = userService.getCurrentUser();
-        Action action = actionService.getById(actionService.getPrecedentAction(application, currentUser, ActionType.VIEW_EDIT));
+        Action action = actionService.getById(actionService.getPrecedentAction(application, currentUser, ActionType.APPLICATION_VIEW_EDIT));
         workflowService.applicationUpdated(application, userService.getCurrentUser());
     }
 
@@ -219,7 +219,7 @@ public class ApplicationFormService {
 
     public void applicationCreated(ApplicationForm application) {
         User applicant = application.getApplicant();
-        Action action = actionService.getById(ApplicationFormAction.COMPLETE_APPLICATION);
+        Action action = actionService.getById(ApplicationFormAction.APPLICATION_COMPLETE_APPLICATION);
         Role role = roleService.getById(Authority.APPLICANT);
         ActionRequired completeApplicationAction = new ActionRequired().withApplication(application).withRole(role).withAction(action).withDeadlineDate(application.getDueDate())
                 .withBindDeadlineToDueDate(false).withRaisesUrgentFlag(true);
@@ -235,8 +235,8 @@ public class ApplicationFormService {
         return applicationDescriptor;
     }
 
-    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ApplicationFormAction completeStageAction) {
-        return applicationFormDAO.getLatestStateChangeComment(applicationForm, completeStageAction);
+    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ActionType applicationCompleteApprovalStage) {
+        return applicationFormDAO.getLatestStateChangeComment(applicationForm, applicationCompleteApprovalStage);
     }
 
     private void autoPopulateApplication(ApplicationForm applicationForm) {

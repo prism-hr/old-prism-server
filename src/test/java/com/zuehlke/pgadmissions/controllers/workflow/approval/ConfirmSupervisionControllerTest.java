@@ -76,7 +76,7 @@ public class ConfirmSupervisionControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
+        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION);
 
         EasyMock.replay(actionsProviderMock);
         String res = controller.confirmSupervision(modelMap);
@@ -99,7 +99,7 @@ public class ConfirmSupervisionControllerTest {
         modelMap.put("applicationForm", applicationForm);
         modelMap.put("user", user);
 
-        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.CONFIRM_PRIMARY_SUPERVISION);
+        actionsProviderMock.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION);
 
         EasyMock.replay(approvalServiceMock, actionsProviderMock);
         String res = controller.applyConfirmSupervision(confirmSupervisionDTO, result, modelMap);

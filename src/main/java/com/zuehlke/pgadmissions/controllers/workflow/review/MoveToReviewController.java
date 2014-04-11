@@ -59,7 +59,7 @@ public class MoveToReviewController {
     @RequestMapping(method = RequestMethod.GET, value = "moveToReview")
     public String getReviewRoundDetailsPage(ModelMap modelMap) {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
-        actionService.validateAction(application, getUser(), ApplicationFormAction.ASSIGN_REVIEWERS);
+        actionService.validateAction(application, getUser(), ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS);
         applicationFormUserRoleService.deleteApplicationUpdate(application, getUser());
         return REVIEW_DETAILS_VIEW_NAME;
     }
@@ -76,7 +76,7 @@ public class MoveToReviewController {
         ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
         User user = getUser();
 
-        actionService.validateAction(application, user, ApplicationFormAction.ASSIGN_REVIEWERS);
+        actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS);
         if (bindingResult.hasErrors()) {
             modelMap.put("comment", comment);
             return REVIEWERS_SECTION_NAME;

@@ -45,7 +45,7 @@ public class DeclineController {
 	    User reviewer = getReviewer(activationCode);
 	    ApplicationForm application = getApplicationForm(applicationId);
 	    
-	    actionService.validateAction(application, reviewer, ApplicationFormAction.PROVIDE_REVIEW);
+	    actionService.validateAction(application, reviewer, ApplicationFormAction.APPLICATION_PROVIDE_REVIEW);
 	    
 		if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 		    commentService.declineReview(reviewer, application);
@@ -84,7 +84,7 @@ public class DeclineController {
 	    Referee referee = getReferee(activationCode, applicationForm);
 	    User user = userService.getUserByActivationCode(activationCode);
 	    
-	    actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REFERENCE);
+	    actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
 	    
 	    if (StringUtils.equalsIgnoreCase(confirmation, "OK")) {
 	        // the user clicked on "Confirm"

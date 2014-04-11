@@ -134,7 +134,7 @@ public class ReviewCommentController {
     public String getReviewFeedbackPage(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_REVIEW);
         WorkflowService.deleteApplicationUpdate(applicationForm, user);
         return REVIEW_FEEDBACK_PAGE;
     }
@@ -143,7 +143,7 @@ public class ReviewCommentController {
     public String addComment(@ModelAttribute("comment") ReviewComment comment, BindingResult result, ModelMap modelMap) throws ScoringDefinitionParseException {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.PROVIDE_REVIEW);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_REVIEW);
 
         List<Score> scores = comment.getScores();
         if (!scores.isEmpty()) {

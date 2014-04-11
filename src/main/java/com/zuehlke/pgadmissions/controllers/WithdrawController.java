@@ -41,7 +41,7 @@ public class WithdrawController {
     public String withdrawApplicationAndGetApplicationList(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.WITHDRAW);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_WITHDRAW);
 
         withdrawService.withdrawApplication(applicationForm);
         withdrawService.sendToPortico(applicationForm);

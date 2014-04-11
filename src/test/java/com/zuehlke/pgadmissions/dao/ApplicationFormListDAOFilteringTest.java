@@ -75,10 +75,10 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         role = roleDAO.getById(Authority.INTERVIEWER);
 
-        applicant = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+        applicant = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").password("password").enabled(false)
                 .applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
 
-        currentUser = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password").enabled(false)
+        currentUser = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").password("password").enabled(false)
                 .applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
 
         sessionFactory.getCurrentSession().flush();
@@ -215,7 +215,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Test
     public void shouldReturnAppsFilteredByApplicantName() {
-        User otherUser = new UserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek").password("franek123")
+        User otherUser = new UserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").password("franek123")
                 .enabled(false).build();
 
         ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(otherUser)
@@ -343,7 +343,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Test
     public void shouldReturnAppsFilteredByApplicantFirstNameAndLastName() {
-        User otherUser = new UserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com").username("franek").password("franek123")
+        User otherUser = new UserBuilder().firstName("Franciszek").lastName("Pieczka").email("franek@pieczka.com")
                 .enabled(false).build();
 
         ApplicationForm otherApplicationForm = new ApplicationFormBuilder().advert(program).applicant(otherUser)

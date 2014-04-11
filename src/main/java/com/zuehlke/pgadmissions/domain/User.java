@@ -79,9 +79,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String email;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
-    private String username;
-
     @Column(name = "advert_id")
     private Advert advert;
 
@@ -172,14 +169,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public Advert getAdvert() {
@@ -290,5 +279,10 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Override
     public String getPassword() {
         return account != null ? account.getPassword() : null;
+    }
+    
+    @Override
+    public String getUsername() {
+        return email;
     }
 }

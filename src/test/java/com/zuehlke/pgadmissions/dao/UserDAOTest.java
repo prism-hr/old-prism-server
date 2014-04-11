@@ -62,7 +62,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadUser() throws Exception {
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .enabled(false).build();
 
         assertNull(user.getId());
@@ -85,9 +85,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldFindUsersByUsername() throws Exception {
 
-        User userOne = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
+        User userOne = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .password("password").enabled(true).build();
-        User userTwo = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername")
+        User userTwo = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .password("password").enabled(true).build();
 
         save(userOne, userTwo);
@@ -102,9 +102,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldFindUsersByActivationCode() throws Exception {
 
-        User userOne = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
+        User userOne = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .password("password").enabled(false).activationCode("xyz").build();
-        User userTwo = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername")
+        User userTwo = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .password("password").enabled(false).activationCode("def").build();
 
         save(userOne, userTwo);
@@ -118,10 +118,10 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldFindDisabledUsersByEmail() throws Exception {
-        User userOne = new UserBuilder().firstName("Jane").lastName("Doe").email("email1@test.com").username("username")
+        User userOne = new UserBuilder().firstName("Jane").lastName("Doe").email("email1@test.com")
                 .password("password").enabled(false).activationCode("xyz").build();
 
-        User userTwo = new UserBuilder().firstName("Jane").lastName("Doe").email("email1@test.com").username("otherusername")
+        User userTwo = new UserBuilder().firstName("Jane").lastName("Doe").email("email1@test.com")
                 .password("password").enabled(true).activationCode("def").build();
 
         save(userOne, userTwo);
@@ -146,7 +146,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).build();
         save(user);
         flushAndClearSession();
@@ -171,7 +171,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).build();
         save(user);
         flushAndClearSession();
@@ -194,7 +194,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).notificationDate(now).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).notificationDate(now).build();
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).build();
         save(user);
         flushAndClearSession();
@@ -214,7 +214,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).build();
         PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).build();
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .enabled(true).pendingRoleNotifications(pendingOne, pendingTwo).build();
         save(user);
         flushAndClearSession();
@@ -226,7 +226,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldNotReturnUserWithNoPendingNotifications() {
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .enabled(false).build();
         save(user);
         flushAndClearSession();
@@ -280,7 +280,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         User superadmin = new UserBuilder()
 //        .role(superadministratorRole)
         .firstName("Jane").lastName("Doe").email("somethingelse@test.com")
-                .username("somethingelse").password("password").enabled(false).build();
+                .enabled(false).build();
         sessionFactory.getCurrentSession().save(superadmin);
 
         List<User> superadministrators = userDAO.getSuperadministrators();
@@ -295,7 +295,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         User admitter = new UserBuilder()
 //        .role(admitterRole)
         .firstName("Jane").lastName("Doe").email("somethingelse@test.com")
-                .username("somethingelse").password("password").enabled(false).build();
+                .enabled(false).build();
         sessionFactory.getCurrentSession().save(admitter);
 
         List<User> admitters = userDAO.getAdmitters();

@@ -41,9 +41,9 @@ public class UserValidatorTest {
     public void setup() {
         userServiceMock = EasyMock.createMock(UserService.class);
         encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
-        user = new UserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com").confirmPassword("12345678")
+        user = new UserBuilder().id(1)
                 .newPassword("12345678").password("5f4dcc3b5aa").build();
-        currentUser = new UserBuilder().id(1).username("email").firstName("bob").lastName("bobson").email("email@test.com")
+        currentUser = new UserBuilder().id(1)
                 .confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
@@ -168,7 +168,7 @@ public class UserValidatorTest {
 
     @Test
     public void shouldRejectIfNewEmailAlreadyExists() {
-        User existingUser = new UserBuilder().id(2).username("email2@test.com").firstName("bob").lastName("bobson")
+        User existingUser = new UserBuilder().id(2)
                 .email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
 
         user.setEmail("email2@test.com");
@@ -185,7 +185,7 @@ public class UserValidatorTest {
 
     @Test
     public void shouldNotRejectIfuserWithEmailExistsButIsCUrrentUser() {
-        User existingUser = new UserBuilder().id(1).username("email2@test.com").firstName("bob").lastName("bobson")
+        User existingUser = new UserBuilder().id(1)
                 .email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa").build();
         user.setEmail("email2@test.com");
 

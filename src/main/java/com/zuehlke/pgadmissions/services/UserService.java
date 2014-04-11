@@ -101,7 +101,6 @@ public class UserService {
         User user = new User();
         user.setFirstName(firstname);
         user.setLastName(lastname);
-        user.setUsername(email);
         user.setEmail(email);
         user.setActivationCode(encryptionUtils.generateUUID());
 
@@ -129,7 +128,6 @@ public class UserService {
         if (StringUtils.isNotBlank(user.getAccount().getNewPassword())) {
             currentUser.getAccount().setPassword(encryptionUtils.getMD5Hash(user.getAccount().getNewPassword()));
         }
-        currentUser.setUsername(user.getEmail());
         save(currentUser);
     }
 

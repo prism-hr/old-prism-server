@@ -34,7 +34,7 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
     public void prepare() {
         applicationFormTransferDAO = new ApplicationFormTransferDAO(sessionFactory);
         User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .username("username").password("password")
+                .password("password")
                 .enabled(false).build();
 
         save(user);
@@ -77,7 +77,7 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         }
         flushAndClearSession();
         
-        User applicant = new UserBuilder().id(Integer.MAX_VALUE).username("ked9999@zuhlke.com").email("ked@zuhlke.com").build();
+        User applicant = new UserBuilder().id(Integer.MAX_VALUE).build();
         
         program = testObjectProvider.getEnabledProgram();
         
@@ -127,7 +127,7 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         }
         flushAndClearSession();
         
-        User applicant = new UserBuilder().id(Integer.MAX_VALUE).username("ked9999@zuhlke.com").email("ked@zuhlke.com").build();
+        User applicant = new UserBuilder().id(Integer.MAX_VALUE).build();
         
         program = testObjectProvider.getEnabledProgram();
         

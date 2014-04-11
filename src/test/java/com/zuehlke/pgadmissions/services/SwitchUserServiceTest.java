@@ -42,12 +42,12 @@ public class SwitchUserServiceTest {
         role2 = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
         
         user1 = new UserBuilder().id(5).firstName("Jane").lastName("Doe").email("jane@doe.com")
-                .username("janeUsername").password("password").enabled(true)
+                .enabled(true)
 //                .roles(role1)
                 .build();
         
         user2 = new UserBuilder().id(6).firstName("John").lastName("Doe").email("john@doe.com")
-                .username("johnUsername").password("password").enabled(true)
+                .enabled(true)
 //                .roles(role1, role2)
                 .build();
         

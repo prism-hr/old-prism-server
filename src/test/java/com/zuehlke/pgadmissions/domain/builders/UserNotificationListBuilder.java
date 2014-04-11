@@ -340,7 +340,7 @@ public class UserNotificationListBuilder {
     }
 
     private User getDummyUser() {
-        User user = new UserBuilder().username(encryptionUtils.generateUUID()).enabled(true).build();
+        User user = new UserBuilder().email(encryptionUtils.generateUUID()).enabled(true).build();
         saveDummyObject(user);
         return user;
     }

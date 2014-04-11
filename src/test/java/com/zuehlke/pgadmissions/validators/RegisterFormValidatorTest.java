@@ -39,7 +39,7 @@ public class RegisterFormValidatorTest {
 
     @Before
     public void setup() {
-        user = new UserBuilder().id(4).username("email").firstName("Hans-Peter").lastName("Mueller").email("meuston@gmail.com")
+        user = new UserBuilder().id(4)
                 .confirmPassword("12345678").password("12345678").build();
         userServiceMock = EasyMock.createMock(UserService.class);
         recordValidator = new RegisterFormValidator(userServiceMock);

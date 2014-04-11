@@ -65,7 +65,7 @@ public class PendingRoleNotificationDAOTest extends AutomaticRollbackTestCase {
     public void initialise() {
         pendingRoleNotificationDAO = new PendingRoleNotificationDAO(sessionFactory);
         roleDAO = new RoleDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").enabled(false)
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").enabled(false)
                 .build();
         save(user);
         flushAndClearSession();

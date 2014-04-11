@@ -81,7 +81,7 @@ public class ConfigurationControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundIfNotSuperAdminOrADmin() {
-        User applicant = new UserBuilder().id(1).username("aa").email("aa@gmail.com").firstName("mark").lastName("ham")
+        User applicant = new UserBuilder().id(1)
                 .build();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();

@@ -93,11 +93,11 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         roleDAO = new RoleDAO(sessionFactory);
 
-        applicant = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+        applicant = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .enabled(true).applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
 
-        superUser = new UserBuilder().firstName("John").lastName("Doe").email("email@test.com").username("superUserUsername").password("password")
+        superUser = new UserBuilder().firstName("John").lastName("Doe").email("email@test.com")
         // .withRole(roleDAO.getById(Authority.SUPERADMINISTRATOR))
                 .enabled(true).applicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)).build();
 
@@ -121,7 +121,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationFormListDAO applicationFormListDAOMock = EasyMock.createMock(ApplicationFormListDAO.class);
         InjectionUtils.injectInto(applicationFormListDAOMock, applicationsService, "applicationFormListDAO");
 
-        User user = new UserBuilder().id(1).username("bob")
+        User user = new UserBuilder().id(1)
         // .withRole(new RoleBuilder().id(Authority.APPLICANT).build())
                 .build();
         ApplicationsFiltering filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
@@ -313,8 +313,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingFirstNameFred() {
-        User applicant = new UserBuilder().firstName("FredzzZZZZZerick").lastName("Doe").email("email@test.com").username("freddy").password("password")
-                .enabled(true).build();
+        User applicant = new UserBuilder().firstName("FredzzZZZZZerick").lastName("Doe").email("email@test.com").password("password").enabled(true).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(applicant)
                 .status(new State().withId(ApplicationFormStatus.APPROVAL)).build();
@@ -337,7 +336,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingLastName() {
 
-        User applicant = new UserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com").username("freddy").password("password")
+        User applicant = new UserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com")
                 .enabled(true).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(applicant)
@@ -361,7 +360,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldNotReturnAppIfTermNotInApplicantNameFirstOrLastName() {
 
-        User applicant = new UserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").username("freddy").password("password")
+        User applicant = new UserBuilder().firstName("Frederick").lastName("unique").email("email@test.com")
                 .enabled(true).build();
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(applicant)
@@ -597,16 +596,16 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldSortApplicationWithApplName() throws ParseException {
-        User applicant1 = new UserBuilder().firstName("AAAA").lastName("BBBB").username("1")
+        User applicant1 = new UserBuilder().firstName("AAAA").lastName("BBBB")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
-        User applicant2 = new UserBuilder().firstName("AAAA").lastName("CCCC").username("2")
+        User applicant2 = new UserBuilder().firstName("AAAA").lastName("CCCC")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
-        User applicant3 = new UserBuilder().firstName("BBBB").lastName("AAAA").username("3")
+        User applicant3 = new UserBuilder().firstName("BBBB").lastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
-        User applicant4 = new UserBuilder().firstName("CCCC").lastName("AAAA").username("4")
+        User applicant4 = new UserBuilder().firstName("CCCC").lastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
 
@@ -647,16 +646,16 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldSortApplicationWithApplStatus() throws ParseException {
-        User applicant1 = new UserBuilder().firstName("AAAA").lastName("BBBB").username("1")
+        User applicant1 = new UserBuilder().firstName("AAAA").lastName("BBBB")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
-        User applicant2 = new UserBuilder().firstName("AAAA").lastName("CCCC").username("2")
+        User applicant2 = new UserBuilder().firstName("AAAA").lastName("CCCC")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
-        User applicant3 = new UserBuilder().firstName("BBBB").lastName("AAAA").username("3")
+        User applicant3 = new UserBuilder().firstName("BBBB").lastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
-        User applicant4 = new UserBuilder().firstName("CCCC").lastName("AAAA").username("4")
+        User applicant4 = new UserBuilder().firstName("CCCC").lastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
 
@@ -697,16 +696,16 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldSortApplicationWithProgramName() throws ParseException {
-        User applicant1 = new UserBuilder().firstName("AAAA").lastName("BBBB").username("1")
+        User applicant1 = new UserBuilder().firstName("AAAA").lastName("BBBB")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
-        User applicant2 = new UserBuilder().firstName("AAAA").lastName("CCCC").username("2")
+        User applicant2 = new UserBuilder().firstName("AAAA").lastName("CCCC")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
-        User applicant3 = new UserBuilder().firstName("BBBB").lastName("AAAA").username("3")
+        User applicant3 = new UserBuilder().firstName("BBBB").lastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
-        User applicant4 = new UserBuilder().firstName("CCCC").lastName("AAAA").username("4")
+        User applicant4 = new UserBuilder().firstName("CCCC").lastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
 
@@ -782,7 +781,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldReturnApplicationWithSupervisorInProgrammeDetails() {
-        User applicant = new UserBuilder().firstName("AAAA").lastName("BBBB").username("1")
+        User applicant = new UserBuilder().firstName("AAAA").lastName("BBBB")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
         SuggestedSupervisor supervisor = new SuggestedSupervisorBuilder().aware(true).email("threepwood@monkeyisland.com").firstname("Guybrush")
@@ -812,12 +811,12 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     // TODO fix test (approvalComment instead of approvalRound)
     // @Test
     // public void shouldReturnApplicationWithSupervisorInOneOfTheApprovalRounds() {
-    // RegisteredUser applicant = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB").username("AASW")
+    // RegisteredUser applicant = new RegisteredUserBuilder().firstName("AAAA").lastName("BBBB")
     // .withRole(roleDAO.getRoleByAuthority(Authority.APPLICANT)).build();
-    // RegisteredUser supervisorUser1 = new RegisteredUserBuilder().firstName("Guybrush").lastName("Threepwood").username("AASWW")
+    // RegisteredUser supervisorUser1 = new RegisteredUserBuilder().firstName("Guybrush").lastName("Threepwood")
     // .withRole(roleDAO.getRoleByAuthority(Authority.SUPERVISOR)).build();
     // Supervisor supervisor1 = new SupervisorBuilder().isPrimary(true).withUser(supervisorUser1).build();
-    // RegisteredUser supervisorUser2 = new RegisteredUserBuilder().firstName("Herman").lastName("Toothrot").username("AASSSCXXSW")
+    // RegisteredUser supervisorUser2 = new RegisteredUserBuilder().firstName("Herman").lastName("Toothrot")
     // .withRole(roleDAO.getRoleByAuthority(Authority.SUPERVISOR)).build();
     // Supervisor supervisor2 = new SupervisorBuilder().isPrimary(false).withUser(supervisorUser1).build();
     // ApprovalRound approvalRound1 = new ApprovalRoundBuilder().createdDate(new Date()).supervisors(supervisor1).build();

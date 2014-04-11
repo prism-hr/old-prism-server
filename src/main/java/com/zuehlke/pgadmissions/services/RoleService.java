@@ -62,21 +62,7 @@ public class RoleService {
     }
 
     public boolean hasRole(User user, Authority authority, PrismScope scope) {
-        Role role = roleDAO.getById(authority);
-        switch (role.getAuthorityScope()) {
-        case SYSTEM:
-            return roleDAO.getSystemUserRoles(user).contains(roleDAO.getById(authority));
-        case INSTITUTION:
-            return roleDAO.getInstitutionUserRoles((Institution) scope, user).contains(roleDAO.getById(authority));
-        case PROGRAM:
-            return roleDAO.getProgramUserRoles((Program) scope, user).contains(roleDAO.getById(authority));
-        case PROJECT:
-            return roleDAO.getProjectUserRoles((Project) scope, user).contains(roleDAO.getById(authority));
-        case APPLICATION:
-            return roleDAO.getApplicationFormUserRoles((ApplicationForm) scope, user).contains(roleDAO.getById(authority));
-        default:
-            throw new IllegalStateException("Unkwown scope: " + role.getAuthorityScope());
-        }
+        return roleDAO.hasRole(user, authority, scope);
     }
 
     public List<User> getUsersInRole(PrismScope scope, Authority... authorities) {

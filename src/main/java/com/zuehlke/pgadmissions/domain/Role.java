@@ -32,10 +32,6 @@ public class Role implements GrantedAuthority, Serializable {
     @Enumerated(EnumType.STRING)
     private Authority id;
     
-    @Enumerated(EnumType.STRING)
-    @Column(name = "application_role_scope_id")
-    private AuthorityScope authorityScope;
-    
     @Column(name = "update_visibility")
     @Enumerated(EnumType.ORDINAL)
     private ApplicationUpdateScope updateVisibility = ApplicationUpdateScope.ALL_USERS;
@@ -58,13 +54,6 @@ public class Role implements GrantedAuthority, Serializable {
     @Override
     public String getAuthority() {
         return id.toString();
-    }
-    public AuthorityScope getAuthorityScope() {
-        return authorityScope;
-    }
-
-    public void setAuthorityScope(AuthorityScope authorityScope) {
-        this.authorityScope = authorityScope;
     }
 
     public ApplicationUpdateScope getUpdateVisibility() {

@@ -388,7 +388,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withEnabled(false))
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("kod_aktywacyjny").userAccount(new UserAccount().withEnabled(false).withPassword("dupa"))
                 .build();
         reminderInterval = new ReminderIntervalBuilder().id(1).reminderType(ReminderType.REFERENCE).duration(1).unit(DurationUnitEnum.WEEKS).build();
         sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);

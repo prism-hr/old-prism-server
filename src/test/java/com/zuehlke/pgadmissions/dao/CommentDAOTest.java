@@ -47,7 +47,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         commentDAO = new CommentDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withEnabled(false))
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("code").userAccount(new UserAccount().withEnabled(false).withPassword("haslo"))
                 .build();
         save(user);
         flushAndClearSession();

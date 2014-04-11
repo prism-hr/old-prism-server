@@ -5,14 +5,14 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 
 @Component
 public class ApplicationFormAddressValidator extends FormSectionObjectValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return ApplicationFormAddress.class.equals(clazz);
+		return ApplicationAddress.class.equals(clazz);
 	}
 
 	@Override

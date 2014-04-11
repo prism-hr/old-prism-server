@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
@@ -53,7 +53,7 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/editAddress", method = RequestMethod.POST)
-    public String editAddresses(@Valid ApplicationFormAddress applicationFormAddress, BindingResult result, @ModelAttribute ApplicationForm applicationForm,
+    public String editAddresses(@Valid ApplicationAddress applicationFormAddress, BindingResult result, @ModelAttribute ApplicationForm applicationForm,
             ModelMap modelMap) {
         if (result.hasErrors()) {
             return returnView(modelMap, applicationFormAddress);
@@ -89,7 +89,7 @@ public class AddressController {
         return domicileService.getAllEnabledDomiciles();
     }
 
-    private String returnView(ModelMap modelMap, ApplicationFormAddress applicationFormAddress) {
+    private String returnView(ModelMap modelMap, ApplicationAddress applicationFormAddress) {
         modelMap.put("applicationFormAddress", applicationFormAddress);
         return TemplateLocation.APPLICATION_APPLICANT_ADDRESS;
     }

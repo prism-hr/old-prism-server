@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -35,11 +35,11 @@ public class ApplicationFormCopyHelper {
             copyPersonalDetails(to.getPersonalDetails(), from.getPersonalDetails(), true);
         }
         
-        if (from.getApplicationFormAddress() != null) {
-            ApplicationFormAddress applicationFormAddress = new ApplicationFormAddress();
-            to.setApplicationFormAddress(applicationFormAddress);
+        if (from.getApplicationAddress() != null) {
+            ApplicationAddress applicationFormAddress = new ApplicationAddress();
+            to.setApplicationAddress(applicationFormAddress);
             applicationFormAddress.setApplication(to);
-            copyApplicationFormAddress(to.getApplicationFormAddress(), from.getApplicationFormAddress(), true);
+            copyApplicationFormAddress(to.getApplicationAddress(), from.getApplicationAddress(), true);
         }
                                                                                                                                                                                                                                                         
         for (Qualification fromQualification : from.getQualifications()) {
@@ -70,11 +70,11 @@ public class ApplicationFormCopyHelper {
             copyReferee(referee, fromReferee, true);
         }
 
-        if (from.getApplicationFormDocument() != null) {
-            ApplicationFormDocument applicationFormDocument = new ApplicationFormDocument();
-            to.setApplicationFormDocument(applicationFormDocument);
+        if (from.getApplicationDocument() != null) {
+            ApplicationDocument applicationFormDocument = new ApplicationDocument();
+            to.setApplicationDocument(applicationFormDocument);
             applicationFormDocument.setApplication(to);
-            copyApplicationFormDocument(to.getApplicationFormDocument(), from.getApplicationFormDocument(), true);
+            copyApplicationFormDocument(to.getApplicationDocument(), from.getApplicationDocument(), true);
         }
 
         if (from.getAdditionalInformation() != null) {
@@ -195,7 +195,7 @@ public class ApplicationFormCopyHelper {
         }
     }
     
-    public void copyApplicationFormAddress(ApplicationFormAddress to, ApplicationFormAddress from, boolean doPerformDeepCopy) {
+    public void copyApplicationFormAddress(ApplicationAddress to, ApplicationAddress from, boolean doPerformDeepCopy) {
         if (doPerformDeepCopy) {
             to.setCurrentAddress(copyAddress(from.getCurrentAddress()));
             to.setContactAddress(copyAddress(from.getContactAddress()));
@@ -205,7 +205,7 @@ public class ApplicationFormCopyHelper {
         }
     }
     
-    public void copyApplicationFormDocument(ApplicationFormDocument to, ApplicationFormDocument from, boolean doPerformDeepCopy) {
+    public void copyApplicationFormDocument(ApplicationDocument to, ApplicationDocument from, boolean doPerformDeepCopy) {
         if (doPerformDeepCopy) {
             to.setCv(copyDocument(from.getCv()));
             to.setPersonalStatement(copyDocument(from.getPersonalStatement()));

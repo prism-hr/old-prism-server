@@ -36,8 +36,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
-import com.zuehlke.pgadmissions.domain.ApplicationFormDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -553,7 +553,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 
-        ApplicationFormAddress address = form.getApplicationFormAddress();
+        ApplicationAddress address = form.getApplicationAddress();
         table.addCell(newTableCell("Current Address", SMALL_BOLD_FONT));
         if (address.getCurrentAddress() == null) {
             table.addCell(newTableCell(null, SMALL_FONT));
@@ -872,7 +872,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table = new PdfPTable(2);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
 
-        ApplicationFormDocument documents = form.getApplicationFormDocument();
+        ApplicationDocument documents = form.getApplicationDocument();
 
         table.addCell(newTableCell("Personal Statement", SMALL_BOLD_FONT));
         if (includeAttachments) {

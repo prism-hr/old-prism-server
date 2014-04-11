@@ -6,7 +6,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.ApplicationFormAddress;
+import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")
@@ -19,7 +19,7 @@ public class AddressValidatorTest {
 
     private AddressValidator addressSectionDTOValidator;
 
-    private ApplicationFormAddress address;
+    private ApplicationAddress address;
 
 //    @Before
 //    public void setup() {

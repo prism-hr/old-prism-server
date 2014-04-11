@@ -11,26 +11,24 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-import org.hibernate.search.indexes.serialization.javaserialization.impl.Add;
+@Entity(name="APPLICATION_DOCUMENT")
+public class ApplicationDocument implements Serializable, FormSectionObject {
 
-@Entity(name="APPLICATION_FORM_ADDRESS")
-public class ApplicationFormAddress implements Serializable, FormSectionObject {
-
-    private static final long serialVersionUID = -9022421958392952549L;
+    private static final long serialVersionUID = 1088530727424344593L;
     
     @Id
     @GeneratedValue
     private Integer id;
     
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "current_address_id")
-    private Address currentAddress;
+    @JoinColumn(name = "personal_statement_id")
+    private Document personalStatement;
     
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "contact_address_id")
-    private Address contactAddress;
+    @JoinColumn(name = "cv_id")
+    private Document cv = null;
     
-    @OneToOne(mappedBy = "applicationFormAddress", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "applicationDocument", fetch = FetchType.LAZY)
     private ApplicationForm application;
     
     @Transient
@@ -44,20 +42,20 @@ public class ApplicationFormAddress implements Serializable, FormSectionObject {
         this.id = id;
     }
 
-    public Address getCurrentAddress() {
-        return currentAddress;
+    public Document getPersonalStatement() {
+        return personalStatement;
     }
 
-    public void setCurrentAddress(Address currentAddress) {
-        this.currentAddress = currentAddress;
+    public void setPersonalStatement(Document personalStatement) {
+        this.personalStatement = personalStatement;
+    }
+    
+    public Document getCv() {
+        return cv;
     }
 
-    public Address getContactAddress() {
-        return contactAddress;
-    }
-
-    public void setContactAddress(Address contactAddress) {
-        this.contactAddress = contactAddress;
+    public void setCv(Document cv) {
+        this.cv = cv;
     }
 
     public ApplicationForm getApplication() {
@@ -76,17 +74,13 @@ public class ApplicationFormAddress implements Serializable, FormSectionObject {
         this.acceptedTerms = acceptedTerms;
     }
     
-    public boolean currentAddressIsContactAddress() {
-        return currentAddress == contactAddress;
-    }
-    
-    public ApplicationFormAddress withCurrentAddress(Address address) {
-        this.currentAddress = address;
+    public ApplicationDocument withPersonalStatement(Document document) {
+        this.personalStatement = document;
         return this;
     }
-
-    public ApplicationFormAddress withContactAddress(Address address) {
-        this.contactAddress = address;
+    
+    public ApplicationDocument withCv(Document document) {
+        this.cv = document;
         return this;
     }
 

@@ -100,7 +100,7 @@ public class AccountControllerTest {
 
         User desiredAccount = new UserBuilder().id(2).enabled(true).activationCode("abcd").email("A@B.com").password("password").build();
 
-        desiredAccount.setPrimaryAccount(currentAccount);
+        desiredAccount.setParentUser(currentAccount);
 
         EasyMock.expect(userServiceMock.getUserByEmail(desiredAccount.getEmail())).andReturn(desiredAccount);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentAccount);

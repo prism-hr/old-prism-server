@@ -33,7 +33,7 @@ public class SwitchUserService {
         User currentAccount = (User) preProcessToken.getPrincipal();
         User desiredAccount = (User) preProcessToken.getCredentials();
         
-        User primary = currentAccount.getPrimaryAccount();
+        User primary = currentAccount.getParentUser();
         if (primary == null) {
             primary = currentAccount;
         }

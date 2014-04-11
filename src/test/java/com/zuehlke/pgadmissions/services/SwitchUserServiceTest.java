@@ -51,7 +51,7 @@ public class SwitchUserServiceTest {
 //                .roles(role1, role2)
                 .build();
         
-        user2.setPrimaryAccount(user1);
+        user2.setParentUser(user1);
         user1.getLinkedAccounts().add(user2);
     }
     

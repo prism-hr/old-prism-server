@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -8,12 +7,12 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.SessionFactory;
 
 import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ActionRequired;
-import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.helpers.NotificationListTestCase;

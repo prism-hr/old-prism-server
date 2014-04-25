@@ -626,7 +626,7 @@ INSERT INTO ACTION
 	SELECT "APPLICATION_MOVE_TO_DIFFERENT_STAGE_AS_APPROVER", "APPLICATION_MOVE_TO_DIFFERENT_STAGE", 1, "SYNDICATED"
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_INTERVIEW_STAGE', 'APPLICATION_APPROVAL', 'ONE_COMPLETED', 2)
 ;
 

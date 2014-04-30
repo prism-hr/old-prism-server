@@ -49,7 +49,6 @@ public class ApplicationFormBuilder {
     private String uclBookingReferenceNumber;
     private String ipAddress;
     private Boolean useCustomReferenceQuestions = false;
-    private State nextStatus;
 
     public ApplicationFormBuilder ipAddress(String ipAddress) {
         this.ipAddress = ipAddress;
@@ -83,11 +82,6 @@ public class ApplicationFormBuilder {
 
     public ApplicationFormBuilder status(State status) {
         this.status = status;
-        return this;
-    }
-
-    public ApplicationFormBuilder nextStatus(State nextStatus) {
-        this.nextStatus = nextStatus;
         return this;
     }
 
@@ -224,7 +218,6 @@ public class ApplicationFormBuilder {
         application.setDueDate(dueDate);
         application.setAdvert(advert);
         application.setState(status);
-        application.setNextState(nextStatus);
         application.setAdditionalInformation(info);
         application.setUpdateTimestamp(lastUpdated);
         application.setAcceptedTermsOnSubmission(acceptedTerms);

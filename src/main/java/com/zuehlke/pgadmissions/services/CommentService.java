@@ -138,7 +138,8 @@ public class CommentService {
             }
         }
 
-        applicationForm.setNextState(stateDAO.getById(nextStatus));
+        // TODO set relevant state
+//        applicationForm.setNextState(stateDAO.getById(nextStatus));
         save(stateChangeComment);
         applicationsService.save(applicationForm);
         applicationsService.refresh(applicationForm);

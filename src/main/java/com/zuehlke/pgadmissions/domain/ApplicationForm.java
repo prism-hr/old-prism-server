@@ -52,10 +52,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     @JoinColumn(name = "state_id")
     private State state;
 
-    @ManyToOne
-    @JoinColumn(name = "next_state_id")
-    private State nextState = null;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_address_id")
     @Valid
@@ -200,14 +196,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
 
     public void setState(State status) {
         this.state = status;
-    }
-
-    public State getNextState() {
-        return nextState;
-    }
-
-    public void setNextState(State nextStatus) {
-        this.nextState = nextStatus;
     }
 
     public ApplicationAddress getApplicationAddress() {

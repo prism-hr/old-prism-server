@@ -66,37 +66,37 @@ public class StateTransitionServiceTest {
     
     @Test
     public void shouldReturnRedirectToReviewIfReviewNextStatus() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").nextStatus(new State().withId(ApplicationFormStatus.REVIEW)).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(ApplicationFormStatus.REVIEW)).build();
         assertEquals("redirect:/review/moveToReview?applicationId=ABC", service.resolveView(applicationForm));
     }
     
     @Test
     public void shouldReturnRedirectToInterviewIfInterviewNextStatus() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").nextStatus(new State().withId(ApplicationFormStatus.INTERVIEW)).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(ApplicationFormStatus.INTERVIEW)).build();
         assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", service.resolveView(applicationForm));
     }
     
     @Test
     public void shouldReturnRedirectToApprovalIfApprovalNextStatus() {
-        ApplicationForm   applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").nextStatus(new State().withId(ApplicationFormStatus.APPROVAL)).build();
+        ApplicationForm   applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(ApplicationFormStatus.APPROVAL)).build();
         assertEquals("redirect:/approval/moveToApproval?action=firstLoad&applicationId=ABC", service.resolveView(applicationForm));
     }
     
     @Test
     public void shouldReturnRedirectToRejectedIfRejectedNextStatus() {
-        ApplicationForm   applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").nextStatus(new State().withId(ApplicationFormStatus.REJECTED)).build();
+        ApplicationForm   applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(ApplicationFormStatus.REJECTED)).build();
         assertEquals("redirect:/rejectApplication?applicationId=ABC", service.resolveView(applicationForm));
     }
 
     @Test
     public void shouldReturnRedirectToOfferRecommendationIfApprovedNextStatus() {
-        ApplicationForm     applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").nextStatus(new State().withId(ApplicationFormStatus.APPROVED)).build();
+        ApplicationForm     applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(ApplicationFormStatus.APPROVED)).build();
         assertEquals("redirect:/offerRecommendation?applicationId=ABC", service.resolveView(applicationForm));
     }
     
     @Test
     public void shouldReturnStateTransitionViewIfNextStatusNotSpecified() {
-        ApplicationForm     applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").nextStatus(null).build();
+        ApplicationForm     applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(null).build();
         assertEquals("private/staff/admin/state_transition",  service.resolveView(applicationForm));
     }
 }

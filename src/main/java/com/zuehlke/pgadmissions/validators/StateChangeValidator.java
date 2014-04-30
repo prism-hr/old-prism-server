@@ -23,7 +23,7 @@ public class StateChangeValidator extends AbstractValidator {
     	
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
     	
-        if (stateChangeDTO.getApplicationForm().getState().getId() == ApplicationFormStatus.VALIDATION) {
+        if (stateChangeDTO.getApplicationForm().getState().getId() == ApplicationFormStatus.APPLICATION_VALIDATION) {
             if (stateChangeDTO.getQualifiedForPhd() == null) {
                 errors.rejectValue("qualifiedForPhd", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }
@@ -36,7 +36,7 @@ public class StateChangeValidator extends AbstractValidator {
         }
         
         ApplicationFormStatus nextStatus = stateChangeDTO.getNextStatus();
-        boolean stateChangeRequiresFastTrack = !(ApplicationFormStatus.APPROVED.equals(nextStatus) || ApplicationFormStatus.REJECTED.equals(nextStatus))
+        boolean stateChangeRequiresFastTrack = !(ApplicationFormStatus.APPLICATION_APPROVED.equals(nextStatus) || ApplicationFormStatus.APPLICATION_REJECTED.equals(nextStatus))
                 // FIXME check it by invoking PermissionsService
                  // && BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights())
         		        ;
@@ -60,15 +60,15 @@ public class StateChangeValidator extends AbstractValidator {
             errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
         }
         
-        if (stateChangeDTO.getApplicationForm().getState().equals(ApplicationFormStatus.VALIDATION)
+        if (stateChangeDTO.getApplicationForm().getState().equals(ApplicationFormStatus.APPLICATION_VALIDATION)
                 && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.REFERENCE)
                 && stateChangeDTO.getUseCustomReferenceQuestions() == null) {
             errors.rejectValue("useCustomReferenceQuestions", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
         
-        if (((nextStatus == ApplicationFormStatus.REVIEW
+        if (((nextStatus == ApplicationFormStatus.APPLICATION_REVIEW
                 && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.REVIEW))
-                || (nextStatus == ApplicationFormStatus.INTERVIEW
+                || (nextStatus == ApplicationFormStatus.APPLICATION_INTERVIEW
                         && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.INTERVIEW)))
                 && stateChangeDTO.getUseCustomQuestions() == null) {
             errors.rejectValue("useCustomQuestions", EMPTY_DROPDOWN_ERROR_MESSAGE);

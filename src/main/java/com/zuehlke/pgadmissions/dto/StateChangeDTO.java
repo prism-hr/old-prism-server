@@ -240,12 +240,12 @@ public class StateChangeDTO {
     }
 
     public boolean displayCustomQuestionsOption() {
-        return (this.nextStatus == ApplicationFormStatus.REVIEW && getCustomQuestionCoverage().contains(ScoringStage.REVIEW))
-                || (this.nextStatus == ApplicationFormStatus.INTERVIEW && getCustomQuestionCoverage().contains(ScoringStage.INTERVIEW));
+        return (this.nextStatus == ApplicationFormStatus.APPLICATION_REVIEW && getCustomQuestionCoverage().contains(ScoringStage.REVIEW))
+                || (this.nextStatus == ApplicationFormStatus.APPLICATION_INTERVIEW && getCustomQuestionCoverage().contains(ScoringStage.INTERVIEW));
     }
 
     public boolean displayCustomReferenceQuestionsOption() {
-        return this.status == ApplicationFormStatus.VALIDATION && getCustomQuestionCoverage().contains(ScoringStage.REFERENCE);
+        return this.status == ApplicationFormStatus.APPLICATION_VALIDATION && getCustomQuestionCoverage().contains(ScoringStage.REFERENCE);
     }
 
 }

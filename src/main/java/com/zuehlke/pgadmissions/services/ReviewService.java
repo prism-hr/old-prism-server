@@ -52,12 +52,12 @@ public class ReviewService {
 	        baseDate = new DateTime(application.getClosingDate());
 	    }
 	    
-		State state = stateDAO.getById(ApplicationFormStatus.REVIEW);
+		State state = stateDAO.getById(ApplicationFormStatus.APPLICATION_REVIEW);
 		// TODO write query to get duration in minutes
         Integer durationInMinutes = 0; //state.getDurationInMinutes();
 		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, durationInMinutes);
         application.setDueDate(dueDate.toDate());
-        boolean sendReferenceRequest = application.getState().getId() == ApplicationFormStatus.VALIDATION;
+        boolean sendReferenceRequest = application.getState().getId() == ApplicationFormStatus.APPLICATION_VALIDATION;
         application.setState(state);
 		
         if (sendReferenceRequest) {

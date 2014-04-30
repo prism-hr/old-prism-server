@@ -118,7 +118,7 @@ public class ApplicationFormService {
     public void submitApplication(ApplicationForm application) {
         // TODO set IP
         
-        setApplicationStatus(application, ApplicationFormStatus.VALIDATION);
+        setApplicationStatus(application, ApplicationFormStatus.APPLICATION_VALIDATION);
         workflowService.applicationSubmitted(application);
         workflowService.applicationUpdated(application, userService.getCurrentUser());
     }
@@ -130,27 +130,27 @@ public class ApplicationFormService {
         // TODO add referee roles and send referee notifications
         // TODO add admitter roles
         switch (newStatus) {
-        case UNSUBMITTED:
+        case APPLICATION_UNSUBMITTED:
             application.setDueDate(getDueDateForApplication(application));
             application.setClosingDate(getClosingDateForApplication(application));
-        case VALIDATION:
+        case APPLICATION_VALIDATION:
             application.setSubmittedTimestamp(new LocalDate().toDate());
             application.setDueDate(getDueDateForApplication(application));
-        case INTERVIEW:
+        case APPLICATION_INTERVIEW:
             application.setDueDate(getDueDateForApplication(application));
             application.setClosingDate(null);
-        case APPROVAL:
+        case APPLICATION_APPROVAL:
             application.setDueDate(getDueDateForApplication(application));
             application.setClosingDate(null);
-        case REVIEW:
+        case APPLICATION_REVIEW:
             application.setDueDate(getDueDateForApplication(application));
             // TODO check the history in order tyo set closing date
 //            if (application.getLastState().getId() == newStatus) {
                 application.setClosingDate(null);
 //            }
-        case APPROVED:
-        case REJECTED:
-        case WITHDRAWN:
+        case APPLICATION_APPROVED:
+        case APPLICATION_REJECTED:
+        case APPLICATION_WITHDRAWN:
             application.setDueDate(null);
             application.setClosingDate(null);
             actionService.deleteApplicationActions(application);
@@ -298,7 +298,7 @@ public class ApplicationFormService {
         LocalDate baselineDate = new LocalDate();
         Date closingDate = application.getClosingDate();
         State status = application.getState();
-        if (status.getId() == ApplicationFormStatus.REVIEW && closingDate != null) {
+        if (status.getId() == ApplicationFormStatus.APPLICATION_REVIEW && closingDate != null) {
             if (closingDate.after(baselineDate.toDate())) {
                 baselineDate = new LocalDate(closingDate);
             }

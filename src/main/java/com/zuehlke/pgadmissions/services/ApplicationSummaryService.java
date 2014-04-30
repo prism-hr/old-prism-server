@@ -69,7 +69,7 @@ public class ApplicationSummaryService {
         result.put("name", form.getApplicant().getDisplayName());
         result.put("phoneNumber", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getPhoneNumber());
         result.put("email", form.getApplicant().getEmail());
-        result.put("applicationStatus", form.getState().getId().displayValue());
+        result.put("applicationStatus", form.getState().getId().name());
     }
 
     private void addQualifications(final ApplicationForm form, final Map<String, String> result) {
@@ -193,7 +193,7 @@ public class ApplicationSummaryService {
     public Map<String, String> getSummary(final String applicationNumber) {
         ApplicationForm form = applicationsService.getByApplicationNumber(applicationNumber);
 
-        if (form.getState().equals(ApplicationFormStatus.WITHDRAWN) || form.getState().equals(ApplicationFormStatus.UNSUBMITTED)) {
+        if (form.getState().equals(ApplicationFormStatus.APPLICATION_WITHDRAWN) || form.getState().equals(ApplicationFormStatus.APPLICATION_UNSUBMITTED)) {
             return Collections.emptyMap();
         }
 

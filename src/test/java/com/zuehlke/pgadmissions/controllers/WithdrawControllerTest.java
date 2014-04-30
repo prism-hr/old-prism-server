@@ -36,7 +36,7 @@ public class WithdrawControllerTest {
 
     @Test
     public void shouldChangeStatusToWithdrawnAndSaveAndSendEmailsNotifications() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.VALIDATION)).applicant(student).id(2)
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).applicant(student).id(2)
                 .applicationNumber("abc").build();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);

@@ -88,7 +88,7 @@ public class ConfigurationServiceTest {
         serviceLevelsDTO.setReminderIntervals(Lists.newArrayList(reminderInterval));
         serviceLevelsDTO.setNotificationsDuration(notificationsDuration);
 
-        EasyMock.expect(stateDAOMock.getById(ApplicationFormStatus.VALIDATION)).andReturn(oldValidationDuration);
+        EasyMock.expect(stateDAOMock.getById(ApplicationFormStatus.APPLICATION_VALIDATION)).andReturn(oldValidationDuration);
         EasyMock.expect(reminderIntervalDAOMock.getReminderInterval(ReminderType.INTERVIEW_SCHEDULE)).andReturn(oldReminderInterval);
         EasyMock.expect(notificationsDurationDAOMock.getNotificationsDuration()).andReturn(oldNotificationsDuration);
 

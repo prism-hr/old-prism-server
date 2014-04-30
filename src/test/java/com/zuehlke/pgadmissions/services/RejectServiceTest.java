@@ -75,7 +75,7 @@ public class RejectServiceTest {
         admin = new UserBuilder().id(324).build();
         approver = new UserBuilder().id(22414).build();
         Program program = new ProgramBuilder().id(10023).build();
-        application = new ApplicationFormBuilder().id(200).advert(program).status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
+        application = new ApplicationFormBuilder().id(200).advert(program).status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).build();
 
         reason1 = new RejectReasonBuilder().id(1).text("idk").build();
         reason2 = new RejectReasonBuilder().id(2).text("idc").build();
@@ -95,7 +95,7 @@ public class RejectServiceTest {
         rejectService.moveApplicationToReject(application, rejection);
         verify();
 
-        assertEquals(ApplicationFormStatus.REJECTED, application.getState());
+        assertEquals(ApplicationFormStatus.APPLICATION_REJECTED, application.getState());
         assertEquals(rejection, application.getRejection());
     }
 

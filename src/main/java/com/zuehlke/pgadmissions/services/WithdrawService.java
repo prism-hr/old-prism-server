@@ -16,7 +16,7 @@ public class WithdrawService {
 
     @Transactional
     public void withdrawApplication(final ApplicationForm application) {
-        applicationFormService.setApplicationStatus(application, ApplicationFormStatus.WITHDRAWN);
+        applicationFormService.setApplicationStatus(application, ApplicationFormStatus.APPLICATION_WITHDRAWN);
     }
 
     @Transactional

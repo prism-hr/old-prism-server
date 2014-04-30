@@ -730,7 +730,7 @@ public class PorticoWebServiceIT {
     }
 
     private ApplicationForm randomlyPickApplicationForm() {
-        List<ApplicationForm> allApplicationsByStatus = applicationsService.getApplicationsByStatus(ApplicationFormStatus.REVIEW);
+        List<ApplicationForm> allApplicationsByStatus = applicationsService.getApplicationsByStatus(ApplicationFormStatus.APPLICATION_REVIEW);
         ApplicationForm applicationForm = null;
         boolean foundEnoughDataForQualifications = false;
         boolean foundEnoughDataForReferees = false;

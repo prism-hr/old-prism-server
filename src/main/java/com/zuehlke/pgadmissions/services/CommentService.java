@@ -93,7 +93,7 @@ public class CommentService {
         Comment stateChangeComment = null;
 
         switch (status) {
-        case VALIDATION:
+        case APPLICATION_VALIDATION:
             ValidationComment validationComment = new ValidationComment();
             validationComment.setQualifiedForPhd(stateChangeDTO.getQualifiedForPhd());
             validationComment.setEnglishCompetencyOk(stateChangeDTO.getEnglishCompentencyOk());
@@ -101,13 +101,13 @@ public class CommentService {
             stateChangeComment = validationComment;
             stateChangeComment.setUseCustomReferenceQuestions(BooleanUtils.toBooleanObject(stateChangeDTO.getUseCustomReferenceQuestions()));
             break;
-        case REVIEW:
+        case APPLICATION_REVIEW:
             stateChangeComment = new CompleteReviewComment();
             break;
-        case INTERVIEW:
+        case APPLICATION_INTERVIEW:
             stateChangeComment = new CompleteInterviewComment();
             break;
-        case APPROVAL:
+        case APPLICATION_APPROVAL:
             stateChangeComment = new CompleteApprovalComment();
             break;
         default:

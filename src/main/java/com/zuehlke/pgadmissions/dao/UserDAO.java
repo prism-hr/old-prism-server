@@ -80,9 +80,9 @@ public class UserDAO {
 
     public Long getNumberOfActiveApplicationsForApplicant(final User applicant) {
         return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicant", applicant))
-                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.APPROVED)))
-                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.REJECTED)))
-                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.WITHDRAWN))).setProjection(Projections.rowCount()).uniqueResult();
+                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.APPLICATION_APPROVED)))
+                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.APPLICATION_REJECTED)))
+                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.APPLICATION_WITHDRAWN))).setProjection(Projections.rowCount()).uniqueResult();
     }
 
     public List<User> getUsersWithUpi(final String upi) {

@@ -60,8 +60,8 @@ public class RefereeDAO {
                 .add(Restrictions.isNull("referenceComment.id"))
                 .add(Restrictions.eq("declined", false))
                 .add(Restrictions.isNotNull("user"))
-                .add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.WITHDRAWN,
-                        ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED})))
+                .add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.APPLICATION_WITHDRAWN,
+                        ApplicationFormStatus.APPLICATION_APPROVED, ApplicationFormStatus.APPLICATION_REJECTED, ApplicationFormStatus.APPLICATION_UNSUBMITTED})))
                 .add(Restrictions.le("lastNotified", dateWithSubtractedInterval)).list();
     }
 

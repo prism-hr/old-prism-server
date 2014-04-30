@@ -42,15 +42,15 @@ public class StateTransitionService {
             ApplicationFormStatus status = application.getState().getId();
             if (status != null) {
                 switch (status) {
-                case REVIEW:
+                case APPLICATION_REVIEW:
                     return REVIEW_VIEW + application.getApplicationNumber();
-                case INTERVIEW:
+                case APPLICATION_INTERVIEW:
                     return INTERVIEW_VIEW + application.getApplicationNumber();
-                case APPROVAL:
+                case APPLICATION_APPROVAL:
                     return APPROVAL_VIEW + application.getApplicationNumber();
-                case REJECTED:
+                case APPLICATION_REJECTED:
                     return REJECTION_VIEW + application.getApplicationNumber();
-                case APPROVED:
+                case APPLICATION_APPROVED:
                     return OFFER_RECOMMENDATION_VIEW + application.getApplicationNumber();
                 default:
                 }

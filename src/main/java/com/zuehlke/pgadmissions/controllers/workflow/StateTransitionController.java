@@ -103,7 +103,7 @@ public class StateTransitionController {
     	stateChangeDTO.setUser(user);
     	stateChangeDTO.setApplicationForm(applicationForm);
     	
-    	if (applicationForm.getState().getId() == ApplicationFormStatus.VALIDATION) {
+    	if (applicationForm.getState().getId() == ApplicationFormStatus.APPLICATION_VALIDATION) {
 	    	stateChangeDTO.setValidationQuestionOptions(ValidationQuestionOptions.values());
 	    	stateChangeDTO.setHomeOrOverseasOptions(HomeOrOverseas.values());
     	}
@@ -121,7 +121,7 @@ public class StateTransitionController {
         if (action != null) {
             Comment latestStateChangeComment = null;
 
-            if (applicationForm.getState().getId() == ApplicationFormStatus.VALIDATION) {
+            if (applicationForm.getState().getId() == ApplicationFormStatus.APPLICATION_VALIDATION) {
                 ValidationComment validationComment = commentService.getLastCommentOfType(applicationForm, ValidationComment.class);
                 stateChangeDTO.setQualifiedForPhd(validationComment.getQualifiedForPhd());
                 stateChangeDTO.setEnglishCompentencyOk(validationComment.getEnglishCompetencyOk());

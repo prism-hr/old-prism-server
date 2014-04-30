@@ -61,7 +61,7 @@ public class FileUploadControllerTest {
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowCannotUpdateApplicationExceptionIfApplicationFormNotInUnsubmmitedState() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).status(new State().withId(ApplicationFormStatus.APPROVED))
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).status(new State().withId(ApplicationFormStatus.APPLICATION_APPROVED))
 				.build();
 		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);

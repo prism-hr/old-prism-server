@@ -69,7 +69,7 @@ public class ExportQueueService {
         List<ApplicationFormTransfer> applications = formTransferService.getAllTransfersWaitingToBeSentToPorticoOldestFirst();
         for (ApplicationFormTransfer transfer : applications) {
             ApplicationForm form = transfer.getApplicationForm();
-            if (form.getState().equals(ApplicationFormStatus.APPROVED)) {
+            if (form.getState().equals(ApplicationFormStatus.APPLICATION_APPROVED)) {
                 sendToPortico(form);
             }
         }

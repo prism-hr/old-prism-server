@@ -48,7 +48,7 @@ public class ApplicationFormDocumentValidatorTest {
 
     @Before
     public void setup() {
-        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).build();
+        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.APPLICATION_UNSUBMITTED)).build();
         documentsSectionDTO = new ApplicationDocument();
         documentsSectionDTO.setCv(new DocumentBuilder().type(DocumentType.CV).build());
         documentsSectionDTO.setPersonalStatement(new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).build());

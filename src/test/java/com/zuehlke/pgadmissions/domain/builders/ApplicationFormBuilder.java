@@ -42,7 +42,6 @@ public class ApplicationFormBuilder {
     private List<Funding> fundings = new ArrayList<Funding>();
     private ApplicationDocument applicationFormDocument;
     private AdditionalInformation info;
-    private Date lastUpdated;
     private Date rejectNotificationDate;
     private Rejection rejection;
     private String applicationNumber;
@@ -67,11 +66,6 @@ public class ApplicationFormBuilder {
 
     public ApplicationFormBuilder rejection(Rejection rejection) {
         this.rejection = rejection;
-        return this;
-    }
-
-    public ApplicationFormBuilder lastUpdated(Date lastUpdated) {
-        this.lastUpdated = lastUpdated;
         return this;
     }
 
@@ -219,7 +213,6 @@ public class ApplicationFormBuilder {
         application.setAdvert(advert);
         application.setState(status);
         application.setAdditionalInformation(info);
-        application.setUpdateTimestamp(lastUpdated);
         application.setAcceptedTermsOnSubmission(acceptedTerms);
         application.getApplicationComments().addAll(comments);
         application.setRejection(rejection);

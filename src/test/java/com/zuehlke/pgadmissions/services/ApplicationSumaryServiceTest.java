@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
@@ -13,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
+@RunWith(UnitilsJUnit4TestClassRunner.class)
 public class ApplicationSumaryServiceTest {
 
     private static final String PERSONAL_STATEMENT_FILE_NAME = "MyPersonalStatement.pdf";
@@ -68,12 +71,6 @@ public class ApplicationSumaryServiceTest {
         dateOfSubmission = new DateTime(2013, 4, 23, 9, 20).toDate();
         dateOfLastUpdate = new DateTime(2013, 4, 20, 9, 20).toDate();
         currentUser = new UserBuilder().id(CURRENT_USER_ID).email(CURRENT_USER_EMAIL_ADDRESS).build();
-        applicationDescriptorMock = createMock(ApplicationDescriptor.class);
-        userServiceMock = createMock(UserService.class);
-        encryptionHelperMock = createMock(EncryptionHelper.class);
-        applicationsServiceMock = createMock(ApplicationFormService.class);
-        actionsProviderMock = createMock(ActionService.class);
-        service = new ApplicationSummaryService(applicationsServiceMock, userServiceMock, encryptionHelperMock, actionsProviderMock);
     }
 
 //    @Test

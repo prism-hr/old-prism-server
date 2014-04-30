@@ -234,7 +234,7 @@ public class ApplicationsReportService {
                     row.addCell(getSuggestedSupervisors(programmeDetails));
                     row.addCell(getAcademicYear(app));
                     row.addCell(app.getSubmittedTimestamp() != null ? getDateValue(app.getSubmittedTimestamp()) : DateValue.getNullValue());
-                    row.addCell(app.getUpdateTimestamp() != null ? getDateValue(app.getUpdateTimestamp()) : DateValue.getNullValue());
+//                    row.addCell(app.getUpdateTimestamp() != null ? getDateValue(app.getUpdateTimestamp()) : DateValue.getNullValue());
                     row.addCell(getFundingTotal(app));
 
                     // overall rating

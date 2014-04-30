@@ -77,10 +77,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     @Column(name = "closing_date")
     private Date closingDate = null;
 
-    @Column(name = "update_timestamp")
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date updateTimestamp;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User applicant = null;
@@ -252,14 +248,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
 
     public void setClosingDate(Date closingDate) {
         this.closingDate = closingDate;
-    }
-
-    public Date getUpdateTimestamp() {
-        return updateTimestamp;
-    }
-
-    public void setUpdateTimestamp(Date updateTimestamp) {
-        this.updateTimestamp = updateTimestamp;
     }
 
     public User getApplicant() {

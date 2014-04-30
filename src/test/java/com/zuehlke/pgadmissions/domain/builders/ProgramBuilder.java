@@ -38,7 +38,6 @@ public class ProgramBuilder {
     private Institution institution;
     private ProgramImport programFeed;
     private ProgramType programType = ProgramTypeBuilder.aProgramType().build();
-    private boolean locked;
 
     public ProgramBuilder id(Integer id) {
         this.id = id;
@@ -122,11 +121,6 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder locked(boolean locked) {
-        this.locked = locked;
-        return this;
-    }
-
     public ProgramBuilder advert(Advert advert) {
         return id(advert.getId()).title(advert.getTitle()).description(advert.getDescription()).studyDuration(advert.getStudyDuration())
                 .funding(advert.getFunding()).state(advert.getState()).contactUser(advert.getContactUser());
@@ -149,7 +143,6 @@ public class ProgramBuilder {
         program.setInstitution(institution);
         program.setProgramImport(programFeed);
         program.setProgramType(programType);
-        program.setLocked(locked);
         program.setState(state);
         return program;
     }

@@ -87,8 +87,8 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withEnabled(false))
-                .build();
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test2.com").activationCode("code")
+                .userAccount(new UserAccount().withEnabled(false).withPassword("dupa")).build();
         save(user);
         flushAndClearSession();
         program = testObjectProvider.getEnabledProgram();

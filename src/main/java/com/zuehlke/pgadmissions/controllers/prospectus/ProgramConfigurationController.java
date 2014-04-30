@@ -170,7 +170,8 @@ public class ProgramConfigurationController {
         result.put("programType", program.getProgramType().getId());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
         result.put("institutionCode", program.getInstitution().getCode());
-        result.put("programLock", program.getLocked());
+        // TODO check if locked
+//        result.put("programLock", program.getLocked());
         result.put("advertisingDeadline", programInstanceService.getAdvertisingDeadlineYear(program));
         result.put("studyOptions", programInstanceService.getStudyOptions(program));
         result.put("buttonToApply", templateRenderer.renderButton(dataMap));

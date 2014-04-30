@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.ReferenceService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 

@@ -59,9 +59,6 @@ public class Program extends Advert implements PrismScope {
     @JoinColumn(name = "program_type_id")
     private ProgramType programType;
 
-    @Column(name = "locked")
-    private boolean locked;
-
     public Program() {
         super.setAdvertType(AdvertType.PROGRAM);
     }
@@ -120,14 +117,6 @@ public class Program extends Advert implements PrismScope {
 
     public void setProgramType(ProgramType programType) {
         this.programType = programType;
-    }
-
-    public boolean getLocked() {
-        return locked;
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
     }
 
     @Override

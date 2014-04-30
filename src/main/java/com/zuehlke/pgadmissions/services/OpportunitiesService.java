@@ -64,8 +64,7 @@ public class OpportunitiesService {
             opportunityRequest.setProgramTitle(program.getTitle());
             opportunityRequest.setAtasRequired(program.getAtasRequired());
 
-            // lock the program
-            program.setLocked(true);
+            // TODO lock the program
             programsService.merge(program);
         } else {
             // new program
@@ -111,10 +110,10 @@ public class OpportunitiesService {
         opportunityRequest.setAdvertisingDeadlineYear(newOpportunityRequest.getAdvertisingDeadlineYear());
         opportunityRequest.setStudyOptions(newOpportunityRequest.getStudyOptions());
 
-        // unlock program if already exists
         Program program = opportunityRequest.getSourceProgram();
         if (program != null) {
-            program.setLocked(false);
+            // unlock program if already exists
+//            program.setLocked(false);
             program = (Program) programsService.merge(program);
         }
 

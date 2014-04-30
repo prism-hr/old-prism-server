@@ -109,7 +109,6 @@ public class OpportunitiesServiceTest {
         assertEquals(OpportunityRequestType.CHANGE, opportunityRequest.getType());
         assertEquals("tytul", opportunityRequest.getProgramTitle());
         assertTrue(opportunityRequest.getAtasRequired());
-        assertTrue(program.getLocked());
     }
 
     @Test
@@ -143,7 +142,7 @@ public class OpportunitiesServiceTest {
     public void shouldRespondToOpportunityRequest() {
         User author = new User();
         User currentUser = new User();
-        Program program = new ProgramBuilder().locked(true).build();
+        Program program = new Program();
         Program savedProgram = new Program();
         OpportunityRequest request = new OpportunityRequestBuilder().id(666).author(author).sourceProgram(program).build();
         Domicile country = new Domicile();
@@ -173,7 +172,6 @@ public class OpportunitiesServiceTest {
         assertEquals(newOpportunityRequest.getAtasRequired(), request.getAtasRequired());
         assertEquals(newOpportunityRequest.getAdvertisingDeadlineYear(), request.getAdvertisingDeadlineYear());
         assertEquals(newOpportunityRequest.getStudyOptions(), request.getStudyOptions());
-        assertFalse(program.getLocked());
         assertSame(savedProgram, request.getSourceProgram());
 
         OpportunityRequestComment returncomment = Iterables.getOnlyElement(request.getComments());

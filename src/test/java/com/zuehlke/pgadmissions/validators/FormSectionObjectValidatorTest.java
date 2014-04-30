@@ -21,7 +21,7 @@ public class FormSectionObjectValidatorTest {
 
     @Test
     public void shouldRejectIfApplicationSubmittedAndTermsAcceptedIsFalse() {
-        applicationForm.setState(new State().withId(ApplicationFormStatus.VALIDATION));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
         formSectionObjectValidator.addExtraValidation(formSectionObject, mappingResult);
 
@@ -32,7 +32,7 @@ public class FormSectionObjectValidatorTest {
     @Test
     public void shouldNotRejectIfApplicationsubmittedAndTermsAcceptedIsTrue() {
         formSectionObject.setAcceptedTerms(true);
-        applicationForm.setState(new State().withId(ApplicationFormStatus.VALIDATION));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
         formSectionObjectValidator.addExtraValidation(formSectionObject, mappingResult);
 
@@ -41,7 +41,7 @@ public class FormSectionObjectValidatorTest {
 
     @Test
     public void shouldNotRejectIfApplicationUnsubmittedAndTermsAcceptedIsFalse() {
-        applicationForm.setState(new State().withId(ApplicationFormStatus.UNSUBMITTED));
+        applicationForm.setState(new State().withId(ApplicationFormStatus.APPLICATION_UNSUBMITTED));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(formSectionObject, "acceptedTerms");
         formSectionObjectValidator.addExtraValidation(formSectionObject, mappingResult);
 
@@ -50,7 +50,7 @@ public class FormSectionObjectValidatorTest {
 
     @Before
     public void setup() throws ParseException {
-        applicationForm = new ApplicationFormBuilder().id(2).status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).build();
+        applicationForm = new ApplicationFormBuilder().id(2).status(new State().withId(ApplicationFormStatus.APPLICATION_UNSUBMITTED)).build();
         formSectionObject = new MyObject();
         formSectionObjectValidator = new FormSectionObjectValidator() {
         };

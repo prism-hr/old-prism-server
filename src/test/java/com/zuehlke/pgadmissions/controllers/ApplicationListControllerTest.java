@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPROVAL;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPROVED;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.INTERVIEW;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REJECTED;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.REVIEW;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.VALIDATION;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.WITHDRAWN;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_APPROVAL;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_INTERVIEW;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_REJECTED;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_REVIEW;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_VALIDATION;
+import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_WITHDRAWN;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -275,7 +275,7 @@ public class ApplicationListControllerTest {
     @Test
     public void shouldReturnRelevantApplicationStatusValues() {
         List<ApplicationFormStatus> values = controller.getApplicationStatusValues();
-        assertEquals(values, Lists.newArrayList(VALIDATION, REVIEW, INTERVIEW, APPROVAL, APPROVED, WITHDRAWN, REJECTED));
+        assertEquals(values, Lists.newArrayList(APPLICATION_VALIDATION, APPLICATION_REVIEW, APPLICATION_INTERVIEW, APPLICATION_APPROVAL, APPLICATION_APPROVED, APPLICATION_WITHDRAWN, APPLICATION_REJECTED));
     }
 
     @Before

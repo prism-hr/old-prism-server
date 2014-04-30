@@ -63,17 +63,17 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
         Marshaller marshaller = webServiceTemplate.getMarshaller();
 
         List<ApplicationForm> applications = new LinkedList<ApplicationForm>();
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPROVED));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPROVAL));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.INTERVIEW));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.REJECTED));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.REVIEW));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.VALIDATION));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.WITHDRAWN));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_APPROVED));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_APPROVAL));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_INTERVIEW));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_REJECTED));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_REVIEW));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_VALIDATION));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_WITHDRAWN));
 
-        State approvedState = stateService.getById(ApplicationFormStatus.APPROVED);
-        State rejectedState = stateService.getById(ApplicationFormStatus.REJECTED);
-        State withdrawnState = stateService.getById(ApplicationFormStatus.WITHDRAWN);
+        State approvedState = stateService.getById(ApplicationFormStatus.APPLICATION_APPROVED);
+        State rejectedState = stateService.getById(ApplicationFormStatus.APPLICATION_REJECTED);
+        State withdrawnState = stateService.getById(ApplicationFormStatus.APPLICATION_WITHDRAWN);
 
         for (ApplicationForm form : applications) {
             try {

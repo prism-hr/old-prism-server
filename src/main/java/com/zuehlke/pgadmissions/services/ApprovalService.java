@@ -140,9 +140,9 @@ public class ApprovalService {
     public void moveApplicationToApproval(ApplicationForm form, Comment newComment, User initiator) {
         checkSendToPorticoStatus(form);
 
-        boolean sendReferenceRequest = form.getState().getId() == ApplicationFormStatus.VALIDATION;
+        boolean sendReferenceRequest = form.getState().getId() == ApplicationFormStatus.APPLICATION_VALIDATION;
 
-        applicationsService.setApplicationStatus(form, ApplicationFormStatus.APPROVAL);
+        applicationsService.setApplicationStatus(form, ApplicationFormStatus.APPLICATION_APPROVAL);
 
         AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
         approvalComment.setApplication(form);

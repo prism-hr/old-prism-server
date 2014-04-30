@@ -213,7 +213,7 @@ public class ApplicationDescriptor {
 	}
 
 	public boolean getApplicationFormSubmitted() {
-		return applicationFormStatus != ApplicationFormStatus.UNSUBMITTED;
+		return applicationFormStatus != ApplicationFormStatus.APPLICATION_UNSUBMITTED;
 	}
 	
 	public void setApplicationFormNextStatus(ApplicationFormStatus applicationFormNextStatus) {

@@ -43,7 +43,7 @@ public class WithdrawServiceTest {
 
     @Test
     public void shouldWithdrawApplication() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.REVIEW)).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.APPLICATION_REVIEW)).build();
 
         applicationServiceMock.save(applicationForm);
         actionService.deleteApplicationActions(applicationForm);
@@ -52,12 +52,12 @@ public class WithdrawServiceTest {
         service.withdrawApplication(applicationForm);
         verify();
 
-        assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getState());
+        assertEquals(ApplicationFormStatus.APPLICATION_WITHDRAWN, applicationForm.getState());
     }
 
     @Test
     public void shouldWithdrawUnsubmittedApplication() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.APPLICATION_UNSUBMITTED)).build();
 
         applicationServiceMock.save(applicationForm);
         actionService.deleteApplicationActions(applicationForm);
@@ -66,13 +66,13 @@ public class WithdrawServiceTest {
         service.withdrawApplication(applicationForm);
         verify();
 
-        assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getState());
+        assertEquals(ApplicationFormStatus.APPLICATION_WITHDRAWN, applicationForm.getState());
     }
 
     @Test
     public void shouldSendFormToPortico() {
         Program program = new ProgramBuilder().programFeed(new ProgramFeedBuilder().feedUrl("test").build()).build();
-        ApplicationForm form = new ApplicationFormBuilder().id(1).advert(program).submittedDate(new Date()).status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
+        ApplicationForm form = new ApplicationFormBuilder().id(1).advert(program).submittedDate(new Date()).status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).build();
         expect(porticoQueueServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationFormTransfer());
         replay();
         service.sendToPortico(form);

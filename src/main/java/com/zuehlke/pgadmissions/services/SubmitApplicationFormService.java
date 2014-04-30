@@ -22,7 +22,7 @@ public class SubmitApplicationFormService {
     private MailSendingService mailSendingService;
 
     public void submitApplication(ApplicationForm applicationForm) {
-        applicationService.setApplicationStatus(applicationForm, ApplicationFormStatus.VALIDATION);
+        applicationService.setApplicationStatus(applicationForm, ApplicationFormStatus.APPLICATION_VALIDATION);
         
         mailSendingService.sendSubmissionConfirmationToApplicant(applicationForm);
         

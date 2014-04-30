@@ -175,7 +175,7 @@ public class ApplicationListController {
     public List<ApplicationFormStatus> getApplicationStatusValues() {
         List<ApplicationFormStatus> statuses = Lists.newArrayListWithCapacity(ApplicationFormStatus.values().length);
         for (ApplicationFormStatus status : ApplicationFormStatus.values()) {
-            if (status != ApplicationFormStatus.UNSUBMITTED) {
+            if (status != ApplicationFormStatus.APPLICATION_UNSUBMITTED) {
                 statuses.add(status);
             }
         }

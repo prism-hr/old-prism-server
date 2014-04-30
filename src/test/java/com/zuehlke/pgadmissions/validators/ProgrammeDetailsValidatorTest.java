@@ -346,7 +346,7 @@ public class ProgrammeDetailsValidatorTest {
     @Test
     public void shouldRejectIfApplicationSubmittedAndTermsAcceptedIsFalse() {
         State validationState = new State();
-        validationState.setId(ApplicationFormStatus.VALIDATION);
+        validationState.setId(ApplicationFormStatus.APPLICATION_VALIDATION);
         form.setState(validationState);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
@@ -359,7 +359,7 @@ public class ProgrammeDetailsValidatorTest {
     public void shouldNotRejectIfApplicationsubmittedAndTermsAcceptedIsTrue() {
         programmeDetail.setAcceptedTerms(true);
         State validationState = new State();
-        validationState.setId(ApplicationFormStatus.VALIDATION);
+        validationState.setId(ApplicationFormStatus.APPLICATION_VALIDATION);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "acceptedTerms");
         programmeDetailsValidator.validate(programmeDetail, mappingResult);
 
@@ -385,7 +385,7 @@ public class ProgrammeDetailsValidatorTest {
         programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
                 .applicationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2025/08/06"))
                 .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).enabled(true).build();
-        form = new ApplicationFormBuilder().id(2).advert(program).applicant(currentUser).status(new State().withId(ApplicationFormStatus.UNSUBMITTED)).build();
+        form = new ApplicationFormBuilder().id(2).advert(program).applicant(currentUser).status(new State().withId(ApplicationFormStatus.APPLICATION_UNSUBMITTED)).build();
         programmeDetail = new ProgrammeDetailsBuilder().id(5).suggestedSupervisors(suggestedSupervisor).sourcesOfInterest(interest)
                 .startDate(DateUtils.addDays(new Date(), 10)).applicationForm(form).studyOption(new StudyOption("1", "Full-time")).build();
 

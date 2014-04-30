@@ -202,7 +202,7 @@ public class ApplicationsReportService {
 
                     // overall rating
 //                    row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
-                    row.addCell(app.getState().getId().displayValue());
+                    row.addCell(app.getState().getId().name());
 
                     // reference report
                     row.addCell(receivedAndDeclinedReferences[0]);
@@ -241,8 +241,8 @@ public class ApplicationsReportService {
 //                    row.addCell(canSeeRating ? printRating(app.getAverageRatingFormatted()) : N_R);
                     row.addCell(canSeeRating ? String.valueOf(overallPositiveEndorsements) : N_R);
 
-                    row.addCell(app.getState().getId().displayValue());
-                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.VALIDATION)));
+                    row.addCell(app.getState().getId().name());
+                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPLICATION_VALIDATION)));
                     row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
                     row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
                     row.addCell(validationComment != null ? validationComment.getEnglishCompetencyOk().getDisplayValue() : StringUtils.EMPTY);
@@ -256,25 +256,25 @@ public class ApplicationsReportService {
 
                     // review report
 //                    row.addCell(new NumberValue(app.getReviewRounds().size()));
-                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.REVIEW)));
+                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPLICATION_REVIEW)));
                     row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[0]) : N_R);
                     row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[1]) : N_R);
                     row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app)) : N_R);
 
                     // interview report
                     row.addCell(new NumberValue(666));
-                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.INTERVIEW)));
+                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPLICATION_INTERVIEW)));
                     row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
                     row.addCell(canSeeRating ? String.valueOf(interviewEndorsements[0]) : N_R);
                     row.addCell(canSeeRating ? String.valueOf(interviewEndorsements[1]) : N_R);
                     row.addCell(canSeeRating ? printRating(getAverageRatingForAllInterviewRounds(app)) : N_R);
 
                     // approval report
-                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPROVAL)));
+                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPLICATION_APPROVAL)));
 //                    row.addCell(new NumberValue(app.getApprovalRounds().size()));
                     row.addCell(getPrintablePrimarySupervisor(app));
                     row.addCell(getPrintableSecondarySupervisor(app));
-                    row.addCell(app.getState().getId() == ApplicationFormStatus.APPROVED ? "Approved" : "Not approved");
+                    row.addCell(app.getState().getId() == ApplicationFormStatus.APPLICATION_APPROVED ? "Approved" : "Not approved");
                     row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
                     row.addCell(approveDate != null ? getConditionalType(app) : StringUtils.EMPTY);
                     row.addCell(approveDate != null ? getOfferConditions(app) : StringUtils.EMPTY);

@@ -79,20 +79,6 @@ public abstract class AbstractMailSendingService {
         };
     }
 
-    protected String resolveMessage(EmailTemplateName templateName, ApplicationForm form, ApplicationFormStatus previousStage) {
-        if (previousStage == null) {
-            return resolveMessage(templateName, form);
-        }
-        User applicant = form.getApplicant();
-        if (applicant == null) {
-            throw new IllegalArgumentException("applicant must be provided!");
-        }
-        Object[] args = new Object[] { form.getApplicationNumber(), form.getAdvert().getTitle(), applicant.getFirstName(), applicant.getLastName(),
-                previousStage.displayValue() };
-
-        return resolveMessage(templateName, args);
-    }
-
     protected String resolveMessage(EmailTemplateName templateName, ApplicationForm applicationForm) {
         User applicant = applicationForm.getApplicant();
         if (applicant == null) {

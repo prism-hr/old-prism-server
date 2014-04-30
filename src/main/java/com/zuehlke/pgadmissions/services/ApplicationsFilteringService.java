@@ -30,9 +30,9 @@ public class ApplicationsFilteringService {
     public ApplicationsFiltering getActiveApplicationFiltering() {
         ApplicationsFiltering filtering = new ApplicationsFiltering();
         List<ApplicationsFilter> filters = filtering.getFilters();
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.APPROVED));
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.REJECTED));
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.WITHDRAWN));
+        filters.add(getFilterForNonStatus(ApplicationFormStatus.APPLICATION_APPROVED));
+        filters.add(getFilterForNonStatus(ApplicationFormStatus.APPLICATION_REJECTED));
+        filters.add(getFilterForNonStatus(ApplicationFormStatus.APPLICATION_WITHDRAWN));
         return filtering;
     }
     
@@ -46,7 +46,7 @@ public class ApplicationsFilteringService {
         ApplicationsFilter filter = new ApplicationsFilter();
         filter.setSearchCategory(SearchCategory.APPLICATION_STATUS);
         filter.setSearchPredicate(SearchPredicate.NOT_CONTAINING);
-        filter.setSearchTerm(status.displayValue());
+        filter.setSearchTerm(status.name());
         return filter;
     }
 }

@@ -51,7 +51,7 @@ public class InterviewService {
     public void moveApplicationToInterview(User user, final AssignInterviewersComment interviewComment, ApplicationForm applicationForm) {
         interviewComment.setApplication(applicationForm);
 
-        applicationsService.setApplicationStatus(applicationForm, ApplicationFormStatus.INTERVIEW);
+        applicationsService.setApplicationStatus(applicationForm, ApplicationFormStatus.APPLICATION_INTERVIEW);
 
         // TODO add interview status transient field to the comment and use it here
         // if (!interview.getTakenPlace()) {

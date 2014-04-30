@@ -18,22 +18,27 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Score;
+import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoreBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
 public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     private CommentDAO commentDAO;
+    
+    private StateDAO stateDAO;
+    
     private User user;
     private Program program;
 
@@ -56,7 +61,8 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadGenericComment() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).build();
+        State state = stateDAO.getById(ApplicationFormStatus.APPLICATION_APPROVAL);
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).dueDate(new Date()). build();
         save(application);
         flushAndClearSession();
 

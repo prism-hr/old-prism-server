@@ -150,7 +150,7 @@ public class ApplicationFormListDAO {
                                     .add(Restrictions.like("program.code", StringUtils.lowerCase(searchTerm), MatchMode.ANYWHERE));
                             break;
                         case APPLICATION_STATUS:
-                        	criterion = Restrictions.eq("applicationForm.status", ApplicationFormStatus.convert(searchTerm));
+                        	criterion = Restrictions.eq("applicationForm.status", searchTerm);
                             break;
                         case PROJECT_TITLE:
                         	criterion = Restrictions.disjunction()

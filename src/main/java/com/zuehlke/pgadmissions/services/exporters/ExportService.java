@@ -226,7 +226,7 @@ public class ExportService {
      */
     @Transactional
     protected void prepareApplicationForm(final ApplicationForm application) {
-        if (application.getState().getId() == ApplicationFormStatus.WITHDRAWN || application.getState().getId() == ApplicationFormStatus.REJECTED) {
+        if (application.getState().getId() == ApplicationFormStatus.APPLICATION_WITHDRAWN || application.getState().getId() == ApplicationFormStatus.APPLICATION_REJECTED) {
             if (porticoService.getReferencesToSendToPortico(application).size() < 2) {
                 final HashMap<Integer, Referee> refereesToSend = new HashMap<Integer, Referee>();
 

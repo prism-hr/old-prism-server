@@ -401,19 +401,19 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         applicationTp.setRefereeList(buildReferee());
 
         switch (applicationForm.getState().getId()) {
-        case WITHDRAWN:
+        case APPLICATION_WITHDRAWN:
             applicationTp.setApplicationStatus("WITHDRAWN");
             break;
-        case APPROVED:
+        case APPLICATION_APPROVED:
             applicationTp.setApplicationStatus("ACTIVE");
             applicationTp.setDepartmentalDecision("OFFER");
             break;
-        case REJECTED:
+        case APPLICATION_REJECTED:
             applicationTp.setApplicationStatus("ACTIVE");
             applicationTp.setDepartmentalDecision("REJECT");
             break;
         default:
-            throw new IllegalArgumentException("Application is in wrong state " + applicationForm.getState().getId().displayValue());
+            throw new IllegalArgumentException("Application is in wrong state " + applicationForm.getState().getId().name());
         }
 
         try {
@@ -424,7 +424,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             throw new IllegalArgumentException(exp.getMessage(), exp);
         }
 
-        if (printLanguageQualificationAdmissionsNote && applicationForm.getState().getId() == ApplicationFormStatus.APPROVED) {
+        if (printLanguageQualificationAdmissionsNote && applicationForm.getState().getId() == ApplicationFormStatus.APPLICATION_APPROVED) {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
         }
 
@@ -436,7 +436,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             }
         }
 
-        if (offerRecommendedComment != null && applicationForm.getState().getId() == ApplicationFormStatus.APPROVED) {
+        if (offerRecommendedComment != null && applicationForm.getState().getId() == ApplicationFormStatus.APPLICATION_APPROVED) {
             String departmentalOfferConditions = "Recommended Offer Type: ";
             if (BooleanUtils.isTrue(offerRecommendedComment.getRecommendedConditionsAvailable())) {
                 departmentalOfferConditions += "Conditional\n\nRecommended Conditions: ";

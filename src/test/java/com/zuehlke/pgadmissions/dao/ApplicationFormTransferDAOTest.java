@@ -42,7 +42,7 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
         program = testObjectProvider.getEnabledProgram();
         applicationForm = new ApplicationFormBuilder().advert(program).applicant(user)
-                .status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
+                .status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).build();
         save(applicationForm);
         flushAndClearSession();
     }

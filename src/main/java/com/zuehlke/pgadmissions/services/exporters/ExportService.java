@@ -108,7 +108,6 @@ public class ExportService {
             proxy.prepareApplicationForm(form);
             proxy.sendWebServiceRequest(form, transfer, listener);
             proxy.uploadDocuments(form, transfer, listener);
-            form.setExported(true);
             applicationsService.save(form);
             commentDAO.save(new ApplicationTransferComment(form, userDAO.getSuperadministrators().get(0)));
         } catch (ExportServiceException e) {

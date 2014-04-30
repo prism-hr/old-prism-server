@@ -56,10 +56,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     @JoinColumn(name = "next_state_id")
     private State nextState = null;
 
-    @ManyToOne
-    @JoinColumn(name = "last_state_id")
-    private State lastState = null;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_address_id")
     @Valid
@@ -157,9 +153,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     @Column(name = "use_custom_reference_questions")
     private Boolean useCustomReferenceQuestions = false;
 
-    @Column(name = "is_exported")
-    private Boolean exported = null;
-
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "applicationForm")
     private ApplicationFormTransfer applicationFormTransfer;
 
@@ -215,14 +208,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
 
     public void setNextState(State nextStatus) {
         this.nextState = nextStatus;
-    }
-
-    public State getLastState() {
-        return lastState;
-    }
-
-    public void setLastState(State lastStatus) {
-        this.lastState = lastStatus;
     }
 
     public ApplicationAddress getApplicationAddress() {
@@ -375,14 +360,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
 
     public void setUseCustomReferenceQuestions(Boolean useCustomReferenceQuestions) {
         this.useCustomReferenceQuestions = useCustomReferenceQuestions;
-    }
-
-    public Boolean getExported() {
-        return exported;
-    }
-
-    public void setExported(Boolean exported) {
-        this.exported = exported;
     }
 
     public ApplicationFormTransfer getApplicationFormTransfer() {

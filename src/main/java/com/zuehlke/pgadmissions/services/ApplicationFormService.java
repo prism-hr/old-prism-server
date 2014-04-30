@@ -125,7 +125,6 @@ public class ApplicationFormService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void setApplicationStatus(ApplicationForm application, ApplicationFormStatus newStatus) {
-        application.setLastState(application.getState());
         application.setState(stateService.getById(newStatus));
         application.setNextState(null);
 
@@ -146,9 +145,10 @@ public class ApplicationFormService {
             application.setClosingDate(null);
         case REVIEW:
             application.setDueDate(getDueDateForApplication(application));
-            if (application.getLastState().getId() == newStatus) {
+            // TODO check the history in order tyo set closing date
+//            if (application.getLastState().getId() == newStatus) {
                 application.setClosingDate(null);
-            }
+//            }
         case APPROVED:
         case REJECTED:
         case WITHDRAWN:
@@ -203,7 +203,7 @@ public class ApplicationFormService {
     }
 
     public void queueApplicationForExport(ApplicationForm application) {
-        if (application.getLastState().isSubmitted() && application.getProgram().getProgramImport() != null) {
+        if (application.getState().getId() == ApplicationFormStatus.APPLICATION_WITHDRAWN_PENDING_EXPORT) {
             exportQueueService.createOrReturnExistingApplicationFormTransfer(application);
         }
     }

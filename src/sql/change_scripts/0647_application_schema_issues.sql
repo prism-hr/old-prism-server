@@ -630,283 +630,283 @@ INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id,
 VALUES (NULL, 'APPLICATION_COMPLETE_INTERVIEW_STAGE', 'APPLICATION_APPROVAL', 'ONE_COMPLETED', 2)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_INTERVIEW_STAGE', 'APPLICATION_INTERVIEW', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_INTERVIEW_STAGE', 'APPLICATION_REJECTED', 'ONE_COMPLETED', 3)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_INTERVIEW_STAGE', 'APPLICATION_REVIEW', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_APPROVAL_STAGE_AS_ADMINISTRATOR', 'APPLICATION_APPROVAL', 'ONE_COMPLETED', 2)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_APPROVAL_STAGE_AS_ADMINISTRATOR', 'APPLICATION_INTERVIEW', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_APPROVAL_STAGE_AS_ADMINISTRATOR', 'APPLICATION_REJECTED', 'ONE_COMPLETED', 3)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_APPROVAL_STAGE_AS_ADMINISTRATOR', 'APPLICATION_REVIEW', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_REVIEW_STAGE', 'APPLICATION_APPROVAL', 'ONE_COMPLETED', 2)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_REVIEW_STAGE', 'APPLICATION_INTERVIEW', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_REVIEW_STAGE', 'APPLICATION_REJECTED', 'ONE_COMPLETED', 3)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_REVIEW_STAGE', 'APPLICATION_REVIEW', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_VALIDATION_STAGE', 'APPLICATION_APPROVAL', 'ONE_COMPLETED', 2)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_VALIDATION_STAGE', 'APPLICATION_INTERVIEW', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_VALIDATION_STAGE', 'APPLICATION_REJECTED', 'ONE_COMPLETED', 3)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_VALIDATION_STAGE', 'APPLICATION_REVIEW', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_APPROVAL_STAGE_AS_APPROVER', 'APPLICATION_APPROVAL', 'ONE_COMPLETED', 2)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_APPROVAL_STAGE_AS_APPROVER', 'APPLICATION_INTERVIEW', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_APPROVAL_STAGE_AS_APPROVER', 'APPLICATION_REJECTED', 'ONE_COMPLETED', 4)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_APPROVAL_STAGE_AS_APPROVER', 'APPLICATION_REVIEW', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_APPROVAL_STAGE_AS_APPROVER', 'APPLICATION_APPROVED', 'ONE_COMPLETED', 3)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_MOVE_TO_DIFFERENT_STAGE_AS_ADMINISTRATOR', 'APPLICATION_APPROVAL', 'ONE_COMPLETED', 2)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_MOVE_TO_DIFFERENT_STAGE_AS_ADMINISTRATOR', 'APPLICATION_INTERVIEW', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_MOVE_TO_DIFFERENT_STAGE_AS_ADMINISTRATOR', 'APPLICATION_REJECTED', 'ONE_COMPLETED', 3)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_MOVE_TO_DIFFERENT_STAGE_AS_ADMINISTRATOR', 'APPLICATION_REVIEW', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_MOVE_TO_DIFFERENT_STAGE_AS_APPROVER', 'APPLICATION_APPROVAL', 'ONE_COMPLETED', 2)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_MOVE_TO_DIFFERENT_STAGE_AS_APPROVER', 'APPLICATION_INTERVIEW', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_MOVE_TO_DIFFERENT_STAGE_AS_APPROVER', 'APPLICATION_REJECTED', 'ONE_COMPLETED', 4)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_MOVE_TO_DIFFERENT_STAGE_AS_APPROVER', 'APPLICATION_REVIEW', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_MOVE_TO_DIFFERENT_STAGE_AS_APPROVER', 'APPLICATION_APPROVED', 'ONE_COMPLETED', 3)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_APPLICATION', 'APPLICATION_VALIDATION', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_COMPLETE_APPLICATION', 'APPLICATION_UNSUBMITTED_PENDING_COMPLETION', 'DUE_DATE_EXPIRY', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_ASSESS_ELIGIBILITY', 'APPLICATION_VALIDATION_PENDING_FEEDBACK', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_ASSESS_ELIGIBILITY', 'APPLICATION_VALIDATION_PENDING_COMPLETION', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_CONFIRM_ELIGIBILITY', 'APPLICATION_VALIDATION_PENDING_COMPLETION', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'PROGRAM_COMPLETE_APPROVAL_STAGE', 'PROGRAM_APPROVED', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'PROGRAM_COMPLETE_APPROVAL_STAGE', 'PROGRAM_REJECTED', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_ASSIGN_REVIEWERS', 'APPLICATION_REVIEW_PENDING_FEEDBACK', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_PROVIDE_REVIEW', 'APPLICATION_REVIEW_PENDING_COMPLETION', 'ALL_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_PROVIDE_REVIEW', 'APPLICATION_REVIEW_PENDING_COMPLETION', 'DUE_DATE_EXPIRY', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_ASSIGN_INTERVIEWERS', 'APPLICATION_INTERVIEW_PENDING_SCHEDULING', 'ONE_COMPLETED', 2)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_ASSIGN_INTERVIEWERS', 'APPLICATION_INTERVIEW_PENDING_INTERVIEW', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_ASSIGN_INTERVIEWERS', 'APPLICATION_INTERVIEW_PENDING_FEEDBACK', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY', 'APPLICATION_INTERVIEW_PENDING_SCHEDULING', 'ALL_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY', 'APPLICATION_INTERVIEW_PENDING_SCHEDULING', 'DUE_DATE_EXPIRY', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS', 'APPLICATION_INTERVIEW_PENDING_INTERVIEW', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS', 'APPLICATION_INTERVIEW_PENDING_FEEDBACK', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_PROVIDE_INTERVIEW_FEEDBACK', 'APPLICATION_INTERVIEW_PENDING_COMPLETION', 'ALL_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_PROVIDE_INTERVIEW_FEEDBACK', 'APPLICATION_INTERVIEW_PENDING_COMPLETION', 'DUE_DATE_EXPIRY', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'PROJECT_CONFIGURE', 'PROJECT_DEACTIVATED', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'PROJECT_CONFIGURE', 'PROJECT_DISABLED', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'PROJECT_CONFIGURE', 'PROJECT_DISABLED', 'DUE_DATE_EXPIRY', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'PROGRAM_CONFIGURE', 'PROGRAM_DEACTIVATED', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'PROGRAM_CONFIGURE', 'PROGRAM_DISABLED', 'ONE_COMPLETED', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'PROGRAM_CONFIGURE', 'PROGRAM_DISABLED', 'DUE_DATE_EXPIRY', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_ASSIGN_SUPERVISORS', 'APPLICATION_APPROVAL_PENDING_FEEDBACK', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_CONFIRM_PRIMARY_SUPERVISION', 'APPLICATION_APPROVAL_PENDING_COMPLETION', 'ALL_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_CONFIRM_PRIMARY_SUPERVISION', 'APPLICATION_APPROVAL_PENDING_COMPLETION', 'DUE_DATE_EXPIRY', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_CONFIRM_OFFER_RECOMMENDATION', 'APPLICATION_APPROVED_PENDING_EXPORT', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_CORRECT_APPLICATION', 'APPLICATION_APPROVED_PENDING_EXPORT', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_CONFIRM_REJECTION', 'APPLICATION_REJECTED_PENDING_EXPORT', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_CORRECT_APPLICATION', 'APPLICATION_REJECTED_PENDING_EXPORT', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_EXPORT', 'APPLICATION_APPROVED_PENDING_CORRECTION', 'DUE_DATE_EXPIRY', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_EXPORT', 'APPLICATION_APPROVED_COMPLETED', 'DUE_DATE_EXPIRY', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_EXPORT', 'APPLICATION_REJECTED_PENDING_CORRECTION', 'DUE_DATE_EXPIRY', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_EXPORT', 'APPLICATION_REJECTED_COMPLETED', 'DUE_DATE_EXPIRY', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_CORRECT_APPLICATION', 'APPLICATION_WITHDRAWN_PENDING_EXPORT', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_EXPORT', 'APPLICATION_WITHDRAWN_PENDING_CORRECTION', 'DUE_DATE_EXPIRY', 1)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_EXPORT', 'APPLICATION_WITHDRAWN_COMPLETED', 'DUE_DATE_EXPIRY', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_WITHDRAW', 'APPLICATION_WITHDRAWN_PENDING_EXPORT', 'ONE_COMPLETED', 0)
 ;
 
-INSERT INTO state_transition (id, action_id, state_id, state_transition_type_id, display_order)
+INSERT INTO STATE_TRANSITION (id, action_id, state_id, state_transition_type_id, display_order)
 VALUES (NULL, 'APPLICATION_WITHDRAW', 'APPLICATION_WITHDRAWN_COMPLETED', 'ONE_COMPLETED', 1)
 ;
 

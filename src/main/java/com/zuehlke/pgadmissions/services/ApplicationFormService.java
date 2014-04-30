@@ -126,7 +126,6 @@ public class ApplicationFormService {
     @Transactional(propagation = Propagation.REQUIRED)
     public void setApplicationStatus(ApplicationForm application, ApplicationFormStatus newStatus) {
         application.setState(stateService.getById(newStatus));
-        application.setNextState(null);
 
         // TODO add referee roles and send referee notifications
         // TODO add admitter roles

@@ -155,4 +155,9 @@ public class CommentService {
         return getLastCommentOfType(null, applicationForm, clazz);
     }
 
+    public Comment getLastComment(ApplicationForm form) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

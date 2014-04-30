@@ -189,8 +189,8 @@ public class ValidApplicationFormBuilder {
                 .closingDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1))
                 .applicationFormAddress(new ApplicationAddress().withCurrentAddress(address).withContactAddress(address))
                 .dueDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).employmentPositions(employmentPosition).fundings(funding)
-                .lastUpdated(new Date()).personalDetails(personalDetails).advert(program).programmeDetails(programDetails)
-                .qualification(qualification1, qualification2).status(new State().withId(ApplicationFormStatus.APPROVED)).submittedDate(new Date())
+                .personalDetails(personalDetails).advert(program).programmeDetails(programDetails).qualification(qualification1, qualification2)
+                .status(new State().withId(ApplicationFormStatus.APPROVED)).submittedDate(new Date())
                 .applicationFormDocument(new ApplicationDocument().withPersonalStatement(personalStatement).withCv(cvDocument))
                 .referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");
         applicationForm = getApplicationFormBuilder().build();

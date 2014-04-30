@@ -37,32 +37,25 @@ public class ApplicationSummaryService {
 
     private static final String DATE_FORMAT = "dd MMM yyyy";
 
-    private final ApplicationFormService applicationsService;
-
-    private final UserService userService;
-
-    private final EncryptionHelper encryptionHelper;
-
-    private final ActionService actionService;
-
-    public ApplicationSummaryService() {
-        this(null, null, null, null);
-    }
+    @Autowired
+    private ApplicationFormService applicationsService;
 
     @Autowired
-    public ApplicationSummaryService(final ApplicationFormService applicationsService, final UserService userService, final EncryptionHelper encryptionHelper,
-            final ActionService actionService) {
-        this.applicationsService = applicationsService;
-        this.userService = userService;
-        this.encryptionHelper = encryptionHelper;
-        this.actionService = actionService;
-    }
+    private UserService userService;
+
+    @Autowired
+    private EncryptionHelper encryptionHelper;
+
+    @Autowired
+    private CommentService commentService;
 
     private void addApplicationProperties(final ApplicationForm form, final Map<String, String> result) {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedTimestamp()));
-        result.put("applicationUpdateDate", dateFormat.format(form.getUpdateTimestamp()));
+        Date updatedTimeStamp = commentService.getLastComment(form).getCreatedTimestamp();
         ApplicationDescriptor applicationDescriptor = applicationsService.getApplicationDescriptorForUser(form, userService.getCurrentUser());
+
+        result.put("applicationSubmissionDate", dateFormat.format(form.getSubmittedTimestamp()));
+        result.put("applicationUpdateDate", dateFormat.format(updatedTimeStamp));
         result.put("requiresAttention", BooleanUtils.toStringTrueFalse(applicationDescriptor.getNeedsToSeeUrgentFlag()));
         result.put("applicationNumber", form.getApplicationNumber());
     }
@@ -72,9 +65,9 @@ public class ApplicationSummaryService {
     }
 
     private void addApplicantDetails(final ApplicationForm form, final Map<String, String> result) {
-        result.put("title", form.getPersonalDetails() == null   ? "" : form.getPersonalDetails().getTitle().getDisplayValue());
+        result.put("title", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getTitle().getDisplayValue());
         result.put("name", form.getApplicant().getDisplayName());
-        result.put("phoneNumber", form.getPersonalDetails() == null   ? "" : form.getPersonalDetails().getPhoneNumber());
+        result.put("phoneNumber", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getPhoneNumber());
         result.put("email", form.getApplicant().getEmail());
         result.put("applicationStatus", form.getState().getId().displayValue());
     }
@@ -146,14 +139,14 @@ public class ApplicationSummaryService {
     private void addFundings(final ApplicationForm form, Map<String, String> result, final Gson gson) {
         Integer fundingSum = 0;
         for (Funding funding : form.getFundings()) {
-                fundingSum = fundingSum + funding.getValueAsInteger();
+            fundingSum = fundingSum + funding.getValueAsInteger();
         }
         result.put("fundingRequirements", fundingSum.toString());
     }
 
     private void addSkype(final ApplicationForm form, Map<String, String> result) {
         String skype;
-        if(form.getPersonalDetails() == null || Strings.isNullOrEmpty(form.getPersonalDetails().getMessenger())){
+        if (form.getPersonalDetails() == null || Strings.isNullOrEmpty(form.getPersonalDetails().getMessenger())) {
             skype = "Not Provided";
         } else {
             skype = form.getPersonalDetails().getMessenger();
@@ -185,7 +178,7 @@ public class ApplicationSummaryService {
             } else {
                 result.put("personalStatementProvided", "false");
             }
-    
+
             Document cv = applicationFormDocument.getCv();
             if (cv != null) {
                 result.put("cvProvided", "true");

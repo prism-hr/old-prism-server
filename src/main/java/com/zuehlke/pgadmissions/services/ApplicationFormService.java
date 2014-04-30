@@ -303,7 +303,8 @@ public class ApplicationFormService {
                 baselineDate = new LocalDate(closingDate);
             }
         }
-        Integer daysToAdd = status.getDurationInDays();
+        // TODO write query to get duration
+        Integer daysToAdd = 0; //status.getDurationInDays();
         if (daysToAdd != null) {
             application.setDueDate(baselineDate.plusDays(daysToAdd).toDate());
         }

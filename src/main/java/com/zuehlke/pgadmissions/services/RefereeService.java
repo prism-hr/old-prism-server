@@ -81,9 +81,10 @@ public class RefereeService {
         }
         applicationFormCopyHelper.copyReferee(persistentReferee, referee, false);
         applicationFormService.saveOrUpdateApplicationSection(application);
-        if (application.getState().isModifiable()) {
+        // FIXME check if can edit referees
+//        if (application.getState().isModifiable()) {
             processRefereeAndGetAsUser(referee);
-        }
+//        }
     }
 
     // TODO finish it

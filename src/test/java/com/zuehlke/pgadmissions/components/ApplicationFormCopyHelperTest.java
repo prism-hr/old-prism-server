@@ -59,7 +59,6 @@ public class ApplicationFormCopyHelperTest {
     public void shouldCopyApplicationForm() {
         ApplicationForm applicationForm = new ValidApplicationFormBuilder().build();
         State state = new State();
-        state.setSubmitted(false);
         applicationForm.setState(state);
         validateApplication(applicationForm);
 

@@ -62,9 +62,9 @@ import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
@@ -508,8 +508,8 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
         if (idx < suggestedSupervisors.size()) {
             SuggestedSupervisor suggestedSupervisor = suggestedSupervisors.get(idx);
-            nameTp.setForename1(suggestedSupervisor.getFirstname());
-            nameTp.setSurname(suggestedSupervisor.getLastname());
+            nameTp.setForename1(suggestedSupervisor.getUser().getFirstName());
+            nameTp.setSurname(suggestedSupervisor.getUser().getLastName());
             return nameTp;
         } else {
             return null;

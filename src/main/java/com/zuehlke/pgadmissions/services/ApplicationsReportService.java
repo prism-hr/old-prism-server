@@ -37,11 +37,10 @@ import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 
@@ -312,7 +311,7 @@ public class ApplicationsReportService {
         List<SuggestedSupervisor> supervisors = programmeDetails.getSuggestedSupervisors();
         String supervisorsString = Joiner.on(", ").join(Iterables.transform(supervisors, new Function<SuggestedSupervisor, String>() {
             public String apply(SuggestedSupervisor supervisor) {
-                return supervisor.getFirstname() + " " + supervisor.getLastname();
+                return supervisor.getUser().getFirstName() + " " + supervisor.getUser().getLastName();
             }
         }));
         return supervisorsString;

@@ -28,20 +28,19 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
-import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -73,8 +72,8 @@ public class ProgrammeDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfSupervisorsHaveTheSameEmailAddress() {
-        SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().firstname("Mark").lastname("Johnson").email("mark@gmail.com").aware(true)
-                .build();
+        SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisor().withUser(
+                new User().withFirstName("Mark").withLastName("Johnson").withEmail("mark@gmail.com")).withAware(true);
         programmeDetail.getSuggestedSupervisors().add(suggestedSupervisor);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
@@ -177,7 +176,7 @@ public class ProgrammeDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfSuggestedSupervisorFirstNameIsEmpty() {
-        programmeDetail.getSuggestedSupervisors().get(0).setFirstname(null);
+        programmeDetail.getSuggestedSupervisors().get(0).getUser().setFirstName(null);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
@@ -193,7 +192,7 @@ public class ProgrammeDetailsValidatorTest {
     @Test
     public void shouldRejectIfSuggestedSupervisorFirstNameContainsInvalidCharacter() {
         String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
-        programmeDetail.getSuggestedSupervisors().get(0).setFirstname(chineseName);
+        programmeDetail.getSuggestedSupervisors().get(0).getUser().setFirstName(chineseName);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
@@ -208,7 +207,7 @@ public class ProgrammeDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfSuggestedSupervisorFirstNameIsLongerThan30() {
-        programmeDetail.getSuggestedSupervisors().get(0).setFirstname("PaulinePaulinePaulinePaulinePaulinePaulinePauline");
+        programmeDetail.getSuggestedSupervisors().get(0).getUser().setFirstName("PaulinePaulinePaulinePaulinePaulinePaulinePauline");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
@@ -223,7 +222,7 @@ public class ProgrammeDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfSuggestedSupervisorLastNameIsEmpty() {
-        programmeDetail.getSuggestedSupervisors().get(0).setLastname(null);
+        programmeDetail.getSuggestedSupervisors().get(0).getUser().setLastName(null);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
@@ -239,7 +238,7 @@ public class ProgrammeDetailsValidatorTest {
     @Test
     public void shouldRejectIfSuggestedSupervisorLastNameContainsInvalidCharacter() {
         String chineseName = StringEscapeUtils.unescapeJava("\\u5b9d\\u8912\\u82de\\n");
-        programmeDetail.getSuggestedSupervisors().get(0).setLastname(chineseName);
+        programmeDetail.getSuggestedSupervisors().get(0).getUser().setLastName(chineseName);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
@@ -254,7 +253,7 @@ public class ProgrammeDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfSuggestedSupervisorLastNameIsLongerThan40() {
-        programmeDetail.getSuggestedSupervisors().get(0).setLastname("PaulinePaulinePaulinePaulinePaulinePaulinePaulinePaulinePaulinePauline");
+        programmeDetail.getSuggestedSupervisors().get(0).getUser().setLastName("PaulinePaulinePaulinePaulinePaulinePaulinePaulinePaulinePaulinePauline");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
@@ -269,7 +268,7 @@ public class ProgrammeDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfSuggestedSupervisorEmailIsEmpty() {
-        programmeDetail.getSuggestedSupervisors().get(0).setEmail(null);
+        programmeDetail.getSuggestedSupervisors().get(0).getUser().setEmail(null);
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
@@ -284,7 +283,7 @@ public class ProgrammeDetailsValidatorTest {
 
     @Test
     public void shouldRejectIfSuggestedSupervisorEmailContainsInvalidCharacter() {
-        programmeDetail.getSuggestedSupervisors().get(0).setEmail("paul.@never.com");
+        programmeDetail.getSuggestedSupervisors().get(0).getUser().setEmail("paul.@never.com");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
         EasyMock.expect(programServiceMock.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
@@ -302,6 +301,7 @@ public class ProgrammeDetailsValidatorTest {
         programmeDetail
                 .getSuggestedSupervisors()
                 .get(0)
+                .getUser()
                 .setEmail(
                         "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890@a.com");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(programmeDetail, "suggestedSupervisors");
@@ -379,13 +379,14 @@ public class ProgrammeDetailsValidatorTest {
         SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").build();
         Role role = new RoleBuilder().id(Authority.APPLICATION_APPLICANT).build();
         User currentUser = new UserBuilder().id(1).build();
-        SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisorBuilder().firstname("Mark").lastname("Johnson").email("mark@gmail.com").aware(true)
-                .build();
+        SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisor().withUser(
+                new User().withFirstName("Mark").withLastName("Johnson").withEmail("mark@gmail.com")).withAware(true);
         program = new ProgramBuilder().id(1).title("Program 1").state(AdvertState.PROGRAM_APPROVED).build();
         programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
                 .applicationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2025/08/06"))
                 .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).enabled(true).build();
-        form = new ApplicationFormBuilder().id(2).advert(program).applicant(currentUser).status(new State().withId(ApplicationFormStatus.APPLICATION_UNSUBMITTED)).build();
+        form = new ApplicationFormBuilder().id(2).advert(program).applicant(currentUser)
+                .status(new State().withId(ApplicationFormStatus.APPLICATION_UNSUBMITTED)).build();
         programmeDetail = new ProgrammeDetailsBuilder().id(5).suggestedSupervisors(suggestedSupervisor).sourcesOfInterest(interest)
                 .startDate(DateUtils.addDays(new Date(), 10)).applicationForm(form).studyOption(new StudyOption("1", "Full-time")).build();
 

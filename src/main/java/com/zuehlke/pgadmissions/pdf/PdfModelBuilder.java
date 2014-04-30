@@ -305,13 +305,13 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(headerCell);
 
                 table.addCell(newTableCell("Supervisor First Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(supervisor.getFirstname(), SMALL_FONT));
+                table.addCell(newTableCell(supervisor.getUser().getFirstName(), SMALL_FONT));
 
                 table.addCell(newTableCell("Supervisor Last Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(supervisor.getLastname(), SMALL_FONT));
+                table.addCell(newTableCell(supervisor.getUser().getLastName(), SMALL_FONT));
 
                 table.addCell(newTableCell("Supervisor Email", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(supervisor.getEmail(), SMALL_FONT));
+                table.addCell(newTableCell(supervisor.getUser().getEmail(), SMALL_FONT));
 
                 table.addCell(newTableCell("Is this supervisor aware of your application?", SMALL_BOLD_FONT));
 

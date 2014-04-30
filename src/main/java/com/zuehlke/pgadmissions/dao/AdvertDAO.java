@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
@@ -186,8 +187,7 @@ public class AdvertDAO {
                         .add(Projections.property("program.advertType"), "advertType"))
                 .createAlias("program.contactUser", "contactUser", JoinType.INNER_JOIN)
                 .createAlias("program.closingDates", "closingDate", JoinType.LEFT_OUTER_JOIN)
-                .add(Restrictions.eq("program.enabled", true))
-                .add(Restrictions.eq("program.active", true))
+                .add(Restrictions.eq("program.state", AdvertState.PROGRAM_APPROVED))
                 .add(Restrictions.disjunction()
                         .add(Restrictions.isNull("closingDate.id"))
                         .add(Restrictions.ge("closingDate.closingDate", baselineDate)))
@@ -212,8 +212,7 @@ public class AdvertDAO {
                         .add(Projections.property("secondarySupervisor.lastName"), "secondarySupervisorLastName"))
                 .createAlias("project.primarySupervisor", "primarySupervisor", JoinType.INNER_JOIN)
                 .createAlias("project.secondarySupervisor", "secondarySupervisor", JoinType.LEFT_OUTER_JOIN)
-                .add(Restrictions.eq("project.enabled", true))
-                .add(Restrictions.eq("project.active", true))
+                .add(Restrictions.eq("project.state", AdvertState.PROJECT_APPROVED))
                 .add(Restrictions.ne("project.id", selectedAdvertId))
                 .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class)).list();
     }

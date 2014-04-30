@@ -61,8 +61,8 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadGenericComment() {
-        State state = stateDAO.getById(ApplicationFormStatus.APPLICATION_APPROVAL);
-        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).dueDate(new Date()). build();
+        State state = (State) sessionFactory.getCurrentSession().createQuery("from State where id = 'APPLICATION_APPROVAL'").uniqueResult();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).dueDate(new Date()).status(state). build();
         save(application);
         flushAndClearSession();
 

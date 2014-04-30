@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -10,13 +12,21 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "SUGGESTED_SUPERVISOR")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class SuggestedSupervisor extends Person {
+public class SuggestedSupervisor {
 
-    private static final long serialVersionUID = -4309091276524405556L;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "application_form_id")
     private ApplicationForm application;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    private boolean aware;
 
     public ApplicationForm getApplication() {
         return application;
@@ -26,7 +36,13 @@ public class SuggestedSupervisor extends Person {
         this.application = application;
     }
 
-    private boolean aware;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public boolean isAware() {
         return aware;
@@ -34,6 +50,21 @@ public class SuggestedSupervisor extends Person {
 
     public void setAware(boolean aware) {
         this.aware = aware;
+    }
+
+    public SuggestedSupervisor withApplication(ApplicationForm application) {
+        this.application = application;
+        return this;
+    }
+
+    public SuggestedSupervisor withUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public SuggestedSupervisor withAware(boolean aware) {
+        this.aware = aware;
+        return this;
     }
 
 }

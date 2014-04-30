@@ -284,4 +284,34 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     public String getUsername() {
         return email;
     }
+
+    public User withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public User withFirstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+    }
+
+    public User withFirstName2(String firstName2) {
+        this.firstName2 = firstName2;
+        return this;
+    }
+
+    public User withFirstName3(String firstName3) {
+        this.firstName3 = firstName3;
+        return this;
+    }
+
+    public User withLastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+    }
+
+    public User withEmail(String email) {
+        this.email = email;
+        return this;
+    }
 }

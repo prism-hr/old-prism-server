@@ -283,9 +283,7 @@ public class ApplicationFormService {
 
     private SuggestedSupervisor createSuggestedSupervisor(User user) {
         SuggestedSupervisor supervisor = new SuggestedSupervisor();
-        supervisor.setEmail(user.getEmail());
-        supervisor.setFirstname(user.getFirstName());
-        supervisor.setLastname(user.getLastName());
+        supervisor.setUser(user);
         supervisor.setAware(true);
         return supervisor;
     }

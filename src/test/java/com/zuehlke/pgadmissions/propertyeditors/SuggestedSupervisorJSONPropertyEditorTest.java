@@ -8,68 +8,64 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
-import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
-
 public class SuggestedSupervisorJSONPropertyEditorTest {
-	
-	private SuggestedSupervisorJSONPropertyEditor editor;
-	private EncryptionHelper encryptionHelperMock;
 
-	@Test	
-	public void shouldParseAndSetAsValue(){
-		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
-		EasyMock.replay(encryptionHelperMock);
-		editor.setAsText("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"awareSupervisor\": \"YES\"}");
-		SuggestedSupervisor expected = new SuggestedSupervisorBuilder().id(1).firstname("Mark").lastname("Johnson").email("test@gmail.com").aware(true).build();
-		SuggestedSupervisor suggestedSupervisor =   (SuggestedSupervisor) editor.getValue();
-		assertEquals(expected.getFirstname(), suggestedSupervisor.getFirstname());
-		assertEquals(expected.getLastname(), suggestedSupervisor.getLastname());
-		assertEquals(expected.getEmail(), suggestedSupervisor.getEmail());
-		assertEquals(expected.isAware(), suggestedSupervisor.isAware());
-	}
-	
-	@Test	
-	public void shouldParseEmptyIdAsNull(){
-		editor.setAsText("{\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" ,  \"awareSupervisor\": \"YES\"}");		
-		SuggestedSupervisor suggestedSupervisor =   (SuggestedSupervisor) editor.getValue();
-		assertNull (suggestedSupervisor.getId());
-		
-	}
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldThrowIllegalArgumentExceptionIfAStringNotInTheRightFormat(){			
-		editor.setAsText("{email: 'test@gmail.com' awareSupervisor: 'YES'}");		
-	}
-	
-	@Test	
-	public void shouldReturNullIfStringIsNull(){			
-		editor.setAsText(null);
-		assertNull(editor.getValue());		
-	}
-	@Test	
-	public void shouldReturNullIfStringIsEmpty(){			
-		editor.setAsText("");
-		assertNull(editor.getValue());		
-	}
-	
-	@Test	
-	public void shouldReturnNullIfValueIsNull(){			
-		editor.setValue(null);
-		assertNull(editor.getAsText());
-	}
-	
-	@Test	
-	public void shouldReturnCorrectjsonString(){			
-		EasyMock.expect(encryptionHelperMock.encrypt(1)).andReturn("bob");
-		EasyMock.replay(encryptionHelperMock);
-		editor.setValue(new SuggestedSupervisorBuilder().firstname("Mark").id(1).lastname("Johnson").email("test@gmail.com").aware(false).build());
-		assertEquals("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\", \"awareSupervisor\": \"NO\"}", editor.getAsText());
-	}
-	
-	@Before
-	public void setup(){
-		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-		editor = new SuggestedSupervisorJSONPropertyEditor(encryptionHelperMock);
-	}
+    private SuggestedSupervisorJSONPropertyEditor editor;
+    private EncryptionHelper encryptionHelperMock;
+
+    @Test
+    public void shouldParseAndSetAsValue() {
+        EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
+        EasyMock.replay(encryptionHelperMock);
+        editor.setAsText("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"awareSupervisor\": \"YES\"}");
+        SuggestedSupervisor expected = new SuggestedSupervisor().withUser(
+                new User().withId(1).withFirstName("Mark").withLastName("Johnson").withEmail("test@gmail.com")).withAware(true);
+        SuggestedSupervisor suggestedSupervisor = (SuggestedSupervisor) editor.getValue();
+        assertEquals(expected.getUser().getFirstName(), suggestedSupervisor.getUser().getFirstName());
+        assertEquals(expected.getUser().getLastName(), suggestedSupervisor.getUser().getLastName());
+        assertEquals(expected.getUser().getEmail(), suggestedSupervisor.getUser().getEmail());
+        assertEquals(expected.isAware(), suggestedSupervisor.isAware());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowIllegalArgumentExceptionIfAStringNotInTheRightFormat() {
+        editor.setAsText("{email: 'test@gmail.com' awareSupervisor: 'YES'}");
+    }
+
+    @Test
+    public void shouldReturNullIfStringIsNull() {
+        editor.setAsText(null);
+        assertNull(editor.getValue());
+    }
+
+    @Test
+    public void shouldReturNullIfStringIsEmpty() {
+        editor.setAsText("");
+        assertNull(editor.getValue());
+    }
+
+    @Test
+    public void shouldReturnNullIfValueIsNull() {
+        editor.setValue(null);
+        assertNull(editor.getAsText());
+    }
+
+    @Test
+    public void shouldReturnCorrectjsonString() {
+        EasyMock.expect(encryptionHelperMock.encrypt(1)).andReturn("bob");
+        EasyMock.replay(encryptionHelperMock);
+        editor.setValue(new SuggestedSupervisor().withUser(new User().withFirstName("Mark").withId(1).withLastName("Johnson").withEmail("test@gmail.com"))
+                .withAware(false));
+        assertEquals("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\", \"awareSupervisor\": \"NO\"}",
+                editor.getAsText());
+    }
+
+    @Before
+    public void setup() {
+        encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+        editor = new SuggestedSupervisorJSONPropertyEditor(encryptionHelperMock);
+    }
 }

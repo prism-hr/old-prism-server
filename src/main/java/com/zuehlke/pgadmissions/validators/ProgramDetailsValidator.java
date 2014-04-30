@@ -65,23 +65,23 @@ public class ProgramDetailsValidator extends FormSectionObjectValidator implemen
 
         Set<String> supervisorEmails = new HashSet<String>();
         for (SuggestedSupervisor supervisor : programDetail.getSuggestedSupervisors()) {
-            if (StringUtils.isBlank(supervisor.getFirstname())) {
+            if (StringUtils.isBlank(supervisor.getUser().getFirstName())) {
                 errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
             }
 
-            if (StringUtils.isBlank(supervisor.getLastname())) {
+            if (StringUtils.isBlank(supervisor.getUser().getLastName())) {
                 errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
             }
 
-            if (StringUtils.isBlank(supervisor.getEmail())) {
+            if (StringUtils.isBlank(supervisor.getUser().getEmail())) {
                 errors.rejectValue("suggestedSupervisors", EMPTY_FIELD_ERROR_MESSAGE);
             }
 
-            if (StringUtils.isNotBlank(supervisor.getEmail())) {
-                if (supervisorEmails.contains(supervisor.getEmail())) {
+            if (StringUtils.isNotBlank(supervisor.getUser().getEmail())) {
+                if (supervisorEmails.contains(supervisor.getUser().getEmail())) {
                     errors.rejectValue("suggestedSupervisors", "suggestedSupervisors.duplicate.email");
                 } else {
-                    supervisorEmails.add(supervisor.getEmail());
+                    supervisorEmails.add(supervisor.getUser().getEmail());
                 }
             }
         }

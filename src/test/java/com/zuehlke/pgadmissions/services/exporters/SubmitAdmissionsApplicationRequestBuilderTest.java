@@ -36,13 +36,12 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplic
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.OfferRecommendedCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
@@ -302,10 +301,8 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     public void shouldBuildValidWebServiceRequestContainingAtasStatement() throws JAXBException, DatatypeConfigurationException {
         final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
         applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
-        OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm)
-                .comment("").projectAbstract("abstract")
-                .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(recommendedStartDate)
-                .build();
+        OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
+                .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(recommendedStartDate).build();
         applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setAtasRequired(true);
 
@@ -360,8 +357,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
     public void shouldBuildValidWebServiceRequestNotContainingAtasStatement() throws JAXBException, DatatypeConfigurationException {
         final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
         applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
-        OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm)
-                .comment("").projectAbstract("abstract")
+        OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
                 .recommendedConditionsAvailable(false).recommendedStartDate(recommendedStartDate).build();
         applicationForm.getApplicationComments().add(offerComment);
         applicationForm.getProgram().setAtasRequired(false);
@@ -418,8 +414,8 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         final DateTime dateInThePast = new DateTime(2013, 1, 1, 8, 0);
 
         // suggested supervisors
-        SuggestedSupervisor suggestedSupervisor1 = new SuggestedSupervisorBuilder().firstname("Eugeniusz").lastname("Kowalski").build();
-        SuggestedSupervisor suggestedSupervisor2 = new SuggestedSupervisorBuilder().firstname("Genowefa").lastname("Pigwa").build();
+        SuggestedSupervisor suggestedSupervisor1 = new SuggestedSupervisor().withUser(new User().withFirstName("Eugeniusz").withLastName("Kowalski"));
+        SuggestedSupervisor suggestedSupervisor2 = new SuggestedSupervisor().withUser(new User().withFirstName("Genowefa").withLastName("Pigwa"));
         applicationForm.getProgramDetails().setSuggestedSupervisors(Arrays.asList(suggestedSupervisor1, suggestedSupervisor2));
         applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
 

@@ -53,7 +53,8 @@ public class ReviewService {
 	    }
 	    
 		State state = stateDAO.getById(ApplicationFormStatus.REVIEW);
-        Integer durationInMinutes = state.getDurationInMinutes();
+		// TODO write query to get duration in minutes
+        Integer durationInMinutes = 0; //state.getDurationInMinutes();
 		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, durationInMinutes);
         application.setDueDate(dueDate.toDate());
         boolean sendReferenceRequest = application.getState().getId() == ApplicationFormStatus.VALIDATION;

@@ -166,7 +166,7 @@ public class ApplicationsReportService {
 
         for (ApplicationForm app : applications) {
 
-            if (!app.getState().isSubmitted() || app.getSubmittedTimestamp() == null || app.getPersonalDetails() == null) {
+            if (app.getSubmittedTimestamp() == null || app.getPersonalDetails() == null) {
                 continue;
             }
 

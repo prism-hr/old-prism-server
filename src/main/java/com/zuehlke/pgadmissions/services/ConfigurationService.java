@@ -45,7 +45,8 @@ public class ConfigurationService {
         for (State state : serviceLevelsDTO.getStagesDuration()) {
             State oldState = stateDAO.getById(state.getId());
             if (oldState != null) {
-                oldState.setDuration(state.getDuration());
+                // FIXME set new duration
+//                oldState.setDuration(state.getDuration());
             }
         }
 

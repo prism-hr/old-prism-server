@@ -18,7 +18,9 @@ public enum ApplicationFormStatus {
 	
 	WITHDRAWN("Withdrawn"),
 	
-	REJECTED("Rejected");
+	REJECTED("Rejected"),
+	
+	APPLICATION_WITHDRAWN_PENDING_EXPORT("");
 
 	private final String displayValue;
 

@@ -125,7 +125,6 @@ public class ApplicationFormTransferService {
         updateTransferStatus(transfer, newStatus);
         listener.webServiceCallFailed(exception, transferError, application);
         applicationFormUserRoleService.applicationExportFailed(application);
-        application.setExported(false);
         applicationFormDAO.save(application);
         commentDAO.save(new ApplicationTransferComment(application, userDAO.getSuperadministrators().get(0), transferError));
         log.error(String.format(logMessage, application.getApplicationNumber()), exception);

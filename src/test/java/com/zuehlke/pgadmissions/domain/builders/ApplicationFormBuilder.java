@@ -50,7 +50,6 @@ public class ApplicationFormBuilder {
     private String ipAddress;
     private Boolean useCustomReferenceQuestions = false;
     private State nextStatus;
-    private State lastStatus;
 
     public ApplicationFormBuilder ipAddress(String ipAddress) {
         this.ipAddress = ipAddress;
@@ -89,11 +88,6 @@ public class ApplicationFormBuilder {
 
     public ApplicationFormBuilder nextStatus(State nextStatus) {
         this.nextStatus = nextStatus;
-        return this;
-    }
-
-    public ApplicationFormBuilder previousStatus(State previousStatus) {
-        this.lastStatus = previousStatus;
         return this;
     }
 
@@ -231,7 +225,6 @@ public class ApplicationFormBuilder {
         application.setAdvert(advert);
         application.setState(status);
         application.setNextState(nextStatus);
-        application.setLastState(lastStatus);
         application.setAdditionalInformation(info);
         application.setUpdateTimestamp(lastUpdated);
         application.setAcceptedTermsOnSubmission(acceptedTerms);

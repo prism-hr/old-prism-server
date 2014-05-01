@@ -7,19 +7,15 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class SwitchUserServiceTest {
@@ -38,9 +34,9 @@ public class SwitchUserServiceTest {
     public void setup() {
         authenticationProvider = new SwitchUserService();
         
-        role1 = new RoleBuilder().id(Authority.APPLICATION_APPLICANT).build();
+        role1 = new Role().withId(Authority.APPLICATION_CREATOR);
         
-        role2 = new RoleBuilder().id(Authority.PROGRAM_ADMINISTRATOR).build();
+        role2 = new Role().withId(Authority.PROGRAM_ADMINISTRATOR);
         
         user1 = new UserBuilder().id(5).firstName("Jane").lastName("Doe").email("jane@doe.com")
                 .userAccount(new UserAccount().withEnabled(true))

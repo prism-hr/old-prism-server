@@ -15,7 +15,7 @@ public enum AuthorityGroup {
     INTERNAL_PROJECT_AUTHORITIES(Arrays.asList(Authority.PROJECTADMINISTRATOR)),
     EXTERNAL_PROJECT_AUTHORITIES(new ArrayList<Authority>(0)),
 
-    INTERNAL_APPLICATION_AUTHORITIES(Arrays.asList(Authority.APPLICATION_INTERVIEWER, Authority.APPLICATION_REVIEWER, Authority.SUPERVISOR)),
+    INTERNAL_APPLICATION_AUTHORITIES(Arrays.asList(Authority.APPLICATION_INTERVIEWER, Authority.APPLICATION_REVIEWER, Authority.APPLICATION_PRIMARY_SUPERVISOR)),
     EXTERNAL_APPLICATION_AUTHORITIES(new ArrayList<Authority>(0)),
 
     INTERNAL_STATE_AUTHORITIES(Arrays.asList(Authority.APPLICATION_ADMINISTRATOR)), 
@@ -67,7 +67,7 @@ public enum AuthorityGroup {
 
     public static List<Authority> getAllInternalRecruiterAuthorities() {
         List<Authority> inclusions = getAllProgramAuthorities();
-        List<Authority> exclusions = Arrays.asList(Authority.PROGRAM_ADMINISTRATOR, Authority.APPLICATION_APPLICANT, Authority.APPLICATION_REFEREE);
+        List<Authority> exclusions = Arrays.asList(Authority.PROGRAM_ADMINISTRATOR, Authority.APPLICATION_CREATOR, Authority.APPLICATION_REFEREE);
         inclusions.addAll(getAllProjectAuthorities());
         inclusions.addAll(getAllApplicationAuthorities());
         inclusions.addAll(getAllStateAuthorities());

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain;
 import java.io.Serializable;
 import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -13,6 +12,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.apache.lucene.store.Lock.With;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,9 +32,6 @@ public class Role implements GrantedAuthority, Serializable {
     @Enumerated(EnumType.STRING)
     private Authority id;
 
-    @Column(name = "do_send_update_notification")
-    private Boolean doSendUpdateNotification = false;
-
     @ManyToMany
     @JoinTable(name = "COMMENT_ACTION_VISIBILITY", joinColumns = { @JoinColumn(name = "application_role_id") }, inverseJoinColumns = { @JoinColumn(name = "action_id") })
     private Set<Action> visibleActions = Sets.newHashSet();
@@ -50,14 +47,6 @@ public class Role implements GrantedAuthority, Serializable {
     @Override
     public String getAuthority() {
         return id.toString();
-    }
-
-    public Boolean getDoSendUpdateNotification() {
-        return doSendUpdateNotification;
-    }
-
-    public void setDoSendUpdateNotification(Boolean doSendUpdateNotification) {
-        this.doSendUpdateNotification = doSendUpdateNotification;
     }
 
     public Set<Action> getVisibleActions() {
@@ -80,5 +69,10 @@ public class Role implements GrantedAuthority, Serializable {
         final Role other = (Role) obj;
         return Objects.equal(id, other.getId());
     }
-
+    
+    public Role withId(Authority id) {
+        this.id = id;
+        return this;
+    }
+    
 }

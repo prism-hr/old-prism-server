@@ -28,7 +28,7 @@ public class UserValidatorTest {
     @Autowired
     private Validator validator;
 
-    private UserValidator accountValidator;
+    private UserAccountValidator accountValidator;
 
     private EncryptionUtils encryptionUtilsMock;
 
@@ -47,7 +47,7 @@ public class UserValidatorTest {
                 .userAccount(new UserAccount().withConfirmPassword("12345678").withNewPassword("12345678").withPassword("5f4dcc3b5aa")).build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
-        accountValidator = new UserValidator(userServiceMock, encryptionUtilsMock);
+        accountValidator = new UserAccountValidator(userServiceMock, encryptionUtilsMock);
         accountValidator.setValidator((javax.validation.Validator) validator);
     }
 

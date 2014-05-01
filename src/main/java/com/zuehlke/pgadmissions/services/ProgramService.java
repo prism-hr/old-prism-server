@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 
 @Service
@@ -280,6 +281,16 @@ public class ProgramService {
             }
         }
         return program.getContactUser();
+    }
+
+    public Project addProject(ProjectDTO projectDTO) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public void updateProject(Integer id, ProjectDTO projectDTO) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

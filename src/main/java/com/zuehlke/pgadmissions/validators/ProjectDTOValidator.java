@@ -5,12 +5,10 @@ import static org.apache.commons.lang.BooleanUtils.isNotTrue;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -26,15 +24,9 @@ public class ProjectDTOValidator extends AbstractValidator {
     public static final String PROSPECTUS_PERSON_NOT_EXISTS = "prospectus.person.not.exists";
     public static final String PROSPECTUS_NO_ADMINISTRATOR = "prospectus.noadministrator";
 
-    private final PersonValidator personValidator;
-    private final UserService userService;
+    private UserValidator userValidator;
 
-    @Autowired
-    public ProjectDTOValidator(PersonValidator personValidator, UserService userService) {
-        this.personValidator = personValidator;
-        this.userService = userService;
-
-    }
+    private UserService userService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -74,12 +66,12 @@ public class ProjectDTOValidator extends AbstractValidator {
         }
     }
 
-    private void validatePrimarySupervisor(Errors errors, Person primarySupervisor) {
+    private void validatePrimarySupervisor(Errors errors, User primarySupervisor) {
         if (primarySupervisor == null) {
             return;
         }
         errors.pushNestedPath("primarySupervisor");
-        ValidationUtils.invokeValidator(personValidator, primarySupervisor, errors);
+        ValidationUtils.invokeValidator(userValidator, primarySupervisor, errors);
         errors.popNestedPath();
         if (StringUtils.isBlank(primarySupervisor.getEmail())) {
             return;
@@ -90,7 +82,7 @@ public class ProjectDTOValidator extends AbstractValidator {
         }
     }
 
-    private void validateAdministrator(Errors errors, Boolean administratorSpecified, Person administrator) {
+    private void validateAdministrator(Errors errors, Boolean administratorSpecified, User administrator) {
         if (isNotTrue(administratorSpecified)) {
             return;
         }
@@ -99,7 +91,7 @@ public class ProjectDTOValidator extends AbstractValidator {
             return;
         }
         errors.pushNestedPath("administrator");
-        ValidationUtils.invokeValidator(personValidator, administrator, errors);
+        ValidationUtils.invokeValidator(userValidator, administrator, errors);
         errors.popNestedPath();
         if (StringUtils.isBlank(administrator.getEmail())) {
             return;
@@ -110,7 +102,7 @@ public class ProjectDTOValidator extends AbstractValidator {
         }
     }
 
-    private void validateSecondarySupervisor(Errors errors, Boolean secondarySupervisorSpecified, Person secondarySupervisor) {
+    private void validateSecondarySupervisor(Errors errors, Boolean secondarySupervisorSpecified, User secondarySupervisor) {
         if (isNotTrue(secondarySupervisorSpecified)) {
             return;
         }
@@ -119,7 +111,7 @@ public class ProjectDTOValidator extends AbstractValidator {
             return;
         }
         errors.pushNestedPath("secondarySupervisor");
-        ValidationUtils.invokeValidator(personValidator, secondarySupervisor, errors);
+        ValidationUtils.invokeValidator(userValidator, secondarySupervisor, errors);
         errors.popNestedPath();
         if (StringUtils.isBlank(secondarySupervisor.getEmail())) {
             return;
@@ -130,7 +122,7 @@ public class ProjectDTOValidator extends AbstractValidator {
         }
     }
 
-    private void validateDifferentSupervisors(Errors errors, Person primarySupervisor, Person secondarySupervisor) {
+    private void validateDifferentSupervisors(Errors errors, User primarySupervisor, User secondarySupervisor) {
         if (primarySupervisor == null || StringUtils.isBlank(primarySupervisor.getEmail()) || secondarySupervisor == null) {
             return;
         }

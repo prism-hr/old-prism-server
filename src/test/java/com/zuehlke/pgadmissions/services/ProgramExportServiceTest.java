@@ -7,7 +7,6 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
@@ -17,25 +16,23 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.ResearchOpportunitiesFeedDAO;
+import com.zuehlke.pgadmissions.dao.ProgramExportDAO;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ResearchOpportunitiesFeedBuilder;
-import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
+import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-public class ResearchOpportunitiesFeedServiceTest {
+public class ProgramExportServiceTest {
 
     private UserService userServiceMock;
 
-    private ResearchOpportunitiesFeedDAO daoMock;
+    private ProgramExportDAO daoMock;
 
     private ProgramService programServiceMock;
 
@@ -43,23 +40,23 @@ public class ResearchOpportunitiesFeedServiceTest {
 
     private static final String HOST = "http://localhost:8080";
 
-    private ResearchOpportunitiesFeedService service;
+    private ProgramExportService service;
 
     @Before
     public void prepare() {
-        daoMock = EasyMock.createMock(ResearchOpportunitiesFeedDAO.class);
+        daoMock = EasyMock.createMock(ProgramExportDAO.class);
         programServiceMock = EasyMock.createMock(ProgramService.class);
         userServiceMock = EasyMock.createMock(UserService.class);
         freeMarkerConfigurerMock = EasyMock.createMock(FreeMarkerConfigurer.class);
-        service = new ResearchOpportunitiesFeedService(daoMock, programServiceMock, userServiceMock, freeMarkerConfigurerMock, HOST);
+        service = new ProgramExportService(daoMock, programServiceMock, userServiceMock, freeMarkerConfigurerMock, HOST);
     }
 
     @Test
     public void shouldReturnSmallIframeCodeByFeedId() throws IOException, TemplateException {
         User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed")
-                .user(user).build();
+        ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
+                .withUser(user);
         Map<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("host", HOST);
         dataMap.put("feedKey", "OPPORTUNITIESBYFEEDID");
@@ -69,7 +66,7 @@ public class ResearchOpportunitiesFeedServiceTest {
         Template templateMock = EasyMock.createMock(Template.class);
 
         EasyMock.expect(freeMarkerConfigurerMock.getConfiguration()).andReturn(configurationMock);
-        EasyMock.expect(configurationMock.getTemplate(ResearchOpportunitiesFeedService.SMALL_IFRAME)).andReturn(templateMock);
+        EasyMock.expect(configurationMock.getTemplate(ProgramExportService.SMALL_IFRAME)).andReturn(templateMock);
         templateMock.process(EasyMock.eq(dataMap), EasyMock.isA(StringWriter.class));
 
         EasyMock.replay(freeMarkerConfigurerMock, configurationMock, templateMock);
@@ -81,8 +78,8 @@ public class ResearchOpportunitiesFeedServiceTest {
     public void shouldReturnLargeDefaultIframeCodeForCurrentUser() throws IOException, TemplateException {
         User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(-2).feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed")
-                .user(user).build();
+        ProgramExport feed = new ProgramExport().withId(-2).withFormat(ProgramExportFormat.LARGE).withPrograms(program).withTitle("Hello Feed")
+                .withUser(user);
         Map<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("host", HOST);
         dataMap.put("feedKey", "OPPORTUNITIESBYUSERUSERNAME");
@@ -93,7 +90,7 @@ public class ResearchOpportunitiesFeedServiceTest {
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(freeMarkerConfigurerMock.getConfiguration()).andReturn(configurationMock);
-        EasyMock.expect(configurationMock.getTemplate(ResearchOpportunitiesFeedService.LARGE_IFRAME)).andReturn(templateMock);
+        EasyMock.expect(configurationMock.getTemplate(ProgramExportService.LARGE_IFRAME)).andReturn(templateMock);
         templateMock.process(EasyMock.eq(dataMap), EasyMock.isA(StringWriter.class));
 
         EasyMock.replay(freeMarkerConfigurerMock, configurationMock, templateMock, userServiceMock);
@@ -107,24 +104,24 @@ public class ResearchOpportunitiesFeedServiceTest {
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
 
         EasyMock.expect(programServiceMock.getById(1)).andReturn(program);
-        daoMock.save(EasyMock.anyObject(ResearchOpportunitiesFeed.class));
+        daoMock.save(EasyMock.anyObject(ProgramExport.class));
 
         EasyMock.replay(programServiceMock, daoMock);
 
-        ResearchOpportunitiesFeed saveNewFeed = service.saveNewFeed(Arrays.asList(1), user, FeedFormat.LARGE, "hello");
+        ProgramExport saveNewFeed = service.saveNewFeed(Arrays.asList(1), user, ProgramExportFormat.LARGE, "hello");
 
         EasyMock.verify(programServiceMock, daoMock);
 
         Assert.assertEquals(saveNewFeed.getPrograms().get(0), program);
         Assert.assertEquals(saveNewFeed.getTitle(), "hello");
-        Assert.assertEquals(saveNewFeed.getFeedFormat(), FeedFormat.LARGE);
+        Assert.assertEquals(saveNewFeed.getFormat(), ProgramExportFormat.LARGE);
     }
 
     @Test
     public void shouldGetAllFeedsForUser() {
         User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
         EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(user)).andReturn(null).times(2);
-        EasyMock.expect(daoMock.getAllFeedsForUser(user)).andReturn(Collections.<ResearchOpportunitiesFeed> emptyList());
+        EasyMock.expect(daoMock.getAllFeedsForUser(user)).andReturn(Collections.<ProgramExport> emptyList());
 
         EasyMock.replay(daoMock, programServiceMock);
         service.getAllFeedsForUser(user);
@@ -144,8 +141,8 @@ public class ResearchOpportunitiesFeedServiceTest {
     public void shouldDeleteFeedById() {
         User user = new UserBuilder().id(1).email("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed")
-                .user(user).build();
+        ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
+                .withUser(user);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 
         daoMock.deleteById(1);
@@ -159,8 +156,8 @@ public class ResearchOpportunitiesFeedServiceTest {
     public void shouldGetFeedById() {
         User user = new UserBuilder().id(1).email("fooBarZ@fooBarZ.com").build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.SMALL).programs(program).title("Hello Feed")
-                .user(user).build();
+        ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
+                .withUser(user);
 
         EasyMock.expect(daoMock.getById(1)).andReturn(feed).times(1);
         EasyMock.replay(daoMock);
@@ -172,8 +169,8 @@ public class ResearchOpportunitiesFeedServiceTest {
     public void shouldUpdateFeed() {
         User user = new UserBuilder().email("fooBarZ@fooBarZ.com").id(1).build();
         Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).feedFormat(FeedFormat.LARGE).programs(program).title("Hello Feed")
-                .user(user).build();
+        ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.LARGE).withPrograms(program).withTitle("Hello Feed")
+                .withUser(user);
 
         EasyMock.expect(programServiceMock.getById(1)).andReturn(program);
         EasyMock.expect(daoMock.getById(1)).andReturn(feed);
@@ -181,13 +178,13 @@ public class ResearchOpportunitiesFeedServiceTest {
 
         EasyMock.replay(programServiceMock, daoMock, userServiceMock);
 
-        ResearchOpportunitiesFeed saveNewFeed = service.updateFeed(1, Arrays.asList(1), user, FeedFormat.SMALL, "hello1");
+        ProgramExport saveNewFeed = service.updateFeed(1, Arrays.asList(1), user, ProgramExportFormat.SMALL, "hello1");
 
         EasyMock.verify(programServiceMock, daoMock, userServiceMock);
 
         assertEquals(saveNewFeed.getPrograms().get(0), program);
         assertEquals(saveNewFeed.getTitle(), "hello1");
-        assertEquals(saveNewFeed.getFeedFormat(), FeedFormat.SMALL);
+        assertEquals(saveNewFeed.getFormat(), ProgramExportFormat.SMALL);
     }
 
 }

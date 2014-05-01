@@ -27,7 +27,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
+import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
@@ -134,7 +134,7 @@ public class AdvertDAO {
     }
     
     private Criteria getProgramAdvertByFeedIdCriteria(Session session, String feedKeyValue) {
-        return session.createCriteria(ResearchOpportunitiesFeed.class)
+        return session.createCriteria(ProgramExport.class)
                 .createAlias("programs", "program", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("id", Integer.parseInt(feedKeyValue)));
     }

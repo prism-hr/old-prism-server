@@ -14,14 +14,13 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
-import com.zuehlke.pgadmissions.domain.builders.ResearchOpportunitiesFeedBuilder;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
+import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 
@@ -162,8 +161,8 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
         Program program = testObjectProvider.getEnabledProgram();
         Program otherProgram = testObjectProvider.getAlternativeEnabledProgram(program);
         
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(program, otherProgram)
-                .title("feed").user(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
+        ProgramExport feed = new ProgramExport().withFormat(ProgramExportFormat.LARGE).withPrograms(program, otherProgram)
+                .withTitle("feed").withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
         save(feed);
         
         List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.OPPORTUNITIESBYFEEDID, feed.getId().toString(), null);

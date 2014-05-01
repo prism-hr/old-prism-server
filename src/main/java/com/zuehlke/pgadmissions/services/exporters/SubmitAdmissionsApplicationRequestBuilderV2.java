@@ -65,7 +65,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 
@@ -424,7 +424,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             throw new IllegalArgumentException(exp.getMessage(), exp);
         }
 
-        if (printLanguageQualificationAdmissionsNote && applicationForm.getState().getId() == ApplicationFormStatus.APPLICATION_APPROVED) {
+        if (printLanguageQualificationAdmissionsNote && applicationForm.getState().getId() == PrismState.APPLICATION_APPROVED) {
             applicationTp.setDepartmentalOfferConditions(LANGUAGE_QUALIFICATION_ADMISSIONS_NOTE);
         }
 
@@ -436,7 +436,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             }
         }
 
-        if (offerRecommendedComment != null && applicationForm.getState().getId() == ApplicationFormStatus.APPLICATION_APPROVED) {
+        if (offerRecommendedComment != null && applicationForm.getState().getId() == PrismState.APPLICATION_APPROVED) {
             String departmentalOfferConditions = "Recommended Offer Type: ";
             if (BooleanUtils.isTrue(offerRecommendedComment.getRecommendedConditionsAvailable())) {
                 departmentalOfferConditions += "Conditional\n\nRecommended Conditions: ";

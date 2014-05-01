@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
+import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Service
 @Transactional
@@ -18,6 +19,9 @@ public class QualificationInstitutionService {
     
     @Autowired
     private QualificationInstitutionDAO qualificationInstitutionDAO;
+    
+    @Autowired
+    private StateDAO stateDAO;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -45,7 +49,7 @@ public class QualificationInstitutionService {
             if (persistentInstitution == null) {
                 persistentInstitution = new Institution();
                 persistentInstitution.setDomicileCode(domicile.getCode());
-                persistentInstitution.setState(InstitutionState.INSTITUTION_APPROVED);
+                persistentInstitution.setState(stateDAO.getById(PrismState.INSTITUTION_APPROVED));
                 persistentInstitution.setName(institutionName);
                 persistentInstitution.setCode(generateNextInstitutionCode());
                 qualificationInstitutionDAO.save(persistentInstitution);

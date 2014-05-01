@@ -4,7 +4,6 @@ import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 import static org.unitils.easymock.EasyMockUnitils.verify;
 
@@ -20,12 +19,11 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
-import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class QualificationInstitutionServiceTest {
@@ -56,7 +54,7 @@ public class QualificationInstitutionServiceTest {
 
     @Test
     public void shouldGenerateNextInstitutionCode() {
-        Institution lastCustomInstitution = new QualificationInstitutionBuilder().code("CUST00084").build();
+        Institution lastCustomInstitution = new Institution().withCode("CUST00084");
 
         expect(qualificationInstitutionDAO.getLastCustomInstitution()).andReturn(lastCustomInstitution);
 
@@ -112,7 +110,7 @@ public class QualificationInstitutionServiceTest {
 
         assertSame(returned, institutionCapture.getValue());
         assertEquals("PL", returned.getDomicileCode());
-        assertEquals(InstitutionState.INSTITUTION_APPROVED, returned.getState());
+        assertEquals(PrismState.INSTITUTION_APPROVED, returned.getState());
         assertEquals(opportunityRequest.getOtherInstitution(), returned.getName());
         assertEquals("00008", returned.getCode());
     }

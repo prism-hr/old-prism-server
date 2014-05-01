@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 import org.apache.commons.lang.StringUtils;
 
-public enum ApplicationFormStatus {
+public enum PrismState {
 
     APPLICATION_APPROVAL, //
     APPLICATION_APPROVAL_PENDING_COMPLETION, //

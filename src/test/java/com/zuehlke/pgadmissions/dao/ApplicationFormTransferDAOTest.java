@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormTransferBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 
 public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
@@ -42,7 +42,7 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
         program = testObjectProvider.getEnabledProgram();
         applicationForm = new ApplicationFormBuilder().advert(program).applicant(user)
-                .status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).build();
+                .status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(applicationForm);
         flushAndClearSession();
     }

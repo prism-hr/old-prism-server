@@ -12,7 +12,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -32,11 +31,10 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.zuehlke.pgadmissions.converters.ProjectConverter;
-import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
@@ -45,7 +43,7 @@ import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DurationOfStudyPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -58,51 +56,28 @@ import freemarker.template.TemplateException;
 @RequestMapping("/prospectus/projects")
 public class ProjectConfigurationController {
 
-    private final UserService userService;
+    private UserService userService;
 
-    private final ProgramService programsService;
+    private ProgramService programsService;
 
-    private final ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
-    private final ProjectDTOValidator projectDTOValidator;
+    private ProjectDTOValidator projectDTOValidator;
 
-    private final DatePropertyEditor datePropertyEditor;
+    private DatePropertyEditor datePropertyEditor;
 
-    private final ProgramPropertyEditor programPropertyEditor;
+    private ProgramPropertyEditor programPropertyEditor;
 
-    private final PersonPropertyEditor personPropertyEditor;
+    private UserPropertyEditor personPropertyEditor;
 
-    private final ProjectConverter projectConverter;
+    private ApplyTemplateRenderer templateRenderer;
 
-    private final ApplyTemplateRenderer templateRenderer;
-
-    private final DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
+    private DurationOfStudyPropertyEditor durationOfStudyPropertyEditor;
 
     private Gson gson;
 
-    public ProjectConfigurationController() {
-        this(null, null, null, null, null, null, null, null, null, null);
-    }
-
-    @Autowired
-    public ProjectConfigurationController(UserService userService, ProgramService programsService, ApplicationContext applicationContext,
-            ProjectDTOValidator projectDTOValidator, DatePropertyEditor datePropertyEditor, ProgramPropertyEditor programPropertyEditor,
-            PersonPropertyEditor personPropertyEditor, ProjectConverter projectConverter, ApplyTemplateRenderer templateRenderer,
-            DurationOfStudyPropertyEditor durationOfStudyPropertyEditor) {
-        this.userService = userService;
-        this.programsService = programsService;
-        this.applicationContext = applicationContext;
-        this.projectDTOValidator = projectDTOValidator;
-        this.datePropertyEditor = datePropertyEditor;
-        this.programPropertyEditor = programPropertyEditor;
-        this.personPropertyEditor = personPropertyEditor;
-        this.projectConverter = projectConverter;
-        this.templateRenderer = templateRenderer;
-        this.durationOfStudyPropertyEditor = durationOfStudyPropertyEditor;
-    }
-
     @PostConstruct
-    public void customizeJsonSerializer() throws IOException {
+    protected void customizeJsonSerializer() throws IOException {
         gson = new GsonBuilder().registerTypeAdapterFactory(HibernateProxyTypeAdapter.FACTORY)
                 .registerTypeAdapter(Program.class, new JsonSerializer<Program>() {
                     @Override
@@ -111,12 +86,12 @@ public class ProjectConfigurationController {
                     }
                 }).registerTypeAdapter(User.class, new JsonSerializer<User>() {
                     @Override
-                    public JsonElement serialize(User supervisor, Type typeOfSrc, JsonSerializationContext context) {
-                        Person person = new Person();
-                        person.setEmail(supervisor.getEmail());
-                        person.setFirstname(supervisor.getFirstName());
-                        person.setLastname(supervisor.getLastName());
-                        return new Gson().toJsonTree(person);
+                    public JsonElement serialize(User user, Type typeOfSrc, JsonSerializationContext context) {
+                        JsonObject element = new JsonObject();
+                        element.add("email", new JsonPrimitive(user.getEmail()));
+                        element.add("firstName", new JsonPrimitive(user.getFirstName()));
+                        element.add("lastName", new JsonPrimitive(user.getLastName()));
+                        return element;
                     }
                 }).create();
     }
@@ -125,11 +100,11 @@ public class ProjectConfigurationController {
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(projectDTOValidator);
         binder.registerCustomEditor(Program.class, "program", programPropertyEditor);
-        binder.registerCustomEditor(Person.class, "administrator", personPropertyEditor);
+        binder.registerCustomEditor(User.class, "administrator", personPropertyEditor);
         binder.registerCustomEditor(Date.class, datePropertyEditor);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-        binder.registerCustomEditor(Person.class, "primarySupervisor", personPropertyEditor);
-        binder.registerCustomEditor(Person.class, "secondarySupervisor", personPropertyEditor);
+        binder.registerCustomEditor(User.class, "primarySupervisor", personPropertyEditor);
+        binder.registerCustomEditor(User.class, "secondarySupervisor", personPropertyEditor);
         binder.registerCustomEditor(Integer.class, "studyDuration", durationOfStudyPropertyEditor);
     }
 
@@ -152,10 +127,7 @@ public class ProjectConfigurationController {
         Map<String, Object> map = getErrorValues(result, request);
 
         if (map.isEmpty()) {
-            User currentUser = getUser();
-            Project project = projectConverter.toDomainObject(projectDTO);
-            project.setContactUser(currentUser);
-            programsService.save(project);
+            Project project = programsService.addProject(projectDTO);
             map.put("success", "true");
             map.put("projectId", project.getId());
         }
@@ -181,12 +153,7 @@ public class ProjectConfigurationController {
     @RequestMapping(value = "/defaultPrimarySupervisor", method = RequestMethod.GET)
     @ResponseBody
     public String defaultSupervisor() {
-        User user = getUser();
-        Person person = new Person();
-        person.setFirstname(user.getFirstName());
-        person.setLastname(user.getLastName());
-        person.setEmail(user.getEmail());
-        return gson.toJson(person);
+        return gson.toJson(getUser());
     }
 
     @RequestMapping(value = "/{projectId}", method = RequestMethod.GET)
@@ -213,16 +180,12 @@ public class ProjectConfigurationController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     @ResponseBody
-    public String saveProject(@Valid ProjectDTO projectDTO, BindingResult result, HttpServletRequest request) {
+    public String saveProject(@RequestParam Integer id, @Valid ProjectDTO projectDTO, BindingResult result, HttpServletRequest request) {
         Map<String, Object> map = getErrorValues(result, request);
         if (!result.hasErrors()) {
-            Project project = projectConverter.toDomainObject(projectDTO);
-            if (project == null) {
-                throw new ResourceNotFoundException();
-            }
-            programsService.save(project);
+            programsService.updateProject(id, projectDTO);
             map.put("success", "true");
-            map.put("projectId", project.getId());
+            map.put("projectId", id);
         }
         return gson.toJson(map);
     }

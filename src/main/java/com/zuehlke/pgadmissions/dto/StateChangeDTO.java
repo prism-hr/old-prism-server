@@ -5,7 +5,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -29,9 +29,9 @@ public class StateChangeDTO {
 
     private HomeOrOverseas homeOrOverseas;
 
-    private ApplicationFormStatus status;
+    private PrismState status;
 
-    private ApplicationFormStatus nextStatus;
+    private PrismState nextStatus;
 
     private Boolean fastTrackApplication;
 
@@ -50,7 +50,7 @@ public class StateChangeDTO {
 
     private HomeOrOverseas[] homeOrOverseasOptions;
 
-    private List<ApplicationFormStatus> stati;
+    private List<PrismState> stati;
 
     private Boolean useCustomReferenceQuestions;
 
@@ -139,11 +139,11 @@ public class StateChangeDTO {
         this.homeOrOverseas = homeOrOverseas;
     }
 
-    public ApplicationFormStatus getNextStatus() {
+    public PrismState getNextStatus() {
         return nextStatus;
     }
 
-    public void setNextStatus(ApplicationFormStatus nextStatus) {
+    public void setNextStatus(PrismState nextStatus) {
         this.nextStatus = nextStatus;
     }
 
@@ -211,11 +211,11 @@ public class StateChangeDTO {
         this.homeOrOverseasOptions = homeOrOverseasOptions;
     }
 
-    public List<ApplicationFormStatus> getStati() {
+    public List<PrismState> getStati() {
         return stati;
     }
 
-    public void setStati(List<ApplicationFormStatus> stati) {
+    public void setStati(List<PrismState> stati) {
         this.stati = stati;
     }
 
@@ -240,12 +240,12 @@ public class StateChangeDTO {
     }
 
     public boolean displayCustomQuestionsOption() {
-        return (this.nextStatus == ApplicationFormStatus.APPLICATION_REVIEW && getCustomQuestionCoverage().contains(ScoringStage.REVIEW))
-                || (this.nextStatus == ApplicationFormStatus.APPLICATION_INTERVIEW && getCustomQuestionCoverage().contains(ScoringStage.INTERVIEW));
+        return (this.nextStatus == PrismState.APPLICATION_REVIEW && getCustomQuestionCoverage().contains(ScoringStage.REVIEW))
+                || (this.nextStatus == PrismState.APPLICATION_INTERVIEW && getCustomQuestionCoverage().contains(ScoringStage.INTERVIEW));
     }
 
     public boolean displayCustomReferenceQuestionsOption() {
-        return this.status == ApplicationFormStatus.APPLICATION_VALIDATION && getCustomQuestionCoverage().contains(ScoringStage.REFERENCE);
+        return this.status == PrismState.APPLICATION_VALIDATION && getCustomQuestionCoverage().contains(ScoringStage.REFERENCE);
     }
 
 }

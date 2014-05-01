@@ -18,34 +18,34 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
-import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
+import com.zuehlke.pgadmissions.domain.ProgramExport;
+import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.ResearchOpportunitiesFeedService;
+import com.zuehlke.pgadmissions.services.ProgramExportService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 
 @Controller
 @RequestMapping("/prospectus/researchOpportunitiesFeed")
-public class ResearchOpportunitiesFeedController {
+public class ProgramExportController {
 
     private final UserService userService;
     
     private final ProgramService programsService; 
     
-    private final ResearchOpportunitiesFeedService feedService;
+    private final ProgramExportService feedService;
     
     private final MessageSource messageSource;
     
     private static final String SUCCESS = "success";
     
-    public ResearchOpportunitiesFeedController() {
+    public ProgramExportController() {
         this(null, null, null, null);
     }
     
     @Autowired
-    public ResearchOpportunitiesFeedController(final UserService userService, final ProgramService programsService,
-            final ResearchOpportunitiesFeedService feedService, final MessageSource messageSource) {
+    public ProgramExportController(final UserService userService, final ProgramService programsService,
+            final ProgramExportService feedService, final MessageSource messageSource) {
         this.userService = userService;
         this.programsService = programsService;
         this.feedService = feedService;
@@ -69,8 +69,8 @@ public class ResearchOpportunitiesFeedController {
     @ResponseBody
     public List<Map<String, Object>> getAllResearchOpportunitiesFeedForCurrentUser() {
         ArrayList<Map<String, Object>> response = new ArrayList<Map<String, Object>>();
-        List<ResearchOpportunitiesFeed> feeds = feedService.getAllFeedsForUser(getCurrentUser());
-        for (ResearchOpportunitiesFeed feed : feeds) {
+        List<ProgramExport> feeds = feedService.getAllFeedsForUser(getCurrentUser());
+        for (ProgramExport feed : feeds) {
             response.add(convertToMap(feed));
         }
         return response;
@@ -94,7 +94,7 @@ public class ResearchOpportunitiesFeedController {
         
         Map<String, Object> responseMap = validate(selectedProgramIds, feedFormat, title, currentUser, true);
         if ((Boolean) responseMap.get(SUCCESS)) {
-            ResearchOpportunitiesFeed feed = feedService.updateFeed(feedId, selectedProgramIds, currentUser, FeedFormat.valueOf(feedFormat), title);
+            ProgramExport feed = feedService.updateFeed(feedId, selectedProgramIds, currentUser, ProgramExportFormat.valueOf(feedFormat), title);
             responseMap.put("iframeCode", feedService.getIframeHtmlCode(feed));
         }
         return responseMap;
@@ -104,7 +104,7 @@ public class ResearchOpportunitiesFeedController {
     @ResponseBody
     public List<Map<String, Object>> getFeedById(@PathVariable final Integer feedId) {
         ArrayList<Map<String, Object>> response = new ArrayList<Map<String, Object>>();
-        ResearchOpportunitiesFeed feed = feedService.getById(feedId);
+        ProgramExport feed = feedService.getById(feedId);
         response.add(convertToMap(feed));
         return response;
     }
@@ -120,7 +120,7 @@ public class ResearchOpportunitiesFeedController {
         String title = (String) json.get("feedTitle");
         responseMap = validate(selectedProgramIds, feedFormat, title, currentUser);
         if ((Boolean) responseMap.get(SUCCESS)) {
-            ResearchOpportunitiesFeed feed = feedService.saveNewFeed(selectedProgramIds, currentUser, FeedFormat.valueOf(feedFormat), title);
+            ProgramExport feed = feedService.saveNewFeed(selectedProgramIds, currentUser, ProgramExportFormat.valueOf(feedFormat), title);
             responseMap.put("iframeCode", feedService.getIframeHtmlCode(feed));
             responseMap.put("id", feed.getId());
         } 
@@ -131,11 +131,11 @@ public class ResearchOpportunitiesFeedController {
         return userService.getCurrentUser();
     }
     
-    private HashMap<String, Object> convertToMap(final ResearchOpportunitiesFeed feed) {
+    private HashMap<String, Object> convertToMap(final ProgramExport feed) {
         HashMap<String, Object> responseMap = new HashMap<String, Object>();
         responseMap.put("id", feed.getId());
         responseMap.put("title", feed.getTitle());
-        responseMap.put("feedSize", feed.getFeedFormat());
+        responseMap.put("feedSize", feed.getFormat());
         ArrayList<Integer> programId = new ArrayList<Integer>();
         for (Program p : feed.getPrograms()) {
             programId.add(p.getId());
@@ -161,7 +161,7 @@ public class ResearchOpportunitiesFeedController {
         }
         
         try {
-            FeedFormat.valueOf(StringUtils.upperCase(feedFormat));
+            ProgramExportFormat.valueOf(StringUtils.upperCase(feedFormat));
         } catch (Exception e) {
             responseMap.put(SUCCESS, false);
             responseMap.put("feedSize", FieldErrorUtils.resolveMessage("dropdown.radio.select.none", messageSource));

@@ -9,7 +9,7 @@ public enum Authority {
     INSTITUTION_ADMITTER,
 
     /* An applicant applying for a programme */
-    APPLICATION_APPLICANT,
+    APPLICATION_CREATOR,
 
     /* A person which approves an application and decides whether the application will be APPROVED or REJECTED */
     PROGRAM_APPROVER,
@@ -27,7 +27,9 @@ public enum Authority {
     SYSTEM_ADMINISTRATOR,
 
     /* A person which makes a commitment towards the applicant to supervise him after his application has been APPROVED */
-    SUPERVISOR,
+    APPLICATION_PRIMARY_SUPERVISOR,
+
+    APPLICATION_SECONDARY_SUPERVISOR,
 
     /* Enables the holder to view all applications within the programme */
     PROGRAM_VIEWER,

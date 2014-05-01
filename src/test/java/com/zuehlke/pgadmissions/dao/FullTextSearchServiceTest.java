@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
+import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 
@@ -175,7 +175,7 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
     public void shouldReturnSimilarMatchForInstitutionName() {
         TransactionTemplate template = new TransactionTemplate(transactionManager);
 
-        final Institution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
+        final Institution institution = TestData.aQualificationInstitution();
 
         template.execute(new TransactionCallbackWithoutResult() {
             @Override

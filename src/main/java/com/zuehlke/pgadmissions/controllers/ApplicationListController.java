@@ -30,7 +30,7 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
@@ -172,10 +172,10 @@ public class ApplicationListController {
     }
 
     @ModelAttribute("applicationStatusValues")
-    public List<ApplicationFormStatus> getApplicationStatusValues() {
-        List<ApplicationFormStatus> statuses = Lists.newArrayListWithCapacity(ApplicationFormStatus.values().length);
-        for (ApplicationFormStatus status : ApplicationFormStatus.values()) {
-            if (status != ApplicationFormStatus.APPLICATION_UNSUBMITTED) {
+    public List<PrismState> getApplicationStatusValues() {
+        List<PrismState> statuses = Lists.newArrayListWithCapacity(PrismState.values().length);
+        for (PrismState status : PrismState.values()) {
+            if (status != PrismState.APPLICATION_UNSUBMITTED) {
                 statuses.add(status);
             }
         }

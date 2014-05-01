@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
@@ -87,7 +87,7 @@ public class ApplicationFormDAO {
 
     }
 
-    public List<ApplicationForm> getAllApplicationsByStatus(ApplicationFormStatus status) {
+    public List<ApplicationForm> getAllApplicationsByStatus(PrismState status) {
         return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("status", status))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }

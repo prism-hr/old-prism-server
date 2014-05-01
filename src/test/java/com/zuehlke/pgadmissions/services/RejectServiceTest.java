@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -75,7 +75,7 @@ public class RejectServiceTest {
         admin = new UserBuilder().id(324).build();
         approver = new UserBuilder().id(22414).build();
         Program program = new ProgramBuilder().id(10023).build();
-        application = new ApplicationFormBuilder().id(200).advert(program).status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).build();
+        application = new ApplicationFormBuilder().id(200).advert(program).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
 
         reason1 = new RejectReasonBuilder().id(1).text("idk").build();
         reason2 = new RejectReasonBuilder().id(2).text("idc").build();
@@ -95,7 +95,7 @@ public class RejectServiceTest {
         rejectService.moveApplicationToReject(application, rejection);
         verify();
 
-        assertEquals(ApplicationFormStatus.APPLICATION_REJECTED, application.getState());
+        assertEquals(PrismState.APPLICATION_REJECTED, application.getState());
         assertEquals(rejection, application.getRejection());
     }
 

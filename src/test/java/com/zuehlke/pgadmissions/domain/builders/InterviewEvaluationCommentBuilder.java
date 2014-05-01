@@ -5,7 +5,7 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CompleteInterviewComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class InterviewEvaluationCommentBuilder {
 
@@ -14,9 +14,9 @@ public class InterviewEvaluationCommentBuilder {
     private Date date;
     private String comment;
     private Integer id;
-    private ApplicationFormStatus nextStatus;
+    private PrismState nextStatus;
 
-    public InterviewEvaluationCommentBuilder nextStatus(ApplicationFormStatus nextStatus) {
+    public InterviewEvaluationCommentBuilder nextStatus(PrismState nextStatus) {
         this.nextStatus = nextStatus;
         return this;
     }

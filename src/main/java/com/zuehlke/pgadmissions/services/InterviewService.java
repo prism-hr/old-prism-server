@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.dto.InterviewConfirmDTO;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -51,7 +51,7 @@ public class InterviewService {
     public void moveApplicationToInterview(User user, final AssignInterviewersComment interviewComment, ApplicationForm applicationForm) {
         interviewComment.setApplication(applicationForm);
 
-        applicationsService.setApplicationStatus(applicationForm, ApplicationFormStatus.APPLICATION_INTERVIEW);
+        applicationsService.setApplicationStatus(applicationForm, PrismState.APPLICATION_INTERVIEW);
 
         // TODO add interview status transient field to the comment and use it here
         // if (!interview.getTakenPlace()) {

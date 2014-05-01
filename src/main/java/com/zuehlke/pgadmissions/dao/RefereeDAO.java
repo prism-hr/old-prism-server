@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
 @Repository
@@ -60,8 +60,8 @@ public class RefereeDAO {
                 .add(Restrictions.isNull("referenceComment.id"))
                 .add(Restrictions.eq("declined", false))
                 .add(Restrictions.isNotNull("user"))
-                .add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.APPLICATION_WITHDRAWN,
-                        ApplicationFormStatus.APPLICATION_APPROVED, ApplicationFormStatus.APPLICATION_REJECTED, ApplicationFormStatus.APPLICATION_UNSUBMITTED})))
+                .add(Restrictions.not(Restrictions.in("application.status", new PrismState[]{PrismState.APPLICATION_WITHDRAWN,
+                        PrismState.APPLICATION_APPROVED, PrismState.APPLICATION_REJECTED, PrismState.APPLICATION_UNSUBMITTED})))
                 .add(Restrictions.le("lastNotified", dateWithSubtractedInterval)).list();
     }
 

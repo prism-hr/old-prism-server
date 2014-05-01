@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
@@ -80,9 +80,9 @@ public class UserDAO {
 
     public Long getNumberOfActiveApplicationsForApplicant(final User applicant) {
         return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicant", applicant))
-                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.APPLICATION_APPROVED)))
-                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.APPLICATION_REJECTED)))
-                .add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.APPLICATION_WITHDRAWN))).setProjection(Projections.rowCount()).uniqueResult();
+                .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_APPROVED)))
+                .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_REJECTED)))
+                .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_WITHDRAWN))).setProjection(Projections.rowCount()).uniqueResult();
     }
 
     public List<User> getUsersWithUpi(final String upi) {

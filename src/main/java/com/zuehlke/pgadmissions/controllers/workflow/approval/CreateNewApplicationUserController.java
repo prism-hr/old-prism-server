@@ -36,7 +36,7 @@ public class CreateNewApplicationUserController {
 
     @RequestMapping(value = "/createSupervisor", method = RequestMethod.POST)
     public String createNewSupervisorUser(@Valid @ModelAttribute("suggestedUser") UserDTO userDTO, BindingResult bindingResult, ModelMap modelMap) {
-        return createNewUser(Authority.SUPERVISOR, userDTO, bindingResult, modelMap);
+        return createNewUser(Authority.APPLICATION_PRIMARY_SUPERVISOR, userDTO, bindingResult, modelMap);
     }
 
     @RequestMapping(value = "/createInterviewer", method = RequestMethod.POST)
@@ -52,7 +52,7 @@ public class CreateNewApplicationUserController {
     private String createNewUser(Authority userType, UserDTO userDTO, BindingResult bindingResult, ModelMap modelMap) {
         if (bindingResult.hasErrors()) {
             switch (userType) {
-            case SUPERVISOR:
+            case APPLICATION_PRIMARY_SUPERVISOR:
                 return CREATE_SUPERVISOR_SECTION;
             case APPLICATION_INTERVIEWER:
                 return CREATE_INTERVIEWER_SECTION;

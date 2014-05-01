@@ -2,47 +2,29 @@ package com.zuehlke.pgadmissions.propertyeditors;
 
 import java.beans.PropertyEditorSupport;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Objects;
+import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
 public class UserPropertyEditor extends PropertyEditorSupport {
 
-    private final UserService userService;
-    private final EncryptionHelper encryptionHelper;
-
-    public UserPropertyEditor() {
-        this(null, null);
-    }
-
     @Autowired
-    public UserPropertyEditor(UserService userService, EncryptionHelper encryptionHelper) {
-        this.userService = userService;
-        this.encryptionHelper = encryptionHelper;
-
-    }
+    private UserService userService;
 
     @Override
-    public void setAsText(String strId) throws IllegalArgumentException {
-        if (StringUtils.isBlank(strId)) {
-            setValue(null);
-            return;
-        }
-        setValue(userService.getById(encryptionHelper.decryptToInteger(strId)));
-
+    public void setAsText(String jsonString) throws IllegalArgumentException {
+            User user = new Gson().fromJson(jsonString, User.class);
+            User persistedUser = userService.getUserByEmail(user.getEmail());
+            setValue(Objects.firstNonNull(persistedUser, user));
     }
 
     @Override
     public String getAsText() {
-        if (getValue() == null || ((User) getValue()).getId() == null) {
-            return null;
-        }
-        return encryptionHelper.encrypt(((User) getValue()).getId());
+        throw new UnsupportedOperationException();
     }
-
 }

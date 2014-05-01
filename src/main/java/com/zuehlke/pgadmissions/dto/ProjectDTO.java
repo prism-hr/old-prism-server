@@ -4,23 +4,19 @@ import java.util.Date;
 
 import javax.validation.constraints.Size;
 
-import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.AdvertState;
-import com.zuehlke.pgadmissions.utils.DateUtils;
 import com.zuehlke.pgadmissions.validators.ATASConstraint;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 public class ProjectDTO {
 
-    private Integer id;
-
     private Program program;
 
     private Boolean administratorSpecified;
 
-    private Person administrator;
+    private User administrator;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     private String title;
@@ -40,11 +36,11 @@ public class ProjectDTO {
 
     private AdvertState state;
 
-    private Person primarySupervisor;
+    private User primarySupervisor;
 
     private Boolean secondarySupervisorSpecified;
 
-    private Person secondarySupervisor;
+    private User secondarySupervisor;
 
     public Program getProgram() {
         return program;
@@ -62,11 +58,11 @@ public class ProjectDTO {
         this.administratorSpecified = administratorSpecified;
     }
 
-    public Person getAdministrator() {
+    public User getAdministrator() {
         return administrator;
     }
 
-    public void setAdministrator(Person administrator) {
+    public void setAdministrator(User administrator) {
         this.administrator = administrator;
     }
 
@@ -118,19 +114,11 @@ public class ProjectDTO {
         this.state = state;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Person getPrimarySupervisor() {
+    public User getPrimarySupervisor() {
         return primarySupervisor;
     }
 
-    public void setPrimarySupervisor(Person primarySupervisor) {
+    public void setPrimarySupervisor(User primarySupervisor) {
         this.primarySupervisor = primarySupervisor;
     }
 
@@ -142,11 +130,11 @@ public class ProjectDTO {
         this.secondarySupervisorSpecified = secondarySupervisorSpecified;
     }
 
-    public Person getSecondarySupervisor() {
+    public User getSecondarySupervisor() {
         return secondarySupervisor;
     }
 
-    public void setSecondarySupervisor(Person secondarySupervisor) {
+    public void setSecondarySupervisor(User secondarySupervisor) {
         this.secondarySupervisor = secondarySupervisor;
     }
 

@@ -15,7 +15,6 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.NotificationsDurationDAO;
-import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
@@ -44,10 +43,6 @@ public class ConfigurationServiceTest {
     @Mock
     @InjectIntoByType
     private NotificationsDurationDAO notificationsDurationDAOMock;
-
-    @Mock
-    @InjectIntoByType
-    private PersonDAO personDAOMock;
 
     @Mock
     @InjectIntoByType

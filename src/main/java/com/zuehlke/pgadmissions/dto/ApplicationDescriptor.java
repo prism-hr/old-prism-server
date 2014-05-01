@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
 public class ApplicationDescriptor {
@@ -39,11 +39,11 @@ public class ApplicationDescriptor {
     
     private BigDecimal applicantAverageRating;
     
-    private ApplicationFormStatus applicationFormStatus;
+    private PrismState applicationFormStatus;
     
-    private ApplicationFormStatus applicationFormNextStatus;
+    private PrismState applicationFormNextStatus;
     
-    private ApplicationFormStatus applicationFormStatusWhenWithdrawn;
+    private PrismState applicationFormStatusWhenWithdrawn;
     
     private List<ActionDefinition> actionDefinitions = Lists.newArrayList();
     
@@ -200,31 +200,31 @@ public class ApplicationDescriptor {
 		this.applicantAverageRating = applicantAverageRating;
 	}
 
-	public ApplicationFormStatus getApplicationFormStatus() {
+	public PrismState getApplicationFormStatus() {
 		return applicationFormStatus;
 	}
 
-	public void setApplicationFormStatus(ApplicationFormStatus applicationFormStatus) {
+	public void setApplicationFormStatus(PrismState applicationFormStatus) {
 		this.applicationFormStatus = applicationFormStatus;
 	}
 
-	public ApplicationFormStatus getApplicationFormNextStatus() {
+	public PrismState getApplicationFormNextStatus() {
 		return applicationFormNextStatus;
 	}
 
 	public boolean getApplicationFormSubmitted() {
-		return applicationFormStatus != ApplicationFormStatus.APPLICATION_UNSUBMITTED;
+		return applicationFormStatus != PrismState.APPLICATION_UNSUBMITTED;
 	}
 	
-	public void setApplicationFormNextStatus(ApplicationFormStatus applicationFormNextStatus) {
+	public void setApplicationFormNextStatus(PrismState applicationFormNextStatus) {
 		this.applicationFormNextStatus = applicationFormNextStatus;
 	}
 
-	public ApplicationFormStatus getApplicationFormStatusWhenWithdrawn() {
+	public PrismState getApplicationFormStatusWhenWithdrawn() {
 		return applicationFormStatusWhenWithdrawn;
 	}
 
-	public void setApplicationFormStatusWhenWithdrawn(ApplicationFormStatus applicationFormStatusWhenWithdrawn) {
+	public void setApplicationFormStatusWhenWithdrawn(PrismState applicationFormStatusWhenWithdrawn) {
 		this.applicationFormStatusWhenWithdrawn = applicationFormStatusWhenWithdrawn;
 	}
 

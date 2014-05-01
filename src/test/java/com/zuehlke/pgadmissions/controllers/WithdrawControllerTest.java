@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -36,7 +36,7 @@ public class WithdrawControllerTest {
 
     @Test
     public void shouldChangeStatusToWithdrawnAndSaveAndSendEmailsNotifications() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).applicant(student).id(2)
+        ApplicationForm applicationForm = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION)).applicant(student).id(2)
                 .applicationNumber("abc").build();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);

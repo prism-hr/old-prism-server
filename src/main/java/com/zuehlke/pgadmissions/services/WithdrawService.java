@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Service
 @Transactional
@@ -16,7 +16,7 @@ public class WithdrawService {
 
     @Transactional
     public void withdrawApplication(final ApplicationForm application) {
-        applicationFormService.setApplicationStatus(application, ApplicationFormStatus.APPLICATION_WITHDRAWN);
+        applicationFormService.setApplicationStatus(application, PrismState.APPLICATION_WITHDRAWN);
     }
 
     @Transactional

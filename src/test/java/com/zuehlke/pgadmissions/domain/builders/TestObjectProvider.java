@@ -13,18 +13,17 @@ import org.hibernate.sql.JoinType;
 
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
-import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class TestObjectProvider {
 
@@ -124,12 +123,8 @@ public class TestObjectProvider {
                 .setMaxResults(1).uniqueResult();
     }
 
-    public Institution getEnabledInstitution() {
-        return getInstitution(InstitutionState.INSTITUTION_APPROVED);
-    }
-
-    public Institution getDisabledInstitution() {
-        return getInstitution(InstitutionState.INSTITUTION_DISABLED);
+    public Institution getInstitution() {
+        return getInstitution(PrismState.INSTITUTION_APPROVED);
     }
 
     public ApplicationForm getEnabledProgramApplication() {
@@ -148,7 +143,7 @@ public class TestObjectProvider {
         return getProjectApplication(false);
     }
 
-    public ApplicationForm getApplication(ApplicationFormStatus status) {
+    public ApplicationForm getApplication(PrismState status) {
         return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
                 .createAlias("program", "program", JoinType.INNER_JOIN).add(Restrictions.eq("status", status)).setMaxResults(1).uniqueResult();
     }
@@ -249,9 +244,9 @@ public class TestObjectProvider {
         return (Project) criteria.setMaxResults(1).uniqueResult();
     }
 
-    public Institution getInstitution(InstitutionState state) {
+    public Institution getInstitution(PrismState state) {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class)
-                .add(Restrictions.eq("state", state)).setMaxResults(1).uniqueResult();
+                .add(Restrictions.eq("state.id", state)).setMaxResults(1).uniqueResult();
     }
 
 }

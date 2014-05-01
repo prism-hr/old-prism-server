@@ -49,7 +49,7 @@ import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
@@ -730,7 +730,7 @@ public class PorticoWebServiceIT {
     }
 
     private ApplicationForm randomlyPickApplicationForm() {
-        List<ApplicationForm> allApplicationsByStatus = applicationsService.getApplicationsByStatus(ApplicationFormStatus.APPLICATION_REVIEW);
+        List<ApplicationForm> allApplicationsByStatus = applicationsService.getApplicationsByStatus(PrismState.APPLICATION_REVIEW);
         ApplicationForm applicationForm = null;
         boolean foundEnoughDataForQualifications = false;
         boolean foundEnoughDataForReferees = false;

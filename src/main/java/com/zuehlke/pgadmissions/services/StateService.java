@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Service
 @Transactional
@@ -17,7 +17,7 @@ public class StateService {
     @Autowired
     private StateDAO stateDAO;
 
-    public State getById(ApplicationFormStatus id) {
+    public State getById(PrismState id) {
         return stateDAO.getById(id);
     }
     
@@ -29,11 +29,11 @@ public class StateService {
         return stateDAO.getAllConfigurableStates();
     }
     
-    public List<ApplicationFormStatus> getAllStatesThatApplicationsCanBeAssignedTo() {
+    public List<PrismState> getAllStatesThatApplicationsCanBeAssignedTo() {
         return stateDAO.getAllStatesThatApplicationsCanBeAssignedTo();
     }
     
-    public List<ApplicationFormStatus> getAllStatesThatApplicationsCanBeAssignedFrom() {
+    public List<PrismState> getAllStatesThatApplicationsCanBeAssignedFrom() {
         return stateDAO.getAllStatesThatApplicationsCanBeAssignedFrom();
     }
     

@@ -26,16 +26,16 @@ import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserNotificationListBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
-import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 import com.zuehlke.pgadmissions.domain.helpers.NotificationListTestScenario;
 import com.zuehlke.pgadmissions.domain.helpers.UserTestHarness;
@@ -122,8 +122,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getById(Authority.APPLICATION_REVIEWER);
         Role interviewerRole = roleDAO.getById(Authority.APPLICATION_INTERVIEWER);
 
-        Institution institution = new QualificationInstitutionBuilder().code("code").name("a10").domicileCode("AE")
-                .state(InstitutionState.INSTITUTION_APPROVED).build();
+        Institution institution = new Institution().withCode("code").withName("a10").withDomicileCode("AE").withState(new State().withId(PrismState.INSTITUTION_APPROVED));
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("doesntexist")
                 .title("another title").institution(institution).build();
         save(institution, program);
@@ -148,8 +147,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         Role reviewerRole = roleDAO.getById(Authority.APPLICATION_REVIEWER);
         Role interviewerRole = roleDAO.getById(Authority.APPLICATION_INTERVIEWER);
 
-        Institution institution = new QualificationInstitutionBuilder().code("code").name("a66").domicileCode("AE")
-                .state(InstitutionState.INSTITUTION_APPROVED).build();
+        Institution institution = new Institution().withCode("code").withName("a66").withDomicileCode("AE").withState(new State().withId(PrismState.INSTITUTION_APPROVED));
         Program program = new ProgramBuilder().contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).code("doesntexist")
                 .title("another title").institution(institution).build();
         save(institution, program);

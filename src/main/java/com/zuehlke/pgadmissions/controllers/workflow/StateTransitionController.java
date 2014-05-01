@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -103,7 +103,7 @@ public class StateTransitionController {
     	stateChangeDTO.setUser(user);
     	stateChangeDTO.setApplicationForm(applicationForm);
     	
-    	if (applicationForm.getState().getId() == ApplicationFormStatus.APPLICATION_VALIDATION) {
+    	if (applicationForm.getState().getId() == PrismState.APPLICATION_VALIDATION) {
 	    	stateChangeDTO.setValidationQuestionOptions(ValidationQuestionOptions.values());
 	    	stateChangeDTO.setHomeOrOverseasOptions(HomeOrOverseas.values());
     	}
@@ -121,7 +121,7 @@ public class StateTransitionController {
         if (action != null) {
             Comment latestStateChangeComment = null;
 
-            if (applicationForm.getState().getId() == ApplicationFormStatus.APPLICATION_VALIDATION) {
+            if (applicationForm.getState().getId() == PrismState.APPLICATION_VALIDATION) {
                 ValidationComment validationComment = commentService.getLastCommentOfType(applicationForm, ValidationComment.class);
                 stateChangeDTO.setQualifiedForPhd(validationComment.getQualifiedForPhd());
                 stateChangeDTO.setEnglishCompentencyOk(validationComment.getEnglishCompetencyOk());

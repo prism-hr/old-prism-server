@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
@@ -69,7 +69,7 @@ public class ExportQueueService {
         List<ApplicationFormTransfer> applications = formTransferService.getAllTransfersWaitingToBeSentToPorticoOldestFirst();
         for (ApplicationFormTransfer transfer : applications) {
             ApplicationForm form = transfer.getApplicationForm();
-            if (form.getState().equals(ApplicationFormStatus.APPLICATION_APPROVED)) {
+            if (form.getState().equals(PrismState.APPLICATION_APPROVED)) {
                 sendToPortico(form);
             }
         }

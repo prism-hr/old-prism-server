@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 
 @Service("applicationsReportService")
@@ -241,7 +241,7 @@ public class ApplicationsReportService {
                     row.addCell(canSeeRating ? String.valueOf(overallPositiveEndorsements) : N_R);
 
                     row.addCell(app.getState().getId().name());
-                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPLICATION_VALIDATION)));
+                    row.addCell(new NumberValue(getTimeSpentIn(app, PrismState.APPLICATION_VALIDATION)));
                     row.addCell(validationComment != null ? validationComment.getHomeOrOverseas().getDisplayValue() : StringUtils.EMPTY);
                     row.addCell(validationComment != null ? validationComment.getQualifiedForPhd().getDisplayValue() : StringUtils.EMPTY);
                     row.addCell(validationComment != null ? validationComment.getEnglishCompetencyOk().getDisplayValue() : StringUtils.EMPTY);
@@ -255,25 +255,25 @@ public class ApplicationsReportService {
 
                     // review report
 //                    row.addCell(new NumberValue(app.getReviewRounds().size()));
-                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPLICATION_REVIEW)));
+                    row.addCell(new NumberValue(getTimeSpentIn(app, PrismState.APPLICATION_REVIEW)));
                     row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[0]) : N_R);
                     row.addCell(canSeeRating ? String.valueOf(reviewEndorsements[1]) : N_R);
                     row.addCell(canSeeRating ? printRating(getAverageRatingForAllReviewRounds(app)) : N_R);
 
                     // interview report
                     row.addCell(new NumberValue(666));
-                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPLICATION_INTERVIEW)));
+                    row.addCell(new NumberValue(getTimeSpentIn(app, PrismState.APPLICATION_INTERVIEW)));
                     row.addCell(new NumberValue(getNumberOfInterviewReports(app)));
                     row.addCell(canSeeRating ? String.valueOf(interviewEndorsements[0]) : N_R);
                     row.addCell(canSeeRating ? String.valueOf(interviewEndorsements[1]) : N_R);
                     row.addCell(canSeeRating ? printRating(getAverageRatingForAllInterviewRounds(app)) : N_R);
 
                     // approval report
-                    row.addCell(new NumberValue(getTimeSpentIn(app, ApplicationFormStatus.APPLICATION_APPROVAL)));
+                    row.addCell(new NumberValue(getTimeSpentIn(app, PrismState.APPLICATION_APPROVAL)));
 //                    row.addCell(new NumberValue(app.getApprovalRounds().size()));
                     row.addCell(getPrintablePrimarySupervisor(app));
                     row.addCell(getPrintableSecondarySupervisor(app));
-                    row.addCell(app.getState().getId() == ApplicationFormStatus.APPLICATION_APPROVED ? "Approved" : "Not approved");
+                    row.addCell(app.getState().getId() == PrismState.APPLICATION_APPROVED ? "Approved" : "Not approved");
                     row.addCell(approveDate != null ? getDateValue(approveDate) : DateValue.getNullValue());
                     row.addCell(approveDate != null ? getConditionalType(app) : StringUtils.EMPTY);
                     row.addCell(approveDate != null ? getOfferConditions(app) : StringUtils.EMPTY);
@@ -303,7 +303,7 @@ public class ApplicationsReportService {
         return applicationLink;
     }
 
-    private long getTimeSpentIn(ApplicationForm app, ApplicationFormStatus applicationStatus) {
+    private long getTimeSpentIn(ApplicationForm app, PrismState applicationStatus) {
         return 666; // FIXME
     }
 

@@ -12,7 +12,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class StateTransitionServiceTest {
@@ -66,31 +66,31 @@ public class StateTransitionServiceTest {
     
     @Test
     public void shouldReturnRedirectToReviewIfReviewNextStatus() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(ApplicationFormStatus.APPLICATION_REVIEW)).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(PrismState.APPLICATION_REVIEW)).build();
         assertEquals("redirect:/review/moveToReview?applicationId=ABC", service.resolveView(applicationForm));
     }
     
     @Test
     public void shouldReturnRedirectToInterviewIfInterviewNextStatus() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(ApplicationFormStatus.APPLICATION_INTERVIEW)).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(PrismState.APPLICATION_INTERVIEW)).build();
         assertEquals("redirect:/interview/moveToInterview?applicationId=ABC", service.resolveView(applicationForm));
     }
     
     @Test
     public void shouldReturnRedirectToApprovalIfApprovalNextStatus() {
-        ApplicationForm   applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(ApplicationFormStatus.APPLICATION_APPROVAL)).build();
+        ApplicationForm   applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
         assertEquals("redirect:/approval/moveToApproval?action=firstLoad&applicationId=ABC", service.resolveView(applicationForm));
     }
     
     @Test
     public void shouldReturnRedirectToRejectedIfRejectedNextStatus() {
-        ApplicationForm   applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(ApplicationFormStatus.APPLICATION_REJECTED)).build();
+        ApplicationForm   applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(PrismState.APPLICATION_REJECTED)).build();
         assertEquals("redirect:/rejectApplication?applicationId=ABC", service.resolveView(applicationForm));
     }
 
     @Test
     public void shouldReturnRedirectToOfferRecommendationIfApprovedNextStatus() {
-        ApplicationForm     applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(ApplicationFormStatus.APPLICATION_APPROVED)).build();
+        ApplicationForm     applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").status(new State().withId(PrismState.APPLICATION_APPROVED)).build();
         assertEquals("redirect:/offerRecommendation?applicationId=ABC", service.resolveView(applicationForm));
     }
     

@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -48,7 +48,7 @@ public class ApplicationFormDocumentValidatorTest {
 
     @Before
     public void setup() {
-        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.APPLICATION_UNSUBMITTED)).build();
+        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
         documentsSectionDTO = new ApplicationDocument();
         documentsSectionDTO.setCv(new DocumentBuilder().type(DocumentType.CV).build());
         documentsSectionDTO.setPersonalStatement(new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).build());

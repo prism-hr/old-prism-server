@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Service
 public class StateTransitionService {
@@ -39,7 +39,7 @@ public class StateTransitionService {
         } else if ("abort".equals(action)) {
             return STATE_TRANSITION_VIEW;
         } else {
-            ApplicationFormStatus status = application.getState().getId();
+            PrismState status = application.getState().getId();
             if (status != null) {
                 switch (status) {
                 case APPLICATION_REVIEW:
@@ -60,7 +60,7 @@ public class StateTransitionService {
 
     }
 
-    public List<ApplicationFormStatus> getAssignableNextStati(final ApplicationForm application, final User user) {
+    public List<PrismState> getAssignableNextStati(final ApplicationForm application, final User user) {
         // TODO write a query
         return null;
     }

@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -85,7 +85,7 @@ public class MailSendingService extends AbstractMailSendingService {
                             roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
                             admissionsOfferServiceLevel });
             Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.APPLICATION_REJECTED.equals(form.getState())) {
+            if (PrismState.APPLICATION_REJECTED.equals(form.getState())) {
                 model.put("reason", form.getRejection().getRejectionReason());
                 if (form.getRejection().isIncludeProspectusLink()) {
                     model.put("prospectusLink", uclProspectusLink);
@@ -112,7 +112,7 @@ public class MailSendingService extends AbstractMailSendingService {
                             roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
                             admissionsOfferServiceLevel });
             Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.APPLICATION_REJECTED.equals(form.getState())) {
+            if (PrismState.APPLICATION_REJECTED.equals(form.getState())) {
                 model.put("reason", form.getRejection().getRejectionReason());
                 if (form.getRejection().isIncludeProspectusLink()) {
                     model.put("prospectusLink", uclProspectusLink);
@@ -138,7 +138,7 @@ public class MailSendingService extends AbstractMailSendingService {
                             roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(),
                             admissionsOfferServiceLevel });
             Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.APPLICATION_REJECTED.equals(form.getState())) {
+            if (PrismState.APPLICATION_REJECTED.equals(form.getState())) {
                 model.put("reason", form.getRejection().getRejectionReason());
                 if (form.getRejection().isIncludeProspectusLink()) {
                     model.put("prospectusLink", uclProspectusLink);
@@ -177,7 +177,7 @@ public class MailSendingService extends AbstractMailSendingService {
                     "admissionOfferServiceLevel" }, new Object[] { getAdminsEmailsCommaSeparatedAsString(admins), application, application.getApplicant(),
                     roleService.getUsersInRole(roleService.getPrismSystem(), Authority.INSTITUTION_ADMITTER), getHostName(), admissionsOfferServiceLevel });
             Map<String, Object> model = modelBuilder.build();
-            if (ApplicationFormStatus.APPLICATION_REJECTED.equals(application.getState())) {
+            if (PrismState.APPLICATION_REJECTED.equals(application.getState())) {
                 model.put("reason", application.getRejection().getRejectionReason());
                 if (application.getRejection().isIncludeProspectusLink()) {
                     model.put("prospectusLink", uclProspectusLink);

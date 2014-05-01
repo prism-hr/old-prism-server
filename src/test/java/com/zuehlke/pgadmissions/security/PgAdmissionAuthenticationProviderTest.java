@@ -15,11 +15,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -36,8 +35,8 @@ public class PgAdmissionAuthenticationProviderTest {
 
     @Test
     public void shouldReturnPopulatedAuthenticationForValidCredentials() throws NoSuchAlgorithmException {
-        Role roleOne = new RoleBuilder().id(Authority.APPLICATION_APPLICANT).build();
-        Role roleTwo = new RoleBuilder().id(Authority.PROGRAM_ADMINISTRATOR).build();
+        Role roleOne = new Role().withId(Authority.APPLICATION_CREATOR);
+        Role roleTwo = new Role().withId(Authority.PROGRAM_ADMINISTRATOR);
         User user = new UserBuilder().id(1).build();
         EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");

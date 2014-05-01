@@ -22,7 +22,7 @@ public class RoleDAOTest extends AutomaticRollbackTestCase {
 	public void shoudlGetRoleByApplicantAuthority() {
 		flushAndClearSession();
 		RoleDAO roleDAO = new RoleDAO(sessionFactory);
-		Role relaodedRole = roleDAO.getById(Authority.APPLICATION_APPLICANT);
+		Role relaodedRole = roleDAO.getById(Authority.APPLICATION_CREATOR);
 		assertNotNull(relaodedRole);
 
 	}
@@ -76,8 +76,8 @@ public class RoleDAOTest extends AutomaticRollbackTestCase {
 	public void shoudlGetRoleBySupervisorAuthority() {
 		flushAndClearSession();
 		RoleDAO roleDAO = new RoleDAO(sessionFactory);
-		Role relaodedRole = roleDAO.getById(Authority.SUPERVISOR);
-		assertEquals(Authority.SUPERVISOR, relaodedRole.getId());
+		Role relaodedRole = roleDAO.getById(Authority.APPLICATION_PRIMARY_SUPERVISOR);
+		assertEquals(Authority.APPLICATION_PRIMARY_SUPERVISOR, relaodedRole.getId());
 		assertNotNull(relaodedRole);
 		
 	}

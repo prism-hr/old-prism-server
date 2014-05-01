@@ -219,11 +219,11 @@ public class ApplicationFormService {
     public void applicationCreated(ApplicationForm application) {
         User applicant = application.getApplicant();
         Action action = actionService.getById(ApplicationFormAction.APPLICATION_COMPLETE_APPLICATION);
-        Role role = roleService.getById(Authority.APPLICATION_APPLICANT);
+        Role role = roleService.getById(Authority.APPLICATION_CREATOR);
         ActionRequired completeApplicationAction = new ActionRequired().withApplication(application).withRole(role).withAction(action).withDeadlineDate(application.getDueDate())
                 .withBindDeadlineToDueDate(false).withRaisesUrgentFlag(true);
         // TODO save action
-        roleService.createUserRole(application, applicant, Authority.APPLICATION_APPLICANT);
+        roleService.createUserRole(application, applicant, Authority.APPLICATION_CREATOR);
     }
 
     public ApplicationDescriptor getApplicationDescriptorForUser(final ApplicationForm application, final User user) {

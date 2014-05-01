@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
@@ -30,9 +30,9 @@ public class ApplicationsFilteringService {
     public ApplicationsFiltering getActiveApplicationFiltering() {
         ApplicationsFiltering filtering = new ApplicationsFiltering();
         List<ApplicationsFilter> filters = filtering.getFilters();
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.APPLICATION_APPROVED));
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.APPLICATION_REJECTED));
-        filters.add(getFilterForNonStatus(ApplicationFormStatus.APPLICATION_WITHDRAWN));
+        filters.add(getFilterForNonStatus(PrismState.APPLICATION_APPROVED));
+        filters.add(getFilterForNonStatus(PrismState.APPLICATION_REJECTED));
+        filters.add(getFilterForNonStatus(PrismState.APPLICATION_WITHDRAWN));
         return filtering;
     }
     
@@ -42,7 +42,7 @@ public class ApplicationsFilteringService {
         return filtering;
     }
 
-    private ApplicationsFilter getFilterForNonStatus(ApplicationFormStatus status) {
+    private ApplicationsFilter getFilterForNonStatus(PrismState status) {
         ApplicationsFilter filter = new ApplicationsFilter();
         filter.setSearchCategory(SearchCategory.APPLICATION_STATUS);
         filter.setSearchPredicate(SearchPredicate.NOT_CONTAINING);

@@ -18,11 +18,11 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
+import com.zuehlke.pgadmissions.domain.builders.TestData;
 
 public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
 
@@ -49,7 +49,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
         User currentUser = (User) sessionFactory.getCurrentSession().get(User.class, 28);
         User otherUser = (User) sessionFactory.getCurrentSession().get(User.class, 15);
         Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
-        Institution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
+        Institution institution = TestData.aQualificationInstitution();
         Program program = testObjectProvider.getEnabledProgram();
 
         DateTime date = new DateTime(1410, 7, 14, 12, 0);
@@ -64,19 +64,17 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
         OpportunityRequestDAO opportunityRequestDAO = new OpportunityRequestDAO(sessionFactory);
         List<OpportunityRequest> returned = opportunityRequestDAO.listOpportunityRequests(currentUser);
 
-        assertThat(returned, (Matcher)hasItem(hasProperty("id", equalTo(request1.getId()))));
-        assertThat(returned, (Matcher)hasItem(hasProperty("id", equalTo(request3.getId()))));
-        assertThat(returned, (Matcher)not(hasItem(hasProperty("id", equalTo(request2.getId())))));
-        assertThat(returned, (Matcher)not(hasItem(hasProperty("id", equalTo(request4.getId())))));
+        assertThat(returned, (Matcher) hasItem(hasProperty("id", equalTo(request1.getId()))));
+        assertThat(returned, (Matcher) hasItem(hasProperty("id", equalTo(request3.getId()))));
+        assertThat(returned, (Matcher) not(hasItem(hasProperty("id", equalTo(request2.getId())))));
+        assertThat(returned, (Matcher) not(hasItem(hasProperty("id", equalTo(request4.getId())))));
     }
-    
-    
 
     @Test
     public void shouldGetOpportunityRequestsForProgram() {
         User user = (User) sessionFactory.getCurrentSession().get(User.class, 15);
         Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
-        Institution institution = QualificationInstitutionBuilder.aQualificationInstitution().build();
+        Institution institution = TestData.aQualificationInstitution();
         Program program = testObjectProvider.getEnabledProgram();
 
         DateTime date = new DateTime(1410, 7, 14, 12, 0);

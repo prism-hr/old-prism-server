@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_INTERVIEW;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_REJECTED;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_REVIEW;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_VALIDATION;
-import static com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus.APPLICATION_WITHDRAWN;
+import static com.zuehlke.pgadmissions.domain.enums.PrismState.APPLICATION_APPROVAL;
+import static com.zuehlke.pgadmissions.domain.enums.PrismState.APPLICATION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.enums.PrismState.APPLICATION_INTERVIEW;
+import static com.zuehlke.pgadmissions.domain.enums.PrismState.APPLICATION_REJECTED;
+import static com.zuehlke.pgadmissions.domain.enums.PrismState.APPLICATION_REVIEW;
+import static com.zuehlke.pgadmissions.domain.enums.PrismState.APPLICATION_VALIDATION;
+import static com.zuehlke.pgadmissions.domain.enums.PrismState.APPLICATION_WITHDRAWN;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -44,7 +44,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
@@ -274,7 +274,7 @@ public class ApplicationListControllerTest {
 
     @Test
     public void shouldReturnRelevantApplicationStatusValues() {
-        List<ApplicationFormStatus> values = controller.getApplicationStatusValues();
+        List<PrismState> values = controller.getApplicationStatusValues();
         assertEquals(values, Lists.newArrayList(APPLICATION_VALIDATION, APPLICATION_REVIEW, APPLICATION_INTERVIEW, APPLICATION_APPROVAL, APPLICATION_APPROVED, APPLICATION_WITHDRAWN, APPLICATION_REJECTED));
     }
 

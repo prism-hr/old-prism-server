@@ -5,7 +5,7 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CompleteReviewComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class ReviewEvaluationCommentBuilder {
 
@@ -14,10 +14,10 @@ public class ReviewEvaluationCommentBuilder {
 	private Date date;	
 	private String comment;	
 	private Integer id;
-	private ApplicationFormStatus nextStatus;
+	private PrismState nextStatus;
 	private User delegateAdministrator;
 
-	public ReviewEvaluationCommentBuilder nextStatus(ApplicationFormStatus nextStatus){
+	public ReviewEvaluationCommentBuilder nextStatus(PrismState nextStatus){
 		this.nextStatus = nextStatus;
 		return this;
 	}

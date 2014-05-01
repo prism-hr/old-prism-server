@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.NotificationsDurationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReminderIntervalBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
@@ -83,7 +83,7 @@ public class ConfigurationServiceTest {
         serviceLevelsDTO.setReminderIntervals(Lists.newArrayList(reminderInterval));
         serviceLevelsDTO.setNotificationsDuration(notificationsDuration);
 
-        EasyMock.expect(stateDAOMock.getById(ApplicationFormStatus.APPLICATION_VALIDATION)).andReturn(oldValidationDuration);
+        EasyMock.expect(stateDAOMock.getById(PrismState.APPLICATION_VALIDATION)).andReturn(oldValidationDuration);
         EasyMock.expect(reminderIntervalDAOMock.getReminderInterval(ReminderType.INTERVIEW_SCHEDULE)).andReturn(oldReminderInterval);
         EasyMock.expect(notificationsDurationDAOMock.getNotificationsDuration()).andReturn(oldNotificationsDuration);
 

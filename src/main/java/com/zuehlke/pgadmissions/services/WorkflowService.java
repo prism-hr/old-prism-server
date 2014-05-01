@@ -32,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -40,13 +40,13 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 @Transactional
 public class WorkflowService {
 
-    private static final HashMap<ApplicationFormStatus, ApplicationFormAction> INITIATE_STAGE_MAP;
+    private static final HashMap<PrismState, ApplicationFormAction> INITIATE_STAGE_MAP;
     static {
-        INITIATE_STAGE_MAP = new HashMap<ApplicationFormStatus, ApplicationFormAction>(4);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.APPLICATION_REVIEW, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.APPLICATION_INTERVIEW, ApplicationFormAction.APPLICATION_ASSIGN_INTERVIEWERS);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.APPLICATION_APPROVAL, ApplicationFormAction.APPLICATION_ASSIGN_SUPERVISORS);
-        INITIATE_STAGE_MAP.put(ApplicationFormStatus.APPLICATION_REJECTED, ApplicationFormAction.APPLICATION_CONFIRM_REJECTION);
+        INITIATE_STAGE_MAP = new HashMap<PrismState, ApplicationFormAction>(4);
+        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_REVIEW, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS);
+        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_INTERVIEW, ApplicationFormAction.APPLICATION_ASSIGN_INTERVIEWERS);
+        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_APPROVAL, ApplicationFormAction.APPLICATION_ASSIGN_SUPERVISORS);
+        INITIATE_STAGE_MAP.put(PrismState.APPLICATION_REJECTED, ApplicationFormAction.APPLICATION_CONFIRM_REJECTION);
     };
 
     @Autowired

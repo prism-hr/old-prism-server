@@ -39,7 +39,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     public void setup() {
         super.setup();
         programDAO = new ProgramDAO(sessionFactory);
-        institution = testObjectProvider.getEnabledInstitution();
+        institution = testObjectProvider.getInstitution();
         flushAndClearSession();
         project = testObjectProvider.getEnabledProject();
     }

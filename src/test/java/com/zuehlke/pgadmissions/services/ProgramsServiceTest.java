@@ -4,7 +4,6 @@ import static junit.framework.Assert.assertSame;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.unitils.easymock.EasyMockUnitils.replay;
@@ -28,22 +27,20 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
+import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AdvertState;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 
@@ -184,7 +181,7 @@ public class ProgramsServiceTest {
 
         User requestAuthor = new User();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, domicile).otherInstitution("other_name").build();
-        Institution institution = new QualificationInstitutionBuilder().build();
+        Institution institution = new Institution();
 
         expect(applicationContext.getBean(ProgramService.class)).andReturn(thisBean);
         expect(qualificationInstitutionService.getOrCreate("AGH", domicile, "other_name")).andReturn(institution);
@@ -207,7 +204,7 @@ public class ProgramsServiceTest {
     @Test
     public void shouldGetCustomProgram() {
         ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
-        Program program = new ProgramBuilder().institution(new QualificationInstitutionBuilder().code("any_inst").build()).build();
+        Program program = new ProgramBuilder().institution(new Institution().withCode("any_inst")).build();
         User requestAuthor = new User();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, null).institutionCode("any_inst")
                 .atasRequired(true).sourceProgram(program).acceptingApplications(true).build();
@@ -234,7 +231,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldGenerateNextProgramCode() {
-        Institution institution = new QualificationInstitutionBuilder().code("AAA").build();
+        Institution institution = new Institution().withCode("AAA");
         Program lastCustomProgram = new ProgramBuilder().code("AAA_00018").build();
 
         expect(programDAOMock.getLastCustomProgram(institution)).andReturn(lastCustomProgram);
@@ -280,7 +277,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldInitialProgramCode() {
-        Institution institution = new QualificationInstitutionBuilder().code("AAA").build();
+        Institution institution = new Institution().withCode("AAA");
 
         expect(programDAOMock.getLastCustomProgram(institution)).andReturn(null);
 
@@ -310,12 +307,11 @@ public class ProgramsServiceTest {
     public void shouldReturnAdvertByProjectIdIfProjectIsActive() {
         Project project = new ProjectBuilder().build();
         EasyMock.expect(programDAOMock.getAcceptingApplicationsById(8)).andReturn(project);
-        
+
         replay();
         Advert advert = programsService.getValidProgramProjectAdvert(8);
-        
+
         assertEquals(advert.getProject(), project);
     }
-
 
 }

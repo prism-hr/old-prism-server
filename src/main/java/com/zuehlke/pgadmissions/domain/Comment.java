@@ -36,7 +36,7 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.IndexColumn;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.validators.ATASConstraint;
@@ -155,7 +155,7 @@ public class Comment implements Serializable {
     private Boolean recommendAlternativeOpportunity;
 
     @Column(name = "next_status")
-    private ApplicationFormStatus nextStatus = null;
+    private PrismState nextStatus = null;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delegate_provider_id")
@@ -386,11 +386,11 @@ public class Comment implements Serializable {
         this.recommendAlternativeOpportunity = recommendAlternativeOpportunity;
     }
 
-    public ApplicationFormStatus getNextStatus() {
+    public PrismState getNextStatus() {
         return nextStatus;
     }
 
-    public void setNextStatus(ApplicationFormStatus nextStatus) {
+    public void setNextStatus(PrismState nextStatus) {
         this.nextStatus = nextStatus;
     }
 

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -22,7 +22,7 @@ public class StateDAO {
         sessionFactory.getCurrentSession().saveOrUpdate(state);
 	}
 	
-	public State getById(ApplicationFormStatus id) {
+	public State getById(PrismState id) {
 		return (State)sessionFactory.getCurrentSession().createCriteria(State.class)
 				.add(Restrictions.eq("id", id)).uniqueResult();
 	}
@@ -32,14 +32,14 @@ public class StateDAO {
                 .add(Restrictions.isNotNull("duration")).list();
 	}
 	
-	public List<ApplicationFormStatus> getAllStatesThatApplicationsCanBeAssignedTo() {
-        return (List<ApplicationFormStatus>) sessionFactory.getCurrentSession().createCriteria(State.class)
+	public List<PrismState> getAllStatesThatApplicationsCanBeAssignedTo() {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class)
                 .setProjection(Projections.property("id"))
                 .add(Restrictions.eq("canBeAssignedTo", true)).list();
     }
 	
-	public List<ApplicationFormStatus> getAllStatesThatApplicationsCanBeAssignedFrom() {
-        return (List<ApplicationFormStatus>) sessionFactory.getCurrentSession().createCriteria(State.class)
+	public List<PrismState> getAllStatesThatApplicationsCanBeAssignedFrom() {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class)
                 .setProjection(Projections.property("id"))
                 .add(Restrictions.eq("canBeAssignedFrom", true)).list();
 	}

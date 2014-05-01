@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramFeedBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class WithdrawServiceTest {
@@ -43,7 +43,7 @@ public class WithdrawServiceTest {
 
     @Test
     public void shouldWithdrawApplication() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.APPLICATION_REVIEW)).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_REVIEW)).build();
 
         applicationServiceMock.save(applicationForm);
         actionService.deleteApplicationActions(applicationForm);
@@ -52,12 +52,12 @@ public class WithdrawServiceTest {
         service.withdrawApplication(applicationForm);
         verify();
 
-        assertEquals(ApplicationFormStatus.APPLICATION_WITHDRAWN, applicationForm.getState());
+        assertEquals(PrismState.APPLICATION_WITHDRAWN, applicationForm.getState());
     }
 
     @Test
     public void shouldWithdrawUnsubmittedApplication() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.APPLICATION_UNSUBMITTED)).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
 
         applicationServiceMock.save(applicationForm);
         actionService.deleteApplicationActions(applicationForm);
@@ -66,13 +66,13 @@ public class WithdrawServiceTest {
         service.withdrawApplication(applicationForm);
         verify();
 
-        assertEquals(ApplicationFormStatus.APPLICATION_WITHDRAWN, applicationForm.getState());
+        assertEquals(PrismState.APPLICATION_WITHDRAWN, applicationForm.getState());
     }
 
     @Test
     public void shouldSendFormToPortico() {
         Program program = new ProgramBuilder().programFeed(new ProgramFeedBuilder().feedUrl("test").build()).build();
-        ApplicationForm form = new ApplicationFormBuilder().id(1).advert(program).submittedDate(new Date()).status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).build();
+        ApplicationForm form = new ApplicationFormBuilder().id(1).advert(program).submittedDate(new Date()).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         expect(porticoQueueServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationFormTransfer());
         replay();
         service.sendToPortico(form);

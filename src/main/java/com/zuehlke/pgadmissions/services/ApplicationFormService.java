@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -107,7 +107,7 @@ public class ApplicationFormService {
         return applicationFormListDAO.getVisibleApplicationsForReport(user, filtering);
     }
 
-    public List<ApplicationForm> getApplicationsByStatus(final ApplicationFormStatus status) {
+    public List<ApplicationForm> getApplicationsByStatus(final PrismState status) {
         return applicationFormDAO.getAllApplicationsByStatus(status);
     }
 
@@ -118,13 +118,13 @@ public class ApplicationFormService {
     public void submitApplication(ApplicationForm application) {
         // TODO set IP
         
-        setApplicationStatus(application, ApplicationFormStatus.APPLICATION_VALIDATION);
+        setApplicationStatus(application, PrismState.APPLICATION_VALIDATION);
         workflowService.applicationSubmitted(application);
         workflowService.applicationUpdated(application, userService.getCurrentUser());
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void setApplicationStatus(ApplicationForm application, ApplicationFormStatus newStatus) {
+    public void setApplicationStatus(ApplicationForm application, PrismState newStatus) {
         application.setState(stateService.getById(newStatus));
 
         // TODO add referee roles and send referee notifications
@@ -202,7 +202,7 @@ public class ApplicationFormService {
     }
 
     public void queueApplicationForExport(ApplicationForm application) {
-        if (application.getState().getId() == ApplicationFormStatus.APPLICATION_WITHDRAWN_PENDING_EXPORT) {
+        if (application.getState().getId() == PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) {
             exportQueueService.createOrReturnExistingApplicationFormTransfer(application);
         }
     }
@@ -219,11 +219,11 @@ public class ApplicationFormService {
     public void applicationCreated(ApplicationForm application) {
         User applicant = application.getApplicant();
         Action action = actionService.getById(ApplicationFormAction.APPLICATION_COMPLETE_APPLICATION);
-        Role role = roleService.getById(Authority.APPLICATION_APPLICANT);
+        Role role = roleService.getById(Authority.APPLICATION_CREATOR);
         ActionRequired completeApplicationAction = new ActionRequired().withApplication(application).withRole(role).withAction(action).withDeadlineDate(application.getDueDate())
                 .withBindDeadlineToDueDate(false).withRaisesUrgentFlag(true);
         // TODO save action
-        roleService.createUserRole(application, applicant, Authority.APPLICATION_APPLICANT);
+        roleService.createUserRole(application, applicant, Authority.APPLICATION_CREATOR);
     }
 
     public ApplicationDescriptor getApplicationDescriptorForUser(final ApplicationForm application, final User user) {
@@ -296,7 +296,7 @@ public class ApplicationFormService {
         LocalDate baselineDate = new LocalDate();
         Date closingDate = application.getClosingDate();
         State status = application.getState();
-        if (status.getId() == ApplicationFormStatus.APPLICATION_REVIEW && closingDate != null) {
+        if (status.getId() == PrismState.APPLICATION_REVIEW && closingDate != null) {
             if (closingDate.after(baselineDate.toDate())) {
                 baselineDate = new LocalDate(closingDate);
             }

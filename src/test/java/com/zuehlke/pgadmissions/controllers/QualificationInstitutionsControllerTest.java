@@ -19,11 +19,10 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.QualificationInstitutionService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -58,10 +57,10 @@ public class QualificationInstitutionsControllerTest {
     @Test
     public void shouldGetInstitutions() {
         Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").build();
-        Institution institution1 = new QualificationInstitutionBuilder().id(2).state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK")
-                .code("ABC").build();
-        Institution institution2 = new QualificationInstitutionBuilder().id(3).state(InstitutionState.INSTITUTION_APPROVED).name("University of Cambridge").domicileCode("UK")
-                .code("ABCD").build();
+        Institution institution1 = new Institution().withId(2).withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of London")
+                .withDomicileCode("UK").withCode("ABC");
+        Institution institution2 = new Institution().withId(3).withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Cambridge")
+                .withDomicileCode("UK").withCode("ABCD");
 
         expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
         expect(domicileDAO.getDomicileById(0)).andReturn(domicile);
@@ -77,10 +76,10 @@ public class QualificationInstitutionsControllerTest {
     @Test
     public void shouldGetUserCategorizedInstitutions() {
         Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").build();
-        Institution institution1 = new QualificationInstitutionBuilder().id(2).state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK")
-                .code("ABC").build();
-        Institution institution2 = new QualificationInstitutionBuilder().id(3).state(InstitutionState.INSTITUTION_APPROVED).name("University of Cambridge").domicileCode("UK")
-                .code("ABCD").build();
+        Institution institution1 = new Institution().withId(2).withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of London")
+                .withDomicileCode("UK").withCode("ABC");
+        Institution institution2 = new Institution().withId(3).withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Cambridge")
+                .withDomicileCode("UK").withCode("ABCD");
         User user = new User();
 
         expect(encryptionHelper.decryptToInteger("0")).andReturn(0);

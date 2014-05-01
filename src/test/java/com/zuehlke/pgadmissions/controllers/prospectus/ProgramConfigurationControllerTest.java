@@ -27,10 +27,10 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
@@ -39,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramTypeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AdvertState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -122,7 +121,7 @@ public class ProgramConfigurationControllerTest {
     @SuppressWarnings("unchecked")
     public void shouldGetOpportunityData() {
         Domicile domicile = new DomicileBuilder().id(88).build();
-        Program program = new ProgramBuilder().code("07").institution(new QualificationInstitutionBuilder().domicileCode("PL").code("inst").build())
+        Program program = new ProgramBuilder().code("07").institution(new Institution().withDomicileCode("PL").withCode("inst"))
                 .advert(new AdvertBuilder().id(999).build()).title("Dlaczego w pizdzie nie ma krzesel?").description("Zeby chuj stal").studyDuration(8)
                 .funding("Ni ma kasy").state(AdvertState.PROGRAM_APPROVED).atasRequired(false)
                 .programType(new ProgramTypeBuilder().id(ProgramTypeId.INTERNSHIP).build()).build();

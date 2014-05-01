@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.SwitchUserService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.UserValidator;
+import com.zuehlke.pgadmissions.validators.UserAccountValidator;
 import com.zuehlke.pgadmissions.validators.SwitchAndLinkUserAccountDTOValidator;
 
 @RunWith(PowerMockRunner.class)
@@ -36,7 +36,7 @@ public class AccountControllerTest {
     private SwitchUserService switchUserService;
     private SwitchAndLinkUserAccountDTOValidator switchAndLinkAccountDTOValidatorMock;
 
-    private UserValidator accountValidatorMock;
+    private UserAccountValidator accountValidatorMock;
     private BindingResult bindingResultMock;
 
     @Test

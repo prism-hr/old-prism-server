@@ -15,27 +15,26 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ResearchOpportunitiesFeedBuilder;
-import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
+import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
+import com.zuehlke.pgadmissions.services.ProgramExportService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.ResearchOpportunitiesFeedService;
 import com.zuehlke.pgadmissions.services.UserService;
 
-public class ResearchOpportunitiesFeedControllerTest {
+public class ProgramExportControllerTest {
 
     private ProgramService programsServiceMock;
     
-    private ResearchOpportunitiesFeedService feedServiceMock;
+    private ProgramExportService feedServiceMock;
     
     private MessageSource messageSourceMock;
     
     private UserService userServiceMock;
     
-    private ResearchOpportunitiesFeedController controller;
+    private ProgramExportController controller;
     
     private User currentUser;
     
@@ -43,10 +42,10 @@ public class ResearchOpportunitiesFeedControllerTest {
     public void prepare() {
         currentUser = new UserBuilder().build();
         programsServiceMock = EasyMock.createMock(ProgramService.class);
-        feedServiceMock = EasyMock.createMock(ResearchOpportunitiesFeedService.class);
+        feedServiceMock = EasyMock.createMock(ProgramExportService.class);
         messageSourceMock = EasyMock.createNiceMock(MessageSource.class);
         userServiceMock = EasyMock.createMock(UserService.class);
-        controller = new ResearchOpportunitiesFeedController(userServiceMock, programsServiceMock, feedServiceMock, messageSourceMock) {
+        controller = new ProgramExportController(userServiceMock, programsServiceMock, feedServiceMock, messageSourceMock) {
             @Override
             protected User getCurrentUser() {
                 return currentUser;
@@ -73,7 +72,7 @@ public class ResearchOpportunitiesFeedControllerTest {
     @Test
     public void shouldReturnAllResearchOpportunitiesFeedForCurrentUser() {
         Program program = new ProgramBuilder().id(1).title("foo").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).title("foobar").feedFormat(FeedFormat.LARGE).programs(program).build();
+        ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         EasyMock.expect(feedServiceMock.getAllFeedsForUser(currentUser)).andReturn(Arrays.asList(feed));
         EasyMock.expect(feedServiceMock.getIframeHtmlCode(feed)).andReturn(StringUtils.EMPTY);
         EasyMock.replay(feedServiceMock);
@@ -87,7 +86,7 @@ public class ResearchOpportunitiesFeedControllerTest {
         Assert.assertEquals(5, map.size());
         Assert.assertEquals(feed.getId(), map.get("id"));
         Assert.assertEquals(feed.getTitle(), map.get("title"));
-        Assert.assertEquals(FeedFormat.LARGE, map.get("feedSize"));
+        Assert.assertEquals(ProgramExportFormat.LARGE, map.get("feedSize"));
         Assert.assertEquals(Arrays.asList(1), map.get("selectedPrograms"));
         Assert.assertEquals(StringUtils.EMPTY, map.get("iframeCode"));
     }
@@ -107,13 +106,12 @@ public class ResearchOpportunitiesFeedControllerTest {
     @Test
     public void shouldUpdateFeedById() {
         Program program = new ProgramBuilder().id(1).title("foo").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).title("foobar").feedFormat(FeedFormat.LARGE).programs(program).build();
+        ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         HashMap<String, Object> json = new HashMap<String, Object>();
         json.put("selectedPrograms", Arrays.asList(1));
         json.put("feedSize", "SMALL");
         json.put("feedTitle", "foobar2");
      
-        EasyMock.expect(feedServiceMock.updateFeed(feed.getId(), Arrays.asList(1), currentUser, FeedFormat.SMALL, "foobar2")).andReturn(feed);
         EasyMock.expect(feedServiceMock.getIframeHtmlCode(feed)).andReturn(StringUtils.EMPTY);
         EasyMock.replay(feedServiceMock);
         
@@ -128,7 +126,7 @@ public class ResearchOpportunitiesFeedControllerTest {
     @Test
     public void shouldNotValidateIfTitleIsEmpty() {
         Program program = new ProgramBuilder().id(1).title("foo").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).title("foobar").feedFormat(FeedFormat.LARGE).programs(program).build();
+        ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         HashMap<String, Object> json = new HashMap<String, Object>();
         json.put("selectedPrograms", Arrays.asList(1));
         json.put("feedSize", "SMALL");
@@ -144,7 +142,7 @@ public class ResearchOpportunitiesFeedControllerTest {
     @Test
     public void shouldNotValidateIfFeedFormatIsEmpty() {
         Program program = new ProgramBuilder().id(1).title("foo").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).title("foobar").feedFormat(FeedFormat.LARGE).programs(program).build();
+        ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         HashMap<String, Object> json = new HashMap<String, Object>();
         json.put("selectedPrograms", Arrays.asList(1));
         json.put("feedSize", StringUtils.EMPTY);
@@ -160,7 +158,7 @@ public class ResearchOpportunitiesFeedControllerTest {
     @Test
     public void shouldNotValidateIfProgramsIsEmpty() {
         Program program = new ProgramBuilder().id(1).title("foo").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).title("foobar").feedFormat(FeedFormat.LARGE).programs(program).build();
+        ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         HashMap<String, Object> json = new HashMap<String, Object>();
         json.put("feedSize", "LARGE");
         json.put("feedTitle", "foobar2");
@@ -179,7 +177,7 @@ public class ResearchOpportunitiesFeedControllerTest {
     @Test
     public void shouldReturnFeedById() {
         Program program = new ProgramBuilder().id(1).title("foo").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).title("foobar").feedFormat(FeedFormat.LARGE).programs(program).build();
+        ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         EasyMock.expect(feedServiceMock.getById(feed.getId())).andReturn(feed);
         EasyMock.expect(feedServiceMock.getIframeHtmlCode(feed)).andReturn(StringUtils.EMPTY);
         EasyMock.replay(feedServiceMock);
@@ -194,7 +192,7 @@ public class ResearchOpportunitiesFeedControllerTest {
         Assert.assertEquals(5, map.size());
         Assert.assertEquals(feed.getId(), map.get("id"));
         Assert.assertEquals(feed.getTitle(), map.get("title"));
-        Assert.assertEquals(FeedFormat.LARGE, map.get("feedSize"));
+        Assert.assertEquals(ProgramExportFormat.LARGE, map.get("feedSize"));
         Assert.assertEquals(Arrays.asList(1), map.get("selectedPrograms"));
         Assert.assertEquals(StringUtils.EMPTY, map.get("iframeCode"));
     }
@@ -202,13 +200,13 @@ public class ResearchOpportunitiesFeedControllerTest {
     @Test
     public void shouldSaveFeed() {
         Program program = new ProgramBuilder().id(1).title("foo").build();
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().id(1).title("foobar").feedFormat(FeedFormat.LARGE).programs(program).build();
+        ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         HashMap<String, Object> json = new HashMap<String, Object>();
         json.put("selectedPrograms", Arrays.asList(1));
         json.put("feedSize", "LARGE");
         json.put("feedTitle", "foobar2");
      
-        EasyMock.expect(feedServiceMock.saveNewFeed(Arrays.asList(1), currentUser, FeedFormat.LARGE, "foobar2")).andReturn(feed);
+        EasyMock.expect(feedServiceMock.saveNewFeed(Arrays.asList(1), currentUser, ProgramExportFormat.LARGE, "foobar2")).andReturn(feed);
         EasyMock.expect(feedServiceMock.isUniqueFeedTitleForUser("foobar2", currentUser)).andReturn(true);
         EasyMock.expect(feedServiceMock.getIframeHtmlCode(feed)).andReturn(StringUtils.EMPTY);
         EasyMock.replay(feedServiceMock);

@@ -10,31 +10,26 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.domain.QualificationInstitutionReference;
+import com.zuehlke.pgadmissions.domain.PrismSystem;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationInstitutionBuilder;
-import com.zuehlke.pgadmissions.domain.enums.InstitutionState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnInstitutionForDomicileCode() {
-        Institution institution1 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK").code("ABC")
-                .build();
-        Institution institution2 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_DISABLED).name("University of Cambridge").domicileCode("UK")
-                .code("ABCD").build();
-        Institution institution3 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of Zurich").domicileCode("CH")
-                .code("ABCDE").build();
-
-        QualificationInstitutionReference institution4 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_DISABLED).name("University of   Cambridge .")
-                .domicileCode("UK").code("ABCD").buildAsReference();
-        QualificationInstitutionReference institution5 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of Zurich").domicileCode("CH")
-                .code("ABCDE").buildAsReference();
+        Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of London")
+                .withDomicileCode("UK").withCode("ABC");
+        Institution institution2 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Cambridge")
+                .withDomicileCode("UK").withCode("ABCD");
+        Institution institution3 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Zurich")
+                .withDomicileCode("CH").withCode("ABCDE");
 
         Country country1 = new CountryBuilder().enabled(true).name("United Kingdom").code("XK").build();
         Country country2 = new CountryBuilder().enabled(true).name("Switzerland").code("CH").build();
 
-        save(institution1, country1, institution2, country2, institution3, institution4, institution5);
+        save(institution1, country1, institution2, country2, institution3);
 
         flushAndClearSession();
 
@@ -50,12 +45,14 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetInstitutionByCode() {
-        Institution institution1 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK").code("ABC")
-                .build();
-        Institution institution2 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_DISABLED).name("University of Cambridge").domicileCode("UK")
-                .code("ABCD").build();
-        Institution institution3 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of Zurich").domicileCode("CH")
-                .code("ABCDE").build();
+        PrismSystem system = (PrismSystem) sessionFactory.getCurrentSession().createCriteria(PrismSystem.class).uniqueResult();
+
+        Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of London")
+                .withDomicileCode("UK").withCode("ABC").withSystem(system);
+        Institution institution2 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Cambridge")
+                .withDomicileCode("UK").withCode("ABCD").withSystem(system);
+        Institution institution3 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Zurich")
+                .withDomicileCode("CH").withCode("ABCDE").withSystem(system);
 
         save(institution1, institution2, institution3);
 
@@ -71,12 +68,12 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetLastCustomInstitution() {
-        Institution institution1 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK")
-                .code("CUST00005").build();
-        Institution institution2 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_DISABLED).name("University of Cambridge").domicileCode("UK")
-                .code("CUST00006").build();
-        Institution institution3 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of Zurich").domicileCode("CH")
-                .code("CUST00004").build();
+        Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of London")
+                .withDomicileCode("UK").withCode("ABC");
+        Institution institution2 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Cambridge")
+                .withDomicileCode("UK").withCode("ABCD");
+        Institution institution3 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Zurich")
+                .withDomicileCode("CH").withCode("ABCDE");
 
         save(institution1, institution2, institution3);
 
@@ -89,15 +86,15 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
         assertEquals(institution2.getCode(), returned.getCode());
         assertEquals(institution2.getName(), returned.getName());
     }
-    
+
     @Test
     public void shouldGetInstitutionByDomicileAndName() {
-        Institution institution1 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("UK").code("ABC")
-                .build();
-        Institution institution2 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("University of London").domicileCode("PL")
-                .code("ABCD").build();
-        Institution institution3 = new QualificationInstitutionBuilder().state(InstitutionState.INSTITUTION_APPROVED).name("Akademia Gorniczo-Hutnicza").domicileCode("PL")
-                .code("ABCDE").build();
+        Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of London")
+                .withDomicileCode("UK").withCode("ABC");
+        Institution institution2 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Cambridge")
+                .withDomicileCode("UK").withCode("ABCD");
+        Institution institution3 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Zurich")
+                .withDomicileCode("CH").withCode("ABCDE");
 
         save(institution1, institution2, institution3);
 

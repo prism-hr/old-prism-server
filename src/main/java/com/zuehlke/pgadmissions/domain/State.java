@@ -9,7 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Entity
 @Table(name = "STATE")
@@ -18,17 +18,17 @@ public class State {
     @Id
     @Column(name = "id")
     @Enumerated(EnumType.STRING)
-    private ApplicationFormStatus id;
+    private PrismState id;
 
     @ManyToOne
     @JoinColumn(name = "parent_state_id")
     private State parentState;
 
-    public ApplicationFormStatus getId() {
+    public PrismState getId() {
         return id;
     }
 
-    public void setId(ApplicationFormStatus id) {
+    public void setId(PrismState id) {
         this.id = id;
     }
 
@@ -40,7 +40,7 @@ public class State {
         this.parentState = parentState;
     }
 
-    public State withId(ApplicationFormStatus id) {
+    public State withId(PrismState id) {
         this.id = id;
         return this;
     }

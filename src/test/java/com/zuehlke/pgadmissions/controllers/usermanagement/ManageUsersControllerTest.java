@@ -22,8 +22,6 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Person;
-import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
@@ -33,8 +31,8 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UserDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.ManageUsersService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -72,7 +70,7 @@ public class ManageUsersControllerTest {
 
     @Mock
     @InjectIntoByType
-    private PersonPropertyEditor registryPropertyEditor;
+    private UserPropertyEditor registryPropertyEditor;
 
     @Mock
     @InjectIntoByType
@@ -258,15 +256,6 @@ public class ManageUsersControllerTest {
 
         replay();
         controller.registerPropertyEditors(binderMock);
-
-    }
-
-    @Test
-    public void shouldRegistorPropertyEditorForRegistryUsers() {
-        WebDataBinder dataBinderMock = EasyMock.createMock(WebDataBinder.class);
-        dataBinderMock.registerCustomEditor(Person.class, registryPropertyEditor);
-        replay();
-        controller.registerValidatorsAndPropertyEditorsForRegistryUsers(dataBinderMock);
 
     }
 

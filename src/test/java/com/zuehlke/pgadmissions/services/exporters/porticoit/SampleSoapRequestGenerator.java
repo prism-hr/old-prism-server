@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.services.exporters.SubmitAdmissionsApplicationRequestBuilderV2;
 import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
@@ -63,17 +63,17 @@ public class SampleSoapRequestGenerator extends AutomaticRollbackTestCase {
         Marshaller marshaller = webServiceTemplate.getMarshaller();
 
         List<ApplicationForm> applications = new LinkedList<ApplicationForm>();
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_APPROVED));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_APPROVAL));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_INTERVIEW));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_REJECTED));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_REVIEW));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_VALIDATION));
-        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(ApplicationFormStatus.APPLICATION_WITHDRAWN));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_APPROVED));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_APPROVAL));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_INTERVIEW));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_REJECTED));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_REVIEW));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_VALIDATION));
+        applications.addAll(applicationFormDAO.getAllApplicationsByStatus(PrismState.APPLICATION_WITHDRAWN));
 
-        State approvedState = stateService.getById(ApplicationFormStatus.APPLICATION_APPROVED);
-        State rejectedState = stateService.getById(ApplicationFormStatus.APPLICATION_REJECTED);
-        State withdrawnState = stateService.getById(ApplicationFormStatus.APPLICATION_WITHDRAWN);
+        State approvedState = stateService.getById(PrismState.APPLICATION_APPROVED);
+        State rejectedState = stateService.getById(PrismState.APPLICATION_REJECTED);
+        State withdrawnState = stateService.getById(PrismState.APPLICATION_WITHDRAWN);
 
         for (ApplicationForm form : applications) {
             try {

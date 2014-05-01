@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -23,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
 import com.zuehlke.pgadmissions.dto.UserDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.ManageUsersService;
@@ -61,18 +59,10 @@ public class ManageUsersController {
     private SuperadminUserDTOValidator userDTOValidator;
 
     @Autowired
-    private PersonPropertyEditor registryPropertyEditor;
-
-    @Autowired
     private ConfigurationService configurationService;
 
     @Autowired
     private RoleService roleService;
-
-    @InitBinder(value = "registryUserDTO")
-    public void registerValidatorsAndPropertyEditorsForRegistryUsers(WebDataBinder binder) {
-        binder.registerCustomEditor(Person.class, registryPropertyEditor);
-    }
 
     @InitBinder(value = "userDTO")
     public void registerPropertyEditors(WebDataBinder binder) {

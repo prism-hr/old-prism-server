@@ -15,17 +15,17 @@ import org.springframework.util.Assert;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.ResearchOpportunitiesFeedDAO;
+import com.zuehlke.pgadmissions.dao.ProgramExportDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
-import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
+import com.zuehlke.pgadmissions.domain.ProgramExport;
+import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 @Service
-public class ResearchOpportunitiesFeedService {
+public class ProgramExportService {
 
     private static final int DEFAULT_LARGE_FEED_ID = -2;
 
@@ -37,7 +37,7 @@ public class ResearchOpportunitiesFeedService {
 
     private final UserService userService;
 
-    private final ResearchOpportunitiesFeedDAO dao;
+    private final ProgramExportDAO dao;
 
     private final ProgramService programService;
 
@@ -45,12 +45,12 @@ public class ResearchOpportunitiesFeedService {
 
     private final String host;
 
-    public ResearchOpportunitiesFeedService() {
+    public ProgramExportService() {
         this(null, null, null, null, null);
     }
 
     @Autowired
-    public ResearchOpportunitiesFeedService(final ResearchOpportunitiesFeedDAO dao, final ProgramService programService, final UserService userService,
+    public ProgramExportService(final ProgramExportDAO dao, final ProgramService programService, final UserService userService,
             final FreeMarkerConfigurer freeMarkerConfigurer, @Value("${application.host}") final String host) {
         this.dao = dao;
         this.programService = programService;
@@ -59,9 +59,9 @@ public class ResearchOpportunitiesFeedService {
         this.freeMarkerConfigurer = freeMarkerConfigurer;
     }
 
-    public String getIframeHtmlCode(final ResearchOpportunitiesFeed feed) {
+    public String getIframeHtmlCode(final ProgramExport feed) {
         try {
-            String templateName = feed.getFeedFormat() == FeedFormat.SMALL ? SMALL_IFRAME : LARGE_IFRAME;
+            String templateName = feed.getFormat() == ProgramExportFormat.SMALL ? SMALL_IFRAME : LARGE_IFRAME;
             Template template = freeMarkerConfigurer.getConfiguration().getTemplate(templateName);
             Map<String, Object> dataMap = new HashMap<String, Object>();
             dataMap.put("host", host);
@@ -83,12 +83,12 @@ public class ResearchOpportunitiesFeedService {
     }
 
     @Transactional
-    public ResearchOpportunitiesFeed saveNewFeed(final List<Integer> selectedProgramIds, final User user, final FeedFormat format, final String title) {
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeed();
+    public ProgramExport saveNewFeed(final List<Integer> selectedProgramIds, final User user, final ProgramExportFormat format, final String title) {
+        ProgramExport feed = new ProgramExport();
         for (Integer programId : selectedProgramIds) {
             feed.getPrograms().add((Program) programService.getById(programId));
         }
-        feed.setFeedFormat(format);
+        feed.setFormat(format);
         feed.setTitle(title);
         feed.setUser(user);
         dao.save(feed);
@@ -96,12 +96,12 @@ public class ResearchOpportunitiesFeedService {
     }
 
     @Transactional(readOnly = true)
-    public List<ResearchOpportunitiesFeed> getAllFeedsForUser(final User user) {
-        ResearchOpportunitiesFeed defaultFeedSmall = getDefaultOpportunitiesFeed(user, FeedFormat.SMALL);
-        ResearchOpportunitiesFeed defaultFeedLarge = getDefaultOpportunitiesFeed(user, FeedFormat.LARGE);
-        List<ResearchOpportunitiesFeed> savedFeeds = dao.getAllFeedsForUser(user);
+    public List<ProgramExport> getAllFeedsForUser(final User user) {
+        ProgramExport defaultFeedSmall = getDefaultOpportunitiesFeed(user, ProgramExportFormat.SMALL);
+        ProgramExport defaultFeedLarge = getDefaultOpportunitiesFeed(user, ProgramExportFormat.LARGE);
+        List<ProgramExport> savedFeeds = dao.getAllFeedsForUser(user);
 
-        List<ResearchOpportunitiesFeed> allFeeds = Lists.newArrayListWithCapacity(savedFeeds.size() + 2);
+        List<ProgramExport> allFeeds = Lists.newArrayListWithCapacity(savedFeeds.size() + 2);
         allFeeds.add(defaultFeedSmall);
         allFeeds.add(defaultFeedLarge);
         allFeeds.addAll(savedFeeds);
@@ -109,28 +109,28 @@ public class ResearchOpportunitiesFeedService {
         return allFeeds;
     }
 
-    private ResearchOpportunitiesFeed getDefaultOpportunitiesFeed(final User user, FeedFormat format) {
+    private ProgramExport getDefaultOpportunitiesFeed(final User user, ProgramExportFormat format) {
         List<Program> defaultPrograms = programService.getProgramsForWhichCanManageProjects(user);
 
-        ResearchOpportunitiesFeed defaultFeedSmall = new ResearchOpportunitiesFeed();
-        defaultFeedSmall.setId(format == FeedFormat.SMALL ? DEFAULT_SMALL_FEED_ID : DEFAULT_LARGE_FEED_ID);
-        String title = format == FeedFormat.SMALL ? "My Opportunities Feed - Small" : "My Opportunities Feed - Large";
+        ProgramExport defaultFeedSmall = new ProgramExport();
+        defaultFeedSmall.setId(format == ProgramExportFormat.SMALL ? DEFAULT_SMALL_FEED_ID : DEFAULT_LARGE_FEED_ID);
+        String title = format == ProgramExportFormat.SMALL ? "My Opportunities Feed - Small" : "My Opportunities Feed - Large";
         defaultFeedSmall.setTitle(title);
         defaultFeedSmall.setPrograms(defaultPrograms);
         defaultFeedSmall.setUser(user);
-        defaultFeedSmall.setFeedFormat(format);
+        defaultFeedSmall.setFormat(format);
         return defaultFeedSmall;
     }
 
-    private List<ResearchOpportunitiesFeed> getDefaultOpportunitiesFeeds(List<User> users, FeedFormat format) {
-        LinkedList<ResearchOpportunitiesFeed> feeds = Lists.newLinkedList();
+    private List<ProgramExport> getDefaultOpportunitiesFeeds(List<User> users, ProgramExportFormat format) {
+        LinkedList<ProgramExport> feeds = Lists.newLinkedList();
         for (User linkedUser : users) {
             feeds.add(getDefaultOpportunitiesFeed(linkedUser, format));
         }
         return feeds;
     }
 
-    public List<ResearchOpportunitiesFeed> getDefaultOpportunitiesFeedsByUpi(String upi, FeedFormat format) {
+    public List<ProgramExport> getDefaultOpportunitiesFeedsByUpi(String upi, ProgramExportFormat format) {
         return getDefaultOpportunitiesFeeds(userService.getUsersWithUpi(upi), format);
     }
 
@@ -145,27 +145,27 @@ public class ResearchOpportunitiesFeedService {
         dao.deleteById(feedId);
     }
 
-    private boolean isOwner(ResearchOpportunitiesFeed feed) {
+    private boolean isOwner(ProgramExport feed) {
         User currentUser = userService.getCurrentUser();
         return feed.getUser().getId().equals(currentUser.getId());
     }
 
     @Transactional(readOnly = true)
-    public ResearchOpportunitiesFeed getById(final Integer feedId) {
+    public ProgramExport getById(final Integer feedId) {
         if (feedId == DEFAULT_SMALL_FEED_ID) {
-            return getDefaultOpportunitiesFeed(userService.getCurrentUser(), FeedFormat.SMALL);
+            return getDefaultOpportunitiesFeed(userService.getCurrentUser(), ProgramExportFormat.SMALL);
         } else if (feedId == DEFAULT_LARGE_FEED_ID) {
-            return getDefaultOpportunitiesFeed(userService.getCurrentUser(), FeedFormat.LARGE);
+            return getDefaultOpportunitiesFeed(userService.getCurrentUser(), ProgramExportFormat.LARGE);
         }
         return dao.getById(feedId);
     }
 
     @Transactional
-    public ResearchOpportunitiesFeed updateFeed(final Integer feedId, final List<Integer> selectedProgramIds, final User currentUser,
-            final FeedFormat format, final String title) {
-        ResearchOpportunitiesFeed feed = dao.getById(feedId);
+    public ProgramExport updateFeed(final Integer feedId, final List<Integer> selectedProgramIds, final User currentUser,
+            final ProgramExportFormat format, final String title) {
+        ProgramExport feed = dao.getById(feedId);
         Assert.isTrue(isOwner(feed));
-        feed.setFeedFormat(format);
+        feed.setFormat(format);
         feed.getPrograms().clear();
         for (Integer programId : selectedProgramIds) {
             feed.getPrograms().add((Program) programService.getById(programId));

@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -64,7 +64,7 @@ public class StateChangeValidatorTest {
 		stateChangeDTO.setEnglishCompentencyOk(null);
         stateChangeDTO.setConfirmNextStage(true);
         Program program = new ProgramBuilder().build();
-        ApplicationForm application = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).advert(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_VALIDATION)).advert(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -77,7 +77,7 @@ public class StateChangeValidatorTest {
 		stateChangeDTO.setHomeOrOverseas(null);
         stateChangeDTO.setConfirmNextStage(true);
         Program program = new ProgramBuilder().build();
-        ApplicationForm application = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).advert(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_VALIDATION)).advert(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -90,7 +90,7 @@ public class StateChangeValidatorTest {
 		stateChangeDTO.setQualifiedForPhd(null);
         stateChangeDTO.setConfirmNextStage(true);
         Program program = new ProgramBuilder().build();
-        ApplicationForm application = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).advert(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_VALIDATION)).advert(program).build();
         stateChangeDTO.setApplicationForm(application);
 		stateChangeValidator.validate(stateChangeDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -168,15 +168,15 @@ public class StateChangeValidatorTest {
 	        scoringDefinitions.put(stage, new ScoringDefinition());
 	    }
 	    Program program = new ProgramBuilder().scoringDefinitions(scoringDefinitions).build();
-        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).advert(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION)).advert(program).build();
         stateChangeDTO.setApplicationForm(application);
-	    stateChangeDTO.setNextStatus(ApplicationFormStatus.APPLICATION_REVIEW);
+	    stateChangeDTO.setNextStatus(PrismState.APPLICATION_REVIEW);
 	    stateChangeDTO.setConfirmNextStage(true);
         stateChangeValidator.validate(stateChangeDTO, mappingResult);
 	    Assert.assertEquals(2, mappingResult.getErrorCount());
         Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("useCustomReferenceQuestions").getCode());
         Assert.assertEquals("dropdown.radio.select.none", mappingResult.getFieldError("useCustomQuestions").getCode());
-        stateChangeDTO.setNextStatus(ApplicationFormStatus.APPLICATION_INTERVIEW);
+        stateChangeDTO.setNextStatus(PrismState.APPLICATION_INTERVIEW);
         mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
         stateChangeValidator.validate(stateChangeDTO, mappingResult);
         Assert.assertEquals(2, mappingResult.getErrorCount());
@@ -189,15 +189,15 @@ public class StateChangeValidatorTest {
 	    DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
         Map<ScoringStage, ScoringDefinition> scoringDefinitions = new HashMap<ScoringStage, ScoringDefinition>();
         Program program = new ProgramBuilder().scoringDefinitions(scoringDefinitions).build();
-        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.APPLICATION_VALIDATION)).advert(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_VALIDATION)).advert(program).build();
         stateChangeDTO.setApplicationForm(application);
-        stateChangeDTO.setNextStatus(ApplicationFormStatus.APPLICATION_REVIEW);
+        stateChangeDTO.setNextStatus(PrismState.APPLICATION_REVIEW);
         stateChangeDTO.setConfirmNextStage(true);
         stateChangeDTO.setUseCustomReferenceQuestions(false);
         stateChangeDTO.setUseCustomQuestions(false);
         stateChangeValidator.validate(stateChangeDTO, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
-        stateChangeDTO.setNextStatus(ApplicationFormStatus.APPLICATION_INTERVIEW);
+        stateChangeDTO.setNextStatus(PrismState.APPLICATION_INTERVIEW);
         mappingResult = new DirectFieldBindingResult(stateChangeDTO, "stateChangeDTO");
         stateChangeValidator.validate(stateChangeDTO, mappingResult);
         Assert.assertEquals(0, mappingResult.getErrorCount());
@@ -207,7 +207,7 @@ public class StateChangeValidatorTest {
 	public void setup() {
 		stateChangeDTO = new StateChangeDTO();
 		stateChangeDTO.setComment("Validation comment");
-		stateChangeDTO.setNextStatus(ApplicationFormStatus.APPLICATION_APPROVAL);
+		stateChangeDTO.setNextStatus(PrismState.APPLICATION_APPROVAL);
 		stateChangeDTO.setEnglishCompentencyOk(ValidationQuestionOptions.YES);
 		stateChangeDTO.setQualifiedForPhd(ValidationQuestionOptions.NO);
 		stateChangeDTO.setHomeOrOverseas(HomeOrOverseas.HOME);

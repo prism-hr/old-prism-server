@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.StateChangeDTO;
 
@@ -23,7 +23,7 @@ public class StateChangeValidator extends AbstractValidator {
     	
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", EMPTY_FIELD_ERROR_MESSAGE);
     	
-        if (stateChangeDTO.getApplicationForm().getState().getId() == ApplicationFormStatus.APPLICATION_VALIDATION) {
+        if (stateChangeDTO.getApplicationForm().getState().getId() == PrismState.APPLICATION_VALIDATION) {
             if (stateChangeDTO.getQualifiedForPhd() == null) {
                 errors.rejectValue("qualifiedForPhd", EMPTY_DROPDOWN_ERROR_MESSAGE);
             }
@@ -35,8 +35,8 @@ public class StateChangeValidator extends AbstractValidator {
             }
         }
         
-        ApplicationFormStatus nextStatus = stateChangeDTO.getNextStatus();
-        boolean stateChangeRequiresFastTrack = !(ApplicationFormStatus.APPLICATION_APPROVED.equals(nextStatus) || ApplicationFormStatus.APPLICATION_REJECTED.equals(nextStatus))
+        PrismState nextStatus = stateChangeDTO.getNextStatus();
+        boolean stateChangeRequiresFastTrack = !(PrismState.APPLICATION_APPROVED.equals(nextStatus) || PrismState.APPLICATION_REJECTED.equals(nextStatus))
                 // FIXME check it by invoking PermissionsService
                  // && BooleanUtils.isTrue(stateChangeDTO.hasGlobalAdministrationRights())
         		        ;
@@ -60,15 +60,15 @@ public class StateChangeValidator extends AbstractValidator {
             errors.rejectValue("confirmNextStage", MANDATORY_CHECKBOX);
         }
         
-        if (stateChangeDTO.getApplicationForm().getState().equals(ApplicationFormStatus.APPLICATION_VALIDATION)
+        if (stateChangeDTO.getApplicationForm().getState().equals(PrismState.APPLICATION_VALIDATION)
                 && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.REFERENCE)
                 && stateChangeDTO.getUseCustomReferenceQuestions() == null) {
             errors.rejectValue("useCustomReferenceQuestions", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
         
-        if (((nextStatus == ApplicationFormStatus.APPLICATION_REVIEW
+        if (((nextStatus == PrismState.APPLICATION_REVIEW
                 && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.REVIEW))
-                || (nextStatus == ApplicationFormStatus.APPLICATION_INTERVIEW
+                || (nextStatus == PrismState.APPLICATION_INTERVIEW
                         && stateChangeDTO.getCustomQuestionCoverage().contains(ScoringStage.INTERVIEW)))
                 && stateChangeDTO.getUseCustomQuestions() == null) {
             errors.rejectValue("useCustomQuestions", EMPTY_DROPDOWN_ERROR_MESSAGE);

@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
@@ -193,7 +193,7 @@ public class ApplicationSummaryService {
     public Map<String, String> getSummary(final String applicationNumber) {
         ApplicationForm form = applicationsService.getByApplicationNumber(applicationNumber);
 
-        if (form.getState().equals(ApplicationFormStatus.APPLICATION_WITHDRAWN) || form.getState().equals(ApplicationFormStatus.APPLICATION_UNSUBMITTED)) {
+        if (form.getState().equals(PrismState.APPLICATION_WITHDRAWN) || form.getState().equals(PrismState.APPLICATION_UNSUBMITTED)) {
             return Collections.emptyMap();
         }
 

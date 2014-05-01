@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.dto.SwitchAndLinkUserAccountDTO;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.services.SwitchUserService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.UserValidator;
+import com.zuehlke.pgadmissions.validators.UserAccountValidator;
 import com.zuehlke.pgadmissions.validators.SwitchAndLinkUserAccountDTOValidator;
 
 @Controller
@@ -41,7 +41,7 @@ public class AccountController {
     private UserService userService;
 
     @Autowired
-    private UserValidator accountValidator;
+    private UserAccountValidator accountValidator;
 
     @Autowired
     private SwitchUserService switchUserService;

@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
@@ -61,7 +61,7 @@ public class FileUploadControllerTest {
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowCannotUpdateApplicationExceptionIfApplicationFormNotInUnsubmmitedState() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).status(new State().withId(ApplicationFormStatus.APPLICATION_APPROVED))
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).status(new State().withId(PrismState.APPLICATION_APPROVED))
 				.build();
 		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);

@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
@@ -51,7 +51,7 @@ public class RejectService {
 
 	public void moveApplicationToReject(final ApplicationForm form, final Rejection rejection) {
 
-		form.setState(stateDAO.getById(ApplicationFormStatus.APPLICATION_REJECTED));		
+		form.setState(stateDAO.getById(PrismState.APPLICATION_REJECTED));		
 		form.setRejection(rejection);
 		
 		sendRejectNotificationToApplicant(form);

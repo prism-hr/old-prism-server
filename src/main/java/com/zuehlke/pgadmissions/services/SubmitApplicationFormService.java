@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
@@ -22,7 +22,7 @@ public class SubmitApplicationFormService {
     private MailSendingService mailSendingService;
 
     public void submitApplication(ApplicationForm applicationForm) {
-        applicationService.setApplicationStatus(applicationForm, ApplicationFormStatus.APPLICATION_VALIDATION);
+        applicationService.setApplicationStatus(applicationForm, PrismState.APPLICATION_VALIDATION);
         
         mailSendingService.sendSubmissionConfirmationToApplicant(applicationForm);
         

@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -52,12 +52,12 @@ public class ReviewService {
 	        baseDate = new DateTime(application.getClosingDate());
 	    }
 	    
-		State state = stateDAO.getById(ApplicationFormStatus.APPLICATION_REVIEW);
+		State state = stateDAO.getById(PrismState.APPLICATION_REVIEW);
 		// TODO write query to get duration in minutes
         Integer durationInMinutes = 0; //state.getDurationInMinutes();
 		DateTime dueDate = DateUtils.addWorkingDaysInMinutes(baseDate, durationInMinutes);
         application.setDueDate(dueDate.toDate());
-        boolean sendReferenceRequest = application.getState().getId() == ApplicationFormStatus.APPLICATION_VALIDATION;
+        boolean sendReferenceRequest = application.getState().getId() == PrismState.APPLICATION_VALIDATION;
         application.setState(state);
 		
         if (sendReferenceRequest) {

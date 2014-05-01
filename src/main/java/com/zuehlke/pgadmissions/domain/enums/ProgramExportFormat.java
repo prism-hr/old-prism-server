@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum FeedFormat {
+public enum ProgramExportFormat {
 
     SMALL, LARGE
 }

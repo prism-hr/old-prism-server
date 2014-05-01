@@ -11,40 +11,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
+import com.zuehlke.pgadmissions.domain.ProgramExport;
 
 @Repository
-public class ResearchOpportunitiesFeedDAO {
+public class ProgramExportDAO {
 
     private final SessionFactory sessionFactory;
 
-    public ResearchOpportunitiesFeedDAO() {
+    public ProgramExportDAO() {
         this(null);
     }
 
     @Autowired
-    public ResearchOpportunitiesFeedDAO(final SessionFactory sessionFactory) {
+    public ProgramExportDAO(final SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
     
-    public ResearchOpportunitiesFeed getById(Integer id) {
-        return (ResearchOpportunitiesFeed) sessionFactory.getCurrentSession().get(ResearchOpportunitiesFeed.class, id);
+    public ProgramExport getById(Integer id) {
+        return (ProgramExport) sessionFactory.getCurrentSession().get(ProgramExport.class, id);
     }
     
-    public void save(final ResearchOpportunitiesFeed feed) {
+    public void save(final ProgramExport feed) {
         sessionFactory.getCurrentSession().saveOrUpdate(feed);
     }
 
     @SuppressWarnings("unchecked")
-    public List<ResearchOpportunitiesFeed> getAllFeedsForUser(final User user) {
+    public List<ProgramExport> getAllFeedsForUser(final User user) {
         return sessionFactory.getCurrentSession()
-                .createCriteria(ResearchOpportunitiesFeed.class).add(Restrictions.eq("user", user))
+                .createCriteria(ProgramExport.class).add(Restrictions.eq("user", user))
                 .addOrder(Order.asc("title")).list();
     }
 
     @SuppressWarnings("unchecked")
     public boolean isUniqueFeedTitleForUser(final String title, final User user) {
-        List<Integer> list = sessionFactory.getCurrentSession().createCriteria(ResearchOpportunitiesFeed.class)
+        List<Integer> list = sessionFactory.getCurrentSession().createCriteria(ProgramExport.class)
                 .setProjection(Projections.property("id")).add(Restrictions.ilike("title", title, MatchMode.EXACT))
                 .add(Restrictions.eq("user", user)).list();
         return list.isEmpty();

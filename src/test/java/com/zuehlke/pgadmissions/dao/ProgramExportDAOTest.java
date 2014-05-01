@@ -5,32 +5,31 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
+import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ResearchOpportunitiesFeed;
-import com.zuehlke.pgadmissions.domain.builders.ResearchOpportunitiesFeedBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.FeedFormat;
+import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 
-public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase {
+public class ProgramExportDAOTest extends AutomaticRollbackTestCase {
 
-    private ResearchOpportunitiesFeedDAO dao;
+    private ProgramExportDAO dao;
 
     @Override
     public void setup() {
         super.setup();
-        dao = new ResearchOpportunitiesFeedDAO(sessionFactory);
+        dao = new ProgramExportDAO(sessionFactory);
     }
 
     @Test
     public void shouldPersistAResearchOpportunitiesFeed() {
         User user = testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR);
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(testObjectProvider.getEnabledProgram())
-                .title("Hello Feed").user(user).build();
+        ProgramExport feed = new ProgramExport().withFormat(ProgramExportFormat.LARGE).withPrograms(testObjectProvider.getEnabledProgram())
+                .withTitle("Hello Feed2").withUser(user);
         dao.save(feed);
         sessionFactory.getCurrentSession().refresh(user);
-        ResearchOpportunitiesFeed feedFromDb = dao.getById(feed.getId());
+        ProgramExport feedFromDb = dao.getById(feed.getId());
         Assert.assertNotNull(feedFromDb);
-        for (ResearchOpportunitiesFeed gotFeed : dao.getAllFeedsForUser(user)) {
+        for (ProgramExport gotFeed : dao.getAllFeedsForUser(user)) {
             Assert.assertEquals(gotFeed.getId(), feed.getId());
         }
     }
@@ -38,8 +37,8 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
     @Test
     public void shouldReturnWhetherATitleIsUniqueForAUser() {
         User user = testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR);
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(testObjectProvider.getEnabledProgram())
-                .title("Hello Feed2").user(user).build();
+        ProgramExport feed = new ProgramExport().withFormat(ProgramExportFormat.LARGE).withPrograms(testObjectProvider.getEnabledProgram())
+                .withTitle("Hello Feed2").withUser(user);
         dao.save(feed);
         sessionFactory.getCurrentSession().refresh(user);
         Assert.assertFalse(dao.isUniqueFeedTitleForUser("Hello Feed2", user));
@@ -48,10 +47,10 @@ public class ResearchOpportunitiesFeedDAOTest extends AutomaticRollbackTestCase 
     @Test
     public void shouldReturnAllFeedsForAUser() {
         User user = testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR);
-        ResearchOpportunitiesFeed feed = new ResearchOpportunitiesFeedBuilder().feedFormat(FeedFormat.LARGE).programs(testObjectProvider.getEnabledProgram())
-                .title("Hello Feed3").user(user).build();
+        ProgramExport feed = new ProgramExport().withFormat(ProgramExportFormat.LARGE).withPrograms(testObjectProvider.getEnabledProgram())
+                .withTitle("Hello Feed2").withUser(user);
         dao.save(feed);
-        for (ResearchOpportunitiesFeed gotFeed : dao.getAllFeedsForUser(user)) {
+        for (ProgramExport gotFeed : dao.getAllFeedsForUser(user)) {
             Assert.assertEquals(gotFeed.getId(), feed.getId());
         }
 

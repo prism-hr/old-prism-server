@@ -222,11 +222,11 @@ public class ApplicationFormCopyHelper {
             return null;
         }
         Address to = new Address();
-        to.setAddress1(from.getAddress1());
-        to.setAddress2(from.getAddress2());
-        to.setAddress3(from.getAddress3());
-        to.setAddress4(from.getAddress4());
-        to.setAddress5(from.getAddress5());
+        to.setAddressLine1(from.getAddressLine1());
+        to.setAddressLine2(from.getAddressLine2());
+        to.setAddressTown(from.getAddressTown());
+        to.setAddressRegion(from.getAddressRegion());
+        to.setAddressCode(from.getAddressCode());
         to.setDomicile(getEnabledImportedObject(from.getDomicile()));
         return to;
     }

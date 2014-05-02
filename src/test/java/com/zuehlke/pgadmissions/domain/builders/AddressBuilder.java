@@ -52,11 +52,11 @@ public class AddressBuilder {
     public Address build() {
         Address address = new Address();
         address.setId(id);
-        address.setAddress1(address1);
-        address.setAddress2(address2);
-        address.setAddress3(address3);
-        address.setAddress4(address4);
-        address.setAddress5(address5);
+        address.setAddressLine1(address1);
+        address.setAddressLine2(address2);
+        address.setAddressTown(address3);
+        address.setAddressRegion(address4);
+        address.setAddressCode(address5);
         address.setDomicile(domicile);
         return address;
     }

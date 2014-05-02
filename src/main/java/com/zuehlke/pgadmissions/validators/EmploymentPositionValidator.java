@@ -49,10 +49,10 @@ public class EmploymentPositionValidator extends FormSectionObjectValidator impl
 		if (position.getApplication().getEmploymentPositions().size() >= MAX_NUMBER_OF_POSITIONS + 1) {
 		    errors.reject("");
 		}
-		if (position.getEmployerAddress() != null && StringUtils.isBlank(position.getEmployerAddress().getAddress1())) {
+		if (position.getEmployerAddress() != null && StringUtils.isBlank(position.getEmployerAddress().getAddressLine1())) {
 			errors.rejectValue("employerAddress.address1", EMPTY_FIELD_ERROR_MESSAGE);
 		}
-		if (position.getEmployerAddress() != null && StringUtils.isBlank(position.getEmployerAddress().getAddress3())) {
+		if (position.getEmployerAddress() != null && StringUtils.isBlank(position.getEmployerAddress().getAddressTown())) {
 			errors.rejectValue("employerAddress.address3", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 		if (position.getEmployerAddress() != null && position.getEmployerAddress().getDomicile()==null) {

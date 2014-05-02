@@ -46,11 +46,11 @@ public class RefereeValidator extends FormSectionObjectValidator implements Vali
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", EMPTY_FIELD_ERROR_MESSAGE);
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", EMPTY_FIELD_ERROR_MESSAGE);
 		
-		if (referee.getAddressLocation() != null && StringUtils.isBlank(referee.getAddressLocation().getAddress1())) {
+		if (referee.getAddressLocation() != null && StringUtils.isBlank(referee.getAddressLocation().getAddressLine1())) {
 			errors.rejectValue("addressLocation.address1", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 		
-		if (referee.getAddressLocation() != null && StringUtils.isBlank(referee.getAddressLocation().getAddress3())) {
+		if (referee.getAddressLocation() != null && StringUtils.isBlank(referee.getAddressLocation().getAddressTown())) {
 			errors.rejectValue("addressLocation.address3", EMPTY_FIELD_ERROR_MESSAGE);
 		}
 		

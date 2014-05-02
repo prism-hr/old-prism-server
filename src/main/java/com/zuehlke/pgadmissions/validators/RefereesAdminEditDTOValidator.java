@@ -54,10 +54,10 @@ public class RefereesAdminEditDTOValidator extends AbstractValidator {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", EMPTY_FIELD_ERROR_MESSAGE);
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", EMPTY_FIELD_ERROR_MESSAGE);
 
-			if (dto.getAddressLocation() != null && StringUtils.isBlank(dto.getAddressLocation().getAddress1())) {
+			if (dto.getAddressLocation() != null && StringUtils.isBlank(dto.getAddressLocation().getAddressLine1())) {
 				errors.rejectValue("addressLocation.address1", EMPTY_FIELD_ERROR_MESSAGE);
 			}
-			if (dto.getAddressLocation() != null && StringUtils.isBlank(dto.getAddressLocation().getAddress3())) {
+			if (dto.getAddressLocation() != null && StringUtils.isBlank(dto.getAddressLocation().getAddressTown())) {
 				errors.rejectValue("addressLocation.address3", EMPTY_FIELD_ERROR_MESSAGE);
 			}
 			if (dto.getAddressLocation() != null && dto.getAddressLocation().getDomicile() == null) {

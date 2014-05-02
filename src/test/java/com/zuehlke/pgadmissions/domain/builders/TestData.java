@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.State;
@@ -27,6 +29,10 @@ public class TestData {
     
     public static ApplicationForm anApplicationForm(User user, Program program, State state) {
         return new ApplicationForm().withUser(user).withProgram(program).withState(state).withDueDate(new LocalDate().plusWeeks(2));
+    }
+    
+    public static Address anAddress(Domicile domicile){
+        return new Address().withDomicile(domicile).withLine1("ul. Leszczynska 29").withTown("Bielsko-Biala").withRegion("woj. Slaskie");
     }
     
 }

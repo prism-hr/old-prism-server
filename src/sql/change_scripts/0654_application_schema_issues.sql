@@ -1919,8 +1919,18 @@ INSERT INTO STATE_TRANSITION (state_action_id, state_transition_type_id, transit
 
 /* Project disabled pending reactivation */
 
-INSERT INTO STATE_TRANSITION (state_action_id, state_transition_type_id, transition_state_id)
-	SELECT id, "DUE_DATE_EXPIRY", "PROJECT_DISABLED_COMPLETED"
+INSERT INTO STATE_TRANSITION (state_action_id, state_transition_type_id, transition_state_id, display_order)
+	SELECT id, "ONE_COMPLETED", "PROJECT_APPROVED", 0
+	FROM STATE_ACTION
+	WHERE state_id = "PROJECT_DISABLED_PENDING_REACTIVATION"
+		AND action_id = "PROJECT_CONFIGURE"
+		UNION
+	SELECT id, "ONE_COMPLETED", "PROJECT_DEACTIVATED", 1
+	FROM STATE_ACTION
+	WHERE state_id = "PROJECT_DISABLED_PENDING_REACTIVATION"
+		AND action_id = "PROJECT_CONFIGURE"
+		UNION
+	SELECT id, "DUE_DATE_EXPIRY", "PROJECT_DISABLED_COMPLETED", NULL
 	FROM STATE_ACTION
 	WHERE state_id = "PROJECT_DISABLED_PENDING_REACTIVATION"
 		AND action_id = "PROJECT_ESCALATE"

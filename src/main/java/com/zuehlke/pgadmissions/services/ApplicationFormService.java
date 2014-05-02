@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +32,8 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
@@ -217,7 +218,7 @@ public class ApplicationFormService {
     }
 
     public void applicationCreated(ApplicationForm application) {
-        User applicant = application.getApplicant();
+        User applicant = application.getUser();
         Action action = actionService.getById(ApplicationFormAction.APPLICATION_COMPLETE_APPLICATION);
         Role role = roleService.getById(Authority.APPLICATION_CREATOR);
         ActionRequired completeApplicationAction = new ActionRequired().withApplication(application).withRole(role).withAction(action).withDeadlineDate(application.getDueDate())
@@ -251,7 +252,7 @@ public class ApplicationFormService {
     private ApplicationForm createApplication(User applicant, Advert advert) {
         String applicationNumber = generateApplicationNumber(advert.getProgram());
         ApplicationForm application = new ApplicationForm();
-        application.setApplicant(applicant);
+        application.setUser(applicant);
         application.setProgram(advert.getProgram());
         application.setProject(advert.getProject());
         application.setApplicationNumber(applicationNumber);
@@ -289,23 +290,23 @@ public class ApplicationFormService {
         return supervisor;
     }
 
-    private Date getClosingDateForApplication(ApplicationForm application) {
+    private LocalDate getClosingDateForApplication(ApplicationForm application) {
         return application.getAdvert().getClosingDate().getClosingDate();
     }
 
-    private Date getDueDateForApplication(ApplicationForm application) {
+    private LocalDate getDueDateForApplication(ApplicationForm application) {
         LocalDate baselineDate = new LocalDate();
-        Date closingDate = application.getClosingDate();
+        LocalDate closingDate = application.getClosingDate();
         State status = application.getState();
         if (status.getId() == PrismState.APPLICATION_REVIEW && closingDate != null) {
-            if (closingDate.after(baselineDate.toDate())) {
+            if (closingDate.isAfter(baselineDate)) {
                 baselineDate = new LocalDate(closingDate);
             }
         }
         // TODO write query to get duration
         Integer daysToAdd = 0; //status.getDurationInDays();
         if (daysToAdd != null) {
-            application.setDueDate(baselineDate.plusDays(daysToAdd).toDate());
+            application.setDueDate(baselineDate.plusDays(daysToAdd));
         }
         return null;
     }

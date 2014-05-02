@@ -6,6 +6,7 @@ import java.util.Date;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.SessionFactory;
+import org.joda.time.LocalDate;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -185,9 +186,9 @@ public class ValidApplicationFormBuilder {
                 .type(FundingType.SCHOLARSHIP).value("5").build();
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
                 .createdTimestamp(new Date()).applicant(user).applicationNumber("TMRMBISING01-2012-999999")
-                .closingDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1))
+                .closingDate(new LocalDate().plusMonths(1))
                 .applicationFormAddress(new ApplicationAddress().withCurrentAddress(address).withContactAddress(address))
-                .dueDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 1)).employmentPositions(employmentPosition).fundings(funding)
+                .dueDate(new LocalDate().plusMonths(1)).employmentPositions(employmentPosition).fundings(funding)
                 .personalDetails(personalDetails).program(program).programmeDetails(programDetails).qualification(qualification1, qualification2)
                 .status(new State().withId(PrismState.APPLICATION_APPROVED)).submittedDate(new Date())
                 .applicationFormDocument(new ApplicationDocument().withPersonalStatement(personalStatement).withCv(cvDocument))

@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,15 +31,14 @@ import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoreBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
 public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     private CommentDAO commentDAO;
-    
+
     private StateDAO stateDAO;
-    
+
     private User user;
     private Program program;
 
@@ -52,8 +52,8 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         commentDAO = new CommentDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("code").userAccount(new UserAccount().withEnabled(false).withPassword("haslo"))
-                .build();
+        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("code")
+                .userAccount(new UserAccount().withEnabled(false).withPassword("haslo")).build();
         save(user);
         flushAndClearSession();
         program = testObjectProvider.getEnabledProgram();
@@ -62,7 +62,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadGenericComment() {
         State state = (State) sessionFactory.getCurrentSession().createQuery("from State where id = 'APPLICATION_APPROVAL'").uniqueResult();
-        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).dueDate(new Date()).status(state). build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).dueDate(new LocalDate()).status(state).build();
         save(application);
         flushAndClearSession();
 

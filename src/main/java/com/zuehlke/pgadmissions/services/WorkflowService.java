@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,8 +33,8 @@ import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @Service
@@ -369,7 +370,7 @@ public class WorkflowService {
 //        applicationFormUserRoleDAO.updateUrgentApplications();
     }
 
-    private void updateApplicationDueDate(ApplicationForm applicationForm, Date deadlineTimestamp) {
+    private void updateApplicationDueDate(ApplicationForm applicationForm, LocalDate dueDate) {
 //        applicationFormUserRoleDAO.updateApplicationDueDate(applicationForm, deadlineTimestamp);
     }
 
@@ -386,7 +387,7 @@ public class WorkflowService {
     }
 
     private void updateApplicationDueDate(ApplicationForm applicationForm) {
-        Date newDueDate = new Date();
+        LocalDate newDueDate = new LocalDate();
         applicationForm.setDueDate(newDueDate);
         updateApplicationDueDate(applicationForm, newDueDate);
     }

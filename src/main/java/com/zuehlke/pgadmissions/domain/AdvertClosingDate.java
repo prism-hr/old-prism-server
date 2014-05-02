@@ -14,6 +14,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Entity
@@ -31,8 +34,8 @@ public class AdvertClosingDate implements Serializable {
     private Advert advert;
 
     @Column(name = "closing_date")
-    @Temporal(value = TemporalType.DATE)
-    private Date closingDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate closingDate;
 
     @Column(name = "study_places")
     private Integer studyPlaces;
@@ -45,12 +48,12 @@ public class AdvertClosingDate implements Serializable {
         this.advert = advert;
     }
 
-    public Date getClosingDate() {
+    public LocalDate getClosingDate() {
         return closingDate;
     }
 
-    public void setClosingDate(Date closingDate) {
-        this.closingDate = DateUtils.truncateToDay(closingDate);
+    public void setClosingDate(LocalDate closingDate) {
+        this.closingDate = closingDate;
     }
 
     public Integer getStudyPlaces() {

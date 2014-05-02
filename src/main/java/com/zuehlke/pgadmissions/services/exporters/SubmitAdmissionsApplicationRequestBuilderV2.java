@@ -218,7 +218,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private NameTp buildFullName() {
         NameTp nameTp = xmlFactory.createNameTp();
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
-        User applicant = applicationForm.getApplicant();
+        User applicant = applicationForm.getUser();
         nameTp.setSurname(applicant.getLastName());
         nameTp.setForename1(applicant.getFirstName());
         nameTp.setForename2(applicant.getFirstName2());
@@ -341,7 +341,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         }
 
         contactDtlsTp.setAddressDtls(addressTp);
-        contactDtlsTp.setEmail(applicationForm.getApplicant().getEmail());
+        contactDtlsTp.setEmail(applicationForm.getUser().getEmail());
         contactDtlsTp.setLandline(cleanPhoneNumber(personalDetails.getPhoneNumber()));
         return contactDtlsTp;
     }
@@ -370,7 +370,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         }
 
         contactDtlsTp.setAddressDtls(addressTp);
-        contactDtlsTp.setEmail(applicationForm.getApplicant().getEmail());
+        contactDtlsTp.setEmail(applicationForm.getUser().getEmail());
         contactDtlsTp.setLandline(cleanPhoneNumber(applicationForm.getPersonalDetails().getPhoneNumber()));
         return contactDtlsTp;
     }
@@ -431,7 +431,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         // FIXME get offer recommended comment (this class should be Spring component so it can access CommentService)
         OfferRecommendedComment offerRecommendedComment = null; // applicationForm.getOfferRecommendedComment();
         if (offerRecommendedComment != null) {
-            if (isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getAtasRequired())) {
+            if (isOverseasStudent && BooleanUtils.isTrue(applicationForm.getProgram().getRequireProjectDefinition())) {
                 applicationTp.setAtasStatement(offerRecommendedComment.getProjectAbstract());
             }
         }

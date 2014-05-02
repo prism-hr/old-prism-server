@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 
@@ -11,7 +13,7 @@ public class AdvertClosingDateBuilder {
     private Integer id;
     private Advert advert;
     private Integer studyPlaces;
-    private Date closingDate;
+    private LocalDate closingDate;
     
     public AdvertClosingDateBuilder id(Integer id){
         this.id = id;
@@ -29,7 +31,7 @@ public class AdvertClosingDateBuilder {
     }
     
     
-    public AdvertClosingDateBuilder closingDate(Date closingDate){
+    public AdvertClosingDateBuilder closingDate(LocalDate closingDate){
         this.closingDate = closingDate;
         return this;
     }

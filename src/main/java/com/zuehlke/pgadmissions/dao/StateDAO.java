@@ -17,6 +17,13 @@ public class StateDAO {
 
     @Autowired
 	private SessionFactory sessionFactory;
+
+    public StateDAO() {
+    }
+    
+    public StateDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 	
 	public void save(State state) {
         sessionFactory.getCurrentSession().saveOrUpdate(state);

@@ -87,7 +87,7 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
         result.setIdentifier(getIdentifier());
         result.setEnabled(true);
         Program program = getProgramme(currentData, changes);
-        program.setAtasRequired(isAtasRequired());
+        program.setRequireProjectDefinition(isAtasRequired());
         result.setProgram(program);
         return result;
     }

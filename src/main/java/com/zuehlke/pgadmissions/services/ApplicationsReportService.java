@@ -170,7 +170,7 @@ public class ApplicationsReportService {
             }
 
             try {
-                User applicant = app.getApplicant();
+                User applicant = app.getUser();
                 PersonalDetails personalDetails = app.getPersonalDetails();
                 String firstNames = Joiner.on(" ").skipNulls().join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3());
                 Program program = app.getProgram();

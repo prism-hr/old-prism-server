@@ -66,9 +66,9 @@ public class ApplicationSummaryService {
 
     private void addApplicantDetails(final ApplicationForm form, final Map<String, String> result) {
         result.put("title", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getTitle().getDisplayValue());
-        result.put("name", form.getApplicant().getDisplayName());
+        result.put("name", form.getUser().getDisplayName());
         result.put("phoneNumber", form.getPersonalDetails() == null ? "" : form.getPersonalDetails().getPhoneNumber());
-        result.put("email", form.getApplicant().getEmail());
+        result.put("email", form.getUser().getEmail());
         result.put("applicationStatus", form.getState().getId().name());
     }
 
@@ -202,7 +202,7 @@ public class ApplicationSummaryService {
         Map<String, String> applicantResult = new HashMap<String, String>();
 
         addApplicationProperties(form, result);
-        addActiveApplications(form.getApplicant(), result);
+        addActiveApplications(form.getUser(), result);
         addApplicantDetails(form, applicantResult);
         addQualifications(form, applicantResult);
         addEmployments(form, applicantResult);

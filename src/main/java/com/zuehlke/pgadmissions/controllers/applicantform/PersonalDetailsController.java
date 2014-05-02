@@ -106,7 +106,7 @@ public class PersonalDetailsController {
 
     @RequestMapping(value = "/getPersonalDetails", method = RequestMethod.GET)
     public String getPersonalDetailsView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
-        return returnView(modelMap, personalDetailsService.getOrCreate(applicationForm), applicationForm.getApplicant());
+        return returnView(modelMap, personalDetailsService.getOrCreate(applicationForm), applicationForm.getUser());
     }
 
     @RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)

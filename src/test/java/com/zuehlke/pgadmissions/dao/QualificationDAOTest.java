@@ -42,7 +42,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
     public void shouldDeleteQualification() throws ParseException {
         ApplicationForm application = new ApplicationForm();
         application.setProgram(program);
-        application.setApplicant(user);
+        application.setUser(user);
 
         QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
         DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);

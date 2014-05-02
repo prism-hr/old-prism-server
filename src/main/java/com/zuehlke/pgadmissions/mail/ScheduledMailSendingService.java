@@ -186,7 +186,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             ApplicationForm application = referee.getApplication();
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(application.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
-                    adminsEmails, referee, application, application.getApplicant(), getHostName() });
+                    adminsEmails, referee, application, application.getUser(), getHostName() });
             message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
             sendEmail(message);
             referee.setLastNotified(new Date());

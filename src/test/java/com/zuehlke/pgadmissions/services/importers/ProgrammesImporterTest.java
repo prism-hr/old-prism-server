@@ -115,7 +115,7 @@ public class ProgrammesImporterTest {
         EasyMock.verify(programDAO, importService);
 
         assertSame(programFeed, p2.getProgramImport());
-        Assert.assertTrue("The ATAS flag should have been updated to be true", p1.getAtasRequired());
-        Assert.assertFalse("The ATAS flag should have been updated to be false", p2.getAtasRequired());
+        Assert.assertTrue("The ATAS flag should have been updated to be true", p1.getRequireProjectDefinition());
+        Assert.assertFalse("The ATAS flag should have been updated to be false", p2.getRequireProjectDefinition());
     }
 }

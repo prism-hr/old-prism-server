@@ -1,55 +1,58 @@
-ALTER TABLE ADVERT
-	ADD COLUMN program_id INT(10) UNSIGNED AFTER id,
-	ADD INDEX (program_id),
-	ADD FOREIGN KEY (program_id) REFERENCES ADVERT (id)
-;
-
-UPDATE ADVERT INNER JOIN PROJECT
-	ON ADVERT.id = PROJECT.id
-SET ADVERT.program_id = PROJECT.program_id
-;
-
-UPDATE ADVERT
-SET program_id = id
-WHERE program_id IS NULL
-;
-
 ALTER TABLE APPLICATION
-	DROP FOREIGN KEY prog_app_fk,
-	DROP FOREIGN KEY project_fk,
-	DROP COLUMN program_id,
-	DROP COLUMN project_id
+	DROP FOREIGN KEY advert_fk,
+	DROP COLUMN advert_id
 ;
 
-ALTER TABLE USER_ROLE
-	DROP FOREIGN KEY user_role_ibfk_3,
-	DROP FOREIGN KEY user_role_ibfk_4
+UPDATE PROGRAM INNER JOIN ADVERT
+	ON PROGRAM.id = ADVERT.id
+SET PROGRAM.title = ADVERT.title
+WHERE PROGRAM.title IS NULL
 ;
 
-UPDATE USER_ROLE
-SET project_id = program_id
-WHERE program_id IS NOT NULL
+ALTER TABLE PROGRAM
+	MODIFY COLUMN title VARCHAR(255) NOT NULL,
+	CHANGE COLUMN atas_required require_project_definition INT(1) UNSIGNED,
+	ADD COLUMN state_id VARCHAR(50),
+	ADD COLUMN due_date DATE,
+	ADD INDEX (state_id),
+	ADD FOREIGN KEY (state_id) REFERENCES STATE (id)
 ;
 
-ALTER TABLE USER_ROLE
-	DROP COLUMN program_id,
-	DROP INDEX program_id,
-	CHANGE COLUMN project_id advert_id INT(10) UNSIGNED,
-	ADD FOREIGN KEY (advert_id) REFERENCES ADVERT (id)
+ALTER TABLE PROJECT
+	ADD COLUMN title VARCHAR(255),
+	ADD COLUMN state_id VARCHAR(50),
+	ADD COLUMN due_date DATE,
+	ADD INDEX (state_id),
+	ADD FOREIGN KEY (state_id) REFERENCES STATE (id)
 ;
 
-DROP TABLE PROJECT
+UPDATE PROGRAM INNER JOIN ADVERT
+	ON PROGRAM.id = ADVERT.id
+SET PROGRAM.state_id = ADVERT.state_id,
+	PROGRAM.due_date = ADVERT.due_date
+;
+
+ALTER TABLE PROGRAM
+	MODIFY COLUMN state_id VARCHAR(50) NOT NULL,
+	MODIFY COLUMN due_date DATE NOT NULL
+;
+
+UPDATE PROJECT INNER JOIN ADVERT
+	ON PROJECT.id = ADVERT.id
+SET PROJECT.title = ADVERT.title,
+	PROJECT.state_id = ADVERT.state_id,
+	PROJECT.due_date = ADVERT.due_date
+;
+
+ALTER TABLE PROJECT
+	MODIFY COLUMN state_id VARCHAR(50) NOT NULL,
+	MODIFY COLUMN due_date DATE NOT NULL
 ;
 
 ALTER TABLE ADVERT
-	ADD COLUMN project_id INT(10) UNSIGNED,
-	ADD INDEX (project_id),
-	ADD FOREIGN KEY (project_id) REFERENCES ADVERT (id)
-;
-
-UPDATE ADVERT
-SET project_id = id
-WHERE id != program_id
+	DROP FOREIGN KEY advert_ibfk_3,
+	DROP COLUMN state_id,
+	DROP COLUMN due_date
 ;
 
 /* Fix uniqueness constraints on imported data tables */

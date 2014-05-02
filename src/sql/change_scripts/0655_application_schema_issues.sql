@@ -38,6 +38,20 @@ ALTER TABLE USER_ROLE
 	ADD FOREIGN KEY (advert_id) REFERENCES ADVERT (id)
 ;
 
+DROP TABLE PROJECT
+;
+
+ALTER TABLE ADVERT
+	ADD COLUMN project_id INT(10) UNSIGNED,
+	ADD INDEX (project_id),
+	ADD FOREIGN KEY (project_id) REFERENCES ADVERT (id)
+;
+
+UPDATE ADVERT
+SET project_id = id
+WHERE id != program_id
+;
+
 /* Fix uniqueness constraints on imported data tables */
 
 /* Fix suggested supervisor table */

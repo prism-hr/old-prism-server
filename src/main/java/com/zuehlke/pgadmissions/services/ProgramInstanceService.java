@@ -28,7 +28,7 @@ public class ProgramInstanceService {
     private static final int CONSIDERATION_PERIOD_MONTHS = 1;
 
     @Autowired
-    private ThrottleService throttleService;
+    private ApplicationExportConfigurationService throttleService;
 
     @Autowired
     private ProgramDAO programDAO;

@@ -43,7 +43,7 @@ public class ExportQueueListener implements MessageListener {
     private ApplicationFormTransferService applicationFormTransferService;
 
     @Autowired
-    private ThrottleService throttleService;
+    private ApplicationExportConfigurationService throttleService;
 
     @Autowired
     private MailSendingService mailSendingService;

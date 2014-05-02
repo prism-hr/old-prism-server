@@ -44,7 +44,7 @@ public class ProgramInstanceServiceTest {
 
     @Mock
     @InjectIntoByType
-    private ThrottleService throttleService;
+    private ApplicationExportConfigurationService throttleService;
 
     @Mock
     @InjectIntoByType
@@ -58,32 +58,6 @@ public class ProgramInstanceServiceTest {
     public void shouldReturnTrueForIsActiveIfProgramInstanceIsEnabled() {
         ProgramInstance programInstance = new ProgramInstanceBuilder().enabled(true).build();
         assertTrue(service.isActive(programInstance));
-    }
-
-    @Test
-    public void shouldReturnTrueForIsActiveIfProgramInstanceIsDisabledForLessThanAMonth() {
-        DateTime weekAgo = new DateTime().minusWeeks(1);
-        ProgramInstance programInstance = new ProgramInstanceBuilder().enabled(false).disabledDate(weekAgo.toDate()).build();
-
-        EasyMock.expect(throttleService.getProcessingDelayInDays()).andReturn(30);
-
-        replay();
-        boolean isActive = service.isActive(programInstance);
-        verify();
-        assertTrue(isActive);
-    }
-
-    @Test
-    public void shouldReturnFalseForIsActiveIfProgramInstanceIsDisabledForMoreThanAMonth() {
-        DateTime weekAgo = new DateTime().minusWeeks(5);
-        ProgramInstance programInstance = new ProgramInstanceBuilder().enabled(false).disabledDate(weekAgo.toDate()).build();
-
-        EasyMock.expect(throttleService.getProcessingDelayInDays()).andReturn(30);
-
-        replay();
-        boolean isActive = service.isActive(programInstance);
-        verify();
-        assertFalse(isActive);
     }
 
     @Test

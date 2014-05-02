@@ -9,17 +9,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.services.ExportQueueService;
-import com.zuehlke.pgadmissions.services.ThrottleService;
+import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
 
 public class PorticoThrottleTaskTest {
 	
-	private ThrottleService throttleServiceMock;
+	private ApplicationExportConfigurationService throttleServiceMock;
 	private ExportQueueService porticoQueueServiceMock;
 	private PorticoThrottleTask timer;
 	
 	@Before
 	public void setup() {
-		throttleServiceMock = createMock(ThrottleService.class);
+		throttleServiceMock = createMock(ApplicationExportConfigurationService.class);
 		porticoQueueServiceMock = createMock(ExportQueueService.class);
 		timer = new PorticoThrottleTask(throttleServiceMock, porticoQueueServiceMock);
 	}

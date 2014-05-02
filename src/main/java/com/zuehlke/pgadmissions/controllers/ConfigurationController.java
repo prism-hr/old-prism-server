@@ -35,12 +35,12 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.State;
-import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.dto.ApplicationExportConfigurationDTO;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
 import com.zuehlke.pgadmissions.exceptions.EmailTemplateException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -49,12 +49,12 @@ import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
+import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.services.ExportQueueService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.FieldErrorUtils;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
@@ -72,12 +72,12 @@ public class ConfigurationController {
 
     @Autowired
     private ConfigurationService configurationService;
-
+    
+    @Autowired
+    private ApplicationExportConfigurationService applicationExportConfigurationService;
+    
     @Autowired
     private EmailTemplateService templateService;
-
-    @Autowired
-    private ThrottleService throttleService;
 
     @Autowired
     private ExportQueueService queueService;
@@ -144,31 +144,26 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/getThrottle")
     @ResponseBody
-    public Map<String, Object> getThrottle() {
-        Throttle throttle = throttleService.getThrottle();
-        if (throttle == null) {
-            return Collections.emptyMap();
-        }
+    public Map<String, Object> getApplicationExportConfiguration() {
+        ApplicationExportConfigurationDTO dto = applicationExportConfigurationService.getApplicationExportConfiguration();
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("enabled", throttle.getEnabled());
-        result.put("batchSize", throttle.getBatchSize());
-        result.put("processingDelay", throttle.getProcessingDelay());
-        result.put("processingDelayUnit", throttle.getProcessingDelayUnit());
+        result.put("enabled", dto.isEnabled());
+        result.put("batchSize", dto.getBatchSize());
         return result;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateThrottle")
     @ResponseBody
-    public Map<String, Object> updateThrottle(@Valid Throttle throttle, BindingResult throttleErrors) {
+    public Map<String, Object> updateApplicationExportConfiguration(@Valid ApplicationExportConfigurationDTO configuration, BindingResult throttleErrors) {
 
         Map<String, Object> errorsMap = FieldErrorUtils.populateMapWithErrors(throttleErrors, applicationContext);
         if (!errorsMap.isEmpty()) {
             return errorsMap;
         }
 
-        throttleService.updateThrottleWithNewValues(throttle);
+        applicationExportConfigurationService.updateApplicationExportConfiguration(configuration);
 
-        if (throttleService.userTurnedOnThrottle(throttle.getEnabled())) {
+        if (applicationExportConfigurationService.userTurnedOnThrottle(configuration.isEnabled())) {
             queueService.sendQueuedApprovedApplicationsToPortico();
         }
 

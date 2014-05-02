@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.dto.ApplicationExportConfigurationDTO;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
 
 @Service

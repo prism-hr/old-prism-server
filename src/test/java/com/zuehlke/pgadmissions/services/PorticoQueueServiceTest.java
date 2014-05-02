@@ -30,7 +30,7 @@ public class PorticoQueueServiceTest {
     
     private JmsTemplate templateMock;
     
-    private ThrottleService throttleServiceMock;
+    private ApplicationExportConfigurationService throttleServiceMock;
     
     private ExportService exportServiceMock;
     
@@ -47,7 +47,7 @@ public class PorticoQueueServiceTest {
         form = new ValidApplicationFormBuilder().build();
         queueMock = EasyMock.createMock(Queue.class);
         templateMock = EasyMock.createMock(JmsTemplate.class);
-        throttleServiceMock = EasyMock.createMock(ThrottleService.class);
+        throttleServiceMock = EasyMock.createMock(ApplicationExportConfigurationService.class);
         exportServiceMock = EasyMock.createMock(ExportService.class);
         formTransferServiceMock = EasyMock.createMock(ApplicationFormTransferService.class);
         porticoQueueService = new ExportQueueService();

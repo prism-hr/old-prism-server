@@ -29,26 +29,25 @@ import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Throttle;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ThrottleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.dto.ApplicationExportConfigurationDTO;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
 import com.zuehlke.pgadmissions.exceptions.EmailTemplateException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.JsonPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
+import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.EmailTemplateService;
 import com.zuehlke.pgadmissions.services.ExportQueueService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.ThrottleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -64,7 +63,7 @@ public class ConfigurationControllerTest {
     private JsonPropertyEditor notificationsDurationPropertyEditorMock;
     private UserService userServiceMock;
     private EmailTemplateService emailTemplateServiceMock;
-    private ThrottleService throttleserviceMock;
+    private ApplicationExportConfigurationService throttleserviceMock;
     private ConfigurationService configurationServiceMock;
     private User admin;
     private ExportQueueService queueServiceMock;
@@ -284,12 +283,7 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldGetThrottleAndSetProperties() {
-        Throttle throttle = new ThrottleBuilder().id(12).enabled(true).batchSize(40).processingDelay((short) 3).processingDelayUnit(DurationUnitEnum.DAYS)
-                .build();
-        expect(throttleserviceMock.getThrottle()).andReturn(throttle);
-        replay(throttleserviceMock);
-
-        Map<String, Object> result = controller.getThrottle();
+        Map<String, Object> result = controller.getApplicationExportConfiguration();
 
         assertNotNull(result);
         assertEquals(4, result.size());
@@ -301,28 +295,16 @@ public class ConfigurationControllerTest {
     }
 
     @Test
-    public void shouldGetNoThrottleAndSetNoProperties() {
-        expect(throttleserviceMock.getThrottle()).andReturn(null);
-        replay(throttleserviceMock);
-
-        Map<String, Object> result = controller.getThrottle();
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-        verify(throttleserviceMock);
-    }
-
-    @Test
     public void shouldUpdateThrottle() {
-        Throttle throttle = new ThrottleBuilder().enabled(false).batchSize(15).processingDelay((short) 4).processingDelayUnit(DurationUnitEnum.WEEKS).build();
-        throttleserviceMock.updateThrottleWithNewValues(throttle);
+        ApplicationExportConfigurationDTO configuration = new ApplicationExportConfigurationDTO();
+        throttleserviceMock.updateApplicationExportConfiguration(configuration);
 
         EasyMock.expect(throttleserviceMock.userTurnedOnThrottle(false)).andReturn(false);
 
-        BindingResult errors = new DirectFieldBindingResult(throttle, "throttle");
+        BindingResult errors = new DirectFieldBindingResult(configuration, "throttle");
 
         replay(throttleserviceMock);
-        Map<String, Object> result = controller.updateThrottle(throttle, errors);
+        Map<String, Object> result = controller.updateApplicationExportConfiguration(configuration, errors);
         verify(throttleserviceMock);
 
         assertNotNull(result);
@@ -331,15 +313,15 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldNotUpdateThrottleAndReturnErrorMessage() {
-        Throttle throttle = new Throttle();
+        ApplicationExportConfigurationDTO configuration = new ApplicationExportConfigurationDTO();
 
-        BindingResult errors = new DirectFieldBindingResult(throttle, "throttle");
+        BindingResult errors = new DirectFieldBindingResult(configuration, "configuration");
         errors.rejectValue("enabled", "code");
 
         EasyMock.expect(applicationContext.getMessage(EasyMock.isA(FieldError.class), EasyMock.eq(Locale.getDefault()))).andReturn("message");
 
         replay(applicationContext);
-        Map<String, Object> result = controller.updateThrottle(throttle, errors);
+        Map<String, Object> result = controller.updateApplicationExportConfiguration(configuration, errors);
         verify(applicationContext);
 
         assertNotNull(result);
@@ -349,15 +331,15 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldTriggerSendingApplicationsToPorticoIfTheSwitchHasBeenSetToTrue() {
-        Throttle throttle = new ThrottleBuilder().enabled(true).batchSize(15).processingDelay((short) 4).processingDelayUnit(DurationUnitEnum.WEEKS).build();
-        throttleserviceMock.updateThrottleWithNewValues(throttle);
+        ApplicationExportConfigurationDTO configuration = new ApplicationExportConfigurationDTO();
+        throttleserviceMock.updateApplicationExportConfiguration(configuration);
         EasyMock.expect(throttleserviceMock.userTurnedOnThrottle(true)).andReturn(true);
         queueServiceMock.sendQueuedApprovedApplicationsToPortico();
 
-        BindingResult errors = new DirectFieldBindingResult(throttle, "throttle");
+        BindingResult errors = new DirectFieldBindingResult(configuration, "throttle");
 
         replay(throttleserviceMock, queueServiceMock);
-        controller.updateThrottle(throttle, errors);
+        controller.updateApplicationExportConfiguration(configuration, errors);
         verify(throttleserviceMock, queueServiceMock);
     }
 

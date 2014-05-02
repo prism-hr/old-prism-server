@@ -39,7 +39,7 @@ public class ExportQueueService {
     private JmsTemplate template;
 
     @Autowired
-    private ThrottleService throttleService;
+    private ApplicationExportConfigurationService throttleService;
 
     @Autowired
     private ExportService exportService;
@@ -100,7 +100,7 @@ public class ExportQueueService {
         transfer.setStatus(ApplicationTransferStatus.CANCELLED);
     }
 
-    public void setThrottleService(ThrottleService throttleService) {
+    public void setThrottleService(ApplicationExportConfigurationService throttleService) {
         this.throttleService = throttleService;
     }
 
@@ -128,7 +128,7 @@ public class ExportQueueService {
         this.template = template;
     }
 
-    public ThrottleService getThrottleService() {
+    public ApplicationExportConfigurationService getThrottleService() {
         return throttleService;
     }
 

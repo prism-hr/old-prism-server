@@ -14,7 +14,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 
 @Entity
 @Table(name = "ACTION")
@@ -34,10 +33,6 @@ public class Action implements Serializable {
 
     @Column(name = "precedence")
     private Integer precedence = 0;
-
-    @Column(name = "notification_method_id")
-    @Enumerated(EnumType.STRING)
-    private NotificationMethod notificationMethod = null;
 
     public ApplicationFormAction getId() {
         return id;
@@ -61,14 +56,6 @@ public class Action implements Serializable {
 
     public void setPrecedence(Integer precedence) {
         this.precedence = precedence;
-    }
-
-    public NotificationMethod getNotificationMethod() {
-        return notificationMethod;
-    }
-
-    public void setNotificationMethod(NotificationMethod notification) {
-        this.notificationMethod = notification;
     }
 
 }

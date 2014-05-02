@@ -9,6 +9,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
@@ -94,7 +95,11 @@ public class UserDAO {
     }
 
     public User getDisabledUserByEmail(String email) {
-        return (User) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("enabled", false))
+        return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .createAlias("account", "account", JoinType.LEFT_OUTER_JOIN)
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("account"))
+                        .add(Restrictions.eq("account.enabled", false))) //
                 .add(Restrictions.eq("email", email)).uniqueResult();
     }
 
@@ -103,10 +108,16 @@ public class UserDAO {
     }
 
     public List<Integer> getUsersIdsWithPendingRoleNotifications() {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class, "user")
-                .setProjection(Projections.distinct(Projections.property("id"))).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq("enabled", false)).createAlias("pendingRoleNotifications", "pendingRoleNotification")
-                .add(Restrictions.isNull("pendingRoleNotification.notificationDate")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class, "user") //
+                .setProjection(Projections.distinct(Projections.property("id"))) //
+                .createAlias("account", "account", JoinType.LEFT_OUTER_JOIN)
+                .createAlias("pendingRoleNotifications", "pendingRoleNotification") //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("account"))
+                        .add(Restrictions.eq("account.enabled", false))) //
+                .add(Restrictions.isNull("pendingRoleNotification.notificationDate")) //
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY) //
+                .list();
     }
 
     public List<User> getSuperadministrators() {

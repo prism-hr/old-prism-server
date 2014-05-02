@@ -314,4 +314,14 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.email = email;
         return this;
     }
+    
+    public User withActivationCode(String activationCode) {
+        this.activationCode = activationCode;
+        return this;
+    }
+    
+    public User withAccount(UserAccount account) {
+        this.account = account;
+        return this;
+    }
 }

@@ -107,19 +107,6 @@ public class UserDAO {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class).add(Restrictions.eq("email", email)).uniqueResult();
     }
 
-    public List<Integer> getUsersIdsWithPendingRoleNotifications() {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class, "user") //
-                .setProjection(Projections.distinct(Projections.property("id"))) //
-                .createAlias("account", "account", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("pendingRoleNotifications", "pendingRoleNotification") //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("account"))
-                        .add(Restrictions.eq("account.enabled", false))) //
-                .add(Restrictions.isNull("pendingRoleNotification.notificationDate")) //
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY) //
-                .list();
-    }
-
     public List<User> getSuperadministrators() {
         return sessionFactory.getCurrentSession().createCriteria(User.class).createAlias("roles", "role")
                 .add(Restrictions.eq("role.id", Authority.SYSTEM_ADMINISTRATOR)).list();

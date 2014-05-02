@@ -97,10 +97,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Valid
     private List<Comment> comments = new ArrayList<Comment>();
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
-
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "registered_user_id")
     private List<Referee> referees = new ArrayList<Referee>();
@@ -208,10 +204,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     public List<Comment> getComments() {
         return comments;
-    }
-
-    public List<PendingRoleNotification> getPendingRoleNotifications() {
-        return pendingRoleNotifications;
     }
 
     public List<Referee> getReferees() {

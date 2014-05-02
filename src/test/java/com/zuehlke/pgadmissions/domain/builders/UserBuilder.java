@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 
@@ -17,7 +16,6 @@ public class UserBuilder {
     private String email;
     private Integer id;
     private String activationCode;
-    private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
     private Advert advert;
     private User primaryAccount;
     private List<User> linkedAccounts = new ArrayList<User>();
@@ -26,11 +24,6 @@ public class UserBuilder {
 
     public UserBuilder linkedAccounts(final User... user) {
         linkedAccounts.addAll(Arrays.asList(user));
-        return this;
-    }
-
-    public UserBuilder pendingRoleNotifications(PendingRoleNotification... pendingRoleNotifications) {
-        this.pendingRoleNotifications.addAll(Arrays.asList(pendingRoleNotifications));
         return this;
     }
 
@@ -92,7 +85,6 @@ public class UserBuilder {
         user.setLastName(lastName);
         user.setEmail(email);
         user.setActivationCode(activationCode);
-        user.getPendingRoleNotifications().addAll(pendingRoleNotifications);
         user.setAdvert(advert);
         user.getLinkedAccounts().addAll(linkedAccounts);
         user.setParentUser(primaryAccount);

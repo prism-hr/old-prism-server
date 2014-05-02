@@ -129,9 +129,15 @@ public class ManageUsersController {
         if (result.hasErrors()) {
             return NEW_USER_VIEW_NAME;
         }
+        
+        boolean userExisted = userService.getUserByEmail(userDTO.getEmail()) != null;
 
-        manageUsersService.setUserRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true, true, roleService.getPrismSystem(),
+        User newUser = manageUsersService.setUserRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true, true, roleService.getPrismSystem(),
                 userDTO.getSelectedAuthorities());
+        
+        if(!userExisted) {
+            
+        }
 
         return "redirect:/manageUsers/edit";
 

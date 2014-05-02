@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.mail;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
 
 import java.util.Collections;
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
@@ -233,37 +231,5 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         return true;
     }
 
-    @Transactional
-    public void sendNewUserInvitation() {
-        log.trace("Running sendNewUserInvitation Task");
-        List<Integer> users = userDAO.getUsersIdsWithPendingRoleNotifications();
-        for (Integer user : users) {
-            applicationContext.getBean(this.getClass()).sendNewUserInvitation(user);
-        }
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendNewUserInvitation(Integer userId) {
-        PrismEmailMessage message = null;
-        User user = userDAO.getById(userId);
-        String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[]) null);
-        for (PendingRoleNotification notification : user.getPendingRoleNotifications()) {
-            if (notification.getNotificationDate() == null) {
-                notification.setNotificationDate(new Date());
-            }
-        }
-        User admin = user.getPendingRoleNotifications().get(0).getAddedByUser();
-
-        try {
-            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "newUser", "admin", "host" }, new Object[] { user, admin, getHostName() });
-            message = buildMessage(user, subject, modelBuilder.build(), NEW_USER_SUGGESTION);
-            sendEmail(message);
-            userDAO.save(user);
-        } catch (Exception e) {
-            log.error("Error while sending reference reminder email to referee: ", e);
-            return false;
-        }
-        return true;
-    }
 
 }

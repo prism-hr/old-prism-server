@@ -27,8 +27,4 @@ public class MailSendingTimer {
         mailService.sendInterviewParticipantVoteReminder();
     }
 
-    @Scheduled(cron = "${email.schedule.period.cron}")
-    public void sendNewUserInvitation() {
-        mailService.sendNewUserInvitation();
-    }
 }

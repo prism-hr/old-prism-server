@@ -106,4 +106,9 @@ public class RoleService {
         return roleDAO.getPrismSystem();
     }
 
+    public User getInvitingAdmin(User user) {
+        // TODO implement
+        return null;
+    }
+
 }

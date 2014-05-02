@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.OPPORTUNITY_REQUEST_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
@@ -24,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -303,6 +306,26 @@ public class MailSendingService extends AbstractMailSendingService {
         } catch (Exception e) {
             log.error("Error while sending reset password email: {}", e);
         }
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean sendNewUserInvitation(Integer userId) {
+        PrismEmailMessage message = null;
+        User user = userDAO.getById(userId);
+        String subject = resolveMessage(NEW_USER_SUGGESTION, (Object[]) null);
+        
+        User admin = roleService.getInvitingAdmin(user);
+
+        try {
+            EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "newUser", "admin", "host" }, new Object[] { user, admin, getHostName() });
+            message = buildMessage(user, subject, modelBuilder.build(), NEW_USER_SUGGESTION);
+            sendEmail(message);
+            userDAO.save(user);
+        } catch (Exception e) {
+            log.error("Error while sending reference reminder email to referee: ", e);
+            return false;
+        }
+        return true;
     }
 
 }

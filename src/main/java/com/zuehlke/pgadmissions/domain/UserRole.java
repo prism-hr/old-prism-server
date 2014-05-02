@@ -54,8 +54,7 @@ public class UserRole {
     @JoinColumn(name = "requesting_user_id")
     private User requestingUser;
 
-    @Column(name = "assigned_timestamp", insertable = false, updatable = false, nullable = false)
-    @Generated(GenerationTime.INSERT)
+    @Column(name = "assigned_timestamp", nullable = false)
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date assignedTimestamp;
 

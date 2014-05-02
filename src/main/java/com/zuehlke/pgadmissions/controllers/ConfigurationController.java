@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -32,14 +31,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
-import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.Throttle;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
@@ -47,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
 import com.zuehlke.pgadmissions.exceptions.EmailTemplateException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.JsonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
@@ -68,16 +64,8 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 public class ConfigurationController {
 
     private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
+    
     private static final String CONFIGURATION_SECTION_NAME = "/private/staff/superAdmin/configuration_section";
-
-    @Resource(name = "stageDurationPropertyEditor")
-    private JsonPropertyEditor stageDurationPropertyEditor;
-
-    @Resource(name = "reminderIntervalPropertyEditor")
-    private JsonPropertyEditor reminderIntervalPropertyEditor;
-
-    @Resource(name = "notificationsDurationPropertyEditor")
-    private JsonPropertyEditor notificationsDurationPropertyEditor;
 
     @Autowired
     private UserService userService;
@@ -115,13 +103,6 @@ public class ConfigurationController {
     @Autowired
     private RoleService roleService;
 
-    @InitBinder(value = "serviceLevelsDTO")
-    public void registerValidatorsAndPropertyEditors(WebDataBinder binder) {
-        binder.registerCustomEditor(State.class, stageDurationPropertyEditor);
-        binder.registerCustomEditor(ReminderInterval.class, reminderIntervalPropertyEditor);
-        binder.registerCustomEditor(NotificationsDuration.class, notificationsDurationPropertyEditor);
-    }
-
     @RequestMapping(method = RequestMethod.GET)
     public String getConfigurationPage() {
         User user = userService.getCurrentUser();
@@ -133,6 +114,7 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET, value = "config_section")
     public String getConfigurationSection() {
+        // FIXME rewrite using AJAX
         if (!roleService.hasRole(getUser(), Authority.SYSTEM_ADMINISTRATOR)) {
             return "/private/common/simpleMessage";
         }
@@ -145,7 +127,7 @@ public class ConfigurationController {
         if (!roleService.hasRole(user, Authority.SYSTEM_ADMINISTRATOR)) {
             throw new ResourceNotFoundException();
         }
-        configurationService.saveConfigurations(serviceLevelsDTO);
+        configurationService.saveServiceLevels(serviceLevelsDTO);
         return "redirect:/configuration/config_section";
     }
 
@@ -316,16 +298,6 @@ public class ConfigurationController {
     @ModelAttribute("user")
     public User getUser() {
         return userService.getCurrentUser();
-    }
-
-    @ModelAttribute("reminderIntervals")
-    public List<ReminderInterval> getReminderIntervals() {
-        return configurationService.getReminderIntervals();
-    }
-
-    @ModelAttribute("notificationsDuration")
-    public NotificationsDuration getNotificationsDuration() {
-        return configurationService.getNotificationsDuration();
     }
 
     @ModelAttribute("units")

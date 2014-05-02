@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
@@ -16,9 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -50,9 +47,7 @@ public class RefereeDAO {
     public List<Integer> getRefereesDueReminder() {
         // TODO use ApplicationFormUserRole
         Date today = Calendar.getInstance().getTime();
-        ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class)
-                .add(Restrictions.eq("reminderType", ReminderType.REFERENCE)).uniqueResult();
-        Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
+        Date dateWithSubtractedInterval = new Date();
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
                 .setProjection(Projections.groupProperty("id"))
                 .createAlias("application", "application", JoinType.INNER_JOIN)

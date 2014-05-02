@@ -41,7 +41,7 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         save(user);
         flushAndClearSession();
         program = testObjectProvider.getEnabledProgram();
-        applicationForm = new ApplicationFormBuilder().advert(program).applicant(user)
+        applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
                 .status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(applicationForm);
         flushAndClearSession();
@@ -82,10 +82,10 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         
         program = testObjectProvider.getEnabledProgram();
         
-        ApplicationForm approvedForm1 = new ApplicationFormBuilder().advert(program).applicant(applicant).build();
-        ApplicationForm approvedForm2 = new ApplicationFormBuilder().advert(program).applicant(applicant).build();
-        ApplicationForm withdrawnForm1 = new ApplicationFormBuilder().advert(program).applicant(applicant).build();
-        ApplicationForm rejectedForm1 = new ApplicationFormBuilder().advert(program).applicant(applicant).build();
+        ApplicationForm approvedForm1 = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+        ApplicationForm approvedForm2 = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+        ApplicationForm withdrawnForm1 = new ApplicationFormBuilder().program(program).applicant(applicant).build();
+        ApplicationForm rejectedForm1 = new ApplicationFormBuilder().program(program).applicant(applicant).build();
         
 //        approvedForm1.setStatus(ApplicationFormStatus.APPROVED);
 //        approvedForm1.setApplicationNumber("1");
@@ -132,12 +132,12 @@ public class ApplicationFormTransferDAOTest extends AutomaticRollbackTestCase {
         
         program = testObjectProvider.getEnabledProgram();
         
-        ApplicationForm approvedForm1 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
-        ApplicationForm approvedForm2 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
-        ApplicationForm withdrawnForm1 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
-        ApplicationForm rejectedForm1 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
-        ApplicationForm approvedForm3 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
-        ApplicationForm approvedForm4 = new ApplicationFormBuilder().applicant(applicant).advert(program).build();
+        ApplicationForm approvedForm1 = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+        ApplicationForm approvedForm2 = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+        ApplicationForm withdrawnForm1 = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+        ApplicationForm rejectedForm1 = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+        ApplicationForm approvedForm3 = new ApplicationFormBuilder().applicant(applicant).program(program).build();
+        ApplicationForm approvedForm4 = new ApplicationFormBuilder().applicant(applicant).program(program).build();
         
         // FIXME set statuses
 //        approvedForm1.setStatus(ApplicationFormStatus.APPROVED);

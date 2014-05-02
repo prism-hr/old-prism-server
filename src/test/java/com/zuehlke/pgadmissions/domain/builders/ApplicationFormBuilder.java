@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -29,7 +30,7 @@ public class ApplicationFormBuilder {
     private ApplicationAddress applicationFormAddress;
     private Integer id;
     private User applicant;
-    private Advert advert;
+    private Program program;
     private Date createdTimestamp;
     private Date submittedDate;
     private Date closingDate;
@@ -109,8 +110,8 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder advert(Advert advert) {
-        this.advert = advert;
+    public ApplicationFormBuilder program(Advert advert) {
+        this.program = program;
         return this;
     }
 
@@ -200,6 +201,7 @@ public class ApplicationFormBuilder {
         ApplicationForm application = new ApplicationForm();
         application.setId(id);
         application.setApplicant(applicant);
+        application.setProgram(program);
         application.setSubmittedTimestamp(submittedDate);
         application.getReferees().addAll(referees);
         application.setCreatedTimestamp(createdTimestamp);
@@ -210,7 +212,6 @@ public class ApplicationFormBuilder {
         application.setApplicationDocument(applicationFormDocument);
         application.setPersonalDetails(personalDetails);
         application.setDueDate(dueDate);
-        application.setAdvert(advert);
         application.setState(status);
         application.setAdditionalInformation(info);
         application.setAcceptedTermsOnSubmission(acceptedTerms);

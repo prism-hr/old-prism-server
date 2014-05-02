@@ -92,7 +92,7 @@ public class ProgrammeDetailsControllerTest {
     public void shouldReturnAvaialbeStudyOptionLevels() {
         final String applicationNumber = "1";
         Program program = new ProgramBuilder().id(7).build();
-        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).advert(program).build();
+        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).program(program).build();
 
         StudyOption option1 = new StudyOption("1", "Full-time");
         StudyOption option2 = new StudyOption("31", "Part-time");

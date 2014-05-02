@@ -30,6 +30,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
+import com.google.common.base.Objects;
+
 @Entity
 @Table(name = "APPLICATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -80,10 +82,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User applicant = null;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "advert_id")
-    private Advert advert;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
@@ -259,11 +257,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     }
 
     public Advert getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(Advert advert) {
-        this.advert = advert;
+        return Objects.firstNonNull(getProject(), getProgram());
     }
 
     public Program getProgram() {

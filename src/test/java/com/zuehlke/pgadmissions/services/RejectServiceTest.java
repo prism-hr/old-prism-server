@@ -75,7 +75,7 @@ public class RejectServiceTest {
         admin = new UserBuilder().id(324).build();
         approver = new UserBuilder().id(22414).build();
         Program program = new ProgramBuilder().id(10023).build();
-        application = new ApplicationFormBuilder().id(200).advert(program).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        application = new ApplicationFormBuilder().id(200).program(program).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
 
         reason1 = new RejectReasonBuilder().id(1).text("idk").build();
         reason2 = new RejectReasonBuilder().id(2).text("idc").build();

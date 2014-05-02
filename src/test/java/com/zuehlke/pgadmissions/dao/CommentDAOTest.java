@@ -62,7 +62,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadGenericComment() {
         State state = (State) sessionFactory.getCurrentSession().createQuery("from State where id = 'APPLICATION_APPROVAL'").uniqueResult();
-        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).dueDate(new Date()).status(state). build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).dueDate(new Date()).status(state). build();
         save(application);
         flushAndClearSession();
 
@@ -91,7 +91,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveAndLoadReviewComment() {
-        ApplicationForm application = new ApplicationFormBuilder().id(1).advert(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).build();
         save(application);
         flushAndClearSession();
 
@@ -121,7 +121,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .userAccount(new UserAccount().withPassword("password").withEnabled(false)).build();
 
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
 
         save(user, application);
         flushAndClearSession();
@@ -135,7 +135,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
                 .userAccount(new UserAccount().withPassword("password").withEnabled(false)).build();
 
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
         Score score1 = new ScoreBuilder().dateResponse(new Date()).question("1??").questionType(QuestionType.RATING).ratingResponse(4).build();
         Score score2 = new ScoreBuilder().dateResponse(new Date()).question("2??").questionType(QuestionType.TEXTAREA).textResponse("aaa").build();
         ReferenceComment comment = new ReferenceCommentBuilder().comment("reference").user(user).application(application).scores(score1, score2).build();

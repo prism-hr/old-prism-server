@@ -33,7 +33,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldDeleteEmploymentPosition() {
         ApplicationForm application = new ApplicationForm();
-        application.setAdvert(program);
+        application.setProgram(program);
         application.setApplicant(user);
 
         EmploymentPosition employmentPosition = new EmploymentPositionBuilder().address1("Address").application(application).employerName("fr")
@@ -51,7 +51,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveEmployemnt() {
         ApplicationForm application = new ApplicationForm();
-        application.setAdvert(program);
+        application.setProgram(program);
         application.setApplicant(user);
 
         save(application);
@@ -71,7 +71,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetEmploymentById() {
         ApplicationForm application = new ApplicationForm();
-        application.setAdvert(program);
+        application.setProgram(program);
         application.setApplicant(user);
 
         EmploymentPosition employmentPosition = new EmploymentPositionBuilder().address1("Address").application(application).employerName("fr")

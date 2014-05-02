@@ -72,7 +72,7 @@ public class WithdrawServiceTest {
     @Test
     public void shouldSendFormToPortico() {
         Program program = new ProgramBuilder().programFeed(new ProgramFeedBuilder().feedUrl("test").build()).build();
-        ApplicationForm form = new ApplicationFormBuilder().id(1).advert(program).submittedDate(new Date()).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm form = new ApplicationFormBuilder().id(1).program(program).submittedDate(new Date()).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         expect(porticoQueueServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationFormTransfer());
         replay();
         service.sendToPortico(form);

@@ -49,7 +49,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
     public void shouldDeleteReferee() {
 
         ApplicationForm application = new ApplicationForm();
-        application.setAdvert(program);
+        application.setProgram(program);
         application.setApplicant(user);
 
         DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
@@ -84,10 +84,10 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnRefereesForInactiveApplicationForms() {
-        ApplicationForm unsubmittedApplication = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
-        ApplicationForm approvedApplication = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_APPROVED)).build();
-        ApplicationForm rejectedApplication = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_REJECTED)).build();
-        ApplicationForm withdrawnApplicationForm = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_WITHDRAWN)).build();
+        ApplicationForm unsubmittedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
+        ApplicationForm approvedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_APPROVED)).build();
+        ApplicationForm rejectedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_REJECTED)).build();
+        ApplicationForm withdrawnApplicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_WITHDRAWN)).build();
         save(unsubmittedApplication, approvedApplication, rejectedApplication, withdrawnApplicationForm);
 
         DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
@@ -120,7 +120,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnRefereesWhoHaveDeclined() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
 
         DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
@@ -135,7 +135,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnRefereesWhoHaveProvidedReference() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").build();
         ReferenceComment reference = new ReferenceCommentBuilder().user(user).comment("comment").application(application).document(document).build();
@@ -154,7 +154,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnRefereesWhoHaveBeenRemindedInLastWeek() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
         Date threeDaysAgo = DateUtils.addDays(now, -3);
@@ -173,7 +173,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnRefereesDueReminders() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
         Date eightDaysAgo = DateUtils.addDays(now, -8);
@@ -193,7 +193,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnRefereesWithNoReminders() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
 
         DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
@@ -210,7 +210,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnRefereeForWhichReminderWasSendOneWeekMinus5minAgoForSixDaysInternal() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
         Date oneWeekAgo = DateUtils.addDays(now, -7);
@@ -230,7 +230,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnRefereeReminded1DayAgoFor6DaysReminderInterval() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
         Date oneMinuteAgo = DateUtils.addDays(now, -1);
@@ -249,7 +249,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnRefereeReminded2DaysAgoForOneDayReminderInterval() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
         Date twoMinutesAgo = DateUtils.addDays(now, -2);
@@ -268,7 +268,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnRefereeForWhichReminderWasSendOne6DaysAnd5minAgo() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
         Date sixDaysAgo = DateUtils.addDays(now, -6);
@@ -288,7 +288,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnRefereeForWhichReminderWasSendOneWeekPlus5minAgo() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
         Date oneWeekAgo = DateUtils.addMinutes(now, -((int) TimeUnit.MINUTES.convert(7, TimeUnit.DAYS)));
@@ -308,7 +308,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnRefereesForWhichThereIsNoRegisteredUserMapped() {
-        ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
         Date oneWeekAgo = DateUtils.addDays(now, -7);
@@ -327,8 +327,8 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnRefereesWhoHavenNotProvidedReference() {
-        ApplicationForm application = new ApplicationFormBuilder().id(20).advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
-        ApplicationForm application2 = new ApplicationFormBuilder().id(21).advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_REJECTED)).build();
+        ApplicationForm application = new ApplicationFormBuilder().id(20).program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm application2 = new ApplicationFormBuilder().id(21).program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_REJECTED)).build();
         save(application, application2);
 
         flushAndClearSession();

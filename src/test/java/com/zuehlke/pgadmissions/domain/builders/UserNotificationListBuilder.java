@@ -324,7 +324,7 @@ public class UserNotificationListBuilder {
     }
 
     private ApplicationForm getDummyApplication() {
-        ApplicationForm application = new ApplicationFormBuilder().applicant(getDummyUser()).advert(program).build();
+        ApplicationForm application = new ApplicationFormBuilder().applicant(getDummyUser()).program(program).build();
         saveDummyObject(application);
         return application;
     }

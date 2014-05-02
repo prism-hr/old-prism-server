@@ -238,7 +238,7 @@ public class ApplicationFormValidatorTest {
         currentAddress = new AddressBuilder().address1("address").build();
         contactAddress = new AddressBuilder().address1("address").build();
         additionalInformation = new AdditionalInformationBuilder().id(3).build();
-        applicationForm = new ApplicationFormBuilder().advert(program).programmeDetails(programmeDetails).acceptedTerms(true).personalDetails(personalDetails)
+        applicationForm = new ApplicationFormBuilder().program(program).programmeDetails(programmeDetails).acceptedTerms(true).personalDetails(personalDetails)
                 .additionalInformation(additionalInformation)//
                 .applicationFormAddress(new ApplicationAddress().withCurrentAddress(currentAddress).withContactAddress(contactAddress))
                 .referees(new Referee(), new Referee(), new Referee())//

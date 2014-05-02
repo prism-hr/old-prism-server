@@ -252,7 +252,8 @@ public class ApplicationFormService {
         String applicationNumber = generateApplicationNumber(advert.getProgram());
         ApplicationForm application = new ApplicationForm();
         application.setApplicant(applicant);
-        application.setAdvert(advert);
+        application.setProgram(advert.getProgram());
+        application.setProject(advert.getProject());
         application.setApplicationNumber(applicationNumber);
         ProgramDetails programDetails = programDetailsService.getOrCreate(application);
         programDetails.setApplication(application);

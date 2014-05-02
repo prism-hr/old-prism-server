@@ -66,7 +66,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     public void shouldSaveAndLoadApplication() throws Exception {
 
         ApplicationForm inApplication = new ApplicationForm();
-        inApplication.setAdvert(program);
+        inApplication.setProgram(program);
 
         inApplication.setApplicant(user);
 
@@ -100,7 +100,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldAssignDateToApplicationForm() {
         ApplicationForm inApplication = new ApplicationForm();
-        inApplication.setAdvert(program);
+        inApplication.setProgram(program);
         inApplication.setApplicant(user);
 
         applicationDAO.save(inApplication);
@@ -124,7 +124,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         
         long number = applicationDAO.getApplicationsInProgramThisYear(program, thisYear);
         assertEquals(0, number);
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
 
         save(applicationFormOne);
 
@@ -132,7 +132,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         assertEquals(Long.valueOf(1), applicationDAO.getApplicationsInProgramThisYear(program, thisYear));
 
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(applicationFormTwo);
 
         flushAndClearSession();
@@ -152,7 +152,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetApplicationByApplicationNumber() {
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").advert(program).applicant(user)
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(user)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
 
         save(applicationFormOne);
@@ -167,7 +167,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         application = new ApplicationForm();
         application.setApplicant(user);
-        application.setAdvert(program);
+        application.setProgram(program);
 
         QualificationTypeDAO typeDao = new QualificationTypeDAO(sessionFactory);
 
@@ -201,8 +201,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldGetTwoApplicationsByApplicantAndProgram() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
-        ApplicationForm applicationForm2 = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
+        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
+        ApplicationForm applicationForm2 = new ApplicationFormBuilder().program(program).applicant(user).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
 
         save(applicationForm, applicationForm2);
         flushAndClearSession();
@@ -229,16 +229,16 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         User otherApplicant = new UserBuilder().firstName("Other").lastName("Applicant").email("other@applicant.com")
                 .userAccount(new UserAccount().withPassword("password").withEnabled(false)).build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).toDate()).advert(program).applicant(user)
+        ApplicationForm applicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).toDate()).program(program).applicant(user)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
-        ApplicationForm applicationForm2 = new ApplicationFormBuilder().submittedDate(initialDate.toDate()).advert(program).applicant(user)
+        ApplicationForm applicationForm2 = new ApplicationFormBuilder().submittedDate(initialDate.toDate()).program(program).applicant(user)
                 .status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
-        ApplicationForm applicationForm3 = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(1).toDate()).advert(program).applicant(user)
+        ApplicationForm applicationForm3 = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(1).toDate()).program(program).applicant(user)
                 .status(new State().withId(PrismState.APPLICATION_INTERVIEW)).build();
 
-        ApplicationForm recentApplicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).plusMinutes(2).toDate()).advert(program)
+        ApplicationForm recentApplicationForm = new ApplicationFormBuilder().submittedDate(initialDate.plusDays(2).plusMinutes(2).toDate()).program(program)
                 .applicant(otherApplicant).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
-        ApplicationForm otherApplication = new ApplicationFormBuilder().submittedDate(initialDate.plusWeeks(1).toDate()).advert(program)
+        ApplicationForm otherApplication = new ApplicationFormBuilder().submittedDate(initialDate.plusWeeks(1).toDate()).program(program)
                 .applicant(otherApplicant).status(new State().withId(PrismState.APPLICATION_REVIEW)).build();
 
         save(otherApplicant, applicationForm, applicationForm2, applicationForm3, recentApplicationForm, otherApplication);

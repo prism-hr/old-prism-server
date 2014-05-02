@@ -79,7 +79,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Before
     public void prepare() {
-        userDAO = new UserDAO(sessionFactory, null, null);
+        userDAO = new UserDAO(sessionFactory);
 
         applicationFormListDAO = new ApplicationFormListDAO(sessionFactory, userDAO);
 

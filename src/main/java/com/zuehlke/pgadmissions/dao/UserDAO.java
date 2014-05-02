@@ -35,19 +35,13 @@ public class UserDAO {
 
     private final SessionFactory sessionFactory;
 
-    private final ReminderIntervalDAO reminderIntervalDAO;
-
-    private final NotificationsDurationDAO notificationsDurationDAO;
-
     public UserDAO() {
-        this(null, null, null);
+        this(null);
     }
 
     @Autowired
-    public UserDAO(SessionFactory sessionFactory, ReminderIntervalDAO reminderIntervalDAO, NotificationsDurationDAO notificationsDurationDAO) {
+    public UserDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-        this.reminderIntervalDAO = reminderIntervalDAO;
-        this.notificationsDurationDAO = notificationsDurationDAO;
     }
 
     public void save(User user) {
@@ -262,13 +256,17 @@ public class UserDAO {
     }
     
     private Date getReminderBaseline(Date baseline, ReminderType type) {
-        int reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK).getDurationInDays();
-        return DateUtils.addDays((Date) baseline.clone(), -reminderInterval);
+        // TODO implement
+        return new Date();
+//        int reminderInterval = reminderIntervalDAO.getReminderInterval(ReminderType.TASK).getDurationInDays();
+//        return DateUtils.addDays((Date) baseline.clone(), -reminderInterval);
     }
     
     private Date getExpiryBaseline(Date baseline) {
-        int expiryInterval = notificationsDurationDAO.getNotificationsDuration().getDurationInDays();
-        return DateUtils.addDays((Date) baseline.clone(), -expiryInterval);
+        // TODO implement
+        return new Date();
+//        int expiryInterval = notificationsDurationDAO.getNotificationsDuration().getDurationInDays();
+//        return DateUtils.addDays((Date) baseline.clone(), -expiryInterval);
     }
 
 

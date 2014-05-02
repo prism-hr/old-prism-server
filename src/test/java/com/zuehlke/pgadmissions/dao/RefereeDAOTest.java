@@ -23,26 +23,21 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReminderIntervalBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
-import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
 public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     private User user;
     private Program program;
     private RefereeDAO refereeDAO;
-    private ReminderInterval reminderInterval;
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerException() {
@@ -215,10 +210,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnRefereeForWhichReminderWasSendOneWeekMinus5minAgoForSixDaysInternal() {
-        reminderInterval = new ReminderIntervalBuilder().id(1).reminderType(ReminderType.REFERENCE).duration(6).unit(DurationUnitEnum.DAYS).build();
-
-        sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
-
         ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
@@ -239,10 +230,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotReturnRefereeReminded1DayAgoFor6DaysReminderInterval() {
-        reminderInterval = new ReminderIntervalBuilder().id(1).reminderType(ReminderType.REFERENCE).duration(6).unit(DurationUnitEnum.DAYS).build();
-
-        sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
-
         ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
@@ -262,10 +249,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnRefereeReminded2DaysAgoForOneDayReminderInterval() {
-        reminderInterval = new ReminderIntervalBuilder().id(1).reminderType(ReminderType.REFERENCE).duration(1).unit(DurationUnitEnum.DAYS).build();
-
-        sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
-
         ApplicationForm application = new ApplicationFormBuilder().advert(program).applicant(user).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
         save(application);
         Date now = Calendar.getInstance().getTime();
@@ -390,8 +373,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
     public void prepare() {
         user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("kod_aktywacyjny").userAccount(new UserAccount().withEnabled(false).withPassword("dupa"))
                 .build();
-        reminderInterval = new ReminderIntervalBuilder().id(1).reminderType(ReminderType.REFERENCE).duration(1).unit(DurationUnitEnum.WEEKS).build();
-        sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
         save(user);
         flushAndClearSession();
         refereeDAO = new RefereeDAO(sessionFactory);

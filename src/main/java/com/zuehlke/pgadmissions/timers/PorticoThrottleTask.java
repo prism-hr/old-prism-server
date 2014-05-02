@@ -7,14 +7,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.services.ExportQueueService;
-import com.zuehlke.pgadmissions.services.ThrottleService;
+import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
 
 @Service
 public class PorticoThrottleTask {
 
     private final Logger log = LoggerFactory.getLogger(PorticoThrottleTask.class);
     
-    private final ThrottleService throttleService;
+    private final ApplicationExportConfigurationService throttleService;
 
     private ExportQueueService queueService;
     
@@ -23,7 +23,7 @@ public class PorticoThrottleTask {
     }
     
     @Autowired
-    public PorticoThrottleTask(final ThrottleService throttleService, final ExportQueueService queueService) {
+    public PorticoThrottleTask(final ApplicationExportConfigurationService throttleService, final ExportQueueService queueService) {
         this.throttleService = throttleService;
         this.queueService = queueService;
     }

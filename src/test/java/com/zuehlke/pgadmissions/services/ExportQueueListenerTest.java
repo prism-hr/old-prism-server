@@ -52,7 +52,7 @@ public class ExportQueueListenerTest {
     private ApplicationFormTransferService applicationFormTransferServiceMock;
     
     @Mock @InjectIntoByType
-    private ThrottleService throttleServiceMock;
+    private ApplicationExportConfigurationService throttleServiceMock;
     
     @Mock @InjectIntoByType
     private TextMessage messageMock;

@@ -8,11 +8,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertSame;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -27,22 +25,17 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.WebDataBinder;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.EmailTemplate;
-import com.zuehlke.pgadmissions.domain.NotificationsDuration;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ReminderInterval;
-import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.Throttle;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ThrottleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
@@ -122,27 +115,6 @@ public class ConfigurationControllerTest {
     }
 
     @Test
-    public void shouldRegistorPropertyEditorForStageDurations() {
-        WebDataBinder dataBinderMock = EasyMock.createMock(WebDataBinder.class);
-        dataBinderMock.registerCustomEditor(State.class, stageDurationPropertyEditorMock);
-        dataBinderMock.registerCustomEditor(ReminderInterval.class, reminderIntervalPropertyEditorMock);
-        dataBinderMock.registerCustomEditor(NotificationsDuration.class, notificationsDurationPropertyEditorMock);
-
-        EasyMock.replay(dataBinderMock);
-        controller.registerValidatorsAndPropertyEditors(dataBinderMock);
-        EasyMock.verify(dataBinderMock);
-    }
-
-    @Test
-    public void shouldGetReminderInterval() {
-        List<ReminderInterval> intervals = Lists.newArrayList();
-
-        EasyMock.expect(configurationServiceMock.getReminderIntervals()).andReturn(intervals);
-        EasyMock.replay(configurationServiceMock);
-        assertSame(intervals, controller.getReminderIntervals());
-    }
-
-    @Test
     public void shouldGetPossibleDurationUnits() {
         org.junit.Assert.assertArrayEquals(DurationUnitEnum.values(), controller.getUnits());
     }
@@ -152,7 +124,7 @@ public class ConfigurationControllerTest {
 
         ServiceLevelsDTO stageDurationDto = new ServiceLevelsDTO();
 
-        configurationServiceMock.saveConfigurations(stageDurationDto);
+        configurationServiceMock.saveServiceLevels(stageDurationDto);
         expect(userServiceMock.getCurrentUser()).andReturn(superAdmin).anyTimes();
 
         replay(configurationServiceMock, userServiceMock);

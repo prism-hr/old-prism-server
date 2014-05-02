@@ -267,7 +267,8 @@ WHERE id = "PROJECT_TASK_REQUEST_REMINDER"
 ;
 
 UPDATE NOTIFICATION_TEMPLATE
-SET reminder_notification_template_id = "PROJECT_TASK_REQUEST_REMINDER"
+SET reminder_notification_template_id = "PROJECT_TASK_REQUEST_REMINDER",
+	reminder_interval = 259200
 WHERE id = "PROJECT_TASK_REQUEST"
 ;
 

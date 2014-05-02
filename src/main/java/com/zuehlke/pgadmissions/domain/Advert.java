@@ -21,7 +21,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.enums.AdvertState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -49,10 +49,6 @@ public abstract class Advert implements Serializable {
     @Size(max = 2000, message = "A maximum of 1000 characters are allowed.")
     @Column(name = "funding")
     private String funding;
-
-    @Column(name = "state_id")
-    @Enumerated(EnumType.STRING)
-    private AdvertState state;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -160,17 +156,7 @@ public abstract class Advert implements Serializable {
         return closingDates;
     }
 
-    public AdvertState getState() {
-        return state;
-    }
-
-    public void setState(AdvertState state) {
-        this.state = state;
-    }
-
-    public boolean isEnabled() {
-        return state == AdvertState.PROGRAM_APPROVED || state == AdvertState.PROJECT_APPROVED;
-    }
+    public abstract boolean isEnabled();
 
     @Override
     public int hashCode() {

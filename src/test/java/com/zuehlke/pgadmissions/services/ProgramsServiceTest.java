@@ -35,12 +35,12 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
-import com.zuehlke.pgadmissions.domain.enums.AdvertState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
+import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 
@@ -163,7 +163,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldDisableProjectAndAdvertOnRemoveProject() {
-        Project project = new ProjectBuilder().advert(new AdvertBuilder().build()).build();
+        Project project = new Project();
         expect(programDAOMock.getById(1)).andReturn(project);
         programDAOMock.save(project);
 
@@ -171,7 +171,7 @@ public class ProgramsServiceTest {
         programsService.removeProject(1);
         verify();
 
-        assertEquals(AdvertState.PROJECT_DISABLED, project.getState());
+        assertEquals(ProjectState.PROJECT_DISABLED, project.getState());
     }
 
     @Test
@@ -224,7 +224,7 @@ public class ProgramsServiceTest {
         assertEquals(program.getAtasRequired(), opportunityRequest.getAtasRequired());
         assertEquals(program.getStudyDuration(), opportunityRequest.getStudyDuration());
         assertEquals(program.getFunding(), opportunityRequest.getFunding());
-        assertEquals(AdvertState.PROGRAM_APPROVED, program.getState());
+        assertEquals(ProgramState.PROGRAM_APPROVED, program.getState());
         assertSame(program.getProgramType(), opportunityRequest.getProgramType());
         assertSame(program.getContactUser(), requestAuthor);
     }
@@ -245,8 +245,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldUpdateClosingDate() {
-        Advert advert = new AdvertBuilder().description("program").studyDuration(12).state(AdvertState.PROGRAM_APPROVED).build();
-        Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
+        Program program = new ProgramBuilder().code("AAA_00018").description("program").studyDuration(12).state(ProgramState.PROGRAM_APPROVED).build();
         AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new Date()).advert(program).build();
         programDAOMock.updateClosingDate(closingDate);
         replay();
@@ -256,8 +255,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldAddClosingDateToProgram() {
-        Advert advert = new AdvertBuilder().description("program").studyDuration(12).state(AdvertState.PROGRAM_APPROVED).build();
-        Program program = new ProgramBuilder().code("AAA_00018").advert(advert).build();
+        Program program = new ProgramBuilder().code("AAA_00018").description("program").studyDuration(12).state(ProgramState.PROGRAM_APPROVED).build();
         AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new Date()).advert(program).build();
         programDAOMock.save(program);
         replay();

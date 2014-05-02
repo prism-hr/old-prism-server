@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
-import com.zuehlke.pgadmissions.domain.enums.AdvertState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 public class ProgramBuilder {
@@ -27,7 +27,7 @@ public class ProgramBuilder {
     private String description = "Description.";
     private Integer studyDuration = 12;
     private String funding;
-    private AdvertState state;
+    private ProgramState state;
     private User contactUser;
     private String code;
     private boolean atasRequired;
@@ -64,7 +64,7 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder state(AdvertState state) {
+    public ProgramBuilder state(ProgramState state) {
         this.state = state;
         return this;
     }
@@ -121,11 +121,6 @@ public class ProgramBuilder {
         return this;
     }
 
-    public ProgramBuilder advert(Advert advert) {
-        return id(advert.getId()).title(advert.getTitle()).description(advert.getDescription()).studyDuration(advert.getStudyDuration())
-                .funding(advert.getFunding()).state(advert.getState()).contactUser(advert.getContactUser());
-    }
-
     public Program build() {
         Program program = new Program();
         program.setId(id);
@@ -148,6 +143,6 @@ public class ProgramBuilder {
     }
 
     public static ProgramBuilder aProgram(Institution institution) {
-        return new ProgramBuilder().code("AAA").title("Amazing program!").state(AdvertState.PROGRAM_APPROVED).atasRequired(false).institution(institution);
+        return new ProgramBuilder().code("AAA").title("Amazing program!").state(ProgramState.PROGRAM_APPROVED).atasRequired(false).institution(institution);
     }
 }

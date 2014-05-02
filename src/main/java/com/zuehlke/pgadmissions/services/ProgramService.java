@@ -22,9 +22,10 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.enums.AdvertState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
+import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
@@ -89,7 +90,7 @@ public class ProgramService {
     public void removeProject(Integer projectId) {
         Project project = (Project) getById(projectId);
         if (project != null) {
-            project.setState(AdvertState.PROJECT_DISABLED);
+            project.setState(ProjectState.PROJECT_DISABLED);
         }
     }
 
@@ -143,7 +144,7 @@ public class ProgramService {
             program.setContactUser(thisBean.getContactUserForProgram(program, opportunityRequest.getAuthor()));
         } else {
             program = new Program();
-            program.setState(AdvertState.PROGRAM_APPROVED);
+            program.setState(ProgramState.PROGRAM_APPROVED);
             program.setContactUser(opportunityRequest.getAuthor());
         }
 

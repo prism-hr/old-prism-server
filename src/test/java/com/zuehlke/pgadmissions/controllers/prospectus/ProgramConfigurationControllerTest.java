@@ -34,12 +34,11 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramTypeBuilder;
-import com.zuehlke.pgadmissions.domain.enums.AdvertState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
@@ -122,8 +121,8 @@ public class ProgramConfigurationControllerTest {
     public void shouldGetOpportunityData() {
         Domicile domicile = new DomicileBuilder().id(88).build();
         Program program = new ProgramBuilder().code("07").institution(new Institution().withDomicileCode("PL").withCode("inst"))
-                .advert(new AdvertBuilder().id(999).build()).title("Dlaczego w pizdzie nie ma krzesel?").description("Zeby chuj stal").studyDuration(8)
-                .funding("Ni ma kasy").state(AdvertState.PROGRAM_APPROVED).atasRequired(false)
+                .id(999).title("Dlaczego w pizdzie nie ma krzesel?").description("Zeby chuj stal").studyDuration(8)
+                .funding("Ni ma kasy").state(ProgramState.PROGRAM_APPROVED).atasRequired(false)
                 .programType(new ProgramTypeBuilder().id(ProgramTypeId.INTERNSHIP).build()).build();
 
         Map<String, Object> dataMap = Maps.newHashMap();

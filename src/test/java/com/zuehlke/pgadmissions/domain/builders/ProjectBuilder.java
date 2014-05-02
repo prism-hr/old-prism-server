@@ -6,7 +6,8 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.AdvertState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
+import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 
 public class ProjectBuilder {
 
@@ -15,7 +16,7 @@ public class ProjectBuilder {
     private String description = "Description.";
     private Integer studyDuration = 12;
     private String funding;
-    private AdvertState state;
+    private ProjectState state;
     private User contactUser;
     private Program program;
 
@@ -44,7 +45,7 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder state(AdvertState state) {
+    public ProjectBuilder state(ProjectState state) {
         this.state = state;
         return this;
     }
@@ -57,11 +58,6 @@ public class ProjectBuilder {
     public ProjectBuilder program(Program program) {
         this.program = program;
         return this;
-    }
-
-    public ProjectBuilder advert(Advert advert) {
-        return id(advert.getId()).title(advert.getTitle()).description(advert.getDescription()).studyDuration(advert.getStudyDuration())
-                .funding(advert.getFunding()).state(advert.getState()).contactUser(advert.getContactUser());
     }
 
     public Project build() {

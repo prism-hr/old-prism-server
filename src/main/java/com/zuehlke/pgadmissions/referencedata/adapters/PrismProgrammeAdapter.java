@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramInstanceInterface;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.enums.AdvertState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.services.importers.ImportService;
@@ -104,7 +104,7 @@ public class PrismProgrammeAdapter implements ProgramInstanceInterface, ImportDa
         program = new Program();
         program.setCode(getCode());
         program.setTitle(getName());
-        program.setState(AdvertState.PROGRAM_APPROVED);
+        program.setState(ProgramState.PROGRAM_APPROVED);
         return program;
     }
 

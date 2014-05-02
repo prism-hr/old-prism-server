@@ -18,12 +18,13 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.AdvertState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 
 public class TestObjectProvider {
 
@@ -91,27 +92,27 @@ public class TestObjectProvider {
     }
 
     public Program getEnabledProgram() {
-        return getProgram(AdvertState.PROGRAM_APPROVED, null);
+        return getProgram(ProgramState.PROGRAM_APPROVED, null);
     }
 
     public Program getDisabledProgram() {
-        return getProgram(AdvertState.PROGRAM_DISABLED, null);
+        return getProgram(ProgramState.PROGRAM_DISABLED, null);
     }
 
     public Project getEnabledProject() {
-        return getProject(AdvertState.PROJECT_APPROVED);
+        return getProject(ProjectState.PROJECT_APPROVED);
     }
 
     public Project getDisabledProject() {
-        return getProject(AdvertState.PROJECT_DISABLED);
+        return getProject(ProjectState.PROJECT_DISABLED);
     }
 
     public Program getAlternativeEnabledProgram(Program program) {
-        return getProgram(AdvertState.PROGRAM_APPROVED, program);
+        return getProgram(ProgramState.PROGRAM_APPROVED, program);
     }
 
     public Program getAlternativeDisabledProgram(Program program) {
-        return getProgram(AdvertState.PROGRAM_DISABLED, program);
+        return getProgram(ProgramState.PROGRAM_DISABLED, program);
     }
 
     public Role getRole(Authority authority) {
@@ -216,7 +217,7 @@ public class TestObjectProvider {
         return null;
     }
 
-    private Program getProgram(AdvertState state, Program alternativeOf) {
+    private Program getProgram(ProgramState state, Program alternativeOf) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("state", state));
 
         if (alternativeOf != null) {
@@ -237,7 +238,7 @@ public class TestObjectProvider {
                 .createAlias("project", "project", JoinType.INNER_JOIN).add(Restrictions.eq("project.active", enabled)).setMaxResults(1).uniqueResult();
     }
 
-    private Project getProject(AdvertState state) {
+    private Project getProject(ProjectState state) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Project.class).createAlias("program", "program", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("state", state));
 

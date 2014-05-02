@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,6 +22,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 @Entity
@@ -28,6 +31,10 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 public class Program extends Advert implements PrismScope {
 
     private static final long serialVersionUID = -9073611033741317582L;
+
+    @Column(name = "state_id")
+    @Enumerated(EnumType.STRING)
+    private ProgramState state;
 
     @Column(name = "code")
     private String code;
@@ -119,6 +126,14 @@ public class Program extends Advert implements PrismScope {
         this.programType = programType;
     }
 
+    public ProgramState getState() {
+        return state;
+    }
+
+    public void setState(ProgramState state) {
+        this.state = state;
+    }
+
     @Override
     public Program getProgram() {
         return this;
@@ -127,6 +142,11 @@ public class Program extends Advert implements PrismScope {
     @Override
     public Project getProject() {
         return null;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return state == ProgramState.PROGRAM_APPROVED;
     }
 
 }

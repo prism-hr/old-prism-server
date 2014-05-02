@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.AdvertBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
@@ -296,7 +295,7 @@ public class RegisterControllerTest {
     public void shouldCreateNewApplicationAndRedirectToItIfQueryStringExistsOnUserWithProject() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
         Advert advert = new Program();
-        Project project = new ProjectBuilder().id(1).advert(new AdvertBuilder().id(1).build()).build();
+        Project project = new ProjectBuilder().id(1).build();
         User user = new UserBuilder().id(1).advert(advert).activationCode(activationCode).userAccount(new UserAccount().withEnabled(false)
                 .withPassword("1234")).build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);

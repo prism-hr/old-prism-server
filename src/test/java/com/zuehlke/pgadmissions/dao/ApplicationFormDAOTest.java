@@ -68,7 +68,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         ApplicationForm inApplication = new ApplicationForm();
         inApplication.setProgram(program);
 
-        inApplication.setApplicant(user);
+        inApplication.setUser(user);
 
         assertNull(inApplication.getId());
 
@@ -84,7 +84,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         reloadedApplication = applicationDAO.getById(id);
         assertNotSame(inApplication, reloadedApplication);
         assertEquals(inApplication.getId(), reloadedApplication.getId());
-        assertEquals(inApplication.getApplicant().getId(), user.getId());
+        assertEquals(inApplication.getUser().getId(), user.getId());
     }
 
     @Test
@@ -101,7 +101,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     public void shouldAssignDateToApplicationForm() {
         ApplicationForm inApplication = new ApplicationForm();
         inApplication.setProgram(program);
-        inApplication.setApplicant(user);
+        inApplication.setUser(user);
 
         applicationDAO.save(inApplication);
 
@@ -166,7 +166,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
     private List<Qualification> getQualificationsBelongingToSameApplication() throws ParseException {
 
         application = new ApplicationForm();
-        application.setApplicant(user);
+        application.setUser(user);
         application.setProgram(program);
 
         QualificationTypeDAO typeDao = new QualificationTypeDAO(sessionFactory);

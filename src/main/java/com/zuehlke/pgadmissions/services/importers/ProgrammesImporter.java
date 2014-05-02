@@ -115,7 +115,7 @@ public class ProgrammesImporter implements IProgrammesImporter {
             Programme programme = programmeOccurence.getProgramme();
             Program prismProgram = programDAO.getProgramByCode(programme.getCode());
             if (prismProgram != null) {
-                prismProgram.setAtasRequired(BooleanUtils.isTrue(programme.isAtasRegistered()));
+                prismProgram.setRequireProjectDefinition(BooleanUtils.isTrue(programme.isAtasRegistered()));
                 programDAO.save(prismProgram);
             }
         }

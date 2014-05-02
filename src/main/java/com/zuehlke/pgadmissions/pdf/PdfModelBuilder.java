@@ -224,7 +224,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newTableCell("Applicant", SMALL_BOLD_FONT));
 
-        User applicant = form.getApplicant();
+        User applicant = form.getUser();
         String fullName = Joiner.on(" ").skipNulls()
                 .join(applicant.getFirstName(), applicant.getFirstName2(), applicant.getFirstName3(), applicant.getLastName());
         table.addCell(newTableCell(fullName, SMALL_FONT));
@@ -459,7 +459,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
 
         table.addCell(newTableCell("Email", SMALL_BOLD_FONT));
-        table.addCell(newTableCell(form.getApplicant().getEmail(), SMALL_FONT));
+        table.addCell(newTableCell(form.getUser().getEmail(), SMALL_FONT));
 
         table.addCell(newTableCell("Telephone", SMALL_BOLD_FONT));
         table.addCell(createPropertyCell(form, "personalDetails.phoneNumber"));

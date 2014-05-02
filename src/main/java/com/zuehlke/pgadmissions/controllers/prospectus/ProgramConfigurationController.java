@@ -166,7 +166,7 @@ public class ProgramConfigurationController {
         result.put("programFunding", program.getFunding());
         result.put("programState", program.getState());
         result.put("isCustomProgram", program.getProgramImport() == null);
-        result.put("atasRequired", program.getAtasRequired());
+        result.put("atasRequired", program.getRequireProjectDefinition());
         result.put("programType", program.getProgramType().getId());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
         result.put("institutionCode", program.getInstitution().getCode());

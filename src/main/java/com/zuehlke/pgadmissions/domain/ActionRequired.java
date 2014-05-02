@@ -15,6 +15,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 
 @Entity
 @Table(name = "ACTION_REQUIRED")
@@ -53,8 +55,8 @@ public class ActionRequired {
     private Action action;
 
     @Column(name = "deadline_timestamp")
-    @Temporal(value = TemporalType.DATE)
-    private Date deadlineDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate deadlineDate;
 
     @Column(name = "bind_deadline_to_due_date")
     private Boolean bindDeadlineToDueDate;
@@ -131,11 +133,11 @@ public class ActionRequired {
         this.action = action;
     }
 
-    public Date getDeadlineDate() {
+    public LocalDate getDeadlineDate() {
         return deadlineDate;
     }
 
-    public void setDeadlineDate(Date deadlineDate) {
+    public void setDeadlineDate(LocalDate deadlineDate) {
         this.deadlineDate = deadlineDate;
     }
 
@@ -199,7 +201,7 @@ public class ActionRequired {
         return this;
     }
     
-    public ActionRequired withDeadlineDate(Date deadlineDate) {
+    public ActionRequired withDeadlineDate(LocalDate deadlineDate) {
         this.deadlineDate = deadlineDate;
         return this;
     }

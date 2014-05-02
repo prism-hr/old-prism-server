@@ -29,6 +29,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
 
@@ -64,9 +67,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     @Valid
     private ApplicationDocument applicationDocument;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "due_date")
-    private Date dueDate;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate dueDate;
 
     @Column(name = "created_timestamp", insertable = false, updatable = false)
     @Generated(GenerationTime.INSERT)
@@ -77,11 +80,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     private Date submittedTimestamp;
 
     @Column(name = "closing_date")
-    private Date closingDate = null;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate closingDate = null;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User applicant = null;
+    private User user = null;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
@@ -208,11 +212,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.applicationDocument = applicationDocument;
     }
 
-    public Date getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(Date dueDate) {
+    public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
 
@@ -240,20 +244,20 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.submittedTimestamp = submittedTimestamp;
     }
 
-    public Date getClosingDate() {
+    public LocalDate getClosingDate() {
         return closingDate;
     }
 
-    public void setClosingDate(Date closingDate) {
+    public void setClosingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
     }
 
-    public User getApplicant() {
-        return applicant;
+    public User getUser() {
+        return user;
     }
 
-    public void setApplicant(User applicant) {
-        this.applicant = applicant;
+    public void setUser(User applicant) {
+        this.user = applicant;
     }
 
     public Advert getAdvert() {
@@ -384,6 +388,26 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
             return this.createdTimestamp.compareTo(appForm.getCreatedTimestamp());
         }
         return this.submittedTimestamp.compareTo(appForm.getSubmittedTimestamp());
+    }
+
+    public ApplicationForm withProgram(Program program) {
+        this.program = program;
+        return this;
+    }
+
+    public ApplicationForm withUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public ApplicationForm withState(State state) {
+        this.state = state;
+        return this;
+    }
+
+    public ApplicationForm withDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+        return this;
     }
 
 }

@@ -27,7 +27,7 @@ public class SubmitApplicationFormService {
         mailSendingService.sendSubmissionConfirmationToApplicant(applicationForm);
         
         applicationFormUserRoleService.applicationSubmitted(applicationForm);
-        applicationFormUserRoleService.applicationUpdated(applicationForm, applicationForm.getApplicant());
+        applicationFormUserRoleService.applicationUpdated(applicationForm, applicationForm.getUser());
     }
 
 }

@@ -128,6 +128,6 @@ public class PrintController {
 	}
 	
 	private boolean isApplicant(final User user, final ApplicationForm form) {
-	    return user.getId().equals(form.getApplicant().getId());
+	    return user.getId().equals(form.getUser().getId());
 	}
 }

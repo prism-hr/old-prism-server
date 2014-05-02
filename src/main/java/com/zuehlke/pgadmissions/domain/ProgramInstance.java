@@ -146,6 +146,6 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
 
     @Override
     public Boolean isAtasRequired() {
-        return program.getAtasRequired();
+        return program.getRequireProjectDefinition();
     }
 }

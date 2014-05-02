@@ -401,7 +401,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                 .comment("").projectAbstract("abstract")
                 .recommendedConditionsAvailable(false).recommendedStartDate(new Date()).build();
         applicationForm.getApplicationComments().add(offerComment);
-        applicationForm.getProgram().setAtasRequired(true);
+        applicationForm.getProgram().setRequireProjectDefinition(true);
         ApplicationFormTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         TransferListener listener = new TransferListener() {
 

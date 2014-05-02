@@ -2,13 +2,14 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.Date;
 
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
+import com.zuehlke.pgadmissions.domain.Program;
 
 @Component
 public class AdvertClosingDateValidator extends AbstractValidator {
@@ -32,11 +33,11 @@ public class AdvertClosingDateValidator extends AbstractValidator {
             errors.rejectValue("program", EMPTY_DROPDOWN_ERROR_MESSAGE);
         }
 
-        Date date = newClosingDate.getClosingDate();
+        LocalDate date = newClosingDate.getClosingDate();
         if (date == null) {
             errors.rejectValue("closingDate", MUST_SELECT_DATE_AND_TIME);
         } else {
-            if (!date.after(new Date())) {
+            if (!date.isAfter(new LocalDate())) {
                 errors.rejectValue("closingDate", MUST_SELECT_DATE_AND_TIMES_IN_THE_FUTURE);
             }
             if (program != null) {

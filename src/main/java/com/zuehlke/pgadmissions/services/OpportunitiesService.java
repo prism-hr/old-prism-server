@@ -62,7 +62,7 @@ public class OpportunitiesService {
             // program exists
             opportunityRequest.setType(OpportunityRequestType.CHANGE);
             opportunityRequest.setProgramTitle(program.getTitle());
-            opportunityRequest.setAtasRequired(program.getAtasRequired());
+            opportunityRequest.setAtasRequired(program.getRequireProjectDefinition());
 
             // TODO lock the program
             programsService.merge(program);

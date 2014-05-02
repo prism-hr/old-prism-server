@@ -16,6 +16,7 @@ import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.unitils.inject.util.InjectionUtils;
@@ -866,18 +867,18 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_VALIDATION)).submittedDate(new Date())
-                .createdTimestamp(format.parse("01 01 2012")).closingDate(format.parse("01 01 2050")).build();
+                .createdTimestamp(format.parse("01 01 2012")).closingDate(new LocalDate(2050, 1, 1)).build();
 
         ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).createdTimestamp(format.parse("01 01 2012"))
-                .closingDate(format.parse("01 01 2050")).submittedDate(format.parse("01 04 2012")).build();
+                .closingDate(new LocalDate(2050, 1, 1)).submittedDate(format.parse("01 04 2012")).build();
 
-        ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(applicant).closingDate(format.parse("01 01 2050"))
+        ApplicationForm applicationFormThree = new ApplicationFormBuilder().program(program).applicant(applicant).closingDate(new LocalDate(2050, 1, 1))
                 .status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012")).build();
 
         ApplicationForm applicationFormFour = new ApplicationFormBuilder().program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).createdTimestamp(format.parse("01 02 2012"))
-                .closingDate(format.parse("01 01 2050")).submittedDate(format.parse("01 03 2012")).build();
+                .closingDate(new LocalDate(2050, 1, 1)).submittedDate(format.parse("01 03 2012")).build();
 
         Role role = roleDAO.getById(Authority.APPLICATION_CREATOR);
         UserRole applicationFormUserRole1 = new UserRole().withApplication(applicationFormOne).withRole(role).withUser(applicant);
@@ -906,7 +907,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     public void shouldReturnApplicationWithProjectTitle() throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_REVIEW)).program(program)
-                .applicant(applicant).submittedDate(new Date()).createdTimestamp(format.parse("01 01 2012")).dueDate(format.parse("01 01 2050")).build();
+                .applicant(applicant).submittedDate(new Date()).createdTimestamp(format.parse("01 01 2012")).dueDate(new LocalDate(2050, 1, 1)).build();
 
         Role role = roleDAO.getById(Authority.SYSTEM_ADMINISTRATOR);
         UserRole applicationFormUserRole = new UserRole().withApplication(applicationFormOne).withRole(role).withUser(superUser);

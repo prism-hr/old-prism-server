@@ -17,6 +17,7 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -106,13 +107,13 @@ public class ProgramDAO {
         return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).add(Restrictions.eq("id", id)).uniqueResult();
     }
 
-    public AdvertClosingDate getClosingDateByDate(final Program program, final Date date) {
+    public AdvertClosingDate getClosingDateByDate(final Program program, final LocalDate date) {
         return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).add(Restrictions.eq("program", program))
                 .add(Restrictions.eq("closingDate", date)).addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
     }
 
-    public Date getNextClosingDate(Program program) {
-        return (Date) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).setProjection(Projections.min("closingDate"))
+    public LocalDate getNextClosingDate(Program program) {
+        return (LocalDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).setProjection(Projections.min("closingDate"))
                 .add(Restrictions.eq("program", program)).add(Restrictions.ge("closingDate", new Date())).uniqueResult();
     }
 

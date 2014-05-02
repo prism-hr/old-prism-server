@@ -132,7 +132,7 @@ public class ProgramBuilder {
         program.setCode(code);
         program.getInstances().addAll(instances);
         program.getScoringDefinitions().putAll(scoringDefinitions);
-        program.setAtasRequired(atasRequired);
+        program.setRequireProjectDefinition(atasRequired);
         program.getClosingDates().addAll(programClosingDates);
         program.getProjects().addAll(projects);
         program.setInstitution(institution);

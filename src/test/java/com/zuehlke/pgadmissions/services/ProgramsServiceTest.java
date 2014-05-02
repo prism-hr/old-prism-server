@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationContext;
@@ -195,7 +196,7 @@ public class ProgramsServiceTest {
 
         assertSame(program.getContactUser(), requestAuthor);
         assertSame(programCapture.getValue(), program);
-        assertEquals(opportunityRequest.getAtasRequired(), program.getAtasRequired());
+        assertEquals(opportunityRequest.getAtasRequired(), program.getRequireProjectDefinition());
         assertSame(institution, program.getInstitution());
         assertEquals(opportunityRequest.getProgramTitle(), program.getTitle());
         assertEquals("AAA_00000", program.getCode());
@@ -218,10 +219,10 @@ public class ProgramsServiceTest {
         Program returned = programsService.createOrGetProgram(opportunityRequest);
         verify();
 
-        assertTrue(returned.getAtasRequired());
+        assertTrue(returned.getRequireProjectDefinition());
         assertEquals(program.getTitle(), opportunityRequest.getProgramTitle());
         assertEquals(program.getDescription(), opportunityRequest.getProgramDescription());
-        assertEquals(program.getAtasRequired(), opportunityRequest.getAtasRequired());
+        assertEquals(program.getRequireProjectDefinition(), opportunityRequest.getAtasRequired());
         assertEquals(program.getStudyDuration(), opportunityRequest.getStudyDuration());
         assertEquals(program.getFunding(), opportunityRequest.getFunding());
         assertEquals(ProgramState.PROGRAM_APPROVED, program.getState());
@@ -246,7 +247,7 @@ public class ProgramsServiceTest {
     @Test
     public void shouldUpdateClosingDate() {
         Program program = new ProgramBuilder().code("AAA_00018").description("program").studyDuration(12).state(ProgramState.PROGRAM_APPROVED).build();
-        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new Date()).advert(program).build();
+        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).advert(program).build();
         programDAOMock.updateClosingDate(closingDate);
         replay();
         programsService.updateClosingDate(closingDate);
@@ -256,7 +257,7 @@ public class ProgramsServiceTest {
     @Test
     public void shouldAddClosingDateToProgram() {
         Program program = new ProgramBuilder().code("AAA_00018").description("program").studyDuration(12).state(ProgramState.PROGRAM_APPROVED).build();
-        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new Date()).advert(program).build();
+        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).advert(program).build();
         programDAOMock.save(program);
         replay();
         programsService.addClosingDateToProgram(program, closingDate);
@@ -265,7 +266,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldDeleteClosingDateById() {
-        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new Date()).build();
+        AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).build();
         expect(programDAOMock.getClosingDateById(closingDate.getId())).andReturn(closingDate);
         programDAOMock.deleteClosingDate(closingDate);
         replay();

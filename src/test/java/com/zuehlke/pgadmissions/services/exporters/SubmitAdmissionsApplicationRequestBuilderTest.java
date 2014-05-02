@@ -304,7 +304,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
                 .recommendedConditionsAvailable(true).recommendedConditions("conditions").recommendedStartDate(recommendedStartDate).build();
         applicationForm.getApplicationComments().add(offerComment);
-        applicationForm.getProgram().setAtasRequired(true);
+        applicationForm.getProgram().setRequireProjectDefinition(true);
 
         SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()) {
             @Override
@@ -360,7 +360,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         OfferRecommendedComment offerComment = new OfferRecommendedCommentBuilder().id(15).application(applicationForm).comment("").projectAbstract("abstract")
                 .recommendedConditionsAvailable(false).recommendedStartDate(recommendedStartDate).build();
         applicationForm.getApplicationComments().add(offerComment);
-        applicationForm.getProgram().setAtasRequired(false);
+        applicationForm.getProgram().setRequireProjectDefinition(false);
 
         SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()) {
             @Override

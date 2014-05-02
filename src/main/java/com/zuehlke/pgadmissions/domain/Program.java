@@ -39,8 +39,8 @@ public class Program extends Advert implements PrismScope {
     @Column(name = "code")
     private String code;
 
-    @Column(name = "atas_required")
-    private Boolean atasRequired;
+    @Column(name = "require_project_definition")
+    private Boolean requireProjectDefinition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id", nullable = false)
@@ -82,12 +82,12 @@ public class Program extends Advert implements PrismScope {
         return instances;
     }
 
-    public Boolean getAtasRequired() {
-        return atasRequired;
+    public Boolean getRequireProjectDefinition() {
+        return requireProjectDefinition;
     }
 
-    public void setAtasRequired(final Boolean atasRequired) {
-        this.atasRequired = atasRequired;
+    public void setRequireProjectDefinition(Boolean requireProjectDefinition) {
+        this.requireProjectDefinition = requireProjectDefinition;
     }
 
     public Map<ScoringStage, ScoringDefinition> getScoringDefinitions() {

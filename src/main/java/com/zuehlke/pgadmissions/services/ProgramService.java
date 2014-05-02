@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -12,18 +13,18 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -100,12 +101,8 @@ public class ProgramService {
     }
 
     public String getDefaultClosingDate(Program program) {
-        Date closingDate = programDAO.getNextClosingDate(program);
-        String formattedDate = "null";
-        if (closingDate != null) {
-            formattedDate = new SimpleDateFormat("dd MMM yyyy").format(closingDate);
-        }
-        return formattedDate;
+        LocalDate closingDate = programDAO.getNextClosingDate(program);
+        return closingDate != null ? closingDate.toString("dd MMM yyyy") : "null";
     }
 
     public void updateClosingDate(AdvertClosingDate closingDate) {
@@ -156,7 +153,7 @@ public class ProgramService {
                 program.setCode(thisBean.generateNextProgramCode(institution));
             }
             program.setTitle(opportunityRequest.getProgramTitle());
-            program.setAtasRequired(opportunityRequest.getAtasRequired());
+            program.setRequireProjectDefinition(opportunityRequest.getAtasRequired());
             program.setProgramType(opportunityRequest.getProgramType());
         }
 
@@ -268,7 +265,7 @@ public class ProgramService {
         return programDAO.getAvailableStudyOptions(program);
     }
 
-    public Date getNextClosingDate(Program program) {
+    public LocalDate getNextClosingDate(Program program) {
         return programDAO.getNextClosingDate(program);
     }
 
@@ -291,7 +288,7 @@ public class ProgramService {
 
     public void updateProject(Integer id, ProjectDTO projectDTO) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
@@ -33,8 +35,8 @@ public class ApplicationFormBuilder {
     private Program program;
     private Date createdTimestamp;
     private Date submittedDate;
-    private Date closingDate;
-    private Date dueDate;
+    private LocalDate closingDate;
+    private LocalDate dueDate;
     private Boolean acceptedTerms;
     private List<Qualification> qualifications = new ArrayList<Qualification>();
     private List<Referee> referees = new ArrayList<Referee>();
@@ -167,7 +169,7 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder closingDate(Date closingDate) {
+    public ApplicationFormBuilder closingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
         return this;
     }
@@ -182,7 +184,7 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder dueDate(Date dueDate) {
+    public ApplicationFormBuilder dueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
         return this;
     }
@@ -200,7 +202,7 @@ public class ApplicationFormBuilder {
     public ApplicationForm build() {
         ApplicationForm application = new ApplicationForm();
         application.setId(id);
-        application.setApplicant(applicant);
+        application.setUser(applicant);
         application.setProgram(program);
         application.setSubmittedTimestamp(submittedDate);
         application.getReferees().addAll(referees);

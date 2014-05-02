@@ -41,7 +41,7 @@ public class PersonalDetailsService {
     }
      
     private void updateApplicantData(ApplicationForm application, User updatedUser) {
-        User persistentUpdatedUser = application.getApplicant();
+        User persistentUpdatedUser = application.getUser();
         persistentUpdatedUser.setFirstName(updatedUser.getFirstName());
         persistentUpdatedUser.setFirstName2(updatedUser.getFirstName2());
         persistentUpdatedUser.setFirstName3(updatedUser.getFirstName3());

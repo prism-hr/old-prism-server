@@ -80,7 +80,7 @@ public abstract class AbstractMailSendingService {
     }
 
     protected String resolveMessage(EmailTemplateName templateName, ApplicationForm applicationForm) {
-        User applicant = applicationForm.getApplicant();
+        User applicant = applicationForm.getUser();
         if (applicant == null) {
             return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm.getAdvert().getTitle());
         } else {

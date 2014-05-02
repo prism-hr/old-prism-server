@@ -321,11 +321,11 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
         AddressTp addressTp = xmlFactory.createAddressTp();
         Address currentAddress = applicationForm.getApplicationAddress().getCurrentAddress();
-        addressTp.setAddressLine1(currentAddress.getAddress1());
-        addressTp.setAddressLine2(currentAddress.getAddress2());
-        addressTp.setAddressLine3(currentAddress.getAddress3());
-        addressTp.setAddressLine4(currentAddress.getAddress4());
-        addressTp.setPostCode(currentAddress.getAddress5());
+        addressTp.setAddressLine1(currentAddress.getAddressLine1());
+        addressTp.setAddressLine2(currentAddress.getAddressLine2());
+        addressTp.setAddressLine3(currentAddress.getAddressTown());
+        addressTp.setAddressLine4(currentAddress.getAddressRegion());
+        addressTp.setPostCode(currentAddress.getAddressCode());
         addressTp.setCountry(currentAddress.getDomicile().getEnabledCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
@@ -350,11 +350,11 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         Address contactAddress = applicationForm.getApplicationAddress().getContactAddress();
         ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
         AddressTp addressTp = xmlFactory.createAddressTp();
-        addressTp.setAddressLine1(contactAddress.getAddress1());
-        addressTp.setAddressLine2(contactAddress.getAddress2());
-        addressTp.setAddressLine3(contactAddress.getAddress3());
-        addressTp.setAddressLine4(contactAddress.getAddress4());
-        addressTp.setPostCode(contactAddress.getAddress5());
+        addressTp.setAddressLine1(contactAddress.getAddressLine1());
+        addressTp.setAddressLine2(contactAddress.getAddressLine2());
+        addressTp.setAddressLine3(contactAddress.getAddressTown());
+        addressTp.setAddressLine4(contactAddress.getAddressRegion());
+        addressTp.setPostCode(contactAddress.getAddressCode());
         addressTp.setCountry(contactAddress.getDomicile().getEnabledCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
@@ -651,11 +651,11 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             }
 
             AddressTp addressTp = xmlFactory.createAddressTp();
-            addressTp.setAddressLine1(referee.getAddressLocation().getAddress1());
-            addressTp.setAddressLine2(referee.getAddressLocation().getAddress2());
-            addressTp.setAddressLine3(referee.getAddressLocation().getAddress3());
-            addressTp.setAddressLine4(referee.getAddressLocation().getAddress4());
-            addressTp.setPostCode(referee.getAddressLocation().getAddress5());
+            addressTp.setAddressLine1(referee.getAddressLocation().getAddressLine1());
+            addressTp.setAddressLine2(referee.getAddressLocation().getAddressLine2());
+            addressTp.setAddressLine3(referee.getAddressLocation().getAddressTown());
+            addressTp.setAddressLine4(referee.getAddressLocation().getAddressRegion());
+            addressTp.setPostCode(referee.getAddressLocation().getAddressCode());
             addressTp.setCountry(referee.getAddressLocation().getDomicile().getEnabledCode());
 
             // postCode is mandatory but but PRISM did not collect addresses

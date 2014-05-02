@@ -196,8 +196,8 @@ public class RefereesAdminEditDTO {
     public boolean hasUserStartedTyping() {
         boolean startedTypingReference = StringUtils.isNotBlank(comment) || !allNull(referenceDocument, suitableForProgramme, suitableForUCL);
         boolean startedTypingRefereeData = addressLocation != null
-                && (!allBlank(firstname, lastname, addressLocation.getAddress1(), addressLocation.getAddress2(), addressLocation.getAddress3(),
-                        addressLocation.getAddress4(), addressLocation.getAddress5(), jobEmployer, jobTitle, email, phoneNumber, messenger) || addressLocation
+                && (!allBlank(firstname, lastname, addressLocation.getAddressLine1(), addressLocation.getAddressLine2(), addressLocation.getAddressTown(),
+                        addressLocation.getAddressRegion(), addressLocation.getAddressCode(), jobEmployer, jobTitle, email, phoneNumber, messenger) || addressLocation
                         .getDomicile() != null);
         return startedTypingReference || startedTypingRefereeData;
     }

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,19 +29,24 @@ public class Address implements Serializable {
     private Domicile domicile;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
-    private String address1;
+    @Column(name = "address_line_1")
+    private String addressLine1;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
-    private String address2;
+    @Column(name = "address_line_2")
+    private String addressLine2;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
-    private String address3;
+    @Column(name = "address_town")
+    private String addressTown;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
-    private String address4;
+    @Column(name = "address_region")
+    private String addressRegion;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 12)
-    private String address5;
+    @Column(name = "address_code")
+    private String addressCode;
 
     public Integer getId() {
         return id;
@@ -58,48 +64,48 @@ public class Address implements Serializable {
         this.domicile = domicile;
     }
 
-    public String getAddress1() {
-        return address1;
+    public String getAddressLine1() {
+        return addressLine1;
     }
 
-    public void setAddress1(String address1) {
-        this.address1 = address1;
+    public void setAddressLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
     }
 
-    public String getAddress2() {
-        return address2;
+    public String getAddressLine2() {
+        return addressLine2;
     }
 
-    public void setAddress2(String address2) {
-        this.address2 = address2;
+    public void setAddressLine2(String addressLine2) {
+        this.addressLine2 = addressLine2;
     }
 
-    public String getAddress3() {
-        return address3;
+    public String getAddressTown() {
+        return addressTown;
     }
 
-    public void setAddress3(String address3) {
-        this.address3 = address3;
+    public void setAddressTown(String addressTown) {
+        this.addressTown = addressTown;
     }
 
-    public String getAddress4() {
-        return address4;
+    public String getAddressRegion() {
+        return addressRegion;
     }
 
-    public void setAddress4(String address4) {
-        this.address4 = address4;
+    public void setAddressRegion(String addressRegion) {
+        this.addressRegion = addressRegion;
     }
 
-    public String getAddress5() {
-        return address5;
+    public String getAddressCode() {
+        return addressCode;
     }
 
-    public void setAddress5(String address5) {
-        this.address5 = address5;
+    public void setAddressCode(String addressCode) {
+        this.addressCode = addressCode;
     }
 
     public String getLocationString() {
-        return Joiner.on('\n').skipNulls().join(address1, address2, address3, address4, address5);
+        return Joiner.on('\n').skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode);
     }
 
     @Override
@@ -107,4 +113,35 @@ public class Address implements Serializable {
         String domicileName = domicile == null ? null : domicile.getName();
         return Joiner.on('\n').skipNulls().join(getLocationString(), domicileName);
     }
+    
+    public Address withDomicile(Domicile domicile) {
+        this.domicile = domicile;
+        return this;
+    }
+    
+    public Address withLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
+        return this;
+    }
+    
+    public Address withLine2(String addressLine2) {
+        this.addressLine2 = addressLine2;
+        return this;
+    }
+
+    public Address withTown(String town) {
+        this.addressTown = town;
+        return this;
+    }
+    
+    public Address withRegion(String region) {
+        this.addressRegion = region;
+        return this;
+    }
+    
+    public Address withCode(String code) {
+        this.addressCode = code;
+        return this;
+    }
+    
 }

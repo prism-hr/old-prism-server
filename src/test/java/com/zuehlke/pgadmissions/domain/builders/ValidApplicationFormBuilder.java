@@ -129,12 +129,10 @@ public class ValidApplicationFormBuilder {
         referenceComment2 = new ReferenceCommentBuilder().comment("Hello From Jane").document(referenceDocument).providedBy(user).suitableForProgramme(true)
                 .suitableForUcl(true).user(user).build();
         refereeOne = new RefereeBuilder().id(Integer.MAX_VALUE - 1).user(approverUser).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith")
-                .addressDomicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
-                .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer")
+                .address(TestData.anAddress(domicile)).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer")
                 .messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).build();
         refereeTwo = new RefereeBuilder().id(Integer.MAX_VALUE - 2).user(approverUser).email("ked2@zuhlke.com").firstname("Jane").lastname("Austen")
-                .addressDomicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1]).address3(addressStr.split("\n")[2])
-                .address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer")
+                .address(TestData.anAddress(domicile)).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer")
                 .messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment2).build();
         refereeOne.setComment(referenceComment1);
         refereeTwo.setComment(referenceComment2);

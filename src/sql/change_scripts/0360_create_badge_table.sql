@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS BADGE (
+  id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  program_id INT(10) UNSIGNED,
+  closing_date DATETIME,
+  project_title VARCHAR(500),
+  PRIMARY KEY(id),
+  CONSTRAINT badge_program_fk FOREIGN KEY (program_id) REFERENCES PROGRAM(id)
+)
+ENGINE = InnoDB
+;

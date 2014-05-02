@@ -55,6 +55,53 @@ ALTER TABLE ADVERT
 	DROP COLUMN due_date
 ;
 
+ALTER TABLE PROGRAM
+	ADD COLUMN previous_state_id VARCHAR(50) AFTER state_id,
+	ADD INDEX (previous_state_id),
+	ADD FOREIGN KEY (previous_state_id) REFERENCES STATE (id)
+;
+
+ALTER TABLE PROJECT
+	ADD COLUMN previous_state_id VARCHAR(50) AFTER state_id,
+	ADD INDEX (previous_state_id),
+	ADD FOREIGN KEY (previous_state_id) REFERENCES STATE (id)
+;
+
+ALTER TABLE APPLICATION
+	ADD COLUMN previous_state_id VARCHAR(50) AFTER state_id,
+	ADD INDEX (previous_state_id),
+	ADD FOREIGN KEY (previous_state_id) REFERENCES STATE (id)
+;
+
+UPDATE PROGRAM
+SET previous_state_id = "PROGRAM_APPROVED"
+WHERE state_id != "PROGRAM_APPROVED"
+;
+
+UPDATE PROGRAM
+SET previous_state_id = "PROGRAM_APPROVAL"
+WHERE state_id = "PROGRAM_APPROVED"
+AND program_import_id IS NULL
+;
+
+UPDATE PROJECT
+SET previous_state_id = "PROJECT_APPROVED"
+WHERE state_id != "PROJECT_APPROVED"
+;
+
+UPDATE APPLICATION
+SET previous_state_id = "APPLICATION_UNSUBMITTED"
+WHERE state_id = "APPLICATION_WITHDRAWN_COMPLETED"
+AND submitted_timestamp IS NULL
+;
+
+INSERT INTO ROLE (id)
+VALUES ("PROGRAM_APPLICATION_CREATOR"),
+	("PROJECT_APPLICATION_CREATOR"),
+	("SYSTEM_APPLICATION_CREATOR"),
+	("SYSTEM_PROGRAM_CREATOR")
+;
+
 /* Fix uniqueness constraints on imported data tables */
 
 /* Fix suggested supervisor table */

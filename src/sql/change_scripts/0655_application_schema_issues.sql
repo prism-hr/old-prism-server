@@ -153,6 +153,20 @@ INSERT INTO USER_ROLE (system_id, user_id, role_id, requesting_user_id, assigned
 	GROUP BY USER_ROLE.user_id
 ;
 
+ALTER TABLE ACTION
+	MODIFY COLUMN precedence INT(3) UNSIGNED
+;
+
+UPDATE ACTION LEFT JOIN (
+	SELECT action_type_id AS action_type_id
+	FROM ACTION
+	GROUP BY action_type_id
+	HAVING COUNT(action_type_id) > 1) AS OVERLOADED_ACTION
+	ON ACTION.action_type_id = OVERLOADED_ACTION.action_type_id 	
+SET ACTION.precedence = NULL
+WHERE OVERLOADED_ACTION.action_type_id IS NULL
+;
+
 /* Fix uniqueness constraints on imported data tables */
 
 /* Fix suggested supervisor table */

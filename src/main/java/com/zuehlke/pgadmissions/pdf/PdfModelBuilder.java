@@ -653,21 +653,21 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                     table.addCell(newTableCell(dateFormat.format(qualification.getQualificationAwardDate()), SMALL_FONT));
                 }
 
-                if (qualification.getProofOfAward() != null) {
+                if (qualification.getDocument() != null) {
                     table.addCell(newTableCell("Proof of award", SMALL_BOLD_FONT));
                 } else {
                     table.addCell(newTableCell("Interim Transcript", SMALL_BOLD_FONT));
                 }
 
                 if (includeAttachments) {
-                    if (qualification.getProofOfAward() != null) {
+                    if (qualification.getDocument() != null) {
                         table.addCell(newTableCell("See APPENDIX(" + appendixCounter + ")", LINK_FONT, appendixCounter));
-                        bookmarkMap.put(appendixCounter++, qualification.getProofOfAward());
+                        bookmarkMap.put(appendixCounter++, qualification.getDocument());
                     } else {
                         table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
                     }
                 } else {
-                    if (qualification.getProofOfAward() != null) {
+                    if (qualification.getDocument() != null) {
                         table.addCell(newTableCell(PROVIDED, SMALL_FONT));
                     } else {
                         table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));

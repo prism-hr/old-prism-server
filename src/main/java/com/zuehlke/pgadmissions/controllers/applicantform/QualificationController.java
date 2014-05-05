@@ -173,7 +173,7 @@ public class QualificationController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(String applicationId) {
-        return applicationsService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE_APPLICATION, ApplicationFormAction.APPLICATION_CORRECT_APPLICATION);
+        return applicationsService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE, ApplicationFormAction.APPLICATION_CORRECT);
     }
 
     private String returnView(ModelMap modelMap, Qualification qualification) {

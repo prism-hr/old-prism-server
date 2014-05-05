@@ -109,10 +109,10 @@ public class QualificationServiceTest {
         replay();
         service.selectForSendingToPortico(applicationForm, Arrays.asList(new Integer[] { 3, 4 }));
 
-        assertTrue("SendToUcl flag has not been updated to true", qualification3.getSendToUCL());
-        assertTrue("SendToUcl flag has not been updated to true", qualification4.getSendToUCL());
-        assertFalse("SendToUcl flag has not been updated to false", qualification1.getSendToUCL());
-        assertFalse("SendToUcl flag has not been updated to false", qualification2.getSendToUCL());
+        assertTrue("SendToUcl flag has not been updated to true", qualification3.getExport());
+        assertTrue("SendToUcl flag has not been updated to true", qualification4.getExport());
+        assertFalse("SendToUcl flag has not been updated to false", qualification1.getExport());
+        assertFalse("SendToUcl flag has not been updated to false", qualification2.getExport());
     }
 
     @Test
@@ -132,10 +132,10 @@ public class QualificationServiceTest {
         replay();
         service.selectForSendingToPortico(applicationForm, Collections.<Integer> emptyList());
 
-        assertFalse("SendToUcl flag has not been updated to false", qualification3.getSendToUCL());
-        assertFalse("SendToUcl flag has not been updated to false", qualification4.getSendToUCL());
-        assertFalse("SendToUcl flag has not been updated to false", qualification1.getSendToUCL());
-        assertFalse("SendToUcl flag has not been updated to false", qualification2.getSendToUCL());
+        assertFalse("SendToUcl flag has not been updated to false", qualification3.getExport());
+        assertFalse("SendToUcl flag has not been updated to false", qualification4.getExport());
+        assertFalse("SendToUcl flag has not been updated to false", qualification1.getExport());
+        assertFalse("SendToUcl flag has not been updated to false", qualification2.getExport());
     }
 
 }

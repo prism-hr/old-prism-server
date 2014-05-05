@@ -121,8 +121,6 @@ public class ExportQueueListenerTest {
         expect(roleServiceMock.getUsersInRole(systemScope, Authority.SYSTEM_ADMINISTRATOR))
         	.andReturn(admins);
         
-        mailServiceMock.sendExportErrorMessage(eq(admins), eq(uclExportServiceException.getMessage()), isA(Date.class), form);
-        
         replay();
         
         try {

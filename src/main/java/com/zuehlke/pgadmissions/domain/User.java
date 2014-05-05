@@ -78,15 +78,8 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String email;
 
-    @Column(name = "advert_id")
-    private Advert advert;
-
     @Column(name = "activation_code")
     private String activationCode;
-
-    @JoinColumn(name = "application_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ApplicationForm application;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -162,14 +155,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.email = email;
     }
 
-    public Advert getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(Advert advert) {
-        this.advert = advert;
-    }
-
     public boolean isEnabled() {
         return account != null && account.isEnabled();
     }
@@ -180,14 +165,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
-    }
-
-    public ApplicationForm getApplication() {
-        return application;
-    }
-
-    public void setApplication(ApplicationForm application) {
-        this.application = application;
     }
 
     public List<Comment> getComments() {

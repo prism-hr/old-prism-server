@@ -12,97 +12,58 @@ import org.junit.Test;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.services.NotificationTemplateService;
 
 public class MailSenderTest {
 
     private JavaMailSender javaMailSenderMock;
-    
+
     private NotificationTemplateService emailTemplateServiceMock;
-    
+
     private FreeMarkerConfig freemarkerConfigMock;
-    
+
     private MailSender service;
-    
+
     @Before
     public void setup() {
         javaMailSenderMock = createMock(JavaMailSender.class);
         emailTemplateServiceMock = createMock(NotificationTemplateService.class);
         freemarkerConfigMock = createMock(FreeMarkerConfig.class);
     }
-    
+
     @Test
     public void shouldResolveSubjectWithoutArguments() {
+        NotificationTemplate notificationTemplate = new NotificationTemplate().withVersion(new NotificationTemplateVersion()
+                .withSubject("Subject without arguments"));
+
         service = new MailSender(javaMailSenderMock, null, null, null, emailTemplateServiceMock, freemarkerConfigMock);
-        
-        
-        expect(emailTemplateServiceMock.getSubjectForTemplate(isA(NotificationTemplateId.class)))
-        .andReturn("Subject without arguments");
-        
+
+        expect(emailTemplateServiceMock.getById(isA(NotificationTemplateId.class))).andReturn(notificationTemplate);
+
         replay(emailTemplateServiceMock);
-        String result = service.resolveSubject(NotificationTemplateId.REGISTRATION_CONFIRMATION, (Object[])null);
+        String result = service.resolveSubject(NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST, (Object[]) null);
         verify(emailTemplateServiceMock);
-        
+
         assertEquals("Subject without arguments", result);
     }
-    
+
     @Test
     public void shouldResolveSubjectWithOneArgument() {
+        NotificationTemplate notificationTemplate = new NotificationTemplate().withVersion(new NotificationTemplateVersion()
+                .withSubject("Dear %s, welcome to the 105 Zoo"));
+
         service = new MailSender(javaMailSenderMock, null, null, null, emailTemplateServiceMock, freemarkerConfigMock);
-        
-        
-        expect(emailTemplateServiceMock.getSubjectForTemplate(isA(NotificationTemplateId.class)))
-        .andReturn("Dear %s, welcome to the 105 Zoo");
-        
+
+        expect(emailTemplateServiceMock.getById(isA(NotificationTemplateId.class))).andReturn(notificationTemplate);
+
         replay(emailTemplateServiceMock);
-        String result = service.resolveSubject(NotificationTemplateId.REGISTRATION_CONFIRMATION, new Object[] {"Beppe"});
+        String result = service.resolveSubject(NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST, new Object[] { "Beppe" });
         verify(emailTemplateServiceMock);
-        
+
         assertEquals("Dear Beppe, welcome to the 105 Zoo", result);
     }
-    
-    @Test
-    public void shouldResolveSubjectWithTwoArguments() {
-        service = new MailSender(javaMailSenderMock, null, null, null, emailTemplateServiceMock, freemarkerConfigMock);
-        
-        
-        expect(emailTemplateServiceMock.getSubjectForTemplate(isA(NotificationTemplateId.class)))
-        .andReturn("Dear %s, you have been assigned the tole of %s");
-        
-        replay(emailTemplateServiceMock);
-        String result = service.resolveSubject(NotificationTemplateId.REGISTRATION_CONFIRMATION, new Object[] {"Beppe", "\"Gran Maestro\""});
-        verify(emailTemplateServiceMock);
-        
-        assertEquals("Dear Beppe, you have been assigned the tole of \"Gran Maestro\"", result);
-    }
-    
-    @Test
-    public void shouldResolveSubjectWithTwoStringArgumentsAndOneNumeric() {
-        service = new MailSender(javaMailSenderMock, null, null, null, emailTemplateServiceMock, freemarkerConfigMock);
-        
-        
-        expect(emailTemplateServiceMock.getSubjectForTemplate(isA(NotificationTemplateId.class)))
-        .andReturn("Dear %s, you have been reminded %d times that you have been assigned the tole of %s");
-        
-        replay(emailTemplateServiceMock);
-        String result = service.resolveSubject(NotificationTemplateId.REGISTRATION_CONFIRMATION, new Object[] {"Beppe", new Integer(3), "\"Gran Maestro\""});
-        verify(emailTemplateServiceMock);
-        assertEquals("Dear Beppe, you have been reminded 3 times that you have been assigned the tole of \"Gran Maestro\"", result);
-    }
-    
-    @Test
-    public void shouldResolveSubjectWithTwoStringArgumentsAndOneNumericWithcustomOrder() {
-        service = new MailSender(javaMailSenderMock, null, null, null, emailTemplateServiceMock, freemarkerConfigMock);
-        
-        
-        expect(emailTemplateServiceMock.getSubjectForTemplate(isA(NotificationTemplateId.class)))
-        .andReturn("Dear %2$s, you have been reminded %3$d times that you have been assigned the tole of %1$s");
-        
-        replay(emailTemplateServiceMock);
-        String result = service.resolveSubject(NotificationTemplateId.REGISTRATION_CONFIRMATION, new Object[] {"\"Gran Maestro\"",  "Beppe", new Integer(3)});
-        verify(emailTemplateServiceMock);
-        assertEquals("Dear Beppe, you have been reminded 3 times that you have been assigned the tole of \"Gran Maestro\"", result);
-    }
-    
+
 }

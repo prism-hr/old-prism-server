@@ -224,7 +224,7 @@ public class RegisterControllerTest {
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         userServiceMock.save(user);
         EasyMock.replay(userServiceMock);
-        String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, new MockHttpServletRequest());
         EasyMock.verify(userServiceMock);
         assertEquals("redirect:/applications?activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
@@ -240,7 +240,7 @@ public class RegisterControllerTest {
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         userServiceMock.save(user);
         EasyMock.replay(userServiceMock);
-        String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, new MockHttpServletRequest());
         EasyMock.verify(userServiceMock);
         assertEquals("redirect:/directLink?activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
@@ -263,7 +263,7 @@ public class RegisterControllerTest {
 
         EasyMock.replay(userServiceMock);
 
-        String view = registerController.activateAccountSubmit(activationCode, requestMock);
+        String view = registerController.activateAccountSubmit(activationCode, null, requestMock);
 
         EasyMock.verify(userServiceMock);
 
@@ -277,7 +277,7 @@ public class RegisterControllerTest {
         String activationCode = "ul5oaij68186jbcg";
         Advert advert = new Program();
         Program program = new ProgramBuilder().id(1).build();
-        User user = new UserBuilder().id(1).advert(advert).activationCode(activationCode).userAccount(new UserAccount().withEnabled(false)
+        User user = new UserBuilder().id(1).activationCode(activationCode).userAccount(new UserAccount().withEnabled(false)
                 .withPassword("1234")).build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         Map<String, String> parsedParams = new HashMap<String, String>(3);
@@ -286,7 +286,7 @@ public class RegisterControllerTest {
         userServiceMock.save(user);
 
         replay();
-        String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null,  new MockHttpServletRequest());
         assertEquals("redirect:/application?applicationId=ABC&activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
     }
@@ -296,7 +296,7 @@ public class RegisterControllerTest {
         String activationCode = "ul5oaij68186jbcg";
         Advert advert = new Program();
         Project project = new ProjectBuilder().id(1).build();
-        User user = new UserBuilder().id(1).advert(advert).activationCode(activationCode).userAccount(new UserAccount().withEnabled(false)
+        User user = new UserBuilder().id(1).activationCode(activationCode).userAccount(new UserAccount().withEnabled(false)
                 .withPassword("1234")).build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         Map<String, String> parsedParams = new HashMap<String, String>(3);
@@ -306,7 +306,7 @@ public class RegisterControllerTest {
         userServiceMock.save(user);
 
         replay();
-        String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, new MockHttpServletRequest());
         assertEquals("redirect:/application?applicationId=ABC&activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
     }
@@ -315,7 +315,7 @@ public class RegisterControllerTest {
     public void shouldThrowExceptionIfRegisteringForAnInvalidOpportunity() throws ParseException {
         String activationCode = "ul5oaij68186jbcg";
         Advert advert = new Program();
-        User user = new UserBuilder().id(1).advert(advert).activationCode(activationCode).userAccount(new UserAccount().withEnabled(false)
+        User user = new UserBuilder().id(1).activationCode(activationCode).userAccount(new UserAccount().withEnabled(false)
                 .withPassword("1234")).build();
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         Map<String, String> parsedParams = new HashMap<String, String>(3);
@@ -325,7 +325,7 @@ public class RegisterControllerTest {
 
         userServiceMock.save(user);
         replay();
-        registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
+        registerController.activateAccountSubmit(activationCode, null, new MockHttpServletRequest());
     }
 
     @Test
@@ -333,7 +333,7 @@ public class RegisterControllerTest {
         String activationCode = "differentactivationcode";
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(null);
         EasyMock.replay(userServiceMock);
-        String view = registerController.activateAccountSubmit(activationCode, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, new MockHttpServletRequest());
         assertEquals("public/register/activation_failed", view);
     }
 

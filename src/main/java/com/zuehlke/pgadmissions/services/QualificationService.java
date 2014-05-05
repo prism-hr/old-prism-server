@@ -59,11 +59,11 @@ public class QualificationService {
     public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> qualificationsSendToPortico) {
         for (Qualification qualification : applicationForm.getQualifications()) {
             qualification = qualificationDAO.getById(qualification.getId());
-            qualification.setSendToUCL(false);
+            qualification.setExport(false);
         }
         for (Integer qualificationId : qualificationsSendToPortico) {
             Qualification qualification = qualificationDAO.getById(qualificationId);
-            qualification.setSendToUCL(true);
+            qualification.setExport(true);
         }
     }
     

@@ -90,8 +90,8 @@ public class FundingController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE_APPLICATION,
-                ApplicationFormAction.APPLICATION_CORRECT_APPLICATION);
+        return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
+                ApplicationFormAction.APPLICATION_CORRECT);
     }
 
     private String returnView(ModelMap modelMap, Funding funding) {

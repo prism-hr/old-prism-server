@@ -78,9 +78,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Field(analyzer = @Analyzer(definition = "userAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String email;
 
-    @Column(name = "advert_id")
-    private Advert advert;
-
     @Column(name = "activation_code")
     private String activationCode;
 
@@ -160,14 +157,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Advert getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(Advert advert) {
-        this.advert = advert;
     }
 
     public boolean isEnabled() {

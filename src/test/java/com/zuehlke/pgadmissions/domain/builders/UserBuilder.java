@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 
@@ -16,7 +15,6 @@ public class UserBuilder {
     private String email;
     private Integer id;
     private String activationCode;
-    private Advert advert;
     private User primaryAccount;
     private List<User> linkedAccounts = new ArrayList<User>();
 
@@ -29,11 +27,6 @@ public class UserBuilder {
 
     public UserBuilder email(String email) {
         this.email = email;
-        return this;
-    }
-
-    public UserBuilder advert(Advert advert) {
-        this.advert = advert;
         return this;
     }
 
@@ -85,7 +78,6 @@ public class UserBuilder {
         user.setLastName(lastName);
         user.setEmail(email);
         user.setActivationCode(activationCode);
-        user.setAdvert(advert);
         user.getLinkedAccounts().addAll(linkedAccounts);
         user.setParentUser(primaryAccount);
         user.setAccount(userAccount);

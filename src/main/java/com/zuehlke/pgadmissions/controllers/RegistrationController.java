@@ -16,15 +16,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 
@@ -48,6 +53,9 @@ public class RegistrationController {
 
     @Autowired
     private ProgramService programService;
+
+    @Autowired
+    private RoleService roleService;
 
     @RequestMapping(value = "/submit", method = RequestMethod.GET)
     public String defaultGet(@ModelAttribute("pendingUser") User pendingUser, Model model, HttpSession session) {
@@ -83,7 +91,8 @@ public class RegistrationController {
     }
 
     @RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
-    public String activateAccountSubmit(@RequestParam String activationCode, HttpServletRequest request) {
+    public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam(required = false) ApplicationFormAction action,
+            HttpServletRequest request) {
 
         User user = registrationService.activateAccount(activationCode);
 
@@ -93,8 +102,14 @@ public class RegistrationController {
 
         String redirectView = RedirectLocation.REDIRECT;
 
-        if (user.getAdvert() != null) {
-            redirectView = createApplicationAndReturnApplicationViewValue(user);
+        // TODO switch action and perform relevant action
+        if (action == ApplicationFormAction.PROGRAM_CREATE_APPLICATION || action == ApplicationFormAction.PROJECT_CREATE_APPLICATION) {
+            Authority authority = action == ApplicationFormAction.PROJECT_CREATE_APPLICATION ? Authority.PROJECT_APPLICATION_CREATOR
+                    : Authority.PROGRAM_APPLICATION_CREATOR;
+            UserRole userRole = roleService.getUserRole(user, authority);
+            Advert advert = Objects.firstNonNull(userRole.getProgram(), userRole.getProject());
+            ApplicationForm application = applicationFormService.getOrCreateApplication(user, advert.getId());
+            redirectView = RedirectLocation.CREATE_APPLICATION + application.getApplicationNumber();
             // TODO append redirect string based on action
             // } else if (user.getDirectToUrl() != null) {
             // redirectView += user.getDirectToUrl();
@@ -114,11 +129,6 @@ public class RegistrationController {
 
         log.info("Activation page requested by " + user.getUsername() + ". Redirecting to: " + redirectView);
         return redirectView;
-    }
-
-    private String createApplicationAndReturnApplicationViewValue(final User user) {
-        ApplicationForm application = applicationFormService.getOrCreateApplication(user, user.getAdvert().getId());
-        return RedirectLocation.CREATE_APPLICATION + application.getApplicationNumber();
     }
 
     @RequestMapping(method = RequestMethod.GET)

@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 
 @Repository
-@SuppressWarnings("unchecked")
 public class NotificationTemplateDAO {
 
     private final SessionFactory sessionFactory;

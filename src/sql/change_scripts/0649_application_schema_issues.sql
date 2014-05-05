@@ -837,7 +837,7 @@ INSERT INTO STATE_ACTION (state_id, action_id, raises_urgent_flag, notification_
 	SELECT "APPLICATION_WITHDRAWN_COMPLETED", "APPLICATION_VIEW_AS_RECRUITER", 0, NULL
 ;
 
-/* Just created */
+/* Project created */
 
 INSERT INTO STATE_ACTION (state_id, action_id, raises_urgent_flag, notification_template_id)
 	SELECT "PROJECT_APPROVED", "PROJECT_CREATE_APPLICATION", 0, NULL
@@ -847,7 +847,7 @@ INSERT INTO STATE_ACTION (state_id, action_id, raises_urgent_flag, notification_
 	SELECT "PROJECT_APPROVED", "PROJECT_ESCALATE", 0, NULL
 ;
 
-/* Created and deactivated */
+/* Project created and deactivated */
 
 INSERT INTO STATE_ACTION (state_id, action_id, raises_urgent_flag, notification_template_id)	
 	SELECT "PROJECT_DEACTIVATED", "PROJECT_CREATE_APPLICATION", 0, NULL
@@ -857,7 +857,7 @@ INSERT INTO STATE_ACTION (state_id, action_id, raises_urgent_flag, notification_
 	SELECT "PROJECT_DEACTIVATED", "PROJECT_ESCALATE", 0, NULL
 ;
 
-/* Created and disabled manaully */
+/* Project created and disabled manaully */
 
 INSERT INTO STATE_ACTION (state_id, action_id, raises_urgent_flag, notification_template_id)
 	SELECT "PROJECT_DISABLED_PENDING_COMPLETION", "PROJECT_CREATE_APPLICATION", 0, NULL
@@ -865,7 +865,7 @@ INSERT INTO STATE_ACTION (state_id, action_id, raises_urgent_flag, notification_
 	SELECT "PROJECT_DISABLED_PENDING_COMPLETION", "PROJECT_ESCALATE", 0, NULL
 ;
 
-/* Created and disabled due to project due date */
+/* Project created and disabled due to project due date */
 
 INSERT INTO STATE_ACTION (state_id, action_id, raises_urgent_flag, notification_template_id)
 	SELECT "PROJECT_DISABLED_PENDING_REACTIVATION", "PROJECT_CREATE_APPLICATION", 0, NULL
@@ -875,7 +875,7 @@ INSERT INTO STATE_ACTION (state_id, action_id, raises_urgent_flag, notification_
 	SELECT "PROJECT_DISABLED_PENDING_REACTIVATION", "PROJECT_CONFIGURE", 1, "PROJECT_TASK_REQUEST"
 ;
 
-/* Created and disabled due to program due date */
+/* Project created and disabled due to program due date */
 
 INSERT INTO STATE_ACTION (state_id, action_id, raises_urgent_flag, notification_template_id)
 	SELECT "PROJECT_DISABLED_PENDING_PROGRAM_REACTIVATION", "PROJECT_CREATE_APPLICATION", 0, NULL

@@ -121,13 +121,7 @@ public class RefereeService {
     }
 
     public User processRefereeAndGetAsUser(Referee referee) {
-        User user = userService.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
-        if (user == null) {
-            createAndSaveNewUserWithRefereeRole(referee);
-        } else {
-            
-        }
-        
+        User user = referee.getUser();
         if (user.getActivationCode() == null) {
             user.setActivationCode(encryptionUtils.generateUUID());
         }
@@ -141,22 +135,6 @@ public class RefereeService {
         referee.setUser(user);
         applicationFormUserRoleService.createRefereeRole(referee);
         return user;
-    }
-
-    private User createAndSaveNewUserWithRefereeRole(Referee referee) {
-        User user = newRegisteredUser();
-        user.setEmail(referee.getEmail());
-        user.setFirstName(referee.getFirstname());
-        user.setLastName(referee.getLastname());
-        
-        user.setAction(ApplicationFormAction.APPLICATION_PROVIDE_REFERENCE);
-        user.setApplication(referee.getApplication());
-        userService.save(user);
-        return user;
-    }
-
-    User newRegisteredUser() {
-        return new User();
     }
 
     public void delete(Referee referee) {
@@ -232,16 +210,17 @@ public class RefereeService {
     }
 
     private Referee createReferee(RefereesAdminEditDTO refereesAdminEditDTO, ApplicationForm applicationForm) {
+        User user = userService.getUser(refereesAdminEditDTO.getFirstname(), refereesAdminEditDTO.getLastname(), refereesAdminEditDTO.getEditedRefereeId(), true);
+        
         Referee referee = new Referee();
         referee.setApplication(applicationForm);
-        referee.setFirstname(refereesAdminEditDTO.getFirstname());
-        referee.setLastname(refereesAdminEditDTO.getLastname());
-        referee.setAddressLocation(refereesAdminEditDTO.getAddressLocation());
+        referee.setUser(user);
+        referee.setAddress(refereesAdminEditDTO.getAddressLocation());
         referee.setJobEmployer(refereesAdminEditDTO.getJobEmployer());
         referee.setJobTitle(refereesAdminEditDTO.getJobTitle());
-        referee.setEmail(refereesAdminEditDTO.getEmail());
         referee.setPhoneNumber(refereesAdminEditDTO.getPhoneNumber());
         referee.setMessenger(refereesAdminEditDTO.getMessenger());
+        refereeDAO.save(referee);
         return referee;
     }
 

@@ -146,7 +146,7 @@ public class TestObjectProvider {
 
     public ApplicationForm getApplication(PrismState status) {
         return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .createAlias("program", "program", JoinType.INNER_JOIN).add(Restrictions.eq("status", status)).setMaxResults(1).uniqueResult();
+                .createAlias("program", "program", JoinType.INNER_JOIN).add(Restrictions.eq("state.id", status)).setMaxResults(1).uniqueResult();
     }
 
     private User getUser(Authority authority, Boolean isInRole, Boolean userEnabled) {

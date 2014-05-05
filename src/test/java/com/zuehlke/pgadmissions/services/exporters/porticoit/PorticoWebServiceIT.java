@@ -691,9 +691,6 @@ public class PorticoWebServiceIT {
                 .suitableForUcl(true).user(referee.getUser()).build();
         Referee refereeOne = new RefereeBuilder()
                 .user(referee.getUser())
-                .email("ked1@zuhlke.com")
-                .firstname("Bob")
-                .lastname("Smith")
                 .address(
                         new Address().withDomicile(domicile).withLine1(addressStr.split("\n")[0]).withLine2(addressStr.split("\n")[1])
                                 .withTown(addressStr.split("\n")[2]).withRegion(addressStr.split("\n")[3]).withCode(addressStr.split("\n")[4]))

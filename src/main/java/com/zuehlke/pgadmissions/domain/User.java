@@ -84,10 +84,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Column(name = "activation_code")
     private String activationCode;
 
-    @Column(name = "action_id")
-    @Enumerated(EnumType.STRING)
-    private ApplicationFormAction action;
-
     @JoinColumn(name = "application_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private ApplicationForm application;
@@ -184,14 +180,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
-    }
-
-    public ApplicationFormAction getAction() {
-        return action;
-    }
-
-    public void setAction(ApplicationFormAction action) {
-        this.action = action;
     }
 
     public ApplicationForm getApplication() {

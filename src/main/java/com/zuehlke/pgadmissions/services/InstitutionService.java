@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
+import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
@@ -15,10 +15,10 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Service
 @Transactional
-public class QualificationInstitutionService {
+public class InstitutionService {
     
     @Autowired
-    private QualificationInstitutionDAO qualificationInstitutionDAO;
+    private InstitutionDAO institutionDAO;
     
     @Autowired
     private StateDAO stateDAO;
@@ -27,32 +27,32 @@ public class QualificationInstitutionService {
     private ApplicationContext applicationContext;
 
     public Institution getByCode(String institutionCode) {
-        return qualificationInstitutionDAO.getByCode(institutionCode);
+        return institutionDAO.getByCode(institutionCode);
     }
 
     public List<Institution> getEnabledInstitutionsByDomicileCode(String domicileCode) {
-        return qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(domicileCode);
+        return institutionDAO.getByDomicileCode(domicileCode);
     }
     
     public List<Institution> getEnabledInstitutionsByUserIdAndDomicileCode(Integer userId, String domicileCode) {
-        return qualificationInstitutionDAO.getEnabledInstitutionsByUserIdAndDomicileCode(userId, domicileCode);
+        return institutionDAO.getByUserIdAndDomicileCode(userId, domicileCode);
     }
     
     public List<Institution> getEnabledInstitutionsByDomicileCodeExludingUserId(Integer userId, String domicileCode) {
-        return qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCodeExludingUserId(userId, domicileCode);
+        return institutionDAO.getByDomicileCodeExludingUserId(userId, domicileCode);
     }
 
     public Institution getOrCreate(String institutionCode, Domicile domicile, String institutionName) {
         Institution persistentInstitution;
         if ("OTHER".equals(institutionCode)) {
-            persistentInstitution = qualificationInstitutionDAO.getByDomicileAndName(domicile.getCode(), institutionName);
+            persistentInstitution = institutionDAO.getByDomicileAndName(domicile.getCode(), institutionName);
             if (persistentInstitution == null) {
                 persistentInstitution = new Institution();
                 persistentInstitution.setDomicileCode(domicile.getCode());
                 persistentInstitution.setState(stateDAO.getById(PrismState.INSTITUTION_APPROVED));
                 persistentInstitution.setName(institutionName);
                 persistentInstitution.setCode(generateNextInstitutionCode());
-                qualificationInstitutionDAO.save(persistentInstitution);
+                institutionDAO.save(persistentInstitution);
             }
         } else {
             persistentInstitution = getByCode(institutionCode);
@@ -61,7 +61,7 @@ public class QualificationInstitutionService {
     }
 
     protected String generateNextInstitutionCode() {
-        Institution lastCustomInstitution = qualificationInstitutionDAO.getLastCustomInstitution();
+        Institution lastCustomInstitution = institutionDAO.getLastCustomInstitution();
         Integer codeNumber;
         if (lastCustomInstitution != null) {
             codeNumber = Integer.valueOf(lastCustomInstitution.getCode().substring(4));

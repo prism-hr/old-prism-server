@@ -24,7 +24,7 @@ import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
+import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -87,7 +87,7 @@ public class QualificationController {
     private QualificationTypePropertyEditor qualificationTypePropertyEditor;
 
     @Autowired
-    private QualificationInstitutionDAO qualificationInstitutionDAO;
+    private InstitutionDAO qualificationInstitutionDAO;
 
     @Autowired
     private FullTextSearchService searchService;
@@ -180,7 +180,7 @@ public class QualificationController {
         modelMap.put("qualification", qualification);
         Institution institution = qualification.getInstitution();
         if (institution != null) {
-            modelMap.put("institutions", qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(institution.getDomicileCode()));
+            modelMap.put("institutions", qualificationInstitutionDAO.getByDomicileCode(institution.getDomicileCode()));
         }
         return TemplateLocation.APPLICATION_APPLICANT_ADDITIONAL_INFORMATION;
     }

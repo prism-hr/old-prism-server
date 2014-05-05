@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
+import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.ProgramType;
@@ -52,7 +52,7 @@ public class CreateNewOpportunityController {
     private DomicileService domicileService;
 
     @Autowired
-    private QualificationInstitutionDAO qualificationInstitutionDAO;
+    private InstitutionDAO qualificationInstitutionDAO;
 
     @Autowired
     private DomicilePropertyEditor domicilePropertyEditor;
@@ -95,7 +95,7 @@ public class CreateNewOpportunityController {
         if (result.hasErrors()) {
             if (opportunityRequest.getInstitutionCountry() != null) {
                 model.addAttribute("institutions",
-                        qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
+                        qualificationInstitutionDAO.getByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
             }
             request.setAttribute(CLICKED_ON_CREATE_OPPORTUNITY, true);
             return LOGIN_PAGE;

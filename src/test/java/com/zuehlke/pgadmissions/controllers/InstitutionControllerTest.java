@@ -24,11 +24,11 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.QualificationInstitutionService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
-public class QualificationInstitutionsControllerTest {
+public class InstitutionControllerTest {
 
     @Mock
     @InjectIntoByType
@@ -40,14 +40,14 @@ public class QualificationInstitutionsControllerTest {
 
     @Mock
     @InjectIntoByType
-    private QualificationInstitutionService qualificationInstitutionService;
+    private InstitutionService institutionService;
 
     @Mock
     @InjectIntoByType
     private UserService userService;
 
     @TestedObject
-    private QualificationInstitutionsController controller = new QualificationInstitutionsController();
+    private InstitutionController controller = new InstitutionController();
 
     @Before
     public void setup() {
@@ -64,7 +64,7 @@ public class QualificationInstitutionsControllerTest {
 
         expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
         expect(domicileDAO.getDomicileById(0)).andReturn(domicile);
-        expect(qualificationInstitutionService.getEnabledInstitutionsByDomicileCode(domicile.getCode())).andReturn(Arrays.asList(institution1, institution2));
+        expect(institutionService.getEnabledInstitutionsByDomicileCode(domicile.getCode())).andReturn(Arrays.asList(institution1, institution2));
 
         replay();
         String institutions = controller.getInstitutions("0");
@@ -85,7 +85,7 @@ public class QualificationInstitutionsControllerTest {
         expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
         expect(domicileDAO.getDomicileById(0)).andReturn(domicile);
         expect(userService.getCurrentUser()).andReturn(user);
-        expect(qualificationInstitutionService.getEnabledInstitutionsByDomicileCode(domicile.getCode())).andReturn(
+        expect(institutionService.getEnabledInstitutionsByDomicileCode(domicile.getCode())).andReturn(
                 Lists.newArrayList(institution1, institution2));
 
         replay();

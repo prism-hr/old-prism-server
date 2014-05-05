@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
-public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
+public class InstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnInstitutionForDomicileCode() {
@@ -33,9 +33,9 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
         flushAndClearSession();
 
-        QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
+        InstitutionDAO qualificationInstitutionDAO = new InstitutionDAO(sessionFactory);
 
-        List<Institution> returnList = qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("UK");
+        List<Institution> returnList = qualificationInstitutionDAO.getByDomicileCode("UK");
 
         assertNotNull(returnList);
         assertEquals(1, returnList.size());
@@ -58,7 +58,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
         flushAndClearSession();
 
-        QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
+        InstitutionDAO qualificationInstitutionDAO = new InstitutionDAO(sessionFactory);
 
         Institution returned = qualificationInstitutionDAO.getByCode("ABC");
 
@@ -79,7 +79,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
         flushAndClearSession();
 
-        QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
+        InstitutionDAO qualificationInstitutionDAO = new InstitutionDAO(sessionFactory);
 
         Institution returned = qualificationInstitutionDAO.getLastCustomInstitution();
 
@@ -100,7 +100,7 @@ public class QualificationInstitutionDAOTest extends AutomaticRollbackTestCase {
 
         flushAndClearSession();
 
-        QualificationInstitutionDAO qualificationInstitutionDAO = new QualificationInstitutionDAO(sessionFactory);
+        InstitutionDAO qualificationInstitutionDAO = new InstitutionDAO(sessionFactory);
 
         Institution returned = qualificationInstitutionDAO.getByDomicileAndName("PL", "University of London");
 

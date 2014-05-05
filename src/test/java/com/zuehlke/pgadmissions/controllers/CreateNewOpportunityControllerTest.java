@@ -30,7 +30,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
+import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.ProgramType;
@@ -61,7 +61,7 @@ public class CreateNewOpportunityControllerTest {
 
 	@Mock
 	@InjectIntoByType
-	private QualificationInstitutionDAO qualificationInstitutionDAO;
+	private InstitutionDAO qualificationInstitutionDAO;
 
 	@Mock
 	@InjectIntoByType
@@ -177,7 +177,7 @@ public class CreateNewOpportunityControllerTest {
 		HttpServletRequest request = new MockHttpServletRequest();
 
 		ArrayList<Institution> institutionsList = Lists.newArrayList();
-		expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutionsList);
+		expect(qualificationInstitutionDAO.getByDomicileCode("PL")).andReturn(institutionsList);
 
 		replay();
 		String result = controller.postOpportunityRequest(opportunityRequest, bindingResult, model, request);

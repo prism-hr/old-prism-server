@@ -25,18 +25,18 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
+import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferErrorBuilder;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationTransferErrorBuilder;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -49,7 +49,7 @@ public class ExportQueueListenerTest {
     private ApplicationFormDAO formDAOMock;
     
     @Mock @InjectIntoByType
-    private ApplicationFormTransferService applicationFormTransferServiceMock;
+    private ApplicationTransferService applicationFormTransferServiceMock;
     
     @Mock @InjectIntoByType
     private ApplicationExportConfigurationService throttleServiceMock;
@@ -68,7 +68,7 @@ public class ExportQueueListenerTest {
     
     @Test
     public void shouldReceiveJmsMessageAndCallSendToPortico() throws JMSException {
-        ApplicationFormTransfer formTransferMock = EasyMock.createMock(ApplicationFormTransfer.class);
+        ApplicationTransfer formTransferMock = EasyMock.createMock(ApplicationTransfer.class);
         
         ApplicationForm form = new ValidApplicationFormBuilder().build();
         
@@ -95,12 +95,12 @@ public class ExportQueueListenerTest {
     
     @Test
     public void shouldTriggerARetryIfThereWasAnIssueWithTheNetwork() throws JMSException, ExportServiceException {
-        ApplicationFormTransfer formTransferMock = EasyMock.createMock(ApplicationFormTransfer.class);
+        ApplicationTransfer formTransferMock = EasyMock.createMock(ApplicationTransfer.class);
         
         ApplicationForm form = new ValidApplicationFormBuilder().build();
         ExportServiceException uclExportServiceException = new ExportServiceException("error",
-                new ApplicationFormTransferErrorBuilder().errorHandlingStrategy(
-                        ApplicationFormTransferErrorHandlingDecision.RETRY).build());
+                new ApplicationTransferErrorBuilder().errorHandlingStrategy(
+                        ApplicationTransferErrorHandlingDecision.RETRY).build());
         User admin1 = new UserBuilder().id(1).build();
         User admin2 = new UserBuilder().id(2).build();
         List<User> admins = asList(admin1, admin2);

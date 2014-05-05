@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationTransferDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationTransferErrorDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
+import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
+import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -26,10 +26,10 @@ public class ReportPorticoDocumentUploadFailureService {
     private final Logger log = LoggerFactory.getLogger(ReportPorticoDocumentUploadFailureService.class);
     
     @Autowired
-    private ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO;
+    private ApplicationTransferErrorDAO applicationFormTransferErrorDAO;
     
     @Autowired
-    private ApplicationFormTransferDAO applicationFormTransferDAO;
+    private ApplicationTransferDAO applicationFormTransferDAO;
     
     @Autowired
     private MailSendingService mailService;
@@ -38,7 +38,7 @@ public class ReportPorticoDocumentUploadFailureService {
     private RoleService roleService;
     
     public void reportPorticoUploadError(final String bookingReference, final String errorCode, final String message) {
-        ApplicationFormTransferError transferError = saveDocumentUploadError(bookingReference, errorCode, message);
+        ApplicationTransferError transferError = saveDocumentUploadError(bookingReference, errorCode, message);
         
         String errorMessage = String
                 .format("Portico reported that there was an error uploading the documents for application %s [errorCode=%s, bookingReference=%s]: %s",
@@ -60,13 +60,13 @@ public class ReportPorticoDocumentUploadFailureService {
         }
     }
     
-    private ApplicationFormTransferError saveDocumentUploadError(final String bookingReference, final String errorCode, final String message) {
-        ApplicationFormTransfer transfer = applicationFormTransferDAO.getByReceivedBookingReferenceNumber(bookingReference);
+    private ApplicationTransferError saveDocumentUploadError(final String bookingReference, final String errorCode, final String message) {
+        ApplicationTransfer transfer = applicationFormTransferDAO.getByReceivedBookingReferenceNumber(bookingReference);
         if (transfer != null) {
-            ApplicationFormTransferError transferError = new ApplicationFormTransferError();
+            ApplicationTransferError transferError = new ApplicationTransferError();
             transferError.setDiagnosticInfo(String.format("DocumentUploadError from Portico [errorCode=%s, message=%s]", errorCode, message));
-            transferError.setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP);
-            transferError.setProblemClassification(ApplicationFormTransferErrorType.PORTICO_SFTP_DOCUMENT_HANDLING_PROBLEM);
+            transferError.setErrorHandlingStrategy(ApplicationTransferErrorHandlingDecision.GIVE_UP);
+            transferError.setProblemClassification(ApplicationTransferErrorType.PORTICO_SFTP_DOCUMENT_HANDLING_PROBLEM);
             transferError.setRequestCopy(StringUtils.EMPTY);
             transferError.setResponseCopy(StringUtils.EMPTY);
             transferError.setTimepoint(new Date());

@@ -5,63 +5,42 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Date;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.TestData;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 
-    private User user;
-
-    private Program program;
-
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowNullPointerException() {
-        EmploymentPositionDAO positionDAO = new EmploymentPositionDAO();
-        EmploymentPosition position = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
-        positionDAO.delete(position);
-    }
+    private EmploymentPositionDAO employmentPositionDAO;
+    
+    private ApplicationForm application;
+    
+    
 
     @Test
     public void shouldDeleteEmploymentPosition() {
-        ApplicationForm application = new ApplicationForm();
-        application.setProgram(program);
-        application.setUser(user);
-
-        EmploymentPosition employmentPosition = new EmploymentPositionBuilder().address1("Address").application(application).employerName("fr")
-                .endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
-        save(application, employmentPosition);
+        EmploymentPosition employmentPosition = new EmploymentPosition().withApplication(application).withEmployerAddress(TestData.anAddress(testObjectProvider.getDomicile()))
+                .withEmployerName("fr").withEndDate(new Date()).withRemit("dfsfsd").withStartDate(new Date()).withPosition("rerew");
+        save(employmentPosition);
         flushAndClearSession();
 
         Integer id = employmentPosition.getId();
-        EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
-        dao.delete(employmentPosition);
+        employmentPositionDAO.delete(employmentPosition);
         flushAndClearSession();
+        
         assertNull(sessionFactory.getCurrentSession().get(EmploymentPosition.class, id));
     }
 
     @Test
     public void shouldSaveEmployemnt() {
-        ApplicationForm application = new ApplicationForm();
-        application.setProgram(program);
-        application.setUser(user);
+        EmploymentPosition employmentPosition = new EmploymentPosition().withApplication(application).withEmployerAddress(TestData.anAddress(testObjectProvider.getDomicile()))
+                .withEmployerName("fr").withEndDate(new Date()).withRemit("dfsfsd").withStartDate(new Date()).withPosition("rerew");
 
-        save(application);
-        flushAndClearSession();
-
-        EmploymentPosition employmentPosition = new EmploymentPositionBuilder().address1("Address").application(application).employerName("fr")
-                .endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
-
-        EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
-        dao.save(employmentPosition);
+        employmentPositionDAO.save(employmentPosition);
         flushAndClearSession();
 
         assertEquals(employmentPosition.getId(),
@@ -70,27 +49,23 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetEmploymentById() {
-        ApplicationForm application = new ApplicationForm();
-        application.setProgram(program);
-        application.setUser(user);
-
-        EmploymentPosition employmentPosition = new EmploymentPositionBuilder().address1("Address").application(application).employerName("fr")
-                .endDate(new Date()).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
-        save(application, employmentPosition);
+        EmploymentPosition employmentPosition = new EmploymentPosition().withApplication(application).withEmployerAddress(TestData.anAddress(testObjectProvider.getDomicile()))
+                .withEmployerName("fr").withEndDate(new Date()).withRemit("dfsfsd").withStartDate(new Date()).withPosition("rerew");
+        
+        save(employmentPosition);
         flushAndClearSession();
 
-        EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
-        EmploymentPosition reloadedPosistion = dao.getById(employmentPosition.getId());
+        EmploymentPosition reloadedPosistion = employmentPositionDAO.getById(employmentPosition.getId());
         assertEquals(employmentPosition.getId(), reloadedPosistion.getId());
 
     }
 
-    @Before
-    public void prepare() {
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test2.com").activationCode("code")
-                .userAccount(new UserAccount().withEnabled(false).withPassword("dupa")).build();
-        save(user);
-        flushAndClearSession();
-        program = testObjectProvider.getEnabledProgram();
+    @Override
+    public void setup() {
+        super.setup();
+        
+        employmentPositionDAO = new EmploymentPositionDAO(sessionFactory);
+        
+        application = testObjectProvider.getApplication(PrismState.APPLICATION_UNSUBMITTED);
     }
 }

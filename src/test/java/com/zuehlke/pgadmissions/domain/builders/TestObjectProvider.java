@@ -13,6 +13,7 @@ import org.hibernate.sql.JoinType;
 
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -124,7 +125,7 @@ public class TestObjectProvider {
         return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("doSendUpdateNotification", doSendUpdateNotification))
                 .setMaxResults(1).uniqueResult();
     }
-
+    
     public Institution getInstitution() {
         return getInstitution(PrismState.INSTITUTION_APPROVED);
     }
@@ -249,6 +250,10 @@ public class TestObjectProvider {
     public Institution getInstitution(PrismState state) {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class)
                 .add(Restrictions.eq("state.id", state)).setMaxResults(1).uniqueResult();
+    }
+    
+    public Domicile getDomicile() {
+        return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult(); 
     }
     
     public PrismSystem getPrismSystem() {

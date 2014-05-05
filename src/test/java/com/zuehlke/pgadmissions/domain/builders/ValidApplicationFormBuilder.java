@@ -136,10 +136,8 @@ public class ValidApplicationFormBuilder {
                 .sendToUCL(true).reference(referenceComment2).build();
         refereeOne.setComment(referenceComment1);
         refereeTwo.setComment(referenceComment2);
-        employmentPosition = new EmploymentPositionBuilder().current(true).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1])
-                .address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).domicile(domicile)
-                .position("Software Engineer").current(true).startDate(DateUtils.addYears(new Date(), -2)).remit("Developer").employerName("Zuhlke Ltd.")
-                .toEmploymentPosition();
+        employmentPosition = new EmploymentPosition().withCurrent(true).withEmployerAddress(TestData.anAddress(domicile)).withPosition("Software Engineer")
+                .withCurrent(true).withStartDate(DateUtils.addYears(new Date(), -2)).withRemit("Developer").withEmployerName("Zuhlke Ltd.");
         language = new LanguageBuilder().code("GB").name("England").enabled(true).build();
         disability = new DisabilityBuilder().code("0").name("No Disability").enabled(true).build();
         ethnicity = new EthnicityBuilder().code("10").name("White").enabled(true).build();

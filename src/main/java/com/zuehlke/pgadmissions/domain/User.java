@@ -81,10 +81,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     @Column(name = "activation_code")
     private String activationCode;
 
-    @JoinColumn(name = "application_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ApplicationForm application;
-
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     @Valid
@@ -169,14 +165,6 @@ public class User implements UserDetails, Comparable<User>, Serializable {
 
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
-    }
-
-    public ApplicationForm getApplication() {
-        return application;
-    }
-
-    public void setApplication(ApplicationForm application) {
-        this.application = application;
     }
 
     public List<Comment> getComments() {

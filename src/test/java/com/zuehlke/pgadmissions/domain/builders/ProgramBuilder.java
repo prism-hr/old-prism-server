@@ -7,16 +7,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 

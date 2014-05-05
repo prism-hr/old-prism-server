@@ -747,8 +747,8 @@ public class PorticoWebServiceIT {
             applicationForm = allApplicationsByStatus.get(random.nextInt(allApplicationsByStatus.size()));
 
             for (Qualification qualification : applicationForm.getQualifications()) {
-                if (qualification.getProofOfAward() != null) {
-                    qualification.setSendToUCL(true);
+                if (qualification.getDocument() != null) {
+                    qualification.setExport(true);
                     numberOfQualifications++;
                     if (numberOfQualifications == 2) {
                         break;

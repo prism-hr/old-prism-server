@@ -7,10 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,9 +31,6 @@ public class Document implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "proofOfAward")
-    private Qualification qualification;
 
     @Column(name = "uploaded_time_stamp", insertable = false)
     @Generated(GenerationTime.INSERT)
@@ -110,14 +105,6 @@ public class Document implements Serializable {
 
     public void setDateUploaded(Date dateUploaded) {
         this.dateUploaded = dateUploaded;
-    }
-
-    public Qualification getQualification() {
-        return qualification;
-    }
-
-    public void setQualification(Qualification qualification) {
-        this.qualification = qualification;
     }
 
     public MultipartFile getFileData() {

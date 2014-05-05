@@ -103,8 +103,8 @@ public class QualificationBuilder {
 		qualification.setQualificationType(type);
 		qualification.setId(id);
 		qualification.setCompleted(completed);
-		qualification.setProofOfAward(proofOfAward);
-		qualification.setSendToUCL(sendToUCL);
+		qualification.setDocument(proofOfAward);
+		qualification.setExport(sendToUCL);
 		return qualification;
 	}
 }

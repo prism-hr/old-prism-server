@@ -84,7 +84,7 @@ public class MailSender {
     }
 
     protected String resolveSubject(final NotificationTemplateId templateName, final Object... args) {
-        String subjectFormat = emailTemplateService.getSubjectForTemplate(templateName);
+        String subjectFormat = emailTemplateService.getById(templateName).getVersion().getSubject();
         return args == null ? subjectFormat : String.format(subjectFormat, args);
     }
 
@@ -134,8 +134,8 @@ public class MailSender {
                         messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
                     }
 
-                    NotificationTemplate activeEmailTemplate = emailTemplateService.getActiveEmailTemplate(message.getTemplateName());
-                    Template template = new Template(message.getTemplateName().displayValue(), new StringReader(activeEmailTemplate.getContent()),
+                    NotificationTemplate notificationTemplate = emailTemplateService.getById(message.getTemplateName());
+                    Template template = new Template(message.getTemplateName().displayValue(), new StringReader(notificationTemplate.getVersion().getContent()),
                             freemarkerConfig.getConfiguration());
 
                     HtmlToPlainText htmlFormatter = new HtmlToPlainText();
@@ -181,8 +181,8 @@ public class MailSender {
                         messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
                     }
 
-                    NotificationTemplate activeEmailTemplate = emailTemplateService.getActiveEmailTemplate(message.getTemplateName());
-                    Template template = new Template(message.getTemplateName().displayValue(), new StringReader(activeEmailTemplate.getContent()),
+                    NotificationTemplate notificationTemplate = emailTemplateService.getById(message.getTemplateName());
+                    Template template = new Template(message.getTemplateName().displayValue(), new StringReader(notificationTemplate.getVersion().getContent()),
                             freemarkerConfig.getConfiguration());
 
                     HtmlToPlainText htmlFormatter = new HtmlToPlainText();

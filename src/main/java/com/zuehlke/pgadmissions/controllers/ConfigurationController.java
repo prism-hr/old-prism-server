@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
@@ -64,7 +66,7 @@ import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 public class ConfigurationController {
 
     private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
-    
+
     private static final String CONFIGURATION_SECTION_NAME = "/private/staff/superAdmin/configuration_section";
 
     @Autowired
@@ -72,10 +74,10 @@ public class ConfigurationController {
 
     @Autowired
     private ConfigurationService configurationService;
-    
+
     @Autowired
     private ApplicationExportConfigurationService applicationExportConfigurationService;
-    
+
     @Autowired
     private NotificationTemplateService templateService;
 
@@ -133,11 +135,11 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{id:\\d+}")
     @ResponseBody
-    public Map<String, Object> getTemplateVersion(@PathVariable Long id) {
-        NotificationTemplate template = templateService.getEmailTemplate(id);
+    public Map<String, Object> getTemplateVersion(@PathVariable Integer id) {
+        NotificationTemplateVersion template = templateService.getTemplateVersion(id);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("content", template.getContent());
-        result.put("version", template.getVersion());
+        result.put("createdTimestamp", template.getCreatedTimestamp());
         result.put("subject", template.getSubject());
         return result;
     }
@@ -200,77 +202,49 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{templateName:[a-zA-Z_]+}")
     @ResponseBody
     public Map<Object, Object> getVersionsForTemplate(@PathVariable String templateName) {
-        NotificationTemplate template = templateService.getActiveEmailTemplate(valueOf(templateName));
-        Map<Long, String> versions = templateService.getEmailTemplateVersions(template.getName());
+        NotificationTemplate template = templateService.getById(valueOf(templateName));
+        Set<NotificationTemplateVersion> versions = template.getVersions();
         Map<Object, Object> result = new HashMap<Object, Object>();
-        result.put("content", template.getContent());
+        result.put("activeVersion", template.getVersion().getId());
         result.put("versions", versions);
-        result.put("subject", template.getSubject());
-        result.put("activeVersion", template.getId());
-        result.putAll(versions);
         return result;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = { "saveEmailTemplate/{templateName:[a-zA-Z_]+}" })
     @ResponseBody
     public Map<String, Object> saveTemplate(@PathVariable NotificationTemplateId templateName, @RequestParam String content, @RequestParam String subject) {
-        return saveNewTemplate(templateName, content, subject);
+        return saveNewTemplateVersion(templateName, content, subject);
     }
 
-    private Map<String, Object> saveNewTemplate(NotificationTemplateId templateName, String content, String subject) {
-        NotificationTemplate template = templateService.saveNewEmailTemplate(templateName, content, subject);
+    private Map<String, Object> saveNewTemplateVersion(NotificationTemplateId templateId, String content, String subject) {
+        NotificationTemplateVersion newVersion = templateService.saveTemplateVersion(templateId, content, subject);
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("id", template.getId());
-        result.put("version", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(template.getVersion()));
+        result.put("id", newVersion.getId());
+        result.put("createdTimestamp", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(newVersion.getCreatedTimestamp()));
         return result;
     }
 
     @RequestMapping(method = RequestMethod.POST, value = { "activateEmailTemplate/{templateName:[a-zA-Z_]+}/{id:\\d+}" })
     @ResponseBody
-    public Map<String, Object> activateTemplate(@PathVariable String templateName, @PathVariable Long id, @RequestParam Boolean saveCopy,
+    public Map<String, Object> activateTemplate(@PathVariable String templateName, @PathVariable Integer id, @RequestParam Boolean saveCopy,
             @RequestParam(required = false) String newContent, @RequestParam(required = false) String newSubject) {
         Map<String, Object> result = new HashMap<String, Object>();
         if (saveCopy != null && saveCopy) {
-            result = saveNewTemplate(valueOf(templateName), newContent, newSubject);
-            id = (Long) result.get("id");
+            result = saveNewTemplateVersion(valueOf(templateName), newContent, newSubject);
+            id = (Integer) result.get("id");
         }
         if (result.containsKey("error")) {
             return result;
         }
-        Long previousId = templateService.getActiveEmailTemplate(valueOf(templateName)).getId();
+        Integer previousId = templateService.getById(valueOf(templateName)).getVersion().getId();
 
         try {
-            templateService.activateEmailTemplate(valueOf(templateName), id);
+            templateService.activateTemplateVersion(valueOf(templateName), id);
             result.put("previousTemplateId", (Object) previousId);
             return result;
         } catch (NotificationTemplateException ete) {
             return Collections.singletonMap("error", (Object) ete.getMessage());
         }
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = { "deleteEmailTemplate/{id:\\d+}" })
-    @ResponseBody
-    public Map<String, Object> deleteTemplate(@PathVariable Long id) {
-        Map<String, Object> result = new HashMap<String, Object>();
-        NotificationTemplate toDeleteTemplate = templateService.getEmailTemplate(id);
-        NotificationTemplateId templateName = toDeleteTemplate.getName();
-        NotificationTemplate activeTemplate = templateService.getActiveEmailTemplate(templateName);
-        result.put("activeTemplateId", activeTemplate.getId());
-        result.put("activeTemplateContent", activeTemplate.getContent());
-        result.put("activeTemplateSubject", activeTemplate.getSubject());
-        try {
-            templateService.deleteTemplateVersion(toDeleteTemplate);
-        } catch (NotificationTemplateException ete) {
-            result.put("error", ete.getMessage());
-        }
-        return result;
-    }
-
-    // Not used now, may be in the future
-    @RequestMapping(method = RequestMethod.POST, value = { "previewTemplate" })
-    @ResponseBody
-    public Map<String, String> getTemplatePreview(@RequestParam String templateContent) {
-        return Collections.singletonMap("template", templateService.processTemplateContent(templateContent));
     }
 
     @ModelAttribute("templateTypes")

@@ -15,60 +15,10 @@ function toggleButtons(disable) {
 	$('#modal-preview-go').attr('disabled', disable);
 }
 
-function doGetCaretPosition (ctrl) {
-	  var CaretPos = 0; // IE Support
-	  if (document.selection) {
-	  ctrl.focus ();
-	    var Sel = document.selection.createRange ();
-	    Sel.moveStart ('character', -ctrl.value.length);
-	    CaretPos = Sel.text.length;
-	  }
-	  // Firefox support
-	  else if (ctrl.selectionStart || ctrl.selectionStart == '0')
-	    CaretPos = ctrl.selectionStart;
-	  return (CaretPos);
-	}
-	function setCaretPosition(ctrl, pos){
-	  if(ctrl.setSelectionRange)
-	  {
-	    ctrl.focus();
-	    ctrl.setSelectionRange(pos,pos);
-	  }
-	  else if (ctrl.createTextRange) {
-	    var range = ctrl.createTextRange();
-	    range.collapse(true);
-	    range.moveEnd('character', pos);
-	    range.moveStart('character', pos);
-	    range.select();
-	  }
-	}
-
 var emailTemplateContent;
 var emailTemplateSubject;
 
-
 $(document).ready(function() {
-	
-	$('#templateSubjectId').focus();
-    $('#templateSubjectId').on('keydown', function(evt) {
-      console.log(evt.keyCode);
-      if (evt.keyCode == 37 || evt.keyCode == 39 || evt.keyCode == 9 || evt.keyCode == 13) return;
-      var c = doGetCaretPosition(evt.target);
-      var value = $(this).val();
-      var match = value.match(/%[0-9]\$s/g);
-
-      var prev = 0;
-      _.each(match, function(item) {
-        var start = value.indexOf(item, prev);
-        var end = start + item.length;
-        if (c > start && c < end) {
-          evt.preventDefault();
-          return;
-        }
-        prev = end;
-      });
-
-    });
 	
 	toggleButtons(true);
     $(document).on('change', 'select.templateType', function() {
@@ -186,17 +136,18 @@ $(document).ready(function() {
     
     $('#enable-go').click(function() {
     	$('#ajaxloader').show();
-    	if ($('#templateContentId').val()!=emailTemplateContent || $('#templateSubjectId').val()!=emailTemplateSubject) {//user has chnaged template before rnabling it
-    		var options = {
+    	var options;
+    	if ($('#templateContentId').val()!=emailTemplateContent || $('#templateSubjectId').val()!=emailTemplateSubject) {//user has changed template before rnabling it
+    		options = {
     				saveCopy : true,
     				newContent : $('#templateContentId').val(),
     				newSubject : $('#templateSubjectId').val()
-    				};
+			};
     	}
     	else {
-    		var options = {
-    				saveCopy : false
-    				};
+    		options = {
+    		        saveCopy : false
+			};
     	}
 		 $.ajax({
 			 type : 'POST',
@@ -234,32 +185,4 @@ $(document).ready(function() {
     	$('#previewModalContent').html(html);
     });
     
-    $('#delete-go').click(function() {
-    	$('#ajaxloader').show();
-    	$.ajax({
-    		type : 'POST',
-    		statusCode : errorCodes,
-    		url : "/pgadmissions/configuration/deleteEmailTemplate/"+$('#emailTemplateVersion').val(),
-    		data : null,
-    		success : function(data) {
-				$("#templateContentId").parent().find('.alert-error').remove();
-    			if (data.error!=null) {
-					$("#templateContentId").parent().append('<div class="alert alert-error"><i class="icon-warning-sign"></i> '+data.error+'</div>');
-    			}
-    			else {
-					$("#templateContentId").parent().find('.alert-error').remove();
-	    			var optionVal = $('#emailTemplateVersion').val();
-	    			$("#emailTemplateVersion option[value="+optionVal+"]").remove();
-	    			$('#emailTemplateVersion').val(data.activeTemplateId);
-	    			$('#templateContentId').val(data.activeTemplateContent);
-	    			$('#templateSubjectId').val(data.activeTemplateSubject);
-	    			emailTemplateContent=$('#templateContentId').val();
-	    			emailTemplateSubject=$('#templateSubjectId').val();
-    			}
-    		},
-    		complete : function() {
-    			$('#ajaxloader').fadeOut('fast');
-    		}
-    	});
-    });
 });

@@ -1,20 +1,22 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Lob;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Entity
 @Table(name = "NOTIFICATION_TEMPLATE")
@@ -23,73 +25,96 @@ public class NotificationTemplate implements Serializable {
     private static final long serialVersionUID = -3640707667534813533L;
 
     @Id
-    @GeneratedValue
     @Column(name = "id")
-    private Long id;
-
-    @Column(name = "name")
     @Enumerated(EnumType.STRING)
-    private NotificationTemplateId name;
+    private NotificationTemplateId id;
 
-    @Lob
-    @Column(name = "content")
-    private String content;
+    @Column(name = "notification_type_id")
+    @Enumerated(EnumType.STRING)
+    private NotificationType type;
 
-    @Column(name = "version")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date version;
+    @OneToOne
+    @JoinColumn(name = "notification_template_version_id")
+    private NotificationTemplateVersion version;
 
-    @Column(name = "active")
-    private Boolean active;
+    @OneToOne
+    @JoinColumn(name = "reminder_notification_template_id")
+    private NotificationTemplate reminderTemplate;
 
-    @Column(name = "subject")
-    private String subject;
+    @Column(name = "reminder_interval")
+    private Integer reminderInterval;
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    @OneToMany(mappedBy = "notificationTemplate")
+    @OrderBy("createdTimestamp")
+    private Set<NotificationTemplateVersion> versions = Sets.newLinkedHashSet();
+
+    public NotificationTemplateId getId() {
+        return id;
     }
 
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public Date getVersion() {
-        return version;
-    }
-
-    public void setVersion(Date version) {
-        this.version = version;
-    }
-
-    public NotificationTemplateId getName() {
-        return name;
-    }
-
-    public void setName(NotificationTemplateId name) {
-        this.name = name;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setId(Long id) {
+    public void setId(NotificationTemplateId id) {
         this.id = id;
     }
 
-    public Long getId() {
-        return id;
+    public NotificationType getType() {
+        return type;
     }
+
+    public void setType(NotificationType type) {
+        this.type = type;
+    }
+
+    public NotificationTemplateVersion getVersion() {
+        return version;
+    }
+
+    public void setVersion(NotificationTemplateVersion version) {
+        this.version = version;
+    }
+
+    public NotificationTemplate getReminderTemplate() {
+        return reminderTemplate;
+    }
+
+    public void setReminderTemplate(NotificationTemplate reminderTemplate) {
+        this.reminderTemplate = reminderTemplate;
+    }
+
+    public Integer getReminderInterval() {
+        return reminderInterval;
+    }
+
+    public void setReminderInterval(Integer reminderInterval) {
+        this.reminderInterval = reminderInterval;
+    }
+
+    public Set<NotificationTemplateVersion> getVersions() {
+        return versions;
+    }
+
+    public NotificationTemplate withId(NotificationTemplateId id) {
+        this.id = id;
+        return this;
+    }
+
+    public NotificationTemplate withType(NotificationType type) {
+        this.type = type;
+        return this;
+    }
+
+    public NotificationTemplate withVersion(NotificationTemplateVersion version) {
+        this.version = version;
+        return this;
+    }
+
+    public NotificationTemplate withReminderTemplate(NotificationTemplate reminderTemplate) {
+        this.reminderTemplate = reminderTemplate;
+        return this;
+    }
+
+    public NotificationTemplate withReminderInterval(Integer reminderInterval) {
+        this.reminderInterval = reminderInterval;
+        return this;
+    }
+
 }

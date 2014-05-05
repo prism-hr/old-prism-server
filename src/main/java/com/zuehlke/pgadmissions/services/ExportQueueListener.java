@@ -43,7 +43,7 @@ public class ExportQueueListener implements MessageListener {
     private ApplicationTransferService applicationFormTransferService;
 
     @Autowired
-    private ApplicationExportConfigurationService throttleService;
+    private ApplicationExportConfigurationService exportConfigurationService;
 
     @Autowired
     private MailSendingService mailSendingService;
@@ -76,7 +76,9 @@ public class ExportQueueListener implements MessageListener {
         try {
             exportService.sendToPortico(form, transfer);
         } catch (ExportServiceException e) {
-            sendEmailWithErrorMessage(form);
+
+            // TODO add APPLICATION_CORRECT_REQUEST task and send email
+            
             errorHandlingStrategyResolver(e);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -92,24 +94,13 @@ public class ExportQueueListener implements MessageListener {
         return applicationFormTransferService.createOrReturnExistingApplicationFormTransfer(form);
     }
 
-    private void sendEmailWithErrorMessage(final ApplicationForm application) {
-        try {
-            String messageCode = "An error occured during the export of Application " + application.getApplicationNumber() + ". " +
-                    "The error has been reported to a system administrator and is currently under investigation. Should you wish to, " +
-                    "you may login and correct data errors in the application and attempt to resend.";
-        	mailSendingService.sendExportErrorMessage(roleService.getUsersInRole(roleService.getPrismSystem(), Authority.SYSTEM_ADMINISTRATOR, Authority.INSTITUTION_ADMITTER), messageCode, new Date(), application);
-        } catch (Exception ex) {
-            log.warn("{}", ex);
-        }
-    }
-
     private void errorHandlingStrategyResolver(ExportServiceException e) {
         switch (e.getErrorHandlingStrategy()) {
         case RETRY:
             throw new TriggerJmsRetryException(e.getMessage(), e);
 
         case STOP_TRANSFERS_AND_WAIT_FOR_ADMIN_ACTION:
-            disablePorticoInterface();
+            exportConfigurationService.disablePorticoInterface();
             break;
 
         default:
@@ -117,15 +108,4 @@ public class ExportQueueListener implements MessageListener {
         }
     }
 
-    private void disablePorticoInterface() {
-        throttleService.disablePorticoInterface();
-        String messageCode = "There was an issue with the PORTICO interfaces which needs attention by an administrator. "
-                + "PRISM is now not sending any more applications to PORTICO until this issue has been resolved";
-        try {
-            mailSendingService.sendExportErrorMessage(roleService.getUsersInRole(roleService.getPrismSystem(), Authority.SYSTEM_ADMINISTRATOR), messageCode, new Date(), null);
-        } catch (Exception ex) {
-            log.warn("{}", ex);
-        }
-    }
-    
 }

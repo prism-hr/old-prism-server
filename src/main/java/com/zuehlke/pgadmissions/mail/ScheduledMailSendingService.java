@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.DIGEST_TASK_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.DIGEST_TASK_REMINDER;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.DIGEST_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.REFEREE_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_TASK_REQUEST;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_TASK_REQUEST_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER;
 
 import java.util.Collections;
 import java.util.Date;
@@ -131,16 +131,16 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
 
             switch (digestNotificationType) {
             case TASK_REMINDER:
-                templateName = DIGEST_TASK_REMINDER;
+                templateName = APPLICATION_TASK_REQUEST_REMINDER;
                 break;
             case TASK_NOTIFICATION:
-                templateName = DIGEST_TASK_NOTIFICATION;
+                templateName = APPLICATION_TASK_REQUEST;
                 break;
             case UPDATE_NOTIFICATION:
-                templateName = DIGEST_UPDATE_NOTIFICATION;
+                templateName = APPLICATION_UPDATE_NOTIFICATION;
                 break;
             case OPPORTUNITY_REQUEST_NOTIFICATION:
-                templateName = NotificationTemplateId.OPPORTUNITY_REQUEST_NOTIFICATION;
+                templateName = NotificationTemplateId.PROGRAM_TASK_REQUEST;
                 break;
             default:
                 throw new RuntimeException();
@@ -182,12 +182,12 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         final Referee referee = refereeDAO.getRefereeById(refereeId);
         PrismEmailMessage message;
         try {
-            String subject = resolveMessage(REFEREE_REMINDER, referee.getApplication());
+            String subject = resolveMessage(APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER, referee.getApplication());
             ApplicationForm application = referee.getApplication();
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(application.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
                     adminsEmails, referee, application, application.getUser(), getHostName() });
-            message = buildMessage(referee.getUser(), subject, modelBuilder.build(), REFEREE_REMINDER);
+            message = buildMessage(referee.getUser(), subject, modelBuilder.build(), APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER);
             sendEmail(message);
             referee.setLastNotified(new Date());
             refereeDAO.save(referee);

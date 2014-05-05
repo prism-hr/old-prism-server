@@ -32,9 +32,6 @@ public class ReportPorticoDocumentUploadFailureService {
     private ApplicationTransferDAO applicationFormTransferDAO;
     
     @Autowired
-    private MailSendingService mailService;
-    
-    @Autowired
     private RoleService roleService;
     
     public void reportPorticoUploadError(final String bookingReference, final String errorCode, final String message) {
@@ -49,17 +46,10 @@ public class ReportPorticoDocumentUploadFailureService {
         
         log.warn(errorMessage);
 
-        sendErrorMessageToSuperAdministrators(errorMessage, transferError.getTransfer().getApplicationForm());
+        // TODO add APPLICATION_CORRECT_REQUEST task and send email
+        
     }
 
-    private void sendErrorMessageToSuperAdministrators(final String message, final ApplicationForm application) {
-        try {
-            mailService.sendExportErrorMessage(roleService.getUsersInRole(roleService.getPrismSystem(), Authority.SYSTEM_ADMINISTRATOR), message, new Date(), application);
-        } catch (Exception e) {
-            log.warn("{}", e);
-        }
-    }
-    
     private ApplicationTransferError saveDocumentUploadError(final String bookingReference, final String errorCode, final String message) {
         ApplicationTransfer transfer = applicationFormTransferDAO.getByExternalTransferReference(bookingReference);
         if (transfer != null) {

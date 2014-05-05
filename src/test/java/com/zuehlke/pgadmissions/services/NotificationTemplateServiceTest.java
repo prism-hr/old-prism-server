@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.REFEREE_NOTIFICATION;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -21,34 +21,34 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.dao.EmailTemplateDAO;
-import com.zuehlke.pgadmissions.domain.EmailTemplate;
+import com.zuehlke.pgadmissions.dao.NotificationTemplateDAO;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.builders.EmailTemplateBuilder;
-import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
-import com.zuehlke.pgadmissions.exceptions.EmailTemplateException;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
+import com.zuehlke.pgadmissions.exceptions.NotificationTemplateException;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
-public class EmailTemplateServiceTest {
+public class NotificationTemplateServiceTest {
     
     @Mock  
     @InjectIntoByType
-	private EmailTemplateDAO daoMock;
+	private NotificationTemplateDAO daoMock;
     
     @TestedObject
-	private EmailTemplateService service;
+	private NotificationTemplateService service;
 
 	@Test
 	public void shouldReturnEmailTemplates() {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
-		EmailTemplate template1 = new EmailTemplateBuilder().id(1L).content("Template content")
+		NotificationTemplate template1 = new EmailTemplateBuilder().id(1L).content("Template content")
 				.name(REFEREE_NOTIFICATION).build();
-		EmailTemplate template2 = new EmailTemplateBuilder().id(2L).content("Template content 2")
+		NotificationTemplate template2 = new EmailTemplateBuilder().id(2L).content("Template content 2")
 				.name(REFEREE_NOTIFICATION).version(version.toDate()).build();
 		expect(daoMock.getByName(REFEREE_NOTIFICATION)).andReturn(asList(template1, template2));
 		
 		
 		replay();
-		List<EmailTemplate> result = service.getEmailTemplates(REFEREE_NOTIFICATION);
+		List<NotificationTemplate> result = service.getEmailTemplates(REFEREE_NOTIFICATION);
 		verify();
 		
 		assertNotNull(result);
@@ -58,7 +58,7 @@ public class EmailTemplateServiceTest {
 		
 	}
 
-	private void areEqual(EmailTemplate expected, EmailTemplate actual) {
+	private void areEqual(NotificationTemplate expected, NotificationTemplate actual) {
 		assertNotNull(actual);
 		assertEquals(expected.getName(), actual.getName());
 		assertEquals(expected.getContent(), actual.getContent());
@@ -67,14 +67,14 @@ public class EmailTemplateServiceTest {
 	
 	@Test
 	public void shouldReturnNoEmailTemplateList() {
-		EmailTemplate template1 = new EmailTemplateBuilder().id(1L).content("Template1 content")
+		NotificationTemplate template1 = new EmailTemplateBuilder().id(1L).content("Template1 content")
 				.name(REFEREE_NOTIFICATION).build();
-		EmailTemplate template2 = new EmailTemplateBuilder().id(2L).content("Template2 content")
-				.name(EmailTemplateName.NEW_PASSWORD_CONFIRMATION).build();
+		NotificationTemplate template2 = new EmailTemplateBuilder().id(2L).content("Template2 content")
+				.name(NotificationTemplateId.NEW_PASSWORD_CONFIRMATION).build();
 		expect(daoMock.getAll()).andReturn(asList(template1, template2));
 
 		replay();
-		List<EmailTemplate> result = service.getAllEmailTemplates();
+		List<NotificationTemplate> result = service.getAllEmailTemplates();
 		verify();
 		
 		assertNotNull(result);
@@ -105,9 +105,9 @@ public class EmailTemplateServiceTest {
 	@Test
 	public void shouldActivateEmailTemplateAndDisableTheOldOne() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
-		EmailTemplate oldTtemplate = new EmailTemplateBuilder().id(1L).content("Template1 content")
+		NotificationTemplate oldTtemplate = new EmailTemplateBuilder().id(1L).content("Template1 content")
 				.name(REFEREE_NOTIFICATION).active(true).build();
-		EmailTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
+		NotificationTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
 				.name(REFEREE_NOTIFICATION).version(version.toDate()).build();
 		expect(daoMock.getById(2L)).andReturn(toActivate);
 		expect(daoMock.getActiveByName(REFEREE_NOTIFICATION)).andReturn(oldTtemplate);
@@ -122,7 +122,7 @@ public class EmailTemplateServiceTest {
 	@Test
 	public void shouldNotActivateEmailIfAlreadyActive() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
-		EmailTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
+		NotificationTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
 				.name(REFEREE_NOTIFICATION).version(version.toDate()).active(true).build();
 		expect(daoMock.getById(2L)).andReturn(toActivate);
 		
@@ -131,10 +131,10 @@ public class EmailTemplateServiceTest {
 		verify();
 	}
 	
-	@Test(expected = EmailTemplateException.class)
+	@Test(expected = NotificationTemplateException.class)
 	public void shouldNotActivateEmailTemplateBecauseOfNoTemplateFoundException() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
-		EmailTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
+		NotificationTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
 				.name(REFEREE_NOTIFICATION).version(version.toDate()).active(true).build();
 		expect(daoMock.getById(2L)).andReturn(null);
 		
@@ -143,10 +143,10 @@ public class EmailTemplateServiceTest {
 		verify();
 	}
 	
-	@Test(expected = EmailTemplateException.class)
+	@Test(expected = NotificationTemplateException.class)
 	public void shouldNotActivateEmailTemplateBecauseOfNoActiveTemplateFound() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
-		EmailTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
+		NotificationTemplate toActivate = new EmailTemplateBuilder().id(2L).content("Template2 content")
 				.name(REFEREE_NOTIFICATION).version(version.toDate()).build();
 		expect(daoMock.getById(2L)).andReturn(toActivate);
 		expect(daoMock.getActiveByName(REFEREE_NOTIFICATION)).andReturn(null);
@@ -158,7 +158,7 @@ public class EmailTemplateServiceTest {
 	
 	@Test
 	public void shouldReturnDefaultTemplate() {
-		EmailTemplate defaultTemplate = new EmailTemplateBuilder().id(1L).content("Template1 content")
+		NotificationTemplate defaultTemplate = new EmailTemplateBuilder().id(1L).content("Template1 content")
 				.name(REFEREE_NOTIFICATION).build();
 		expect(daoMock.getDefaultByName(REFEREE_NOTIFICATION)).andReturn(defaultTemplate);
 		
@@ -170,7 +170,7 @@ public class EmailTemplateServiceTest {
 	@Test
 	public void shouldDeleteTemplate() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
-		EmailTemplate toDelete = new EmailTemplateBuilder().id(2L).content("Template2 content")
+		NotificationTemplate toDelete = new EmailTemplateBuilder().id(2L).content("Template2 content")
 				.name(REFEREE_NOTIFICATION).version(version.toDate()).build();
 		expect(daoMock.getById(2L)).andReturn(toDelete);
 		daoMock.remove(toDelete);
@@ -180,10 +180,10 @@ public class EmailTemplateServiceTest {
 		verify();
 	}
 	
-	@Test(expected = EmailTemplateException.class)
+	@Test(expected = NotificationTemplateException.class)
 	public void shouldNotDeletActiveTemplate() throws Exception {
 		DateTime version = new DateTime(2013, 4, 25, 00, 00);
-		EmailTemplate toDelete = new EmailTemplateBuilder().id(2L).content("Template2 content")
+		NotificationTemplate toDelete = new EmailTemplateBuilder().id(2L).content("Template2 content")
 				.name(REFEREE_NOTIFICATION).active(true).version(version.toDate()).build();
 		expect(daoMock.getById(2L)).andReturn(toDelete);
 		
@@ -192,9 +192,9 @@ public class EmailTemplateServiceTest {
 		verify();
 	}
 	
-	@Test(expected = EmailTemplateException.class)
+	@Test(expected = NotificationTemplateException.class)
 	public void shouldNotDeletDefaultTemplate() throws Exception {
-		EmailTemplate toDelete = new EmailTemplateBuilder().id(2L).content("Template2 content")
+		NotificationTemplate toDelete = new EmailTemplateBuilder().id(2L).content("Template2 content")
 				.name(REFEREE_NOTIFICATION).build();
 		expect(daoMock.getById(2L)).andReturn(toDelete);
 		
@@ -206,7 +206,7 @@ public class EmailTemplateServiceTest {
 	
 	@Test
 	public void shouldSaveNewUpdatedEmailTemplate() {
-		EmailTemplate updatedTemplate = new EmailTemplateBuilder().id(1L).content("Changed Content!!")
+		NotificationTemplate updatedTemplate = new EmailTemplateBuilder().id(1L).content("Changed Content!!")
 				.name(REFEREE_NOTIFICATION).build();
 		daoMock.save(updatedTemplate);
 		

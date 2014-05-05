@@ -61,7 +61,7 @@ public class ReportPorticoDocumentUploadFailureService {
     }
     
     private ApplicationTransferError saveDocumentUploadError(final String bookingReference, final String errorCode, final String message) {
-        ApplicationTransfer transfer = applicationFormTransferDAO.getByReceivedBookingReferenceNumber(bookingReference);
+        ApplicationTransfer transfer = applicationFormTransferDAO.getByExternalTransferReference(bookingReference);
         if (transfer != null) {
             ApplicationTransferError transferError = new ApplicationTransferError();
             transferError.setDiagnosticInfo(String.format("DocumentUploadError from Portico [errorCode=%s, message=%s]", errorCode, message));

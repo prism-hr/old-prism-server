@@ -9,12 +9,12 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class ApplicationTransferDAOTest extends AutomaticRollbackTestCase {
 
-    private ApplicationTransferDAO applicationFormTransferDAO;
+    private ApplicationTransferDAO applicationTransferDAO;
     
     private ApplicationForm applicationForm;
     
@@ -27,17 +27,22 @@ public class ApplicationTransferDAOTest extends AutomaticRollbackTestCase {
 
         ApplicationTransfer transfer = new ApplicationTransfer();
         transfer.setApplicationForm(applicationForm);
-        transfer.setStatus(ApplicationTransferStatus.COMPLETED);
-        transfer.setTransferFinishTimepoint(new Date());
-        transfer.setTransferStartTimepoint(new Date());
-        transfer.setUclBookingReferenceReceived(bookingReferenceNumber);
-        transfer.setUclUserIdReceived(uclUserIdReceived);
+        transfer.setState(ApplicationTransferState.COMPLETED);
+        transfer.setEndedTimestamp(new Date());
+        transfer.setBeganTimestamp(new Date());
+        transfer.setExternalTransferReference(bookingReferenceNumber);
+        transfer.setExternalApplicantReference(uclUserIdReceived);
         
         save(transfer);
         flushAndClearSession();
         
-        ApplicationTransfer transferWithBookingRef = applicationFormTransferDAO.getByReceivedBookingReferenceNumber(bookingReferenceNumber);
-        assertEquals(bookingReferenceNumber, transferWithBookingRef.getUclBookingReferenceReceived());
+        ApplicationTransfer transferWithBookingRef = applicationTransferDAO.getByExternalTransferReference(bookingReferenceNumber);
+        assertEquals(bookingReferenceNumber, transferWithBookingRef.getExternalTransferReference());
+    }
+    
+    public void setup(){
+        super.setup();
+        applicationTransferDAO = new ApplicationTransferDAO(sessionFactory);
     }
     
 }

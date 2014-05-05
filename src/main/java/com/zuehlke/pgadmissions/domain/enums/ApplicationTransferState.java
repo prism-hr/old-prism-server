@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum ApplicationTransferStatus {
+public enum ApplicationTransferState {
 
     QUEUED_FOR_WEBSERVICE_CALL("queued for ws call"),
 
@@ -14,7 +14,7 @@ public enum ApplicationTransferStatus {
 
     private final String displayValue;
 
-    private ApplicationTransferStatus(String displayValue) {
+    private ApplicationTransferState(String displayValue) {
         this.displayValue = displayValue;
     }
 

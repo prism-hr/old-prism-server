@@ -400,8 +400,8 @@ public class PorticoDocumentUploadPhase2IT {
         @Override
         public void sftpTransferCompleted(String zipFileName, ApplicationTransfer transfer) {
             csvEntries.add(zipFileName);
-            csvEntries.add(transfer.getUclUserIdReceived());
-            csvEntries.add(transfer.getUclBookingReferenceReceived());
+            csvEntries.add(transfer.getExternalApplicantReference());
+            csvEntries.add(transfer.getExternalTransferReference());
             csvEntries.add("null");
         }
     }

@@ -18,7 +18,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
-import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 
 /**
  * I represent a single transfer of application form. Applications forms are transfered from PRISM system to UCL-PORTICO system. I represent the whole lifecycle
@@ -49,22 +49,22 @@ public class ApplicationTransfer implements Serializable {
     private ApplicationForm applicationForm;
 
     /** Timepoint when I was created (so this is the timepoint of scheduling). */
-    @Column(name = "transfer_begin_timeppoint")
-    private Date transferStartTimepoint;
+    @Column(name = "began_timestamp")
+    private Date beganTimestamp;
 
     /** Timepoint when I was successfully finished. In case of failed transfers this value stays null. */
-    @Column(name = "transfer_end_timepoint")
-    private Date transferFinishTimepoint;
+    @Column(name = "ended_timestamp")
+    private Date endedTimestamp;
 
-    @Column(name = "status")
+    @Column(name = "application_transfer_state_id")
     @Enumerated(EnumType.STRING)
-    private ApplicationTransferStatus status;
+    private ApplicationTransferState state;
 
-    @Column(name = "ucl_user_id_received")
-    private String uclUserIdReceived;
+    @Column(name = "external_applicant_reference")
+    private String externalApplicantReference;
 
-    @Column(name = "ucl_booking_ref_number_received")
-    private String uclBookingReferenceReceived;
+    @Column(name = "external_transfer_reference")
+    private String externalTransferReference;
 
     public Long getId() {
         return id;
@@ -90,44 +90,44 @@ public class ApplicationTransfer implements Serializable {
         this.applicationForm = applicationForm;
     }
 
-    public Date getTransferStartTimepoint() {
-        return transferStartTimepoint;
+    public Date getBeganTimestamp() {
+        return beganTimestamp;
     }
 
-    public void setTransferStartTimepoint(Date transferStartTimepoint) {
-        this.transferStartTimepoint = transferStartTimepoint;
+    public void setBeganTimestamp(Date beganTimestamp) {
+        this.beganTimestamp = beganTimestamp;
     }
 
-    public Date getTransferFinishTimepoint() {
-        return transferFinishTimepoint;
+    public Date getEndedTimestamp() {
+        return endedTimestamp;
     }
 
-    public void setTransferFinishTimepoint(Date transferFinishTimepoint) {
-        this.transferFinishTimepoint = transferFinishTimepoint;
+    public void setEndedTimestamp(Date endedTimestamp) {
+        this.endedTimestamp = endedTimestamp;
     }
 
-    public ApplicationTransferStatus getStatus() {
-        return status;
+    public ApplicationTransferState getState() {
+        return state;
     }
 
-    public void setStatus(ApplicationTransferStatus status) {
-        this.status = status;
+    public void setState(ApplicationTransferState state) {
+        this.state = state;
     }
 
-    public String getUclBookingReferenceReceived() {
-        return uclBookingReferenceReceived;
+    public String getExternalTransferReference() {
+        return externalTransferReference;
     }
 
-    public void setUclBookingReferenceReceived(String uclBookingReferenceReceived) {
-        this.uclBookingReferenceReceived = uclBookingReferenceReceived;
+    public void setExternalTransferReference(String externalTransferReference) {
+        this.externalTransferReference = externalTransferReference;
     }
 
-    public String getUclUserIdReceived() {
-        return uclUserIdReceived;
+    public String getExternalApplicantReference() {
+        return externalApplicantReference;
     }
 
-    public void setUclUserIdReceived(String uclUserIdReceived) {
-        this.uclUserIdReceived = uclUserIdReceived;
+    public void setExternalApplicantReference(String externalApplicantReference) {
+        this.externalApplicantReference = externalApplicantReference;
     }
 
 }

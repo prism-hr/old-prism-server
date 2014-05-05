@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 
@@ -97,7 +97,7 @@ public class ExportQueueService {
     public void handleNonDeliverableApplication(final String applicationNumber) {
         ApplicationForm form = formDAO.getByApplicationNumber(applicationNumber);
         ApplicationTransfer transfer = form.getTransfer();
-        transfer.setStatus(ApplicationTransferStatus.CANCELLED);
+        transfer.setState(ApplicationTransferState.CANCELLED);
     }
 
     public void setThrottleService(ApplicationExportConfigurationService throttleService) {

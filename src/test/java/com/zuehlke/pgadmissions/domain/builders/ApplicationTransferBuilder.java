@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 
 public class ApplicationTransferBuilder {
     
@@ -18,7 +18,7 @@ public class ApplicationTransferBuilder {
 
     private Date transferFinishTimepoint;
 
-    private ApplicationTransferStatus status;
+    private ApplicationTransferState status;
 
     private String uclUserIdReceived;
 
@@ -49,7 +49,7 @@ public class ApplicationTransferBuilder {
         return this;
     }
     
-    public ApplicationTransferBuilder status(final ApplicationTransferStatus status) {
+    public ApplicationTransferBuilder status(final ApplicationTransferState status) {
         this.status = status;
         return this;
     }
@@ -69,11 +69,11 @@ public class ApplicationTransferBuilder {
         transfer.setId(id);
         transfer.setCreatedTimestamp(createdTimestamp);
         transfer.setApplicationForm(applicationForm);
-        transfer.setStatus(status);
-        transfer.setTransferFinishTimepoint(transferFinishTimepoint);
-        transfer.setTransferStartTimepoint(transferStartTimepoint);
-        transfer.setUclBookingReferenceReceived(uclBookingReferenceReceived);
-        transfer.setUclUserIdReceived(uclUserIdReceived);
+        transfer.setState(status);
+        transfer.setEndedTimestamp(transferFinishTimepoint);
+        transfer.setBeganTimestamp(transferStartTimepoint);
+        transfer.setExternalTransferReference(uclBookingReferenceReceived);
+        transfer.setExternalApplicantReference(uclUserIdReceived);
         return transfer;
     }
 }

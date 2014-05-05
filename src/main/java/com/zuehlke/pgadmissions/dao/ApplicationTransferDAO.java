@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -39,17 +39,17 @@ public class ApplicationTransferDAO {
         return (ApplicationTransfer) sessionFactory.getCurrentSession().get(ApplicationTransfer.class, id);
     }
 
-    public ApplicationTransfer getByReceivedBookingReferenceNumber(String bookingReferenceNumber) {
+    public ApplicationTransfer getByExternalTransferReference(String bookingReferenceNumber) {
         return (ApplicationTransfer) sessionFactory.getCurrentSession().createCriteria(ApplicationTransfer.class)
-                .add(Restrictions.eq("uclBookingReferenceReceived", bookingReferenceNumber)).uniqueResult();
+                .add(Restrictions.eq("externalTransferReference", bookingReferenceNumber)).uniqueResult();
     }
 
     public List<ApplicationTransfer> getAllTransfersWaitingToBeSentToPorticoOldestFirst() {
         return sessionFactory
                 .getCurrentSession()
                 .createCriteria(ApplicationTransfer.class)
-                .add(Restrictions.or(Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING),
-                        Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL))).addOrder(Order.asc("transferStartTimepoint")).list();
+                .add(Restrictions.or(Restrictions.eq("status", ApplicationTransferState.QUEUED_FOR_ATTACHMENTS_SENDING),
+                        Restrictions.eq("status", ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL))).addOrder(Order.asc("transferStartTimepoint")).list();
     }
 
     public List<Long> getAllTransfersWaitingToBeSentToPorticoOldestFirstAsIds() {
@@ -59,9 +59,9 @@ public class ApplicationTransferDAO {
                 .createCriteria(ApplicationTransfer.class)
                 .setProjection(Projections.id())
                 .add(Restrictions.or(
-                        Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING),
-                        Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL),
-                        Restrictions.and(Restrictions.eq("status", ApplicationTransferStatus.REJECTED_BY_WEBSERVICE),
+                        Restrictions.eq("status", ApplicationTransferState.QUEUED_FOR_ATTACHMENTS_SENDING),
+                        Restrictions.eq("status", ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL),
+                        Restrictions.and(Restrictions.eq("status", ApplicationTransferState.REJECTED_BY_WEBSERVICE),
                                 Restrictions.gt("createdTimestamp", weekAgo)))).addOrder(Order.asc("transferStartTimepoint")).list();
     }
 
@@ -72,8 +72,8 @@ public class ApplicationTransferDAO {
     public void requeueApplicationTransfer(final ApplicationForm application) {
         ApplicationTransfer transfer = application.getTransfer();
         if (transfer != null) {
-            transfer.setTransferStartTimepoint(new Date());
-            transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
+            transfer.setBeganTimestamp(new Date());
+            transfer.setState(ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL);
             save(transfer);
         }
     }

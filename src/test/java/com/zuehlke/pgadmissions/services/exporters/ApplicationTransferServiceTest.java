@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationTransferBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 import com.zuehlke.pgadmissions.services.WorkflowService;
 import com.zuehlke.pgadmissions.utils.DateUtils;
 
@@ -59,13 +59,13 @@ public class ApplicationTransferServiceTest {
     @Test
     public void shouldUpdateTransferStatus() {
         DateTime dateInThePast = new DateTime(1984, 9, 29, 8, 0);
-        ApplicationTransfer transfer = new ApplicationTransferBuilder().status(ApplicationTransferStatus.CANCELLED)
+        ApplicationTransfer transfer = new ApplicationTransferBuilder().status(ApplicationTransferState.CANCELLED)
                 .transferStartTimepoint(dateInThePast.toDate()).build();
 
-        service.updateTransferStatus(transfer, ApplicationTransferStatus.COMPLETED);
+        service.updateTransferStatus(transfer, ApplicationTransferState.COMPLETED);
 
-        assertEquals(ApplicationTransferStatus.COMPLETED, transfer.getStatus());
-        assertTrue(DateUtils.isToday(transfer.getTransferFinishTimepoint()));
+        assertEquals(ApplicationTransferState.COMPLETED, transfer.getState());
+        assertTrue(DateUtils.isToday(transfer.getEndedTimestamp()));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class ApplicationTransferServiceTest {
 
     @Test
     public void shouldCreateTransferError() {
-        ApplicationTransfer transfer = new ApplicationTransferBuilder().status(ApplicationTransferStatus.CANCELLED).transferStartTimepoint(new Date()).build();
+        ApplicationTransfer transfer = new ApplicationTransferBuilder().status(ApplicationTransferState.CANCELLED).transferStartTimepoint(new Date()).build();
 
         ApplicationTransferErrorBuilder builder = new ApplicationTransferErrorBuilder().errorHandlingStrategy(ApplicationTransferErrorHandlingDecision.RETRY)
                 .problemClassification(ApplicationTransferErrorType.WEBSERVICE_UNREACHABLE).requestCopy("").transfer(transfer);

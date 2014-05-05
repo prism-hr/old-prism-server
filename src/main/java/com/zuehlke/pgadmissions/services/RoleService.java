@@ -111,4 +111,9 @@ public class RoleService {
         return null;
     }
 
+    public UserRole getUserRole(User user, Authority authority) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

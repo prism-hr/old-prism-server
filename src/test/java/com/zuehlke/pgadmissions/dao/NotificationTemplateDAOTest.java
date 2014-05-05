@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 
 import org.junit.Test;
 
@@ -17,7 +16,7 @@ public class NotificationTemplateDAOTest extends AutomaticRollbackTestCase {
     public void defaultEmailTemnplateShouldHaveNullVersion() {
         NotificationTemplate result = dao.getById(NotificationTemplateId.APPLICATION_PROVIDE_REFERENCE_REQUEST);
         assertNotNull(result);
-        assertNull(result.getVersion());
+        assertNotNull(result.getVersion());
     }
 
     @Override

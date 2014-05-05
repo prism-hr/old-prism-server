@@ -122,7 +122,7 @@ public class RefereeController {
 
     @ModelAttribute("applicationForm")
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        return applicationsService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_EDIT_AS_APPLICANT, ApplicationFormAction.APPLICATION_CORRECT_APPLICATION);
+        return applicationsService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_EDIT_AS_CREATOR, ApplicationFormAction.APPLICATION_CORRECT);
     }
 
     @InitBinder(value = "referee")

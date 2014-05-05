@@ -77,7 +77,7 @@ public class SubmitApplicationFormControllerTest {
         request.setRemoteAddr("localhost");
 
         expect(userServiceMock.getCurrentUser()).andReturn(applicant);
-        actionsProviderMock.validateAction(applicationForm, applicant, ApplicationFormAction.APPLICATION_COMPLETE_APPLICATION);
+        actionsProviderMock.validateAction(applicationForm, applicant, ApplicationFormAction.APPLICATION_COMPLETE);
         submitApplicationFormServiceMock.submitApplication(applicationForm);
 
         replay();

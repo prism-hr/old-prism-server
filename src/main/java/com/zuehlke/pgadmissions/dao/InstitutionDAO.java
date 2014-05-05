@@ -31,8 +31,10 @@ public class InstitutionDAO {
     }
 
     public List<Institution> getByDomicileCode(String domicileCode) {
-        return sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Restrictions.eq("enabled", true))
-                .add(Restrictions.eq("domicileCode", domicileCode)).addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .add(Restrictions.eq("domicileCode", domicileCode)) //
+                .addOrder(Order.asc("name")) //
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
     public List<Institution> getByUserIdAndDomicileCode(Integer userId, String domicileCode) {
@@ -56,7 +58,9 @@ public class InstitutionDAO {
     }
 
     public Institution getByCode(String institutionCode) {
-        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Restrictions.eq("code", institutionCode)).uniqueResult();
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .add(Restrictions.eq("code", institutionCode)) //
+                .uniqueResult();
     }
 
     public Institution getByDomicileAndName(String domicileCode, String institutionName) {
@@ -67,8 +71,9 @@ public class InstitutionDAO {
     public Institution getLastCustomInstitution() {
         DetachedCriteria maxCustomCode = DetachedCriteria.forClass(Institution.class).setProjection(Projections.max("code"))
                 .add(Restrictions.like("code", "CUST%"));
-        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Property.forName("code").eq(maxCustomCode))
-                .uniqueResult();
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .add(Property.forName("code") //
+                        .eq(maxCustomCode)).uniqueResult();
     }
 
     public void save(Institution institution) {

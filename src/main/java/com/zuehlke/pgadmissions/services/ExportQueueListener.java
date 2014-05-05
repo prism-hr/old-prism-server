@@ -14,11 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
+import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 
 public class ExportQueueListener implements MessageListener {
@@ -40,7 +40,7 @@ public class ExportQueueListener implements MessageListener {
     private ApplicationFormDAO applicationFormDAO;
 
     @Autowired
-    private ApplicationFormTransferService applicationFormTransferService;
+    private ApplicationTransferService applicationFormTransferService;
 
     @Autowired
     private ApplicationExportConfigurationService throttleService;
@@ -71,7 +71,7 @@ public class ExportQueueListener implements MessageListener {
 
     private void sendApplicationToPortico(final String applicationNumber) {
         ApplicationForm form = getApplicationForm(applicationNumber);
-        ApplicationFormTransfer transfer = getApplicationFormTransfer(form);
+        ApplicationTransfer transfer = getApplicationFormTransfer(form);
 
         try {
             exportService.sendToPortico(form, transfer);
@@ -88,7 +88,7 @@ public class ExportQueueListener implements MessageListener {
         return applicationFormDAO.getByApplicationNumber(applicationNumber);
     }
 
-    private ApplicationFormTransfer getApplicationFormTransfer(final ApplicationForm form) {
+    private ApplicationTransfer getApplicationFormTransfer(final ApplicationForm form) {
         return applicationFormTransferService.createOrReturnExistingApplicationFormTransfer(form);
     }
 

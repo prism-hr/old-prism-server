@@ -10,7 +10,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -31,8 +30,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
  * UCL by creating an ApplicationFormTransfer instance with status set to QUEUED_FOR_WEBSERVICE_CALL.
  */
 @Entity
-@Table(name = "APPLICATION_FORM_TRANSFER")
-public class ApplicationFormTransfer implements Serializable {
+@Table(name = "APPLICATION_TRANSFER")
+public class ApplicationTransfer implements Serializable {
 
     private static final long serialVersionUID = 9133196638104217546L;
 
@@ -46,8 +45,7 @@ public class ApplicationFormTransfer implements Serializable {
     private Date createdTimestamp;
 
     /** The application form that constitutes my payload (a payload of the transfer I am representing). */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_id")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "transfer")
     private ApplicationForm applicationForm;
 
     /** Timepoint when I was created (so this is the timepoint of scheduling). */

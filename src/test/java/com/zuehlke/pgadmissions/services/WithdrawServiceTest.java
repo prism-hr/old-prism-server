@@ -15,7 +15,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
+import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -73,7 +73,7 @@ public class WithdrawServiceTest {
     public void shouldSendFormToPortico() {
         Program program = new ProgramBuilder().programFeed(new ProgramFeedBuilder().feedUrl("test").build()).build();
         ApplicationForm form = new ApplicationFormBuilder().id(1).program(program).submittedDate(new Date()).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
-        expect(porticoQueueServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationFormTransfer());
+        expect(porticoQueueServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationTransfer());
         replay();
         service.sendToPortico(form);
         verify();

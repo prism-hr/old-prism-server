@@ -17,11 +17,11 @@ import org.springframework.jms.core.MessagePostProcessor;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormTransferBuilder;
+import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationTransferBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.services.exporters.ApplicationFormTransferService;
+import com.zuehlke.pgadmissions.services.exporters.ApplicationTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 
 public class PorticoQueueServiceTest {
@@ -34,7 +34,7 @@ public class PorticoQueueServiceTest {
     
     private ExportService exportServiceMock;
     
-    private ApplicationFormTransferService formTransferServiceMock;
+    private ApplicationTransferService formTransferServiceMock;
 
     private ExportQueueService porticoQueueService;
     
@@ -49,7 +49,7 @@ public class PorticoQueueServiceTest {
         templateMock = EasyMock.createMock(JmsTemplate.class);
         throttleServiceMock = EasyMock.createMock(ApplicationExportConfigurationService.class);
         exportServiceMock = EasyMock.createMock(ExportService.class);
-        formTransferServiceMock = EasyMock.createMock(ApplicationFormTransferService.class);
+        formTransferServiceMock = EasyMock.createMock(ApplicationTransferService.class);
         porticoQueueService = new ExportQueueService();
         porticoQueueService.setExportService(exportServiceMock);
         porticoQueueService.setFormTransferService(formTransferServiceMock);
@@ -60,7 +60,7 @@ public class PorticoQueueServiceTest {
     
     @Test
     public void shouldNotSendApplicationsToTheQueueIfTheInterfaceHasBeenDisabled() {
-        EasyMock.expect(formTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationFormTransfer());
+        EasyMock.expect(formTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationTransfer());
         EasyMock.expect(throttleServiceMock.isPorticoInterfaceEnabled()).andReturn(false);
         EasyMock.replay(formTransferServiceMock, throttleServiceMock, templateMock);
         porticoQueueService.sendToPortico(form);
@@ -69,7 +69,7 @@ public class PorticoQueueServiceTest {
     
     @Test
     public void shouldSendApplicationsToTheQueueIfTheInterfaceHasBeenDisabled() {
-        EasyMock.expect(formTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationFormTransfer());
+        EasyMock.expect(formTransferServiceMock.createOrReturnExistingApplicationFormTransfer(form)).andReturn(new ApplicationTransfer());
         EasyMock.expect(throttleServiceMock.isPorticoInterfaceEnabled()).andReturn(true);
         templateMock.convertAndSend(EasyMock.eq(queueMock), EasyMock.eq(form.getApplicationNumber()), EasyMock.isA(MessagePostProcessor.class));
         EasyMock.replay(formTransferServiceMock, throttleServiceMock, templateMock);

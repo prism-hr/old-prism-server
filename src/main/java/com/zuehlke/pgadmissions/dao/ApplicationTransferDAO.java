@@ -12,47 +12,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
+import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
+import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
 
 @Repository
 @SuppressWarnings("unchecked")
-public class ApplicationFormTransferDAO {
+public class ApplicationTransferDAO {
 
     private final SessionFactory sessionFactory;
 
-    public ApplicationFormTransferDAO() {
+    public ApplicationTransferDAO() {
         this(null);
     }
 
     @Autowired
-    public ApplicationFormTransferDAO(SessionFactory sessionFactory) {
+    public ApplicationTransferDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
-    public void save(ApplicationFormTransfer transfer) {
+    public void save(ApplicationTransfer transfer) {
         sessionFactory.getCurrentSession().saveOrUpdate(transfer);
     }
 
-    public ApplicationFormTransfer getById(Long id) {
-        return (ApplicationFormTransfer) sessionFactory.getCurrentSession().get(ApplicationFormTransfer.class, id);
+    public ApplicationTransfer getById(Long id) {
+        return (ApplicationTransfer) sessionFactory.getCurrentSession().get(ApplicationTransfer.class, id);
     }
 
-    public ApplicationFormTransfer getByReceivedBookingReferenceNumber(String bookingReferenceNumber) {
-        return (ApplicationFormTransfer) sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class)
+    public ApplicationTransfer getByReceivedBookingReferenceNumber(String bookingReferenceNumber) {
+        return (ApplicationTransfer) sessionFactory.getCurrentSession().createCriteria(ApplicationTransfer.class)
                 .add(Restrictions.eq("uclBookingReferenceReceived", bookingReferenceNumber)).uniqueResult();
     }
 
-    public List<ApplicationFormTransfer> getAllTransfersWaitingForWebserviceCall() {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class)
-                .add(Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL)).list();
-    }
-
-    public List<ApplicationFormTransfer> getAllTransfersWaitingToBeSentToPorticoOldestFirst() {
+    public List<ApplicationTransfer> getAllTransfersWaitingToBeSentToPorticoOldestFirst() {
         return sessionFactory
                 .getCurrentSession()
-                .createCriteria(ApplicationFormTransfer.class)
+                .createCriteria(ApplicationTransfer.class)
                 .add(Restrictions.or(Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING),
                         Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL))).addOrder(Order.asc("transferStartTimepoint")).list();
     }
@@ -61,7 +56,7 @@ public class ApplicationFormTransferDAO {
         Date weekAgo = new DateTime().minusWeeks(1).toDate();
         return sessionFactory
                 .getCurrentSession()
-                .createCriteria(ApplicationFormTransfer.class)
+                .createCriteria(ApplicationTransfer.class)
                 .setProjection(Projections.id())
                 .add(Restrictions.or(
                         Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING),
@@ -70,26 +65,12 @@ public class ApplicationFormTransferDAO {
                                 Restrictions.gt("createdTimestamp", weekAgo)))).addOrder(Order.asc("transferStartTimepoint")).list();
     }
 
-    public List<ApplicationFormTransfer> getAllTransfersWaitingForAttachmentsSending() {
-        return sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class)
-                .add(Restrictions.eq("status", ApplicationTransferStatus.QUEUED_FOR_ATTACHMENTS_SENDING)).list();
-    }
-
-    public ApplicationFormTransfer getByApplicationForm(final ApplicationForm form) {
-        return (ApplicationFormTransfer) sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class)
-                .add(Restrictions.eq("applicationForm", form)).uniqueResult();
-    }
-
-    public List<ApplicationFormTransfer> getAllTransfers() {
-        return (List<ApplicationFormTransfer>) sessionFactory.getCurrentSession().createCriteria(ApplicationFormTransfer.class).list();
-    }
-    
-    public ApplicationFormTransferError getErrorById(Long id) {
-        return (ApplicationFormTransferError) sessionFactory.getCurrentSession().get(ApplicationFormTransferError.class, id);
+    public ApplicationTransferError getErrorById(Long id) {
+        return (ApplicationTransferError) sessionFactory.getCurrentSession().get(ApplicationTransferError.class, id);
     }
     
     public void requeueApplicationTransfer(final ApplicationForm application) {
-        ApplicationFormTransfer transfer = application.getApplicationFormTransfer();
+        ApplicationTransfer transfer = application.getTransfer();
         if (transfer != null) {
             transfer.setTransferStartTimepoint(new Date());
             transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);

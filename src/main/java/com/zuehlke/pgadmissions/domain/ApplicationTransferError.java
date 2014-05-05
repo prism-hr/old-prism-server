@@ -14,16 +14,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
 
 /**
  * I represent the error situation recognized during transfer of application form (PRISM ----> PORTICO). Remark: This enties actually constitute a log that can
  * be accessed by application administrator on UCL side.
  */
 @Entity
-@Table(name = "APPLICATION_FORM_TRANSFER_ERROR")
-public class ApplicationFormTransferError implements Serializable {
+@Table(name = "APPLICATION_TRANSFER_ERROR")
+public class ApplicationTransferError implements Serializable {
 
     private static final long serialVersionUID = -8609731063290824582L;
 
@@ -34,7 +34,7 @@ public class ApplicationFormTransferError implements Serializable {
     /** The transfer that I am documenting. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transfer_id")
-    private ApplicationFormTransfer transfer;
+    private ApplicationTransfer transfer;
 
     /** Time point when the error happened. */
     @Column(name = "handling_time")
@@ -55,12 +55,12 @@ public class ApplicationFormTransferError implements Serializable {
     /** Type of the problem as recognized by PRISM. */
     @Enumerated(EnumType.STRING)
     @Column(name = "problem_classification")
-    private ApplicationFormTransferErrorType problemClassification;
+    private ApplicationTransferErrorType problemClassification;
 
     /** Decision (programatically) made by PRISM on how to handle the situation. */
     @Column(name = "error_handling_strategy")
     @Enumerated(EnumType.STRING)
-    private ApplicationFormTransferErrorHandlingDecision errorHandlingStrategy;
+    private ApplicationTransferErrorHandlingDecision errorHandlingStrategy;
 
     public Long getId() {
         return id;
@@ -70,11 +70,11 @@ public class ApplicationFormTransferError implements Serializable {
         this.id = id;
     }
 
-    public ApplicationFormTransfer getTransfer() {
+    public ApplicationTransfer getTransfer() {
         return transfer;
     }
 
-    public void setTransfer(ApplicationFormTransfer transfer) {
+    public void setTransfer(ApplicationTransfer transfer) {
         this.transfer = transfer;
     }
 
@@ -110,19 +110,19 @@ public class ApplicationFormTransferError implements Serializable {
         this.responseCopy = responseCopy;
     }
 
-    public ApplicationFormTransferErrorType getProblemClassification() {
+    public ApplicationTransferErrorType getProblemClassification() {
         return problemClassification;
     }
 
-    public void setProblemClassification(ApplicationFormTransferErrorType problemClassification) {
+    public void setProblemClassification(ApplicationTransferErrorType problemClassification) {
         this.problemClassification = problemClassification;
     }
 
-    public ApplicationFormTransferErrorHandlingDecision getErrorHandlingStrategy() {
+    public ApplicationTransferErrorHandlingDecision getErrorHandlingStrategy() {
         return errorHandlingStrategy;
     }
 
-    public void setErrorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision errorHandlingStrategy) {
+    public void setErrorHandlingStrategy(ApplicationTransferErrorHandlingDecision errorHandlingStrategy) {
         this.errorHandlingStrategy = errorHandlingStrategy;
     }
 }

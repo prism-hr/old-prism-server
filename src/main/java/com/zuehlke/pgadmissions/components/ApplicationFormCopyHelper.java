@@ -99,17 +99,15 @@ public class ApplicationFormCopyHelper {
     }
 
     public void copyReferee(Referee to, Referee from, boolean doPerformDeepCopy) {
-        to.setFirstname(from.getFirstname());
-        to.setLastname(from.getLastname());
-        to.setEmail(from.getEmail());
+        to.setUser(from.getUser());
         to.setJobEmployer(from.getJobEmployer());
         to.setJobTitle(from.getJobTitle());
         to.setPhoneNumber(from.getPhoneNumber());
         to.setMessenger(from.getMessenger());
         if (doPerformDeepCopy) {
-            to.setAddressLocation(copyAddress(from.getAddressLocation()));
+            to.setAddress(copyAddress(from.getAddress()));
         } else {
-            to.setAddressLocation(from.getAddressLocation());
+            to.setAddress(from.getAddress());
         }
     }
 

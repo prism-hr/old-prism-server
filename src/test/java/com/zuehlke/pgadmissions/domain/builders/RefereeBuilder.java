@@ -13,15 +13,12 @@ public class RefereeBuilder {
     private Integer id;
 
     private ApplicationForm application;
-    private String firstname;
-    private String lastname;
 
     private String jobEmployer;
     private String jobTitle;
     private Address address;
 
     private ReferenceComment reference;
-    private String email;
     private String messenger;
     private User user;
 
@@ -72,17 +69,6 @@ public class RefereeBuilder {
         return this;
     }
 
-    public RefereeBuilder firstname(String firstname) {
-        this.firstname = firstname;
-        return this;
-    }
-
-    public RefereeBuilder lastname(String lastname) {
-        this.lastname = lastname;
-
-        return this;
-    }
-
     public RefereeBuilder jobEmployer(String jobEmployer) {
         this.jobEmployer = jobEmployer;
         return this;
@@ -98,11 +84,6 @@ public class RefereeBuilder {
         return this;
     }
 
-    public RefereeBuilder email(String email) {
-        this.email = email;
-        return this;
-    }
-
     public RefereeBuilder messenger(String messenger) {
         this.messenger = messenger;
         return this;
@@ -110,14 +91,11 @@ public class RefereeBuilder {
 
     public Referee build() {
         Referee referee = new Referee();
-        referee.setAddressLocation(address);
+        referee.setAddress(address);
         referee.setApplication(application);
-        referee.setEmail(email);
-        referee.setFirstname(firstname);
         referee.setId(id);
         referee.setJobEmployer(jobEmployer);
         referee.setJobTitle(jobTitle);
-        referee.setLastname(lastname);
         referee.setMessenger(messenger);
 
         referee.setComment(reference);

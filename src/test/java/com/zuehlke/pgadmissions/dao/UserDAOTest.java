@@ -103,20 +103,6 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         assertTrue(HibernateUtils.containsEntity(superadministrators, superadmin));
     }
 
-    @Test
-    public void shouldGetAllAdmitters() {
-        RoleDAO roleDAO = new RoleDAO(sessionFactory);
-        Role admitterRole = roleDAO.getById(Authority.INSTITUTION_ADMITTER);
-
-        User admitter = new UserBuilder()
-        // .role(admitterRole)
-                .firstName("Jane").lastName("Doe").email("somethingelse@test.com").userAccount(new UserAccount().withEnabled(false)).build();
-        sessionFactory.getCurrentSession().save(admitter);
-
-        List<User> admitters = userDAO.getAdmitters();
-        assertTrue(HibernateUtils.containsEntity(admitters, admitter));
-    }
-
     @Before
     public void prepare() {
         userDAO = new UserDAO(sessionFactory);

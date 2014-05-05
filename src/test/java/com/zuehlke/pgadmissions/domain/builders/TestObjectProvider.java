@@ -13,7 +13,9 @@ import org.hibernate.sql.JoinType;
 
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -123,7 +125,7 @@ public class TestObjectProvider {
         return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("doSendUpdateNotification", doSendUpdateNotification))
                 .setMaxResults(1).uniqueResult();
     }
-
+    
     public Institution getInstitution() {
         return getInstitution(PrismState.INSTITUTION_APPROVED);
     }
@@ -146,7 +148,7 @@ public class TestObjectProvider {
 
     public ApplicationForm getApplication(PrismState status) {
         return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .createAlias("program", "program", JoinType.INNER_JOIN).add(Restrictions.eq("status", status)).setMaxResults(1).uniqueResult();
+                .createAlias("program", "program", JoinType.INNER_JOIN).add(Restrictions.eq("state.id", status)).setMaxResults(1).uniqueResult();
     }
 
     private User getUser(Authority authority, Boolean isInRole, Boolean userEnabled) {
@@ -249,5 +251,13 @@ public class TestObjectProvider {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class)
                 .add(Restrictions.eq("state.id", state)).setMaxResults(1).uniqueResult();
     }
+    
+    public Domicile getDomicile() {
+        return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult(); 
+    }
+    
+    public PrismSystem getPrismSystem() {
+        return (PrismSystem) sessionFactory.getCurrentSession().createCriteria(PrismSystem.class).uniqueResult();
+    } 
 
 }

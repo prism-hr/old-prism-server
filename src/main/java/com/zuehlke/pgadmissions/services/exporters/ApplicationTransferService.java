@@ -11,37 +11,37 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormTransferDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationFormTransferErrorDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationTransferDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
+import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
+import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferComment;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.services.WorkflowService;
 
 @Service
-public class ApplicationFormTransferService {
+public class ApplicationTransferService {
 
     private final ApplicationFormDAO applicationFormDAO;
-    private final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO;
-    private final ApplicationFormTransferDAO applicationFormTransferDAO;
+    private final ApplicationTransferErrorDAO applicationFormTransferErrorDAO;
+    private final ApplicationTransferDAO applicationFormTransferDAO;
     private final WorkflowService applicationFormUserRoleService;
     private final CommentDAO commentDAO;
     private final UserDAO userDAO;
 
-    public ApplicationFormTransferService() {
+    public ApplicationTransferService() {
         this(null, null, null, null, null, null);
     }
 
     @Autowired
-    public ApplicationFormTransferService(final ApplicationFormDAO applicationFormDAO, final ApplicationFormTransferErrorDAO applicationFormTransferErrorDAO,
-            final ApplicationFormTransferDAO applicationFormTransferDAO, WorkflowService applicationFormUserRoleService,
+    public ApplicationTransferService(final ApplicationFormDAO applicationFormDAO, final ApplicationTransferErrorDAO applicationFormTransferErrorDAO,
+            final ApplicationTransferDAO applicationFormTransferDAO, WorkflowService applicationFormUserRoleService,
             CommentDAO commentDAO, UserDAO userDAO) {
         this.applicationFormDAO = applicationFormDAO;
         this.applicationFormTransferErrorDAO = applicationFormTransferErrorDAO;
@@ -52,15 +52,15 @@ public class ApplicationFormTransferService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateTransferStatus(final ApplicationFormTransfer transfer, final ApplicationTransferStatus status) {
-        transfer.setStatus(status);
-        transfer.setTransferFinishTimepoint(new Date());
+    public void updateTransferStatus(final ApplicationTransfer transfer, final ApplicationTransferState status) {
+        transfer.setState(status);
+        transfer.setEndedTimestamp(new Date());
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateTransferPorticoIds(final ApplicationFormTransfer transfer, final AdmissionsApplicationResponse response) {
-        transfer.setUclUserIdReceived(response.getReference().getApplicantID());
-        transfer.setUclBookingReferenceReceived(response.getReference().getApplicationID());
+    public void updateTransferPorticoIds(final ApplicationTransfer transfer, final AdmissionsApplicationResponse response) {
+        transfer.setExternalApplicantReference(response.getReference().getApplicantID());
+        transfer.setExternalTransferReference(response.getReference().getApplicationID());
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -71,31 +71,32 @@ public class ApplicationFormTransferService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ApplicationFormTransferError createTransferError(final ApplicationFormTransferErrorBuilder builder) {
-        ApplicationFormTransferError transferError = builder.build();
+    public ApplicationTransferError createTransferError(final ApplicationTransferErrorBuilder builder) {
+        ApplicationTransferError transferError = builder.build();
         applicationFormTransferErrorDAO.save(transferError);
         return transferError;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public ApplicationFormTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
-        ApplicationFormTransfer transfer = applicationFormTransferDAO.getByApplicationForm(form);
+    public ApplicationTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
+        ApplicationTransfer transfer = form.getTransfer();
         if (transfer == null) {
-            ApplicationFormTransfer result = new ApplicationFormTransfer();
+            ApplicationTransfer result = new ApplicationTransfer();
+            form.setTransfer(result);
             result.setApplicationForm(form);
-            result.setTransferStartTimepoint(new Date());
-            result.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
+            result.setBeganTimestamp(new Date());
+            result.setState(ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL);
             applicationFormTransferDAO.save(result);
             return result;
         } else {
-            transfer.setTransferStartTimepoint(new Date());
-            transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
+            transfer.setBeganTimestamp(new Date());
+            transfer.setState(ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL);
         }
         return transfer;
     }
 
     @Transactional(readOnly = true)
-    public List<ApplicationFormTransfer> getAllTransfersWaitingToBeSentToPorticoOldestFirst() {
+    public List<ApplicationTransfer> getAllTransfersWaitingToBeSentToPorticoOldestFirst() {
         return applicationFormTransferDAO.getAllTransfersWaitingToBeSentToPorticoOldestFirst();
     }
 
@@ -105,22 +106,17 @@ public class ApplicationFormTransferService {
     }
 
     @Transactional(readOnly = true)
-    public ApplicationFormTransfer getById(final Long id) {
+    public ApplicationTransfer getById(final Long id) {
         return applicationFormTransferDAO.getById(id);
     }
 
-    @Transactional(readOnly = true)
-    public ApplicationFormTransfer getByApplicationForm(final ApplicationForm form) {
-        return applicationFormTransferDAO.getByApplicationForm(form);
-    }
-
     @Transactional
-    public void processApplicationTransferError(TransferListener listener, ApplicationForm application, ApplicationFormTransfer transfer, Exception exception,
-            ApplicationTransferStatus newStatus, String logMessage, ApplicationFormTransferErrorHandlingDecision handlingDecision,
-            ApplicationFormTransferErrorType errorType, Logger log) throws ExportServiceException {
-        ApplicationFormTransferError transferError = createTransferError(new ApplicationFormTransferErrorBuilder()
-                .diagnosticInfo(exception).errorHandlingStrategy(ApplicationFormTransferErrorHandlingDecision.GIVE_UP)
-                .problemClassification(ApplicationFormTransferErrorType.PRISM_EXCEPTION).transfer(transfer));
+    public void processApplicationTransferError(TransferListener listener, ApplicationForm application, ApplicationTransfer transfer, Exception exception,
+            ApplicationTransferState newStatus, String logMessage, ApplicationTransferErrorHandlingDecision handlingDecision,
+            ApplicationTransferErrorType errorType, Logger log) throws ExportServiceException {
+        ApplicationTransferError transferError = createTransferError(new ApplicationTransferErrorBuilder()
+                .diagnosticInfo(exception).errorHandlingStrategy(ApplicationTransferErrorHandlingDecision.GIVE_UP)
+                .problemClassification(ApplicationTransferErrorType.PRISM_EXCEPTION).transfer(transfer));
         applicationFormTransferErrorDAO.save(transferError);
         updateTransferStatus(transfer, newStatus);
         listener.webServiceCallFailed(exception, transferError, application);
@@ -132,7 +128,7 @@ public class ApplicationFormTransferService {
     }
     
     @Transactional
-    public ApplicationFormTransferError getErrorById(Long id) {
+    public ApplicationTransferError getErrorById(Long id) {
         return applicationFormTransferDAO.getErrorById(id);
     }
     

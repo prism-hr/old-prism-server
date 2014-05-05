@@ -21,7 +21,7 @@ import javax.validation.Valid;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "APPLICATION_FORM_REFEREE")
+@Table(name = "APPLICATION_REFEREE")
 public class Referee implements Serializable, FormSectionObject {
 
     private static final long serialVersionUID = 4591043630090924738L;
@@ -38,11 +38,11 @@ public class Referee implements Serializable, FormSectionObject {
     private Date lastNotified;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "registered_user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_form_id")
+    @JoinColumn(name = "application_id")
     private ApplicationForm application;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -57,14 +57,6 @@ public class Referee implements Serializable, FormSectionObject {
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 50)
     private String messenger;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 30)
-    @Column(name = "firstname")
-    private String firstname;
-
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 40)
-    @Column(name = "lastname")
-    private String lastname;
-
     @Column(name = "job_employer")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 200)
     private String jobEmployer;
@@ -76,11 +68,7 @@ public class Referee implements Serializable, FormSectionObject {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id")
     @Valid
-    private Address addressLocation;
-
-    @Column(name = "email")
-    @ESAPIConstraint(rule = "Email", maxLength = 255, message = "{text.email.notvalid}")
-    private String email;
+    private Address address;
 
     @Column(name = "send_to_ucl")
     private Boolean sendToUCL;
@@ -103,22 +91,6 @@ public class Referee implements Serializable, FormSectionObject {
         this.comment = comment;
     }
 
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
     public String getJobEmployer() {
         return jobEmployer;
     }
@@ -135,20 +107,12 @@ public class Referee implements Serializable, FormSectionObject {
         this.jobTitle = jobTitle;
     }
 
-    public Address getAddressLocation() {
-        return addressLocation;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setAddressLocation(Address addressLocation) {
-        this.addressLocation = addressLocation;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public void setId(Integer id) {

@@ -18,24 +18,26 @@ import com.zuehlke.pgadmissions.domain.Program;
 
 @Repository
 @SuppressWarnings("unchecked")
-public class QualificationInstitutionDAO {
+public class InstitutionDAO {
 
     private SessionFactory sessionFactory;
 
-    public QualificationInstitutionDAO() {
+    public InstitutionDAO() {
     }
 
     @Autowired
-    public QualificationInstitutionDAO(SessionFactory sessionFactory) {
+    public InstitutionDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
-    public List<Institution> getEnabledInstitutionsByDomicileCode(String domicileCode) {
-        return sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Restrictions.eq("enabled", true))
-                .add(Restrictions.eq("domicileCode", domicileCode)).addOrder(Order.asc("name")).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    public List<Institution> getByDomicileCode(String domicileCode) {
+        return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .add(Restrictions.eq("domicileCode", domicileCode)) //
+                .addOrder(Order.asc("name")) //
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<Institution> getEnabledInstitutionsByUserIdAndDomicileCode(Integer userId, String domicileCode) {
+    public List<Institution> getByUserIdAndDomicileCode(Integer userId, String domicileCode) {
         return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Program.class)
                 .setProjection(Projections.groupProperty("program.institution")).createAlias("administrators", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("institution", "qualificationInstitution", JoinType.INNER_JOIN).add(Restrictions.eq("registeredUser.id", userId))
@@ -43,7 +45,7 @@ public class QualificationInstitutionDAO {
                 .addOrder(Order.asc("institution.name")).list();
     }
 
-    public List<Institution> getEnabledInstitutionsByDomicileCodeExludingUserId(Integer userId, String domicileCode) {
+    public List<Institution> getByDomicileCodeExludingUserId(Integer userId, String domicileCode) {
         DetachedCriteria exclusions = DetachedCriteria.forClass(Program.class).setProjection(Projections.groupProperty("program.institution"))
                 .createAlias("administrators", "registeredUser", JoinType.INNER_JOIN)
                 .createAlias("institution", "qualificationInstitution", JoinType.INNER_JOIN).add(Restrictions.eq("registeredUser.id", userId))
@@ -56,7 +58,9 @@ public class QualificationInstitutionDAO {
     }
 
     public Institution getByCode(String institutionCode) {
-        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Restrictions.eq("code", institutionCode)).uniqueResult();
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .add(Restrictions.eq("code", institutionCode)) //
+                .uniqueResult();
     }
 
     public Institution getByDomicileAndName(String domicileCode, String institutionName) {
@@ -67,8 +71,9 @@ public class QualificationInstitutionDAO {
     public Institution getLastCustomInstitution() {
         DetachedCriteria maxCustomCode = DetachedCriteria.forClass(Institution.class).setProjection(Projections.max("code"))
                 .add(Restrictions.like("code", "CUST%"));
-        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Property.forName("code").eq(maxCustomCode))
-                .uniqueResult();
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .add(Property.forName("code") //
+                        .eq(maxCustomCode)).uniqueResult();
     }
 
     public void save(Institution institution) {

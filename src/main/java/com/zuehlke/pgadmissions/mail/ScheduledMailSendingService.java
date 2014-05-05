@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_TASK_REMINDER;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.DIGEST_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.DIGEST_TASK_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.DIGEST_TASK_REMINDER;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.DIGEST_UPDATE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.REFEREE_REMINDER;
 
 import java.util.Collections;
 import java.util.Date;
@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
-import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
 
@@ -127,7 +127,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
             PrismEmailMessageBuilder messageBuilder = new PrismEmailMessageBuilder();
             messageBuilder.model(modelBuilder);
             messageBuilder.to(user);
-            EmailTemplateName templateName;
+            NotificationTemplateId templateName;
 
             switch (digestNotificationType) {
             case TASK_REMINDER:
@@ -140,7 +140,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
                 templateName = DIGEST_UPDATE_NOTIFICATION;
                 break;
             case OPPORTUNITY_REQUEST_NOTIFICATION:
-                templateName = EmailTemplateName.OPPORTUNITY_REQUEST_NOTIFICATION;
+                templateName = NotificationTemplateId.OPPORTUNITY_REQUEST_NOTIFICATION;
                 break;
             default:
                 throw new RuntimeException();

@@ -32,7 +32,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
+import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
@@ -71,7 +71,7 @@ public class EditOpportunityRequestControllerTest {
 
     @Mock
     @InjectIntoByType
-    private QualificationInstitutionDAO qualificationInstitutionDAO;
+    private InstitutionDAO qualificationInstitutionDAO;
 
     @Mock
     @InjectIntoByType
@@ -115,7 +115,7 @@ public class EditOpportunityRequestControllerTest {
         expect(permissionsService.canSeeOpportunityRequest(opportunityRequest)).andReturn(true);
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(opportunityRequest);
         expect(opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest)).andReturn(requests);
-        expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutions);
+        expect(qualificationInstitutionDAO.getByDomicileCode("PL")).andReturn(institutions);
 
         replay();
         String result = controller.getEditOpportunityRequestPage(8, modelMap);
@@ -180,7 +180,7 @@ public class EditOpportunityRequestControllerTest {
         List<OpportunityRequest> requests = Lists.newArrayList();
 
         expect(permissionsService.canPostOpportunityRequestComment(existingRequest, comment)).andReturn(true);
-        expect(qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode("PL")).andReturn(institutions);
+        expect(qualificationInstitutionDAO.getByDomicileCode("PL")).andReturn(institutions);
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(existingRequest);
         expect(opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest)).andReturn(requests);
 

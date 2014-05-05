@@ -15,11 +15,14 @@ import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -43,7 +46,8 @@ public class RefereeValidatorTest {
         currentUser = new UserBuilder().id(9).email("me@test.com").build();
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
-        referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).build()).email("email@test.com").firstname("bob").lastname("smith")
+        referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build())
+                .user(TestData.aUser(null))
                 .address(new Address().withDomicile(new DomicileBuilder().enabled(true).build()).withLine1("london").withTown("london3")) //
                 .jobEmployer("zuhlke").jobTitle("se").messenger("skypeAddress").phoneNumber("+44 (0) 20 7911 5000").build();
         refereeValidator = new RefereeValidator(userServiceMock);
@@ -57,7 +61,7 @@ public class RefereeValidatorTest {
 
     @Test
     public void shouldRejectIfFirstNameIsEmpty() {
-        referee.setFirstname(null);
+        referee.getUser().setFirstName(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "firstname");
         refereeValidator.validate(referee, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -85,7 +89,7 @@ public class RefereeValidatorTest {
 
     @Test
     public void shouldRejectIfLasttNameIsEmpty() {
-        referee.setLastname(null);
+        referee.getUser().setLastName(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "lastname");
         refereeValidator.validate(referee, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -94,7 +98,7 @@ public class RefereeValidatorTest {
 
     @Test
     public void shouldRejectIfAddressLocationIsEmpty() {
-        referee.setAddressLocation(null);
+        referee.setAddress(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressLocation");
         refereeValidator.validate(referee, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -121,7 +125,7 @@ public class RefereeValidatorTest {
 
     @Test
     public void shouldRejectIfEmailNotValidEmail() {
-        referee.setEmail("nonvalidemail");
+        referee.getUser().setEmail("nonvalidemail");
         EasyMock.reset(userServiceMock);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("nonvalidemail")).andReturn(null).anyTimes();
@@ -134,7 +138,7 @@ public class RefereeValidatorTest {
 
     @Test
     public void shouldRejectIfEmailSameAsCurrentUser() {
-        referee.setEmail("me@test.com");
+        referee.getUser().setEmail("me@test.com");
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "email");
         refereeValidator.validate(referee, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());

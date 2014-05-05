@@ -17,7 +17,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
+import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
@@ -26,18 +26,18 @@ import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
-public class QualificationInstitutionServiceTest {
+public class InstitutionServiceTest {
 
     @Mock
     @InjectIntoByType
-    private QualificationInstitutionDAO qualificationInstitutionDAO;
+    private InstitutionDAO qualificationInstitutionDAO;
 
     @Mock
     @InjectIntoByType
     private ApplicationContext applicationContext;
 
     @TestedObject
-    private QualificationInstitutionService service = new QualificationInstitutionService();
+    private InstitutionService service = new InstitutionService();
 
     @Test
     public void shouldGetInstitutionByCode() {
@@ -81,7 +81,7 @@ public class QualificationInstitutionServiceTest {
         Domicile domicile = new Domicile();
         Institution institution = new Institution();
 
-        expect(applicationContext.getBean(QualificationInstitutionService.class)).andReturn(null);
+        expect(applicationContext.getBean(InstitutionService.class)).andReturn(null);
         expect(qualificationInstitutionDAO.getByCode("BBB")).andReturn(institution);
 
         replay();
@@ -94,11 +94,11 @@ public class QualificationInstitutionServiceTest {
     @Test
     public void shouldCreateNewCustomInstitution() {
         Domicile country = new DomicileBuilder().code("PL").build();
-        QualificationInstitutionService thisBean = EasyMockUnitils.createMock(QualificationInstitutionService.class);
+        InstitutionService thisBean = EasyMockUnitils.createMock(InstitutionService.class);
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).institutionCode("OTHER")
                 .otherInstitution("instytucja").build();
 
-        expect(applicationContext.getBean(QualificationInstitutionService.class)).andReturn(thisBean);
+        expect(applicationContext.getBean(InstitutionService.class)).andReturn(thisBean);
         expect(qualificationInstitutionDAO.getByDomicileAndName("PL", "instytucja")).andReturn(null);
         expect(thisBean.generateNextInstitutionCode()).andReturn("00008");
         Capture<Institution> institutionCapture = new Capture<Institution>();

@@ -6,15 +6,15 @@ import java.util.Date;
 
 import org.springframework.ws.FaultAwareWebServiceMessage;
 
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorHandlingDecision;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormTransferErrorType;
+import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
+import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
 import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
 
-public class ApplicationFormTransferErrorBuilder {
+public class ApplicationTransferErrorBuilder {
 
-    private ApplicationFormTransfer transfer;
+    private ApplicationTransfer transfer;
     
     private Date timepoint = new Date();
     
@@ -24,39 +24,39 @@ public class ApplicationFormTransferErrorBuilder {
 
     private String responseCopy;
     
-    private ApplicationFormTransferErrorType errorType;
+    private ApplicationTransferErrorType errorType;
     
-    private ApplicationFormTransferErrorHandlingDecision errorHandlingStrategy;
+    private ApplicationTransferErrorHandlingDecision errorHandlingStrategy;
     
-    public ApplicationFormTransferErrorBuilder() {
+    public ApplicationTransferErrorBuilder() {
     }
     
-    public ApplicationFormTransferErrorBuilder transfer(final ApplicationFormTransfer transfer) {
+    public ApplicationTransferErrorBuilder transfer(final ApplicationTransfer transfer) {
         this.transfer = transfer;
         return this;
     }
     
-    public ApplicationFormTransferErrorBuilder timepoint(final Date date) {
+    public ApplicationTransferErrorBuilder timepoint(final Date date) {
         this.timepoint = date;
         return this;
     }
     
-    public ApplicationFormTransferErrorBuilder diagnosticInfo(final Throwable diagnosticInfo) {
+    public ApplicationTransferErrorBuilder diagnosticInfo(final Throwable diagnosticInfo) {
         this.diagnosticInfo = diagnosticInfo;
         return this;
     }
     
-    public ApplicationFormTransferErrorBuilder requestCopy(final String requestCopy) {
+    public ApplicationTransferErrorBuilder requestCopy(final String requestCopy) {
         this.requestCopy = requestCopy;
         return this;
     }
 
-    public ApplicationFormTransferErrorBuilder responseCopy(final String responseCopy) {
+    public ApplicationTransferErrorBuilder responseCopy(final String responseCopy) {
         this.responseCopy = responseCopy;
         return this;
     }
     
-    public ApplicationFormTransferErrorBuilder responseCopy(final FaultAwareWebServiceMessage message) {
+    public ApplicationTransferErrorBuilder responseCopy(final FaultAwareWebServiceMessage message) {
         ByteArrayOutputStream responseMessageBuffer = new ByteArrayOutputStream(5000);
         try {
             message.writeTo(responseMessageBuffer);
@@ -67,18 +67,18 @@ public class ApplicationFormTransferErrorBuilder {
         return this;
     }
     
-    public ApplicationFormTransferErrorBuilder problemClassification(final ApplicationFormTransferErrorType errorType) {
+    public ApplicationTransferErrorBuilder problemClassification(final ApplicationTransferErrorType errorType) {
         this.errorType = errorType;
         return this;
     }
     
-    public ApplicationFormTransferErrorBuilder errorHandlingStrategy(final ApplicationFormTransferErrorHandlingDecision errorHandlingStrategy) {
+    public ApplicationTransferErrorBuilder errorHandlingStrategy(final ApplicationTransferErrorHandlingDecision errorHandlingStrategy) {
         this.errorHandlingStrategy = errorHandlingStrategy;
         return this;
     }
     
-    public ApplicationFormTransferError build() {
-        ApplicationFormTransferError error = new ApplicationFormTransferError();
+    public ApplicationTransferError build() {
+        ApplicationTransferError error = new ApplicationTransferError();
         error.setTransfer(transfer);
         error.setTimepoint(timepoint);
         error.setProblemClassification(errorType);

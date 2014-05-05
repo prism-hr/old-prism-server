@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum ApplicationFormTransferErrorHandlingDecision {
+public enum ApplicationTransferErrorHandlingDecision {
     GIVE_UP,
     
     RETRY,

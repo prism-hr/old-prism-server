@@ -128,18 +128,16 @@ public class ValidApplicationFormBuilder {
                 .suitableForUcl(true).user(user).build();
         referenceComment2 = new ReferenceCommentBuilder().comment("Hello From Jane").document(referenceDocument).providedBy(user).suitableForProgramme(true)
                 .suitableForUcl(true).user(user).build();
-        refereeOne = new RefereeBuilder().id(Integer.MAX_VALUE - 1).user(approverUser).email("ked1@zuhlke.com").firstname("Bob").lastname("Smith")
-                .address(TestData.anAddress(domicile)).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer")
-                .messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment1).build();
-        refereeTwo = new RefereeBuilder().id(Integer.MAX_VALUE - 2).user(approverUser).email("ked2@zuhlke.com").firstname("Jane").lastname("Austen")
-                .address(TestData.anAddress(domicile)).jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer")
-                .messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234").sendToUCL(true).reference(referenceComment2).build();
+        refereeOne = new RefereeBuilder().id(Integer.MAX_VALUE - 1).user(approverUser).address(TestData.anAddress(domicile))
+                .jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234")
+                .sendToUCL(true).reference(referenceComment1).build();
+        refereeTwo = new RefereeBuilder().id(Integer.MAX_VALUE - 2).user(approverUser).address(TestData.anAddress(domicile))
+                .jobEmployer("Zuhlke Engineering Ltd.").jobTitle("Software Engineer").messenger("skypeAddress").phoneNumber("+44 (0) 123 123 1234")
+                .sendToUCL(true).reference(referenceComment2).build();
         refereeOne.setComment(referenceComment1);
         refereeTwo.setComment(referenceComment2);
-        employmentPosition = new EmploymentPositionBuilder().current(true).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1])
-                .address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).domicile(domicile)
-                .position("Software Engineer").current(true).startDate(DateUtils.addYears(new Date(), -2)).remit("Developer").employerName("Zuhlke Ltd.")
-                .toEmploymentPosition();
+        employmentPosition = new EmploymentPosition().withCurrent(true).withEmployerAddress(TestData.anAddress(domicile)).withPosition("Software Engineer")
+                .withCurrent(true).withStartDate(DateUtils.addYears(new Date(), -2)).withRemit("Developer").withEmployerName("Zuhlke Ltd.");
         language = new LanguageBuilder().code("GB").name("England").enabled(true).build();
         disability = new DisabilityBuilder().code("0").name("No Disability").enabled(true).build();
         ethnicity = new EthnicityBuilder().code("10").name("White").enabled(true).build();
@@ -183,11 +181,10 @@ public class ValidApplicationFormBuilder {
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
                 .type(FundingType.SCHOLARSHIP).value("5").build();
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)
-                .createdTimestamp(new Date()).applicant(user).applicationNumber("TMRMBISING01-2012-999999")
-                .closingDate(new LocalDate().plusMonths(1))
+                .createdTimestamp(new Date()).applicant(user).applicationNumber("TMRMBISING01-2012-999999").closingDate(new LocalDate().plusMonths(1))
                 .applicationFormAddress(new ApplicationAddress().withCurrentAddress(address).withContactAddress(address))
-                .dueDate(new LocalDate().plusMonths(1)).employmentPositions(employmentPosition).fundings(funding)
-                .personalDetails(personalDetails).program(program).programmeDetails(programDetails).qualification(qualification1, qualification2)
+                .dueDate(new LocalDate().plusMonths(1)).employmentPositions(employmentPosition).fundings(funding).personalDetails(personalDetails)
+                .program(program).programmeDetails(programDetails).qualification(qualification1, qualification2)
                 .status(new State().withId(PrismState.APPLICATION_APPROVED)).submittedDate(new Date())
                 .applicationFormDocument(new ApplicationDocument().withPersonalStatement(personalStatement).withCv(cvDocument))
                 .referees(refereeOne, refereeTwo).ipAddress("127.0.0.1");

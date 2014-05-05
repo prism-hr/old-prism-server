@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -57,12 +57,12 @@ public abstract class AbstractMailSendingService {
         return StringUtils.join(administratorMails.toArray(new String[] {}), ", ");
     }
 
-    protected PrismEmailMessage buildMessage(User recipient, String subject, Map<String, Object> model, EmailTemplateName templateName) {
+    protected PrismEmailMessage buildMessage(User recipient, String subject, Map<String, Object> model, NotificationTemplateId templateName) {
         return buildMessage(recipient, null, subject, model, templateName);
     }
 
     protected PrismEmailMessage buildMessage(User recipient, List<User> ccRecipients, String subject, Map<String, Object> model,
-            EmailTemplateName templateName) {
+            NotificationTemplateId templateName) {
         return new PrismEmailMessageBuilder().to(recipient).cc(ccRecipients).subject(subject).model(model).emailTemplate(templateName).build();
     }
 
@@ -79,7 +79,7 @@ public abstract class AbstractMailSendingService {
         };
     }
 
-    protected String resolveMessage(EmailTemplateName templateName, ApplicationForm applicationForm) {
+    protected String resolveMessage(NotificationTemplateId templateName, ApplicationForm applicationForm) {
         User applicant = applicationForm.getUser();
         if (applicant == null) {
             return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm.getAdvert().getTitle());
@@ -89,7 +89,7 @@ public abstract class AbstractMailSendingService {
         }
     }
 
-    protected String resolveMessage(EmailTemplateName templateName, Object... args) {
+    protected String resolveMessage(NotificationTemplateId templateName, Object... args) {
         return mailSender.resolveSubject(templateName, args);
     }
 

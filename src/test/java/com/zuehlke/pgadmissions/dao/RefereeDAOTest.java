@@ -56,7 +56,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
         Referee referee = new RefereeBuilder().application(application).address(TestData.anAddress(domicileDAO.getDomicileById(1))).user(user)
                 .jobEmployer("sdfsdf").jobTitle("fsdsd").phoneNumber("hallihallo").build();
-        save(application, referee);
+        save(referee);
         flushAndClearSession();
 
         Integer id = referee.getId();

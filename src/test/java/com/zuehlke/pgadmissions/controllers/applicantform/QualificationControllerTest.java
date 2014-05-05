@@ -19,7 +19,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.DomicileDAO;
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
+import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -99,7 +99,7 @@ public class QualificationControllerTest {
 
     @Mock
     @InjectIntoByType
-    private QualificationInstitutionDAO institutionDAOMock;
+    private InstitutionDAO institutionDAOMock;
 
     @Mock
     @InjectIntoByType

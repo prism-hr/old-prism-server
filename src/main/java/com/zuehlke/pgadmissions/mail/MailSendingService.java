@@ -1,19 +1,19 @@
 package com.zuehlke.pgadmissions.mail;
 
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.APPLICATION_SUBMIT_CONFIRMATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.EXPORT_ERROR;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.IMPORT_ERROR;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEWER_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_CONFIRMATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.INTERVIEW_VOTE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_APPROVED_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.MOVED_TO_INTERVIEW_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_PASSWORD_CONFIRMATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.NEW_USER_SUGGESTION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.OPPORTUNITY_REQUEST_OUTCOME;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REFEREE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REGISTRATION_CONFIRMATION;
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.REJECTED_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_SUBMIT_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.EXPORT_ERROR;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.IMPORT_ERROR;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.INTERVIEWER_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.INTERVIEW_VOTE_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.INTERVIEW_VOTE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.MOVED_TO_APPROVED_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.MOVED_TO_INTERVIEW_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.NEW_PASSWORD_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.NEW_USER_SUGGESTION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.OPPORTUNITY_REQUEST_OUTCOME;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.REFEREE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.REGISTRATION_CONFIRMATION;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.REJECTED_NOTIFICATION;
 
 import java.util.Collection;
 import java.util.Date;
@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.services.RoleService;
 
 @Service
@@ -196,7 +196,7 @@ public class MailSendingService extends AbstractMailSendingService {
 
     public void sendInterviewVoteNotificationToInterviewerParticipants(AssignInterviewersComment assignInterviewersComment) {
         ApplicationForm application = assignInterviewersComment.getApplication();
-        String subject = resolveMessage(EmailTemplateName.INTERVIEW_VOTE_NOTIFICATION, application);
+        String subject = resolveMessage(NotificationTemplateId.INTERVIEW_VOTE_NOTIFICATION, application);
         PrismEmailMessage message = null;
 
         List<User> recipients = Lists.newLinkedList();

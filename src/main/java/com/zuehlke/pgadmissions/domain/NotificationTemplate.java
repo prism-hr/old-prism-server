@@ -14,11 +14,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 
 @Entity
-@Table(name = "EMAIL_TEMPLATE")
-public class EmailTemplate implements Serializable {
+@Table(name = "NOTIFICATION_TEMPLATE")
+public class NotificationTemplate implements Serializable {
 
     private static final long serialVersionUID = -3640707667534813533L;
 
@@ -29,7 +29,7 @@ public class EmailTemplate implements Serializable {
 
     @Column(name = "name")
     @Enumerated(EnumType.STRING)
-    private EmailTemplateName name;
+    private NotificationTemplateId name;
 
     @Lob
     @Column(name = "content")
@@ -69,11 +69,11 @@ public class EmailTemplate implements Serializable {
         this.version = version;
     }
 
-    public EmailTemplateName getName() {
+    public NotificationTemplateId getName() {
         return name;
     }
 
-    public void setName(EmailTemplateName name) {
+    public void setName(NotificationTemplateId name) {
         this.name = name;
     }
 

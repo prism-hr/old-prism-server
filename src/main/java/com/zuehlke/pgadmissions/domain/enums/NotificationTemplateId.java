@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum EmailTemplateName {
+public enum NotificationTemplateId {
 
 	REFEREE_NOTIFICATION("Reference Request"),
 	REFEREE_REMINDER("Reference Request Reminder"),//sent by timer
@@ -25,7 +25,7 @@ public enum EmailTemplateName {
 	
 	private final String displayValue;
 	
-	private EmailTemplateName(String displayValue) {
+	private NotificationTemplateId(String displayValue) {
 		this.displayValue=displayValue;
 	}
 	

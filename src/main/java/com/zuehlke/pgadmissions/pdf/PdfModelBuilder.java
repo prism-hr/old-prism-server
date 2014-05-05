@@ -820,10 +820,10 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 headerCell.setColspan(2);
                 table.addCell(headerCell);
                 table.addCell(newTableCell("First Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getFirstname(), SMALL_FONT));
+                table.addCell(newTableCell(referee.getUser().getFirstName(), SMALL_FONT));
 
                 table.addCell(newTableCell("Last Name", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getLastname(), SMALL_FONT));
+                table.addCell(newTableCell(referee.getUser().getLastName(), SMALL_FONT));
 
                 table.addCell(newTableCell("Employer", SMALL_BOLD_FONT));
                 table.addCell(newTableCell(referee.getJobEmployer(), SMALL_FONT));
@@ -832,13 +832,13 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(newTableCell(referee.getJobTitle(), SMALL_FONT));
 
                 table.addCell(newTableCell("Address", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getAddressLocation().getLocationString(), SMALL_FONT));
+                table.addCell(newTableCell(referee.getAddress().getLocationString(), SMALL_FONT));
 
                 table.addCell(newTableCell("Country", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getAddressLocation().getDomicile().getName(), SMALL_FONT));
+                table.addCell(newTableCell(referee.getAddress().getDomicile().getName(), SMALL_FONT));
 
                 table.addCell(newTableCell("Email", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(referee.getEmail(), SMALL_FONT));
+                table.addCell(newTableCell(referee.getUser().getEmail(), SMALL_FONT));
 
                 table.addCell(newTableCell("Telephone", SMALL_BOLD_FONT));
                 table.addCell(newTableCell(referee.getPhoneNumber(), SMALL_FONT));
@@ -1050,7 +1050,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
     private void addProjectTitleToTable(PdfPTable table, final ApplicationForm form) {
         table.addCell(newTableCell("Project", SMALL_BOLD_FONT));
         String projectTitle = NOT_REQUIRED;
-        if(form.getProject() != null) {
+        if (form.getProject() != null) {
             projectTitle = form.getProject().getTitle();
         }
         table.addCell(newTableCell(projectTitle, SMALL_FONT));

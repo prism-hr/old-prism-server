@@ -636,12 +636,12 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             refereeTp.setPosition(referee.getJobTitle());
 
             NameTp nameTp = xmlFactory.createNameTp();
-            nameTp.setForename1(referee.getFirstname());
-            nameTp.setSurname(referee.getLastname());
+            nameTp.setForename1(referee.getUser().getFirstName());
+            nameTp.setSurname(referee.getUser().getLastName());
             refereeTp.setName(nameTp);
 
             ContactDtlsTp contactDtlsTp = xmlFactory.createContactDtlsTp();
-            contactDtlsTp.setEmail(referee.getEmail());
+            contactDtlsTp.setEmail(referee.getUser().getEmail());
             contactDtlsTp.setLandline(cleanPhoneNumber(referee.getPhoneNumber()));
 
             if (StringUtils.isBlank(referee.getPhoneNumber())) {
@@ -651,12 +651,12 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             }
 
             AddressTp addressTp = xmlFactory.createAddressTp();
-            addressTp.setAddressLine1(referee.getAddressLocation().getAddressLine1());
-            addressTp.setAddressLine2(referee.getAddressLocation().getAddressLine2());
-            addressTp.setAddressLine3(referee.getAddressLocation().getAddressTown());
-            addressTp.setAddressLine4(referee.getAddressLocation().getAddressRegion());
-            addressTp.setPostCode(referee.getAddressLocation().getAddressCode());
-            addressTp.setCountry(referee.getAddressLocation().getDomicile().getEnabledCode());
+            addressTp.setAddressLine1(referee.getAddress().getAddressLine1());
+            addressTp.setAddressLine2(referee.getAddress().getAddressLine2());
+            addressTp.setAddressLine3(referee.getAddress().getAddressTown());
+            addressTp.setAddressLine4(referee.getAddress().getAddressRegion());
+            addressTp.setPostCode(referee.getAddress().getAddressCode());
+            addressTp.setCountry(referee.getAddress().getDomicile().getEnabledCode());
 
             // postCode is mandatory but but PRISM did not collect addresses
             // in this format before.

@@ -51,7 +51,6 @@ public class DeclineController {
 		    commentService.declineReview(reviewer, application);
 		    modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
 		    
-		    reviewer.setAction(null);
 		    userService.save(reviewer);
 		    return TemplateLocation.DECLINE_SUCCESS_VIEW_NAME;
 		} else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {
@@ -91,7 +90,6 @@ public class DeclineController {
     		refereeService.declineToActAsRefereeAndSendNotification(referee.getId());
     		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
 
-            user.setAction(null);
             userService.save(user);
     		return TemplateLocation.DECLINE_SUCCESS_VIEW_NAME;
 	    } else if (StringUtils.equalsIgnoreCase(confirmation, "Cancel")) {

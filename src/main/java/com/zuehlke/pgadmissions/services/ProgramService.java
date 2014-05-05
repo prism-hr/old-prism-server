@@ -39,7 +39,7 @@ public class ProgramService {
     private ProgramDAO programDAO;
 
     @Autowired
-    private QualificationInstitutionService qualificationInstitutionService;
+    private InstitutionService qualificationInstitutionService;
 
     @Autowired
     private ProgramInstanceService programInstanceService;

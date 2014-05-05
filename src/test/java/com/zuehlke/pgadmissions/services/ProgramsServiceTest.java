@@ -54,7 +54,7 @@ public class ProgramsServiceTest {
 
     @Mock
     @InjectIntoByType
-    private QualificationInstitutionService qualificationInstitutionService;
+    private InstitutionService qualificationInstitutionService;
 
     @Mock
     @InjectIntoByType

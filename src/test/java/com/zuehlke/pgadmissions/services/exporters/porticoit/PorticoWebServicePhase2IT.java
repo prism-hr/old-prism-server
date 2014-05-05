@@ -30,8 +30,8 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransfer;
-import com.zuehlke.pgadmissions.domain.ApplicationFormTransferError;
+import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
+import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
@@ -87,7 +87,7 @@ public class PorticoWebServicePhase2IT {
         
         for (String appNumber : applications) {
             ApplicationForm form = applicationsService.getByApplicationNumber(appNumber);
-            ApplicationFormTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(form);
+            ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(form);
             selectReferres(form);
             try {
                 uclExportService.sendToPortico(form, applicationFormTransfer, new CsvTransferListener());
@@ -133,7 +133,7 @@ public class PorticoWebServicePhase2IT {
         }
 
         @Override
-        public void webServiceCallFailed(Throwable throwable, ApplicationFormTransferError error, ApplicationForm form) {
+        public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add(error.getDiagnosticInfo());
@@ -145,7 +145,7 @@ public class PorticoWebServicePhase2IT {
         }
 
         @Override
-        public void sftpTransferFailed(Throwable throwable, ApplicationFormTransferError error, ApplicationForm form) {
+        public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
             csvEntries.add("null");
             csvEntries.add("null");
             csvEntries.add("null");
@@ -154,10 +154,10 @@ public class PorticoWebServicePhase2IT {
         }
 
         @Override
-        public void sftpTransferCompleted(String zipFileName, ApplicationFormTransfer transfer) {
+        public void sftpTransferCompleted(String zipFileName, ApplicationTransfer transfer) {
             csvEntries.add(zipFileName);
-            csvEntries.add(transfer.getUclUserIdReceived());
-            csvEntries.add(transfer.getUclBookingReferenceReceived());
+            csvEntries.add(transfer.getExternalApplicantReference());
+            csvEntries.add(transfer.getExternalTransferReference());
             csvEntries.add("null");
         }
     }

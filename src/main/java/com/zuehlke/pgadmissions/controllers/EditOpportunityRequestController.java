@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.zuehlke.pgadmissions.dao.QualificationInstitutionDAO;
+import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
@@ -55,7 +55,7 @@ public class EditOpportunityRequestController {
     private DomicileService domicileService;
 
     @Autowired
-    private QualificationInstitutionDAO qualificationInstitutionDAO;
+    private InstitutionDAO qualificationInstitutionDAO;
 
     @Autowired
     private DomicilePropertyEditor domicilePropertyEditor;
@@ -100,7 +100,7 @@ public class EditOpportunityRequestController {
 
         if (opportunityRequest.getInstitutionCountry() != null) {
             modelMap.addAttribute("institutions",
-                    qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
+                    qualificationInstitutionDAO.getByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
         }
 
         return EDIT_REQUEST_PAGE_VIEW_NAME;
@@ -130,7 +130,7 @@ public class EditOpportunityRequestController {
 
             if (opportunityRequest.getInstitutionCountry() != null) {
                 modelMap.addAttribute("institutions",
-                        qualificationInstitutionDAO.getEnabledInstitutionsByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
+                        qualificationInstitutionDAO.getByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
             }
 
             return EDIT_REQUEST_PAGE_VIEW_NAME;

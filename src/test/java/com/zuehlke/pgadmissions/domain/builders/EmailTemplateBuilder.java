@@ -2,15 +2,15 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.EmailTemplate;
-import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 
 public class EmailTemplateBuilder {
 
     private Long id;
 
 
-    private EmailTemplateName name;
+    private NotificationTemplateId name;
 
     private String content;
     
@@ -35,7 +35,7 @@ public class EmailTemplateBuilder {
         return this;
     }
 
-    public EmailTemplateBuilder name(EmailTemplateName name) {
+    public EmailTemplateBuilder name(NotificationTemplateId name) {
         this.name = name;
         return this;
     }
@@ -50,8 +50,8 @@ public class EmailTemplateBuilder {
         return this;
     }
 
-    public EmailTemplate build() {
-        EmailTemplate template = new EmailTemplate();
+    public NotificationTemplate build() {
+        NotificationTemplate template = new NotificationTemplate();
         template.setId(id);
         template.setName(name);
         template.setContent(content);

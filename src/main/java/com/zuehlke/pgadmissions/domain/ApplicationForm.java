@@ -30,7 +30,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
@@ -147,8 +146,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     @Column(name = "use_custom_reference_questions")
     private Boolean useCustomReferenceQuestions = false;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "applicationForm")
-    private ApplicationFormTransfer applicationFormTransfer;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_transfer_id")
+    private ApplicationTransfer transfer;
 
     @Transient
     private boolean acceptedTerms;
@@ -336,12 +336,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.useCustomReferenceQuestions = useCustomReferenceQuestions;
     }
 
-    public ApplicationFormTransfer getApplicationFormTransfer() {
-        return applicationFormTransfer;
+    public ApplicationTransfer getTransfer() {
+        return transfer;
     }
 
-    public void setApplicationFormTransfer(ApplicationFormTransfer applicationFormTransfer) {
-        this.applicationFormTransfer = applicationFormTransfer;
+    public void setTransfer(ApplicationTransfer transfer) {
+        this.transfer = transfer;
     }
 
     public List<Comment> getApplicationComments() {

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static com.zuehlke.pgadmissions.domain.enums.EmailTemplateName.valueOf;
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.valueOf;
 import static java.util.Arrays.sort;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.EmailTemplate;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
@@ -38,11 +38,11 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
-import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationExportConfigurationDTO;
 import com.zuehlke.pgadmissions.dto.ServiceLevelsDTO;
-import com.zuehlke.pgadmissions.exceptions.EmailTemplateException;
+import com.zuehlke.pgadmissions.exceptions.NotificationTemplateException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
@@ -51,7 +51,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
-import com.zuehlke.pgadmissions.services.EmailTemplateService;
+import com.zuehlke.pgadmissions.services.NotificationTemplateService;
 import com.zuehlke.pgadmissions.services.ExportQueueService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -77,7 +77,7 @@ public class ConfigurationController {
     private ApplicationExportConfigurationService applicationExportConfigurationService;
     
     @Autowired
-    private EmailTemplateService templateService;
+    private NotificationTemplateService templateService;
 
     @Autowired
     private ExportQueueService queueService;
@@ -134,7 +134,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{id:\\d+}")
     @ResponseBody
     public Map<String, Object> getTemplateVersion(@PathVariable Long id) {
-        EmailTemplate template = templateService.getEmailTemplate(id);
+        NotificationTemplate template = templateService.getEmailTemplate(id);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("content", template.getContent());
         result.put("version", template.getVersion());
@@ -200,7 +200,7 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/editEmailTemplate/{templateName:[a-zA-Z_]+}")
     @ResponseBody
     public Map<Object, Object> getVersionsForTemplate(@PathVariable String templateName) {
-        EmailTemplate template = templateService.getActiveEmailTemplate(valueOf(templateName));
+        NotificationTemplate template = templateService.getActiveEmailTemplate(valueOf(templateName));
         Map<Long, String> versions = templateService.getEmailTemplateVersions(template.getName());
         Map<Object, Object> result = new HashMap<Object, Object>();
         result.put("content", template.getContent());
@@ -213,12 +213,12 @@ public class ConfigurationController {
 
     @RequestMapping(method = RequestMethod.POST, value = { "saveEmailTemplate/{templateName:[a-zA-Z_]+}" })
     @ResponseBody
-    public Map<String, Object> saveTemplate(@PathVariable EmailTemplateName templateName, @RequestParam String content, @RequestParam String subject) {
+    public Map<String, Object> saveTemplate(@PathVariable NotificationTemplateId templateName, @RequestParam String content, @RequestParam String subject) {
         return saveNewTemplate(templateName, content, subject);
     }
 
-    private Map<String, Object> saveNewTemplate(EmailTemplateName templateName, String content, String subject) {
-        EmailTemplate template = templateService.saveNewEmailTemplate(templateName, content, subject);
+    private Map<String, Object> saveNewTemplate(NotificationTemplateId templateName, String content, String subject) {
+        NotificationTemplate template = templateService.saveNewEmailTemplate(templateName, content, subject);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("id", template.getId());
         result.put("version", new SimpleDateFormat("yyyy/M/d - HH:mm:ss").format(template.getVersion()));
@@ -243,7 +243,7 @@ public class ConfigurationController {
             templateService.activateEmailTemplate(valueOf(templateName), id);
             result.put("previousTemplateId", (Object) previousId);
             return result;
-        } catch (EmailTemplateException ete) {
+        } catch (NotificationTemplateException ete) {
             return Collections.singletonMap("error", (Object) ete.getMessage());
         }
     }
@@ -252,15 +252,15 @@ public class ConfigurationController {
     @ResponseBody
     public Map<String, Object> deleteTemplate(@PathVariable Long id) {
         Map<String, Object> result = new HashMap<String, Object>();
-        EmailTemplate toDeleteTemplate = templateService.getEmailTemplate(id);
-        EmailTemplateName templateName = toDeleteTemplate.getName();
-        EmailTemplate activeTemplate = templateService.getActiveEmailTemplate(templateName);
+        NotificationTemplate toDeleteTemplate = templateService.getEmailTemplate(id);
+        NotificationTemplateId templateName = toDeleteTemplate.getName();
+        NotificationTemplate activeTemplate = templateService.getActiveEmailTemplate(templateName);
         result.put("activeTemplateId", activeTemplate.getId());
         result.put("activeTemplateContent", activeTemplate.getContent());
         result.put("activeTemplateSubject", activeTemplate.getSubject());
         try {
             templateService.deleteTemplateVersion(toDeleteTemplate);
-        } catch (EmailTemplateException ete) {
+        } catch (NotificationTemplateException ete) {
             result.put("error", ete.getMessage());
         }
         return result;
@@ -274,11 +274,11 @@ public class ConfigurationController {
     }
 
     @ModelAttribute("templateTypes")
-    public EmailTemplateName[] getTemplateTypes() {
-        EmailTemplateName[] names = EmailTemplateName.values();
-        sort(names, new Comparator<EmailTemplateName>() {
+    public NotificationTemplateId[] getTemplateTypes() {
+        NotificationTemplateId[] names = NotificationTemplateId.values();
+        sort(names, new Comparator<NotificationTemplateId>() {
             @Override
-            public int compare(EmailTemplateName o1, EmailTemplateName o2) {
+            public int compare(NotificationTemplateId o1, NotificationTemplateId o2) {
                 return o1.displayValue().compareTo(o2.displayValue());
             }
         });

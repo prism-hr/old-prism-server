@@ -23,10 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.zuehlke.pgadmissions.domain.EmailTemplate;
-import com.zuehlke.pgadmissions.domain.enums.EmailTemplateName;
+import com.zuehlke.pgadmissions.domain.NotificationTemplate;
+import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
-import com.zuehlke.pgadmissions.services.EmailTemplateService;
+import com.zuehlke.pgadmissions.services.NotificationTemplateService;
 
 import freemarker.template.Template;
 
@@ -45,7 +45,7 @@ public class MailSender {
 
     private final String emailAddressTo;
 
-    private final EmailTemplateService emailTemplateService;
+    private final NotificationTemplateService emailTemplateService;
 
     private final FreeMarkerConfig freemarkerConfig;
     
@@ -56,7 +56,7 @@ public class MailSender {
     @Autowired
     public MailSender(final JavaMailSender javaMailSender, @Value("${email.prod}") final String production,
             @Value("${email.address.from}") final String emailAddressFrom, @Value("${email.address.to}") final String emailAddressTo,
-            final EmailTemplateService emailTemplateService, final FreeMarkerConfig freemarkerConfig) {
+            final NotificationTemplateService emailTemplateService, final FreeMarkerConfig freemarkerConfig) {
         this.javaMailSender = javaMailSender;
         this.emailProductionSwitch = BooleanUtils.toBoolean(production);
         this.emailAddressFrom = emailAddressFrom;
@@ -83,7 +83,7 @@ public class MailSender {
         }
     }
 
-    protected String resolveSubject(final EmailTemplateName templateName, final Object... args) {
+    protected String resolveSubject(final NotificationTemplateId templateName, final Object... args) {
         String subjectFormat = emailTemplateService.getSubjectForTemplate(templateName);
         return args == null ? subjectFormat : String.format(subjectFormat, args);
     }
@@ -134,7 +134,7 @@ public class MailSender {
                         messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
                     }
 
-                    EmailTemplate activeEmailTemplate = emailTemplateService.getActiveEmailTemplate(message.getTemplateName());
+                    NotificationTemplate activeEmailTemplate = emailTemplateService.getActiveEmailTemplate(message.getTemplateName());
                     Template template = new Template(message.getTemplateName().displayValue(), new StringReader(activeEmailTemplate.getContent()),
                             freemarkerConfig.getConfiguration());
 
@@ -181,7 +181,7 @@ public class MailSender {
                         messageHelper.addAttachment(attachment.getAttachmentFilename(), attachment, "application/pdf");
                     }
 
-                    EmailTemplate activeEmailTemplate = emailTemplateService.getActiveEmailTemplate(message.getTemplateName());
+                    NotificationTemplate activeEmailTemplate = emailTemplateService.getActiveEmailTemplate(message.getTemplateName());
                     Template template = new Template(message.getTemplateName().displayValue(), new StringReader(activeEmailTemplate.getContent()),
                             freemarkerConfig.getConfiguration());
 
@@ -199,7 +199,7 @@ public class MailSender {
         }
     }
 
-    public EmailTemplateService getEmailTemplateService() {
+    public NotificationTemplateService getEmailTemplateService() {
         return emailTemplateService;
     }
 

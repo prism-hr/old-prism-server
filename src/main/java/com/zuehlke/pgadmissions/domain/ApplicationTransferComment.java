@@ -22,7 +22,7 @@ public class ApplicationTransferComment extends Comment {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_form_transfer_error_id")
-    private ApplicationFormTransferError applicationFormTransferError = null;
+    private ApplicationTransferError applicationFormTransferError = null;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "comment_type", insertable = false, updatable = false)
@@ -39,7 +39,7 @@ public class ApplicationTransferComment extends Comment {
         setTransferSucceeded(true);
     }
 
-    public ApplicationTransferComment(ApplicationForm application, User user, ApplicationFormTransferError applicationFormTransferError) {
+    public ApplicationTransferComment(ApplicationForm application, User user, ApplicationTransferError applicationFormTransferError) {
         super();
         setUser(user);
         setApplication(application);
@@ -55,11 +55,11 @@ public class ApplicationTransferComment extends Comment {
         this.transferSucceeded = transferSucceeded;
     }
 
-    public ApplicationFormTransferError getApplicationFormTransferError() {
+    public ApplicationTransferError getApplicationFormTransferError() {
         return applicationFormTransferError;
     }
 
-    public void setApplicationFormTransferError(ApplicationFormTransferError applicationFormTransferError) {
+    public void setApplicationFormTransferError(ApplicationTransferError applicationFormTransferError) {
         this.applicationFormTransferError = applicationFormTransferError;
     }
 

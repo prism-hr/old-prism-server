@@ -21,16 +21,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.zuehlke.pgadmissions.domain.Institution;
-import com.zuehlke.pgadmissions.services.QualificationInstitutionService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
 
 @RequestMapping("/update")
 @Controller
-public class QualificationInstitutionsController {
+public class InstitutionController {
 
     @Autowired
-    private QualificationInstitutionService qualificationInstitutionService;
+    private InstitutionService qualificationInstitutionService;
 
     @Autowired
     private UserService userService;

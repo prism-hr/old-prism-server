@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum ApplicationFormTransferErrorType {
+public enum ApplicationTransferErrorType {
     WEBSERVICE_SOAP_FAULT,
     WEBSERVICE_UNREACHABLE,
     SFTP_HOST_UNREACHABLE,

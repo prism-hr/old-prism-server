@@ -20,7 +20,7 @@ import javax.persistence.Transient;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "APPLICATION_FORM_QUALIFICATION")
+@Table(name = "APPLICATION_QUALIFICATION")
 public class Qualification implements Serializable, FormSectionObject {
 
     private static final long serialVersionUID = -8949535622435302565L;
@@ -72,7 +72,7 @@ public class Qualification implements Serializable, FormSectionObject {
     private Boolean sendToUCL;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_form_id")
+    @JoinColumn(name = "application_id")
     private ApplicationForm application;
 
     @Transient

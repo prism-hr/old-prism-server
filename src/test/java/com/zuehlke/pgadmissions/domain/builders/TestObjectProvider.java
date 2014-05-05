@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -125,7 +126,7 @@ public class TestObjectProvider {
         return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("doSendUpdateNotification", doSendUpdateNotification))
                 .setMaxResults(1).uniqueResult();
     }
-    
+
     public Institution getInstitution() {
         return getInstitution(PrismState.INSTITUTION_APPROVED);
     }
@@ -152,10 +153,8 @@ public class TestObjectProvider {
     }
 
     private User getUser(Authority authority, Boolean isInRole, Boolean userEnabled) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class)
-                .createAlias("account", "account", JoinType.INNER_JOIN)
-                .createAlias("userRoles", "userRole", JoinType.INNER_JOIN)
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN);
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class).createAlias("account", "account", JoinType.INNER_JOIN)
+                .createAlias("userRoles", "userRole", JoinType.INNER_JOIN).createAlias("userRole.role", "role", JoinType.INNER_JOIN);
 
         if (BooleanUtils.isTrue(isInRole)) {
             criteria.add(Restrictions.eq("role.id", authority));
@@ -248,16 +247,22 @@ public class TestObjectProvider {
     }
 
     public Institution getInstitution(PrismState state) {
-        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class)
-                .add(Restrictions.eq("state.id", state)).setMaxResults(1).uniqueResult();
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Restrictions.eq("state.id", state)).setMaxResults(1)
+                .uniqueResult();
     }
-    
+
     public Domicile getDomicile() {
-        return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult(); 
+        return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult();
     }
-    
+
     public PrismSystem getPrismSystem() {
         return (PrismSystem) sessionFactory.getCurrentSession().createCriteria(PrismSystem.class).uniqueResult();
-    } 
+    }
+
+    public State getState(PrismState state) {
+        return (State) sessionFactory.getCurrentSession().createCriteria(State.class) //
+                .add(Restrictions.eq("id", state)) //
+                .uniqueResult();
+    }
 
 }

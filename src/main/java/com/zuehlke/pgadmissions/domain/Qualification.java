@@ -20,7 +20,7 @@ import javax.persistence.Transient;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "APPLICATION_FORM_QUALIFICATION")
+@Table(name = "APPLICATION_QUALIFICATION")
 public class Qualification implements Serializable, FormSectionObject {
 
     private static final long serialVersionUID = -8949535622435302565L;
@@ -30,8 +30,8 @@ public class Qualification implements Serializable, FormSectionObject {
     private Integer id;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "proof_of_award_id")
-    private Document proofOfAward;
+    @JoinColumn(name = "document_id")
+    private Document document;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "award_date")
@@ -68,11 +68,11 @@ public class Qualification implements Serializable, FormSectionObject {
     @Column(name = "completed")
     private Boolean completed;
 
-    @Column(name = "send_to_ucl")
-    private Boolean sendToUCL;
+    @Column(name = "export")
+    private Boolean export;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_form_id")
+    @JoinColumn(name = "application_id")
     private ApplicationForm application;
 
     @Transient
@@ -86,12 +86,12 @@ public class Qualification implements Serializable, FormSectionObject {
         this.id = id;
     }
 
-    public Document getProofOfAward() {
-        return proofOfAward;
+    public Document getDocument() {
+        return document;
     }
 
-    public void setProofOfAward(Document proofOfAward) {
-        this.proofOfAward = proofOfAward;
+    public void setDocument(Document document) {
+        this.document = document;
     }
 
     public Date getQualificationAwardDate() {
@@ -166,12 +166,12 @@ public class Qualification implements Serializable, FormSectionObject {
         this.completed = completed;
     }
 
-    public Boolean getSendToUCL() {
-        return sendToUCL;
+    public Boolean getExport() {
+        return export;
     }
 
-    public void setSendToUCL(Boolean sendToUCL) {
-        this.sendToUCL = sendToUCL;
+    public void setExport(Boolean export) {
+        this.export = export;
     }
 
     public ApplicationForm getApplication() {

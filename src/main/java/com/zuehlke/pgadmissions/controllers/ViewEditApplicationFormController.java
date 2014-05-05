@@ -52,14 +52,14 @@ public class ViewEditApplicationFormController {
         ApplicationFormAction viewEditAction = actionService.getPrecedentAction(applicationForm, user, ActionType.APPLICATION_VIEW_EDIT);
 
         switch (viewEditAction) {
-        case APPLICATION_COMPLETE_APPLICATION:
-        case APPLICATION_CORRECT_APPLICATION:
-        case APPLICATION_EDIT_AS_APPLICANT:
+        case APPLICATION_COMPLETE:
+        case APPLICATION_CORRECT:
+        case APPLICATION_EDIT_AS_CREATOR:
             applicationFormService.openApplicationForEdit(applicationForm, user);
             return TemplateLocation.APPLICATION_APPLICANT_FORM;
         case APPLICATION_EDIT_AS_ADMINISTRATOR:
             return RedirectLocation.UPDATE_APPLICATION_AS_STAFF + applicationForm.getApplicationNumber();
-        case APPLICATION_VIEW_AS_APPLICANT:
+        case APPLICATION_VIEW_AS_CREATOR:
         case APPLICATION_VIEW_AS_REFEREE:
         case APPLICATION_VIEW_AS_RECRUITER:
             return getApplicationView(applicationForm, user, request);

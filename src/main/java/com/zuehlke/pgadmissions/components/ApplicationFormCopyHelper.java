@@ -150,10 +150,10 @@ public class ApplicationFormCopyHelper {
         to.setQualificationGrade(from.getQualificationGrade());
         to.setQualificationAwardDate(from.getQualificationAwardDate());
         if (doPerformDeepCopy) {
-            to.setProofOfAward(copyDocument(from.getProofOfAward()));
+            to.setDocument(copyDocument(from.getDocument()));
         } else {
-            documentService.replaceDocument(from.getProofOfAward(), to.getProofOfAward());
-            to.setProofOfAward(from.getProofOfAward());
+            documentService.replaceDocument(from.getDocument(), to.getDocument());
+            to.setDocument(from.getDocument());
         }
     }
 

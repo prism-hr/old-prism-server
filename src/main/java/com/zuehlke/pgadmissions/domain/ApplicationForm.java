@@ -389,6 +389,16 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         }
         return this.submittedTimestamp.compareTo(appForm.getSubmittedTimestamp());
     }
+    
+    public ApplicationForm withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+    
+    public ApplicationForm withApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+        return this;
+    }
 
     public ApplicationForm withProgram(Program program) {
         this.program = program;
@@ -407,6 +417,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
 
     public ApplicationForm withDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+        return this;
+    }
+    
+    public ApplicationForm withSubmittedTimestamp(Date submittedTimestamp) {
+        this.submittedTimestamp = submittedTimestamp;
         return this;
     }
 

@@ -59,7 +59,7 @@ public class SubmitApplicationFormController {
     @RequestMapping(method = RequestMethod.POST)
     public String submitApplication(@Valid ApplicationForm application, BindingResult result, HttpServletRequest request) {
         User user = userService.getCurrentUser();
-        actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_COMPLETE_APPLICATION);
+        actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_COMPLETE);
 
         if (result.hasErrors()) {
             if (result.getFieldError("program") != null) {
@@ -78,7 +78,7 @@ public class SubmitApplicationFormController {
     
     @ModelAttribute
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        return applicationService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE_APPLICATION);
+        return applicationService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE);
     }
     
 }

@@ -14,15 +14,9 @@ public class DocumentBuilder {
 
 	private byte[] content;
 	
-	private Qualification qualification;
 	private String contentType;
 	private DocumentType type;
 	private Date dateUploaded;
-	
-	public DocumentBuilder qualification(Qualification qualification){
-		this.qualification = qualification;
-		return this;
-	}
 	
 	public DocumentBuilder contentType(String contentType){
 		this.contentType = contentType;
@@ -62,7 +56,6 @@ public class DocumentBuilder {
 		document.setType(type);
 		document.setContentType(contentType);
 		document.setDateUploaded(dateUploaded);
-		document.setQualification(qualification);
 		return document;
 	}
 }

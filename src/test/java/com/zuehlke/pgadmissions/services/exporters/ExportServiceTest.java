@@ -53,7 +53,7 @@ import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -126,8 +126,8 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
         ApplicationTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
         assertNotNull(applicationFormTransfer);
         assertEquals(applicationFormTransfer.getApplicationForm(), applicationForm);
-        assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
-        assertTrue(DateUtils.isToday(applicationFormTransfer.getTransferStartTimepoint()));
+        assertEquals(ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getState());
+        assertTrue(DateUtils.isToday(applicationFormTransfer.getBeganTimestamp()));
     }
 
     @Test
@@ -271,7 +271,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         EasyMock.verify(webServiceTemplateMock, applicationsServiceMock, commentDAOMock);
 
-        assertEquals(ApplicationTransferStatus.REJECTED_BY_WEBSERVICE, applicationFormTransfer.getStatus());
+        assertEquals(ApplicationTransferState.REJECTED_BY_WEBSERVICE, applicationFormTransfer.getState());
     }
 
     @Test
@@ -388,8 +388,8 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 //        assertEquals(uclUserId, applicationForm.getApplicant().getUclUserId());
         assertEquals(uclBookingReferenceNumber, applicationForm.getUclBookingReferenceNumber());
 
-        assertEquals(uclUserId, applicationFormTransfer.getUclUserIdReceived());
-        assertEquals(uclBookingReferenceNumber, applicationFormTransfer.getUclBookingReferenceReceived());
+        assertEquals(uclUserId, applicationFormTransfer.getExternalApplicantReference());
+        assertEquals(uclBookingReferenceNumber, applicationFormTransfer.getExternalTransferReference());
 
         assertTrue(hasBeenCalled);
     }
@@ -470,8 +470,8 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 //        assertEquals(uclUserId, applicationForm.getApplicant().getUclUserId());
         assertEquals(uclBookingReferenceNumber, applicationForm.getUclBookingReferenceNumber());
 
-        assertEquals(uclUserId, applicationFormTransfer.getUclUserIdReceived());
-        assertEquals(uclBookingReferenceNumber, applicationFormTransfer.getUclBookingReferenceReceived());
+        assertEquals(uclUserId, applicationFormTransfer.getExternalApplicantReference());
+        assertEquals(uclBookingReferenceNumber, applicationFormTransfer.getExternalTransferReference());
 
         assertTrue(hasBeenCalled);
     }
@@ -533,7 +533,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
                     ex.getMessage());
         }
 
-        assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
+        assertEquals(ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getState());
 
         EasyMock.verify(jschfactoryMock);
     }
@@ -606,7 +606,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             assertEquals("The SFTP service is unreachable because of network issues [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
 
-        assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
+        assertEquals(ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getState());
 
         EasyMock.verify(jschfactoryMock, sessionMock);
     }
@@ -690,7 +690,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             assertEquals("The SFTP service is unreachable because of network issues [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
 
-        assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
+        assertEquals(ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getState());
 
         EasyMock.verify(jschfactoryMock, sessionMock, sftpChannelMock);
     }
@@ -776,7 +776,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             assertEquals("The SFTP target directory is not accessible [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
 
-        assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
+        assertEquals(ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getState());
 
         EasyMock.verify(jschfactoryMock, sessionMock, sftpChannelMock);
     }
@@ -866,7 +866,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             assertEquals("The SFTP service is unreachable because of network issues [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
 
-        assertEquals(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getStatus());
+        assertEquals(ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL, applicationFormTransfer.getState());
 
         EasyMock.verify(jschfactoryMock, sessionMock, sftpChannelMock);
     }
@@ -935,7 +935,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
             assertEquals("There was an error creating the ZIP file for PORTICO [applicationNumber=TMRMBISING01-2012-999999]", ex.getMessage());
         }
 
-        assertEquals(ApplicationTransferStatus.CANCELLED, applicationFormTransfer.getStatus());
+        assertEquals(ApplicationTransferState.CANCELLED, applicationFormTransfer.getState());
 
         EasyMock.verify(sftpAttachmentsSendingServiceMock);
     }
@@ -944,8 +944,8 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
     public void shouldSuccessfullyTransmitDocumentPackOverSftp() throws CouldNotCreateAttachmentsPack, LocallyDefinedSshConfigurationIsWrong,
             CouldNotOpenSshConnectionToRemoteHost, SftpTargetDirectoryNotAccessible, SftpTransmissionFailedOrProtocolError, ExportServiceException {
         ApplicationTransfer applicationFormTransfer = exportService.createOrReturnExistingApplicationFormTransfer(applicationForm);
-        applicationFormTransfer.setUclBookingReferenceReceived(uclBookingReferenceNumber);
-        applicationFormTransfer.setUclUserIdReceived(uclUserId);
+        applicationFormTransfer.setExternalTransferReference(uclBookingReferenceNumber);
+        applicationFormTransfer.setExternalApplicantReference(uclUserId);
         applicationForm.setUclBookingReferenceNumber(uclBookingReferenceNumber);
         TransferListener listener = new TransferListener() {
             @Override
@@ -991,7 +991,7 @@ public class ExportServiceTest extends AutomaticRollbackTestCase {
 
         exportService.uploadDocuments(applicationForm, applicationFormTransfer, listener);
 
-        assertEquals(ApplicationTransferStatus.COMPLETED, applicationFormTransfer.getStatus());
+        assertEquals(ApplicationTransferState.COMPLETED, applicationFormTransfer.getState());
 
         EasyMock.verify(sftpAttachmentsSendingServiceMock, applicationContextMock);
     }

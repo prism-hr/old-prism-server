@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.services.WorkflowService;
 
@@ -52,15 +52,15 @@ public class ApplicationTransferService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateTransferStatus(final ApplicationTransfer transfer, final ApplicationTransferStatus status) {
-        transfer.setStatus(status);
-        transfer.setTransferFinishTimepoint(new Date());
+    public void updateTransferStatus(final ApplicationTransfer transfer, final ApplicationTransferState status) {
+        transfer.setState(status);
+        transfer.setEndedTimestamp(new Date());
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateTransferPorticoIds(final ApplicationTransfer transfer, final AdmissionsApplicationResponse response) {
-        transfer.setUclUserIdReceived(response.getReference().getApplicantID());
-        transfer.setUclBookingReferenceReceived(response.getReference().getApplicationID());
+        transfer.setExternalApplicantReference(response.getReference().getApplicantID());
+        transfer.setExternalTransferReference(response.getReference().getApplicationID());
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -84,13 +84,13 @@ public class ApplicationTransferService {
             ApplicationTransfer result = new ApplicationTransfer();
             form.setTransfer(result);
             result.setApplicationForm(form);
-            result.setTransferStartTimepoint(new Date());
-            result.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
+            result.setBeganTimestamp(new Date());
+            result.setState(ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL);
             applicationFormTransferDAO.save(result);
             return result;
         } else {
-            transfer.setTransferStartTimepoint(new Date());
-            transfer.setStatus(ApplicationTransferStatus.QUEUED_FOR_WEBSERVICE_CALL);
+            transfer.setBeganTimestamp(new Date());
+            transfer.setState(ApplicationTransferState.QUEUED_FOR_WEBSERVICE_CALL);
         }
         return transfer;
     }
@@ -112,7 +112,7 @@ public class ApplicationTransferService {
 
     @Transactional
     public void processApplicationTransferError(TransferListener listener, ApplicationForm application, ApplicationTransfer transfer, Exception exception,
-            ApplicationTransferStatus newStatus, String logMessage, ApplicationTransferErrorHandlingDecision handlingDecision,
+            ApplicationTransferState newStatus, String logMessage, ApplicationTransferErrorHandlingDecision handlingDecision,
             ApplicationTransferErrorType errorType, Logger log) throws ExportServiceException {
         ApplicationTransferError transferError = createTransferError(new ApplicationTransferErrorBuilder()
                 .diagnosticInfo(exception).errorHandlingStrategy(ApplicationTransferErrorHandlingDecision.GIVE_UP)

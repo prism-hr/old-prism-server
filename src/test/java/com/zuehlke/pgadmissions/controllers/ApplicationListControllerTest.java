@@ -38,8 +38,8 @@ import org.springframework.web.bind.WebDataBinder;
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApplicationFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
@@ -74,7 +74,7 @@ public class ApplicationListControllerTest {
         HttpSession httpSession = new MockHttpSession();
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
         user.getAccount().setFilterGroup(filtering);
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
@@ -99,7 +99,7 @@ public class ApplicationListControllerTest {
         HttpSession httpSession = new MockHttpSession();
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
         httpSession.setAttribute("alertDefinition", alert);
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(filteringServiceMock.getDefaultApplicationFiltering(user)).andReturn(filtering);
@@ -110,7 +110,7 @@ public class ApplicationListControllerTest {
         EasyMock.verify(userServiceMock, filteringServiceMock);
 
         // THEN
-        ApplicationsFiltering actualFiltering = (ApplicationsFiltering) model.get("filtering");
+        ApplicationFilterGroup actualFiltering = (ApplicationFilterGroup) model.get("filtering");
         assertSame(filtering, actualFiltering);
         assertSame(alert, model.get("alertDefinition"));
     }
@@ -121,7 +121,7 @@ public class ApplicationListControllerTest {
         // GIVEN
         ModelMap model = new ExtendedModelMap();
 
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
         model.addAttribute("filtering", filtering);
         HttpSession httpSession = new MockHttpSession();
         AlertDefinition alert = new AlertDefinition(AlertType.WARNING, "title", "desc");
@@ -144,7 +144,7 @@ public class ApplicationListControllerTest {
 
         // GIVEN
         ModelMap model = new ExtendedModelMap();
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
         List<ApplicationDescriptor> applications = new ArrayList<ApplicationDescriptor>();
         
         expect(applicationsServiceMock.getApplicationsForList(user, filtering)).andReturn(applications);
@@ -164,7 +164,7 @@ public class ApplicationListControllerTest {
     public void shouldReturnApplicationReport() throws IOException {
 
         // GIVEN 
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
+        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
 
         MockHttpServletRequest requestMock = new MockHttpServletRequest();
         requestMock.setParameter("tqx", "out:html");
@@ -234,9 +234,9 @@ public class ApplicationListControllerTest {
     @Test
     public void shouldSaveNoFiltersAsDefault() {
 
-        List<ApplicationsFilter> emptyFilters = Collections.<ApplicationsFilter> emptyList();
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
-        filtering.setFilters(emptyFilters);
+        List<ApplicationFilter> emptyFilters = Collections.<ApplicationFilter> emptyList();
+        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
+        filtering.getFilters().addAll(emptyFilters);
 
         expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
         userServiceMock.setFiltering(user, filtering);
@@ -249,11 +249,11 @@ public class ApplicationListControllerTest {
     @Test
     public void shouldSaveTwoFiltersAsDefault() {
 
-        ApplicationsFilter filter1 = new ApplicationsFilterBuilder().id(1).build();
-        ApplicationsFilter filter2 = new ApplicationsFilterBuilder().id(2).build();
-        List<ApplicationsFilter> filters = Arrays.asList(filter1, filter2);
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
-        filtering.setFilters(filters);
+        ApplicationFilter filter1 = new ApplicationsFilterBuilder().id(1).build();
+        ApplicationFilter filter2 = new ApplicationsFilterBuilder().id(2).build();
+        List<ApplicationFilter> filters = Arrays.asList(filter1, filter2);
+        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
+        filtering.getFilters().addAll(filters);
 
         expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
         userServiceMock.setFiltering(user, filtering);

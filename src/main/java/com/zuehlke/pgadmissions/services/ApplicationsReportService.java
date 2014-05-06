@@ -29,7 +29,7 @@ import com.google.visualization.datasource.datatable.value.ValueType;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -58,7 +58,7 @@ public class ApplicationsReportService {
     @Value("${application.host}") 
     private String host;
 
-    public DataTable getApplicationsReport(User user, ApplicationsFiltering filtering, ReportFormat reportType) {
+    public DataTable getApplicationsReport(User user, ApplicationFilterGroup filtering, ReportFormat reportType) {
         // TODO implement report functionality (supposedly using query and write new tests)
         DataTable data = new DataTable();
 

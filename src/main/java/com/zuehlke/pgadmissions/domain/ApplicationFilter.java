@@ -8,6 +8,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.google.common.base.Objects;
@@ -15,8 +17,8 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 
 @Entity
-@Table(name = "APPLICATIONS_FILTER")
-public class ApplicationsFilter implements Serializable {
+@Table(name = "application_filter")
+public class ApplicationFilter implements Serializable {
 
     private static final long serialVersionUID = -2766208328669781519L;
 
@@ -34,8 +36,12 @@ public class ApplicationsFilter implements Serializable {
 
     @Column(name = "search_term")
     private String searchTerm;
+    
+    @ManyToOne
+    @JoinColumn(name = "application_filter_group_id", nullable = false, insertable = false, updatable = false)
+    private ApplicationFilterGroup filterGroup;
 
-    public ApplicationsFilter() {
+    public ApplicationFilter() {
     }
 
     public SearchPredicate getSearchPredicate() {
@@ -83,7 +89,7 @@ public class ApplicationsFilter implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ApplicationsFilter other = (ApplicationsFilter) obj;
+        final ApplicationFilter other = (ApplicationFilter) obj;
 
         return Objects.equal(this.searchCategory, other.searchCategory) && Objects.equal(this.searchPredicate, other.searchPredicate)
                 && Objects.equal(this.searchTerm, other.searchTerm);

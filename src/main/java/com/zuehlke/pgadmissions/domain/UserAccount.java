@@ -35,7 +35,7 @@ public class UserAccount {
 
     @JoinColumn(name = "application_filter_group_id")
     @OneToOne(fetch = FetchType.LAZY)
-    private ApplicationsFiltering filterGroup;
+    private ApplicationFilterGroup filterGroup;
 
     @Column(name = "application_list_last_access_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
@@ -67,11 +67,11 @@ public class UserAccount {
         this.confirmPassword = confirmPassword;
     }
 
-    public ApplicationsFiltering getFilterGroup() {
+    public ApplicationFilterGroup getFilterGroup() {
         return filterGroup;
     }
 
-    public void setFilterGroup(ApplicationsFiltering filterGroup) {
+    public void setFilterGroup(ApplicationFilterGroup filterGroup) {
         this.filterGroup = filterGroup;
     }
 
@@ -106,7 +106,7 @@ public class UserAccount {
         return this;
     }
 
-    public UserAccount withFilterGroup(ApplicationsFiltering filterGroup) {
+    public UserAccount withFilterGroup(ApplicationFilterGroup filterGroup) {
         this.filterGroup = filterGroup;
         return this;
     }

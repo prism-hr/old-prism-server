@@ -152,10 +152,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     private ApplicationTransfer transfer;
 
     @Transient
-    private boolean acceptedTerms;
-
-    @Transient
-    private Boolean acceptedTermsOnSubmission;
+    private Boolean acceptedTerms;
 
     public Integer getId() {
         return id;
@@ -163,14 +160,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public boolean isAcceptedTerms() {
-        return acceptedTerms;
-    }
-
-    public void setAcceptedTerms(boolean acceptedTerms) {
-        this.acceptedTerms = acceptedTerms;
     }
 
     public String getApplicationNumber() {
@@ -221,12 +210,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.dueDate = dueDate;
     }
 
-    public Boolean getAcceptedTermsOnSubmission() {
-        return acceptedTermsOnSubmission;
+    public Boolean getAcceptedTerms() {
+        return acceptedTerms;
     }
 
-    public void setAcceptedTermsOnSubmission(Boolean acceptedTermsOnSubmission) {
-        this.acceptedTermsOnSubmission = acceptedTermsOnSubmission;
+    public void setAcceptedTerms(Boolean acceptedTerms) {
+        this.acceptedTerms= acceptedTerms;
     }
 
     public Date getCreatedTimestamp() {

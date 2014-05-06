@@ -216,7 +216,7 @@ public class ApplicationFormBuilder {
         application.setDueDate(dueDate);
         application.setState(status);
         application.setAdditionalInformation(info);
-        application.setAcceptedTermsOnSubmission(acceptedTerms);
+        application.setAcceptedTerms(acceptedTerms);
         application.getApplicationComments().addAll(comments);
         application.setRejection(rejection);
         application.setApplicationNumber(applicationNumber);

@@ -26,7 +26,6 @@ import org.springframework.validation.Validator;
 import org.unitils.inject.util.InjectionUtils;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -38,10 +37,10 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -83,10 +82,10 @@ public class ApplicationFormValidatorTest {
 
     @Test
     public void shouldSupportAppForm() {
-        reset(programDetailsValidatorMock, personalDetailsValidatorMock, applicationFormAddressValidatorMock, additionalInformationValidatorMock,
-                programService);
-        replay(programDetailsValidatorMock, personalDetailsValidatorMock, applicationFormAddressValidatorMock, additionalInformationValidatorMock,
-                programService);
+        reset(programService, programDetailsValidatorMock, personalDetailsValidatorMock, applicationFormAddressValidatorMock,
+                additionalInformationValidatorMock, applicationFormDocumentValidatorMock);
+        replay(programService, programDetailsValidatorMock, personalDetailsValidatorMock, applicationFormAddressValidatorMock,
+                additionalInformationValidatorMock, applicationFormDocumentValidatorMock);
 
         assertTrue(applicationFormValidator.supports(ApplicationForm.class));
     }
@@ -102,7 +101,7 @@ public class ApplicationFormValidatorTest {
         applicationFormValidator.validate(application, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("user.programmeDetails.incomplete", mappingResult.getFieldError("programmeDetails").getCode());
+        Assert.assertEquals("user.programDetails.incomplete", mappingResult.getFieldError("programDetails").getCode());
     }
 
     @Test
@@ -144,7 +143,7 @@ public class ApplicationFormValidatorTest {
         applicationFormValidator.validate(application, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("user.addresses.notempty", mappingResult.getFieldError("currentAddress").getCode());
+        Assert.assertEquals("user.addresses.notempty", mappingResult.getFieldError("applicationAddress").getCode());
 
     }
 
@@ -165,54 +164,33 @@ public class ApplicationFormValidatorTest {
         StudyOption studyOption = new StudyOption("dupa", "jasia");
         ProgramDetails programmeDetail = application.getProgramDetails();
         programmeDetail.setStudyOption(studyOption);
-        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(application, "programmeDetails.studyOption");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(application, "application");
 
         EasyMock.reset(programService);
-        EasyMock.expect(programService.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(null);
-        EasyMock.expect(programService.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance));
+        EasyMock.expect(programService.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Collections.<ProgramInstance>emptyList());
 
         EasyMock.replay(programService);
         applicationFormValidator.validate(application, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("programmeDetails.studyOption.invalid", mappingResult.getFieldError("programmeDetails.studyOption").getCode());
-
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldRejectIfNoCurrentProgrammeInstancesExist() {
-        StudyOption studyOption = new StudyOption("dupa", "jasia");
-        ProgramDetails programmeDetail = application.getProgramDetails();
-        programmeDetail.setStudyOption(studyOption);
-        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(application, "program");
-
-        EasyMock.reset(programService);
-        EasyMock.expect(programService.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Collections.EMPTY_LIST);
-        EasyMock.expect(programService.getActiveProgramInstances(program)).andReturn(Collections.EMPTY_LIST);
-
-        EasyMock.replay(programService);
-        applicationFormValidator.validate(application, mappingResult);
-
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("application.program.invalid", mappingResult.getFieldError("program").getCode());
+        Assert.assertEquals("programDetails.studyOption.invalid", mappingResult.getFieldError("programDetails.studyOption").getCode());
 
     }
 
     @Test
     public void shouldRejectIfNotAcceptedTheTerms() {
-        application.setAcceptedTermsOnSubmission(false);
-        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(application, "acceptedTermsOnSubmission");
+        application.setAcceptedTerms(false);
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(application, "application");
         applicationFormValidator.validate(application, mappingResult);
         EasyMock.verify(programService);
         Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("acceptedTermsOnSubmission").getCode());
+        Assert.assertEquals("text.field.empty", mappingResult.getFieldError("acceptedTerms").getCode());
 
     }
 
     @Before
     public void setup() throws ParseException {
-        program = new Program().withId(1).withTitle("Program 1");
+        program = new Program().withState(ProgramState.PROGRAM_APPROVED);
         programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
                 .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).build();
         program.getInstances().addAll(Arrays.asList(programInstance));

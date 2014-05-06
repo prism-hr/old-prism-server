@@ -1,20 +1,25 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
+import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 
@@ -53,5 +58,15 @@ public class TestData {
     public static UserRole aUserRole(ApplicationForm applicaton, Role role, User user, User requestingUser) {
         return new UserRole().withApplication(applicaton).withRole(role).withUser(user).withRequestingUser(requestingUser).withAssignedTimestamp(new Date());
     }
-    
+
+    public static Document aDocument() {
+        return new Document().withFileName("dupa").withContent(new byte[0]).withContentType("application/pdf").withIsReferenced(false)
+                .withType(DocumentType.CV);
+    }
+
+    public static Qualification aQualification(ApplicationForm application, QualificationType qualificationType, Document document, Institution institution) {
+        return new Qualification().withAwardDate(new Date()).withGrade("").withTitle("").withLanguage("Abkhazian").withSubject("").withCompleted(true)
+                .withStartDate(new Date()).withType(qualificationType).withApplication(application).withDocument(document).withExport(false).withInstitution(institution);
+    }
+
 }

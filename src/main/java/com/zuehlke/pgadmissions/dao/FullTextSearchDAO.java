@@ -155,7 +155,7 @@ public class FullTextSearchDAO {
             List<Qualification> fuzzyQueryResults = fuzzyQuery.list();
 
             for (int i = 0; i < fuzzyQueryResults.size(); i++) {
-                uniqueResults.add(fuzzyQueryResults.get(i).getQualificationTitle());
+                uniqueResults.add(fuzzyQueryResults.get(i).getTitle());
             }
 
         }
@@ -191,7 +191,7 @@ public class FullTextSearchDAO {
             List<Qualification> fuzzyQueryResults = fuzzyQuery.list();
 
             for (int i = 0; i < fuzzyQueryResults.size(); i++) {
-                uniqueResults.add(fuzzyQueryResults.get(i).getQualificationSubject());
+                uniqueResults.add(fuzzyQueryResults.get(i).getSubject());
             }
 
         }
@@ -227,7 +227,7 @@ public class FullTextSearchDAO {
             List<Qualification> fuzzyQueryResults = fuzzyQuery.list();
 
             for (int i = 0; i < fuzzyQueryResults.size(); i++) {
-                uniqueResults.add(fuzzyQueryResults.get(i).getQualificationGrade());
+                uniqueResults.add(fuzzyQueryResults.get(i).getGrade());
             }
 
         }

@@ -343,8 +343,8 @@ public class ApplicationSumaryServiceTest {
 //
 //        PersonalDetails details = new PersonalDetailsBuilder().id(321).title(APPLICANT_TITLE).phoneNumber(APPLICANT_PHONE_NUMBER).build();
 //
-//        Qualification qualification = new QualificationBuilder().awardDate(dateOfLastUpdate).build();
-//        Qualification mostRecentQualification = new QualificationBuilder().awardDate(dateOfSubmission).title(MOST_RECENT_QUALIFICATION_TITLE).build();
+//        Qualification qualification = new Qualification().awardDate(dateOfLastUpdate).build();
+//        Qualification mostRecentQualification = new Qualification().awardDate(dateOfSubmission).title(MOST_RECENT_QUALIFICATION_TITLE).build();
 //
 //        EmploymentPosition position = new EmploymentPositionBuilder().endDate(dateOfLastUpdate).toEmploymentPosition();
 //        EmploymentPosition mostRecentPosition = new EmploymentPositionBuilder().employerName("Shortcuts production").endDate(dateOfSubmission)

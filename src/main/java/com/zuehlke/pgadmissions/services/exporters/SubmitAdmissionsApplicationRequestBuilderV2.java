@@ -549,16 +549,16 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             for (Qualification qualification : qualifications) {
                 QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
 
-                qualificationsTp.setStartDate(buildXmlDate(qualification.getQualificationStartDate()));
-                qualificationsTp.setEndDate(buildXmlDate(qualification.getQualificationAwardDate()));
+                qualificationsTp.setStartDate(buildXmlDate(qualification.getStartDate()));
+                qualificationsTp.setEndDate(buildXmlDate(qualification.getAwardDate()));
 
-                qualificationsTp.setGrade(qualification.getQualificationGrade());
-                qualificationsTp.setLanguageOfInstruction(qualification.getQualificationLanguage());
-                qualificationsTp.setMainSubject(qualification.getQualificationSubject());
+                qualificationsTp.setGrade(qualification.getGrade());
+                qualificationsTp.setLanguageOfInstruction(qualification.getLanguage());
+                qualificationsTp.setMainSubject(qualification.getSubject());
 
                 QualificationTp qualificationTp = xmlFactory.createQualificationTp();
-                qualificationTp.setCode(qualification.getQualificationType().getEnabledCode());
-                qualificationTp.setName(qualification.getQualificationType().getName());
+                qualificationTp.setCode(qualification.getType().getEnabledCode());
+                qualificationTp.setName(qualification.getType().getName());
                 qualificationsTp.setQualification(qualificationTp);
 
                 InstitutionTp institutionTp = xmlFactory.createInstitutionTp();

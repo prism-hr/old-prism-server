@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -132,8 +131,8 @@ public class SendToPorticoDataDTOValidatorTest {
         sendToPorticoDataDTO.setApplicationNumber("84");
 
         Document proofOfAward = new Document();
-        qualification1 = new QualificationBuilder().document(proofOfAward).build();
-        qualification2 = new QualificationBuilder().document(proofOfAward).build();
+        qualification1 = new Qualification().withDocument(proofOfAward);
+        qualification2 = new Qualification().withDocument(proofOfAward);
         ReferenceComment referenceComment = new ReferenceComment();
         referee1 = new RefereeBuilder().reference(referenceComment).build();
         referee2 = new RefereeBuilder().reference(referenceComment).build();

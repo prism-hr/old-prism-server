@@ -34,10 +34,6 @@ public abstract class Advert implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
-    @Column(name = "title")
-    private String title;
-
     @Size(max = 3000, message = "A maximum of 2000 characters are allowed.")
     @Column(name = "description", nullable = false)
     private String description = "Advert coming soon!";
@@ -71,14 +67,6 @@ public abstract class Advert implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getDescription() {
@@ -177,5 +165,7 @@ public abstract class Advert implements Serializable {
     public abstract Program getProgram();
 
     public abstract Project getProject();
+
+    public abstract String getTitle();
 
 }

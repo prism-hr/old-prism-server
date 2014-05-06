@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
@@ -36,14 +37,16 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     private ProgramDAO programDAO;
     private Institution institution;
     private Project project;
+    private ProgramType programType;
 
     @Override
     public void setup() {
         super.setup();
         programDAO = new ProgramDAO(sessionFactory);
+        
         institution = testObjectProvider.getInstitution();
-        flushAndClearSession();
         project = testObjectProvider.getEnabledProject();
+        programType = testObjectProvider.getProgramType();
     }
 
     @SuppressWarnings("unchecked")
@@ -130,9 +133,9 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetLastCustomProgram() {
-        Program program1 = TestData.aProgram(institution).withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).withCode(institution.getCode() + "_00006");
-        Program program2 = TestData.aProgram(institution).withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).withCode(institution.getCode() + "_00008");
-        Program program3 = TestData.aProgram(institution).withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).withCode(institution.getCode() + "_00007");
+        Program program1 = TestData.aProgram(programType, institution, testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).withCode(institution.getCode() + "_00006");
+        Program program2 = TestData.aProgram(programType, institution, testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).withCode(institution.getCode() + "_00008");
+        Program program3 = TestData.aProgram(programType, institution, testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).withCode(institution.getCode() + "_00007");
         save(program1, program2, program3);
         flushAndClearSession();
         Program returned = programDAO.getLastCustomProgram(institution);

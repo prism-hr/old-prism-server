@@ -7,6 +7,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
@@ -36,9 +37,9 @@ public class TestData {
         return new Address().withDomicile(domicile).withLine1("ul. Leszczynska 29").withTown("Bielsko-Biala").withRegion("woj. Slaskie");
     }
 
-    public static Program aProgram(Institution institution) {
+    public static Program aProgram(ProgramType programType, Institution institution, User user) {
         return new Program().withCode("AAA").withTitle("Amazing program!").withState(ProgramState.PROGRAM_APPROVED).withRequireProjectDefinition(false)
-                .withInstitution(institution);
+                .withStudyDuration(20).withProgramType(programType).withUser(user).withInstitution(institution);
     }
 
 }

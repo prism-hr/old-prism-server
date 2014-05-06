@@ -27,10 +27,12 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -107,12 +109,13 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         String thisYear = new SimpleDateFormat("yyyy").format(new Date());
         String lastYear = new Integer(Integer.parseInt(thisYear) - 1).toString();
         String nextYear = new Integer(Integer.parseInt(thisYear) + 1).toString();
-        flushAndClearSession();
 
         Institution institution = testObjectProvider.getInstitution();
-        Program program = new Program().withCode("test").withTitle("test").withDescription("test")
-                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).withInstitution(institution);
+        ProgramType programType = testObjectProvider.getProgramType();
+        Program program = TestData.aProgram(programType, institution, user);
         save(program);
+        
+        flushAndClearSession();
 
         long number = applicationDAO.getApplicationsInProgramThisYear(program, thisYear);
         assertEquals(0, number);

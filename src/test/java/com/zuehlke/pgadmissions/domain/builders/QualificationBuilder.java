@@ -21,7 +21,7 @@ public class QualificationBuilder {
 	private ApplicationForm application;
 	private Integer id;
 	private Boolean completed;
-	private Document proofOfAward;
+	private Document document;
     private boolean sendToUCL;
     
     public QualificationBuilder id(Integer id) {
@@ -39,8 +39,8 @@ public class QualificationBuilder {
         return this;
     }
     
-	public QualificationBuilder proofOfAward(Document proofOfAward) {
-		this.proofOfAward = proofOfAward;
+	public QualificationBuilder document(Document document) {
+		this.document = document;
 		return this;
 	}
 	
@@ -102,7 +102,7 @@ public class QualificationBuilder {
 		qualification.setQualificationType(type);
 		qualification.setId(id);
 		qualification.setCompleted(completed);
-		qualification.setDocument(proofOfAward);
+		qualification.setDocument(document);
 		qualification.setExport(sendToUCL);
 		return qualification;
 	}

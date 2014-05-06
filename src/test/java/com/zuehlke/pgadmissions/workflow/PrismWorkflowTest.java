@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -76,8 +75,8 @@ public class PrismWorkflowTest {
         Domicile polishDomicile = domicileService.getEnabledDomicileByCode("PL");
         ProgramType programType = programService.getProgramTypes().iterator().next();
 
-        User programCreator = new UserBuilder().firstName("Jerzy").lastName("Urban").email("jerzy@urban.pl")
-                .userAccount(new UserAccount().withPassword("password").withConfirmPassword("password")).build();
+        User programCreator = new User().withFirstName("Jerzy").withLastName("Urban").withEmail("jerzy@urban.pl")
+                .withAccount(new UserAccount().withPassword("password").withConfirmPassword("password"));
         OpportunityRequest opportunityRequest = opportunitiesService.createOpportunityRequest(
                 new OpportunityRequestBuilder().institutionCountry(polishDomicile).institutionCode(null).otherInstitution("Akademia Gorniczo-Hutnicza")
                         .programType(programType).programTitle("Zywienie zbiorowe").programDescription("I tak pracy po tym nie znajdziesz.")
@@ -89,7 +88,7 @@ public class PrismWorkflowTest {
         Program savedProgram = opportunitiesService.respondToOpportunityRequest(opportunityRequest.getId(), opportunityRequest,
                 new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.APPROVE).content("Ok!").build());
 
-        User applicant = registrationService.submitRegistration(new UserBuilder().firstName("Kuba").lastName("Fibinger").email("kuba@fibinger.pl").build());
+        User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl"));
         applicant = registrationService.activateAccount(applicant.getActivationCode());
 
         ApplicationForm application = applicationFormService.getOrCreateApplication(applicant, savedProgram.getId());

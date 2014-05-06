@@ -15,7 +15,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class RefereeDAOTest extends AutomaticRollbackTestCase {
@@ -70,8 +69,8 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("kod_aktywacyjny")
-                .userAccount(new UserAccount().withEnabled(false).withPassword("dupa")).build();
+        user = new User().withFirstName("Jane").withLastName("Doe").withEmail("email2@test.com").withActivationCode("kod_aktywacyjny")
+                .withAccount(new UserAccount().withEnabled(false).withPassword("dupa"));
         application = testObjectProvider.getApplication(PrismState.APPLICATION_UNSUBMITTED);
         
         save(user);

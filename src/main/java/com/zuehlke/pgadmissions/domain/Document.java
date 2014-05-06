@@ -47,7 +47,7 @@ public class Document implements Serializable {
     @Column(name = "file_name")
     private String fileName;
 
-    @Column(name = "file_content")
+    @Column(name = "file_content", nullable = false)
     @Type(type = "binary")
     private byte[] content;
 

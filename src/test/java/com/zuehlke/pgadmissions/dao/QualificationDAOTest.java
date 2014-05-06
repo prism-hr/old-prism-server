@@ -10,12 +10,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.TestData;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class QualificationDAOTest extends AutomaticRollbackTestCase {
 
@@ -39,15 +42,14 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldDeleteQualification() throws ParseException {
-        ApplicationForm application = new ApplicationForm();
-        application.setProgram(program);
-        application.setUser(user);
+        ApplicationForm application = TestData.anApplicationForm(user, program, testObjectProvider.getState(PrismState.APPLICATION_UNSUBMITTED));
 
         QualificationTypeDAO qualificationTypeDAO = new QualificationTypeDAO(sessionFactory);
         DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
         Qualification qualification = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").title("")
                 .languageOfStudy("Abkhazian").subject("").isCompleted(true).startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
-                .type(qualificationTypeDAO.getAllQualificationTypes().get(0)).build();
+                .type(qualificationTypeDAO.getAllQualificationTypes().get(0)).application(application).document(new DocumentBuilder().fileName("dupa").content(new byte[0]).contentType("application/pdf").build())
+                .build();
         save(application, qualification);
         flushAndClearSession();
 
@@ -60,8 +62,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         qualificationDAO = new QualificationDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").userAccount(new UserAccount().withEnabled(false))
-                .build();
+        user = TestData.aUser(null);
         save(user);
         flushAndClearSession();
         program = testObjectProvider.getEnabledProgram();

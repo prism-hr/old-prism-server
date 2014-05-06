@@ -43,7 +43,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -280,7 +279,7 @@ public class ApplicationListControllerTest {
 
     @Before
     public void setUp() {
-        user = new UserBuilder().id(1).build();
+        user = new User().withId(1);
         userServiceMock = EasyMock.createMock(UserService.class);
         applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
         applicationsReportServiceMock = EasyMock.createMock(ApplicationsReportService.class);

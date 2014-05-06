@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 
 public class AutosuggestUserControllerTest {
@@ -25,12 +24,12 @@ public class AutosuggestUserControllerTest {
     
     @Before
     public void prepare() {
-        user1 = new UserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com")
-                .userAccount(new UserAccount().withEnabled(false)).build();
+        user1 = new User().withFirstName("Tyler").withLastName("Durden").withEmail("tyler@durden.com")
+                .withAccount(new UserAccount().withEnabled(false));
 
-        similiarToUser1 = new UserBuilder().firstName("Taylor").lastName("Dordeen")
-                .email("taylor@dordeen.com")
-                .userAccount(new UserAccount().withEnabled(false)).build();
+        similiarToUser1 = new User().withFirstName("Taylor").withLastName("Dordeen")
+                .withEmail("taylor@dordeen.com")
+                .withAccount(new UserAccount().withEnabled(false));
         
         searchServiceMock = EasyMock.createMock(FullTextSearchService.class);
         controller = new AutosuggestUserController(searchServiceMock);

@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -68,7 +67,7 @@ public class ApplicationSumaryServiceTest {
     public void setup() {
         dateOfSubmission = new DateTime(2013, 4, 23, 9, 20).toDate();
         dateOfLastUpdate = new DateTime(2013, 4, 20, 9, 20).toDate();
-        currentUser = new UserBuilder().id(CURRENT_USER_ID).email(CURRENT_USER_EMAIL_ADDRESS).build();
+        currentUser = new User().withId(CURRENT_USER_ID).withEmail(CURRENT_USER_EMAIL_ADDRESS);
     }
 
 //    @Test

@@ -132,8 +132,8 @@ public class SendToPorticoDataDTOValidatorTest {
         sendToPorticoDataDTO.setApplicationNumber("84");
 
         Document proofOfAward = new Document();
-        qualification1 = new QualificationBuilder().proofOfAward(proofOfAward).build();
-        qualification2 = new QualificationBuilder().proofOfAward(proofOfAward).build();
+        qualification1 = new QualificationBuilder().document(proofOfAward).build();
+        qualification2 = new QualificationBuilder().document(proofOfAward).build();
         ReferenceComment referenceComment = new ReferenceComment();
         referee1 = new RefereeBuilder().reference(referenceComment).build();
         referee2 = new RefereeBuilder().reference(referenceComment).build();

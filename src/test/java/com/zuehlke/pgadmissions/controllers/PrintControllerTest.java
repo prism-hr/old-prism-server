@@ -22,7 +22,6 @@ import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfModelBuilder;
@@ -111,8 +110,8 @@ public class PrintControllerTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         response.setOutputStreamAccessAllowed(true);
 
-        ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(new UserBuilder().id(4).build()).build();
-        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(new UserBuilder().id(5).build()).build();
+        ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(2).applicant(new User().withId(4)).build();
+        ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(3).applicant(new User().withId(5)).build();
         // EasyMock.expect(currentUser.canSee(applicationFormOne)).andReturn(true);
         // EasyMock.expect(currentUser.canSee(applicationFormTwo)).andReturn(true);
         EasyMock.expect(applicationSevice.getByApplicationNumber("23")).andReturn(applicationFormOne).anyTimes();

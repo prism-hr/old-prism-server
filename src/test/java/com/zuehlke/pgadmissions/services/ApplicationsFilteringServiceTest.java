@@ -9,7 +9,6 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 
 public class ApplicationsFilteringServiceTest {
 
@@ -18,7 +17,7 @@ public class ApplicationsFilteringServiceTest {
     @Test
     public void shouldReturnStoredFiltering() {
         ApplicationsFiltering filtering = new ApplicationsFiltering();
-        User user = new UserBuilder().userAccount(new UserAccount().withFilterGroup(filtering)).build();
+        User user = new User().withAccount(new UserAccount().withFilterGroup(filtering));
 
         ApplicationsFiltering actualFiltering = service.getDefaultApplicationFiltering(user);
 
@@ -27,7 +26,7 @@ public class ApplicationsFilteringServiceTest {
 
     @Test
     public void shouldReturnActiveApplicationFiltering() {
-        User user = new UserBuilder().build();
+        User user = new User();
         ApplicationsFiltering actualFiltering = service.getDefaultApplicationFiltering(user);
         Assert.assertEquals(3, actualFiltering.getFilters().size());
     }

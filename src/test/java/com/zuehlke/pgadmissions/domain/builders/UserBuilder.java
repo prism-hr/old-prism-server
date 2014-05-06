@@ -15,61 +15,62 @@ public class UserBuilder {
     private String email;
     private Integer id;
     private String activationCode;
-    private User primaryAccount;
+    private User parentUser;
     private List<User> linkedAccounts = new ArrayList<User>();
 
     private UserAccount userAccount;
 
-    public UserBuilder linkedAccounts(final User... user) {
-        linkedAccounts.addAll(Arrays.asList(user));
+    public UserBuilder withId(Integer id) {
+        this.id = id;
         return this;
     }
 
-    public UserBuilder email(String email) {
+    public UserBuilder withEmail(String email) {
         this.email = email;
         return this;
     }
 
-    public UserBuilder lastName(String lastName) {
-        this.lastName = lastName;
-        return this;
-    }
-
-    public UserBuilder activationCode(String activationCode) {
-        this.activationCode = activationCode;
-        return this;
-    }
-
-    public UserBuilder firstName(String firstName) {
+    public UserBuilder withFirstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
 
-    public UserBuilder firstName2(String firstName2) {
+    public UserBuilder withFirstName2(String firstName2) {
         this.firstName2 = firstName2;
         return this;
     }
 
-    public UserBuilder firstName3(String firstName3) {
+    public UserBuilder withFirstName3(String firstName3) {
         this.firstName3 = firstName3;
         return this;
     }
 
-    public UserBuilder id(Integer id) {
-        this.id = id;
+    public UserBuilder withLastName(String lastName) {
+        this.lastName = lastName;
         return this;
     }
-    
-    public UserBuilder primaryAccount(User primaryAccount) {
-        this.primaryAccount = primaryAccount;
+
+    public UserBuilder withActivationCode(String activationCode) {
+        this.activationCode = activationCode;
         return this;
     }
-    public UserBuilder userAccount(UserAccount userAccount) {
+
+    public UserBuilder withLinkedAccounts(final User... user) {
+        linkedAccounts.addAll(Arrays.asList(user));
+        return this;
+    }
+
+    public UserBuilder withParentUser(User parentUser) {
+        this.parentUser = parentUser;
+        return this;
+    }
+
+    public UserBuilder withAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
         return this;
     }
 
-    public User build() {
+    public User buildUser() {
         User user = new User();
         user.setId(id);
         user.setFirstName(firstName);
@@ -79,7 +80,7 @@ public class UserBuilder {
         user.setEmail(email);
         user.setActivationCode(activationCode);
         user.getLinkedAccounts().addAll(linkedAccounts);
-        user.setParentUser(primaryAccount);
+        user.setParentUser(parentUser);
         user.setAccount(userAccount);
         return user;
     }

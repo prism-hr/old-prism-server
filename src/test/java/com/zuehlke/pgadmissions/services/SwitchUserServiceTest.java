@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class SwitchUserServiceTest {
@@ -38,15 +37,15 @@ public class SwitchUserServiceTest {
         
         role2 = new Role().withId(Authority.PROGRAM_ADMINISTRATOR);
         
-        user1 = new UserBuilder().id(5).firstName("Jane").lastName("Doe").email("jane@doe.com")
-                .userAccount(new UserAccount().withEnabled(true))
+        user1 = new User().withId(5).withFirstName("Jane").withLastName("Doe").withEmail("jane@doe.com")
+                .withAccount(new UserAccount().withEnabled(true))
 //                .roles(role1)
-                .build();
+                ;
         
-        user2 = new UserBuilder().id(6).firstName("John").lastName("Doe").email("john@doe.com")
-                .userAccount(new UserAccount().withEnabled(true))
+        user2 = new User().withId(6).withFirstName("John").withLastName("Doe").withEmail("john@doe.com")
+                .withAccount(new UserAccount().withEnabled(true))
 //                .roles(role1, role2)
-                .build();
+                ;
         
         user2.setParentUser(user1);
         user1.getLinkedAccounts().add(user2);

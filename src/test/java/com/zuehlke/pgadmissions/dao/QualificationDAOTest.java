@@ -14,8 +14,6 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -48,7 +46,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
         DomicileDAO domicileDAO = new DomicileDAO(sessionFactory);
         Qualification qualification = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").title("")
                 .languageOfStudy("Abkhazian").subject("").isCompleted(true).startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
-                .type(qualificationTypeDAO.getAllQualificationTypes().get(0)).application(application).document(new DocumentBuilder().fileName("dupa").content(new byte[0]).contentType("application/pdf").build())
+                .type(qualificationTypeDAO.getAllQualificationTypes().get(0)).application(application).document(new Document().withFileName("dupa").withContent(new byte[0]).withContentType("application/pdf"))
                 .build();
         save(application, qualification);
         flushAndClearSession();

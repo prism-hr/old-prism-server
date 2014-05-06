@@ -17,7 +17,6 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -135,8 +134,8 @@ public class DocumentValidatorTest {
 
     @Before
     public void setup() throws IOException {
-        document = new DocumentBuilder().fileName("valid.pdf").type(DocumentType.CV)
-                .content(FileUtils.readFileToByteArray(new File("src/test/resources/pdf/valid.pdf"))).build();
+        document = new Document().withFileName("valid.pdf").withType(DocumentType.CV)
+                .withContent(FileUtils.readFileToByteArray(new File("src/test/resources/pdf/valid.pdf")));
 
         documentValidator = new DocumentValidator();
         documentValidator.setValidator((javax.validation.Validator) validator);

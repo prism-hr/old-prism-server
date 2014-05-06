@@ -86,8 +86,8 @@ public class ValidApplicationFormBuilder {
     protected Document getRandomDocument(DocumentType docType, String filename, User user) {
         try {
             Resource testFileAsResurce = new ClassPathResource("/pdf/valid.pdf");
-            Document document = new DocumentBuilder().dateUploaded(new Date()).contentType("application/pdf").fileName(filename)
-                    .content(FileUtils.readFileToByteArray(testFileAsResurce.getFile())).type(docType).build();
+            Document document = new Document().withCreatedTimestamp(new Date()).withContentType("application/pdf").withFileName(filename)
+                    .withContent(FileUtils.readFileToByteArray(testFileAsResurce.getFile())).withType(docType);
             return document;
         } catch (IOException e) {
             e.printStackTrace();

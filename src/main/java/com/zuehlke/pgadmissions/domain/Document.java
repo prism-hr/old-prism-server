@@ -32,10 +32,10 @@ public class Document implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "uploaded_time_stamp", insertable = false)
+    @Column(name = "created_timestamp", insertable = false)
     @Generated(GenerationTime.INSERT)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date dateUploaded;
+    private Date createdTimestamp;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "document_type")
@@ -99,12 +99,12 @@ public class Document implements Serializable {
         this.type = type;
     }
 
-    public Date getDateUploaded() {
-        return dateUploaded;
+    public Date getCreatedTimestamp() {
+        return createdTimestamp;
     }
 
-    public void setDateUploaded(Date dateUploaded) {
-        this.dateUploaded = dateUploaded;
+    public void setCreatedTimestamp(Date createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
     }
 
     public MultipartFile getFileData() {
@@ -123,4 +123,34 @@ public class Document implements Serializable {
         this.isReferenced = isReferenced;
     }
 
+    public Document withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public Document withFileName(String fileName) {
+        this.fileName = fileName;
+        return this;
+    }
+
+    public Document withContent(byte[] content) {
+        this.content = content;
+        return this;
+    }
+
+    public Document withContentType(String contentType) {
+        this.contentType = contentType;
+        return this;
+    }
+
+    public Document withType(DocumentType type) {
+        this.type = type;
+        return this;
+    }
+
+    public Document withCreatedTimestamp(Date date) {
+        this.createdTimestamp = date;
+        return this;
+    }
+    
 }

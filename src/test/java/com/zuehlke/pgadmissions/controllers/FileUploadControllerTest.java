@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -113,7 +112,7 @@ public class FileUploadControllerTest {
 	
 	@Test
 	public void shouldSaveValidDocument(){
-		Document doc = new DocumentBuilder().id(1).build();
+		Document doc = new Document().withId(1);
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		documentServiceMock.save(doc);
@@ -125,7 +124,7 @@ public class FileUploadControllerTest {
 	
 	@Test
 	public void shouldNotSaveInValidDocument(){
-		Document doc = new DocumentBuilder().id(1).build();
+		Document doc = new Document().withId(1);
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);		
 		EasyMock.replay(errors, documentServiceMock);
@@ -139,7 +138,7 @@ public class FileUploadControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 		documentValidatorMock = EasyMock.createMock(DocumentValidator.class);
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
-		document = new DocumentBuilder().id(1).build();
+		document = new Document().withId(1);
 		userServiceMock = EasyMock.createMock(UserService.class);
 //		controller = new FileUploadController(applicationsServiceMock, documentValidatorMock, documentServiceMock, userServiceMock) {
 //			@Override

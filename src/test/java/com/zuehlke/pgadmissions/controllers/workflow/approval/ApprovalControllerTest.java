@@ -388,7 +388,7 @@ public class ApprovalControllerTest {
     // BindingResult porticoResult = new MapBindingResult(Collections.emptyMap(), "");
     // porticoResult.reject("error"); // does not matter if error
     //
-    // Document document = new DocumentBuilder().build();
+    // Document document = new Document().build();
     // RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
     // refereesAdminEditDTO.setComment("comment text");
     // refereesAdminEditDTO.setEditedRefereeId("refereeId");

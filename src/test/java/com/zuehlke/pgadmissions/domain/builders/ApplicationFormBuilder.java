@@ -112,7 +112,7 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder program(Advert advert) {
+    public ApplicationFormBuilder program(Program program) {
         this.program = program;
         return this;
     }

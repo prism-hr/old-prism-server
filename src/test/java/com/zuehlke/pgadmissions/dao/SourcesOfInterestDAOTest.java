@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 

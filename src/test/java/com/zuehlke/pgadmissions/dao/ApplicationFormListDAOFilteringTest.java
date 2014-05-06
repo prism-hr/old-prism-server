@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
@@ -25,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
+import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -75,21 +75,21 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         role = roleDAO.getById(Authority.APPLICATION_INTERVIEWER);
 
-        applicant = new UserBuilder()
-                .firstName("Jane")
-                .lastName("Doe")
-                .email("email@test.com")
-                .userAccount(
-                        new UserAccount().withPassword("password").withEnabled(false).withApplicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)))
-                .build();
+        applicant = new User() //
+                .withFirstName("Jane") //
+                .withLastName("Doe") //
+                .withEmail("email1@test.com") //
+                .withActivationCode("activation1")
+                .withAccount(
+                        new UserAccount().withPassword("password").withEnabled(false).withApplicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)));
 
-        currentUser = new UserBuilder()
-                .firstName("Jane")
-                .lastName("Doe")
-                .email("email@test.com")
-                .userAccount(
-                        new UserAccount().withPassword("password").withEnabled(false).withApplicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)))
-                .build();
+        currentUser = new User() //
+                .withFirstName("Jane") //
+                .withLastName("Doe") //
+                .withEmail("email2@test.com") //
+                .withActivationCode("actkivation2")
+                .withAccount(
+                        new UserAccount().withPassword("password").withEnabled(false).withApplicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)));
 
         sessionFactory.getCurrentSession().flush();
 
@@ -105,8 +105,9 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
                 .applicationNumber("app1").submittedDate(DateUtils.addDays(submissionDate, 0)).build();
         app2InReview = new ApplicationFormBuilder().id(2).program(program).applicant(applicant).status(new State().withId(PrismState.APPLICATION_REVIEW))
                 .applicationNumber("app2").submittedDate(DateUtils.addDays(submissionDate, 1)).build();
-        app3InValidation = new ApplicationFormBuilder().id(3).program(program).applicant(applicant).status(new State().withId(PrismState.APPLICATION_VALIDATION))
-                .applicationNumber("app3").submittedDate(DateUtils.addDays(submissionDate, 2)).build();
+        app3InValidation = new ApplicationFormBuilder().id(3).program(program).applicant(applicant)
+                .status(new State().withId(PrismState.APPLICATION_VALIDATION)).applicationNumber("app3").submittedDate(DateUtils.addDays(submissionDate, 2))
+                .build();
         app4InApproved = new ApplicationFormBuilder().id(4).program(program).applicant(applicant).status(new State().withId(PrismState.APPLICATION_APPROVED))
                 .applicationNumber("app4").submittedDate(DateUtils.addDays(submissionDate, 3)).build();
         app5InInterview = new ApplicationFormBuilder().id(5).program(program).applicant(applicant).status(new State().withId(PrismState.APPLICATION_INTERVIEW))
@@ -124,15 +125,14 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     private void createAndSaveApplicationFormUserRoles(ApplicationForm... applications) {
         for (ApplicationForm applicaton : applications) {
-            UserRole userRole = new UserRole().withApplication(applicaton).withRole(role).withUser(currentUser);
+            UserRole userRole = TestData.aUserRole(applicaton, role, currentUser, currentUser);
             save(userRole);
         }
     }
 
     @Test
     public void shouldReturnAppsFilteredByNumber() {
-        ApplicationForm otherApplicationForm = new ApplicationFormBuilder().program(program).applicant(applicant)
-                .status(new State().withId(PrismState.APPLICATION_APPROVAL)).applicationNumber("other1").build();
+        ApplicationForm otherApplicationForm = TestData.anApplicationForm(applicant, program, TestData.aState(PrismState.APPLICATION_APPROVAL));
         save(otherApplicationForm);
         flushAndClearSession();
 

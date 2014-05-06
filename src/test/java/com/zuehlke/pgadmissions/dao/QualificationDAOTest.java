@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;

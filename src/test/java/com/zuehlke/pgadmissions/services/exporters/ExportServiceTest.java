@@ -39,9 +39,9 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplic
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationTransferErrorDAO;
+import com.zuehlke.pgadmissions.dao.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;

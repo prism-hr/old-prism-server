@@ -170,12 +170,12 @@ public class ValidApplicationFormBuilder {
         programDetails = new ProgrammeDetailsBuilder().sourcesOfInterest(interest).startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
                 .studyOption(new StudyOption("F+++++", "Full-time")).build();
         qualificationType = new QualificationTypeBuilder().code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
-        qualification1 = new QualificationBuilder().id(Integer.MAX_VALUE - 1).awardDate(new Date()).grade("6").institution(institution)
-                .languageOfStudy("English").startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).subject("Engineering").title("MSc")
-                .type(qualificationType).isCompleted(true).document(proofOfAwardDocument).sendToUCL(true).build();
-        qualification2 = new QualificationBuilder().id(Integer.MAX_VALUE - 2).awardDate(new Date()).grade("6").institution(institution)
-                .languageOfStudy("English").startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).subject("Engineering").title("MSc")
-                .type(qualificationType).isCompleted(true).document(proofOfAwardDocument).sendToUCL(true).build();
+        qualification1 = new Qualification().withId(Integer.MAX_VALUE - 1).withAwardDate(new Date()).withGrade("6").withInstitution(institution)
+                .withLanguage("English").withStartDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).withSubject("Engineering").withTitle("MSc")
+                .withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
+        qualification2 = new Qualification().withId(Integer.MAX_VALUE - 2).withAwardDate(new Date()).withGrade("6").withInstitution(institution)
+                .withLanguage("English").withStartDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).withSubject("Engineering").withTitle("MSc")
+                .withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
                 .type(FundingType.SCHOLARSHIP).value("5").build();
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)

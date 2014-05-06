@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class QualificationServiceTest {
@@ -43,7 +42,7 @@ public class QualificationServiceTest {
 
     @Test
     public void shouldDelegateGetQualificationToDAO() {
-        Qualification qualification = new QualificationBuilder().id(2).build();
+        Qualification qualification = new Qualification().withId(2);
 
         expect(qualificationDAOMock.getById(2)).andReturn(qualification);
 
@@ -55,7 +54,7 @@ public class QualificationServiceTest {
 
     @Test
     public void shouldDelegateDeleteToDAO() {
-        Qualification qualification = new QualificationBuilder().id(2).build();
+        Qualification qualification = new Qualification().withId(2);
         qualificationDAOMock.delete(qualification);
 
         replay();
@@ -79,8 +78,8 @@ public class QualificationServiceTest {
         Document existingDocument = new Document();
         Document document = new Document();
 
-        Qualification existingQualification = new QualificationBuilder().document(existingDocument).build();
-        Qualification qualification = new QualificationBuilder().document(document).build();
+        Qualification existingQualification = new Qualification().withDocument(existingDocument);
+        Qualification qualification = new Qualification().withDocument(document);
 
         documentServiceMock.replaceDocument(existingDocument, document);
         expect(qualificationDAOMock.getById(43)).andReturn(existingQualification);
@@ -91,10 +90,10 @@ public class QualificationServiceTest {
 
     @Test
     public void shouldSetFlagSendToPorticoOnSelectedQualifications() {
-        Qualification qualification1 = new QualificationBuilder().id(1).sendToUCL(true).build();
-        Qualification qualification2 = new QualificationBuilder().id(2).sendToUCL(true).build();
-        Qualification qualification3 = new QualificationBuilder().id(3).sendToUCL(false).build();
-        Qualification qualification4 = new QualificationBuilder().id(4).sendToUCL(false).build();
+        Qualification qualification1 = new Qualification().withId(1).withExport(true);
+        Qualification qualification2 = new Qualification().withId(2).withExport(true);
+        Qualification qualification3 = new Qualification().withId(3).withExport(false);
+        Qualification qualification4 = new Qualification().withId(4).withExport(false);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().qualifications(qualification1, qualification2, qualification3, qualification4).build();
 
@@ -117,10 +116,10 @@ public class QualificationServiceTest {
 
     @Test
     public void shouldSetNoFlagSendToPorticoOnQualifications() {
-        Qualification qualification1 = new QualificationBuilder().id(1).sendToUCL(true).build();
-        Qualification qualification2 = new QualificationBuilder().id(2).sendToUCL(true).build();
-        Qualification qualification3 = new QualificationBuilder().id(3).sendToUCL(false).build();
-        Qualification qualification4 = new QualificationBuilder().id(4).sendToUCL(false).build();
+        Qualification qualification1 = new Qualification().withId(1).withExport(true);
+        Qualification qualification2 = new Qualification().withId(2).withExport(true);
+        Qualification qualification3 = new Qualification().withId(3).withExport(false);
+        Qualification qualification4 = new Qualification().withId(4).withExport(false);
 
         ApplicationForm applicationForm = new ApplicationFormBuilder().qualifications(qualification1, qualification2, qualification3, qualification4).build();
 

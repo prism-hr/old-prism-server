@@ -29,51 +29,51 @@ public class Qualification implements Serializable, FormSectionObject {
     @GeneratedValue
     private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "document_id")
-    private Document document;
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "award_date")
-    private Date qualificationAwardDate;
-
     @Column(name = "subject")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
-    private String qualificationSubject;
+    private String subject;
 
     @Column(name = "title")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
-    private String qualificationTitle;
+    private String title;
+
+    @Column(name = "start_date")
+    @Temporal(TemporalType.DATE)
+    private Date startDate;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "award_date")
+    private Date awardDate;
+
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
+    @Column(name = "qualification_language")
+    private String language;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "qualification_type_id")
+    private QualificationType type;
+
+    @Column(name = "grade")
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
+    private String grade;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "document_id")
+    private Document document;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
 
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
-    @Column(name = "qualification_language")
-    private String qualificationLanguage;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "qualification_type_id")
-    private QualificationType qualificationType;
-
-    @Column(name = "grade")
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 70)
-    private String qualificationGrade;
-
-    @Column(name = "start_date")
-    @Temporal(TemporalType.DATE)
-    private Date qualificationStartDate;
+    @JoinColumn(name = "application_id")
+    private ApplicationForm application;
 
     @Column(name = "completed")
     private Boolean completed;
 
     @Column(name = "export")
     private Boolean export;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_id")
-    private ApplicationForm application;
 
     @Transient
     private boolean acceptedTerms;
@@ -94,28 +94,28 @@ public class Qualification implements Serializable, FormSectionObject {
         this.document = document;
     }
 
-    public Date getQualificationAwardDate() {
-        return qualificationAwardDate;
+    public Date getAwardDate() {
+        return awardDate;
     }
 
-    public void setQualificationAwardDate(Date qualificationAwardDate) {
-        this.qualificationAwardDate = qualificationAwardDate;
+    public void setAwardDate(Date awardDate) {
+        this.awardDate = awardDate;
     }
 
-    public String getQualificationSubject() {
-        return qualificationSubject;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setQualificationSubject(String qualificationSubject) {
-        this.qualificationSubject = qualificationSubject;
+    public void setSubject(String qualificationSubject) {
+        this.subject = qualificationSubject;
     }
 
-    public String getQualificationTitle() {
-        return qualificationTitle;
+    public String getTitle() {
+        return title;
     }
 
-    public void setQualificationTitle(String qualificationTitle) {
-        this.qualificationTitle = qualificationTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Institution getInstitution() {
@@ -126,36 +126,36 @@ public class Qualification implements Serializable, FormSectionObject {
         this.institution = institution;
     }
 
-    public String getQualificationLanguage() {
-        return qualificationLanguage;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setQualificationLanguage(String qualificationLanguage) {
-        this.qualificationLanguage = qualificationLanguage;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
-    public QualificationType getQualificationType() {
-        return qualificationType;
+    public QualificationType getType() {
+        return type;
     }
 
-    public void setQualificationType(QualificationType qualificationType) {
-        this.qualificationType = qualificationType;
+    public void setType(QualificationType type) {
+        this.type = type;
     }
 
-    public String getQualificationGrade() {
-        return qualificationGrade;
+    public String getGrade() {
+        return grade;
     }
 
-    public void setQualificationGrade(String qualificationGrade) {
-        this.qualificationGrade = qualificationGrade;
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 
-    public Date getQualificationStartDate() {
-        return qualificationStartDate;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setQualificationStartDate(Date qualificationStartDate) {
-        this.qualificationStartDate = qualificationStartDate;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public Boolean getCompleted() {
@@ -188,6 +188,71 @@ public class Qualification implements Serializable, FormSectionObject {
 
     public void setAcceptedTerms(boolean acceptedTerms) {
         this.acceptedTerms = acceptedTerms;
+    }
+
+    public Qualification withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public Qualification withSubject(String subject) {
+        this.subject = subject;
+        return this;
+    }
+
+    public Qualification withTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public Qualification withStartDate(Date startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+
+    public Qualification withAwardDate(Date awardDate) {
+        this.awardDate = awardDate;
+        return this;
+    }
+
+    public Qualification withLanguage(String language) {
+        this.language = language;
+        return this;
+    }
+
+    public Qualification withType(QualificationType type) {
+        this.type = type;
+        return this;
+    }
+
+    public Qualification withGrade(String grade) {
+        this.grade = grade;
+        return this;
+    }
+
+    public Qualification withDocument(Document document) {
+        this.document = document;
+        return this;
+    }
+
+    public Qualification withInstitution(Institution institution) {
+        this.institution = institution;
+        return this;
+    }
+
+    public Qualification withApplication(ApplicationForm application) {
+        this.application = application;
+        return this;
+    }
+
+    public Qualification withCompleted(Boolean completed) {
+        this.completed = completed;
+        return this;
+    }
+
+    public Qualification withExport(Boolean export) {
+        this.export = export;
+        return this;
     }
 
 }

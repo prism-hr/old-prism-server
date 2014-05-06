@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
@@ -254,6 +255,10 @@ public class TestObjectProvider {
 
     public ProgramType getProgramType() {
         return (ProgramType) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).setMaxResults(1).uniqueResult();
+    }
+
+    public QualificationType getQualificationType() {
+        return (QualificationType) sessionFactory.getCurrentSession().createCriteria(QualificationType.class).setMaxResults(1).uniqueResult();
     }
 
 }

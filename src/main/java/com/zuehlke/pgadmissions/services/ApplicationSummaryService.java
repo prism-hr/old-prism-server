@@ -82,13 +82,13 @@ public class ApplicationSummaryService {
         Qualification mostRecentQualification = Collections.max(qualifications, new Comparator<Qualification>() {
             @Override
             public int compare(Qualification o1, Qualification o2) {
-                return o1.getQualificationAwardDate().compareTo(o2.getQualificationAwardDate());
+                return o1.getAwardDate().compareTo(o2.getAwardDate());
             }
         });
 
-        String title = mostRecentQualification.getQualificationTitle();
-        String subject = mostRecentQualification.getQualificationSubject();
-        String grade = mostRecentQualification.getQualificationGrade();
+        String title = mostRecentQualification.getTitle();
+        String subject = mostRecentQualification.getSubject();
+        String grade = mostRecentQualification.getGrade();
         String institution = mostRecentQualification.getInstitution().getName();
 
         StringBuilder builder = new StringBuilder();

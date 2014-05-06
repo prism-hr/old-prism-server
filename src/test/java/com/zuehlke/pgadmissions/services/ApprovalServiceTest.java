@@ -489,8 +489,8 @@ public class ApprovalServiceTest {
 //
 //        Document document1 = new Document().id(1).build();
 //
-//        Qualification qualification1 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
-//        Qualification qualification2 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
+//        Qualification qualification1 = new Qualification().id(1).sendToUCL(true).proofOfAward(document1).build();
+//        Qualification qualification2 = new Qualification().id(1).sendToUCL(true).proofOfAward(document1).build();
 //
 //        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
 //        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();

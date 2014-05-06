@@ -52,7 +52,7 @@ public class Document implements Serializable {
     private byte[] content;
 
     @Column(name = "is_referenced")
-    private Boolean isReferenced;
+    private boolean isReferenced;
 
     @Transient
     private MultipartFile fileData;
@@ -115,11 +115,11 @@ public class Document implements Serializable {
         this.fileData = fileData;
     }
 
-    public Boolean getIsReferenced() {
+    public boolean getIsReferenced() {
         return isReferenced;
     }
 
-    public void setIsReferenced(Boolean isReferenced) {
+    public void setIsReferenced(boolean isReferenced) {
         this.isReferenced = isReferenced;
     }
 
@@ -150,6 +150,11 @@ public class Document implements Serializable {
 
     public Document withCreatedTimestamp(Date date) {
         this.createdTimestamp = date;
+        return this;
+    }
+    
+    public Document withIsReferenced(boolean isReferenced) {
+        this.isReferenced = isReferenced;
         return this;
     }
     

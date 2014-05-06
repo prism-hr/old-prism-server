@@ -14,9 +14,9 @@ import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -50,8 +50,8 @@ public class ApplicationFormDocumentValidatorTest {
     public void setup() {
         ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
         documentsSectionDTO = new ApplicationDocument();
-        documentsSectionDTO.setCv(new DocumentBuilder().type(DocumentType.CV).build());
-        documentsSectionDTO.setPersonalStatement(new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).build());
+        documentsSectionDTO.setCv(new Document().withType(DocumentType.CV));
+        documentsSectionDTO.setPersonalStatement(new Document().withType(DocumentType.PERSONAL_STATEMENT));
         documentsSectionDTO.setApplication(application);
 
         documentSectionValidator = new ApplicationFormDocumentValidator();

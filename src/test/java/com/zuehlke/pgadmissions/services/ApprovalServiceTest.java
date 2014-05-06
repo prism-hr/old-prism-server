@@ -487,7 +487,7 @@ public class ApprovalServiceTest {
 //        user1.getReferees().add(referee1);
 //        user2.getReferees().add(referee2);
 //
-//        Document document1 = new DocumentBuilder().id(1).build();
+//        Document document1 = new Document().id(1).build();
 //
 //        Qualification qualification1 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
 //        Qualification qualification2 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();

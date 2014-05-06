@@ -18,12 +18,12 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
@@ -695,7 +695,7 @@ public class PersonalDetailsValidatorTest {
                         new LanguageQualificationBuilder().examDate(new Date()).examOnline(false)
                                 .languageQualification(LanguageQualificationEnum.OTHER).qualificationTypeName("foobar").listeningScore("1")
                                 .overallScore("1").readingScore("1").writingScore("1").speakingScore("1")
-                                .languageQualificationDocument(new DocumentBuilder().build()).build()).build();
+                                .languageQualificationDocument(new Document()).build()).build();
 
         passportInformationValidator = new PassportValidator();
         passportInformationValidator.setValidator((javax.validation.Validator) validator);

@@ -208,7 +208,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //
 //        refereeServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoDataDTO.getRefereesSendToPortico());
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");
@@ -249,7 +249,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //        refereeServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoDataDTO.getRefereesSendToPortico());
 //        EasyMock.expectLastCall();
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");

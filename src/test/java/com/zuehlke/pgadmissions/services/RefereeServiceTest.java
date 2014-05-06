@@ -55,7 +55,7 @@ public class RefereeServiceTest {
 //                .document(null).build();
 //        Referee referee = new RefereeBuilder().user(refereeUser).id(8).reference(referenceComment).build();
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");
@@ -89,7 +89,7 @@ public class RefereeServiceTest {
 //
 //        applicationForm.setReferees(Arrays.asList(referee));
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");
@@ -135,7 +135,7 @@ public class RefereeServiceTest {
 //        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
 //        Referee referee = new RefereeBuilder().application(applicationForm).firstname("Franciszek").lastname("Pieczka").build();
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");
@@ -187,7 +187,7 @@ public class RefereeServiceTest {
 //
 //        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");

@@ -350,8 +350,8 @@ public class ApplicationSumaryServiceTest {
 //        EmploymentPosition mostRecentPosition = new EmploymentPositionBuilder().employerName("Shortcuts production").endDate(dateOfSubmission)
 //                .toEmploymentPosition();
 //
-//        Document personalStatement = new DocumentBuilder().id(369).fileName(PERSONAL_STATEMENT_FILE_NAME).build();
-//        Document cv = new DocumentBuilder().id(379).fileName(CV_FILE_NAME).build();
+//        Document personalStatement = new Document().id(369).fileName(PERSONAL_STATEMENT_FILE_NAME).build();
+//        Document cv = new Document().id(379).fileName(CV_FILE_NAME).build();
 //
 //        Funding funding = new FundingBuilder().description(FUNDING_DESCRIPTION).value(null).build();
 //

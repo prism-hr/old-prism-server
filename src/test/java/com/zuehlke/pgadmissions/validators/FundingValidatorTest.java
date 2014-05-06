@@ -17,9 +17,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -120,7 +120,7 @@ public class FundingValidatorTest {
 		funding.setId(2);
 		funding.setType(FundingType.EMPLOYER);
 		funding.setValue("2000");
-		funding.setDocument( new DocumentBuilder().id(1).build());
+		funding.setDocument( new Document().withId(1));
 		
 		fundingValidator = new FundingValidator();
 		fundingValidator.setValidator((javax.validation.Validator) validator);

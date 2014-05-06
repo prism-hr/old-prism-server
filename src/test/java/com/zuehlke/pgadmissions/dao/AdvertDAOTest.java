@@ -63,7 +63,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetProgramApplicationAdvert() {
-        ApplicationForm applicationForm = testObjectProvider.getEnabledProgramApplication();
+        ApplicationForm applicationForm = testObjectProvider.getProgramApplication();
         String applicationFormId = applicationForm.getId().toString(); 
         List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYAPPLICATIONFORMID, applicationFormId, null);
         assertThat(loadedAdverts.size(), equalTo(1));
@@ -72,7 +72,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetProjectApplicationAdvert() {
-        ApplicationForm applicationForm = testObjectProvider.getEnabledProjectApplication();
+        ApplicationForm applicationForm = testObjectProvider.getProjectApplication();
         String applicationFormId = applicationForm.getId().toString();
         List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYAPPLICATIONFORMID, applicationFormId, null);
         assertThat(loadedAdverts.size(), equalTo(2));

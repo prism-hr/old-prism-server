@@ -132,20 +132,17 @@ public class TestObjectProvider {
         return getInstitution(PrismState.INSTITUTION_APPROVED);
     }
 
-    public ApplicationForm getEnabledProgramApplication() {
-        return getProgramApplication(true);
+    public ApplicationForm getProgramApplication() {
+        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNull("project")) //
+                .setMaxResults(1).uniqueResult();
     }
 
-    public ApplicationForm getDisabledProgramApplication() {
-        return getProgramApplication(false);
-    }
-
-    public ApplicationForm getEnabledProjectApplication() {
-        return getProjectApplication(true);
-    }
-
-    public ApplicationForm getDisabledProjectApplication() {
-        return getProjectApplication(false);
+    public ApplicationForm getProjectApplication() {
+        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class) //
+                .createAlias("project", "project", JoinType.INNER_JOIN) //
+                .setMaxResults(1).uniqueResult();
     }
 
     public ApplicationForm getApplication(PrismState status) {
@@ -227,17 +224,6 @@ public class TestObjectProvider {
         }
 
         return (Program) criteria.setMaxResults(1).uniqueResult();
-    }
-
-    private ApplicationForm getProgramApplication(Boolean enabled) {
-        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .createAlias("program", "program", JoinType.INNER_JOIN).add(Restrictions.eq("program.active", enabled)).add(Restrictions.isNull("project"))
-                .setMaxResults(1).uniqueResult();
-    }
-
-    private ApplicationForm getProjectApplication(Boolean enabled) {
-        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .createAlias("project", "project", JoinType.INNER_JOIN).add(Restrictions.eq("project.active", enabled)).setMaxResults(1).uniqueResult();
     }
 
     private Project getProject(ProjectState state) {

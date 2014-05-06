@@ -68,7 +68,7 @@ public class ApplicationFormValidator extends AbstractValidator {
         }
 
         if (!applicationFormDocumentValidator.isValid(applicationFormDocument)) {
-            errors.rejectValue("applicationFormDocument", "documents.section.invalid");
+            errors.rejectValue("applicationDocument", "documents.section.invalid");
         }
 
         if (applicationForm.getReferees().size() < 3) {
@@ -83,7 +83,7 @@ public class ApplicationFormValidator extends AbstractValidator {
             errors.rejectValue("program", "application.program.invalid");
         }
 
-        if (!applicationForm.getProject().isEnabled()) {
+        if (applicationForm.getProject() != null && !applicationForm.getProject().isEnabled()) {
             applicationForm.setProject(null);
         }
 

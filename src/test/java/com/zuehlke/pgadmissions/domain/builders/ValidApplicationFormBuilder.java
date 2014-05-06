@@ -110,7 +110,6 @@ public class ValidApplicationFormBuilder {
     }
 
     public ApplicationForm build() {
-        String addressStr = "Zuhlke Engineering Ltd\n43 Whitfield Street\nLondon\n\nW1T 4HD\nUnited Kingdom";
         user = new UserBuilder().firstName("Kevin").firstName2("Franciszek").firstName3("Duncan").lastName("Denver").email("ked@zuhlke.com")
                 .userAccount(new UserAccount().withEnabled(true)).build();
         cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);
@@ -122,8 +121,7 @@ public class ValidApplicationFormBuilder {
         approverUser = new UserBuilder().id(Integer.MAX_VALUE - 1).email("approver@zhaw.ch").userAccount(new UserAccount().withEnabled(true)).build();
         country = new CountryBuilder().code("XK").name("United Kingdom").enabled(true).build();
         domicile = new DomicileBuilder().code("XK").name("United Kingdom").enabled(true).build();
-        address = new AddressBuilder().domicile(domicile).address1(addressStr.split("\n")[0]).address2(addressStr.split("\n")[1])
-                .address3(addressStr.split("\n")[2]).address4(addressStr.split("\n")[3]).address5(addressStr.split("\n")[4]).build();
+        address = TestData.anAddress(domicile);
         referenceComment1 = new ReferenceCommentBuilder().comment("Hello From Bob").document(referenceDocument).providedBy(user).suitableForProgramme(true)
                 .suitableForUcl(true).user(user).build();
         referenceComment2 = new ReferenceCommentBuilder().comment("Hello From Jane").document(referenceDocument).providedBy(user).suitableForProgramme(true)

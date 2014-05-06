@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -424,5 +425,40 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.submittedTimestamp = submittedTimestamp;
         return this;
     }
+    
+    public ApplicationForm withPersonalDetails(PersonalDetails personalDetails) {
+        this.personalDetails = personalDetails;
+        return this;
+    }
+    
+    public ApplicationForm withProgramDetails(ProgramDetails programDetails) {
+        this.programDetails = programDetails;
+        return this;
+    }
+    
+    public ApplicationForm withAddress(ApplicationAddress applicationAddress) {
+        this.applicationAddress = applicationAddress;
+        return this;
+    }
 
+    public ApplicationForm withDocument(ApplicationDocument applicationDocument) {
+        this.applicationDocument = applicationDocument;
+        return this;
+    }
+    
+    public ApplicationForm withAdditionalInformation(AdditionalInformation additionalInformation) {
+        this.additionalInformation = additionalInformation;
+        return this;
+    }
+
+    public ApplicationForm withAcceptedTerms(Boolean acceptedTerms) {
+        this.acceptedTerms = acceptedTerms;
+        return this;
+    }
+    
+    public ApplicationForm withReferees(Referee... referees) {
+        this.referees.addAll(Arrays.asList(referees));
+        return this;
+    }
+    
 }

@@ -57,5 +57,10 @@ public class Action implements Serializable {
     public void setPrecedence(Integer precedence) {
         this.precedence = precedence;
     }
+    
+    public Action withId(ApplicationFormAction id) {
+        this.id = id;
+        return this;
+    }
 
 }

@@ -18,8 +18,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
-import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 
@@ -143,7 +143,7 @@ public class EmploymentPositionValidatorTest {
         position.setCurrent(false);
         position.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
         position.setPosition("head of department");
-        position.setEmployerAddress(new AddressBuilder().address1("address").address3("address3").domicile(new DomicileBuilder().id(1).enabled(true).build()).build());
+        position.setEmployerAddress(new Address().withLine1("address").withTown("address3").withDomicile(new DomicileBuilder().id(1).enabled(true).build()));
 
         positionValidator = new EmploymentPositionValidator();
         positionValidator.setValidator((javax.validation.Validator) validator);

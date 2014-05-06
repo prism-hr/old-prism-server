@@ -97,7 +97,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     private Set<UserRole> userRoles;
 
     @OneToMany(mappedBy = "user")
-    private List<ProgramExport> researchOpportunitiesFeeds = new ArrayList<ProgramExport>();
+    private List<ProgramExport> programExports = new ArrayList<ProgramExport>();
 
     @JoinColumn(name = "user_account_id")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -183,8 +183,8 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.parentUser = parentUser;
     }
 
-    public List<ProgramExport> getResearchOpportunitiesFeeds() {
-        return researchOpportunitiesFeeds;
+    public List<ProgramExport> getProgramExports() {
+        return programExports;
     }
 
     public UserAccount getAccount() {

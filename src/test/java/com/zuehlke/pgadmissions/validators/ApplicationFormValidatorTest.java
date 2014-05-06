@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
@@ -54,17 +53,19 @@ public class ApplicationFormValidatorTest {
 
     private ApplicationFormValidator applicationFormValidator;
 
-    private ApplicationForm applicationForm;
+    private ApplicationForm application;
 
     private ProgramService programService;
 
-    private ProgramDetailsValidator programmeDetailsValidatorMock;
+    private ProgramDetailsValidator programDetailsValidatorMock;
 
     private PersonalDetailsValidator personalDetailsValidatorMock;
 
-    private AddressValidator addressValidatorMock;
+    private ApplicationFormAddressValidator applicationFormAddressValidatorMock;
 
     private AdditionalInformationValidator additionalInformationValidatorMock;
+
+    private ApplicationFormDocumentValidator applicationFormDocumentValidatorMock;
 
     private ProgramInstance programInstance;
 
@@ -76,27 +77,29 @@ public class ApplicationFormValidatorTest {
 
     private AdditionalInformation additionalInformation;
 
-    private Address contactAddress;
+    private ApplicationAddress address;
 
-    private Address currentAddress;
+    private ApplicationDocument document;
 
     @Test
     public void shouldSupportAppForm() {
-        reset(programmeDetailsValidatorMock, personalDetailsValidatorMock, addressValidatorMock, additionalInformationValidatorMock, programService);
-        replay(programmeDetailsValidatorMock, personalDetailsValidatorMock, addressValidatorMock, additionalInformationValidatorMock, programService);
-        
+        reset(programDetailsValidatorMock, personalDetailsValidatorMock, applicationFormAddressValidatorMock, additionalInformationValidatorMock,
+                programService);
+        replay(programDetailsValidatorMock, personalDetailsValidatorMock, applicationFormAddressValidatorMock, additionalInformationValidatorMock,
+                programService);
+
         assertTrue(applicationFormValidator.supports(ApplicationForm.class));
     }
 
     @Test
     public void shouldRejectIfProgrammeDetailsSectionNotSaved() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(application, "applicationForm");
 
-        EasyMock.reset(programmeDetailsValidatorMock);
-        expect(programmeDetailsValidatorMock.isValid(programmeDetails)).andReturn(false);
+        EasyMock.reset(programDetailsValidatorMock);
+        expect(programDetailsValidatorMock.isValid(programmeDetails)).andReturn(false);
 
-        replay(programmeDetailsValidatorMock);
-        applicationFormValidator.validate(applicationForm, mappingResult);
+        replay(programDetailsValidatorMock);
+        applicationFormValidator.validate(application, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("user.programmeDetails.incomplete", mappingResult.getFieldError("programmeDetails").getCode());
@@ -104,13 +107,13 @@ public class ApplicationFormValidatorTest {
 
     @Test
     public void shouldRejectIfPersonalDetailsSectionMissing() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(application, "applicationForm");
 
         EasyMock.reset(personalDetailsValidatorMock);
         expect(personalDetailsValidatorMock.isValid(personalDetails)).andReturn(false);
 
         replay(personalDetailsValidatorMock);
-        applicationFormValidator.validate(applicationForm, mappingResult);
+        applicationFormValidator.validate(application, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("user.personalDetails.incomplete", mappingResult.getFieldError("personalDetails").getCode());
@@ -118,28 +121,27 @@ public class ApplicationFormValidatorTest {
 
     @Test
     public void shouldRejectIfAdditionalInfoSectionMissing() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(application, "applicationForm");
 
         EasyMock.reset(additionalInformationValidatorMock);
         expect(additionalInformationValidatorMock.isValid(additionalInformation)).andReturn(false);
 
         replay(additionalInformationValidatorMock);
-        applicationFormValidator.validate(applicationForm, mappingResult);
+        applicationFormValidator.validate(application, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("user.additionalInformation.incomplete", mappingResult.getFieldError("additionalInformation").getCode());
     }
 
     @Test
-    public void shouldRejectIfCurrentAddressIsMissing() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm.*");
+    public void shouldRejectIfAddressIsMissing() {
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(application, "applicationForm.*");
 
-        EasyMock.reset(addressValidatorMock);
-        expect(addressValidatorMock.isValid(currentAddress)).andReturn(false);
-        expect(addressValidatorMock.isValid(contactAddress)).andReturn(true);
+        EasyMock.reset(applicationFormAddressValidatorMock);
+        expect(applicationFormAddressValidatorMock.isValid(address)).andReturn(false);
 
-        replay(addressValidatorMock);
-        applicationFormValidator.validate(applicationForm, mappingResult);
+        replay(applicationFormAddressValidatorMock);
+        applicationFormValidator.validate(application, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("user.addresses.notempty", mappingResult.getFieldError("currentAddress").getCode());
@@ -147,27 +149,11 @@ public class ApplicationFormValidatorTest {
     }
 
     @Test
-    public void shouldRejectIfContactAddressIsMissing() {
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
-
-        EasyMock.reset(addressValidatorMock);
-        expect(addressValidatorMock.isValid(currentAddress)).andReturn(true);
-        expect(addressValidatorMock.isValid(contactAddress)).andReturn(false);
-
-        replay(addressValidatorMock);
-        applicationFormValidator.validate(applicationForm, mappingResult);
-
-        Assert.assertEquals(1, mappingResult.getErrorCount());
-        Assert.assertEquals("user.addresses.notempty", mappingResult.getFieldError("contactAddress").getCode());
-
-    }
-
-    @Test
     public void shouldRejectIfFewerThanThreeReferees() {
-        applicationForm.getReferees().remove(2);
-        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+        application.getReferees().remove(2);
+        DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(application, "applicationForm");
 
-        applicationFormValidator.validate(applicationForm, mappingResult);
+        applicationFormValidator.validate(application, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("user.referees.notvalid", mappingResult.getFieldError("referees").getCode());
@@ -177,17 +163,16 @@ public class ApplicationFormValidatorTest {
     @Test
     public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
         StudyOption studyOption = new StudyOption("dupa", "jasia");
-        ProgramDetails programmeDetail = applicationForm.getProgramDetails();
+        ProgramDetails programmeDetail = application.getProgramDetails();
         programmeDetail.setStudyOption(studyOption);
-        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "programmeDetails.studyOption");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(application, "programmeDetails.studyOption");
 
         EasyMock.reset(programService);
-        EasyMock.expect(programService.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
-                null);
+        EasyMock.expect(programService.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(null);
         EasyMock.expect(programService.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance));
 
         EasyMock.replay(programService);
-        applicationFormValidator.validate(applicationForm, mappingResult);
+        applicationFormValidator.validate(application, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("programmeDetails.studyOption.invalid", mappingResult.getFieldError("programmeDetails.studyOption").getCode());
@@ -198,17 +183,16 @@ public class ApplicationFormValidatorTest {
     @Test
     public void shouldRejectIfNoCurrentProgrammeInstancesExist() {
         StudyOption studyOption = new StudyOption("dupa", "jasia");
-        ProgramDetails programmeDetail = applicationForm.getProgramDetails();
+        ProgramDetails programmeDetail = application.getProgramDetails();
         programmeDetail.setStudyOption(studyOption);
-        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "program");
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(application, "program");
 
         EasyMock.reset(programService);
-        EasyMock.expect(programService.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(
-                Collections.EMPTY_LIST);
+        EasyMock.expect(programService.getActiveProgramInstancesForStudyOption(program, programmeDetail.getStudyOption())).andReturn(Collections.EMPTY_LIST);
         EasyMock.expect(programService.getActiveProgramInstances(program)).andReturn(Collections.EMPTY_LIST);
 
         EasyMock.replay(programService);
-        applicationFormValidator.validate(applicationForm, mappingResult);
+        applicationFormValidator.validate(application, mappingResult);
 
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("application.program.invalid", mappingResult.getFieldError("program").getCode());
@@ -217,9 +201,9 @@ public class ApplicationFormValidatorTest {
 
     @Test
     public void shouldRejectIfNotAcceptedTheTerms() {
-        applicationForm.setAcceptedTermsOnSubmission(false);
-        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "acceptedTermsOnSubmission");
-        applicationFormValidator.validate(applicationForm, mappingResult);
+        application.setAcceptedTermsOnSubmission(false);
+        BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(application, "acceptedTermsOnSubmission");
+        applicationFormValidator.validate(application, mappingResult);
         EasyMock.verify(programService);
         Assert.assertEquals(1, mappingResult.getErrorCount());
         Assert.assertEquals("text.field.empty", mappingResult.getFieldError("acceptedTermsOnSubmission").getCode());
@@ -234,43 +218,51 @@ public class ApplicationFormValidatorTest {
         program.getInstances().addAll(Arrays.asList(programInstance));
         personalDetails = new PersonalDetailsBuilder().id(1).build();
         programmeDetails = new ProgrammeDetailsBuilder().studyOption(new StudyOption("1", "Full-time")).id(2).build();
-        currentAddress = new AddressBuilder().address1("address").build();
-        contactAddress = new AddressBuilder().address1("address").build();
+        address = new ApplicationAddress();
         additionalInformation = new AdditionalInformationBuilder().id(3).build();
-        applicationForm = new ApplicationFormBuilder().program(program).programmeDetails(programmeDetails).acceptedTerms(true).personalDetails(personalDetails)
-                .additionalInformation(additionalInformation)//
-                .applicationFormAddress(new ApplicationAddress().withCurrentAddress(currentAddress).withContactAddress(contactAddress))
-                .referees(new Referee(), new Referee(), new Referee())//
-                .applicationFormDocument(new ApplicationDocument().withPersonalStatement(new Document())).build();
+        document = new ApplicationDocument().withPersonalStatement(new Document());
+
+        application = new ApplicationForm() //
+                .withProgram(program) //
+                .withPersonalDetails(personalDetails) //
+                .withProgramDetails(programmeDetails) //
+                .withAddress(address) //
+                .withAdditionalInformation(additionalInformation)//
+                .withReferees(new Referee(), new Referee(), new Referee())//
+                .withDocument(document) //
+                .withAcceptedTerms(true);
 
         programService = EasyMock.createMock(ProgramService.class);
-        programmeDetailsValidatorMock = EasyMock.createMock(ProgramDetailsValidator.class);
+        programDetailsValidatorMock = EasyMock.createMock(ProgramDetailsValidator.class);
         personalDetailsValidatorMock = EasyMock.createMock(PersonalDetailsValidator.class);
-        addressValidatorMock = EasyMock.createMock(AddressValidator.class);
+        applicationFormAddressValidatorMock = EasyMock.createMock(ApplicationFormAddressValidator.class);
         additionalInformationValidatorMock = EasyMock.createMock(AdditionalInformationValidator.class);
+        applicationFormDocumentValidatorMock = EasyMock.createMock(ApplicationFormDocumentValidator.class);
 
-        expect(programmeDetailsValidatorMock.isValid(programmeDetails)).andReturn(true);
+        expect(programDetailsValidatorMock.isValid(programmeDetails)).andReturn(true);
         expect(personalDetailsValidatorMock.isValid(personalDetails)).andReturn(true);
-        expect(addressValidatorMock.isValid(currentAddress)).andReturn(true);
-        expect(addressValidatorMock.isValid(contactAddress)).andReturn(true);
+        expect(applicationFormAddressValidatorMock.isValid(address)).andReturn(true);
         expect(additionalInformationValidatorMock.isValid(additionalInformation)).andReturn(true);
+        expect(applicationFormDocumentValidatorMock.isValid(document)).andReturn(true);
         EasyMock.expect(programService.getActiveProgramInstancesForStudyOption(program, programmeDetails.getStudyOption())).andReturn(
                 Arrays.asList(programInstance));
 
-        applicationFormValidator =  new ApplicationFormValidator();
+        applicationFormValidator = new ApplicationFormValidator();
         InjectionUtils.injectInto(programService, applicationFormValidator, "programService");
-        InjectionUtils.injectInto(programmeDetailsValidatorMock, applicationFormValidator, "programmeDetailsValidator");
+        InjectionUtils.injectInto(programDetailsValidatorMock, applicationFormValidator, "programDetailsValidator");
         InjectionUtils.injectInto(personalDetailsValidatorMock, applicationFormValidator, "personalDetailsValidator");
-        InjectionUtils.injectInto(addressValidatorMock, applicationFormValidator, "addressValidator");
+        InjectionUtils.injectInto(applicationFormAddressValidatorMock, applicationFormValidator, "applicationFormAddressValidator");
         InjectionUtils.injectInto(additionalInformationValidatorMock, applicationFormValidator, "additionalInformationValidator");
+        InjectionUtils.injectInto(applicationFormDocumentValidatorMock, applicationFormValidator, "applicationFormDocumentValidator");
         applicationFormValidator.setValidator((javax.validation.Validator) validator);
 
-        replay(programmeDetailsValidatorMock, personalDetailsValidatorMock, addressValidatorMock, additionalInformationValidatorMock, programService);
+        replay(programService, programDetailsValidatorMock, personalDetailsValidatorMock, applicationFormAddressValidatorMock,
+                additionalInformationValidatorMock, applicationFormDocumentValidatorMock);
     }
 
     @After
     public void verify() {
-        EasyMock.verify(programmeDetailsValidatorMock, personalDetailsValidatorMock, addressValidatorMock, additionalInformationValidatorMock,
-                programService);
+        EasyMock.verify(programService, programDetailsValidatorMock, personalDetailsValidatorMock, applicationFormAddressValidatorMock,
+                additionalInformationValidatorMock, applicationFormDocumentValidatorMock);
     }
 }

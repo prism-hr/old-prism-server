@@ -55,8 +55,8 @@
         <#if application.applicationFormStatusWhenWithdrawn?has_content &&
         	 application.applicationFormStatusWhenWithdrawn == "UNSUBMITTED">
           Aborted
-        <#elseif application.applicationFormCreatedTimestamp?has_content>
-          ${(application.applicationFormCreatedTimestamp?string("dd MMM yyyy"))}
+        <#elseif application.applicationFormSubmittedTimestamp?has_content>
+          ${(application.applicationFormSubmittedTimestamp?string("dd MMM yyyy"))}
         <#else>
           <a class="btn btn-success" href="/pgadmissions/application?view=view&applicationId=${application.applicationFormNumber}">Proceed</a>
         </#if> 

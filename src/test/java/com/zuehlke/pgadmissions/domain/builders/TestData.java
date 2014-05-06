@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.Date;
+
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.Address;
@@ -8,9 +10,11 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 
@@ -42,4 +46,12 @@ public class TestData {
                 .withStudyDuration(20).withProgramType(programType).withUser(user).withInstitution(institution);
     }
 
+    public static State aState(PrismState stateValue) {
+        return new State().withId(stateValue);
+    }
+
+    public static UserRole aUserRole(ApplicationForm applicaton, Role role, User user, User requestingUser) {
+        return new UserRole().withApplication(applicaton).withRole(role).withUser(user).withRequestingUser(requestingUser).withAssignedTimestamp(new Date());
+    }
+    
 }

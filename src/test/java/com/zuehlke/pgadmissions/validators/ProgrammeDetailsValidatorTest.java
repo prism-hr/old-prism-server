@@ -35,14 +35,13 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -380,7 +379,7 @@ public class ProgrammeDetailsValidatorTest {
         User currentUser = new UserBuilder().id(1).build();
         SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisor().withUser(
                 new User().withFirstName("Mark").withLastName("Johnson").withEmail("mark@gmail.com")).withAware(true);
-        program = new ProgramBuilder().id(1).title("Program 1").state(ProgramState.PROGRAM_APPROVED).build();
+        program = new Program().withId(1).withTitle("Program 1").withState(ProgramState.PROGRAM_APPROVED);
         programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
                 .applicationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2025/08/06"))
                 .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).enabled(true).build();

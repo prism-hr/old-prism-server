@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SupervisionConfirmationComment;
+import com.zuehlke.pgadmissions.domain.User;
 
 public class SupervisionConfirmationCommentBuilder {
 

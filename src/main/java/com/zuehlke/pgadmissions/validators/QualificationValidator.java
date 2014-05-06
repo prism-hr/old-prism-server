@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;

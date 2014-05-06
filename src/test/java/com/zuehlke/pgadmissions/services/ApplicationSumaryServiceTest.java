@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.easymock.EasyMock.createMock;
-
 import java.util.Date;
 
 import org.joda.time.DateTime;

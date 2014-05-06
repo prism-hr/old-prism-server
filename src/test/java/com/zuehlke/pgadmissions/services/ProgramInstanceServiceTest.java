@@ -5,7 +5,6 @@ import static org.easymock.EasyMock.isA;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -14,7 +13,6 @@ import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.util.List;
 
-import org.easymock.EasyMock;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;

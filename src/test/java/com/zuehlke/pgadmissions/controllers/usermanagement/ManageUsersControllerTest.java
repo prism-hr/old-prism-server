@@ -25,7 +25,6 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UserDTO;
@@ -98,8 +97,8 @@ public class ManageUsersControllerTest {
 
     @Test
     public void shouldReturnAllProgramsForSuperAdminUser() {
-        Program program1 = new ProgramBuilder().id(1).build();
-        Program program2 = new ProgramBuilder().id(2).build();
+        Program program1 = new Program().withId(1);
+        Program program2 = new Program().withId(2);
         EasyMock.expect(programService.getAllEnabledPrograms()).andReturn(Arrays.asList(program1, program2));
         replay();
         List<Program> programs = controller.getPrograms();
@@ -110,8 +109,8 @@ public class ManageUsersControllerTest {
 
     @Test
     public void shouldReturnProgramsOfWhichAdministratorForAdmins() {
-        Program program1 = new ProgramBuilder().id(1).build();
-        Program program2 = new ProgramBuilder().id(2).build();
+        Program program1 = new Program().withId(1);
+        Program program2 = new Program().withId(2);
         replay();
         List<Program> programs = controller.getPrograms();
 
@@ -164,7 +163,7 @@ public class ManageUsersControllerTest {
         newUserDTO.setFirstName("Jane");
         newUserDTO.setLastName("Doe");
         newUserDTO.setEmail("jane.doe@test.com");
-        Program program = new ProgramBuilder().id(5).code("ABC").build();
+        Program program = new Program().withId(5).withCode("ABC");
         newUserDTO.setSelectedProgram(program);
         newUserDTO.setSelectedAuthorities(Authority.APPLICATION_REVIEWER, Authority.PROGRAM_ADMINISTRATOR);
         EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
@@ -190,7 +189,7 @@ public class ManageUsersControllerTest {
         newUserDTO.setFirstName("Jane");
         newUserDTO.setLastName("Doe");
         newUserDTO.setEmail("jane.doe@test.com");
-        Program program = new ProgramBuilder().id(5).code("ABC").build();
+        Program program = new Program().withId(5).withCode("ABC");
         newUserDTO.setSelectedProgram(program);
         newUserDTO.setSelectedAuthorities(Authority.APPLICATION_REVIEWER, Authority.PROGRAM_ADMINISTRATOR);
 

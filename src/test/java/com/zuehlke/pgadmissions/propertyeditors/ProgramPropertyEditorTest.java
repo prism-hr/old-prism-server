@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
 public class ProgramPropertyEditorTest {
@@ -19,7 +18,7 @@ public class ProgramPropertyEditorTest {
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
-		Program program = new ProgramBuilder().id(1).build();
+		Program program = new Program().withId(1);
 		EasyMock.expect(programServiceMock.getProgramByCode("ABC")).andReturn(program);
 		EasyMock.replay(programServiceMock);
 		
@@ -56,13 +55,13 @@ public class ProgramPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnNullIfCodeValueIsNull(){			
-		editor.setValue(new ProgramBuilder().build());
+		editor.setValue(new Program());
 		assertNull(editor.getAsText());
 	}
 	
 	@Test	
 	public void shouldReturnIdAsString(){			
-		editor.setValue(new ProgramBuilder().id(5).code("ABC").build());
+		editor.setValue(new Program().withId(5).withCode("ABC"));
 		EasyMock.replay(programServiceMock);
 		
 		assertEquals("ABC", editor.getAsText());

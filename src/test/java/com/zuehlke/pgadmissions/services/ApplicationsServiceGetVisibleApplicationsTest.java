@@ -44,7 +44,6 @@ import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
@@ -103,7 +102,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         sessionFactory.getCurrentSession().flush();
 
         institution = testObjectProvider.getInstitution();
-        program = new ProgramBuilder().contactUser(superUser).code("doesntexist").title("another title").institution(institution).build();
+        program = new Program().withUser(superUser).withCode("doesntexist").withTitle("another title").withInstitution(institution);
 
         save(applicant, superUser, institution, program);
 
@@ -247,8 +246,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetApplicationBelongingToProgramWithCodeScienceAndOtherTitle() throws ParseException {
-        Program programOne = new ProgramBuilder().code("Program_ZZZZZ_1").title("empty").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
+        Program programOne = new Program().withCode("Program_ZZZZZ_1").withTitle("empty").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC1").program(programOne).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
@@ -274,8 +273,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetApplicationBelongingToProgramWithTitleScienceAndOtherCode() throws ParseException {
-        Program programOne = new ProgramBuilder().code("empty").title("Program_ZZZZZ_1").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
+        Program programOne = new Program().withCode("empty").withTitle("Program_ZZZZZ_1").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
 
@@ -727,14 +726,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         // .withRole(roleDAO.getById(Authority.APPLICANT))
                 .build();
 
-        Program program1 = new ProgramBuilder().code("empty1").title("AAA").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
-        Program program2 = new ProgramBuilder().code("empty2").title("CCC").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
-        Program program3 = new ProgramBuilder().code("empty3").title("BBB").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
-        Program program4 = new ProgramBuilder().code("empty4").title("DDD").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
+        Program program1 = new Program().withCode("empty1").withTitle("AAA").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
+        Program program2 = new Program().withCode("empty2").withTitle("CCC").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
+        Program program3 = new Program().withCode("empty3").withTitle("BBB").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
+        Program program4 = new Program().withCode("empty4").withTitle("DDD").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
         save(program1, program2, program3, program4);
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1)

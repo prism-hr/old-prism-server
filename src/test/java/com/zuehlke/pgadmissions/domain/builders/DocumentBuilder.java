@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
 public class DocumentBuilder {

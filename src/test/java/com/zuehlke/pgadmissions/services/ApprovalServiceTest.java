@@ -349,7 +349,7 @@ public class ApprovalServiceTest {
 //
 //    @Test
 //    public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfApplicationHasProject() {
-//        Program program = new ProgramBuilder().id(1).enabled(true).build();
+//        Program program = new Program().id(1).enabled(true).build();
 //        RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).email("primary.supervisor@email.test").build();
 //        RegisteredUser secondarySupervisor = new RegisteredUserBuilder().id(2).email("secondary.supervisor@email.test").build();
 //        Advert advert = new AdvertBuilder().description("desc").funding("fund").studyDuration(1).title("title").build();

@@ -17,7 +17,6 @@ import org.springframework.context.MessageSource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 import com.zuehlke.pgadmissions.services.ProgramExportService;
@@ -55,7 +54,7 @@ public class ProgramExportControllerTest {
     
     @Test
     public void shouldReturnProgrammesAsJson() {
-        Program program = new ProgramBuilder().id(1).title("foo").build();
+        Program program = new Program().withId(1).withTitle("foo");
         EasyMock.expect(programsServiceMock.getProgramsForWhichCanManageProjects(currentUser)).andReturn(Arrays.asList(program));
         EasyMock.replay(programsServiceMock);
         
@@ -71,7 +70,7 @@ public class ProgramExportControllerTest {
     
     @Test
     public void shouldReturnAllResearchOpportunitiesFeedForCurrentUser() {
-        Program program = new ProgramBuilder().id(1).title("foo").build();
+        Program program = new Program().withId(1).withTitle("foo");
         ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         EasyMock.expect(feedServiceMock.getAllFeedsForUser(currentUser)).andReturn(Arrays.asList(feed));
         EasyMock.expect(feedServiceMock.getIframeHtmlCode(feed)).andReturn(StringUtils.EMPTY);
@@ -105,7 +104,7 @@ public class ProgramExportControllerTest {
     
     @Test
     public void shouldUpdateFeedById() {
-        Program program = new ProgramBuilder().id(1).title("foo").build();
+        Program program = new Program().withId(1).withTitle("foo");
         ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         HashMap<String, Object> json = new HashMap<String, Object>();
         json.put("selectedPrograms", Arrays.asList(1));
@@ -125,7 +124,7 @@ public class ProgramExportControllerTest {
     
     @Test
     public void shouldNotValidateIfTitleIsEmpty() {
-        Program program = new ProgramBuilder().id(1).title("foo").build();
+        Program program = new Program().withId(1).withTitle("foo");
         ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         HashMap<String, Object> json = new HashMap<String, Object>();
         json.put("selectedPrograms", Arrays.asList(1));
@@ -141,7 +140,7 @@ public class ProgramExportControllerTest {
     
     @Test
     public void shouldNotValidateIfFeedFormatIsEmpty() {
-        Program program = new ProgramBuilder().id(1).title("foo").build();
+        Program program = new Program().withId(1).withTitle("foo");
         ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         HashMap<String, Object> json = new HashMap<String, Object>();
         json.put("selectedPrograms", Arrays.asList(1));
@@ -157,7 +156,7 @@ public class ProgramExportControllerTest {
     
     @Test
     public void shouldNotValidateIfProgramsIsEmpty() {
-        Program program = new ProgramBuilder().id(1).title("foo").build();
+        Program program = new Program().withId(1).withTitle("foo");
         ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         HashMap<String, Object> json = new HashMap<String, Object>();
         json.put("feedSize", "LARGE");
@@ -176,7 +175,7 @@ public class ProgramExportControllerTest {
     
     @Test
     public void shouldReturnFeedById() {
-        Program program = new ProgramBuilder().id(1).title("foo").build();
+        Program program = new Program().withId(1).withTitle("foo");
         ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         EasyMock.expect(feedServiceMock.getById(feed.getId())).andReturn(feed);
         EasyMock.expect(feedServiceMock.getIframeHtmlCode(feed)).andReturn(StringUtils.EMPTY);
@@ -199,7 +198,7 @@ public class ProgramExportControllerTest {
     
     @Test
     public void shouldSaveFeed() {
-        Program program = new ProgramBuilder().id(1).title("foo").build();
+        Program program = new Program().withId(1).withTitle("foo");
         ProgramExport feed = new ProgramExport().withId(1).withTitle("foobar").withFormat(ProgramExportFormat.LARGE).withPrograms(program);
         HashMap<String, Object> json = new HashMap<String, Object>();
         json.put("selectedPrograms", Arrays.asList(1));

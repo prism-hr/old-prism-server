@@ -37,12 +37,12 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class ValidApplicationFormBuilder {
@@ -166,8 +166,8 @@ public class ValidApplicationFormBuilder {
                 .identifier("0009").build();
         institution = new Institution().withCode("code").withName("jakas instytucja").withDomicileCode("AE")
                 .withState(new State().withId(PrismState.INSTITUTION_APPROVED));
-        program = new ProgramBuilder().contactUser(approverUser).code("TMRMBISING99").state(ProgramState.PROGRAM_APPROVED).instances(instance)
-                .title("MRes Medical and Biomedical Imaging").institution(institution).build();
+        program = new Program().withUser(approverUser).withCode("TMRMBISING99").withState(ProgramState.PROGRAM_APPROVED).withInstances(instance)
+                .withTitle("MRes Medical and Biomedical Imaging").withInstitution(institution);
         interest = new SourcesOfInterestBuilder().code("BRIT_COUN").name("British Council").build();
         programDetails = new ProgrammeDetailsBuilder().sourcesOfInterest(interest).startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
                 .studyOption(new StudyOption("F+++++", "Full-time")).build();

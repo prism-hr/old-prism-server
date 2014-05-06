@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.workflow;
 
-import java.security.AuthProvider;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -9,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -17,7 +15,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
-import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.User;
@@ -34,7 +31,6 @@ import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.ReviewService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.importers.Importer;
 
 @RunWith(SpringJUnit4ClassRunner.class)

@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,13 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
-
-import com.zuehlke.pgadmissions.utils.DateUtils;
 
 @Entity
 @Table(name = "ADVERT_CLOSING_DATE")

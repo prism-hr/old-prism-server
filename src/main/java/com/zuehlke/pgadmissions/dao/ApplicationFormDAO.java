@@ -27,9 +27,8 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Repository
 @SuppressWarnings("unchecked")

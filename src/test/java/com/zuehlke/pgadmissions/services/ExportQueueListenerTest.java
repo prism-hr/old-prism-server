@@ -1,14 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
 import static java.util.Arrays.asList;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.jms.JMSException;

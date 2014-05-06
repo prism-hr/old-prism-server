@@ -22,15 +22,14 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
+import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -74,7 +73,7 @@ public class RejectServiceTest {
     public void setUp() {
         admin = new UserBuilder().id(324).build();
         approver = new UserBuilder().id(22414).build();
-        Program program = new ProgramBuilder().id(10023).build();
+        Program program = new Program().withId(10023);
         application = new ApplicationFormBuilder().id(200).program(program).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
 
         reason1 = new RejectReasonBuilder().id(1).text("idk").build();

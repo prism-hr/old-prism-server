@@ -872,7 +872,7 @@ public class MailSendingServiceTest {
 //                .lastName(SAMPLE_APPLICANT_SURNAME).build();
 //        RegisteredUser admin1 = new RegisteredUserBuilder().id(2).email(SAMPLE_ADMIN1_EMAIL_ADDRESS).build();
 //        RegisteredUser admin2 = new RegisteredUserBuilder().id(3).email(SAMPLE_ADMIN2_EMAIL_ADDRESS).build();
-//        Program program = new ProgramBuilder().id(4).title(SAMPLE_PROGRAM_TITLE).administrators(admin1, admin2).build();
+//        Program program = new Program().id(4).title(SAMPLE_PROGRAM_TITLE).administrators(admin1, admin2).build();
 //        ProgrammeDetails programDetails = new ProgrammeDetailsBuilder().id(5).build();
 //        RejectReason reason = new RejectReasonBuilder().text(SAMPLE_REJECTION_REASON).build();
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).status(new State().withId(ApplicationFormStatus.APPROVED))

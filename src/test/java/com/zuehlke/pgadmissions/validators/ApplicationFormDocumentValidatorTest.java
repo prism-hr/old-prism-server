@@ -12,13 +12,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testValidatorContext.xml")

@@ -53,7 +53,7 @@ public class OfferRecommendationServiceTest {
 //        ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().startDate(startDate).studyOption("1", "full").build();
 //        ProgramInstance instance = new ProgramInstanceBuilder().applicationStartDate(startDate).applicationDeadline(DateUtils.addDays(startDate, 1))
 //                .enabled(true).studyOption("1", "full").build();
-//        Program program = new ProgramBuilder().id(1).instances(instance).enabled(true).build();
+//        Program program = new Program().id(1).instances(instance).enabled(true).build();
 //        ApprovalRound latestApprovalRound = new ApprovalRoundBuilder().supervisors(new Supervisor()).build();
 //        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.APPROVAL)).program(program).id(2)
 //                .programmeDetails(programmeDetails).latestApprovalRound(latestApprovalRound).build();
@@ -94,7 +94,7 @@ public class OfferRecommendationServiceTest {
 //                .enabled(false).studyOption("1", "full").build();
 //        ProgramInstance instanceEnabled = new ProgramInstanceBuilder().applicationStartDate(DateUtils.addDays(startDate, 3))
 //                .applicationDeadline(DateUtils.addDays(startDate, 4)).enabled(true).studyOption("1", "full").build();
-//        Program program = new ProgramBuilder().id(1).enabled(true).instances(instanceDisabled, instanceEnabled).build();
+//        Program program = new Program().id(1).enabled(true).instances(instanceDisabled, instanceEnabled).build();
 //        ApplicationForm application = new ApplicationFormBuilder().status(new State().withId(ApplicationFormStatus.APPROVAL)).program(program).id(2)
 //                .programmeDetails(programmeDetails).build();
 //        OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();

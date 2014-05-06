@@ -36,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramTypeBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
@@ -120,10 +119,10 @@ public class ProgramConfigurationControllerTest {
     @SuppressWarnings("unchecked")
     public void shouldGetOpportunityData() {
         Domicile domicile = new DomicileBuilder().id(88).build();
-        Program program = new ProgramBuilder().code("07").institution(new Institution().withDomicileCode("PL").withCode("inst"))
-                .id(999).title("Dlaczego w pizdzie nie ma krzesel?").description("Zeby chuj stal").studyDuration(8)
-                .funding("Ni ma kasy").state(ProgramState.PROGRAM_APPROVED).atasRequired(false)
-                .programType(new ProgramTypeBuilder().id(ProgramTypeId.INTERNSHIP).build()).build();
+        Program program = new Program().withCode("07").withInstitution(new Institution().withDomicileCode("PL").withCode("inst"))
+                .withId(999).withTitle("Dlaczego w pizdzie nie ma krzesel?").withDescription("Zeby chuj stal").withStudyDuration(8)
+                .withFunding("Ni ma kasy").withState(ProgramState.PROGRAM_APPROVED).withRequireProjectDefinition(false)
+                .withProgramType(new ProgramTypeBuilder().id(ProgramTypeId.INTERNSHIP).build());
 
         Map<String, Object> dataMap = Maps.newHashMap();
         dataMap.put("advertId", 999);
@@ -174,7 +173,7 @@ public class ProgramConfigurationControllerTest {
 
     @Test
     public void shouldSaveOpportunity() {
-        Program program = new ProgramBuilder().code("p07").build();
+        Program program = new Program().withCode("p07");
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().sourceProgram(program).build();
         BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
         User user = new User();
@@ -193,7 +192,7 @@ public class ProgramConfigurationControllerTest {
 
     @Test
     public void shouldNotSaveOpportunityButCreateNewOpportunityChangeRequest() {
-        Program program = new ProgramBuilder().code("p07").build();
+        Program program = new Program().withCode("p07");
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().sourceProgram(program).build();
         BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
         User user = new User();

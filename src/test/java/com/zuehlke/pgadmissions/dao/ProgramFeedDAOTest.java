@@ -6,8 +6,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
-import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.builders.ProgramFeedBuilder;
 
 public class ProgramFeedDAOTest extends AutomaticRollbackTestCase {

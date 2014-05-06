@@ -51,7 +51,7 @@ public abstract class Advert implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User contactUser;
+    private User user;
 
     @Column(name = "advert_type")
     @Enumerated(EnumType.STRING)
@@ -127,12 +127,12 @@ public abstract class Advert implements Serializable {
         return studyDurationToRead.toString() + " " + timeIntervalToRead;
     }
 
-    public User getContactUser() {
-        return contactUser;
+    public User getUser() {
+        return user;
     }
 
-    public void setContactUser(User contactUser) {
-        this.contactUser = contactUser;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public AdvertType getAdvertType() {

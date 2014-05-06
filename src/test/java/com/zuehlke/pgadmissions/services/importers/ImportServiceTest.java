@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.ImportedObject;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.referencedata.adapters.CountryOfBirthAdapter;
 import com.zuehlke.pgadmissions.referencedata.adapters.ImportData;
@@ -71,9 +70,8 @@ public class ImportServiceTest {
 
     @Test
     public void testMergeProgrammeData() {
-        ProgramBuilder pb = new ProgramBuilder();
-        Program p1 = pb.code("A").title("A").id(1).build();
-        Program p2 = pb.code("B").title("B").id(2).build();
+        Program p1 = new Program().withCode("A").withTitle("A").withId(1);
+        Program p2 = new Program().withCode("B").withTitle("B").withId(2);
 
         Date deadline = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
         String deadlineStr = new SimpleDateFormat("yyyy-MM-dd").format(deadline);

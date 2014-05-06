@@ -20,8 +20,8 @@ import com.zuehlke.pgadmissions.domain.CompleteReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.dto.StateChangeDTO;
 import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
 

@@ -110,7 +110,7 @@ public class InterviewCommentControllerTest {
 //    @Test
 //    public void shouldCreateNewInterviewCommentForApplicationForm() throws Exception {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.INTERVIEW).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.INTERVIEW, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.INTERVIEW, scoringDefinition)).build();
 //        final ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
 //        final RegisteredUser currentUser = createMock(RegisteredUser.class);
 //        final Interviewer interviewer = new InterviewerBuilder().id(5).build();
@@ -141,7 +141,7 @@ public class InterviewCommentControllerTest {
 //    @Test
 //    public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.INTERVIEW).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.INTERVIEW, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.INTERVIEW, scoringDefinition)).build();
 //        final ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
 //        final RegisteredUser currentUser = createMock(RegisteredUser.class);
 //        final Interviewer interviewer = new InterviewerBuilder().id(5).build();
@@ -174,7 +174,7 @@ public class InterviewCommentControllerTest {
 //    @Test
 //    public void shouldReturnToCommentsPageIfErrors() throws ScoringDefinitionParseException {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
 //        final ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
 //        InterviewComment comment = new InterviewCommentBuilder().application(applicationForm).build();
 //        BindingResult errorsMock = new BeanPropertyBindingResult(comment, "comment");
@@ -186,7 +186,7 @@ public class InterviewCommentControllerTest {
 //    @Test
 //    public void shouldSaveCommentAndResetAppAdminAndToApplicationListIfNoErrors() throws ScoringDefinitionParseException {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
 //        ApplicationForm application = new ApplicationFormBuilder().id(6).applicationNumber("abc").applicationAdministrator(new RegisteredUser())
 //                .program(program).build();
 //        Interview interview = new Interview();

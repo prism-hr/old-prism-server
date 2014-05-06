@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,6 +148,86 @@ public class Program extends Advert implements PrismScope {
     @Override
     public boolean isEnabled() {
         return state == ProgramState.PROGRAM_APPROVED;
+    }
+    
+    public Program withId(Integer id) {
+        setId(id);
+        return this;
+    }
+
+    public Program withTitle(String title) {
+        setTitle(title);
+        return this;
+    }
+
+    public Program withDescription(String description) {
+        setDescription(description);
+        return this;
+    }
+
+    public Program withStudyDuration(Integer studyDuration) {
+        setStudyDuration(studyDuration);
+        return this;
+    }
+
+    public Program withFunding(String funding) {
+        setFunding(funding);
+        return this;
+    }
+
+    public Program withState(ProgramState state) {
+        this.state = state;
+        return this;
+    }
+
+    public Program withUser(User contactUser) {
+        setUser(contactUser);
+        return this;
+    }
+
+    public Program withRequireProjectDefinition(boolean flag) {
+        requireProjectDefinition = flag;
+        return this;
+    }
+
+    public Program withInstances(ProgramInstance... instances) {
+        this.instances.addAll(Arrays.asList(instances));
+        return this;
+    }
+
+    public Program withScoringDefinitions(Map<ScoringStage, ScoringDefinition> scoringDefinitions) {
+        this.scoringDefinitions.putAll(scoringDefinitions);
+        return this;
+    }
+
+    public Program withCode(String code) {
+        this.code = code;
+        return this;
+    }
+
+    public Program withClosingDates(AdvertClosingDate... closingDates) {
+        getClosingDates().addAll(Arrays.asList(closingDates));
+        return this;
+    }
+
+    public Program withProjects(Project... projects) {
+        this.projects.addAll(Arrays.asList(projects));
+        return this;
+    }
+
+    public Program withInstitution(Institution institution) {
+        this.institution = institution;
+        return this;
+    }
+
+    public Program withProgramImport(ProgramImport programImport) {
+        this.programImport = programImport;
+        return this;
+    }
+
+    public Program withProgramType(ProgramType programType) {
+        this.programType = programType;
+        return this;
     }
 
 }

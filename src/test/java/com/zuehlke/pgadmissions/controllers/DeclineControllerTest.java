@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.controllers;
 import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMock;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.ui.ModelMap;
@@ -19,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ActionService;

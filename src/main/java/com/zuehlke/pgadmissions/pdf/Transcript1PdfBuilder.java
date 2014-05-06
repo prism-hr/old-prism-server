@@ -14,7 +14,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.enums.ActionType;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 

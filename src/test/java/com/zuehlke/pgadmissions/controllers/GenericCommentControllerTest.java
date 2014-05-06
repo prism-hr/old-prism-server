@@ -18,10 +18,8 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -42,7 +40,7 @@ public class GenericCommentControllerTest {
 
     @Test
     public void shouldGetApplicationFormFromId() {
-        Program program = new ProgramBuilder().id(7).build();
+        Program program = new Program().withId(7);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 
         User currentUser = EasyMock.createMock(User.class);

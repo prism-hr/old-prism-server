@@ -50,7 +50,6 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.OfferRecommendedCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;

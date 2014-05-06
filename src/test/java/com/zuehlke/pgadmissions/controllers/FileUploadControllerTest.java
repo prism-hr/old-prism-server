@@ -14,13 +14,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;

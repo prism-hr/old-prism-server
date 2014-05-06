@@ -6,9 +6,8 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import javax.validation.Validator;
 
@@ -31,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 
@@ -309,7 +307,7 @@ public class OpportunityRequestValidatorTest {
 
     @Test
     public void shouldIgnoreSomeFieldsIfValidatingRequestForBuiltInProgram() {
-        opportunityRequest.setSourceProgram(new ProgramBuilder().programFeed(new ProgramImport()).build());
+        opportunityRequest.setSourceProgram(new Program().withProgramImport(new ProgramImport()));
         opportunityRequest.setProgramTitle(null);
         opportunityRequest.setAuthor(null);
         opportunityRequest.setStudyOptions(null);

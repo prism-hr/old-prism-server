@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.ScoringDefinition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -127,7 +126,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldApplyScoringDefinition() {
-        Program program = new ProgramBuilder().build();
+        Program program = new Program();
 
         EasyMock.expect(programDAOMock.getProgramByCode("any_code")).andReturn(program);
 
@@ -192,7 +191,7 @@ public class ProgramsServiceTest {
         Program program = programsService.createOrGetProgram(opportunityRequest);
         verify();
 
-        assertSame(program.getContactUser(), requestAuthor);
+        assertSame(program.getUser(), requestAuthor);
         assertSame(programCapture.getValue(), program);
         assertEquals(opportunityRequest.getAtasRequired(), program.getRequireProjectDefinition());
         assertSame(institution, program.getInstitution());
@@ -203,7 +202,7 @@ public class ProgramsServiceTest {
     @Test
     public void shouldGetCustomProgram() {
         ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
-        Program program = new ProgramBuilder().institution(new Institution().withCode("any_inst")).build();
+        Program program = new Program().withInstitution(new Institution().withCode("any_inst"));
         User requestAuthor = new User();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, null).institutionCode("any_inst")
                 .atasRequired(true).sourceProgram(program).acceptingApplications(true).build();
@@ -225,13 +224,13 @@ public class ProgramsServiceTest {
         assertEquals(program.getFunding(), opportunityRequest.getFunding());
         assertEquals(ProgramState.PROGRAM_APPROVED, program.getState());
         assertSame(program.getProgramType(), opportunityRequest.getProgramType());
-        assertSame(program.getContactUser(), requestAuthor);
+        assertSame(program.getUser(), requestAuthor);
     }
 
     @Test
     public void shouldGenerateNextProgramCode() {
         Institution institution = new Institution().withCode("AAA");
-        Program lastCustomProgram = new ProgramBuilder().code("AAA_00018").build();
+        Program lastCustomProgram = new Program().withCode("AAA_00018");
 
         expect(programDAOMock.getLastCustomProgram(institution)).andReturn(lastCustomProgram);
 
@@ -244,7 +243,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldUpdateClosingDate() {
-        Program program = new ProgramBuilder().code("AAA_00018").description("program").studyDuration(12).state(ProgramState.PROGRAM_APPROVED).build();
+        Program program = new Program().withCode("AAA_00018").withDescription("program").withStudyDuration(12).withState(ProgramState.PROGRAM_APPROVED);
         AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).advert(program).build();
         programDAOMock.updateClosingDate(closingDate);
         replay();
@@ -254,7 +253,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldAddClosingDateToProgram() {
-        Program program = new ProgramBuilder().code("AAA_00018").description("program").studyDuration(12).state(ProgramState.PROGRAM_APPROVED).build();
+        Program program = new Program().withCode("AAA_00018").withDescription("program").withStudyDuration(12).withState(ProgramState.PROGRAM_APPROVED);
         AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).advert(program).build();
         programDAOMock.save(program);
         replay();

@@ -20,8 +20,8 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
+import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 
 public class AdvertDAOTest extends AutomaticRollbackTestCase {

@@ -17,8 +17,8 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ProgramExportDAO;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 
 import freemarker.template.Template;

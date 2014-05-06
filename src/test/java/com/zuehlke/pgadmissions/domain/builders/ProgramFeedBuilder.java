@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.ProgramImport;
 
 public class ProgramFeedBuilder {
 

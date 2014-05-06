@@ -4,12 +4,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
@@ -20,14 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReminderType;
 
 @Repository

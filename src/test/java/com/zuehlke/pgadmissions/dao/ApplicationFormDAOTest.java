@@ -31,8 +31,6 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -112,8 +110,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
 
         Institution institution = testObjectProvider.getInstitution();
-        Program program = new ProgramBuilder().code("test").title("test").description("test")
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).institution(institution).build();
+        Program program = new Program().withCode("test").withTitle("test").withDescription("test")
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).withInstitution(institution);
         save(program);
 
         long number = applicationDAO.getApplicationsInProgramThisYear(program, thisYear);

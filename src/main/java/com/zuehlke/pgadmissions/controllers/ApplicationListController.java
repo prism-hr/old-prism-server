@@ -36,10 +36,10 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller

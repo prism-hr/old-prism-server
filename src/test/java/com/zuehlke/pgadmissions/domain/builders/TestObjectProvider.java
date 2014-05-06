@@ -21,12 +21,12 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 
 public class TestObjectProvider {

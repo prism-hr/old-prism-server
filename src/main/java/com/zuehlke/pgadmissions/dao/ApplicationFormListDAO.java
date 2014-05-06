@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory.CategoryType;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
@@ -82,7 +83,7 @@ public class ApplicationFormListDAO {
                                 .add(Projections.property("project.title"), "projectTitle")
                                 // TODO compute rating
                                 // .add(Projections.property("application.averageRating"), "applicantAverageRating")
-                                .add(Projections.property("application.state"), "applicationFormStatus")
+                                .add(Projections.property("application.state.id"), "applicationFormStatus")
                                 // TODO compute next and last status based on comments
                                 // .add(Projections.property("application.nextStatus"), "applicationFormNextStatus")
                                 // .add(Projections.property("application.statusWhenWithdrawn"), "applicationFormStatusWhenWithdrawn")
@@ -95,7 +96,7 @@ public class ApplicationFormListDAO {
         appendJoinStatements(criteria);
         appendWhereStatement(criteria, user, filtering);
 
-        criteria.add(Restrictions.leProperty("assignedTimestamp", "registeredUser.applicationListLastAccessTimestamp"));
+        criteria.add(Restrictions.leProperty("assignedTimestamp", "userAccount.applicationListLastAccessTimestamp"));
 
         appendOrderStatement(criteria, filtering);
         appendLimitStatement(criteria, (blockCount - 1) * itemsPerPage, itemsPerPage);
@@ -117,13 +118,12 @@ public class ApplicationFormListDAO {
 
     private void appendJoinStatements(Criteria criteria) {
         criteria.createAlias("application", "application", JoinType.INNER_JOIN).createAlias("application.user", "applicant", JoinType.INNER_JOIN)
-                .createAlias("application.program", "program", JoinType.INNER_JOIN).createAlias("user", "registeredUser", JoinType.INNER_JOIN)
-                .createAlias("application.project", "project", JoinType.LEFT_OUTER_JOIN).createAlias("application.applicationDocument", "applicationDocument");
+                .createAlias("application.program", "program", JoinType.INNER_JOIN).createAlias("user", "user", JoinType.INNER_JOIN)
+                .createAlias("user.account", "userAccount", JoinType.INNER_JOIN)
+                .createAlias("application.project", "project", JoinType.LEFT_OUTER_JOIN).createAlias("application.applicationDocument", "applicationDocument", JoinType.LEFT_OUTER_JOIN);
     }
 
     private void appendWhereStatement(Criteria criteria, User user, ApplicationsFiltering filtering) {
-        criteria.add(Restrictions.eq("user", user)).add(Restrictions.ne("role.id", Authority.SUGGESTEDSUPERVISOR));
-
         if (filtering != null) {
             boolean useDisjunction = filtering.getUseDisjunction();
 
@@ -152,7 +152,7 @@ public class ApplicationFormListDAO {
                                     .add(Restrictions.like("program.code", StringUtils.lowerCase(searchTerm), MatchMode.ANYWHERE));
                             break;
                         case APPLICATION_STATUS:
-                            criterion = Restrictions.eq("application.state.id", searchTerm);
+                            criterion = Restrictions.eq("application.state.id", PrismState.convert(searchTerm));
                             break;
                         case PROJECT_TITLE:
                             criterion = Restrictions.disjunction() //
@@ -183,7 +183,7 @@ public class ApplicationFormListDAO {
 
                     } else if (searchCategory.getType() == CategoryType.DATE) {
                         if (searchCategory == SearchCategory.SUBMISSION_DATE) {
-                            criterion = getCriteriaForDate(searchPredicate, searchTerm, "application.submittedDate");
+                            criterion = getCriteriaForDate(searchPredicate, searchTerm, "application.submittedTimestamp");
                         } else if (searchCategory == SearchCategory.LAST_EDITED_DATE) {
                             // FIXME use comments
                             // criterion = getCriteriaForDate(searchPredicate, searchTerm, "application.lastUpdated");
@@ -277,11 +277,12 @@ public class ApplicationFormListDAO {
             break;
 
         case RATING:
-            criteria.addOrder(getOrderCriteria("applicationForm.averageRating", doSortAscending));
-            applyDefaultSortOrder(criteria, doSortAscending);
+            // TODO apply sort based on rating
+//            criteria.addOrder(getOrderCriteria("application.averageRating", doSortAscending));
+//            applyDefaultSortOrder(criteria, doSortAscending);
 
         case APPLICATION_STATUS:
-            criteria.addOrder(getOrderCriteria("applicationForm.state.id", doSortAscending));
+            criteria.addOrder(getOrderCriteria("application.state.id", doSortAscending));
             applyDefaultSortOrder(criteria, doSortAscending);
             break;
 
@@ -295,8 +296,8 @@ public class ApplicationFormListDAO {
     }
 
     private void applyDefaultSortOrder(Criteria criteria, Boolean doSortAscending) {
-        criteria.addOrder(getOrderCriteria("applicationForm.submittedDate", doSortAscending));
-        criteria.addOrder(getOrderCriteria("applicationForm.applicationTimestamp", doSortAscending));
+        criteria.addOrder(getOrderCriteria("application.submittedTimestamp", doSortAscending));
+        criteria.addOrder(getOrderCriteria("application.createdTimestamp", doSortAscending));
     }
 
     private void applyOrderByUrgentAndUpdate(Criteria criteria, Boolean doSortAscending) {

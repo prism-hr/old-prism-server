@@ -23,7 +23,6 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -70,7 +69,7 @@ public class SubmitApplicationFormControllerTest {
 
     @Test
     public void shouldSubmitApplicationForm() throws UnknownHostException {
-        User applicant = new UserBuilder().id(1).build();
+        User applicant = new User().withId(1);
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant).applicationNumber("abc").build();
         BindingResult bindingResult = new BeanPropertyBindingResult(applicationForm, "applicationForm");
         MockHttpServletRequest request = new MockHttpServletRequest();

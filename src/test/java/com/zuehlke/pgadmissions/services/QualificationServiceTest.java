@@ -79,8 +79,8 @@ public class QualificationServiceTest {
         Document existingDocument = new Document();
         Document document = new Document();
 
-        Qualification existingQualification = new QualificationBuilder().proofOfAward(existingDocument).build();
-        Qualification qualification = new QualificationBuilder().proofOfAward(document).build();
+        Qualification existingQualification = new QualificationBuilder().document(existingDocument).build();
+        Qualification qualification = new QualificationBuilder().document(document).build();
 
         documentServiceMock.replaceDocument(existingDocument, document);
         expect(qualificationDAOMock.getById(43)).andReturn(existingQualification);

@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -70,7 +69,7 @@ public class GenericCommentControllerTest {
 
     @Test
     public void shouldReturnCurrentUser() {
-        User currentUser = new UserBuilder().id(8).build();
+        User currentUser = new User().withId(8);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
         assertEquals(currentUser, controller.getUser());
@@ -79,7 +78,7 @@ public class GenericCommentControllerTest {
     @Test
     public void shouldCreateNewCommentForApplicationForm() {
         final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
-        User currentUser = new UserBuilder().id(8).build();
+        User currentUser = new User().withId(8);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
         EasyMock.replay(userServiceMock);
         controller = new GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock,

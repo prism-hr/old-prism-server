@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 
@@ -40,8 +39,8 @@ public class ApplicationsFilteringDAOTest extends AutomaticRollbackTestCase {
 
     @Before
     public void prepare() {
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .userAccount(new UserAccount().withEnabled(false)).build();
+        user = new User().withFirstName("Jane").withLastName("Doe").withEmail("email@test.com")
+                .withAccount(new UserAccount().withEnabled(false));
         save(user);
         flushAndClearSession();
     }

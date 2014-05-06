@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class CommentServiceTest {
@@ -52,7 +51,7 @@ public class CommentServiceTest {
     @Test
     public void shouldDeclineReview() {
         ApplicationForm application = new ApplicationForm();
-        User reviewerUser = new UserBuilder().id(1).build();
+        User reviewerUser = new User().withId(1);
         final ReviewComment reviewComment = new ReviewCommentBuilder().id(1).user(reviewerUser).build();
 
         service.declineReview(reviewerUser, application);

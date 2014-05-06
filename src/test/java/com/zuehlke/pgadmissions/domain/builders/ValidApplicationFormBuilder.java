@@ -110,15 +110,15 @@ public class ValidApplicationFormBuilder {
     }
 
     public ApplicationForm build() {
-        user = new UserBuilder().firstName("Kevin").firstName2("Franciszek").firstName3("Duncan").lastName("Denver").email("ked@zuhlke.com")
-                .userAccount(new UserAccount().withEnabled(true)).build();
+        user = new User().withFirstName("Kevin").withFirstName2("Franciszek").withFirstName3("Duncan").withLastName("Denver").withEmail("ked@zuhlke.com")
+                .withAccount(new UserAccount().withEnabled(true));
         cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);
         referenceDocument = getRandomDocument(DocumentType.REFERENCE, "My Reference.pdf", user);
         personalStatement = getRandomDocument(DocumentType.PERSONAL_STATEMENT, "My Personal Statement (v1.0).pdf", user);
         proofOfAwardDocument = getRandomDocument(DocumentType.PROOF_OF_AWARD, "My Proof of Award.pdf", user);
         languageQualificationDocument = getRandomDocument(DocumentType.LANGUAGE_QUALIFICATION, "Language Qualification - My Name.pdf", user);
         fundingDocument = getRandomDocument(DocumentType.SUPPORTING_FUNDING, "Supporting Funding - My Name.pdf", user);
-        approverUser = new UserBuilder().id(Integer.MAX_VALUE - 1).email("approver@zhaw.ch").userAccount(new UserAccount().withEnabled(true)).build();
+        approverUser = new User().withId(Integer.MAX_VALUE - 1).withEmail("approver@zhaw.ch").withAccount(new UserAccount().withEnabled(true));
         country = new CountryBuilder().code("XK").name("United Kingdom").enabled(true).build();
         domicile = new DomicileBuilder().code("XK").name("United Kingdom").enabled(true).build();
         address = TestData.anAddress(domicile);
@@ -172,10 +172,10 @@ public class ValidApplicationFormBuilder {
         qualificationType = new QualificationTypeBuilder().code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
         qualification1 = new QualificationBuilder().id(Integer.MAX_VALUE - 1).awardDate(new Date()).grade("6").institution(institution)
                 .languageOfStudy("English").startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).subject("Engineering").title("MSc")
-                .type(qualificationType).isCompleted(true).proofOfAward(proofOfAwardDocument).sendToUCL(true).build();
+                .type(qualificationType).isCompleted(true).document(proofOfAwardDocument).sendToUCL(true).build();
         qualification2 = new QualificationBuilder().id(Integer.MAX_VALUE - 2).awardDate(new Date()).grade("6").institution(institution)
                 .languageOfStudy("English").startDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).subject("Engineering").title("MSc")
-                .type(qualificationType).isCompleted(true).proofOfAward(proofOfAwardDocument).sendToUCL(true).build();
+                .type(qualificationType).isCompleted(true).document(proofOfAwardDocument).sendToUCL(true).build();
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
                 .type(FundingType.SCHOLARSHIP).value("5").build();
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)

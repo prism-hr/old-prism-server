@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramState;
@@ -376,7 +375,7 @@ public class ProgrammeDetailsValidatorTest {
     public void setup() throws ParseException {
         SourcesOfInterest interest = new SourcesOfInterestBuilder().id(1).name("ZZ").code("ZZ").build();
         Role role = new Role().withId(Authority.APPLICATION_CREATOR);
-        User currentUser = new UserBuilder().id(1).build();
+        User currentUser = new User().withId(1);
         SuggestedSupervisor suggestedSupervisor = new SuggestedSupervisor().withUser(
                 new User().withFirstName("Mark").withLastName("Johnson").withEmail("mark@gmail.com")).withAware(true);
         program = new Program().withId(1).withTitle("Program 1").withState(ProgramState.PROGRAM_APPROVED);

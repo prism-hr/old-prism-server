@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 
@@ -71,8 +70,8 @@ public class RejectServiceTest {
 
     @Before
     public void setUp() {
-        admin = new UserBuilder().id(324).build();
-        approver = new UserBuilder().id(22414).build();
+        admin = new User().withId(324);
+        approver = new User().withId(22414);
         Program program = new Program().withId(10023);
         application = new ApplicationFormBuilder().id(200).program(program).status(new State().withId(PrismState.APPLICATION_VALIDATION)).build();
 

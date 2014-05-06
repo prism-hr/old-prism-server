@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -43,7 +42,7 @@ public class RefereeValidatorTest {
     @Before
     public void setup() {
         userServiceMock = EasyMock.createMock(UserService.class);
-        currentUser = new UserBuilder().id(9).email("me@test.com").build();
+        currentUser = new User().withId(9).withEmail("me@test.com");
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
         EasyMock.replay(userServiceMock);
         referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build())

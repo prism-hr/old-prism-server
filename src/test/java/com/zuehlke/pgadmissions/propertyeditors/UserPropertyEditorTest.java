@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 public class UserPropertyEditorTest {
@@ -44,7 +44,7 @@ public class UserPropertyEditorTest {
 		EasyMock.expect(encryptionHelperMock.encrypt(121)).andReturn("encrypted");
 		EasyMock.replay(encryptionHelperMock);
 
-		editor.setValue(new UserBuilder().firstName("Mark").id(121).lastName("Johnson").email("test@gmail.com").build());
+		editor.setValue(new User().withFirstName("Mark").withId(121).withLastName("Johnson").withEmail("test@gmail.com"));
 
 		assertEquals("{\"id\": \"encrypted\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\"}", editor.getAsText());
 		EasyMock.verify(encryptionHelperMock);

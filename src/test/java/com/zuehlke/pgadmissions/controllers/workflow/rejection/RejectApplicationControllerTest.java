@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -82,7 +81,7 @@ public class RejectApplicationControllerTest {
 
     @Test
     public void getRejectionPage() {
-        User admin = new UserBuilder().id(1).build();
+        User admin = new User().withId(1);
         ApplicationForm application = new ApplicationForm();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
@@ -142,7 +141,7 @@ public class RejectApplicationControllerTest {
     @Test
     public void shouldGetCurrentUserAsUser() {
         EasyMock.reset(userServiceMock);
-        User user = new UserBuilder().id(1).build();
+        User user = new User().withId(1);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
         EasyMock.replay(userServiceMock);
         assertEquals(user, controllerUT.getUser());
@@ -155,7 +154,7 @@ public class RejectApplicationControllerTest {
     @Test
     public void moveToRejectWithValidRejection() {
         ApplicationForm application = new ApplicationForm();
-        User admin = new UserBuilder().id(1).build();
+        User admin = new User().withId(1);
         Rejection rejection = new RejectionBuilder().id(3).build();
         BindingResult result = new BeanPropertyBindingResult(rejection, "rejection");
 
@@ -177,7 +176,7 @@ public class RejectApplicationControllerTest {
     @Test
     public void returnToRejectViewWithInvalidRejection() {
         ApplicationForm application = new ApplicationForm();
-        User admin = new UserBuilder().id(1).build();
+        User admin = new User().withId(1);
         Rejection rejection = new RejectionBuilder().id(3).build();
         BindingResult result = new DirectFieldBindingResult(rejection, "rejection");
         result.reject("error");

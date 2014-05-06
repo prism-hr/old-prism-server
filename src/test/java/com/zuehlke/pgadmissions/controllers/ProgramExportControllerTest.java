@@ -17,7 +17,6 @@ import org.springframework.context.MessageSource;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 import com.zuehlke.pgadmissions.services.ProgramExportService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -39,7 +38,7 @@ public class ProgramExportControllerTest {
     
     @Before
     public void prepare() {
-        currentUser = new UserBuilder().build();
+        currentUser = new User();
         programsServiceMock = EasyMock.createMock(ProgramService.class);
         feedServiceMock = EasyMock.createMock(ProgramExportService.class);
         messageSourceMock = EasyMock.createNiceMock(MessageSource.class);

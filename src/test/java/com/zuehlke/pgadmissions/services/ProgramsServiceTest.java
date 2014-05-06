@@ -11,7 +11,6 @@ import static org.unitils.easymock.EasyMockUnitils.verify;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.easymock.Capture;
@@ -39,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
@@ -304,7 +302,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldReturnAdvertByProjectIdIfProjectIsActive() {
-        Project project = new ProjectBuilder().build();
+        Project project = new Project();
         EasyMock.expect(programDAOMock.getAcceptingApplicationsById(8)).andReturn(project);
 
         replay();

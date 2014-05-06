@@ -77,7 +77,7 @@ public class ApplicationFormDAO {
         Date endYear = DateUtils.addYears(startYear, 1);
 
         return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).setProjection(Projections.rowCount())
-                .add(Restrictions.eq("program", program)).add(Restrictions.between("applicationTimestamp", startYear, endYear)).uniqueResult();
+                .add(Restrictions.eq("program", program)).add(Restrictions.between("createdTimestamp", startYear, endYear)).uniqueResult();
     }
 
     public ApplicationForm getByApplicationNumber(String applicationNumber) {

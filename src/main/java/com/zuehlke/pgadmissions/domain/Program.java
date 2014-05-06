@@ -25,6 +25,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
+import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "PROGRAM")
@@ -39,6 +40,10 @@ public class Program extends Advert implements PrismScope {
 
     @Column(name = "code")
     private String code;
+
+    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
+    @Column(name = "title")
+    private String title;
 
     @Column(name = "require_project_definition")
     private Boolean requireProjectDefinition;
@@ -77,6 +82,14 @@ public class Program extends Advert implements PrismScope {
 
     public String getCode() {
         return code;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public List<ProgramInstance> getInstances() {
@@ -149,7 +162,7 @@ public class Program extends Advert implements PrismScope {
     public boolean isEnabled() {
         return state == ProgramState.PROGRAM_APPROVED;
     }
-    
+
     public Program withId(Integer id) {
         setId(id);
         return this;
@@ -180,8 +193,8 @@ public class Program extends Advert implements PrismScope {
         return this;
     }
 
-    public Program withUser(User contactUser) {
-        setUser(contactUser);
+    public Program withUser(User user) {
+        setUser(user);
         return this;
     }
 

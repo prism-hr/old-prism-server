@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
@@ -95,7 +95,7 @@ public class ApplicationFormService {
         return applicationFormDAO.getByApplicationNumber(applicationNumber);
     }
 
-    public List<ApplicationDescriptor> getApplicationsForList(final User user, final ApplicationsFiltering filtering) {
+    public List<ApplicationDescriptor> getApplicationsForList(final User user, final ApplicationFilterGroup filtering) {
         List<ApplicationDescriptor> applications = applicationFormListDAO.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE);
         for (ApplicationDescriptor application : applications) {
             application.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getApplicationFormId()));
@@ -103,7 +103,7 @@ public class ApplicationFormService {
         return applications;
     }
 
-    public List<ApplicationForm> getApplicationsForReport(final User user, final ApplicationsFiltering filtering, final ReportFormat reportType) {
+    public List<ApplicationForm> getApplicationsForReport(final User user, final ApplicationFilterGroup filtering, final ReportFormat reportType) {
         return applicationFormListDAO.getVisibleApplicationsForReport(user, filtering);
     }
 

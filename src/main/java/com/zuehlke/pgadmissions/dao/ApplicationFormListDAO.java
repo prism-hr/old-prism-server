@@ -24,8 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApplicationFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -57,7 +57,7 @@ public class ApplicationFormListDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ApplicationDescriptor> getVisibleApplicationsForList(final User user, final ApplicationsFiltering filtering, final int itemsPerPage) {
+    public List<ApplicationDescriptor> getVisibleApplicationsForList(final User user, final ApplicationFilterGroup filtering, final int itemsPerPage) {
         Integer blockCount = filtering.getBlockCount();
         updateLastAccessTimestamp(user, blockCount);
 
@@ -105,7 +105,7 @@ public class ApplicationFormListDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ApplicationForm> getVisibleApplicationsForReport(final User user, final ApplicationsFiltering filtering) {
+    public List<ApplicationForm> getVisibleApplicationsForReport(final User user, final ApplicationFilterGroup filtering) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class).setReadOnly(true)
                 .setProjection(Projections.groupProperty("application"));
 
@@ -123,12 +123,12 @@ public class ApplicationFormListDAO {
                 .createAlias("application.project", "project", JoinType.LEFT_OUTER_JOIN).createAlias("application.applicationDocument", "applicationDocument", JoinType.LEFT_OUTER_JOIN);
     }
 
-    private void appendWhereStatement(Criteria criteria, User user, ApplicationsFiltering filtering) {
+    private void appendWhereStatement(Criteria criteria, User user, ApplicationFilterGroup filtering) {
         if (filtering != null) {
             boolean useDisjunction = filtering.getUseDisjunction();
 
             List<Criterion> criterions = new ArrayList<Criterion>();
-            for (ApplicationsFilter filter : filtering.getFilters()) {
+            for (ApplicationFilter filter : filtering.getFilters()) {
                 SearchCategory searchCategory = filter.getSearchCategory();
                 String searchTerm = filter.getSearchTerm();
 
@@ -247,7 +247,7 @@ public class ApplicationFormListDAO {
         return criterion;
     }
 
-    private void appendOrderStatement(Criteria criteria, final ApplicationsFiltering filtering) {
+    private void appendOrderStatement(Criteria criteria, final ApplicationFilterGroup filtering) {
         SortCategory sortCategory = filtering.getSortCategory();
 
         boolean doSortAscending = true;

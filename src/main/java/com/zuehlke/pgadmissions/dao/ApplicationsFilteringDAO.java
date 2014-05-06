@@ -4,7 +4,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 
 @Repository
 public class ApplicationsFilteringDAO {
@@ -20,7 +20,7 @@ public class ApplicationsFilteringDAO {
         this.sessionFactory = sessionFactory;
     }
 
-    public ApplicationsFiltering merge(ApplicationsFiltering filtering) {
+    public ApplicationFilterGroup merge(ApplicationFilterGroup filtering) {
         sessionFactory.getCurrentSession().saveOrUpdate(filtering);
         return filtering;
     }

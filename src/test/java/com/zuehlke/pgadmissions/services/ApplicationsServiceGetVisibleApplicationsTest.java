@@ -28,8 +28,8 @@ import com.zuehlke.pgadmissions.dao.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApplicationFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
@@ -121,7 +121,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         User user = new User().withId(1)
         // .withRole(new RoleBuilder().id(Authority.APPLICANT).build())
                 ;
-        ApplicationsFiltering filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
+        ApplicationFilterGroup filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
         EasyMock.expect(applicationFormListDAOMock.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE)).andReturn(
                 Arrays.asList(applicationDescriptor));
         EasyMock.replay(applicationFormListDAOMock);
@@ -233,7 +233,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("BiOlOgY").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("BiOlOgY").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -262,7 +262,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -288,7 +288,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -308,7 +308,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         save(applicationFormOne, applicationFormUserRole);
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -330,7 +330,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -354,7 +354,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -378,7 +378,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -416,7 +416,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("validati").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("validati").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -454,7 +454,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("approv").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("approv").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -491,7 +491,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Offer").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Offer").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -526,7 +526,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("foobar").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("foobar").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -560,7 +560,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("zzzFooBarz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("zzzFooBarz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.ASCENDING, 1, filter));
 
@@ -646,7 +646,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1, filter));
 
@@ -699,7 +699,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.ASCENDING, 1, filter));
 
@@ -761,7 +761,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 applicationFormUserRole1, applicationFormUserRole2, applicationFormUserRole3, applicationFormUserRole4);
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
 
@@ -791,7 +791,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         save(returnedAppls);
         save(applicationFormUserRoles);
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCDEFG").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCDEFG").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
 
@@ -818,7 +818,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         programmeDetails.setApplication(formWithSupervisor);
         save(programmeDetails);
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUPERVISOR).searchTerm("Threepwood").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUPERVISOR).searchTerm("Threepwood").build();
 
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
@@ -889,7 +889,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.CLOSING_DATE).searchPredicate(SearchPredicate.ON_DATE)
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.CLOSING_DATE).searchPredicate(SearchPredicate.ON_DATE)
                 .searchTerm("01 Jan 2050").build();
 
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
@@ -911,14 +911,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         UserRole applicationFormUserRole = new UserRole().withApplication(applicationFormOne).withRole(role).withUser(superUser);
 
         save(applicationFormOne, applicationFormUserRole);
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROJECT_TITLE).searchTerm("another title").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROJECT_TITLE).searchTerm("another title").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, filter));
         assertEquals(1, applications.size());
 
     }
 
-    private ApplicationsFiltering newFiltering(SortCategory sortCategory, SortOrder sortOrder, int blockCount, ApplicationsFilter... filters) {
+    private ApplicationFilterGroup newFiltering(SortCategory sortCategory, SortOrder sortOrder, int blockCount, ApplicationFilter... filters) {
         return new ApplicationsFilteringBuilder().sortCategory(sortCategory).order(sortOrder).blockCount(blockCount).filters(filters).build();
     }
 

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationFilter;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 
@@ -34,8 +34,8 @@ public class ApplicationsFilterBuilder {
         return this;
     }
 
-    public ApplicationsFilter build() {
-        ApplicationsFilter filter = new ApplicationsFilter();
+    public ApplicationFilter build() {
+        ApplicationFilter filter = new ApplicationFilter();
         filter.setId(id);
         filter.setSearchCategory(searchCategory);
         filter.setSearchPredicate(searchPredicate);

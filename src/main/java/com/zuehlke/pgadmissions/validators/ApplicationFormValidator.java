@@ -60,7 +60,7 @@ public class ApplicationFormValidator extends AbstractValidator {
         }
 
         if (!applicationFormAddressValidator.isValid(applicationFormAddress)) {
-            errors.rejectValue("applicationFormAddress", "user.addresses.notempty");
+            errors.rejectValue("applicationAddress", "user.addresses.notempty");
         }
 
         if (!additionalInformationValidator.isValid(additionalInformation)) {
@@ -75,8 +75,8 @@ public class ApplicationFormValidator extends AbstractValidator {
             errors.rejectValue("referees", "user.referees.notvalid");
         }
 
-        if (BooleanUtils.isNotTrue(applicationForm.getAcceptedTermsOnSubmission())) {
-            errors.rejectValue("acceptedTermsOnSubmission", EMPTY_FIELD_ERROR_MESSAGE);
+        if (BooleanUtils.isNotTrue(applicationForm.getAcceptedTerms())) {
+            errors.rejectValue("acceptedTerms", EMPTY_FIELD_ERROR_MESSAGE);
         }
 
         if (!applicationForm.getProgram().isEnabled()) {

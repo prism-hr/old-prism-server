@@ -58,7 +58,7 @@ public abstract class Advert implements Serializable {
     private AdvertClosingDate closingDate;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "program_id", nullable = false)
+    @JoinColumn(name = "advert_id", nullable = false)
     private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();
 
     public Integer getId() {

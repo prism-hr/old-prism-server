@@ -34,7 +34,9 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
+import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -56,8 +58,19 @@ public class ProgramDAO {
     }
 
     public Advert getAcceptingApplicationsById(Integer advertId) {
-        return (Advert) sessionFactory.getCurrentSession().createCriteria(Advert.class).add(Restrictions.eq("id", advertId))
-                .add(Restrictions.eq("active", true)).uniqueResult();
+        Advert project = (Advert) sessionFactory.getCurrentSession() //
+                .createCriteria(Project.class)//
+                .add(Restrictions.eq("id", advertId)) //
+                .add(Restrictions.eq("state", ProjectState.PROJECT_APPROVED))//
+                .uniqueResult();
+        if (project != null) {
+            return project;
+        }
+        return (Advert) sessionFactory.getCurrentSession() //
+                .createCriteria(Program.class)//
+                .add(Restrictions.eq("id", advertId)) //
+                .add(Restrictions.eq("state", ProgramState.PROGRAM_APPROVED))//
+                .uniqueResult();
     }
 
     public Program getProgramByCode(String code) {
@@ -66,7 +79,7 @@ public class ProgramDAO {
 
     public Program getProgamAcceptingApplicationsByCode(String code) {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code))
-                .add(Restrictions.eq("active", true)).uniqueResult();
+                .add(Restrictions.eq("state", ProgramState.PROGRAM_APPROVED)).uniqueResult();
     }
 
     public String getProgramIdByCode(String code) {
@@ -88,7 +101,7 @@ public class ProgramDAO {
 
     public List<Program> getAllEnabledPrograms() {
         return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq("enabled", true)).addOrder(Order.asc("title")).list();
+                .add(Restrictions.eq("state", ProgramState.PROGRAM_APPROVED)).addOrder(Order.asc("title")).list();
     }
 
     public List<Program> getProgramsForWhichUserCanManageProjects(User user) {
@@ -107,14 +120,14 @@ public class ProgramDAO {
         return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).add(Restrictions.eq("id", id)).uniqueResult();
     }
 
-    public AdvertClosingDate getClosingDateByDate(final Program program, final LocalDate date) {
-        return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).add(Restrictions.eq("program", program))
+    public AdvertClosingDate getClosingDateByDate(final Program advert, final LocalDate date) {
+        return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).add(Restrictions.eq("advert", advert))
                 .add(Restrictions.eq("closingDate", date)).addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
     }
 
-    public LocalDate getNextClosingDate(Program program) {
+    public LocalDate getNextClosingDate(Program advert) {
         return (LocalDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class).setProjection(Projections.min("closingDate"))
-                .add(Restrictions.eq("program", program)).add(Restrictions.ge("closingDate", new Date())).uniqueResult();
+                .add(Restrictions.eq("advert", advert)).add(Restrictions.ge("closingDate", new LocalDate())).uniqueResult();
     }
 
     public void updateClosingDate(AdvertClosingDate closingDate) {
@@ -171,26 +184,25 @@ public class ProgramDAO {
     }
 
     public List<Program> getEnabledProgramsForWhichUserHasApplicationAuthority(User user) {
-        return sessionFactory.getCurrentSession().createCriteria(UserRole.class)
-                .setProjection(Projections.groupProperty("applicationForm.program")).createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN)
-                .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN).createAlias("role", "applicationRole", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("user", user))
+        return sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("applicationForm.program"))
+                .createAlias("applicationForm", "applicationForm", JoinType.INNER_JOIN).createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
+                .createAlias("role", "applicationRole", JoinType.INNER_JOIN).add(Restrictions.eq("user", user))
                 .add(Restrictions.in("applicationRole.id", AuthorityGroup.INTERNAL_APPLICATION_AUTHORITIES.getAuthorities()))
                 .add(Restrictions.eq("program.enabled", true)).list();
     }
 
     public List<Project> getProjectsForProgram(Program program) {
-        return sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("program", program)).add(Restrictions.eq("enabled", true))
-                .list();
+        return sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("program", program))
+                .add(Restrictions.eq("state", ProjectState.PROJECT_APPROVED)).list();
     }
 
     public List<Project> getProjectsForProgramOfWhichAuthor(Program program, User author) {
-        return sessionFactory
-                .getCurrentSession()
-                .createCriteria(Project.class)
-                .add(Restrictions.eq("program", program))
-                .add(Restrictions.disjunction().add(Restrictions.eq("contactUser", author)).add(Restrictions.eq("administrator", author))
-                        .add(Restrictions.eq("primarySupervisor", author))).add(Restrictions.eq("enabled", true)).list();
+        // TODO check also for primarySupervisor role
+        return sessionFactory.getCurrentSession() //
+                .createCriteria(Project.class) //
+                .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("user", author)) //
+                .add(Restrictions.eq("state", ProjectState.PROJECT_APPROVED)).list();
     }
 
     public void deleteInactiveAdverts() {

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import javax.faces.application.ProjectStage;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,7 +13,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 
 @Entity
@@ -61,6 +59,11 @@ public class Project extends Advert implements PrismScope {
     @Override
     public boolean isEnabled() {
         return state == ProjectState.PROJECT_APPROVED;
+    }
+    
+    public Project withId(Integer id) {
+        setId(id);
+        return this;
     }
 
 }

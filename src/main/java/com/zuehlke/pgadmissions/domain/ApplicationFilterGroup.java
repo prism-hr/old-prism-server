@@ -13,17 +13,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.IndexColumn;
 
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 @Entity
-@Table(name = "APPLICATIONS_FILTERING")
-public class ApplicationsFiltering implements Serializable {
+@Table(name = "application_filter_group")
+public class ApplicationFilterGroup implements Serializable {
 
     private static final long serialVersionUID = 7913035836949510857L;
 
@@ -32,12 +31,12 @@ public class ApplicationsFiltering implements Serializable {
     private Integer id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "filtering_id")
-    @IndexColumn(name = "filter_position")
-    private List<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
+    @JoinColumn(name = "application_filter_group_id")
+    @OrderColumn(name = "filter_position")
+    private List<ApplicationFilter> filters = new ArrayList<ApplicationFilter>();
 
-    @Column(name = "use_disjunction")
-    private Boolean useDisjunction = false;
+    @Column(name = "satisfy_all_conditions")
+    private Boolean satisfyAllConditions = false;
 
     @Column(name = "sort_category")
     @Enumerated(EnumType.STRING)
@@ -66,23 +65,19 @@ public class ApplicationsFiltering implements Serializable {
     }
 
     public Boolean getUseDisjunction() {
-        return useDisjunction;
+        return satisfyAllConditions;
     }
 
     public void setUseDisjunction(Boolean useDisjunction) {
-        this.useDisjunction = useDisjunction;
+        this.satisfyAllConditions = useDisjunction;
     }
 
     public void setId(Integer id) {
         this.id = id;
     }
 
-    public List<ApplicationsFilter> getFilters() {
+    public List<ApplicationFilter> getFilters() {
         return filters;
-    }
-
-    public void setFilters(List<ApplicationsFilter> filters) {
-        this.filters = filters;
     }
 
     public SortCategory getSortCategory() {

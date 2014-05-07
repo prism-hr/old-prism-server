@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.domain.helpers;
 import java.util.Arrays;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.UserRole;
 
 public class UserTestHarness {
 

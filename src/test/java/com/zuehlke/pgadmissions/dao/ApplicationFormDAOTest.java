@@ -23,16 +23,15 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -109,12 +108,13 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         String thisYear = new SimpleDateFormat("yyyy").format(new Date());
         String lastYear = new Integer(Integer.parseInt(thisYear) - 1).toString();
         String nextYear = new Integer(Integer.parseInt(thisYear) + 1).toString();
-        flushAndClearSession();
 
         Institution institution = testObjectProvider.getInstitution();
-        Program program = new ProgramBuilder().code("test").title("test").description("test")
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).institution(institution).build();
+        ProgramType programType = testObjectProvider.getProgramType();
+        Program program = TestData.aProgram(programType, institution, user);
         save(program);
+        
+        flushAndClearSession();
 
         long number = applicationDAO.getApplicationsInProgramThisYear(program, thisYear);
         assertEquals(0, number);
@@ -168,25 +168,25 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         List<Qualification> qualifications = new ArrayList<Qualification>();
 
         Qualification qualification1 = new Qualification();
-        qualification1.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-        qualification1.setQualificationGrade("");
+        qualification1.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+        qualification1.setGrade("");
         // qualification1.setQualificationInstitution("");
 
-        qualification1.setQualificationLanguage("Abkhazian");
-        qualification1.setQualificationSubject("");
-        qualification1.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-        qualification1.setQualificationType(typeDao.getAllQualificationTypes().get(0));
+        qualification1.setLanguage("Abkhazian");
+        qualification1.setSubject("");
+        qualification1.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+        qualification1.setType(typeDao.getAllQualificationTypes().get(0));
 
         qualifications.add(qualification1);
 
         Qualification qualification2 = new Qualification();
-        qualification2.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-        qualification2.setQualificationGrade("");
+        qualification2.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+        qualification2.setGrade("");
         // qualification2.setQualificationInstitution("");
-        qualification2.setQualificationLanguage("Abkhazian");
-        qualification2.setQualificationSubject("");
-        qualification2.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-        qualification2.setQualificationType(typeDao.getAllQualificationTypes().get(0));
+        qualification2.setLanguage("Abkhazian");
+        qualification2.setSubject("");
+        qualification2.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+        qualification2.setType(typeDao.getAllQualificationTypes().get(0));
 
         qualifications.add(qualification1);
         return qualifications;

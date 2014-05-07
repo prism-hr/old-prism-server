@@ -20,8 +20,6 @@ import com.zuehlke.pgadmissions.dao.ProgramExportDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 
 import freemarker.template.Configuration;
@@ -53,8 +51,8 @@ public class ProgramExportServiceTest {
 
     @Test
     public void shouldReturnSmallIframeCodeByFeedId() throws IOException, TemplateException {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
-        Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
+        User user = new User().withEmail("fooBarZ@fooBarZ.com");
+        Program program = new Program().withCode("XXXXXXXXXXX").withTitle("Program1");
         ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
                 .withUser(user);
         Map<String, Object> dataMap = new HashMap<String, Object>();
@@ -76,8 +74,8 @@ public class ProgramExportServiceTest {
 
     @Test
     public void shouldReturnLargeDefaultIframeCodeForCurrentUser() throws IOException, TemplateException {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
-        Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
+        User user = new User().withEmail("fooBarZ@fooBarZ.com");
+        Program program = new Program().withCode("XXXXXXXXXXX").withTitle("Program1");
         ProgramExport feed = new ProgramExport().withId(-2).withFormat(ProgramExportFormat.LARGE).withPrograms(program).withTitle("Hello Feed")
                 .withUser(user);
         Map<String, Object> dataMap = new HashMap<String, Object>();
@@ -100,8 +98,8 @@ public class ProgramExportServiceTest {
 
     @Test
     public void shouldSaveNewFeed() {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
-        Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
+        User user = new User().withEmail("fooBarZ@fooBarZ.com");
+        Program program = new Program().withCode("XXXXXXXXXXX").withTitle("Program1");
 
         EasyMock.expect(programServiceMock.getById(1)).andReturn(program);
         daoMock.save(EasyMock.anyObject(ProgramExport.class));
@@ -119,7 +117,7 @@ public class ProgramExportServiceTest {
 
     @Test
     public void shouldGetAllFeedsForUser() {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
+        User user = new User().withEmail("fooBarZ@fooBarZ.com");
         EasyMock.expect(programServiceMock.getProgramsForWhichCanManageProjects(user)).andReturn(null).times(2);
         EasyMock.expect(daoMock.getAllFeedsForUser(user)).andReturn(Collections.<ProgramExport> emptyList());
 
@@ -130,7 +128,7 @@ public class ProgramExportServiceTest {
 
     @Test
     public void shouldAskIsUniqueFeedTitleForUser() {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").build();
+        User user = new User().withEmail("fooBarZ@fooBarZ.com");
         EasyMock.expect(daoMock.isUniqueFeedTitleForUser("hello", user)).andReturn(false);
         EasyMock.replay(daoMock);
         service.isUniqueFeedTitleForUser("hello", user);
@@ -139,8 +137,8 @@ public class ProgramExportServiceTest {
 
     @Test
     public void shouldDeleteFeedById() {
-        User user = new UserBuilder().id(1).email("fooBarZ@fooBarZ.com").build();
-        Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
+        User user = new User().withId(1).withEmail("fooBarZ@fooBarZ.com");
+        Program program = new Program().withCode("XXXXXXXXXXX").withTitle("Program1");
         ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
                 .withUser(user);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
@@ -154,8 +152,8 @@ public class ProgramExportServiceTest {
 
     @Test
     public void shouldGetFeedById() {
-        User user = new UserBuilder().id(1).email("fooBarZ@fooBarZ.com").build();
-        Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
+        User user = new User().withId(1).withEmail("fooBarZ@fooBarZ.com");
+        Program program = new Program().withCode("XXXXXXXXXXX").withTitle("Program1");
         ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.SMALL).withPrograms(program).withTitle("Hello Feed")
                 .withUser(user);
 
@@ -167,8 +165,8 @@ public class ProgramExportServiceTest {
 
     @Test
     public void shouldUpdateFeed() {
-        User user = new UserBuilder().email("fooBarZ@fooBarZ.com").id(1).build();
-        Program program = new ProgramBuilder().code("XXXXXXXXXXX").title("Program1").build();
+        User user = new User().withEmail("fooBarZ@fooBarZ.com").withId(1);
+        Program program = new Program().withCode("XXXXXXXXXXX").withTitle("Program1");
         ProgramExport feed = new ProgramExport().withId(1).withFormat(ProgramExportFormat.LARGE).withPrograms(program).withTitle("Hello Feed")
                 .withUser(user);
 

@@ -8,7 +8,6 @@ import java.util.List;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -112,7 +111,7 @@ public class ApplicationFormBuilder {
         return this;
     }
 
-    public ApplicationFormBuilder program(Advert advert) {
+    public ApplicationFormBuilder program(Program program) {
         this.program = program;
         return this;
     }
@@ -216,7 +215,7 @@ public class ApplicationFormBuilder {
         application.setDueDate(dueDate);
         application.setState(status);
         application.setAdditionalInformation(info);
-        application.setAcceptedTermsOnSubmission(acceptedTerms);
+        application.setAcceptedTerms(acceptedTerms);
         application.getApplicationComments().addAll(comments);
         application.setRejection(rejection);
         application.setApplicationNumber(applicationNumber);

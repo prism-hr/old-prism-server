@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationsFilteringDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.LinkAccountsException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
@@ -204,8 +204,8 @@ public class UserService {
         }
     }
 
-    public void setFiltering(final User user, final ApplicationsFiltering filtering) {
-        ApplicationsFiltering mergedFilter = filteringDAO.merge(filtering);
+    public void setFiltering(final User user, final ApplicationFilterGroup filtering) {
+        ApplicationFilterGroup mergedFilter = filteringDAO.merge(filtering);
         user.getAccount().setFilterGroup(mergedFilter);
         userDAO.save(user);
     }

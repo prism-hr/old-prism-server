@@ -65,9 +65,9 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
@@ -549,16 +549,16 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             for (Qualification qualification : qualifications) {
                 QualificationsTp qualificationsTp = xmlFactory.createQualificationsTp();
 
-                qualificationsTp.setStartDate(buildXmlDate(qualification.getQualificationStartDate()));
-                qualificationsTp.setEndDate(buildXmlDate(qualification.getQualificationAwardDate()));
+                qualificationsTp.setStartDate(buildXmlDate(qualification.getStartDate()));
+                qualificationsTp.setEndDate(buildXmlDate(qualification.getAwardDate()));
 
-                qualificationsTp.setGrade(qualification.getQualificationGrade());
-                qualificationsTp.setLanguageOfInstruction(qualification.getQualificationLanguage());
-                qualificationsTp.setMainSubject(qualification.getQualificationSubject());
+                qualificationsTp.setGrade(qualification.getGrade());
+                qualificationsTp.setLanguageOfInstruction(qualification.getLanguage());
+                qualificationsTp.setMainSubject(qualification.getSubject());
 
                 QualificationTp qualificationTp = xmlFactory.createQualificationTp();
-                qualificationTp.setCode(qualification.getQualificationType().getEnabledCode());
-                qualificationTp.setName(qualification.getQualificationType().getName());
+                qualificationTp.setCode(qualification.getType().getEnabledCode());
+                qualificationTp.setName(qualification.getType().getName());
                 qualificationsTp.setQualification(qualificationTp);
 
                 InstitutionTp institutionTp = xmlFactory.createInstitutionTp();

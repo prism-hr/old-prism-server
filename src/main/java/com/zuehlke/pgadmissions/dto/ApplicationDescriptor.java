@@ -10,262 +10,239 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.utils.MathUtils;
 
 public class ApplicationDescriptor {
-	
-	private Integer applicationFormId;
-	
-	private Boolean needsToSeeUrgentFlag;
-	
+
+    private Integer applicationFormId;
+
+    private Boolean needsToSeeUrgentFlag;
+
     private Boolean needsToSeeUpdateFlag;
-    
+
     private Integer applicantId;
-    
+
     private String applicantFirstName;
-    
+
     private String applicantFirstName2;
-    
+
     private String applicantFirstName3;
-    
+
     private String applicantLastName;
-    
+
     private String applicantEmail;
-    
+
     private String applicationFormNumber;
-    
+
     private String programTitle;
-    
+
     private String projectTitle;
-    
-    private String oldProjectTitle;
-    
+
     private BigDecimal applicantAverageRating;
-    
+
     private PrismState applicationFormStatus;
-    
+
     private PrismState applicationFormNextStatus;
-    
+
     private PrismState applicationFormStatusWhenWithdrawn;
-    
+
     private List<ActionDefinition> actionDefinitions = Lists.newArrayList();
-    
+
     private Integer applicationFormPersonalStatementId;
-    
+
     private Integer applicationFormCvId;
-    
-    private Date applicationFormCreatedTimestamp;
-    
+
+    private Date applicationFormSubmittedTimestamp;
+
     private Date applicationFormUpdatedTimestamp;
-    
-	public ApplicationDescriptor() {
+
+    public ApplicationDescriptor() {
     }
 
     public Integer getApplicationFormId() {
-		return applicationFormId;
-	}
+        return applicationFormId;
+    }
 
-	public void setApplicationFormId(Integer applicationFormId) {
-		this.applicationFormId = applicationFormId;
-	}
+    public void setApplicationFormId(Integer applicationFormId) {
+        this.applicationFormId = applicationFormId;
+    }
 
     public Boolean getNeedsToSeeUpdateFlag() {
         return needsToSeeUpdateFlag;
-    } 
-    
+    }
+
     public Boolean getNeedsToSeeUrgentFlag() {
-    	return needsToSeeUrgentFlag;
+        return needsToSeeUrgentFlag;
     }
 
     public void setNeedsToSeeUrgentFlag(Boolean needsToSeeUrgentFlag) {
-    	this.needsToSeeUrgentFlag = needsToSeeUrgentFlag;
+        this.needsToSeeUrgentFlag = needsToSeeUrgentFlag;
     }
 
     public void setNeedsToSeeUpdateFlag(Boolean needsToSeeUpdateFlag) {
         this.needsToSeeUpdateFlag = needsToSeeUpdateFlag;
     }
 
-	public Integer getApplicantId() {
-		return applicantId;
-	}
+    public Integer getApplicantId() {
+        return applicantId;
+    }
 
-	public void setApplicantId(Integer applicantId) {
-		this.applicantId = applicantId;
-	}
+    public void setApplicantId(Integer applicantId) {
+        this.applicantId = applicantId;
+    }
 
-	public String getApplicantFirstName() {
-		return applicantFirstName;
-	}
+    public String getApplicantFirstName() {
+        return applicantFirstName;
+    }
 
-	public void setApplicantFirstName(String applicantFirstName) {
-		this.applicantFirstName = applicantFirstName;
-	}
-	
-	public String getApplicantFirstName2() {
-		return applicantFirstName2;
-	}
+    public void setApplicantFirstName(String applicantFirstName) {
+        this.applicantFirstName = applicantFirstName;
+    }
 
-	public void setApplicantFirstName2(String applicantFirstName2) {
-		this.applicantFirstName2 = applicantFirstName2;
-	}
+    public String getApplicantFirstName2() {
+        return applicantFirstName2;
+    }
 
-	public String getApplicantFirstName3() {
-		return applicantFirstName3;
-	}
+    public void setApplicantFirstName2(String applicantFirstName2) {
+        this.applicantFirstName2 = applicantFirstName2;
+    }
 
-	public void setApplicantFirstName3(String applicantFirstName3) {
-		this.applicantFirstName3 = applicantFirstName3;
-	}
-	
-	public String getConcatenatedApplicantFirstName() {
-		String concatenatedFirstName = applicantFirstName;
-		if (applicantFirstName2 != null ||
-			applicantFirstName3 != null) {
-			concatenatedFirstName = concatenatedFirstName + " (";
-			if (applicantFirstName2 != null) {
-				concatenatedFirstName = concatenatedFirstName + applicantFirstName2;
-			}
-			if (applicantFirstName2 != null &&
-				applicantFirstName3 != null) {
-				concatenatedFirstName = concatenatedFirstName + " ";
-			}
-			if (applicantFirstName3 != null) {
-				concatenatedFirstName = concatenatedFirstName + applicantFirstName3;
-			}
-			concatenatedFirstName = concatenatedFirstName + ")";
-		}
-		return concatenatedFirstName;
-	}
+    public String getApplicantFirstName3() {
+        return applicantFirstName3;
+    }
 
-	public String getApplicantLastName() {
-		return applicantLastName;
-	}
+    public void setApplicantFirstName3(String applicantFirstName3) {
+        this.applicantFirstName3 = applicantFirstName3;
+    }
 
-	public void setApplicantLastName(String applicantLastName) {
-		this.applicantLastName = applicantLastName;
-	}
+    public String getConcatenatedApplicantFirstName() {
+        String concatenatedFirstName = applicantFirstName;
+        if (applicantFirstName2 != null || applicantFirstName3 != null) {
+            concatenatedFirstName = concatenatedFirstName + " (";
+            if (applicantFirstName2 != null) {
+                concatenatedFirstName = concatenatedFirstName + applicantFirstName2;
+            }
+            if (applicantFirstName2 != null && applicantFirstName3 != null) {
+                concatenatedFirstName = concatenatedFirstName + " ";
+            }
+            if (applicantFirstName3 != null) {
+                concatenatedFirstName = concatenatedFirstName + applicantFirstName3;
+            }
+            concatenatedFirstName = concatenatedFirstName + ")";
+        }
+        return concatenatedFirstName;
+    }
 
-	public String getApplicantEmail() {
-		return applicantEmail;
-	}
+    public String getApplicantLastName() {
+        return applicantLastName;
+    }
 
-	public void setApplicantEmail(String applicantEmail) {
-		this.applicantEmail = applicantEmail;
-	}
-	
-	public String getApplicationFormNumber() {
-		return applicationFormNumber;
-	}
+    public void setApplicantLastName(String applicantLastName) {
+        this.applicantLastName = applicantLastName;
+    }
 
-	public void setApplicationFormNumber(String applicationFormNumber) {
-		this.applicationFormNumber = applicationFormNumber;
-	}
+    public String getApplicantEmail() {
+        return applicantEmail;
+    }
 
-	public String getProgramTitle() {
-		return programTitle;
-	}
+    public void setApplicantEmail(String applicantEmail) {
+        this.applicantEmail = applicantEmail;
+    }
 
-	public void setProgramTitle(String programTitle) {
-		this.programTitle = programTitle;
-	}
+    public String getApplicationFormNumber() {
+        return applicationFormNumber;
+    }
 
-	public String getProjectTitle() {
-		return projectTitle;
-	}
+    public void setApplicationFormNumber(String applicationFormNumber) {
+        this.applicationFormNumber = applicationFormNumber;
+    }
 
-	public void setProjectTitle(String projectTitle) {
-		this.projectTitle = projectTitle;
-	}
+    public String getProgramTitle() {
+        return programTitle;
+    }
 
-	public String getOldProjectTitle() {
-		return oldProjectTitle;
-	}
+    public void setProgramTitle(String programTitle) {
+        this.programTitle = programTitle;
+    }
 
-	public void setOldProjectTitle(String oldProjectTitle) {
-		this.oldProjectTitle = oldProjectTitle;
-	}
-	
-	public String getActualProjectTitle() {
-		if (projectTitle != null) {
-			return projectTitle;
-		} else if (oldProjectTitle != null) {
-			return oldProjectTitle;
-		} else {
-			return null;
-		}
-	}
-	
-	public String getApplicantAverageRating() {
-		return MathUtils.formatRating(applicantAverageRating);
-	}
+    public String getProjectTitle() {
+        return projectTitle;
+    }
 
-	public void setApplicantAverageRating(BigDecimal applicantAverageRating) {
-		this.applicantAverageRating = applicantAverageRating;
-	}
+    public void setProjectTitle(String projectTitle) {
+        this.projectTitle = projectTitle;
+    }
 
-	public PrismState getApplicationFormStatus() {
-		return applicationFormStatus;
-	}
+    public String getApplicantAverageRating() {
+        return MathUtils.formatRating(applicantAverageRating);
+    }
 
-	public void setApplicationFormStatus(PrismState applicationFormStatus) {
-		this.applicationFormStatus = applicationFormStatus;
-	}
+    public void setApplicantAverageRating(BigDecimal applicantAverageRating) {
+        this.applicantAverageRating = applicantAverageRating;
+    }
 
-	public PrismState getApplicationFormNextStatus() {
-		return applicationFormNextStatus;
-	}
+    public PrismState getApplicationFormStatus() {
+        return applicationFormStatus;
+    }
 
-	public boolean getApplicationFormSubmitted() {
-		return applicationFormStatus != PrismState.APPLICATION_UNSUBMITTED;
-	}
-	
-	public void setApplicationFormNextStatus(PrismState applicationFormNextStatus) {
-		this.applicationFormNextStatus = applicationFormNextStatus;
-	}
+    public void setApplicationFormStatus(PrismState applicationFormStatus) {
+        this.applicationFormStatus = applicationFormStatus;
+    }
 
-	public PrismState getApplicationFormStatusWhenWithdrawn() {
-		return applicationFormStatusWhenWithdrawn;
-	}
+    public PrismState getApplicationFormNextStatus() {
+        return applicationFormNextStatus;
+    }
 
-	public void setApplicationFormStatusWhenWithdrawn(PrismState applicationFormStatusWhenWithdrawn) {
-		this.applicationFormStatusWhenWithdrawn = applicationFormStatusWhenWithdrawn;
-	}
+    public boolean getApplicationFormSubmitted() {
+        return applicationFormStatus != PrismState.APPLICATION_UNSUBMITTED;
+    }
 
-	public List<ActionDefinition> getActionDefinitions() {
-    	if (actionDefinitions == null) {
-    		actionDefinitions = new ArrayList<ActionDefinition>();
-    	}
+    public void setApplicationFormNextStatus(PrismState applicationFormNextStatus) {
+        this.applicationFormNextStatus = applicationFormNextStatus;
+    }
+
+    public PrismState getApplicationFormStatusWhenWithdrawn() {
+        return applicationFormStatusWhenWithdrawn;
+    }
+
+    public void setApplicationFormStatusWhenWithdrawn(PrismState applicationFormStatusWhenWithdrawn) {
+        this.applicationFormStatusWhenWithdrawn = applicationFormStatusWhenWithdrawn;
+    }
+
+    public List<ActionDefinition> getActionDefinitions() {
+        if (actionDefinitions == null) {
+            actionDefinitions = new ArrayList<ActionDefinition>();
+        }
         return actionDefinitions;
     }
 
-	public Integer getApplicationFormPersonalStatementId() {
-		return applicationFormPersonalStatementId;
-	}
+    public Integer getApplicationFormPersonalStatementId() {
+        return applicationFormPersonalStatementId;
+    }
 
-	public void setApplicationFormPersonalStatementId(Integer applicationFormPersonalStatementId) {
-		this.applicationFormPersonalStatementId = applicationFormPersonalStatementId;
-	}
+    public void setApplicationFormPersonalStatementId(Integer applicationFormPersonalStatementId) {
+        this.applicationFormPersonalStatementId = applicationFormPersonalStatementId;
+    }
 
-	public Integer getApplicationFormCvId() {
-		return applicationFormCvId;
-	}
+    public Integer getApplicationFormCvId() {
+        return applicationFormCvId;
+    }
 
-	public void setApplicationFormCvId(Integer applicationFormCvId) {
-		this.applicationFormCvId = applicationFormCvId;
-	}
+    public void setApplicationFormCvId(Integer applicationFormCvId) {
+        this.applicationFormCvId = applicationFormCvId;
+    }
 
-	public Date getApplicationFormCreatedTimestamp() {
-		return applicationFormCreatedTimestamp;
-	}
+    public Date getApplicationFormSubmittedTimestamp() {
+        return applicationFormSubmittedTimestamp;
+    }
 
-	public void setApplicationFormCreatedTimestamp(
-			Date applicationFormCreatedTimestamp) {
-		this.applicationFormCreatedTimestamp = applicationFormCreatedTimestamp;
-	}
+    public void setApplicationFormSubmittedTimestamp(Date applicationFormSubmittedTimestamp) {
+        this.applicationFormSubmittedTimestamp = applicationFormSubmittedTimestamp;
+    }
 
-	public Date getApplicationFormUpdatedTimestamp() {
-		return applicationFormUpdatedTimestamp;
-	}
+    public Date getApplicationFormUpdatedTimestamp() {
+        return applicationFormUpdatedTimestamp;
+    }
 
-	public void setApplicationFormUpdatedTimestamp(Date applicationFormUpdatedTimestamp) {
-		this.applicationFormUpdatedTimestamp = applicationFormUpdatedTimestamp;
-	}
-	
+    public void setApplicationFormUpdatedTimestamp(Date applicationFormUpdatedTimestamp) {
+        this.applicationFormUpdatedTimestamp = applicationFormUpdatedTimestamp;
+    }
+
 }

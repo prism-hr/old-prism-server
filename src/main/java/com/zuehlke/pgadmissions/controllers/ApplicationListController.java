@@ -28,7 +28,7 @@ import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.base.DataSourceException;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
@@ -36,10 +36,10 @@ import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 import com.zuehlke.pgadmissions.domain.enums.SearchPredicate;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationsFiltersPropertyEditor;
+import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApplicationSummaryService;
 import com.zuehlke.pgadmissions.services.ApplicationsFilteringService;
 import com.zuehlke.pgadmissions.services.ApplicationsReportService;
-import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -92,7 +92,7 @@ public class ApplicationListController {
             session.removeAttribute("alertDefinition");
         }
 
-        ApplicationsFiltering filtering = (ApplicationsFiltering) model.get("filtering");
+        ApplicationFilterGroup filtering = (ApplicationFilterGroup) model.get("filtering");
         
         if (("urgent").equals(applyFilters)) {
             filtering = filteringService.getUrgentApplicationFiltering();
@@ -107,7 +107,7 @@ public class ApplicationListController {
     }
 
     @RequestMapping(value = "/section", method = RequestMethod.GET)
-    public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationsFiltering filtering,
+    public String getApplicationListSection(final @ModelAttribute("filtering") ApplicationFilterGroup filtering,
     		@RequestParam Integer blockCount, @RequestParam(required = false) Boolean useDisjunction, final ModelMap model) {
         User user = getUser();
         filtering.setBlockCount(blockCount);
@@ -119,7 +119,7 @@ public class ApplicationListController {
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public void getApplicationsReport(@ModelAttribute("filtering") ApplicationsFiltering filtering, @RequestParam(required=false) ReportFormat reportType, HttpServletRequest req, HttpServletResponse resp)
+    public void getApplicationsReport(@ModelAttribute("filtering") ApplicationFilterGroup filtering, @RequestParam(required=false) ReportFormat reportType, HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
         DataTable reportTable = applicationsReportService.getApplicationsReport(getUser(), filtering, reportType);
         DataSourceRequest dsRequest;
@@ -133,7 +133,7 @@ public class ApplicationListController {
     
     @RequestMapping(value = "/saveFilters", method = RequestMethod.POST)
     @ResponseBody
-    public String saveFiltersAsDefault(@ModelAttribute("filtering") ApplicationsFiltering filtering, @RequestParam Boolean useDisjunction) {
+    public String saveFiltersAsDefault(@ModelAttribute("filtering") ApplicationFilterGroup filtering, @RequestParam Boolean useDisjunction) {
         filtering.setUseDisjunction(useDisjunction);
         userService.setFiltering(getUser(), filtering);
         return "OK";

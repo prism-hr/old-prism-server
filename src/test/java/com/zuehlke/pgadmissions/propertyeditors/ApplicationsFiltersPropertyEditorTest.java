@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationFilter;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 
 public class ApplicationsFiltersPropertyEditorTest {
@@ -25,9 +25,9 @@ public class ApplicationsFiltersPropertyEditorTest {
     public void shouldDeserializeTwoElements() {
         editor.setAsText("[{\"searchCategory\":\"APPLICATION_NUMBER\",\"searchTerm\":\"app_number\"},{\"searchCategory\":\"APPLICANT_NAME\",\"searchTerm\":\"Francishek Pieczka\"}]");
         
-        List<ApplicationsFilter> list = (List<ApplicationsFilter>) editor.getValue();
-        ApplicationsFilter numberFilter = list.get(0);
-        ApplicationsFilter applicantFilter = list.get(1);
+        List<ApplicationFilter> list = (List<ApplicationFilter>) editor.getValue();
+        ApplicationFilter numberFilter = list.get(0);
+        ApplicationFilter applicantFilter = list.get(1);
         
         assertEquals(SearchCategory.APPLICATION_NUMBER, numberFilter.getSearchCategory());
         assertEquals("app_number", numberFilter.getSearchTerm());

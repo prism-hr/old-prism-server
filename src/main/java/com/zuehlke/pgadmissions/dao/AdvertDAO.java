@@ -29,9 +29,9 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 
@@ -182,11 +182,11 @@ public class AdvertDAO {
                         .add(Projections.property("program.funding"), "funding")
                         .add(Projections.property("program.code"), "programCode")
                         .add(Projections.min("closingDate.closingDate"), "closingDate")
-                        .add(Projections.property("contactUser.firstName"), "primarySupervisorFirstName")
-                        .add(Projections.property("contactUser.lastName"), "primarySupervisorLastName")
-                        .add(Projections.property("contactUser.email"), "primarySupervisorEmail")
+                        .add(Projections.property("user.firstName"), "primarySupervisorFirstName")
+                        .add(Projections.property("user.lastName"), "primarySupervisorLastName")
+                        .add(Projections.property("user.email"), "primarySupervisorEmail")
                         .add(Projections.property("program.advertType"), "advertType"))
-                .createAlias("program.contactUser", "contactUser", JoinType.INNER_JOIN)
+                .createAlias("program.user", "user", JoinType.INNER_JOIN)
                 .createAlias("program.closingDates", "closingDate", JoinType.LEFT_OUTER_JOIN)
                 .add(Restrictions.eq("program.state", ProgramState.PROGRAM_APPROVED))
                 .add(Restrictions.disjunction()

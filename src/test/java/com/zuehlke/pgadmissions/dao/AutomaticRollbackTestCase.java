@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.dao.mappings;
+package com.zuehlke.pgadmissions.dao;
 
 import java.util.List;
 

@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.mail;
 
+import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_TASK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_TASK_REQUEST_REMINDER;
 import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_UPDATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId.APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER;
 
 import java.util.Collections;
 import java.util.Date;

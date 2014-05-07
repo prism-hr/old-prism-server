@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApplicationFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
@@ -13,7 +13,7 @@ public class ApplicationsFilteringBuilder {
 
     private Integer id;
 
-    private List<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
+    private List<ApplicationFilter> filters = new ArrayList<ApplicationFilter>();
 
     private SortCategory sortCategory = SortCategory.APPLICATION_DATE;
 
@@ -28,7 +28,7 @@ public class ApplicationsFilteringBuilder {
         return this;
     }
 
-    public ApplicationsFilteringBuilder filters(ApplicationsFilter... filters) {
+    public ApplicationsFilteringBuilder filters(ApplicationFilter... filters) {
         this.filters.addAll(Arrays.asList(filters));
         return this;
     }
@@ -53,10 +53,10 @@ public class ApplicationsFilteringBuilder {
         return this;
     }
 
-    public ApplicationsFiltering build() {
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
+    public ApplicationFilterGroup build() {
+        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
         filtering.setId(id);
-        filtering.setFilters(filters);
+        filtering.getFilters().addAll(filters);
         filtering.setSortCategory(sortCategory);
         filtering.setOrder(order);
         filtering.setBlockCount(blockCount);

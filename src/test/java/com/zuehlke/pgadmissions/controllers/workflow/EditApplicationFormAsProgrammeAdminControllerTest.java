@@ -88,7 +88,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //    @Test
 //    public void shouldAddNewReferenceWithoutSavingSendToPorticoReferences() throws ScoringDefinitionParseException {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
 //
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(new State().withId(ApplicationFormStatus.INTERVIEW)).program(program)
 //                .build();
@@ -123,7 +123,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //    @SuppressWarnings("unchecked")
 //    @Test
 //    public void shouldUpdateReference() throws ScoringDefinitionParseException {
-//        Program program = new ProgramBuilder().build();
+//        Program program = new Program().build();
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(new State().withId(ApplicationFormStatus.INTERVIEW)).program(program)
 //                .build();
 //
@@ -146,7 +146,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //    @SuppressWarnings("unchecked")
 //    @Test
 //    public void shouldReportUpdateReferenceFormErrors() throws ScoringDefinitionParseException {
-//        Program program = new ProgramBuilder().build();
+//        Program program = new Program().build();
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(new State().withId(ApplicationFormStatus.INTERVIEW)).program(program)
 //                .build();
 //
@@ -172,7 +172,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //
 //    @Test
 //    public void shouldSaveSendToPorticoReferencesWithoutAddingNewReference() throws ScoringDefinitionParseException {
-//        Program program = new ProgramBuilder().build();
+//        Program program = new Program().build();
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(new State().withId(ApplicationFormStatus.INTERVIEW)).program(program)
 //                .build();
 //        SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
@@ -200,7 +200,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //    @Test
 //    public void shouldSaveSendToPorticoReferencesAndAddNewReference() throws ScoringDefinitionParseException {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(new State().withId(ApplicationFormStatus.INTERVIEW)).program(program)
 //                .build();
 //        SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
@@ -208,7 +208,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //
 //        refereeServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoDataDTO.getRefereesSendToPortico());
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");
@@ -240,7 +240,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //    @Test
 //    public void shouldSaveSendToPorticoReferencesAndReportFormErrors() throws ScoringDefinitionParseException {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").status(new State().withId(ApplicationFormStatus.INTERVIEW)).program(program)
 //                .build();
 //        SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
@@ -249,7 +249,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //        refereeServiceMock.selectForSendingToPortico(applicationForm, sendToPorticoDataDTO.getRefereesSendToPortico());
 //        EasyMock.expectLastCall();
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");
@@ -277,7 +277,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //    @Test
 //    public void shouldReturnRefereesAdminEditDTO() throws Exception {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
 //        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.REVIEW)).program(program).build();
 //
 //        final Question question1 = new Question();
@@ -302,7 +302,7 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 //    @Test
 //    public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
 //        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.REVIEW)).program(program).build();
 //
 //        EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);

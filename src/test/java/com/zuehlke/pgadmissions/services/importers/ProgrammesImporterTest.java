@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.dao.ProgramFeedDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramFeedBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 
@@ -88,8 +87,8 @@ public class ProgrammesImporterTest {
         List<ProgramInstance> currentData = new ArrayList<ProgramInstance>();
         URL xmlFileLocation = new File("src/test/resources/reference_data/programme_feed_atas.xml").toURI().toURL();
         ProgramImport programFeed = new ProgramFeedBuilder().feedUrl(xmlFileLocation.toExternalForm()).build();
-        Program p1 = new ProgramBuilder().programFeed(programFeed).code("DDNBENSING09").title("A").atasRequired(false).id(1).build();
-        Program p2 = new ProgramBuilder().programFeed(programFeed).code("DDNCIVSUSR09").title("B").atasRequired(true).id(2).build();
+        Program p1 = new Program().withProgramImport(programFeed).withCode("DDNBENSING09").withTitle("A").withRequireProjectDefinition(false).withId(1);
+        Program p2 = new Program().withProgramImport(programFeed).withCode("DDNCIVSUSR09").withTitle("B").withRequireProjectDefinition(true).withId(2);
         Date deadline = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
         Date startDate = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
         currentData.add(new ProgramInstanceBuilder().id(1).academicYear("1").identifier("0001").program(p1).applicationDeadline(deadline)

@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 
-import java.util.Date;
-
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.Advert;

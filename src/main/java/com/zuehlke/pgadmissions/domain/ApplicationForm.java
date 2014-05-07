@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -151,10 +152,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     private ApplicationTransfer transfer;
 
     @Transient
-    private boolean acceptedTerms;
-
-    @Transient
-    private Boolean acceptedTermsOnSubmission;
+    private Boolean acceptedTerms;
 
     public Integer getId() {
         return id;
@@ -162,14 +160,6 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public boolean isAcceptedTerms() {
-        return acceptedTerms;
-    }
-
-    public void setAcceptedTerms(boolean acceptedTerms) {
-        this.acceptedTerms = acceptedTerms;
     }
 
     public String getApplicationNumber() {
@@ -220,12 +210,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.dueDate = dueDate;
     }
 
-    public Boolean getAcceptedTermsOnSubmission() {
-        return acceptedTermsOnSubmission;
+    public Boolean getAcceptedTerms() {
+        return acceptedTerms;
     }
 
-    public void setAcceptedTermsOnSubmission(Boolean acceptedTermsOnSubmission) {
-        this.acceptedTermsOnSubmission = acceptedTermsOnSubmission;
+    public void setAcceptedTerms(Boolean acceptedTerms) {
+        this.acceptedTerms= acceptedTerms;
     }
 
     public Date getCreatedTimestamp() {
@@ -424,5 +414,40 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.submittedTimestamp = submittedTimestamp;
         return this;
     }
+    
+    public ApplicationForm withPersonalDetails(PersonalDetails personalDetails) {
+        this.personalDetails = personalDetails;
+        return this;
+    }
+    
+    public ApplicationForm withProgramDetails(ProgramDetails programDetails) {
+        this.programDetails = programDetails;
+        return this;
+    }
+    
+    public ApplicationForm withAddress(ApplicationAddress applicationAddress) {
+        this.applicationAddress = applicationAddress;
+        return this;
+    }
 
+    public ApplicationForm withDocument(ApplicationDocument applicationDocument) {
+        this.applicationDocument = applicationDocument;
+        return this;
+    }
+    
+    public ApplicationForm withAdditionalInformation(AdditionalInformation additionalInformation) {
+        this.additionalInformation = additionalInformation;
+        return this;
+    }
+
+    public ApplicationForm withAcceptedTerms(Boolean acceptedTerms) {
+        this.acceptedTerms = acceptedTerms;
+        return this;
+    }
+    
+    public ApplicationForm withReferees(Referee... referees) {
+        this.referees.addAll(Arrays.asList(referees));
+        return this;
+    }
+    
 }

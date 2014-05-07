@@ -191,7 +191,7 @@ public class InterviewServiceTest {
     // public void shouldCreateNewInterviewerInNewInterviewRoundIfLatestRoundIsNull() {
     // RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari")
     // .withPassword("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
-    // ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().id(1).build())
+    // ApplicationForm application = new ApplicationFormBuilder().id(1).program(new Program().id(1).build())
     // .applicant(new RegisteredUserBuilder().id(1).build()).status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
     // interviewerDAOMock.save(interviewer);
     // EasyMock.replay(interviewerDAOMock);
@@ -206,7 +206,7 @@ public class InterviewServiceTest {
     // RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).firstName("Maria").lastName("Doe").email("mari@test.com").username("mari")
     // .withPassword("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).build();
     // Interview latestInterview = new InterviewBuilder().build();
-    // ApplicationForm application = new ApplicationFormBuilder().latestInterview(latestInterview).id(1).program(new ProgramBuilder().id(1).build())
+    // ApplicationForm application = new ApplicationFormBuilder().latestInterview(latestInterview).id(1).program(new Program().id(1).build())
     // .applicant(new RegisteredUserBuilder().id(1).build()).status(new State().withId(ApplicationFormStatus.VALIDATION)).build();
     // interviewerDAOMock.save(interviewer);
     //

@@ -349,7 +349,7 @@ public class ApprovalServiceTest {
 //
 //    @Test
 //    public void shouldReturnNewApprovalRoundWithExistingRoundsSupervisorsIfApplicationHasProject() {
-//        Program program = new ProgramBuilder().id(1).enabled(true).build();
+//        Program program = new Program().id(1).enabled(true).build();
 //        RegisteredUser primarySupervisor = new RegisteredUserBuilder().id(1).email("primary.supervisor@email.test").build();
 //        RegisteredUser secondarySupervisor = new RegisteredUserBuilder().id(2).email("secondary.supervisor@email.test").build();
 //        Advert advert = new AdvertBuilder().description("desc").funding("fund").studyDuration(1).title("title").build();
@@ -487,10 +487,10 @@ public class ApprovalServiceTest {
 //        user1.getReferees().add(referee1);
 //        user2.getReferees().add(referee2);
 //
-//        Document document1 = new DocumentBuilder().id(1).build();
+//        Document document1 = new Document().id(1).build();
 //
-//        Qualification qualification1 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
-//        Qualification qualification2 = new QualificationBuilder().id(1).sendToUCL(true).proofOfAward(document1).build();
+//        Qualification qualification1 = new Qualification().id(1).sendToUCL(true).proofOfAward(document1).build();
+//        Qualification qualification2 = new Qualification().id(1).sendToUCL(true).proofOfAward(document1).build();
 //
 //        ReferenceComment referenceComment1 = new ReferenceCommentBuilder().id(1).referee(referee1).build();
 //        ReferenceComment referenceComment2 = new ReferenceCommentBuilder().id(2).referee(referee2).build();

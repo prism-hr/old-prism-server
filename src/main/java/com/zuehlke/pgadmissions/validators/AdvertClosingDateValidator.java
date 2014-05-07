@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.validators;
 
-import java.util.Date;
-
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

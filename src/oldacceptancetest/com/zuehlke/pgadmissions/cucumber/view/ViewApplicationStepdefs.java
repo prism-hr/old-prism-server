@@ -195,12 +195,12 @@ public class ViewApplicationStepdefs {
 		sessionFactory.getCurrentSession().save(foxy);
 		userMap.put("foxy", foxy);
 
-		programOne = new ProgramBuilder().code("CUKEPROG1").description("Cucumber Test Program Description").title("Cucumber Test Program Title")
+		programOne = new Program().code("CUKEPROG1").description("Cucumber Test Program Description").title("Cucumber Test Program Title")
 				.approver(foxy).toProgram();
 		sessionFactory.getCurrentSession().save(programOne);
 		programMap.put(programOne.getCode(), programOne);
 
-		programTwo = new ProgramBuilder().code("CUKEPROG2").description("Cucumber Test Program Description").title("Cucumber Test Program Title").toProgram();
+		programTwo = new Program().code("CUKEPROG2").description("Cucumber Test Program Description").title("Cucumber Test Program Title").toProgram();
 		sessionFactory.getCurrentSession().save(programTwo);
 		programMap.put(programTwo.getCode(), programTwo);
 

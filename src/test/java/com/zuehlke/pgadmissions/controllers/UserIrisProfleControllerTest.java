@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 import org.easymock.classextension.EasyMock;
@@ -11,7 +9,6 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.UclIrisProfileService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -65,7 +62,7 @@ public class UserIrisProfleControllerTest {
     
     @Test
     public void shouldNotSetIrisProfileIfUpiIsNotAlphanumeric() {
-        User user = new UserBuilder().id(10).build();
+        User user = new User().withId(10);
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
         EasyMock.expect(messageSourceMock.getMessage("account.iris.upi.invalid", null, null)).andReturn("account.iris.upi.invalid");
         EasyMock.replay(messageSourceMock, userServiceMock);
@@ -78,8 +75,8 @@ public class UserIrisProfleControllerTest {
     @Test
     public void shouldSetIrisProfileForUserWithMultipleAccounts() {
 //        final String upi = "ABCDXX4";
-//        User linkedUser = new UserBuilder().id(11).build();
-//        User user = new UserBuilder().id(10).linkedAccounts(linkedUser).build();
+//        User linkedUser = new User().id(11).build();
+//        User user = new User().id(10).linkedAccounts(linkedUser).build();
 //        EasyMock.expect(irisServiceMock.profileExists(upi)).andReturn(true);
 //        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
 //        EasyMock.expect(userServiceMock.getUsersWithUpi(upi)).andReturn(new ArrayList<User>());
@@ -97,8 +94,8 @@ public class UserIrisProfleControllerTest {
     @Test
     public void shouldNotSetIrisProfileIfUserTriesToEnterAlreadyRegisteredIrisProfile() {
 //        final String upi = "ABCDXX4";
-//        User impersonator = new UserBuilder().id(10).build();
-//        User existingIrisProfile = new UserBuilder().id(11).upi(upi).build();
+//        User impersonator = new User().id(10).build();
+//        User existingIrisProfile = new User().id(11).upi(upi).build();
 //        EasyMock.expect(irisServiceMock.profileExists(upi)).andReturn(true);
 //        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(impersonator);
 //        EasyMock.expect(userServiceMock.getUsersWithUpi(upi)).andReturn(Arrays.asList(existingIrisProfile));
@@ -113,9 +110,9 @@ public class UserIrisProfleControllerTest {
     @Test
     public void shouldUnlinkIrisProfileForCurrentUser(){
         
-//        User primaryAccount = new UserBuilder().upi("666").build();
-//        User currentUser = new UserBuilder().upi("666").primaryAccount(primaryAccount).build();
-//        User linkedSecondaryAccount = new UserBuilder().upi("666").primaryAccount(primaryAccount).build();
+//        User primaryAccount = new User().upi("666").build();
+//        User currentUser = new User().upi("666").primaryAccount(primaryAccount).build();
+//        User linkedSecondaryAccount = new User().upi("666").primaryAccount(primaryAccount).build();
 //        primaryAccount.getLinkedAccounts().addAll(Arrays.asList(currentUser, linkedSecondaryAccount));
 //        
 //        EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);

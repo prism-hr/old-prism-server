@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -45,9 +44,9 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldBeAbleToSeeOpportunityRequestsIfSuperadmin() {
-        User registeredUser = new UserBuilder()
+        User registeredUser = new User()
         // .role(new RoleBuilder().id(Authority.SUPERADMINISTRATOR).build())
-                .build();
+                ;
 
         expect(userService.getCurrentUser()).andReturn(registeredUser);
 
@@ -82,7 +81,7 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldRequestAuthorNotBeAbleToApproveOpportunityRequest() {
-        User registeredUser = new UserBuilder().id(53425345).build();
+        User registeredUser = new User().withId(53425345);
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
         OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.APPROVE).build();
 
@@ -95,7 +94,7 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldRequestAuthorBeAbleToReviseOpportunityRequest() {
-        User registeredUser = new UserBuilder().id(53425345).build();
+        User registeredUser = new User().withId(53425345);
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
         OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.REVISE).build();
 
@@ -108,7 +107,7 @@ public class PermissionsServiceTest {
 
     @Test
     public void shouldRequestAuthorBeAbleToSeeOpportunityRequest() {
-        User registeredUser = new UserBuilder().id(53425345).build();
+        User registeredUser = new User().withId(53425345);
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(registeredUser).build();
 
         expect(userService.getCurrentUser()).andReturn(registeredUser);

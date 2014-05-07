@@ -103,7 +103,7 @@ public class ReferenceControllerTest {
 //    @Test
 //    public void shouldReturnNewReferenceComment() throws Exception {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
 //        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
 //        final Referee referee = new RefereeBuilder().id(8).build();
 //
@@ -135,7 +135,7 @@ public class ReferenceControllerTest {
 //    @Test
 //    public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
 //        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).build();
 //        final Referee referee = new RefereeBuilder().id(8).build();
 //
@@ -171,7 +171,7 @@ public class ReferenceControllerTest {
 //
 //    @Test
 //    public void shouldReturnToFormViewIfValidationErrors() throws ScoringDefinitionParseException {
-//        final Program program = new ProgramBuilder().build();
+//        final Program program = new Program().build();
 //        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("app1").program(program).build();
 //        final ReferenceComment comment = new ReferenceCommentBuilder().application(applicationForm).build();
 //        ModelMap modelMap = new ModelMap();
@@ -185,7 +185,7 @@ public class ReferenceControllerTest {
 //    @Test
 //    public void shouldSaveReferenceAndRedirectToSaveViewIfNoErrors() throws ScoringDefinitionParseException {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
 //        final ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("12").program(program).build();
 //        final Referee referee = new RefereeBuilder().id(1).build();
 //        final ReferenceComment reference = new ReferenceCommentBuilder().application(application).referee(referee).id(4).build();

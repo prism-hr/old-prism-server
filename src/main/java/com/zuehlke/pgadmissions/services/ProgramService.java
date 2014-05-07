@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -138,11 +137,11 @@ public class ProgramService {
 
         if (program != null) {
             program = (Program) merge(program);
-            program.setContactUser(thisBean.getContactUserForProgram(program, opportunityRequest.getAuthor()));
+            program.setUser(thisBean.getContactUserForProgram(program, opportunityRequest.getAuthor()));
         } else {
             program = new Program();
             program.setState(ProgramState.PROGRAM_APPROVED);
-            program.setContactUser(opportunityRequest.getAuthor());
+            program.setUser(opportunityRequest.getAuthor());
         }
 
         if (program.getProgramImport() == null) {
@@ -278,7 +277,7 @@ public class ProgramService {
                 return administrators.get(0);
             }
         }
-        return program.getContactUser();
+        return program.getUser();
     }
 
     public Project addProject(ProjectDTO projectDTO) {

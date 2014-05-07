@@ -21,7 +21,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -34,10 +33,6 @@ public abstract class Advert implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-
-    @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
-    @Column(name = "title")
-    private String title;
 
     @Size(max = 3000, message = "A maximum of 2000 characters are allowed.")
     @Column(name = "description", nullable = false)
@@ -52,7 +47,7 @@ public abstract class Advert implements Serializable {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User contactUser;
+    private User user;
 
     @Column(name = "advert_type")
     @Enumerated(EnumType.STRING)
@@ -63,7 +58,7 @@ public abstract class Advert implements Serializable {
     private AdvertClosingDate closingDate;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "program_id", nullable = false)
+    @JoinColumn(name = "advert_id", nullable = false)
     private List<AdvertClosingDate> closingDates = new ArrayList<AdvertClosingDate>();
 
     public Integer getId() {
@@ -72,14 +67,6 @@ public abstract class Advert implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getDescription() {
@@ -128,12 +115,12 @@ public abstract class Advert implements Serializable {
         return studyDurationToRead.toString() + " " + timeIntervalToRead;
     }
 
-    public User getContactUser() {
-        return contactUser;
+    public User getUser() {
+        return user;
     }
 
-    public void setContactUser(User contactUser) {
-        this.contactUser = contactUser;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public AdvertType getAdvertType() {
@@ -178,5 +165,7 @@ public abstract class Advert implements Serializable {
     public abstract Program getProgram();
 
     public abstract Project getProject();
+
+    public abstract String getTitle();
 
 }

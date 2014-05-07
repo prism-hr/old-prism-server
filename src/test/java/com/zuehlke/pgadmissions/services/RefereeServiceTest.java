@@ -55,7 +55,7 @@ public class RefereeServiceTest {
 //                .document(null).build();
 //        Referee referee = new RefereeBuilder().user(refereeUser).id(8).reference(referenceComment).build();
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");
@@ -80,7 +80,7 @@ public class RefereeServiceTest {
 //    public void shouldPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
 //        Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
 //        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
-//        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+//        Program program = new Program().title("some title").administrators(admin1).build();
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
 //
 //        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
@@ -89,7 +89,7 @@ public class RefereeServiceTest {
 //
 //        applicationForm.setReferees(Arrays.asList(referee));
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");
@@ -129,13 +129,13 @@ public class RefereeServiceTest {
 //    public void shouldCreateRefereeRegisteredUserAndPostReferenceOnBehalfOfReferee() throws UnsupportedEncodingException {
 //        Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
 //        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
-//        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+//        Program program = new Program().title("some title").administrators(admin1).build();
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
 //
 //        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
 //        Referee referee = new RefereeBuilder().application(applicationForm).firstname("Franciszek").lastname("Pieczka").build();
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");
@@ -182,12 +182,12 @@ public class RefereeServiceTest {
 //    public void shouldCreateNewRefereeAndPostReferenceOnBehalfOfHim() throws UnsupportedEncodingException {
 //        Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
 //        RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
-//        Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+//        Program program = new Program().title("some title").administrators(admin1).build();
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).build();
 //
 //        RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("Alice").build();
 //
-//        Document document = new DocumentBuilder().build();
+//        Document document = new Document().build();
 //        RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
 //        refereesAdminEditDTO.setComment("comment text");
 //        refereesAdminEditDTO.setEditedRefereeId("refereeId");
@@ -373,7 +373,7 @@ public class RefereeServiceTest {
 //        RegisteredUser admin2 = new RegisteredUserBuilder().id(2).firstName("anna").lastName("allen").email("email@test.com").build();
 //        Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").build();
 //        ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant)
-//                .program(new ProgramBuilder().title("klala").administrators(admin1, admin2).build()).build();
+//                .program(new Program().title("klala").administrators(admin1, admin2).build()).build();
 //        referee.setApplication(form);
 //
 //        refereeDAOMock.save(referee);

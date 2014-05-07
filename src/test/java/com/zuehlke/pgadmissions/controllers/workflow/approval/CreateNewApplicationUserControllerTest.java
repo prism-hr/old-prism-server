@@ -16,7 +16,6 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.dto.UserDTO;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -38,7 +37,7 @@ public class CreateNewApplicationUserControllerTest {
     @Test
     public void shouldCreateNewUserIfUserDoesNotExists() {
         UserDTO userDTO = new UserDTO().withFirstName("bob").withLastName("bobson").withEmail("bobson@bob.com");
-        User user = new UserBuilder().id(6).firstName("bob").lastName("bobson").email("bobson@bob.com").build();
+        User user = new User().withId(6).withFirstName("bob").withLastName("bobson").withEmail("bobson@bob.com");
         ModelMap modelMap = new ModelMap();
         BindingResult bindingResult = new BeanPropertyBindingResult(user, "user");
 

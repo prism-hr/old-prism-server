@@ -60,7 +60,7 @@ public class ProjectsPageStepdefs {
 		cleanUp();
 		commitAndGetNewTransaction();
 
-		program = new ProgramBuilder().code("CUKEPROG").description("Cucumber Test Program Description").title("Cucumber Test Program Title").toProgram();
+		program = new Program().code("CUKEPROG").description("Cucumber Test Program Description").title("Cucumber Test Program Title").toProgram();
 		sessionFactory.getCurrentSession().save(program);
 
 		Role applicant = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.APPLICANT))

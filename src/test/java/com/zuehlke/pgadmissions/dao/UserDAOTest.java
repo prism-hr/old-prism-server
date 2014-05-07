@@ -12,12 +12,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
@@ -28,8 +26,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldSaveAndLoadUser() throws Exception {
 
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("kod_aktywacyjny")
-                .userAccount(new UserAccount().withEnabled(false).withPassword("dupa")).build();
+        User user = new User().withFirstName("Jane").withLastName("Doe").withEmail("email2@test.com").withActivationCode("kod_aktywacyjny")
+                .withAccount(new UserAccount().withEnabled(false).withPassword("dupa"));
 
         assertNull(user.getId());
 
@@ -51,10 +49,10 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldFindUsersByActivationCode() throws Exception {
 
-        User userOne = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test2.com")
-                .userAccount(new UserAccount().withPassword("password").withEnabled(false)).activationCode("xyz").build();
-        User userTwo = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test3.com")
-                .userAccount(new UserAccount().withPassword("password").withEnabled(false)).activationCode("def").build();
+        User userOne = new User().withFirstName("Jane").withLastName("Doe").withEmail("email@test2.com")
+                .withAccount(new UserAccount().withPassword("password").withEnabled(false)).withActivationCode("xyz");
+        User userTwo = new User().withFirstName("Jane").withLastName("Doe").withEmail("email@test3.com")
+                .withAccount(new UserAccount().withPassword("password").withEnabled(false)).withActivationCode("def");
 
         save(userOne, userTwo);
 
@@ -94,9 +92,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
         RoleDAO roleDAO = new RoleDAO(sessionFactory);
         Role superadministratorRole = roleDAO.getById(Authority.SYSTEM_ADMINISTRATOR);
 
-        User superadmin = new UserBuilder()
+        User superadmin = new User()
         // .role(superadministratorRole)
-                .firstName("Jane").lastName("Doe").email("somethingelse@test.com").userAccount(new UserAccount().withEnabled(false)).build();
+                .withFirstName("Jane").withLastName("Doe").withEmail("somethingelse@test.com").withAccount(new UserAccount().withEnabled(false));
         sessionFactory.getCurrentSession().save(superadmin);
 
         List<User> superadministrators = userDAO.getSuperadministrators();

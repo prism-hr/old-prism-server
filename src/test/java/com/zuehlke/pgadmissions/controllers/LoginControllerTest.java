@@ -23,7 +23,6 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -101,8 +100,8 @@ public class LoginControllerTest {
 
     @Test
     public void shouldSaveUserEmailInSessionIfRequestContainsActivationCode() {
-        User userWithActivationCode = new UserBuilder().firstName("Kevin").lastName("Denver").email("ked@zuhlke.com").userAccount(new UserAccount().withEnabled(true))
-                .activationCode("13ca4700-1393-11e2-892e-0800200c9a66").build();
+        User userWithActivationCode = new User().withFirstName("Kevin").withLastName("Denver").withEmail("ked@zuhlke.com").withAccount(new UserAccount().withEnabled(true))
+                .withActivationCode("13ca4700-1393-11e2-892e-0800200c9a66");
 
         MockHttpSession session = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();

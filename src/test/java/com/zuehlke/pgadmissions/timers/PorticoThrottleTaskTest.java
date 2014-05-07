@@ -8,8 +8,8 @@ import static org.easymock.EasyMock.verify;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.services.ExportQueueService;
 import com.zuehlke.pgadmissions.services.ApplicationExportConfigurationService;
+import com.zuehlke.pgadmissions.services.ExportQueueService;
 
 public class PorticoThrottleTaskTest {
 	

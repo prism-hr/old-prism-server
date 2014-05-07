@@ -17,16 +17,18 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 
 public class TestObjectProvider {
@@ -131,20 +133,17 @@ public class TestObjectProvider {
         return getInstitution(PrismState.INSTITUTION_APPROVED);
     }
 
-    public ApplicationForm getEnabledProgramApplication() {
-        return getProgramApplication(true);
+    public ApplicationForm getProgramApplication() {
+        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class) //
+                .createAlias("program", "program", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNull("project")) //
+                .setMaxResults(1).uniqueResult();
     }
 
-    public ApplicationForm getDisabledProgramApplication() {
-        return getProgramApplication(false);
-    }
-
-    public ApplicationForm getEnabledProjectApplication() {
-        return getProjectApplication(true);
-    }
-
-    public ApplicationForm getDisabledProjectApplication() {
-        return getProjectApplication(false);
+    public ApplicationForm getProjectApplication() {
+        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class) //
+                .createAlias("project", "project", JoinType.INNER_JOIN) //
+                .setMaxResults(1).uniqueResult();
     }
 
     public ApplicationForm getApplication(PrismState status) {
@@ -228,17 +227,6 @@ public class TestObjectProvider {
         return (Program) criteria.setMaxResults(1).uniqueResult();
     }
 
-    private ApplicationForm getProgramApplication(Boolean enabled) {
-        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .createAlias("program", "program", JoinType.INNER_JOIN).add(Restrictions.eq("program.active", enabled)).add(Restrictions.isNull("project"))
-                .setMaxResults(1).uniqueResult();
-    }
-
-    private ApplicationForm getProjectApplication(Boolean enabled) {
-        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-                .createAlias("project", "project", JoinType.INNER_JOIN).add(Restrictions.eq("project.active", enabled)).setMaxResults(1).uniqueResult();
-    }
-
     private Project getProject(ProjectState state) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Project.class).createAlias("program", "program", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("state", state));
@@ -263,6 +251,14 @@ public class TestObjectProvider {
         return (State) sessionFactory.getCurrentSession().createCriteria(State.class) //
                 .add(Restrictions.eq("id", state)) //
                 .uniqueResult();
+    }
+
+    public ProgramType getProgramType() {
+        return (ProgramType) sessionFactory.getCurrentSession().createCriteria(ProgramType.class).setMaxResults(1).uniqueResult();
+    }
+
+    public QualificationType getQualificationType() {
+        return (QualificationType) sessionFactory.getCurrentSession().createCriteria(QualificationType.class).setMaxResults(1).uniqueResult();
     }
 
 }

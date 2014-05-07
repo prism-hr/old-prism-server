@@ -408,7 +408,7 @@ public class WorkflowService {
             User primarySupervisor = roleService.getUserInRole(project, Authority.PROJECT_PRIMARY_SUPERVISOR);
             administrators.put(primarySupervisor, Authority.PROJECTADMINISTRATOR);
 
-            User projectAdministrator = project.getContactUser();
+            User projectAdministrator = project.getUser();
             if (projectAdministrator != null) {
                 administrators.put(projectAdministrator, Authority.PROJECTADMINISTRATOR);
             }

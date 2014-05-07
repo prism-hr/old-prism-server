@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApplicationFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
@@ -17,8 +17,8 @@ import com.zuehlke.pgadmissions.domain.enums.SortCategory;
 @Transactional
 public class ApplicationsFilteringService {
 
-    public ApplicationsFiltering getDefaultApplicationFiltering(User user) {
-        ApplicationsFiltering filtering;
+    public ApplicationFilterGroup getDefaultApplicationFiltering(User user) {
+        ApplicationFilterGroup filtering;
         if (user.getAccount().getFilterGroup() != null) {
             filtering = user.getAccount().getFilterGroup();
         } else {
@@ -27,23 +27,23 @@ public class ApplicationsFilteringService {
         return filtering;
     }
 
-    public ApplicationsFiltering getActiveApplicationFiltering() {
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
-        List<ApplicationsFilter> filters = filtering.getFilters();
+    public ApplicationFilterGroup getActiveApplicationFiltering() {
+        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
+        List<ApplicationFilter> filters = filtering.getFilters();
         filters.add(getFilterForNonStatus(PrismState.APPLICATION_APPROVED));
         filters.add(getFilterForNonStatus(PrismState.APPLICATION_REJECTED));
         filters.add(getFilterForNonStatus(PrismState.APPLICATION_WITHDRAWN));
         return filtering;
     }
     
-    public ApplicationsFiltering getUrgentApplicationFiltering() {
-        ApplicationsFiltering filtering = new ApplicationsFiltering();
+    public ApplicationFilterGroup getUrgentApplicationFiltering() {
+        ApplicationFilterGroup filtering = new ApplicationFilterGroup();
         filtering.setSortCategory(SortCategory.URGENT);
         return filtering;
     }
 
-    private ApplicationsFilter getFilterForNonStatus(PrismState status) {
-        ApplicationsFilter filter = new ApplicationsFilter();
+    private ApplicationFilter getFilterForNonStatus(PrismState status) {
+        ApplicationFilter filter = new ApplicationFilter();
         filter.setSearchCategory(SearchCategory.APPLICATION_STATUS);
         filter.setSearchPredicate(SearchPredicate.NOT_CONTAINING);
         filter.setSearchTerm(status.name());

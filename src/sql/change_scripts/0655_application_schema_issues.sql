@@ -239,9 +239,3 @@ SET FOREIGN_KEY_CHECKS = 1
 ALTER TABLE ADVERT
 	DROP COLUMN title
 ;
-
-/* Fix uniqueness constraints on imported data tables */
-
-/* Fix suggested supervisor table */
-
-/* Transform comments */

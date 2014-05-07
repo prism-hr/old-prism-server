@@ -6,9 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -141,14 +141,14 @@ public class ApplicationFormCopyHelper {
 
     public void copyQualification(Qualification to, Qualification from, boolean doPerformDeepCopy) {
         to.setInstitution(from.getInstitution());
-        to.setQualificationType(getEnabledImportedObject(from.getQualificationType()));
-        to.setQualificationTitle(from.getQualificationTitle());
-        to.setQualificationSubject(from.getQualificationSubject());
-        to.setQualificationLanguage(from.getQualificationLanguage());
-        to.setQualificationStartDate(from.getQualificationStartDate());
+        to.setType(getEnabledImportedObject(from.getType()));
+        to.setTitle(from.getTitle());
+        to.setSubject(from.getSubject());
+        to.setLanguage(from.getLanguage());
+        to.setStartDate(from.getStartDate());
         to.setCompleted(from.getCompleted());
-        to.setQualificationGrade(from.getQualificationGrade());
-        to.setQualificationAwardDate(from.getQualificationAwardDate());
+        to.setGrade(from.getGrade());
+        to.setAwardDate(from.getAwardDate());
         if (doPerformDeepCopy) {
             to.setDocument(copyDocument(from.getDocument()));
         } else {

@@ -7,7 +7,6 @@ import static org.unitils.easymock.EasyMockUnitils.replay;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -15,7 +14,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.web.authentication.rememberme.CookieTheftException;
 import org.springframework.web.servlet.ModelAndView;
 import org.unitils.UnitilsJUnit4TestClassRunner;
-import org.unitils.easymock.EasyMockUnitils;
 import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
@@ -50,7 +48,7 @@ public class PgadmissionsExceptionResolverTest {
         AlertDefinition alert = (AlertDefinition) request.getSession().getAttribute("alertDefinition");
         assertEquals(AlertType.INFO, alert.getType());
         assertEquals("Missing application", alert.getTitle());
-        assertEquals("The application does not exist: app1", alert.getDescription());
+        assertEquals("The application does not exist: app1.", alert.getDescription());
 
         assertEquals("redirect:/applications", modelAndView.getViewName());
     }

@@ -377,7 +377,7 @@ public class ApprovalControllerTest {
     //
     // @Test
     // public void shouldSaveSendToPorticoReferencesAndSaveNewReference() throws ScoringDefinitionParseException {
-    // Program program = new ProgramBuilder().title("some title").build();
+    // Program program = new Program().title("some title").build();
     // ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").program(program).build();
     //
     // SendToPorticoDataDTO sendToPorticoData = new SendToPorticoDataDTO();
@@ -388,7 +388,7 @@ public class ApprovalControllerTest {
     // BindingResult porticoResult = new MapBindingResult(Collections.emptyMap(), "");
     // porticoResult.reject("error"); // does not matter if error
     //
-    // Document document = new DocumentBuilder().build();
+    // Document document = new Document().build();
     // RefereesAdminEditDTO refereesAdminEditDTO = new RefereesAdminEditDTO();
     // refereesAdminEditDTO.setComment("comment text");
     // refereesAdminEditDTO.setEditedRefereeId("refereeId");
@@ -431,7 +431,7 @@ public class ApprovalControllerTest {
     // public void shouldAddNewReferenceWithoutSavingSendToPorticoReferences() throws ScoringDefinitionParseException {
     // Role adminRole = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
     // RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").build();
-    // Program program = new ProgramBuilder().title("some title").administrators(admin1).build();
+    // Program program = new Program().title("some title").administrators(admin1).build();
     // ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").program(program).status(new State().withId(ApplicationFormStatus.INTERVIEW))
     // .build();
     // SendToPorticoDataDTO sendToPorticoDataDTO = new SendToPorticoDataDTO();
@@ -468,7 +468,7 @@ public class ApprovalControllerTest {
     // @Test
     // public void shouldReturnRefereesAdminEditDTO() throws Exception {
     // final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
-    // final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
+    // final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
     // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.REVIEW)).program(program).build();
     //
     // final Question question1 = new Question();
@@ -493,7 +493,7 @@ public class ApprovalControllerTest {
     // @Test
     // public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
     // final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REFERENCE).content("xmlContent").build();
-    // final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
+    // final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REFERENCE, scoringDefinition)).build();
     // final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(ApplicationFormStatus.REVIEW)).program(program).build();
     //
     // EasyMock.expect(applicationServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);

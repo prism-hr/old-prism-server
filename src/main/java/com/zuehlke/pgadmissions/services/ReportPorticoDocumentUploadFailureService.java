@@ -11,13 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationTransferErrorDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.mail.MailSendingService;
 
 @Service
 @Transactional

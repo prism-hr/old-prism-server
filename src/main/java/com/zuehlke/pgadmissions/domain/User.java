@@ -10,9 +10,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -38,7 +35,6 @@ import org.hibernate.search.annotations.TokenizerDef;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
@@ -101,7 +97,7 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     private Set<UserRole> userRoles;
 
     @OneToMany(mappedBy = "user")
-    private List<ProgramExport> researchOpportunitiesFeeds = new ArrayList<ProgramExport>();
+    private List<ProgramExport> programExports = new ArrayList<ProgramExport>();
 
     @JoinColumn(name = "user_account_id")
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -187,8 +183,8 @@ public class User implements UserDetails, Comparable<User>, Serializable {
         this.parentUser = parentUser;
     }
 
-    public List<ProgramExport> getResearchOpportunitiesFeeds() {
-        return researchOpportunitiesFeeds;
+    public List<ProgramExport> getProgramExports() {
+        return programExports;
     }
 
     public UserAccount getAccount() {

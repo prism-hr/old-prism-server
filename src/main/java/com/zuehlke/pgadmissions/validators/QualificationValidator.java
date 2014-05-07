@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -37,21 +36,21 @@ public class QualificationValidator extends FormSectionObjectValidator implement
 
         Qualification qualification = (Qualification) target;
 
-        if (qualification.getQualificationStartDate() != null) {
-            if (qualification.getQualificationStartDate().after(today)) {
+        if (qualification.getStartDate() != null) {
+            if (qualification.getStartDate().after(today)) {
                 errors.rejectValue("qualificationStartDate", "date.field.notpast");
-            } else if (qualification.getQualificationAwardDate() != null
-                    && qualification.getQualificationStartDate().after(qualification.getQualificationAwardDate())) {
+            } else if (qualification.getAwardDate() != null
+                    && qualification.getStartDate().after(qualification.getAwardDate())) {
                 errors.rejectValue("qualificationStartDate", "qualification.start_date.notvalid");
             }
         }
 
         if (qualification.getCompleted()) {
-            if (qualification.getQualificationAwardDate() != null && qualification.getQualificationAwardDate().after(today)) {
+            if (qualification.getAwardDate() != null && qualification.getAwardDate().after(today)) {
                 errors.rejectValue("qualificationAwardDate", "date.field.notpast");
             }
         } else {
-            if (qualification.getQualificationAwardDate() != null && qualification.getQualificationAwardDate().before(today)) {
+            if (qualification.getAwardDate() != null && qualification.getAwardDate().before(today)) {
                 errors.rejectValue("qualificationAwardDate", "date.field.notfuture");
             }
         }

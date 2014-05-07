@@ -14,8 +14,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UpdateUserRolesDTO;
 
@@ -33,8 +33,8 @@ public class UpdateUserRolesDTOValidatorTest {
 	@Before
 	public void setup() {
 		user = new UpdateUserRolesDTO();
-		user.setSelectedUser(new UserBuilder().id(5).build());
-		user.setSelectedProgram(new ProgramBuilder().id(4).build());
+		user.setSelectedUser(new User().withId(5));
+		user.setSelectedProgram(new Program().withId(4));
 		user.setSelectedAuthorities(Authority.APPLICATION_REVIEWER);
 		
 		updateUserRolesDTOValidator = new UpdateUserRolesDTOValidator();

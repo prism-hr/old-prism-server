@@ -80,7 +80,7 @@ public class StateTransitionControllerTest {
     //
     // @Test
     // public void shouldGetApplicationFromIdForAdminUser() {
-    // Program program = new ProgramBuilder().id(6).build();
+    // Program program = new Program().id(6).build();
     // ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
     // RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
     // EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
@@ -97,7 +97,7 @@ public class StateTransitionControllerTest {
     //
     // @Test
     // public void shouldGetApplicationFromIdForApproverUser() {
-    // Program program = new ProgramBuilder().id(6).build();
+    // Program program = new Program().id(6).build();
     // ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
     // RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
     // EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
@@ -115,7 +115,7 @@ public class StateTransitionControllerTest {
     //
     // @Test
     // public void shouldGetApplicationFromIdForApplicationAdministrator() {
-    // Program program = new ProgramBuilder().id(6).build();
+    // Program program = new Program().id(6).build();
     // ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
     // RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
     // EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);

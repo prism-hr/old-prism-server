@@ -27,7 +27,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.exporters.JSchFactory;
 
@@ -47,7 +46,7 @@ public class UclXferPrismUclConnectionIT  {
     @Before
     public void setup() throws IOException {
         Resource testFileAsResurce = new ClassPathResource("/pdf/valid.pdf");
-        document = new DocumentBuilder().content(FileUtils.readFileToByteArray(testFileAsResurce.getFile())).build();
+        document = new Document().withContent(FileUtils.readFileToByteArray(testFileAsResurce.getFile()));
     }
     
     /**

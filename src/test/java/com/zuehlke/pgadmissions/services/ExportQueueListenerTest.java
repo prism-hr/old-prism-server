@@ -1,14 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
 import static java.util.Arrays.asList;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.unitils.easymock.EasyMockUnitils.replay;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -29,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -101,8 +97,8 @@ public class ExportQueueListenerTest {
         ExportServiceException uclExportServiceException = new ExportServiceException("error",
                 new ApplicationTransferErrorBuilder().errorHandlingStrategy(
                         ApplicationTransferErrorHandlingDecision.RETRY).build());
-        User admin1 = new UserBuilder().id(1).build();
-        User admin2 = new UserBuilder().id(2).build();
+        User admin1 = new User().withId(1);
+        User admin2 = new User().withId(2);
         List<User> admins = asList(admin1, admin2);
         PrismScope systemScope = new PrismSystem();
         

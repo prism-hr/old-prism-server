@@ -1,26 +1,16 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-import java.util.List;
-
 import javax.jms.Queue;
 
 import org.easymock.EasyMock;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessagePostProcessor;
 
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationTransferBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 

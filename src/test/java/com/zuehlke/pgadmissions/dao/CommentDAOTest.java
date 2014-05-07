@@ -14,7 +14,6 @@ import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -30,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoreBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 
 public class CommentDAOTest extends AutomaticRollbackTestCase {
@@ -52,8 +50,8 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     @Before
     public void prepare() {
         commentDAO = new CommentDAO(sessionFactory);
-        user = new UserBuilder().firstName("Jane").lastName("Doe").email("email2@test.com").activationCode("code")
-                .userAccount(new UserAccount().withEnabled(false).withPassword("haslo")).build();
+        user = new User().withFirstName("Jane").withLastName("Doe").withEmail("email2@test.com").withActivationCode("code")
+                .withAccount(new UserAccount().withEnabled(false).withPassword("haslo"));
         save(user);
         flushAndClearSession();
         program = testObjectProvider.getEnabledProgram();
@@ -118,8 +116,8 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnNoValidationCommentForApplication() {
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .userAccount(new UserAccount().withPassword("password").withEnabled(false)).build();
+        User user = new User().withFirstName("Jane").withLastName("Doe").withEmail("email@test.com")
+                .withAccount(new UserAccount().withPassword("password").withEnabled(false));
 
         ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
 
@@ -132,8 +130,8 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldReturnCommentWithTwoScores() {
-        User user = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
-                .userAccount(new UserAccount().withPassword("password").withEnabled(false)).build();
+        User user = new User().withFirstName("Jane").withLastName("Doe").withEmail("email@test.com")
+                .withAccount(new UserAccount().withPassword("password").withEnabled(false));
 
         ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
         Score score1 = new ScoreBuilder().dateResponse(new Date()).question("1??").questionType(QuestionType.RATING).ratingResponse(4).build();

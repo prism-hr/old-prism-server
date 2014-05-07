@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationTypeBuilder;
@@ -41,7 +40,7 @@ public class QualificationValidatorTest {
 
     @Test
     public void shouldRejectIfSubjectIsEmpty() {
-        qualification.setQualificationSubject(null);
+        qualification.setSubject(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -50,7 +49,7 @@ public class QualificationValidatorTest {
 
     @Test
     public void shouldRejectIfStartDateIsEmpty() {
-        qualification.setQualificationStartDate(null);
+        qualification.setStartDate(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -59,7 +58,7 @@ public class QualificationValidatorTest {
     
     @Test
     public void shouldRejectIfAwardDateIsEmpty() {
-        qualification.setQualificationAwardDate(null);
+        qualification.setAwardDate(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -68,7 +67,7 @@ public class QualificationValidatorTest {
 
     @Test
     public void shouldRejectIfLanguageIsEmpty() {
-        qualification.setQualificationLanguage(null);
+        qualification.setLanguage(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -83,8 +82,8 @@ public class QualificationValidatorTest {
         tomorrow = calendar.getTime();
         calendar.add(Calendar.DATE, 2);
         dayAfterTomorrow = calendar.getTime();
-        qualification.setQualificationStartDate(tomorrow);
-        qualification.setQualificationAwardDate(dayAfterTomorrow);
+        qualification.setStartDate(tomorrow);
+        qualification.setAwardDate(dayAfterTomorrow);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(2, mappingResult.getErrorCount());
@@ -99,8 +98,8 @@ public class QualificationValidatorTest {
         Date tomorrow = calendar.getTime();
         calendar.add(Calendar.DATE, -1);
         Date yesterday = calendar.getTime();
-        qualification.setQualificationStartDate(tomorrow);
-        qualification.setQualificationAwardDate(yesterday);
+        qualification.setStartDate(tomorrow);
+        qualification.setAwardDate(yesterday);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -109,7 +108,7 @@ public class QualificationValidatorTest {
 
     @Test
     public void shouldRejectIfTypeIsEmpty() {
-        qualification.setQualificationType(null);
+        qualification.setType(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -118,7 +117,7 @@ public class QualificationValidatorTest {
 
     @Test
     public void shouldRejectIfGradeIsEmpty() {
-        qualification.setQualificationGrade(null);
+        qualification.setGrade(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -127,8 +126,8 @@ public class QualificationValidatorTest {
 
     @Test
     public void shouldRejectIfStartDateIsAfterEndDate() throws ParseException {
-        qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-        qualification.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
+        qualification.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+        qualification.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -142,7 +141,7 @@ public class QualificationValidatorTest {
         for (int idx = 0; idx < 200; idx++) {
             builder.append("a");
         }
-        qualification.setQualificationLanguage(builder.toString());
+        qualification.setLanguage(builder.toString());
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -156,7 +155,7 @@ public class QualificationValidatorTest {
         for (int idx = 0; idx < 200; idx++) {
             builder.append("a");
         }
-        qualification.setQualificationGrade(builder.toString());
+        qualification.setGrade(builder.toString());
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
         qualificationValidator.validate(qualification, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -178,14 +177,14 @@ public class QualificationValidatorTest {
         qualification = new Qualification();
         qualification.setApplication(new ApplicationFormBuilder().id(9).build());
         qualification.setId(3);
-        qualification.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
-        qualification.setQualificationGrade("first");
-        qualification.setQualificationLanguage("Abkhazian");
-        qualification.setQualificationSubject("CS");
-        qualification.setQualificationTitle("MS");
+        qualification.setAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
+        qualification.setGrade("first");
+        qualification.setLanguage("Abkhazian");
+        qualification.setSubject("CS");
+        qualification.setTitle("MS");
         qualification.setCompleted(true);
-        qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
-        qualification.setQualificationType(new QualificationTypeBuilder().name("degree").build());
+        qualification.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
+        qualification.setType(new QualificationTypeBuilder().name("degree").build());
 
         qualificationValidator = new QualificationValidator();
         qualificationValidator.setValidator((javax.validation.Validator) validator);

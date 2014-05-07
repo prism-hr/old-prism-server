@@ -18,7 +18,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -37,7 +36,7 @@ public class PgAdmissionAuthenticationProviderTest {
     public void shouldReturnPopulatedAuthenticationForValidCredentials() throws NoSuchAlgorithmException {
         Role roleOne = new Role().withId(Authority.APPLICATION_CREATOR);
         Role roleTwo = new Role().withId(Authority.PROGRAM_ADMINISTRATOR);
-        User user = new UserBuilder().id(1).build();
+        User user = new User().withId(1);
         EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
         EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);
@@ -58,7 +57,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
     @Test(expected = BadCredentialsException.class)
     public void shouldThrowBadCredentialsExceptionForMismatchingPassword() throws NoSuchAlgorithmException {
-        User user = new UserBuilder().id(1).build();
+        User user = new User().withId(1);
         EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
         EasyMock.replay(userDetailsServiceMock);
 
@@ -88,7 +87,7 @@ public class PgAdmissionAuthenticationProviderTest {
 
     @Test(expected = DisabledException.class)
     public void shouldThrowDisabledExceptionForDisabledAccount() {
-        User user = new UserBuilder().userAccount(new UserAccount().withEnabled(false)).id(1).build();
+        User user = new User().withAccount(new UserAccount().withEnabled(false)).withId(1);
         EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
         EasyMock.expect(encryptionUtilsMock.getMD5Hash("secret")).andReturn("secret");
         EasyMock.replay(userDetailsServiceMock, encryptionUtilsMock);

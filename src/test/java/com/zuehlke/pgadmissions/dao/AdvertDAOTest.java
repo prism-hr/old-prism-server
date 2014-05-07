@@ -11,7 +11,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -20,8 +19,8 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityListType;
+import com.zuehlke.pgadmissions.domain.enums.ProgramExportFormat;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 
 public class AdvertDAOTest extends AutomaticRollbackTestCase {
@@ -63,7 +62,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetProgramApplicationAdvert() {
-        ApplicationForm applicationForm = testObjectProvider.getEnabledProgramApplication();
+        ApplicationForm applicationForm = testObjectProvider.getProgramApplication();
         String applicationFormId = applicationForm.getId().toString(); 
         List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYAPPLICATIONFORMID, applicationFormId, null);
         assertThat(loadedAdverts.size(), equalTo(1));
@@ -72,7 +71,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetProjectApplicationAdvert() {
-        ApplicationForm applicationForm = testObjectProvider.getEnabledProjectApplication();
+        ApplicationForm applicationForm = testObjectProvider.getProjectApplication();
         String applicationFormId = applicationForm.getId().toString();
         List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYAPPLICATIONFORMID, applicationFormId, null);
         assertThat(loadedAdverts.size(), equalTo(2));

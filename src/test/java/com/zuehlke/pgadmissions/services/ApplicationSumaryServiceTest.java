@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.easymock.EasyMock.createMock;
-
 import java.util.Date;
 
 import org.joda.time.DateTime;
@@ -10,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -70,7 +67,7 @@ public class ApplicationSumaryServiceTest {
     public void setup() {
         dateOfSubmission = new DateTime(2013, 4, 23, 9, 20).toDate();
         dateOfLastUpdate = new DateTime(2013, 4, 20, 9, 20).toDate();
-        currentUser = new UserBuilder().id(CURRENT_USER_ID).email(CURRENT_USER_EMAIL_ADDRESS).build();
+        currentUser = new User().withId(CURRENT_USER_ID).withEmail(CURRENT_USER_EMAIL_ADDRESS);
     }
 
 //    @Test
@@ -346,15 +343,15 @@ public class ApplicationSumaryServiceTest {
 //
 //        PersonalDetails details = new PersonalDetailsBuilder().id(321).title(APPLICANT_TITLE).phoneNumber(APPLICANT_PHONE_NUMBER).build();
 //
-//        Qualification qualification = new QualificationBuilder().awardDate(dateOfLastUpdate).build();
-//        Qualification mostRecentQualification = new QualificationBuilder().awardDate(dateOfSubmission).title(MOST_RECENT_QUALIFICATION_TITLE).build();
+//        Qualification qualification = new Qualification().awardDate(dateOfLastUpdate).build();
+//        Qualification mostRecentQualification = new Qualification().awardDate(dateOfSubmission).title(MOST_RECENT_QUALIFICATION_TITLE).build();
 //
 //        EmploymentPosition position = new EmploymentPositionBuilder().endDate(dateOfLastUpdate).toEmploymentPosition();
 //        EmploymentPosition mostRecentPosition = new EmploymentPositionBuilder().employerName("Shortcuts production").endDate(dateOfSubmission)
 //                .toEmploymentPosition();
 //
-//        Document personalStatement = new DocumentBuilder().id(369).fileName(PERSONAL_STATEMENT_FILE_NAME).build();
-//        Document cv = new DocumentBuilder().id(379).fileName(CV_FILE_NAME).build();
+//        Document personalStatement = new Document().id(369).fileName(PERSONAL_STATEMENT_FILE_NAME).build();
+//        Document cv = new Document().id(379).fileName(CV_FILE_NAME).build();
 //
 //        Funding funding = new FundingBuilder().description(FUNDING_DESCRIPTION).value(null).build();
 //

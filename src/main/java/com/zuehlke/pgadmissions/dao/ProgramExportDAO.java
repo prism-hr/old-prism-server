@@ -10,8 +10,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
+import com.zuehlke.pgadmissions.domain.User;
 
 @Repository
 public class ProgramExportDAO {

@@ -109,7 +109,7 @@ public class ReviewCommentControllerTest {
 //    @Test
 //    public void shouldCreateNewReviewCommentForApplicationForm() throws Exception {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
 //        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 //        final RegisteredUser currentUser = createMock(RegisteredUser.class);
 //        final Reviewer reviewer = new ReviewerBuilder().id(5).build();
@@ -142,7 +142,7 @@ public class ReviewCommentControllerTest {
 //    @Test
 //    public void shouldNotApplyScoringConfigurationIfParseException() throws Exception {
 //        final ScoringDefinition scoringDefinition = new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("xmlContent").build();
-//        final Program program = new ProgramBuilder().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
+//        final Program program = new Program().scoringDefinitions(Collections.singletonMap(ScoringStage.REVIEW, scoringDefinition)).build();
 //        final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 //        final RegisteredUser currentUser = createMock(RegisteredUser.class);
 //        final Reviewer reviewer = new ReviewerBuilder().id(5).build();

@@ -25,12 +25,10 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -73,11 +71,11 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
                                         + "INSERT INTO APPLICATION_ROLE (id) VALUES ('SUPERVISOR');" + "INSERT INTO APPLICATION_ROLE (id) VALUES ('VIEWER');")
                         .executeUpdate();
 
-                user1 = new UserBuilder().firstName("Tyler").lastName("Durden").email("tyler@durden.com")
-                        .userAccount(new UserAccount().withPassword("password").withEnabled(true)).build();
+                user1 = new User().withFirstName("Tyler").withLastName("Durden").withEmail("tyler@durden.com")
+                        .withAccount(new UserAccount().withPassword("password").withEnabled(true));
 
-                similiarToUser1 = new UserBuilder().firstName("Taylor").lastName("Dordeen").email("taylor@dordeen.com")
-                        .userAccount(new UserAccount().withPassword("password").withEnabled(true)).build();
+                similiarToUser1 = new User().withFirstName("Taylor").withLastName("Dordeen").withEmail("taylor@dordeen.com")
+                        .withAccount(new UserAccount().withPassword("password").withEnabled(true));
 
                 registeredUserDAO.save(user1);
                 registeredUserDAO.save(similiarToUser1);

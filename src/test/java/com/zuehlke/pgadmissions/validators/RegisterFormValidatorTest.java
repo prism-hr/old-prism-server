@@ -16,7 +16,6 @@ import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -39,7 +38,7 @@ public class RegisterFormValidatorTest {
 
     @Before
     public void setup() {
-        user = new UserBuilder().id(4).userAccount(new UserAccount().withConfirmPassword("12345678").withPassword("12345678")).build();
+        user = new User().withId(4).withAccount(new UserAccount().withConfirmPassword("12345678").withPassword("12345678"));
         userServiceMock = EasyMock.createMock(UserService.class);
         recordValidator = new RegisterFormValidator(userServiceMock);
         recordValidator.setValidator((javax.validation.Validator) validator);
@@ -207,7 +206,7 @@ public class RegisterFormValidatorTest {
         user.setEmail("meuston@gmail.com");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "email");
 
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(new UserBuilder().id(5).build());
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(new User().withId(5));
         EasyMock.replay(userServiceMock);
         recordValidator.validate(user, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -221,7 +220,7 @@ public class RegisterFormValidatorTest {
         user.setEmail("meuston@gmail.com");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "email");
 
-        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(new UserBuilder().id(5).build());
+        EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("meuston@gmail.com")).andReturn(new User().withId(5));
         EasyMock.replay(userServiceMock);
         recordValidator.validate(user, mappingResult);
         Assert.assertEquals(1, mappingResult.getErrorCount());

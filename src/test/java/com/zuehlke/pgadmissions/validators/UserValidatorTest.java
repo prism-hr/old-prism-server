@@ -12,12 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -42,9 +40,9 @@ public class UserValidatorTest {
     public void setup() {
         userServiceMock = EasyMock.createMock(UserService.class);
         encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
-        user = new UserBuilder().id(1).userAccount(new UserAccount().withNewPassword("12345678").withPassword("5f4dcc3b5aa")).build();
-        currentUser = new UserBuilder().id(1)
-                .userAccount(new UserAccount().withConfirmPassword("12345678").withNewPassword("12345678").withPassword("5f4dcc3b5aa")).build();
+        user = new User().withId(1).withAccount(new UserAccount().withNewPassword("12345678").withPassword("5f4dcc3b5aa"));
+        currentUser = new User().withId(1)
+                .withAccount(new UserAccount().withConfirmPassword("12345678").withNewPassword("12345678").withPassword("5f4dcc3b5aa"));
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 
         accountValidator = new UserAccountValidator(userServiceMock, encryptionUtilsMock);
@@ -168,8 +166,8 @@ public class UserValidatorTest {
 
     @Test
     public void shouldRejectIfNewEmailAlreadyExists() {
-        User existingUser = new UserBuilder().id(2).email("email2@test.com")
-                .userAccount(new UserAccount().withConfirmPassword("12345678").withNewPassword("12345678").withPassword("5f4dcc3b5aa")).build();
+        User existingUser = new User().withId(2).withEmail("email2@test.com")
+                .withAccount(new UserAccount().withConfirmPassword("12345678").withNewPassword("12345678").withPassword("5f4dcc3b5aa"));
 
         user.setEmail("email2@test.com");
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "email");
@@ -185,8 +183,8 @@ public class UserValidatorTest {
 
     @Test
     public void shouldNotRejectIfuserWithEmailExistsButIsCUrrentUser() {
-        User existingUser = new UserBuilder().id(1).email("email2@test.com").userAccount(new UserAccount().withConfirmPassword("12345678").withNewPassword("12345678")
-                .withPassword("5f4dcc3b5aa")).build();
+        User existingUser = new User().withId(1).withEmail("email2@test.com").withAccount(new UserAccount().withConfirmPassword("12345678").withNewPassword("12345678")
+                .withPassword("5f4dcc3b5aa"));
         user.setEmail("email2@test.com");
 
         BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(user, "email");

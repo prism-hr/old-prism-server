@@ -79,7 +79,7 @@ public class UserServiceTest {
 //    public void shouldGetAllUsersForProgram() {
 //        RegisteredUser userOne = new RegisteredUserBuilder().id(2).build();
 //        RegisteredUser userTow = new RegisteredUserBuilder().id(3).build();
-//        Program program = new ProgramBuilder().id(7).build();
+//        Program program = new Program().id(7).build();
 //        EasyMock.expect(userDAOMock.getUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTow));
 //
 //        EasyMockUnitils.replay();
@@ -147,7 +147,7 @@ public class UserServiceTest {
 //    public void shouldSaveSelectedUser() {
 //        RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
 //        userDAOMock.save(selectedUser);
-//        Program selectedProgram = new ProgramBuilder().id(4).build();
+//        Program selectedProgram = new Program().id(4).build();
 //
 //        EasyMockUnitils.replay();
 //        userService.updateUserWithNewRoles(selectedUser, selectedProgram);
@@ -172,7 +172,7 @@ public class UserServiceTest {
 //    @Test
 //    public void shouldAddUserRoleAdminIfNotAlreadyAdminAndAdminInNewRoles() {
 //        RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
-//        Program selectedProgram = new ProgramBuilder().id(4).build();
+//        Program selectedProgram = new Program().id(4).build();
 //
 //        EasyMock.expect(roleDAOMock.getById(Authority.ADMINISTRATOR)).andReturn(new RoleBuilder().id(Authority.ADMINISTRATOR).build()).anyTimes();
 //        applicationFormUserRoleServiceMock.insertProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
@@ -188,7 +188,7 @@ public class UserServiceTest {
 //    @Test
 //    public void shouldAddUserRoleApproverIfNotAlreadyApproverAndAproverInNewRoles() {
 //        RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
-//        Program selectedProgram = new ProgramBuilder().id(4).build();
+//        Program selectedProgram = new Program().id(4).build();
 //
 //        EasyMock.expect(roleDAOMock.getById(Authority.APPROVER)).andReturn(new RoleBuilder().id(Authority.APPROVER).build()).anyTimes();
 //        applicationFormUserRoleServiceMock.insertProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
@@ -203,7 +203,7 @@ public class UserServiceTest {
 //
 //    @Test
 //    public void shouldAddProgramToAdminListIfNew() {
-//        Program selectedProgram = new ProgramBuilder().id(1).build();
+//        Program selectedProgram = new Program().id(1).build();
 //        RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
 //        Role role = new RoleBuilder().id(Authority.ADMINISTRATOR).build();
 //
@@ -220,7 +220,7 @@ public class UserServiceTest {
 //
 //    @Test
 //    public void shouldAddProgramToApproverlistIfNew() {
-//        Program selectedProgram = new ProgramBuilder().id(1).build();
+//        Program selectedProgram = new Program().id(1).build();
 //        RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).build();
 //        Role role = new RoleBuilder().id(Authority.APPROVER).build();
 //        EasyMock.expect(roleDAOMock.getById(Authority.APPROVER)).andReturn(role).anyTimes();
@@ -236,7 +236,7 @@ public class UserServiceTest {
 //
 //    @Test
 //    public void shouldRemoveFromProgramsOfWhichAdministratorIfNoLongerInList() {
-//        Program selectedProgram = new ProgramBuilder().id(1).build();
+//        Program selectedProgram = new Program().id(1).build();
 //        RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichAdministrator(selectedProgram).id(1).build();
 //
 //        applicationFormUserRoleServiceMock.deleteProgramRole(selectedUser, selectedProgram, Authority.ADMINISTRATOR);
@@ -251,7 +251,7 @@ public class UserServiceTest {
 //
 //    @Test
 //    public void shouldRemoveFromProgramsOfWhichApproverIfNoLongerInList() {
-//        Program selectedProgram = new ProgramBuilder().id(1).build();
+//        Program selectedProgram = new Program().id(1).build();
 //        RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichApprover(selectedProgram).id(1).build();
 //
 //        applicationFormUserRoleServiceMock.deleteProgramRole(selectedUser, selectedProgram, Authority.APPROVER);
@@ -270,12 +270,12 @@ public class UserServiceTest {
 //
 //        EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(existingUser);
 //        EasyMockUnitils.replay();
-//        userService.createNewUserForProgramme("la", "le", "some@email.com", new ProgramBuilder().id(4).build());
+//        userService.createNewUserForProgramme("la", "le", "some@email.com", new Program().id(4).build());
 //    }
 //
 //    @Test
 //    public void shouldCreateUserAndWithRolesInProgramme() {
-//        Program program = new ProgramBuilder().id(4).build();
+//        Program program = new Program().id(4).build();
 //        RegisteredUser newUser = new RegisteredUserBuilder().id(5).build();
 //
 //        Role role_1 = new RoleBuilder().build();

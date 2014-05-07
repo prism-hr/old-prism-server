@@ -14,13 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -70,7 +68,7 @@ public class FileUploadControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionIfCurrentUserNotApplicant() {
-		User applicant = new UserBuilder().id(6).build();
+		User applicant = new User().withId(6);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant)
 				.build();
 		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
@@ -114,7 +112,7 @@ public class FileUploadControllerTest {
 	
 	@Test
 	public void shouldSaveValidDocument(){
-		Document doc = new DocumentBuilder().id(1).build();
+		Document doc = new Document().withId(1);
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		documentServiceMock.save(doc);
@@ -126,7 +124,7 @@ public class FileUploadControllerTest {
 	
 	@Test
 	public void shouldNotSaveInValidDocument(){
-		Document doc = new DocumentBuilder().id(1).build();
+		Document doc = new Document().withId(1);
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);		
 		EasyMock.replay(errors, documentServiceMock);
@@ -140,7 +138,7 @@ public class FileUploadControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationFormService.class);
 		documentValidatorMock = EasyMock.createMock(DocumentValidator.class);
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
-		document = new DocumentBuilder().id(1).build();
+		document = new Document().withId(1);
 		userServiceMock = EasyMock.createMock(UserService.class);
 //		controller = new FileUploadController(applicationsServiceMock, documentValidatorMock, documentServiceMock, userServiceMock) {
 //			@Override
@@ -154,7 +152,7 @@ public class FileUploadControllerTest {
 //
 //		};
 
-		currentUser = new UserBuilder().id(1).build();
+		currentUser = new User().withId(1);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
 	}

@@ -67,7 +67,7 @@ public class MoveToReviewControllerTest {
 //
 //    @Test
 //    public void shouldGetApplicationFromId() {
-//        Program program = new ProgramBuilder().id(6).build();
+//        Program program = new Program().id(6).build();
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 //
 //        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
@@ -159,7 +159,7 @@ public class MoveToReviewControllerTest {
 //
 //    @Test
 //    public void shouldGetApplicationFromIdForAdmin() {
-//        Program program = new ProgramBuilder().id(6).build();
+//        Program program = new Program().id(6).build();
 //        ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).build();
 //
 //        EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);

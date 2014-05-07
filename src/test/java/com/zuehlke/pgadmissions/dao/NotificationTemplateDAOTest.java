@@ -4,7 +4,6 @@ import static junit.framework.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 

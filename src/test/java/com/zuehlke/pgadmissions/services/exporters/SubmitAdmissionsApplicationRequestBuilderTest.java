@@ -41,10 +41,9 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.OfferRecommendedCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class SubmitAdmissionsApplicationRequestBuilderTest {
 
@@ -420,7 +419,7 @@ public class SubmitAdmissionsApplicationRequestBuilderTest {
         applicationForm.getProgramDetails().setStartDate(dateInThePast.toDate());
 
         // agreed supervisor
-        User primarySupervisorUser = new UserBuilder().firstName("Franciszek").lastName("Pieczka").build();
+        User primarySupervisorUser = new User().withFirstName("Franciszek").withLastName("Pieczka");
 
         SubmitAdmissionsApplicationRequestBuilderV2 requestBuilder = new SubmitAdmissionsApplicationRequestBuilderV2(new ObjectFactory()) {
             @Override

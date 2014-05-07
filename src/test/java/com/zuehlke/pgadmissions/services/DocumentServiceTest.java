@@ -13,7 +13,6 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
 public class DocumentServiceTest {
@@ -43,7 +42,7 @@ public class DocumentServiceTest {
 
     @Test
     public void shouldGetDocumentFroMDAO() {
-        Document document = new DocumentBuilder().id(1).build();
+        Document document = new Document().withId(1);
 
         EasyMock.expect(documentDAOMock.getDocumentbyId(1)).andReturn(document);
 

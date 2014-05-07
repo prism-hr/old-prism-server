@@ -12,7 +12,6 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.DocumentService;
 
@@ -33,7 +32,7 @@ public class DocumentPropertyEditorTest {
     @Test
     public void shouldLoadByIdAndSetAsValue() {
         EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
-        Document document = new DocumentBuilder().id(1).build();
+        Document document = new Document().withId(1);
         EasyMock.expect(documentServiceMock.getByid(1)).andReturn(document);
         EasyMock.replay(encryptionHelperMock, documentServiceMock);
 
@@ -69,13 +68,13 @@ public class DocumentPropertyEditorTest {
 
     @Test
     public void shouldReturnNullIfValueIdIsNull() {
-        editor.setValue(new DocumentBuilder().build());
+        editor.setValue(new Document());
         assertNull(editor.getAsText());
     }
 
     @Test
     public void shouldReturnEncryptedIdAsString() {
-        editor.setValue(new DocumentBuilder().id(5).build());
+        editor.setValue(new Document().withId(5));
         EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
         EasyMock.replay(encryptionHelperMock);
         assertEquals("bob", editor.getAsText());

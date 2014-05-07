@@ -18,8 +18,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -82,13 +82,13 @@ public class ApplicationSummaryService {
         Qualification mostRecentQualification = Collections.max(qualifications, new Comparator<Qualification>() {
             @Override
             public int compare(Qualification o1, Qualification o2) {
-                return o1.getQualificationAwardDate().compareTo(o2.getQualificationAwardDate());
+                return o1.getAwardDate().compareTo(o2.getAwardDate());
             }
         });
 
-        String title = mostRecentQualification.getQualificationTitle();
-        String subject = mostRecentQualification.getQualificationSubject();
-        String grade = mostRecentQualification.getQualificationGrade();
+        String title = mostRecentQualification.getTitle();
+        String subject = mostRecentQualification.getSubject();
+        String grade = mostRecentQualification.getGrade();
         String institution = mostRecentQualification.getInstitution().getName();
 
         StringBuilder builder = new StringBuilder();

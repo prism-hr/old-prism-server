@@ -33,9 +33,7 @@ import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ScoringDefinitionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationExportConfigurationDTO;
@@ -75,8 +73,8 @@ public class ConfigurationControllerTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundIfNotSuperAdminOrADmin() {
-        User applicant = new UserBuilder().id(1)
-                .build();
+        User applicant = new User().withId(1)
+                ;
 
         EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
         EasyMock.replay(userServiceMock);
@@ -278,7 +276,7 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldEditScoringDefinition() {
-        Program program = new ProgramBuilder().build();
+        Program program = new Program();
         HttpServletResponse response = new MockHttpServletResponse();
 
         EasyMock.expect(programsServiceMock.getProgramByCode("any_code")).andReturn(program);
@@ -291,7 +289,7 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldAllowSavingEmptyScoringDefinition() {
-        Program program = new ProgramBuilder().build();
+        Program program = new Program();
         HttpServletResponse response = new MockHttpServletResponse();
 
         String programCode = "any_code";
@@ -317,7 +315,7 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldFailToEditScoringDefinitionDueToIncorrectXmlContent() throws Exception {
-        Program program = new ProgramBuilder().build();
+        Program program = new Program();
         HttpServletResponse response = new MockHttpServletResponse();
 
         EasyMock.expect(programsServiceMock.getProgramByCode("any_code")).andReturn(program);
@@ -332,7 +330,7 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldGetScoringDefinition() {
-        Program program = new ProgramBuilder().build();
+        Program program = new Program();
         program.getScoringDefinitions().put(ScoringStage.REVIEW, new ScoringDefinitionBuilder().stage(ScoringStage.REVIEW).content("Mleko").build());
 
         EasyMock.expect(programsServiceMock.getProgramByCode("any_code")).andReturn(program);
@@ -344,7 +342,7 @@ public class ConfigurationControllerTest {
 
     @Test
     public void shouldGetNotDefinedScoringDefinition() {
-        Program program = new ProgramBuilder().build();
+        Program program = new Program();
         EasyMock.expect(programsServiceMock.getProgramByCode("any_code")).andReturn(program);
 
         EasyMock.replay(programsServiceMock);

@@ -24,12 +24,12 @@ import org.unitils.inject.util.InjectionUtils;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
+import com.zuehlke.pgadmissions.dao.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
-import com.zuehlke.pgadmissions.domain.ApplicationsFiltering;
+import com.zuehlke.pgadmissions.domain.ApplicationFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
@@ -44,10 +44,8 @@ import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilteringBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SourcesOfInterestBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
@@ -92,18 +90,18 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         roleDAO = new RoleDAO(sessionFactory);
 
-        applicant = new UserBuilder().firstName("Jane").lastName("Doe").email("email@test.com")
+        applicant = new User().withFirstName("Jane").withLastName("Doe").withEmail("email@test.com")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .userAccount(new UserAccount().withEnabled(true).withApplicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1))).build();
+                .withAccount(new UserAccount().withEnabled(true).withApplicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)));
 
-        superUser = new UserBuilder().firstName("John").lastName("Doe").email("email@test.com")
+        superUser = new User().withFirstName("John").withLastName("Doe").withEmail("email@test.com")
         // .withRole(roleDAO.getById(Authority.SUPERADMINISTRATOR))
-                .userAccount(new UserAccount().withEnabled(true).withApplicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1))).build();
+                .withAccount(new UserAccount().withEnabled(true).withApplicationListLastAccessTimestamp(DateUtils.addHours(new Date(), 1)));
 
         sessionFactory.getCurrentSession().flush();
 
         institution = testObjectProvider.getInstitution();
-        program = new ProgramBuilder().contactUser(superUser).code("doesntexist").title("another title").institution(institution).build();
+        program = new Program().withUser(superUser).withCode("doesntexist").withTitle("another title").withInstitution(institution);
 
         save(applicant, superUser, institution, program);
 
@@ -120,10 +118,10 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         ApplicationFormListDAO applicationFormListDAOMock = EasyMock.createMock(ApplicationFormListDAO.class);
         InjectionUtils.injectInto(applicationFormListDAOMock, applicationsService, "applicationFormListDAO");
 
-        User user = new UserBuilder().id(1)
+        User user = new User().withId(1)
         // .withRole(new RoleBuilder().id(Authority.APPLICANT).build())
-                .build();
-        ApplicationsFiltering filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
+                ;
+        ApplicationFilterGroup filtering = newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
         EasyMock.expect(applicationFormListDAOMock.getVisibleApplicationsForList(user, filtering, APPLICATION_BLOCK_SIZE)).andReturn(
                 Arrays.asList(applicationDescriptor));
         EasyMock.replay(applicationFormListDAOMock);
@@ -235,7 +233,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("BiOlOgY").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("BiOlOgY").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -247,8 +245,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetApplicationBelongingToProgramWithCodeScienceAndOtherTitle() throws ParseException {
-        Program programOne = new ProgramBuilder().code("Program_ZZZZZ_1").title("empty").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
+        Program programOne = new Program().withCode("Program_ZZZZZ_1").withTitle("empty").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC1").program(programOne).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
@@ -264,7 +262,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -274,8 +272,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetApplicationBelongingToProgramWithTitleScienceAndOtherCode() throws ParseException {
-        Program programOne = new ProgramBuilder().code("empty").title("Program_ZZZZZ_1").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
+        Program programOne = new Program().withCode("empty").withTitle("Program_ZZZZZ_1").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
 
@@ -290,7 +288,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -310,7 +308,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         save(applicationFormOne, applicationFormUserRole);
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROGRAMME_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -319,8 +317,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingFirstNameFred() {
-        User applicant = new UserBuilder().firstName("FredzzZZZZZerick").lastName("Doe").email("email@test.com")
-                .userAccount(new UserAccount().withPassword("password").withEnabled(true)).build();
+        User applicant = new User().withFirstName("FredzzZZZZZerick").withLastName("Doe").withEmail("email@test.com")
+                .withAccount(new UserAccount().withPassword("password").withEnabled(true));
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
@@ -332,7 +330,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -343,8 +341,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldGetApplicationBelongingToApplicantMatchingLastName() {
 
-        User applicant = new UserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com")
-                .userAccount(new UserAccount().withEnabled(true)).build();
+        User applicant = new User().withFirstName("Frederick").withLastName("FredzzZZZZZerick").withEmail("email@test.com")
+                .withAccount(new UserAccount().withEnabled(true));
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
@@ -356,7 +354,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -367,8 +365,8 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
     @Test
     public void shouldNotReturnAppIfTermNotInApplicantNameFirstOrLastName() {
 
-        User applicant = new UserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").userAccount(new UserAccount().withEnabled(true))
-                .build();
+        User applicant = new User().withFirstName("Frederick").withLastName("unique").withEmail("email@test.com").withAccount(new UserAccount().withEnabled(true))
+                ;
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(applicant)
                 .status(new State().withId(PrismState.APPLICATION_APPROVAL)).build();
@@ -380,7 +378,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICANT_NAME).searchTerm("zzZZz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -418,7 +416,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("validati").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("validati").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -456,7 +454,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("approv").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("approv").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -493,7 +491,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Offer").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_STATUS).searchTerm("Offer").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -528,7 +526,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("foobar").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("foobar").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1, filter));
 
@@ -562,7 +560,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("zzzFooBarz").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("zzzFooBarz").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
                 newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.ASCENDING, 1, filter));
 
@@ -608,18 +606,18 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldSortApplicationWithApplName() throws ParseException {
-        User applicant1 = new UserBuilder().firstName("AAAA").lastName("BBBB")
+        User applicant1 = new User().withFirstName("AAAA").withLastName("BBBB")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
-        User applicant2 = new UserBuilder().firstName("AAAA").lastName("CCCC")
+                ;
+        User applicant2 = new User().withFirstName("AAAA").withLastName("CCCC")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
-        User applicant3 = new UserBuilder().firstName("BBBB").lastName("AAAA")
+                ;
+        User applicant3 = new User().withFirstName("BBBB").withLastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
-        User applicant4 = new UserBuilder().firstName("CCCC").lastName("AAAA")
+                ;
+        User applicant4 = new User().withFirstName("CCCC").withLastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
+                ;
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1)
                 .status(new State().withId(PrismState.APPLICATION_APPROVED)).applicationNumber("ABCDE1").program(program)
@@ -648,7 +646,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1, filter));
 
@@ -661,18 +659,18 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldSortApplicationWithApplStatus() throws ParseException {
-        User applicant1 = new UserBuilder().firstName("AAAA").lastName("BBBB")
+        User applicant1 = new User().withFirstName("AAAA").withLastName("BBBB")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
-        User applicant2 = new UserBuilder().firstName("AAAA").lastName("CCCC")
+                ;
+        User applicant2 = new User().withFirstName("AAAA").withLastName("CCCC")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
-        User applicant3 = new UserBuilder().firstName("BBBB").lastName("AAAA")
+                ;
+        User applicant3 = new User().withFirstName("BBBB").withLastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
-        User applicant4 = new UserBuilder().firstName("CCCC").lastName("AAAA")
+                ;
+        User applicant4 = new User().withFirstName("CCCC").withLastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
+                ;
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1)
                 .status(new State().withId(PrismState.APPLICATION_APPROVED)).applicationNumber("ABCDE1").program(program)
@@ -701,7 +699,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICATION_STATUS, SortOrder.ASCENDING, 1, filter));
 
@@ -714,27 +712,27 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldSortApplicationWithProgramName() throws ParseException {
-        User applicant1 = new UserBuilder().firstName("AAAA").lastName("BBBB")
+        User applicant1 = new User().withFirstName("AAAA").withLastName("BBBB")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
-        User applicant2 = new UserBuilder().firstName("AAAA").lastName("CCCC")
+                ;
+        User applicant2 = new User().withFirstName("AAAA").withLastName("CCCC")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
-        User applicant3 = new UserBuilder().firstName("BBBB").lastName("AAAA")
+                ;
+        User applicant3 = new User().withFirstName("BBBB").withLastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
-        User applicant4 = new UserBuilder().firstName("CCCC").lastName("AAAA")
+                ;
+        User applicant4 = new User().withFirstName("CCCC").withLastName("AAAA")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
+                ;
 
-        Program program1 = new ProgramBuilder().code("empty1").title("AAA").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
-        Program program2 = new ProgramBuilder().code("empty2").title("CCC").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
-        Program program3 = new ProgramBuilder().code("empty3").title("BBB").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
-        Program program4 = new ProgramBuilder().code("empty4").title("DDD").institution(institution)
-                .contactUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR)).build();
+        Program program1 = new Program().withCode("empty1").withTitle("AAA").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
+        Program program2 = new Program().withCode("empty2").withTitle("CCC").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
+        Program program3 = new Program().withCode("empty3").withTitle("BBB").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
+        Program program4 = new Program().withCode("empty4").withTitle("DDD").withInstitution(institution)
+                .withUser(testObjectProvider.getEnabledUserInRole(Authority.SYSTEM_ADMINISTRATOR));
         save(program1, program2, program3, program4);
 
         ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicant(applicant1)
@@ -763,7 +761,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
                 applicationFormUserRole1, applicationFormUserRole2, applicationFormUserRole3, applicationFormUserRole4);
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCD").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
 
@@ -793,7 +791,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         save(returnedAppls);
         save(applicationFormUserRoles);
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCDEFG").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.APPLICATION_NUMBER).searchTerm("ABCDEFG").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
 
@@ -802,9 +800,9 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
     @Test
     public void shouldReturnApplicationWithSupervisorInProgrammeDetails() {
-        User applicant = new UserBuilder().firstName("AAAA").lastName("BBBB")
+        User applicant = new User().withFirstName("AAAA").withLastName("BBBB")
         // .withRole(roleDAO.getById(Authority.APPLICANT))
-                .build();
+                ;
         SuggestedSupervisor supervisor = new SuggestedSupervisor().withAware(true).withUser(
                 new User().withEmail("threepwood@monkeyisland.com").withFirstName("Guybrush").withLastName("Threepwood"));
         SourcesOfInterest sourcesOfInterest = new SourcesOfInterestBuilder().name("foo").code("foo").build();
@@ -820,7 +818,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         programmeDetails.setApplication(formWithSupervisor);
         save(programmeDetails);
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUPERVISOR).searchTerm("Threepwood").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.SUPERVISOR).searchTerm("Threepwood").build();
 
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1, filter));
@@ -891,7 +889,7 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
 
         flushAndClearSession();
 
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.CLOSING_DATE).searchPredicate(SearchPredicate.ON_DATE)
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.CLOSING_DATE).searchPredicate(SearchPredicate.ON_DATE)
                 .searchTerm("01 Jan 2050").build();
 
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(applicant,
@@ -913,14 +911,14 @@ public class ApplicationsServiceGetVisibleApplicationsTest extends AutomaticRoll
         UserRole applicationFormUserRole = new UserRole().withApplication(applicationFormOne).withRole(role).withUser(superUser);
 
         save(applicationFormOne, applicationFormUserRole);
-        ApplicationsFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROJECT_TITLE).searchTerm("another title").build();
+        ApplicationFilter filter = new ApplicationsFilterBuilder().searchCategory(SearchCategory.PROJECT_TITLE).searchTerm("another title").build();
         List<ApplicationDescriptor> applications = applicationsService.getApplicationsForList(superUser,
                 newFiltering(SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1, filter));
         assertEquals(1, applications.size());
 
     }
 
-    private ApplicationsFiltering newFiltering(SortCategory sortCategory, SortOrder sortOrder, int blockCount, ApplicationsFilter... filters) {
+    private ApplicationFilterGroup newFiltering(SortCategory sortCategory, SortOrder sortOrder, int blockCount, ApplicationFilter... filters) {
         return new ApplicationsFilteringBuilder().sortCategory(sortCategory).order(sortOrder).blockCount(blockCount).filters(filters).build();
     }
 

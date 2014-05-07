@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -60,7 +60,7 @@ public class ApplicationFormValidator extends AbstractValidator {
         }
 
         if (!applicationFormAddressValidator.isValid(applicationFormAddress)) {
-            errors.rejectValue("applicationFormAddress", "user.addresses.notempty");
+            errors.rejectValue("applicationAddress", "user.addresses.notempty");
         }
 
         if (!additionalInformationValidator.isValid(additionalInformation)) {
@@ -68,22 +68,22 @@ public class ApplicationFormValidator extends AbstractValidator {
         }
 
         if (!applicationFormDocumentValidator.isValid(applicationFormDocument)) {
-            errors.rejectValue("applicationFormDocument", "documents.section.invalid");
+            errors.rejectValue("applicationDocument", "documents.section.invalid");
         }
 
         if (applicationForm.getReferees().size() < 3) {
             errors.rejectValue("referees", "user.referees.notvalid");
         }
 
-        if (BooleanUtils.isNotTrue(applicationForm.getAcceptedTermsOnSubmission())) {
-            errors.rejectValue("acceptedTermsOnSubmission", EMPTY_FIELD_ERROR_MESSAGE);
+        if (BooleanUtils.isNotTrue(applicationForm.getAcceptedTerms())) {
+            errors.rejectValue("acceptedTerms", EMPTY_FIELD_ERROR_MESSAGE);
         }
 
         if (!applicationForm.getProgram().isEnabled()) {
             errors.rejectValue("program", "application.program.invalid");
         }
 
-        if (!applicationForm.getProject().isEnabled()) {
+        if (applicationForm.getProject() != null && !applicationForm.getProject().isEnabled()) {
             applicationForm.setProject(null);
         }
 

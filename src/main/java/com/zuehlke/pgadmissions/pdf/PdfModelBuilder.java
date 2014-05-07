@@ -35,9 +35,9 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -47,8 +47,8 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.ReferenceComment;
-import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
@@ -614,19 +614,19 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(newTableCell(qualification.getInstitution().getName(), SMALL_FONT));
 
                 table.addCell(newTableCell("Qualification Type", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getQualificationType().getName(), SMALL_FONT));
+                table.addCell(newTableCell(qualification.getType().getName(), SMALL_FONT));
 
                 table.addCell(newTableCell("Qualification Title", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getQualificationTitle(), SMALL_FONT));
+                table.addCell(newTableCell(qualification.getTitle(), SMALL_FONT));
 
                 table.addCell(newTableCell("Qualification Subject", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getQualificationSubject(), SMALL_FONT));
+                table.addCell(newTableCell(qualification.getSubject(), SMALL_FONT));
 
                 table.addCell(newTableCell("Language of Study", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(qualification.getQualificationLanguage(), SMALL_FONT));
+                table.addCell(newTableCell(qualification.getLanguage(), SMALL_FONT));
 
                 table.addCell(newTableCell("Start Date", SMALL_BOLD_FONT));
-                table.addCell(newTableCell(dateFormat.format(qualification.getQualificationStartDate()), SMALL_FONT));
+                table.addCell(newTableCell(dateFormat.format(qualification.getStartDate()), SMALL_FONT));
 
                 table.addCell(newTableCell("Has this Qualification been awarded", SMALL_BOLD_FONT));
                 if (BooleanUtils.isTrue(qualification.getCompleted())) {
@@ -640,17 +640,17 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 } else {
                     table.addCell(newTableCell("Expected Grade/Result/GPA", SMALL_BOLD_FONT));
                 }
-                table.addCell(newTableCell(qualification.getQualificationGrade(), SMALL_FONT));
+                table.addCell(newTableCell(qualification.getGrade(), SMALL_FONT));
 
                 if (BooleanUtils.isTrue(qualification.getCompleted())) {
                     table.addCell(newTableCell("Award Date", SMALL_BOLD_FONT));
                 } else {
                     table.addCell(newTableCell("Expected Award Date", SMALL_BOLD_FONT));
                 }
-                if (qualification.getQualificationAwardDate() == null) {
+                if (qualification.getAwardDate() == null) {
                     table.addCell(newTableCell(NOT_PROVIDED, SMALL_GREY_FONT));
                 } else {
-                    table.addCell(newTableCell(dateFormat.format(qualification.getQualificationAwardDate()), SMALL_FONT));
+                    table.addCell(newTableCell(dateFormat.format(qualification.getAwardDate()), SMALL_FONT));
                 }
 
                 if (qualification.getDocument() != null) {

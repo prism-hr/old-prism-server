@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.UserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -46,8 +45,8 @@ public class ReportPorticoDocumentUploadFailureServiceTest {
         final ApplicationTransfer applicationFormTransfer = new ApplicationTransfer();
         applicationFormTransfer.setApplicationForm(new ApplicationFormBuilder().applicationNumber("abcdefgh").build());
 
-        User superadmin1 = new UserBuilder().id(12).build();
-        User superadmin2 = new UserBuilder().id(13).build();
+        User superadmin1 = new User().withId(12);
+        User superadmin2 = new User().withId(13);
         List<User> superadmins = Arrays.asList(superadmin1, superadmin2);
         PrismSystem prismSystem = new PrismSystem();
         

@@ -13,7 +13,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.zuehlke.pgadmissions.domain.ApplicationsFilter;
+import com.zuehlke.pgadmissions.domain.ApplicationFilter;
 
 @Component
 public class ApplicationsFiltersPropertyEditor extends PropertyEditorSupport {
@@ -30,14 +30,14 @@ public class ApplicationsFiltersPropertyEditor extends PropertyEditorSupport {
         }
 
         final GsonBuilder gson = new GsonBuilder();
-        gson.registerTypeAdapter(List.class, new JsonDeserializer<List<ApplicationsFilter>>() {
+        gson.registerTypeAdapter(List.class, new JsonDeserializer<List<ApplicationFilter>>() {
 
             @Override
-            public List<ApplicationsFilter> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            public List<ApplicationFilter> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
-                List<ApplicationsFilter> filters = new ArrayList<ApplicationsFilter>();
+                List<ApplicationFilter> filters = new ArrayList<ApplicationFilter>();
                 for (JsonElement jsonFilter : json.getAsJsonArray()) {
-                    ApplicationsFilter filter = gson.create().fromJson(jsonFilter, ApplicationsFilter.class);
+                    ApplicationFilter filter = gson.create().fromJson(jsonFilter, ApplicationFilter.class);
                     
                     String searchTerm = filter.getSearchTerm();
                     filter.setSearchTerm(searchTerm.trim());
@@ -47,7 +47,7 @@ public class ApplicationsFiltersPropertyEditor extends PropertyEditorSupport {
                 return filters;
             }
         });
-        List<ApplicationsFilter> filters = gson.create().fromJson(applicationsFilter, List.class);
+        List<ApplicationFilter> filters = gson.create().fromJson(applicationsFilter, List.class);
         setValue(filters);
     }
 

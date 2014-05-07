@@ -31,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
@@ -92,7 +91,7 @@ public class OpportunitiesServiceTest {
 
     @Test
     public void shouldCreateOpportunityChangeRequest() {
-        Program program = new ProgramBuilder().title("tytul").atasRequired(true).build();
+        Program program = new Program().withTitle("tytul").withRequireProjectDefinition(true);
         User author = new User();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().author(author).sourceProgram(program).build();
 

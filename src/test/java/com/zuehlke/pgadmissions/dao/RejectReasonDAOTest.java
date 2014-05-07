@@ -9,7 +9,6 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 

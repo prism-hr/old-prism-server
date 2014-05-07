@@ -133,6 +133,11 @@ ALTER TABLE USER
 	DROP COLUMN advert_id
 ;
 
+DELETE
+FROM ROLE
+WHERE id = "PROGRAM_CREATOR"
+;
+
 INSERT INTO ROLE_INHERITANCE (role_id, inherited_role_id)
 	SELECT ROLE.id, INHERITED_ROLE.id
 	FROM ROLE INNER JOIN ROLE AS INHERITED_ROLE
@@ -151,20 +156,6 @@ INSERT INTO USER_ROLE (system_id, user_id, role_id, requesting_user_id, assigned
 	WHERE USER.user_account_id IS NOT NULL
 		AND ROLE.id IN ("SYSTEM_APPLICATION_CREATOR", "SYSTEM_PROGRAM_CREATOR")
 	GROUP BY USER_ROLE.user_id
-;
-
-ALTER TABLE ACTION
-	MODIFY COLUMN precedence INT(3) UNSIGNED
-;
-
-UPDATE ACTION LEFT JOIN (
-	SELECT action_type_id AS action_type_id
-	FROM ACTION
-	GROUP BY action_type_id
-	HAVING COUNT(action_type_id) > 1) AS OVERLOADED_ACTION
-	ON ACTION.action_type_id = OVERLOADED_ACTION.action_type_id 	
-SET ACTION.precedence = NULL
-WHERE OVERLOADED_ACTION.action_type_id IS NULL
 ;
 
 UPDATE PROGRAM
@@ -241,6 +232,11 @@ WHERE id LIKE "%RETRACT%"
 ;
 
 SET FOREIGN_KEY_CHECKS = 1
+;
+
+
+ALTER TABLE ADVERT
+	DROP COLUMN title
 ;
 
 /* Fix uniqueness constraints on imported data tables */

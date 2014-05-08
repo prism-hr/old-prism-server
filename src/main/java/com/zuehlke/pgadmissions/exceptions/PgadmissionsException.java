@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.exceptions;
 
-public abstract class PgadmissionsException extends RuntimeException {
+public class PgadmissionsException extends RuntimeException {
 
     private static final long serialVersionUID = 1520657238240701657L;
 

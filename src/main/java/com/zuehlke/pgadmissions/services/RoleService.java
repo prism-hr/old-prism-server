@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class RoleService {
     }
 
     public UserRole createUserRole(PrismScope scope, User user, Authority authority) {
-        UserRole userRole = new UserRole().withUser(user).withRole(getById(authority));
+        UserRole userRole = new UserRole().withUser(user).withRole(getById(authority)).withAssignedTimestamp(new Date());
         PrismScope unproxiedScope = HibernateUtils.unproxy(scope);
         if (unproxiedScope instanceof PrismScope) {
             userRole.setSystem((PrismSystem) scope);

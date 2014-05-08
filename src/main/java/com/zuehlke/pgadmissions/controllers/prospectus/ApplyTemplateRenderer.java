@@ -33,19 +33,13 @@ public class ApplyTemplateRenderer {
     public static final String BUTTON_TO_APPLY = "/private/prospectus/button_to_apply.ftl";
     public static final String LINK_TO_APPLY = "/private/prospectus/link_to_apply.ftl";
 
-    @SuppressWarnings("serial")
     @PostConstruct
     private void intializeTemplates() {
         try {
             linkToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(ApplyTemplateRenderer.LINK_TO_APPLY);
             buttonToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(ApplyTemplateRenderer.BUTTON_TO_APPLY);
         } catch (IOException e) {
-            throw new PgadmissionsException(e) {
-                /*
-                 * PostConstruct MUST NOT throw
-                 * checked exception
-                 */
-            };
+            throw new PgadmissionsException(e);
         }
     }
 

@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.builders.ValidApplicationFormBuilder;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 
-public class PorticoQueueServiceTest {
+public class ExportQueueServiceTest {
     
     private Queue queueMock;
     
@@ -29,8 +29,6 @@ public class PorticoQueueServiceTest {
     private ExportQueueService porticoQueueService;
     
     private ApplicationForm form;
-    
-    private int numberOfSentApplications = 0;
     
     @Before
     public void prepare() {

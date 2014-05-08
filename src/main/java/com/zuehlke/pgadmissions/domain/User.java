@@ -35,6 +35,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @AnalyzerDef(name = "userAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = { @TokenFilterDef(factory = LowerCaseFilterFactory.class) })
@@ -276,5 +277,10 @@ public class User implements UserDetails, Comparable<User>, Serializable {
     public User withAccount(UserAccount account) {
         this.account = account;
         return this;
+    }
+    
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("firstName", firstName).add("lastName", lastName).add("email", email).toString();
     }
 }

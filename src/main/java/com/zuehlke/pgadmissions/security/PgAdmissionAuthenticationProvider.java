@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +29,7 @@ public class PgAdmissionAuthenticationProvider implements AuthenticationProvider
 	
 	private final EncryptionUtils encryptionUtils;
 
+	@Autowired
 	public PgAdmissionAuthenticationProvider(UserDetailsService userDetailsService, EncryptionUtils encryptionUtils) {
 		this.userDetailsService = userDetailsService;
 		this.encryptionUtils = encryptionUtils;

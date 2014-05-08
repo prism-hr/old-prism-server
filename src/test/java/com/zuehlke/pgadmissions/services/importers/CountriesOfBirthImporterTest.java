@@ -42,7 +42,7 @@ public class CountriesOfBirthImporterTest {
 	public void setUp() throws MalformedURLException, JAXBException {
 		countriesDAO = EasyMock.createMock(CountriesDAO.class);
 		importService = EasyMock.createMock(ImportService.class);
-		URL xmlFileLocation = new File("src/test/resources/reference_data/countriesOfBirth.xml").toURI().toURL();
+		URL xmlFileLocation = new File("src/test/resources/reference_data/2014-05-08/countriesOfBirth.xml").toURI().toURL();
 		importer = new CountriesOfBirthImporter(countriesDAO, importService, xmlFileLocation);
     }
 

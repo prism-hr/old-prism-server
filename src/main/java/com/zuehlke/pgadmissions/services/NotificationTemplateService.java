@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.NotificationTemplateDAO;
@@ -11,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.exceptions.NotificationTemplateException;
 
+@Service
 @Transactional
 public class NotificationTemplateService {
 

@@ -63,35 +63,29 @@ public class ExportService {
 
     private static final String SFTP_CALL_FAILED_DIRECTORY = "The SFTP target directory is not accessible [applicationNumber=%s]";
 
+    @Autowired
     private WebServiceTemplate webServiceTemplate;
 
+    @Autowired
     private CommentDAO commentDAO;
 
+    @Autowired
     private UserDAO userDAO;
 
+    @Autowired
     private SftpAttachmentsSendingService sftpAttachmentsSendingService;
 
+    @Autowired
     private ApplicationFormService applicationsService;
 
+    @Autowired
     private ApplicationTransferService applicationFormTransferService;
 
+    @Autowired
     private PorticoService porticoService;
 
-    private final ApplicationContext context;
-
     @Autowired
-    public ExportService(WebServiceTemplate webServiceTemplate, ApplicationFormService applicationsService, CommentDAO commentDAO, UserDAO userDAO,
-            SftpAttachmentsSendingService sftpAttachmentsSendingService, ApplicationTransferService applicationFormTransferService,
-            PorticoService porticoService, ApplicationContext context) {
-        this.webServiceTemplate = webServiceTemplate;
-        this.commentDAO = commentDAO;
-        this.userDAO = userDAO;
-        this.sftpAttachmentsSendingService = sftpAttachmentsSendingService;
-        this.applicationFormTransferService = applicationFormTransferService;
-        this.applicationsService = applicationsService;
-        this.porticoService = porticoService;
-        this.context = context;
-    }
+    private ApplicationContext context;
 
     // oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
 

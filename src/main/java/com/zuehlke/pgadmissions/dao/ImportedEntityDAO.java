@@ -61,12 +61,8 @@ public class ImportedEntityDAO {
         sessionFactory.getCurrentSession().flush();
     }
 
-    public boolean attemptUpdateByCode(ImportedEntity entity) {
-        return sessionFactory.getCurrentSession().createQuery("update :entityType set name = :name where code = :code")//
-                .setString("entityType", entity.getClass().getSimpleName()) //
-                .setString("name", entity.getName()) //
-                .setString("code", entity.getCode()) //
-                .executeUpdate() > 0;
-
+    public void disableAllEntities(Class<ImportedEntity> entityClass) {
+        sessionFactory.getCurrentSession().createQuery("update " + entityClass.getSimpleName() + " set enabled = false") //
+                .executeUpdate();
     }
 }

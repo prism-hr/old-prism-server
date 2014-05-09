@@ -83,6 +83,7 @@ public class EntityImportService {
 
     protected void mergeImportedEntities(Class<ImportedEntity> entityClass, Iterable<ImportedEntity> entities) {
         EntityImportService thisBean = applicationContext.getBean(EntityImportService.class);
+        thisBean.disableAllEntities(entityClass);
         for (ImportedEntity entity : entities) {
             try {
                 thisBean.attemptInsert(entity);
@@ -103,6 +104,11 @@ public class EntityImportService {
     }
 
     @Transactional
+    public void disableAllEntities(Class<ImportedEntity> entityClass) {
+        importedEntityDAO.disableAllEntities(entityClass);
+    }
+
+    @Transactional
     public void attemptInsert(ImportedEntity entity) {
         importedEntityDAO.save(entity);
     }
@@ -111,12 +117,14 @@ public class EntityImportService {
     public void attemptUpdateByCode(Class<ImportedEntity> entityClass, ImportedEntity entity) {
         ImportedEntity entityByCode = importedEntityDAO.getByCode(entityClass, entity.getCode());
         entityByCode.setName(entity.getName());
+        entityByCode.setEnabled(true);
     }
 
     @Transactional
     public void attemptUpdateByName(Class<ImportedEntity> entityClass, ImportedEntity entity) {
         ImportedEntity entityByName = importedEntityDAO.getByName(entityClass, entity.getName());
         entityByName.setCode(entity.getCode());
+        entityByName.setEnabled(true);
     }
 
     public List<ImportedEntityFeed> getImportedEntityFeeds() {
@@ -144,6 +152,7 @@ public class EntityImportService {
                 String code = BeanUtils.getSimpleProperty(input, "code");
                 importedEntity.setName(name);
                 importedEntity.setCode(code);
+                importedEntity.setEnabled(true);
                 return importedEntity;
             } catch (Exception e) {
                 throw new RuntimeException();

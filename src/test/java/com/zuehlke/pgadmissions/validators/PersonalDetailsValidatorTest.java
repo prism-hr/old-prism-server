@@ -18,12 +18,12 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageQualificationBuilder;
@@ -675,14 +675,14 @@ public class PersonalDetailsValidatorTest {
         Language nationality = new Language();
         personalDetails = new PersonalDetailsBuilder().firstNationality(nationality)
                 .applicationForm(new ApplicationFormBuilder().id(2).build())
-                .country(new CountryBuilder().build())
+                .country(new Country())
                 .dateOfBirth(DateUtils.addYears(new Date(), -28))
                 .gender(Gender.INDETERMINATE_GENDER)
                 .title(Title.PROFESSOR)
                 .residenceDomicile(new DomicileBuilder().build())
                 .phoneNumber("+44 (0) 20 7911 5000")
                 .ethnicity(new EthnicityBuilder().id(23).build())
-                .disability(new DisabilityBuilder().id(23213).build())
+                .disability(new Disability())
                 .requiresVisa(true)
                 .passportAvailable(true)
                 .englishFirstLanguage(true)

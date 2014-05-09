@@ -28,12 +28,12 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramDetailsService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.SourcesOfInterestService;
 import com.zuehlke.pgadmissions.validators.ProgramDetailsValidator;
 
 @RequestMapping("/update")
@@ -54,18 +54,18 @@ public class ProgramDetailsController {
 
     @Autowired
     private ProgramDetailsService programDetailsService;
-    
+
     @Autowired
     private ProgramService programService;
-    
+
     @Autowired
-    private SourcesOfInterestService sourcesOfInterestService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
 
     @Autowired
-    private SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor;
+    private EntityPropertyEditor<SourcesOfInterest> sourcesOfInterestPropertyEditor;
 
     @RequestMapping(value = "/getProgrammeDetails", method = RequestMethod.GET)
     public String getProgrammeDetailsView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
@@ -95,7 +95,7 @@ public class ProgramDetailsController {
 
     @ModelAttribute("sourcesOfInterests")
     public List<SourcesOfInterest> getSourcesOfInterests() {
-        return sourcesOfInterestService.getAllEnabledSourcesOfInterest();
+        return importedEntityService.getAllSourcesOfInterest();
     }
 
     @ModelAttribute("applicationForm")

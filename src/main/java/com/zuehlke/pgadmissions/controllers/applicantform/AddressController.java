@@ -22,10 +22,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormAddressService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormAddressValidator;
 
 @RequestMapping("/update")
@@ -42,10 +42,10 @@ public class AddressController {
     private ApplicationFormAddressValidator applicationFormAddressValidator;
 
     @Autowired
-    private DomicileService domicileService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
-    private DomicilePropertyEditor domicilePropertyEditor;
+    private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
     @RequestMapping(value = "/getAddress", method = RequestMethod.GET)
     public String getAddressView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
@@ -86,7 +86,7 @@ public class AddressController {
 
     @ModelAttribute("domiciles")
     public List<Domicile> getAllEnabledDomiciles() {
-        return domicileService.getAllEnabledDomiciles();
+        return importedEntityService.getAllDomiciles();
     }
 
     private String returnView(ModelMap modelMap, ApplicationAddress applicationFormAddress) {

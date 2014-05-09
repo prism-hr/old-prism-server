@@ -32,19 +32,11 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DisabilityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.EthnicityPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
-import com.zuehlke.pgadmissions.services.CountryService;
-import com.zuehlke.pgadmissions.services.DisabilityService;
-import com.zuehlke.pgadmissions.services.DomicileService;
-import com.zuehlke.pgadmissions.services.EthnicityService;
-import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsUserValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
@@ -55,52 +47,40 @@ public class PersonalDetailsController {
 
     @Autowired
     private ApplicationFormService applicationFormService;
-    
+
     @Autowired
     private ApplicationFormPropertyEditor applicationFormPropertyEditor;
-    
+
     @Autowired
     private DatePropertyEditor datePropertyEditor;
-    
+
     @Autowired
-    private CountryService countryService;
-    
+    private ImportedEntityService importedEntityService;
+
     @Autowired
-    private DomicileService domicileService;
-    
+    private EntityPropertyEditor<Language> languagePropertyEditor;
+
     @Autowired
-    private EthnicityService ethnicityService;
-    
+    private EntityPropertyEditor<Country> countryPropertyEditor;
+
     @Autowired
-    private DisabilityService disabilityService;
-    
+    private EntityPropertyEditor<Disability> disabilityPropertyEditor;
+
     @Autowired
-    private LanguageService languageService;
-    
+    private EntityPropertyEditor<Ethnicity> ethnicityPropertyEditor;
+
     @Autowired
-    private LanguagePropertyEditor languagePropertyEditor;
-    
-    @Autowired
-    private CountryPropertyEditor countryPropertyEditor;
-    
-    @Autowired
-    private DisabilityPropertyEditor disabilityPropertyEditor;
-    
-    @Autowired
-    private EthnicityPropertyEditor ethnicityPropertyEditor;
-    
+    private EntityPropertyEditor<Domicile> domicilePropertyEditor;
+
     @Autowired
     private PersonalDetailsValidator personalDetailsValidator;
-    
-    @Autowired
-    private DomicilePropertyEditor domicilePropertyEditor;
-    
+
     @Autowired
     private DocumentPropertyEditor documentPropertyEditor;
-    
+
     @Autowired
     private PersonalDetailsUserValidator personalDetailsUserValidator;
-    
+
     @Autowired
     private PersonalDetailsService personalDetailsService;
 
@@ -143,27 +123,27 @@ public class PersonalDetailsController {
 
     @ModelAttribute("languages")
     public List<Language> getAllEnabledLanguages() {
-        return languageService.getAllEnabledLanguages();
+        return importedEntityService.getAllLanguages();
     }
 
     @ModelAttribute("countries")
     public List<Country> getAllEnabledCountries() {
-        return countryService.getAllEnabledCountries();
+        return importedEntityService.getAllCountries();
     }
 
     @ModelAttribute("ethnicities")
     public List<Ethnicity> getAllEnabledEthnicities() {
-        return ethnicityService.getAllEnabledEthnicities();
+        return importedEntityService.getAllEthnicities();
     }
 
     @ModelAttribute("disabilities")
     public List<Disability> getAllEnabledDisabilities() {
-        return disabilityService.getAllEnabledDisabilities();
+        return importedEntityService.getAllDisabilities();
     }
 
     @ModelAttribute("domiciles")
     public List<Domicile> getAllEnabledDomiciles() {
-        return domicileService.getAllEnabledDomiciles();
+        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("genders")
@@ -192,5 +172,5 @@ public class PersonalDetailsController {
         modelMap.put("updatedUser", updatedUser);
         return TemplateLocation.APPLICATION_APPLICANT_PERSONAL_DETAIL;
     }
-    
+
 }

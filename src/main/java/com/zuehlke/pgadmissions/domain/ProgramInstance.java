@@ -16,9 +16,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "PROGRAM_INSTANCE")
-public class ProgramInstance implements ProgramInstanceInterface, ImportedObject, Serializable {
-
-    private static final long serialVersionUID = -5414750352686318033L;
+public class ProgramInstance {
 
     @Id
     @GeneratedValue
@@ -101,22 +99,10 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
         this.studyOption = studyOption;
     }
 
-    @Override
-    public String getCode() {
-        return program.getCode();
-    }
-
-    @Override
-    public String getName() {
-        return program.getTitle();
-    }
-
-    @Override
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
 
-    @Override
     public Boolean getEnabled() {
         return this.enabled;
     }
@@ -129,7 +115,6 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
         this.disabledDate = disabledDate;
     }
 
-    @Override
     public String getIdentifier() {
         return identifier;
     }
@@ -144,8 +129,4 @@ public class ProgramInstance implements ProgramInstanceInterface, ImportedObject
         return afterStartDate && beforeEndDate;
     }
 
-    @Override
-    public Boolean isAtasRequired() {
-        return program.getRequireProjectDefinition();
-    }
 }

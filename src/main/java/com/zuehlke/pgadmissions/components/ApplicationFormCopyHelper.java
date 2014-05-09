@@ -12,19 +12,20 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
 import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.SelfReferringImportedObject;
 import com.zuehlke.pgadmissions.services.DocumentService;
 
 @Component
 public class ApplicationFormCopyHelper {
-    
-    @Autowired DocumentService documentService;
+
+    @Autowired
+    DocumentService documentService;
 
     @Transactional
     public void copyApplicationFormData(ApplicationForm to, ApplicationForm from) {
@@ -34,14 +35,14 @@ public class ApplicationFormCopyHelper {
             personalDetails.setApplication(to);
             copyPersonalDetails(to.getPersonalDetails(), from.getPersonalDetails(), true);
         }
-        
+
         if (from.getApplicationAddress() != null) {
             ApplicationAddress applicationFormAddress = new ApplicationAddress();
             to.setApplicationAddress(applicationFormAddress);
             applicationFormAddress.setApplication(to);
             copyApplicationFormAddress(to.getApplicationAddress(), from.getApplicationAddress(), true);
         }
-                                                                                                                                                                                                                                                        
+
         for (Qualification fromQualification : from.getQualifications()) {
             Qualification qualification = new Qualification();
             to.getQualifications().add(qualification);
@@ -84,7 +85,7 @@ public class ApplicationFormCopyHelper {
             copyAdditionalInformation(additionalInformation, from.getAdditionalInformation());
         }
     }
-    
+
     public void copyProgramDetails(ProgramDetails to, ProgramDetails from) {
         to.setStudyOption(from.getStudyOption());
         to.setStartDate(from.getStartDate());
@@ -133,8 +134,7 @@ public class ApplicationFormCopyHelper {
         to.setEndDate(from.getEndDate());
         if (doPerformDeepCopy) {
             to.setEmployerAddress(copyAddress(from.getEmployerAddress()));
-        }
-        else {
+        } else {
             to.setEmployerAddress(from.getEmployerAddress());
         }
     }
@@ -192,7 +192,7 @@ public class ApplicationFormCopyHelper {
             to.setPassport(from.getPassport());
         }
     }
-    
+
     public void copyApplicationFormAddress(ApplicationAddress to, ApplicationAddress from, boolean doPerformDeepCopy) {
         if (doPerformDeepCopy) {
             to.setCurrentAddress(copyAddress(from.getCurrentAddress()));
@@ -202,7 +202,7 @@ public class ApplicationFormCopyHelper {
             to.setContactAddress(from.getContactAddress());
         }
     }
-    
+
     public void copyApplicationFormDocument(ApplicationDocument to, ApplicationDocument from, boolean doPerformDeepCopy) {
         if (doPerformDeepCopy) {
             to.setCv(copyDocument(from.getCv()));
@@ -241,9 +241,9 @@ public class ApplicationFormCopyHelper {
         to.setIsReferenced(true);
         return to;
     }
-    
+
     private LanguageQualification copyLanguageQualification(LanguageQualification from) {
-        if (from == null)  {
+        if (from == null) {
             return null;
         }
         LanguageQualification to = new LanguageQualification();
@@ -259,9 +259,9 @@ public class ApplicationFormCopyHelper {
         to.setProofOfAward(copyDocument(from.getProofOfAward()));
         return to;
     }
-    
+
     private Passport copyPassport(Passport from) {
-        if (from == null)  {
+        if (from == null) {
             return null;
         }
         Passport to = new Passport();
@@ -271,13 +271,12 @@ public class ApplicationFormCopyHelper {
         to.setExpiryDate(from.getExpiryDate());
         return to;
     }
-    
-    @SuppressWarnings("unchecked")
-    private <T extends SelfReferringImportedObject> T getEnabledImportedObject(T object) {
-        if (object == null || object.getEnabled() || object.getEnabledObject() == null) {
+
+    private <T extends ImportedEntity> T getEnabledImportedObject(T object) {
+        if (object == null || object.isEnabled()) {
             return object;
         }
-        return (T) object.getEnabledObject();
+        return null;
     }
 
 }

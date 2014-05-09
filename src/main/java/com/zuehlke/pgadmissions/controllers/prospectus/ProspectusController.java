@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -36,7 +36,7 @@ public class ProspectusController {
     private ProgramInstanceService programInstanceService;
 
     @Autowired
-    private DomicileService domicileService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private RoleService roleService;
@@ -72,7 +72,7 @@ public class ProspectusController {
 
     @ModelAttribute("countries")
     public List<Domicile> getAllEnabledDomiciles() {
-        return domicileService.getAllEnabledDomiciles();
+        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("advertisingDeadlines")

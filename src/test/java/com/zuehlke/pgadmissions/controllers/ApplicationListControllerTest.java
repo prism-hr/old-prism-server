@@ -37,9 +37,9 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.DataTable;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationsFilterBuilder;

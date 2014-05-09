@@ -40,9 +40,9 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -57,7 +57,7 @@ public class CreateNewOpportunityControllerTest {
 
 	@Mock
 	@InjectIntoByType
-	private DomicileService domicileService;
+	private ImportedEntityService importedEntityService;
 
 	@Mock
 	@InjectIntoByType
@@ -65,7 +65,7 @@ public class CreateNewOpportunityControllerTest {
 
 	@Mock
 	@InjectIntoByType
-	private DomicilePropertyEditor domicilePropertyEditor;
+	private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
 	@Mock
 	@InjectIntoByType
@@ -93,10 +93,10 @@ public class CreateNewOpportunityControllerTest {
 	@Test
 	public void shouldReturnAllEnabledDomiciles() {
 		List<Domicile> domicileList = Lists.newArrayList();
-		EasyMock.expect(domicileService.getAllEnabledDomiciles()).andReturn(domicileList);
+		EasyMock.expect(importedEntityService.getAllDomiciles()).andReturn(domicileList);
 
 		replay();
-		List<Domicile> returnedList = controller.getAllEnabledDomiciles();
+		List<Domicile> returnedList = controller.getAllDomiciles();
 		verify();
 
 		assertSame(domicileList, returnedList);
@@ -169,7 +169,7 @@ public class CreateNewOpportunityControllerTest {
 
 	@Test
 	public void shouldNotPostOpportunityRequestIfErrors() {
-		Domicile domicile = new DomicileBuilder().code("PL").build();
+		Domicile domicile = new Domicile();
 		OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(domicile).build();
 		BindingResult bindingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 		bindingResult.reject("error");
@@ -177,7 +177,7 @@ public class CreateNewOpportunityControllerTest {
 		HttpServletRequest request = new MockHttpServletRequest();
 
 		ArrayList<Institution> institutionsList = Lists.newArrayList();
-		expect(qualificationInstitutionDAO.getByDomicileCode("PL")).andReturn(institutionsList);
+		expect(qualificationInstitutionDAO.getByDomicile(domicile)).andReturn(institutionsList);
 
 		replay();
 		String result = controller.postOpportunityRequest(opportunityRequest, bindingResult, model, request);

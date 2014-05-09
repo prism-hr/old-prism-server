@@ -163,8 +163,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         application = new ApplicationForm().withProgram(program).withUser(user).withState(unsibmittedState);
 
-        QualificationTypeDAO typeDao = new QualificationTypeDAO(sessionFactory);
-
         List<Qualification> qualifications = new ArrayList<Qualification>();
 
         Qualification qualification1 = new Qualification();
@@ -175,7 +173,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         qualification1.setLanguage("Abkhazian");
         qualification1.setSubject("");
         qualification1.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-        qualification1.setType(typeDao.getAllQualificationTypes().get(0));
+        qualification1.setType(testObjectProvider.getQualificationType());
 
         qualifications.add(qualification1);
 
@@ -186,7 +184,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
         qualification2.setLanguage("Abkhazian");
         qualification2.setSubject("");
         qualification2.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-        qualification2.setType(typeDao.getAllQualificationTypes().get(0));
+        qualification2.setType(testObjectProvider.getQualificationType());
 
         qualifications.add(qualification1);
         return qualifications;

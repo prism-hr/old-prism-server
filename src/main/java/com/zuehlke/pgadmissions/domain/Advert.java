@@ -22,7 +22,6 @@ import javax.validation.constraints.Size;
 
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
-import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "ADVERT")

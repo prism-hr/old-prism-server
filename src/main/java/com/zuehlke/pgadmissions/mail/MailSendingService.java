@@ -245,17 +245,18 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendImportErrorMessage(List<User> recipients, String messageCode, Date timestamp) {
+    public void sendImportErrorMessage(String messageText) {
         PrismEmailMessage message = null;
-        if (messageCode == null) {
+        if (messageText == null) {
             log.error("Error while sending import error message: messageCode is null");
             return;
         }
         String subject = resolveMessage(SYSTEM_IMPORT_ERROR_NOTIFICATION);
+        List<User> recipients = roleService.getUsersInRole(roleService.getPrismSystem(), Authority.SYSTEM_ADMINISTRATOR);
         for (User user : recipients) {
             try {
-                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageCode,
-                        timestamp, getHostName() });
+                EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "user", "message", "time", "host" }, new Object[] { user, messageText,
+                        new Date(), getHostName() });
                 message = buildMessage(user, subject, modelBuilder.build(), SYSTEM_IMPORT_ERROR_NOTIFICATION);
                 sendEmail(message);
             } catch (Exception e) {

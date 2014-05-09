@@ -8,24 +8,16 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.QualificationTypeService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
 public class QualificationTypePropertyEditor extends PropertyEditorSupport {
 
-    private final QualificationTypeService qualificationTypeService;
-    private final EncryptionHelper encryptionHelper;
-
-    public QualificationTypePropertyEditor() {
-        this(null, null);
-    }
+    @Autowired
+    private ImportedEntityService importedEntityService;
 
     @Autowired
-    public QualificationTypePropertyEditor(QualificationTypeService qualificationTypeDao,
-            EncryptionHelper encryptionHelper) {
-        this.qualificationTypeService = qualificationTypeDao;
-        this.encryptionHelper = encryptionHelper;
-    }
+    private EncryptionHelper encryptionHelper;
 
     @Override
     public void setAsText(String strId) throws IllegalArgumentException {
@@ -33,7 +25,7 @@ public class QualificationTypePropertyEditor extends PropertyEditorSupport {
             setValue(null);
             return;
         }
-        setValue(qualificationTypeService.getQualificationTypeById(encryptionHelper.decryptToInteger(strId)));
+        setValue(importedEntityService.getQualificationTypeById(encryptionHelper.decryptToInteger(strId)));
 
     }
 

@@ -22,8 +22,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
     
     private RefereeDAO refereeDAO;
     
-    private DomicileDAO domicileDAO;
-    
     private User user;
     
     private ApplicationForm application;
@@ -36,8 +34,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldDeleteReferee() {
-
-        Referee referee = new RefereeBuilder().application(application).address(TestData.anAddress(domicileDAO.getDomicileById(1))).user(user)
+        Referee referee = new RefereeBuilder().application(application).address(TestData.anAddress(testObjectProvider.getDomicile())).user(user)
                 .jobEmployer("sdfsdf").jobTitle("fsdsd").phoneNumber("hallihallo").build();
         save(referee);
         flushAndClearSession();
@@ -51,7 +48,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveReferee() throws ParseException {
-        Referee referee = new RefereeBuilder().application(application).address(TestData.anAddress(domicileDAO.getDomicileById(1))).user(user).phoneNumber("hallihallo").build();
+        Referee referee = new RefereeBuilder().application(application).address(TestData.anAddress(testObjectProvider.getDomicile())).user(user).phoneNumber("hallihallo").build();
         flushAndClearSession();
 
         refereeDAO.save(referee);
@@ -60,7 +57,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetRefereeById() {
-        Referee referee = new RefereeBuilder().application(application).address(TestData.anAddress(domicileDAO.getDomicileById(1))).user(user).phoneNumber("hallihallo").build();
+        Referee referee = new RefereeBuilder().application(application).address(TestData.anAddress(testObjectProvider.getDomicile())).user(user).phoneNumber("hallihallo").build();
         sessionFactory.getCurrentSession().save(referee);
         flushAndClearSession();
         assertEquals(referee.getId(), refereeDAO.getRefereeById(referee.getId()).getId());
@@ -77,7 +74,6 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
         flushAndClearSession();
         
         refereeDAO = new RefereeDAO(sessionFactory);
-        domicileDAO = new DomicileDAO(sessionFactory);
     }
 
 }

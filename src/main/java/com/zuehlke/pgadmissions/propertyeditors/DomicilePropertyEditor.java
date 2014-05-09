@@ -8,31 +8,24 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
 public class DomicilePropertyEditor extends PropertyEditorSupport {
 
-	private final DomicileService domicileService;
-	private final EncryptionHelper encryptionHelper;
+    @Autowired
+	private ImportedEntityService importedEntityService;
+	
+    @Autowired
+	private EncryptionHelper encryptionHelper;
 
-	public DomicilePropertyEditor(){
-		this(null, null);
-	}
-	
-	@Autowired
-	public DomicilePropertyEditor(DomicileService domicileService, EncryptionHelper encryptionHelper) {
-		this.domicileService = domicileService;
-		this.encryptionHelper = encryptionHelper;	
-	}
-	
 	@Override
 	public void setAsText(String strId) throws IllegalArgumentException {
 		if(strId == null || StringUtils.isBlank(strId)){
 			setValue(null);
 			return;
 		}
-		setValue(domicileService.getDomicileById(encryptionHelper.decryptToInteger(strId)));
+		setValue(importedEntityService.getDomicileById(encryptionHelper.decryptToInteger(strId)));
 		
 	}
 

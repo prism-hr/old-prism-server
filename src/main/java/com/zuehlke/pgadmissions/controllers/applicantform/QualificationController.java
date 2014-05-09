@@ -23,9 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.dao.DomicileDAO;
-import com.zuehlke.pgadmissions.dao.InstitutionDAO;
-import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
@@ -42,7 +39,7 @@ import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
-import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 
@@ -60,7 +57,7 @@ public class QualificationController {
     private DatePropertyEditor datePropertyEditor;
 
     @Autowired
-    private LanguageService languageService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private LanguagePropertyEditor languagePropertyEditor;
@@ -72,22 +69,13 @@ public class QualificationController {
     private QualificationValidator qualificationValidator;
 
     @Autowired
-    private DomicileDAO domicileDAO;
-
-    @Autowired
     private ApplicationFormPropertyEditor applicationFormPropertyEditor;
 
     @Autowired
     private DocumentPropertyEditor documentPropertyEditor;
 
     @Autowired
-    private QualificationTypeDAO qualificationTypeDAO;
-
-    @Autowired
     private QualificationTypePropertyEditor qualificationTypePropertyEditor;
-
-    @Autowired
-    private InstitutionDAO qualificationInstitutionDAO;
 
     @Autowired
     private FullTextSearchService searchService;
@@ -158,17 +146,17 @@ public class QualificationController {
 
     @ModelAttribute("languages")
     public List<Language> getAllEnabledLanguages() {
-        return languageService.getAllEnabledLanguages();
+        return importedEntityService.getAllLanguages();
     }
 
     @ModelAttribute("countries")
     public List<Domicile> getAllEnabledDomiciles() {
-        return domicileDAO.getAllEnabledDomiciles();
+        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("types")
     public List<QualificationType> getAllEnabledQualificationTypes() {
-        return qualificationTypeDAO.getAllEnabledQualificationTypes();
+        return importedEntityService.getAllQualificationTypes();
     }
 
     @ModelAttribute("applicationForm")
@@ -180,7 +168,7 @@ public class QualificationController {
         modelMap.put("qualification", qualification);
         Institution institution = qualification.getInstitution();
         if (institution != null) {
-            modelMap.put("institutions", qualificationInstitutionDAO.getByDomicileCode(institution.getDomicileCode()));
+            modelMap.put("institutions", institution.getDomicile());
         }
         return TemplateLocation.APPLICATION_APPLICANT_ADDITIONAL_INFORMATION;
     }

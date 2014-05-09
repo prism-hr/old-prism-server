@@ -46,8 +46,9 @@ public class Institution implements Serializable, PrismScope {
     @JoinColumn(name = "system_id", nullable = false)
     private PrismSystem system;
 
-    @Column(name = "domicile_code")
-    private String domicileCode;
+    @ManyToOne
+    @JoinColumn(name = "domicile_id")
+    private Domicile domicile;
 
     @Column(name = "name")
     @Field(analyzer = @Analyzer(definition = "institutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
@@ -84,12 +85,12 @@ public class Institution implements Serializable, PrismScope {
         this.state = state;
     }
 
-    public String getDomicileCode() {
-        return domicileCode;
+    public Domicile getDomicile() {
+        return domicile;
     }
 
-    public void setDomicileCode(String domicileCode) {
-        this.domicileCode = domicileCode;
+    public void setDomicile(Domicile domicile) {
+        this.domicile = domicile;
     }
 
     public String getCode() {
@@ -99,32 +100,32 @@ public class Institution implements Serializable, PrismScope {
     public void setCode(String code) {
         this.code = code;
     }
-    
+
     public Institution withId(Integer id) {
         this.id = id;
         return this;
     }
-    
+
     public Institution withSystem(PrismSystem system) {
         this.system = system;
         return this;
     }
-    
-    public Institution withDomicileCode(String domicileCode) {
-        this.domicileCode = domicileCode;
+
+    public Institution withDomicile(Domicile domicile) {
+        this.domicile = domicile;
         return this;
     }
-    
+
     public Institution withName(String name) {
         this.name = name;
         return this;
     }
-    
+
     public Institution withState(State state) {
         this.state = state;
         return this;
     }
-    
+
     public Institution withCode(String code) {
         this.code = code;
         return this;

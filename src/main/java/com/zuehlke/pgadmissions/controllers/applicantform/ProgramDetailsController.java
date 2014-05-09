@@ -31,9 +31,9 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ProgramDetailsService;
 import com.zuehlke.pgadmissions.services.ProgramService;
-import com.zuehlke.pgadmissions.services.SourcesOfInterestService;
 import com.zuehlke.pgadmissions.validators.ProgramDetailsValidator;
 
 @RequestMapping("/update")
@@ -54,12 +54,12 @@ public class ProgramDetailsController {
 
     @Autowired
     private ProgramDetailsService programDetailsService;
-    
+
     @Autowired
     private ProgramService programService;
-    
+
     @Autowired
-    private SourcesOfInterestService sourcesOfInterestService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
@@ -95,7 +95,7 @@ public class ProgramDetailsController {
 
     @ModelAttribute("sourcesOfInterests")
     public List<SourcesOfInterest> getSourcesOfInterests() {
-        return sourcesOfInterestService.getAllEnabledSourcesOfInterest();
+        return importedEntityService.getAllSourcesOfInterest();
     }
 
     @ModelAttribute("applicationForm")

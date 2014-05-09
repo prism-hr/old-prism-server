@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.DisabilityService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
 public class DisabilityPropertyEditor extends PropertyEditorSupport {
 
-	private final DisabilityService disabilityService;
+	private final ImportedEntityService disabilityService;
 	private final EncryptionHelper encryptionHelper;
 
 	@Autowired
-	public DisabilityPropertyEditor(DisabilityService disabilityService, EncryptionHelper encryptionHelper) {
+	public DisabilityPropertyEditor(ImportedEntityService disabilityService, EncryptionHelper encryptionHelper) {
 		this.disabilityService = disabilityService;
 		this.encryptionHelper = encryptionHelper;
 	}

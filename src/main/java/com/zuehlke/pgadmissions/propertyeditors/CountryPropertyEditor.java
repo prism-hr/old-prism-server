@@ -8,31 +8,24 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
 public class CountryPropertyEditor extends PropertyEditorSupport {
 
-	private final CountryService countryService;
-	private final EncryptionHelper encryptionHelper;
+    @Autowired
+	private ImportedEntityService importedEntityService;
+    
+    @Autowired
+	private EncryptionHelper encryptionHelper;
 
-	public CountryPropertyEditor(){
-		this(null, null);
-	}
-	
-	@Autowired
-	public CountryPropertyEditor(CountryService countryService, EncryptionHelper encryptionHelper) {
-		this.countryService = countryService;
-		this.encryptionHelper = encryptionHelper;	
-	}
-	
 	@Override
 	public void setAsText(String strId) throws IllegalArgumentException {
 		if(strId == null || StringUtils.isBlank(strId)){
 			setValue(null);
 			return;
 		}
-		setValue(countryService.getCountryById(encryptionHelper.decryptToInteger(strId)));
+		setValue(importedEntityService.getCountryById(encryptionHelper.decryptToInteger(strId)));
 		
 	}
 

@@ -13,6 +13,7 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 
@@ -63,8 +64,8 @@ public class InstitutionDAO {
                 .uniqueResult();
     }
 
-    public Institution getByDomicileAndName(String domicileCode, String institutionName) {
-        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Restrictions.eq("domicileCode", domicileCode))
+    public Institution getByDomicileAndName(Domicile domicile, String institutionName) {
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Restrictions.eq("domicile", domicile))
                 .add(Restrictions.eq("name", institutionName)).uniqueResult();
     }
 

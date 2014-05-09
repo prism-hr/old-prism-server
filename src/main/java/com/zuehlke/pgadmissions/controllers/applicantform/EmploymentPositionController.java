@@ -32,10 +32,9 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
-import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
-import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 
 @RequestMapping("/update")
@@ -46,7 +45,7 @@ public class EmploymentPositionController {
     private EmploymentPositionService employmentPositionService;
 
     @Autowired
-    private LanguageService languageService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private ApplicationFormService applicationFormService;
@@ -62,9 +61,6 @@ public class EmploymentPositionController {
 
     @Autowired
     private ApplicationFormPropertyEditor applicationFormPropertyEditor;
-
-    @Autowired
-    private DomicileService domicileService;
 
     @Autowired
     private DomicilePropertyEditor domicilePropertyEditor;
@@ -120,12 +116,12 @@ public class EmploymentPositionController {
 
     @ModelAttribute("languages")
     public List<Language> getAllEnabledLanguages() {
-        return languageService.getAllEnabledLanguages();
+        return importedEntityService.getAllLanguages();
     }
 
     @ModelAttribute("domiciles")
     public List<Domicile> getAllEnabledDomiciles() {
-        return domicileService.getAllEnabledDomiciles();
+        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("applicationForm")

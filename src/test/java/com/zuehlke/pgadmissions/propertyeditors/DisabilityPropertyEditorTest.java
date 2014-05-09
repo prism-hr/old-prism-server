@@ -10,17 +10,17 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.DisabilityService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 public class DisabilityPropertyEditorTest {
 
-	private DisabilityService disabilityServiceMock;
+	private ImportedEntityService disabilityServiceMock;
 	private DisabilityPropertyEditor editor;
 	private EncryptionHelper encryptionHelperMock;
 
 	@Before
 	public void setup() {
-		disabilityServiceMock = EasyMock.createMock(DisabilityService.class);
+		disabilityServiceMock = EasyMock.createMock(ImportedEntityService.class);
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
 		editor = new DisabilityPropertyEditor(disabilityServiceMock, encryptionHelperMock);
 	}

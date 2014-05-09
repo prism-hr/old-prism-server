@@ -8,31 +8,24 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.services.EthnicityService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 
 @Component
 public class EthnicityPropertyEditor extends PropertyEditorSupport {
 
-	private final EthnicityService ethnicityService;
-	private final EncryptionHelper encryptionHelper;
+    @Autowired
+	private ImportedEntityService importedEntityService;
+    
+    @Autowired
+	private EncryptionHelper encryptionHelper;
 
-	public EthnicityPropertyEditor(){
-		this(null, null);
-	}
-	
-	@Autowired
-	public EthnicityPropertyEditor(EthnicityService ethService, EncryptionHelper encryptionHelper) {
-		this.ethnicityService = ethService;
-		this.encryptionHelper = encryptionHelper;	
-	}
-	
 	@Override
 	public void setAsText(String strId) throws IllegalArgumentException {
 		if(strId == null || StringUtils.isBlank(strId)){
 			setValue(null);
 			return;
 		}
-		setValue(ethnicityService.getEthnicityById(encryptionHelper.decryptToInteger(strId)));
+		setValue(importedEntityService.getEthnicityById(encryptionHelper.decryptToInteger(strId)));
 	}
 
 	@Override

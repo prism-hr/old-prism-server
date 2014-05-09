@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.workflow;
 
-import java.util.List;
-
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,23 +22,23 @@ import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ManageUsersService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.ReviewService;
-import com.zuehlke.pgadmissions.services.importers.Importer;
+import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 public class PrismWorkflowTest {
 
     @Autowired
-    private List<Importer> importers;
+    private XMLDataImportTask xmlDataImportTask;
 
     @Autowired
-    private DomicileService domicileService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private ProgramService programService;
@@ -68,11 +66,9 @@ public class PrismWorkflowTest {
         User superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, true, manageUsersService.getPrismSystem(),
                 Authority.SYSTEM_ADMINISTRATOR);
 
-        for (Importer importer : importers) {
-            importer.importData();
-        }
+        xmlDataImportTask.importData();
 
-        Domicile polishDomicile = domicileService.getEnabledDomicileByCode("PL");
+        Domicile polishDomicile = importedEntityService.getByCode(Domicile.class, "PL");
         ProgramType programType = programService.getProgramTypes().iterator().next();
 
         User programCreator = new User().withFirstName("Jerzy").withLastName("Urban").withEmail("jerzy@urban.pl")

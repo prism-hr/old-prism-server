@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -49,7 +49,7 @@ public class CreateNewOpportunityController {
     private UserService userService;
 
     @Autowired
-    private DomicileService domicileService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private InstitutionDAO qualificationInstitutionDAO;
@@ -108,8 +108,8 @@ public class CreateNewOpportunityController {
     }
 
     @ModelAttribute("countries")
-    public List<Domicile> getAllEnabledDomiciles() {
-        return domicileService.getAllEnabledDomiciles();
+    public List<Domicile> getAllDomiciles() {
+        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("opportunityRequest")

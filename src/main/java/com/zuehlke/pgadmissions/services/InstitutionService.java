@@ -45,10 +45,10 @@ public class InstitutionService {
     public Institution getOrCreate(String institutionCode, Domicile domicile, String institutionName) {
         Institution persistentInstitution;
         if ("OTHER".equals(institutionCode)) {
-            persistentInstitution = institutionDAO.getByDomicileAndName(domicile.getCode(), institutionName);
+            persistentInstitution = institutionDAO.getByDomicileAndName(domicile, institutionName);
             if (persistentInstitution == null) {
                 persistentInstitution = new Institution();
-                persistentInstitution.setDomicileCode(domicile.getCode());
+                persistentInstitution.setDomicile(domicile);
                 persistentInstitution.setState(stateDAO.getById(PrismState.INSTITUTION_APPROVED));
                 persistentInstitution.setName(institutionName);
                 persistentInstitution.setCode(generateNextInstitutionCode());

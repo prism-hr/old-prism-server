@@ -16,7 +16,6 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.State;
@@ -24,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -36,7 +36,7 @@ public class InstitutionControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DomicileDAO domicileDAO;
+    private ImportedEntityService importedEntityService;
 
     @Mock
     @InjectIntoByType
@@ -58,16 +58,15 @@ public class InstitutionControllerTest {
     public void shouldGetInstitutions() {
         Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").build();
         Institution institution1 = new Institution().withId(2).withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of London")
-                .withDomicileCode("UK").withCode("ABC");
-        Institution institution2 = new Institution().withId(3).withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Cambridge")
-                .withDomicileCode("UK").withCode("ABCD");
+                .withDomicile(domicile).withCode("ABC");
+        Institution institution2 = new Institution().withId(3).withState(new State().withId(PrismState.INSTITUTION_APPROVED))
+                .withName("University of Cambridge").withDomicile(domicile).withCode("ABCD");
 
-        expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
-        expect(domicileDAO.getDomicileById(0)).andReturn(domicile);
-        expect(institutionService.getEnabledInstitutionsByDomicileCode(domicile.getCode())).andReturn(Arrays.asList(institution1, institution2));
+        expect(importedEntityService.getDomicileById(0)).andReturn(domicile);
+        expect(institutionService.getEnabledInstitutionsByDomicile(domicile)).andReturn(Arrays.asList(institution1, institution2));
 
         replay();
-        String institutions = controller.getInstitutions("0");
+        String institutions = controller.getInstitutions(0);
         verify();
 
         assertEquals("[{\"code\":\"ABC\",\"name\":\"University of London\"},{\"code\":\"ABCD\",\"name\":\"University of Cambridge\"}]", institutions);
@@ -77,19 +76,17 @@ public class InstitutionControllerTest {
     public void shouldGetUserCategorizedInstitutions() {
         Domicile domicile = new DomicileBuilder().id(0).code("UK").enabled(true).name("United Kingdom").build();
         Institution institution1 = new Institution().withId(2).withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of London")
-                .withDomicileCode("UK").withCode("ABC");
-        Institution institution2 = new Institution().withId(3).withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Cambridge")
-                .withDomicileCode("UK").withCode("ABCD");
+                .withDomicile(domicile).withCode("ABC");
+        Institution institution2 = new Institution().withId(3).withState(new State().withId(PrismState.INSTITUTION_APPROVED))
+                .withName("University of Cambridge").withDomicile(domicile).withCode("ABCD");
         User user = new User();
 
-        expect(encryptionHelper.decryptToInteger("0")).andReturn(0);
-        expect(domicileDAO.getDomicileById(0)).andReturn(domicile);
+        expect(importedEntityService.getDomicileById(0)).andReturn(domicile);
         expect(userService.getCurrentUser()).andReturn(user);
-        expect(institutionService.getEnabledInstitutionsByDomicileCode(domicile.getCode())).andReturn(
-                Lists.newArrayList(institution1, institution2));
+        expect(institutionService.getEnabledInstitutionsByDomicile(domicile)).andReturn(Lists.newArrayList(institution1, institution2));
 
         replay();
-        String institutions = controller.getAdministratorInstitutions("0");
+        String institutions = controller.getAdministratorInstitutions(0);
         verify();
 
         assertEquals(

@@ -39,11 +39,11 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -75,7 +75,7 @@ public class ProgramConfigurationController {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private DomicilePropertyEditor domicilePropertyEditor;
+    private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
     @Resource(name = "programValidator")
     private OpportunityRequestValidator opportunityRequestValidator;
@@ -99,7 +99,7 @@ public class ProgramConfigurationController {
     private EncryptionHelper encryptionHelper;
 
     @Autowired
-    private DomicileService domicileService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private OpportunitiesService opportunitiesService;
@@ -157,7 +157,7 @@ public class ProgramConfigurationController {
         Map<String, Object> dataMap = Maps.newHashMap();
         dataMap.put("advertId", program.getId());
 
-        Domicile institutionCountry = domicileService.getEnabledDomicileByCode(program.getInstitution().getDomicileCode());
+        Domicile institutionCountry = program.getInstitution().getDomicile();
 
         result.put("programId", program.getId());
         result.put("programTitle", program.getTitle());

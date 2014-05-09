@@ -608,7 +608,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
                 table.addCell(headerCell);
                 table.addCell(newTableCell("Institution Country", SMALL_BOLD_FONT));
                 // TODO display country name rather than code
-                table.addCell(newTableCell(qualification.getInstitution().getDomicileCode(), SMALL_FONT));
+                table.addCell(newTableCell(qualification.getInstitution().getDomicile().getCode(), SMALL_FONT));
 
                 table.addCell(newTableCell("Institution/Provider Name", SMALL_BOLD_FONT));
                 table.addCell(newTableCell(qualification.getInstitution().getName(), SMALL_FONT));

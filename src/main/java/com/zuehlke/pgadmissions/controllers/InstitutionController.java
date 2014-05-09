@@ -20,7 +20,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.HibernateProxyTypeAdapter;
@@ -31,6 +33,9 @@ public class InstitutionController {
 
     @Autowired
     private InstitutionService qualificationInstitutionService;
+    
+    @Autowired
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private UserService userService;
@@ -53,18 +58,20 @@ public class InstitutionController {
 
     @RequestMapping(value = "/getInstitutionInformation", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getInstitutions(@RequestParam String domicileCode) {
-        List<Institution> institutions = qualificationInstitutionService.getEnabledInstitutionsByDomicileCode(domicileCode);
+    public String getInstitutions(@RequestParam Integer domicileId) {
+        Domicile domicile = importedEntityService.getDomicileById(domicileId);
+        List<Institution> institutions = qualificationInstitutionService.getEnabledInstitutionsByDomicile(domicile);
         return gson.toJson(institutions);
     }
 
     @RequestMapping(value = "/getUserInstitutionInformation", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String getAdministratorInstitutions(@RequestParam String domicileCode) {
+    public String getAdministratorInstitutions(@RequestParam Integer domicileId) {
+        Domicile domicile = importedEntityService.getDomicileById(domicileId);
         Integer userId = userService.getCurrentUser().getId();
         LinkedHashMap<Object, Object> returnMap = Maps.newLinkedHashMap();
-        returnMap.put("userInstitutions", qualificationInstitutionService.getEnabledInstitutionsByUserIdAndDomicileCode(userId, domicileCode));
-        returnMap.put("otherInstitutions", qualificationInstitutionService.getEnabledInstitutionsByDomicileCodeExludingUserId(userId, domicileCode));
+        returnMap.put("userInstitutions", qualificationInstitutionService.getEnabledInstitutionsByUserIdAndDomicile(userId, domicile));
+        returnMap.put("otherInstitutions", qualificationInstitutionService.getEnabledInstitutionsByDomicileExludingUserId(userId, domicile));
         return gson.toJson(returnMap);
     }
 

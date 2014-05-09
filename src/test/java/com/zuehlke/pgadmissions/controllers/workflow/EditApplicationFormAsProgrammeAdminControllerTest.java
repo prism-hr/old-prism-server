@@ -10,13 +10,12 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.controllers.factory.ScoreFactory;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -71,11 +70,10 @@ public class EditApplicationFormAsProgrammeAdminControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DomicileService domicileServiceMock;
+    private ImportedEntityService importedEntityService;
 
     @Mock
     @InjectIntoByType
-    private DomicilePropertyEditor domicilePropertyEditorMock;
     private WorkflowService applicationFormUserRoleServiceMock;
 
     @Mock

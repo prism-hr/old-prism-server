@@ -29,9 +29,9 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.PermissionsService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -52,17 +52,17 @@ public class EditOpportunityRequestController {
     private UserService userService;
 
     @Autowired
-    private DomicileService domicileService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private InstitutionDAO qualificationInstitutionDAO;
 
     @Autowired
-    private DomicilePropertyEditor domicilePropertyEditor;
+    private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
     @Resource(name = "opportunityRequestValidator")
     private OpportunityRequestValidator opportunityRequestValidator;
-    
+
     @Autowired
     private ProgramService programsService;
 
@@ -99,8 +99,7 @@ public class EditOpportunityRequestController {
         modelMap.addAttribute("comment", comment);
 
         if (opportunityRequest.getInstitutionCountry() != null) {
-            modelMap.addAttribute("institutions",
-                    qualificationInstitutionDAO.getByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
+            modelMap.addAttribute("institutions", qualificationInstitutionDAO.getByDomicile(opportunityRequest.getInstitutionCountry()));
         }
 
         return EDIT_REQUEST_PAGE_VIEW_NAME;
@@ -129,8 +128,7 @@ public class EditOpportunityRequestController {
             modelMap.put("comment", comment);
 
             if (opportunityRequest.getInstitutionCountry() != null) {
-                modelMap.addAttribute("institutions",
-                        qualificationInstitutionDAO.getByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
+                modelMap.addAttribute("institutions", qualificationInstitutionDAO.getByDomicile(opportunityRequest.getInstitutionCountry()));
             }
 
             return EDIT_REQUEST_PAGE_VIEW_NAME;
@@ -160,8 +158,8 @@ public class EditOpportunityRequestController {
     }
 
     @ModelAttribute("countries")
-    public List<Domicile> getAllEnabledDomiciles() {
-        return domicileService.getAllEnabledDomiciles();
+    public List<Domicile> getAllDomiciles() {
+        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("studyOptions")

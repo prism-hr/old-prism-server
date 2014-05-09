@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services.importers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,7 @@ public class EntityImportServiceTest {
         
         assertEquals("kod", converted.getCode());
         assertEquals("nazwa", converted.getName());
+        assertTrue(converted.isEnabled());
     }
 
 }

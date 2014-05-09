@@ -13,8 +13,6 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.CountriesDAO;
-import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 
@@ -34,11 +32,7 @@ public class ApplicationsServiceTest {
 
     @Mock
     @InjectIntoByType
-    private CountriesDAO countriesDAOMock;
-
-    @Mock
-    @InjectIntoByType
-    private DomicileDAO domicileDAOMock;
+    private ImportedEntityService importedEntityService;
 
     @Test
     public void shouldGetApplicationById() {

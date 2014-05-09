@@ -15,7 +15,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.ImportedDataDAO;
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.ImportedObject;
+import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
@@ -40,7 +40,7 @@ public class ImportDataReferenceUpdaterTest {
         Country disabledCountry = new Country();
         Country enabledCountry = new Country();
         
-        expect(importedDataDAO.getDisabledImportedObjectsWithoutActiveReference(Country.class)).andReturn(Lists.<ImportedObject> newArrayList(disabledCountry));
+        expect(importedDataDAO.getDisabledImportedObjectsWithoutActiveReference(Country.class)).andReturn(Lists.<ImportedEntity> newArrayList(disabledCountry));
 
         expect(importedDataDAO.getEnabledVersion(disabledCountry)).andReturn(enabledCountry);
 

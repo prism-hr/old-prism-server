@@ -202,15 +202,15 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             printLanguageQualificationAdmissionsNote = true;
         }
 
-        //FIXME set applicant UCL ID
-//        applicant.setApplicantID(StringUtils.trimToNull(applicationForm.getApplicant().getUclUserId()));
+        // FIXME set applicant UCL ID
+        // applicant.setApplicantID(StringUtils.trimToNull(applicationForm.getApplicant().getUclUserId()));
 
         return applicant;
     }
 
     private DomicileTp buildDomicile() {
         DomicileTp domicileTp = xmlFactory.createDomicileTp();
-        domicileTp.setCode(applicationForm.getPersonalDetails().getResidenceCountry().getEnabledCode());
+        domicileTp.setCode(applicationForm.getPersonalDetails().getResidenceCountry().getCode());
         domicileTp.setName(applicationForm.getPersonalDetails().getResidenceCountry().getName());
         return domicileTp;
     }
@@ -254,7 +254,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             throw new IllegalArgumentException("Candidate should have at least one nationality.");
         }
 
-        nationalityTp.setCode(firstNationality.getEnabledCode());
+        nationalityTp.setCode(firstNationality.getCode());
         nationalityTp.setName(firstNationality.getName());
         return nationalityTp;
     }
@@ -266,7 +266,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         if (secondNationality == null) {
             return null;
         } else {
-            nationalityTp.setCode(secondNationality.getEnabledCode());
+            nationalityTp.setCode(secondNationality.getCode());
             nationalityTp.setName(secondNationality.getName());
             return nationalityTp;
         }
@@ -275,7 +275,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private CountryTp buildCountry() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         CountryTp countryTp = xmlFactory.createCountryTp();
-        countryTp.setCode(personalDetails.getCountry().getEnabledCode());
+        countryTp.setCode(personalDetails.getCountry().getCode());
         countryTp.setName(personalDetails.getCountry().getName());
         return countryTp;
     }
@@ -302,7 +302,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private DisabilityTp buildDisability() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         DisabilityTp disabilityTp = xmlFactory.createDisabilityTp();
-        disabilityTp.setCode(personalDetails.getDisability().getEnabledCode());
+        disabilityTp.setCode(personalDetails.getDisability().getCode());
         disabilityTp.setName(personalDetails.getDisability().getName());
         return disabilityTp;
     }
@@ -310,7 +310,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private EthnicityTp buildEthnicity() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         EthnicityTp ethnicityTp = xmlFactory.createEthnicityTp();
-        ethnicityTp.setCode(personalDetails.getEthnicity().getEnabledCode());
+        ethnicityTp.setCode(personalDetails.getEthnicity().getCode());
         ethnicityTp.setName(personalDetails.getEthnicity().getName());
         return ethnicityTp;
     }
@@ -326,7 +326,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         addressTp.setAddressLine3(currentAddress.getAddressTown());
         addressTp.setAddressLine4(currentAddress.getAddressRegion());
         addressTp.setPostCode(currentAddress.getAddressCode());
-        addressTp.setCountry(currentAddress.getDomicile().getEnabledCode());
+        addressTp.setCountry(currentAddress.getDomicile().getCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
         // in this format before.
@@ -355,7 +355,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         addressTp.setAddressLine3(contactAddress.getAddressTown());
         addressTp.setAddressLine4(contactAddress.getAddressRegion());
         addressTp.setPostCode(contactAddress.getAddressCode());
-        addressTp.setCountry(contactAddress.getDomicile().getEnabledCode());
+        addressTp.setCountry(contactAddress.getDomicile().getCode());
 
         // postCode is mandatory but but PRISM did not collect addresses
         // in this format before.
@@ -530,10 +530,10 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
         ProgramDetails programmeDetails = applicationForm.getProgramDetails();
         SourceOfInterestTp interestTp = xmlFactory.createSourceOfInterestTp();
         SourcesOfInterest sourcesOfInterest = programmeDetails.getSourceOfInterest();
-        if(sourcesOfInterest == null) {
+        if (sourcesOfInterest == null) {
             return null;
         }
-        interestTp.setCode(sourcesOfInterest.getEnabledCode());
+        interestTp.setCode(sourcesOfInterest.getCode());
         interestTp.setName(sourcesOfInterest.getName());
         if (sourcesOfInterest.isFreeText()) {
             applicationTp.setOtherSourceofInterest(programmeDetails.getSourceOfInterestText());
@@ -557,7 +557,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                 qualificationsTp.setMainSubject(qualification.getSubject());
 
                 QualificationTp qualificationTp = xmlFactory.createQualificationTp();
-                qualificationTp.setCode(qualification.getType().getEnabledCode());
+                qualificationTp.setCode(qualification.getType().getCode());
                 qualificationTp.setName(qualification.getType().getName());
                 qualificationsTp.setQualification(qualificationTp);
 
@@ -567,9 +567,9 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
                 institutionTp.setName(qualification.getInstitution().getName());
 
                 CountryTp countryTp = xmlFactory.createCountryTp();
-                countryTp.setCode(qualification.getInstitution().getDomicileCode());
+                countryTp.setCode(qualification.getInstitution().getDomicile().getCode());
                 // FIXME specify domicile name
-                countryTp.setName(qualification.getInstitution().getDomicileCode());
+                countryTp.setName(qualification.getInstitution().getDomicile().getCode());
                 institutionTp.setCountry(countryTp);
 
                 qualificationsTp.setInstitution(institutionTp);
@@ -627,10 +627,10 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
     private RefereeListTp buildReferee() {
         RefereeListTp resultList = xmlFactory.createRefereeListTp();
-        
+
         // FIXME get referees to send to portico (this class should be Spring component)
-        List<Referee> referees = null; //applicationForm.getRefereesToSendToPortico();
-        for (Referee referee : referees ) {
+        List<Referee> referees = null; // applicationForm.getRefereesToSendToPortico();
+        for (Referee referee : referees) {
             RefereeTp refereeTp = xmlFactory.createRefereeTp();
 
             refereeTp.setPosition(referee.getJobTitle());
@@ -656,7 +656,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
             addressTp.setAddressLine3(referee.getAddress().getAddressTown());
             addressTp.setAddressLine4(referee.getAddress().getAddressRegion());
             addressTp.setPostCode(referee.getAddress().getAddressCode());
-            addressTp.setCountry(referee.getAddress().getDomicile().getEnabledCode());
+            addressTp.setCountry(referee.getAddress().getDomicile().getCode());
 
             // postCode is mandatory but but PRISM did not collect addresses
             // in this format before.
@@ -682,7 +682,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
     private EnglishLanguageQualificationDetailsTp buildEnglishLanguageQualification() {
         PersonalDetails personalDetails = applicationForm.getPersonalDetails();
         EnglishLanguageQualificationDetailsTp englishLanguageQualificationDetailsTp = xmlFactory.createEnglishLanguageQualificationDetailsTp();
-        
+
         if (personalDetails.getLanguageQualificationAvailable()) {
             LanguageQualification languageQualification = personalDetails.getLanguageQualification();
             EnglishLanguageTp englishLanguageTp = xmlFactory.createEnglishLanguageTp();

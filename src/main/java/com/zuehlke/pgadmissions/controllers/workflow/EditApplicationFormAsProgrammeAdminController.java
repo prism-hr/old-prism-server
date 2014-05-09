@@ -50,7 +50,7 @@ import com.zuehlke.pgadmissions.scoring.jaxb.CustomQuestions;
 import com.zuehlke.pgadmissions.scoring.jaxb.Question;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -91,7 +91,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     protected EncryptionHelper encryptionHelper;
 
     @Autowired
-    protected DomicileService domicileService;
+    protected ImportedEntityService importedEntityService;
 
     @Autowired
     protected DomicilePropertyEditor domicilePropertyEditor;
@@ -241,7 +241,7 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @ModelAttribute("domiciles")
     public List<Domicile> getAllDomiciles() {
-        return domicileService.getAllEnabledDomiciles();
+        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("user")

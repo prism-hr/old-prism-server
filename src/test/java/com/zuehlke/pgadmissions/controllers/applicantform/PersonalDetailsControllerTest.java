@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.propertyeditors.EthnicityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CountryService;
-import com.zuehlke.pgadmissions.services.DisabilityService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.EthnicityService;
 import com.zuehlke.pgadmissions.services.LanguageService;
@@ -77,7 +77,7 @@ public class PersonalDetailsControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DisabilityService disabilityService;
+    private ImportedEntityService disabilityService;
 
     @Mock
     @InjectIntoByType

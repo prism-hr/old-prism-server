@@ -28,8 +28,8 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
-import com.zuehlke.pgadmissions.services.DomicileService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
@@ -43,7 +43,7 @@ public class RefereeController {
     private RefereeService refereeService;
 
     @Autowired
-    private DomicileService domicileService;
+    private ImportedEntityService importedEntityService;
 
     @Autowired
     private ApplicationFormService applicationsService;
@@ -113,7 +113,7 @@ public class RefereeController {
 
     @ModelAttribute("domiciles")
     public List<Domicile> getAllDomiciles() {
-        return domicileService.getAllEnabledDomiciles();
+        return importedEntityService.getAllDomiciles();
     }
 
     @ModelAttribute("applicationForm")

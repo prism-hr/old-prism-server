@@ -127,7 +127,7 @@ public class QualificationControllerTest {
     @Test
     public void shouldReturnAllDomiciles() {
         List<Domicile> domicileList = Arrays.asList(new DomicileBuilder().id(1).enabled(true).build(), new DomicileBuilder().id(2).enabled(false).build());
-        EasyMock.expect(domicileDAOMock.getAllEnabledDomiciles()).andReturn(Collections.singletonList(domicileList.get(0)));
+        EasyMock.expect(domicileDAOMock.getAllDomiciles()).andReturn(Collections.singletonList(domicileList.get(0)));
 
         replay();
 

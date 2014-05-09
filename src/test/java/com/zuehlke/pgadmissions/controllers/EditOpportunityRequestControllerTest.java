@@ -213,10 +213,10 @@ public class EditOpportunityRequestControllerTest {
     @Test
     public void shouldReturnAllEnabledDomiciles() {
         List<Domicile> domicileList = Lists.newArrayList();
-        EasyMock.expect(domicileService.getAllEnabledDomiciles()).andReturn(domicileList);
+        EasyMock.expect(domicileService.getAllDomiciles()).andReturn(domicileList);
 
         replay();
-        List<Domicile> returnedList = controller.getAllEnabledDomiciles();
+        List<Domicile> returnedList = controller.getAllDomiciles();
         verify();
 
         assertSame(domicileList, returnedList);

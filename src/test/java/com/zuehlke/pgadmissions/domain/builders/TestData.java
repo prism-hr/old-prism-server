@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.joda.time.LocalDate;
@@ -25,8 +24,8 @@ import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 
 public class TestData {
 
-    public static Institution aQualificationInstitution() {
-        return new Institution().withCode("AGH").withName("Akademia G\u00F3rniczo-Hutnicza").withDomicileCode("PL")
+    public static Institution aQualificationInstitution(Domicile domicile) {
+        return new Institution().withCode("AGH").withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile)
                 .withState(new State().withId(PrismState.INSTITUTION_APPROVED));
     }
 

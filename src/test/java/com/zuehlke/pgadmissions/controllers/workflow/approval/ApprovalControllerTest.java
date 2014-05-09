@@ -12,14 +12,13 @@ import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.CommentAssignedUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParser;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -97,11 +96,7 @@ public class ApprovalControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DomicileService domicileServiceMock;
-
-    @Mock
-    @InjectIntoByType
-    private DomicilePropertyEditor domicilePropertyEditorMock;
+    private ImportedEntityService importedEntityServiceMock;
 
     @Mock
     @InjectIntoByType

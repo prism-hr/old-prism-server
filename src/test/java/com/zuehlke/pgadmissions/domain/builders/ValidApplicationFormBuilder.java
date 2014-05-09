@@ -119,8 +119,8 @@ public class ValidApplicationFormBuilder {
         languageQualificationDocument = getRandomDocument(DocumentType.LANGUAGE_QUALIFICATION, "Language Qualification - My Name.pdf", user);
         fundingDocument = getRandomDocument(DocumentType.SUPPORTING_FUNDING, "Supporting Funding - My Name.pdf", user);
         approverUser = new User().withId(Integer.MAX_VALUE - 1).withEmail("approver@zhaw.ch").withAccount(new UserAccount().withEnabled(true));
-        country = new CountryBuilder().code("XK").name("United Kingdom").enabled(true).build();
-        domicile = new DomicileBuilder().code("XK").name("United Kingdom").enabled(true).build();
+        country = new Country().withCode("XK").withName("United Kingdom");
+        domicile = new Domicile().withCode("XK").withName("United Kingdom");
         address = TestData.anAddress(domicile);
         referenceComment1 = new ReferenceCommentBuilder().comment("Hello From Bob").document(referenceDocument).providedBy(user).suitableForProgramme(true)
                 .suitableForUcl(true).user(user).build();
@@ -137,7 +137,7 @@ public class ValidApplicationFormBuilder {
         employmentPosition = new EmploymentPosition().withCurrent(true).withEmployerAddress(TestData.anAddress(domicile)).withPosition("Software Engineer")
                 .withCurrent(true).withStartDate(DateUtils.addYears(new Date(), -2)).withRemit("Developer").withEmployerName("Zuhlke Ltd.");
         language = new LanguageBuilder().code("GB").name("England").enabled(true).build();
-        disability = new DisabilityBuilder().code("0").name("No Disability").enabled(true).build();
+        disability = new Disability().withCode("0").withName("No Disability");
         ethnicity = new EthnicityBuilder().code("10").name("White").enabled(true).build();
         personalDetails = new PersonalDetailsBuilder()
                 .firstNationality(language)
@@ -162,7 +162,7 @@ public class ValidApplicationFormBuilder {
         instance = new ProgramInstanceBuilder().academicYear("2013").applicationDeadline(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 1))
                 .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 5)).enabled(true).studyOption("F+++++", "Full-time")
                 .identifier("0009").build();
-        institution = new Institution().withCode("code").withName("jakas instytucja").withDomicileCode("AE")
+        institution = new Institution().withCode("code").withName("jakas instytucja").withDomicile(domicile)
                 .withState(new State().withId(PrismState.INSTITUTION_APPROVED));
         program = new Program().withUser(approverUser).withCode("TMRMBISING99").withState(ProgramState.PROGRAM_APPROVED).withInstances(instance)
                 .withTitle("MRes Medical and Biomedical Imaging").withInstitution(institution);
@@ -171,11 +171,11 @@ public class ValidApplicationFormBuilder {
                 .studyOption(new StudyOption("F+++++", "Full-time")).build();
         qualificationType = new QualificationTypeBuilder().code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
         qualification1 = new Qualification().withId(Integer.MAX_VALUE - 1).withAwardDate(new Date()).withGrade("6").withInstitution(institution)
-                .withLanguage("English").withStartDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).withSubject("Engineering").withTitle("MSc")
-                .withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
+                .withLanguage("English").withStartDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).withSubject("Engineering")
+                .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
         qualification2 = new Qualification().withId(Integer.MAX_VALUE - 2).withAwardDate(new Date()).withGrade("6").withInstitution(institution)
-                .withLanguage("English").withStartDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).withSubject("Engineering").withTitle("MSc")
-                .withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
+                .withLanguage("English").withStartDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).withSubject("Engineering")
+                .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)
                 .type(FundingType.SCHOLARSHIP).value("5").build();
         applicationFormBuilder = new ApplicationFormBuilder().applicant(user).acceptedTerms(true).additionalInformation(additionalInformation)

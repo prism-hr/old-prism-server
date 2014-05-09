@@ -30,16 +30,16 @@ public class InstitutionService {
         return institutionDAO.getByCode(institutionCode);
     }
 
-    public List<Institution> getEnabledInstitutionsByDomicileCode(String domicileCode) {
-        return institutionDAO.getByDomicileCode(domicileCode);
+    public List<Institution> getEnabledInstitutionsByDomicile(Domicile domicile) {
+        return institutionDAO.getByDomicile(domicile);
     }
     
-    public List<Institution> getEnabledInstitutionsByUserIdAndDomicileCode(Integer userId, String domicileCode) {
-        return institutionDAO.getByUserIdAndDomicileCode(userId, domicileCode);
+    public List<Institution> getEnabledInstitutionsByUserIdAndDomicile(Integer userId, Domicile domicile) {
+        return institutionDAO.getByUserIdAndDomicile(userId, domicile);
     }
     
-    public List<Institution> getEnabledInstitutionsByDomicileCodeExludingUserId(Integer userId, String domicileCode) {
-        return institutionDAO.getByDomicileCodeExludingUserId(userId, domicileCode);
+    public List<Institution> getEnabledInstitutionsByDomicileExludingUserId(Integer userId, Domicile domicile) {
+        return institutionDAO.getByDomicileExludingUserId(userId, domicile);
     }
 
     public Institution getOrCreate(String institutionCode, Domicile domicile, String institutionName) {

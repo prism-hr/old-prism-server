@@ -48,7 +48,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
         User currentUser = (User) sessionFactory.getCurrentSession().get(User.class, 28);
         User otherUser = (User) sessionFactory.getCurrentSession().get(User.class, 15);
         Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
-        Institution institution = TestData.aQualificationInstitution();
+        Institution institution = TestData.aQualificationInstitution(domicile);
         Program program = testObjectProvider.getEnabledProgram();
 
         DateTime date = new DateTime(1410, 7, 14, 12, 0);
@@ -73,7 +73,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetOpportunityRequestsForProgram() {
         User user = (User) sessionFactory.getCurrentSession().get(User.class, 15);
         Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
-        Institution institution = TestData.aQualificationInstitution();
+        Institution institution = TestData.aQualificationInstitution(domicile);
         Program program = testObjectProvider.getEnabledProgram();
 
         DateTime date = new DateTime(1410, 7, 14, 12, 0);

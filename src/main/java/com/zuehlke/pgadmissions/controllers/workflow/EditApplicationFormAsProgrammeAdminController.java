@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ScoresPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SendToPorticoDataDTOEditor;
 import com.zuehlke.pgadmissions.scoring.ScoringDefinitionParseException;
@@ -79,11 +79,10 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @Autowired
     protected RefereeService refereeService;
-    
+
     @Autowired
     protected RefereesAdminEditDTOValidator refereesAdminEditDTOValidator;
-    
-    
+
     @Autowired
     protected SendToPorticoDataDTOEditor sendToPorticoDataDTOEditor;
 
@@ -94,7 +93,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     protected ImportedEntityService importedEntityService;
 
     @Autowired
-    protected DomicilePropertyEditor domicilePropertyEditor;
+    protected EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
     @Autowired
     protected MessageSource messageSource;
@@ -104,13 +103,13 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @Autowired
     protected ScoresPropertyEditor scoresPropertyEditor;
-    
+
     @Autowired
     protected ScoreFactory scoreFactory;
 
     @Autowired
     protected WorkflowService applicationFormUserRoleService;
-    
+
     @Autowired
     protected ActionService actionService;
 
@@ -132,8 +131,8 @@ public class EditApplicationFormAsProgrammeAdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute ApplicationForm applicationForm) {
-    	actionService.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.APPLICATION_EDIT_AS_ADMINISTRATOR);
-    	applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
+        actionService.validateAction(applicationForm, getCurrentUser(), ApplicationFormAction.APPLICATION_EDIT_AS_ADMINISTRATOR);
+        applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, getCurrentUser());
         return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_VIEW_NAME;
     }
 
@@ -155,7 +154,7 @@ public class EditApplicationFormAsProgrammeAdminController {
             map.put("success", "false");
             map.putAll(FieldErrorUtils.populateMapWithErrors(refereesAdminEditDTOResult, messageSource));
         }
-        
+
         applicationFormUserRoleService.applicationUpdated(applicationForm, getCurrentUser());
         Gson gson = new Gson();
         return gson.toJson(map);
@@ -191,14 +190,13 @@ public class EditApplicationFormAsProgrammeAdminController {
                 return VIEW_APPLICATION_PROGRAMME_ADMINISTRATOR_REFERENCES_VIEW_NAME;
             }
 
-            
             ReferenceComment newComment = refereeService.postCommentOnBehalfOfReferee(applicationForm, refereesAdminEditDTO);
-            
+
             // TODO obtain referee (can be created new one)
             Referee referee = null;
-//            Referee referee = newComment.getReferee();
-//            applicationsService.refresh(applicationForm);
-//            refereeService.refresh(referee);
+            // Referee referee = newComment.getReferee();
+            // applicationsService.refresh(applicationForm);
+            // refereeService.refresh(referee);
 
             applicationsService.save(applicationForm);
             applicationFormUserRoleService.referencePosted(newComment);

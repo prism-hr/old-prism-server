@@ -37,7 +37,6 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
@@ -45,9 +44,8 @@ import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.PermissionsService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -67,15 +65,11 @@ public class EditOpportunityRequestControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DomicileService domicileService;
+    private ImportedEntityService importedEntityService;
 
     @Mock
     @InjectIntoByType
     private InstitutionDAO qualificationInstitutionDAO;
-
-    @Mock
-    @InjectIntoByType
-    private DomicilePropertyEditor domicilePropertyEditor;
 
     @Mock
     @InjectIntoByType
@@ -106,8 +100,8 @@ public class EditOpportunityRequestControllerTest {
 
     @Test
     public void shouldGetEditOpportunityRequestPage() {
-        Domicile institutionCountry = new DomicileBuilder().code("PL").build();
-        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).build();
+        Domicile domicile = new Domicile();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(domicile).build();
         List<OpportunityRequest> requests = Lists.newArrayList();
         ModelMap modelMap = new ModelMap();
         List<Institution> institutions = Lists.newArrayList();
@@ -115,7 +109,7 @@ public class EditOpportunityRequestControllerTest {
         expect(permissionsService.canSeeOpportunityRequest(opportunityRequest)).andReturn(true);
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(opportunityRequest);
         expect(opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest)).andReturn(requests);
-        expect(qualificationInstitutionDAO.getByDomicileCode("PL")).andReturn(institutions);
+        expect(qualificationInstitutionDAO.getByDomicile(domicile)).andReturn(institutions);
 
         replay();
         String result = controller.getEditOpportunityRequestPage(8, modelMap);
@@ -167,8 +161,8 @@ public class EditOpportunityRequestControllerTest {
     public void shouldRespondToOpportunityRequestWhenBindingErrors() {
         User author = new User();
         Date createdDate = new Date();
-        Domicile institutionCountry = new DomicileBuilder().code("PL").build();
-        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(institutionCountry).build();
+        Domicile domicile = new DomicileBuilder().code("PL").build();
+        OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(domicile).build();
         OpportunityRequest existingRequest = new OpportunityRequestBuilder().author(author).createdDate(createdDate).status(OpportunityRequestStatus.REJECTED)
                 .build();
         OpportunityRequestComment comment = new OpportunityRequestComment();
@@ -180,7 +174,7 @@ public class EditOpportunityRequestControllerTest {
         List<OpportunityRequest> requests = Lists.newArrayList();
 
         expect(permissionsService.canPostOpportunityRequestComment(existingRequest, comment)).andReturn(true);
-        expect(qualificationInstitutionDAO.getByDomicileCode("PL")).andReturn(institutions);
+        expect(qualificationInstitutionDAO.getByDomicile(domicile)).andReturn(institutions);
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(existingRequest);
         expect(opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest)).andReturn(requests);
 
@@ -213,7 +207,7 @@ public class EditOpportunityRequestControllerTest {
     @Test
     public void shouldReturnAllEnabledDomiciles() {
         List<Domicile> domicileList = Lists.newArrayList();
-        EasyMock.expect(domicileService.getAllDomiciles()).andReturn(domicileList);
+        EasyMock.expect(importedEntityService.getAllDomiciles()).andReturn(domicileList);
 
         replay();
         List<Domicile> returnedList = controller.getAllDomiciles();
@@ -232,20 +226,6 @@ public class EditOpportunityRequestControllerTest {
         verify();
 
         assertSame(studyOptions, returnedList);
-    }
-
-    @Test
-    public void shouldRegisterOportunityRequestPropertyEditors() {
-        WebDataBinder dataBinder = EasyMockUnitils.createMock(WebDataBinder.class);
-        dataBinder.setValidator(opportunityRequestValidator);
-        dataBinder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
-        dataBinder.registerCustomEditor(Date.class, datePropertyEditor);
-        dataBinder.registerCustomEditor(eq(String.class), isA(StringTrimmerEditor.class));
-        dataBinder.registerCustomEditor(ProgramType.class, programTypePropertyEditor);
-
-        replay();
-        controller.registerOpportunityRequestPropertyEditors(dataBinder);
-        verify();
     }
 
     @Test

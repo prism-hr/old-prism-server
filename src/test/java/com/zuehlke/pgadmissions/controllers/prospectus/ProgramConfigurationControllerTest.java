@@ -14,14 +14,11 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
-import org.springframework.web.bind.WebDataBinder;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
@@ -40,9 +37,8 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramTypeBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
-import com.zuehlke.pgadmissions.services.DomicileService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -58,7 +54,7 @@ public class ProgramConfigurationControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DomicileService domicileService;
+    private ImportedEntityService importedEntityService;
 
     @Mock
     @InjectIntoByType
@@ -75,10 +71,6 @@ public class ProgramConfigurationControllerTest {
     @Mock
     @InjectIntoByType
     private OpportunityRequestValidator opportunityRequestValidator;
-
-    @Mock
-    @InjectIntoByType
-    private DomicilePropertyEditor domicilePropertyEditor;
 
     @Mock
     @InjectIntoByType
@@ -102,24 +94,12 @@ public class ProgramConfigurationControllerTest {
     @TestedObject
     private ProgramConfigurationController controller;
 
-    @Test
-    public void shouldRegisterPropertyEditorsForOpportunityRequest() {
-        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-        binderMock.setValidator(opportunityRequestValidator);
-        binderMock.registerCustomEditor(Domicile.class, domicilePropertyEditor);
-        binderMock.registerCustomEditor(Program.class, programPropertyEditor);
-        binderMock.registerCustomEditor(eq(String.class), isA(StringTrimmerEditor.class));
-
-        replay();
-        controller.registerPropertyEditorsForOpportunityRequest(binderMock);
-        verify();
-    }
 
     @Test
     @SuppressWarnings("unchecked")
     public void shouldGetOpportunityData() {
         Domicile domicile = new DomicileBuilder().id(88).build();
-        Program program = new Program().withCode("07").withInstitution(new Institution().withDomicileCode("PL").withCode("inst"))
+        Program program = new Program().withCode("07").withInstitution(new Institution().withDomicile(domicile).withCode("inst"))
                 .withId(999).withTitle("Dlaczego w pizdzie nie ma krzesel?").withDescription("Zeby chuj stal").withStudyDuration(8)
                 .withFunding("Ni ma kasy").withState(ProgramState.PROGRAM_APPROVED).withRequireProjectDefinition(false)
                 .withProgramType(new ProgramTypeBuilder().id(ProgramTypeId.INTERNSHIP).build());
@@ -127,7 +107,6 @@ public class ProgramConfigurationControllerTest {
         Map<String, Object> dataMap = Maps.newHashMap();
         dataMap.put("advertId", 999);
         expect(programsService.getProgramByCode("07")).andReturn(program);
-        expect(domicileService.getEnabledDomicileByCode("PL")).andReturn(domicile);
         expect(encryptionHelper.encrypt(88)).andReturn("encPL");
         expect(programInstanceService.getAdvertisingDeadlineYear(program)).andReturn(2084);
         expect(templateRenderer.renderButton(dataMap)).andReturn("button");

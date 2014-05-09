@@ -34,9 +34,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -60,10 +58,10 @@ public class QualificationController {
     private ImportedEntityService importedEntityService;
 
     @Autowired
-    private LanguagePropertyEditor languagePropertyEditor;
+    private EntityPropertyEditor<Language> languagePropertyEditor;
 
     @Autowired
-    private DomicilePropertyEditor domicilePropertyEditor;
+    private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
     @Autowired
     private QualificationValidator qualificationValidator;
@@ -75,7 +73,7 @@ public class QualificationController {
     private DocumentPropertyEditor documentPropertyEditor;
 
     @Autowired
-    private QualificationTypePropertyEditor qualificationTypePropertyEditor;
+    private EntityPropertyEditor<QualificationType> qualificationTypePropertyEditor;
 
     @Autowired
     private FullTextSearchService searchService;

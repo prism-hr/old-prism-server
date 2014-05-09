@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
@@ -55,7 +55,7 @@ public class CreateNewOpportunityController {
     private InstitutionDAO qualificationInstitutionDAO;
 
     @Autowired
-    private DomicilePropertyEditor domicilePropertyEditor;
+    private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
     @Resource(name = "opportunityRequestValidator")
     private OpportunityRequestValidator opportunityRequestValidator;
@@ -95,7 +95,7 @@ public class CreateNewOpportunityController {
         if (result.hasErrors()) {
             if (opportunityRequest.getInstitutionCountry() != null) {
                 model.addAttribute("institutions",
-                        qualificationInstitutionDAO.getByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
+                        qualificationInstitutionDAO.getByDomicile(opportunityRequest.getInstitutionCountry()));
             }
             request.setAttribute(CLICKED_ON_CREATE_OPPORTUNITY, true);
             return LOGIN_PAGE;

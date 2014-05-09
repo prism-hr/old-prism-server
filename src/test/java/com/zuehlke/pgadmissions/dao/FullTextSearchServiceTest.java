@@ -173,7 +173,7 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
     public void shouldReturnSimilarMatchForInstitutionName() {
         TransactionTemplate template = new TransactionTemplate(transactionManager);
 
-        final Institution institution = TestData.aQualificationInstitution();
+        final Institution institution = TestData.aQualificationInstitution(null);
 
         template.execute(new TransactionCallbackWithoutResult() {
             @Override

@@ -32,13 +32,9 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DisabilityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.EthnicityPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
@@ -62,22 +58,22 @@ public class PersonalDetailsController {
     private ImportedEntityService importedEntityService;
 
     @Autowired
-    private LanguagePropertyEditor languagePropertyEditor;
+    private EntityPropertyEditor<Language> languagePropertyEditor;
 
     @Autowired
-    private CountryPropertyEditor countryPropertyEditor;
+    private EntityPropertyEditor<Country> countryPropertyEditor;
 
     @Autowired
-    private DisabilityPropertyEditor disabilityPropertyEditor;
+    private EntityPropertyEditor<Disability> disabilityPropertyEditor;
 
     @Autowired
-    private EthnicityPropertyEditor ethnicityPropertyEditor;
+    private EntityPropertyEditor<Ethnicity> ethnicityPropertyEditor;
+
+    @Autowired
+    private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
     @Autowired
     private PersonalDetailsValidator personalDetailsValidator;
-
-    @Autowired
-    private DomicilePropertyEditor domicilePropertyEditor;
 
     @Autowired
     private DocumentPropertyEditor documentPropertyEditor;

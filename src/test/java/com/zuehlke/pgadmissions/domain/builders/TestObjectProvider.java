@@ -243,6 +243,12 @@ public class TestObjectProvider {
         return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult();
     }
 
+    public Domicile getAlternativeDomicile(Domicile domicile) {
+        return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class)//
+                .add(Restrictions.ne("id", domicile.getId())) //
+                .setMaxResults(1).uniqueResult();
+    }
+
     public PrismSystem getPrismSystem() {
         return (PrismSystem) sessionFactory.getCurrentSession().createCriteria(PrismSystem.class).uniqueResult();
     }

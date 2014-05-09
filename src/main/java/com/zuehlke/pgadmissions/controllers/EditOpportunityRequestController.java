@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
@@ -58,7 +58,7 @@ public class EditOpportunityRequestController {
     private InstitutionDAO qualificationInstitutionDAO;
 
     @Autowired
-    private DomicilePropertyEditor domicilePropertyEditor;
+    private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
     @Resource(name = "opportunityRequestValidator")
     private OpportunityRequestValidator opportunityRequestValidator;
@@ -99,7 +99,7 @@ public class EditOpportunityRequestController {
         modelMap.addAttribute("comment", comment);
 
         if (opportunityRequest.getInstitutionCountry() != null) {
-            modelMap.addAttribute("institutions", qualificationInstitutionDAO.getByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
+            modelMap.addAttribute("institutions", qualificationInstitutionDAO.getByDomicile(opportunityRequest.getInstitutionCountry()));
         }
 
         return EDIT_REQUEST_PAGE_VIEW_NAME;
@@ -128,7 +128,7 @@ public class EditOpportunityRequestController {
             modelMap.put("comment", comment);
 
             if (opportunityRequest.getInstitutionCountry() != null) {
-                modelMap.addAttribute("institutions", qualificationInstitutionDAO.getByDomicileCode(opportunityRequest.getInstitutionCountry().getCode()));
+                modelMap.addAttribute("institutions", qualificationInstitutionDAO.getByDomicile(opportunityRequest.getInstitutionCountry()));
             }
 
             return EDIT_REQUEST_PAGE_VIEW_NAME;

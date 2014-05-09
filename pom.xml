@@ -314,13 +314,13 @@
     <dependency>
       <groupId>org.unitils</groupId>
       <artifactId>unitils-easymock</artifactId>
-      <version>3.3</version>
+      <version>3.4.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.unitils</groupId>
       <artifactId>unitils-inject</artifactId>
-      <version>3.3</version>
+      <version>3.4.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>

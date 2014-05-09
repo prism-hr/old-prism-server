@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -49,7 +49,7 @@ public class RefereeController {
     private ApplicationFormService applicationsService;
 
     @Autowired
-    private DomicilePropertyEditor domicilePropertyEditor;
+    private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
     @Autowired
     private ApplicationFormPropertyEditor applicationFormPropertyEditor;

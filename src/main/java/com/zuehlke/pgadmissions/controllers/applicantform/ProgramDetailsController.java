@@ -28,7 +28,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SourcesOfInterestPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
@@ -65,7 +65,7 @@ public class ProgramDetailsController {
     private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
 
     @Autowired
-    private SourcesOfInterestPropertyEditor sourcesOfInterestPropertyEditor;
+    private EntityPropertyEditor<SourcesOfInterest> sourcesOfInterestPropertyEditor;
 
     @RequestMapping(value = "/getProgrammeDetails", method = RequestMethod.GET)
     public String getProgrammeDetailsView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {

@@ -29,8 +29,7 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
@@ -51,7 +50,7 @@ public class EmploymentPositionController {
     private ApplicationFormService applicationFormService;
 
     @Autowired
-    private LanguagePropertyEditor languagePropertyEditor;
+    private EntityPropertyEditor<Language> languagePropertyEditor;
 
     @Autowired
     private DatePropertyEditor datePropertyEditor;
@@ -63,7 +62,7 @@ public class EmploymentPositionController {
     private ApplicationFormPropertyEditor applicationFormPropertyEditor;
 
     @Autowired
-    private DomicilePropertyEditor domicilePropertyEditor;
+    private EntityPropertyEditor<Domicile> domicilePropertyEditor;
 
     @Autowired
     private FullTextSearchService searchService;

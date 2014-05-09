@@ -5,38 +5,24 @@ import static org.unitils.easymock.EasyMockUnitils.replay;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.web.bind.WebDataBinder;
 import org.unitils.UnitilsJUnit4TestClassRunner;
 import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.dao.DomicileDAO;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
-import com.zuehlke.pgadmissions.dao.QualificationTypeDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.QualificationType;
 import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
-import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DomicilePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.QualificationTypePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
-import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.WorkflowService;
@@ -47,19 +33,7 @@ public class QualificationControllerTest {
 
     @Mock
     @InjectIntoByType
-    private LanguageService languageServiceMock;
-
-    @Mock
-    @InjectIntoByType
-    private LanguagePropertyEditor languagePropertyEditorMock;
-
-    @Mock
-    @InjectIntoByType
-    private DatePropertyEditor datePropertyEditorMock;
-
-    @Mock
-    @InjectIntoByType
-    private DomicilePropertyEditor domicilePropertyEditor;
+    private ImportedEntityService importedEntityService;
 
     @Mock
     @InjectIntoByType
@@ -71,27 +45,11 @@ public class QualificationControllerTest {
 
     @Mock
     @InjectIntoByType
-    private DomicileDAO domicileDAOMock;
-
-    @Mock
-    @InjectIntoByType
     private QualificationService qualificationServiceMock;
 
     @Mock
     @InjectIntoByType
-    private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
-
-    @Mock
-    @InjectIntoByType
-    private QualificationTypePropertyEditor qualificationTypePropertyEditorMock;
-
-    @Mock
-    @InjectIntoByType
     private FullTextSearchService fullTextSearchServiceMock;
-
-    @Mock
-    @InjectIntoByType
-    private DocumentPropertyEditor documentPropertyEditorMock;
 
     @Mock
     @InjectIntoByType
@@ -103,10 +61,6 @@ public class QualificationControllerTest {
 
     @Mock
     @InjectIntoByType
-    private QualificationTypeDAO qualificationTypeDAOMock;
-
-    @Mock
-    @InjectIntoByType
     private WorkflowService applicationFormUserRoleServiceMock;
 
     @TestedObject
@@ -115,7 +69,7 @@ public class QualificationControllerTest {
     @Test
     public void shouldReturnAllLanguages() {
         List<Language> languageList = Arrays.asList(new LanguageBuilder().id(1).enabled(true).build(), new LanguageBuilder().id(2).enabled(false).build());
-        EasyMock.expect(languageServiceMock.getAllEnabledLanguages()).andReturn(Collections.singletonList(languageList.get(0)));
+        EasyMock.expect(importedEntityService.getAllLanguages()).andReturn(Collections.singletonList(languageList.get(0)));
 
         replay();
         List<Language> allLanguages = controller.getAllEnabledLanguages();
@@ -127,29 +81,13 @@ public class QualificationControllerTest {
     @Test
     public void shouldReturnAllDomiciles() {
         List<Domicile> domicileList = Arrays.asList(new DomicileBuilder().id(1).enabled(true).build(), new DomicileBuilder().id(2).enabled(false).build());
-        EasyMock.expect(domicileDAOMock.getAllDomiciles()).andReturn(Collections.singletonList(domicileList.get(0)));
+        EasyMock.expect(importedEntityService.getAllDomiciles()).andReturn(Collections.singletonList(domicileList.get(0)));
 
         replay();
 
         List<Domicile> allDomiciles = controller.getAllEnabledDomiciles();
         assertEquals(1, allDomiciles.size());
         assertEquals(domicileList.get(0), allDomiciles.get(0));
-    }
-
-    @Test
-    public void shouldBindPropertyEditors() {
-        WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-        binderMock.setValidator(qualificationValidatorMock);
-        binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
-        binderMock.registerCustomEditor(Language.class, languagePropertyEditorMock);
-        binderMock.registerCustomEditor(Domicile.class, domicilePropertyEditor);
-        binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
-        binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
-        binderMock.registerCustomEditor(QualificationType.class, qualificationTypePropertyEditorMock);
-        binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
-
-        replay();
-        controller.registerPropertyEditors(binderMock);
     }
 
 }

@@ -94,8 +94,12 @@ public class EntityImportService {
                     try {
                         thisBean.attemptUpdateByName(entityClass, entity);
                     } catch (Exception e2) {
-                        log.error("Couldn't update entity by code", e1);
-                        log.error("Couldn't update entity by name", e2);
+                        if (!(e1 instanceof NullPointerException)) {
+                            log.error("Could not update entity by code", e1);
+                        }
+                        if (!(e2 instanceof NullPointerException)) {
+                            log.error("Could not update entity by name", e2);
+                        }
                         mailSendingService.sendImportErrorMessage("Could not merge: " + entity + " due to a data integrity problem in the import feed.");
                     }
                 }

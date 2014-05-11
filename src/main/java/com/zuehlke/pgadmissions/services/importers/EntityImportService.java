@@ -58,6 +58,8 @@ public class EntityImportService {
             Iterable<ImportedEntity> newEntities = Iterables.transform(unmarshalled, entityConverter);
 
             thisBean.mergeImportedEntities(entityClass, newEntities);
+            
+            log.info("Completed the import from file: " + fileLocation);
         } catch (Exception e) {
             throw new XMLDataImportException("Error during the import of file: " + fileLocation, e);
         }
@@ -74,8 +76,8 @@ public class EntityImportService {
             URL fileUrl = new DefaultResourceLoader().getResource(importedEntityFeed.getLocation()).getURL();
             JAXBContext jaxbContext = JAXBContext.newInstance(importedEntityFeed.getImportedEntityType().getJaxbClass());
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            Disabilities unmarshaled = (Disabilities) unmarshaller.unmarshal(fileUrl);
-            return unmarshaled.getDisability();
+            Disabilities unmarshalled = (Disabilities) unmarshaller.unmarshal(fileUrl);
+            return unmarshalled.getDisability();
         } finally {
             Authenticator.setDefault(null);
         }

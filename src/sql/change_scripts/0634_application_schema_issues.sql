@@ -8,9 +8,6 @@ WHERE application_form_id IS NULL
 
 ALTER TABLE APPLICATION_REFEREE
 	CHANGE COLUMN application_form_id application_id INT(10) UNSIGNED NOT NULL,
-	DROP COLUMN firstname,
-	DROP COLUMN lastname,
-	DROP COLUMN email,
 	CHANGE COLUMN ADDRESS_ID address_id INT(10) UNSIGNED NOT NULL
 ;
 

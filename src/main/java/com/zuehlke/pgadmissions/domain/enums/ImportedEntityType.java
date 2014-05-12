@@ -10,25 +10,32 @@ import com.zuehlke.pgadmissions.domain.QualificationType;
 
 public enum ImportedEntityType {
 
-    COUNTRY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Countries.class,  Country.class), //
-    DISABILITY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Disabilities.class, Disability.class), //
-    DOMICILE(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Domiciles.class, Domicile.class), //
-    ETHNICITY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Ethnicities.class, Ethnicity.class), //
-    NATIONALITY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Nationalities.class, Language.class), //
-    PROGRAM(com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.class, Program.class), //
-    QUALIFICATION_TYPE(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Qualifications.class, QualificationType.class);
+    COUNTRY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Countries.class, "country", Country.class), //
+    DISABILITY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Disabilities.class, "disability", Disability.class), //
+    DOMICILE(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Domiciles.class, "domicile", Domicile.class), //
+    ETHNICITY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Ethnicities.class, "ethnicity", Ethnicity.class), //
+    NATIONALITY(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Nationalities.class, "language", Language.class), //
+    PROGRAM(com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.class, "programmeOccurrence", Program.class), //
+    QUALIFICATION_TYPE(com.zuehlke.pgadmissions.referencedata.v2.jaxb.Qualifications.class, "qualification", QualificationType.class);
 
     private Class<?> jaxbClass;
     
+    private String jaxbPropertyName;
+    
     private Class<?> entityClass;
 
-    private ImportedEntityType(Class<?> jaxbClass, Class<?> entityClass) {
+    private ImportedEntityType(Class<?> jaxbClass, String jaxbPropertyName, Class<?> entityClass) {
         this.jaxbClass = jaxbClass;
+        this.jaxbPropertyName = jaxbPropertyName;
         this.entityClass = entityClass;
     }
 
     public Class<?> getJaxbClass() {
         return jaxbClass;
+    }
+    
+    public String getJaxbPropertyName() {
+        return jaxbPropertyName;
     }
     
     public Class<?> getEntityClass() {

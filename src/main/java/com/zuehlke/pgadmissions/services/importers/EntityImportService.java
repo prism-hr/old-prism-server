@@ -123,6 +123,7 @@ public class EntityImportService {
                     try {
                         thisBean.attemptUpdateByName(entityClass, entity);
                     } catch (Exception e2) {
+                        log.error("Couldn't insert entity", e);
                         log.error("Couldn't update entity by code", e1);
                         log.error("Couldn't update entity by name", e2);
                         mailSendingService.sendImportErrorMessage("Could not merge: " + entity + " due to a data integrity problem in the import feed.");
@@ -138,11 +139,11 @@ public class EntityImportService {
         thisBean.disableAllProgramInstances(institution);
 
         for (ProgrammeOccurrence occurrence : programOccurrences) {
-            Programme programme = occurrence.getProgramme();
+            Programme occurrenceProgram = occurrence.getProgramme();
             ModeOfAttendance modeOfAttendance = occurrence.getModeOfAttendance();
 
             // create new program if does not exist
-            Program program = thisBean.getOrCreateProgram(programme, institution);
+            Program program = thisBean.getOrCreateProgram(occurrenceProgram, institution);
 
             // create new study option if does not exist yet
             StudyOption studyOption = thisBean.getOrCreateStudyOption(modeOfAttendance);
@@ -160,11 +161,11 @@ public class EntityImportService {
                     thisBean.attemptUpdate(programInstance);
                 } catch (Exception e1) {
                     log.error("Couldn't insert program instance", e);
-                    throw new RuntimeException("Problem when updating program instance", e1);
+                    log.error("Couldn't update program instance", e1);
+                    mailSendingService.sendImportErrorMessage("Could not merge: " + programInstance + " due to a data integrity problem in the import feed.");
                 }
             }
         }
-
     }
 
     @Transactional
@@ -211,7 +212,7 @@ public class EntityImportService {
         Program program = programService.getProgramByCode(programme.getCode());
         if (program == null) {
             program = new Program().withInstitution(institution).withCode(programme.getCode()).withState(ProgramState.PROGRAM_APPROVED);
-            entityDAO.save(program);
+            save(program);
         }
 
         program.setTitle(programme.getName());

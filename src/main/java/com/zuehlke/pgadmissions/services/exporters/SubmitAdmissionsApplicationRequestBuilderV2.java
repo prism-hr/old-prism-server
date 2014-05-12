@@ -568,8 +568,7 @@ public class SubmitAdmissionsApplicationRequestBuilderV2 {
 
                 CountryTp countryTp = xmlFactory.createCountryTp();
                 countryTp.setCode(qualification.getInstitution().getDomicile().getCode());
-                // FIXME specify domicile name
-                countryTp.setName(qualification.getInstitution().getDomicile().getCode());
+                countryTp.setName(qualification.getInstitution().getDomicile().getName());
                 institutionTp.setCountry(countryTp);
 
                 qualificationsTp.setInstitution(institutionTp);

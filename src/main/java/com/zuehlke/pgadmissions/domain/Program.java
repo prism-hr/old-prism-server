@@ -18,6 +18,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -28,8 +29,10 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
-@Table(name = "PROGRAM")
+@Table(name = "PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "code", "institution_id" }),
+        @UniqueConstraint(columnNames = { "title", "institution_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+
 public class Program extends Advert implements PrismScope {
 
     private static final long serialVersionUID = -9073611033741317582L;
@@ -242,5 +245,5 @@ public class Program extends Advert implements PrismScope {
         this.programType = programType;
         return this;
     }
-
+    
 }

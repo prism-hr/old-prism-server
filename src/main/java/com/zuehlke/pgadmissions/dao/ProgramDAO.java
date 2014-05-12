@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
@@ -74,7 +75,10 @@ public class ProgramDAO {
     }
 
     public Program getProgramByCode(String code) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code)).uniqueResult();
+        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
+                .setFetchMode("instances", FetchMode.JOIN)
+                .add(Restrictions.eq("code", code)) //
+                .uniqueResult();
     }
 
     public Program getProgamAcceptingApplicationsByCode(String code) {
@@ -261,6 +265,18 @@ public class ProgramDAO {
 
     public void save(ProgramInstance programInstance) {
         // TODO Auto-generated method stub
+    }
+
+    public List<Program> getAllPrograms() {
+        return sessionFactory.getCurrentSession().createCriteria(Program.class).list();
+    }
+
+    public ProgramInstance getByProgramAndAcademicYearAndStudyOption(Program program, String academicYear, StudyOption studyOption) {
+        return (ProgramInstance) sessionFactory.getCurrentSession().createCriteria(ProgramInstance.class) //
+                .add(Restrictions.eq("program", program)) //
+                .add(Restrictions.eq("academicYear", academicYear)) //
+                .add(Restrictions.eq("studyOption", studyOption)) //
+                .uniqueResult();
     }
 
 }

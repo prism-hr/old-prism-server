@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static javax.transaction.Transactional.TxType.REQUIRES_NEW;
+
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +58,7 @@ public class ProgramService {
     public Advert getById(Integer advertId) {
         return programDAO.getById(advertId);
     }
-
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
     public void save(Advert advert) {
         programDAO.save(advert);
     }
@@ -288,6 +290,10 @@ public class ProgramService {
     public void updateProject(Integer id, ProjectDTO projectDTO) {
         // TODO Auto-generated method stub
 
+    }
+
+    public List<Program> getAllPrograms() {
+        return programDAO.getAllPrograms();
     }
 
 }

@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.timers;
 
 import java.net.Authenticator;
-import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.services.RoleService;

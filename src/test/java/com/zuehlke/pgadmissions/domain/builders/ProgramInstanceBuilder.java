@@ -18,7 +18,6 @@ public class ProgramInstanceBuilder {
     private Program program;
     private Boolean enabled;
     private String identifier;
-    private Date disabledDate;
 
     public ProgramInstanceBuilder studyOption(StudyOption option) {
         this.studyOption = option;
@@ -65,11 +64,6 @@ public class ProgramInstanceBuilder {
         return this;
     }
 
-    public ProgramInstanceBuilder disabledDate(Date disabledDate) {
-        this.disabledDate = disabledDate;
-        return this;
-    }
-
     public ProgramInstance build() {
         ProgramInstance programInstance = new ProgramInstance();
         programInstance.setApplicationDeadline(applicationDeadline);
@@ -80,14 +74,13 @@ public class ProgramInstanceBuilder {
         programInstance.setAcademicYear(academicYear);
         programInstance.setApplicationStartDate(applicationStartDate);
         programInstance.setEnabled(enabled);
-        programInstance.setDisabledDate(disabledDate);
         return programInstance;
     }
 
     public static ProgramInstanceBuilder aProgramInstance(Program program) {
         return new ProgramInstanceBuilder().identifier("instance").program(program).academicYear("1985")
                 .applicationStartDate(new DateTime(2014, 2, 13, 0, 0).toDate()).applicationDeadline(new DateTime(2015, 2, 13, 0, 0).toDate()).enabled(true)
-                .disabledDate(new DateTime(2015, 1, 13, 0, 0).toDate()).studyOption("F+++++", "Full-time");
+                .studyOption("F+++++", "Full-time");
     }
 
 }

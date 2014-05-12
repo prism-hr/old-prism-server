@@ -6,16 +6,11 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.unitils.UnitilsJUnit4TestClassRunner;
-import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.Disabilities.Disability;
-import com.zuehlke.pgadmissions.services.importers.EntityImportService.ImportEntityConverter;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
-public class EntityImportServiceTest {
-
-    @TestedObject
-    private EntityImportService entityImportService;
+public class ImportEntityConverterTest {
 
     @Test
     public void shouldConvertImportEntity() {

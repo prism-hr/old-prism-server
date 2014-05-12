@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -13,9 +12,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
+
+import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "PROGRAM_INSTANCE")
+@Table(name = "PROGRAM_INSTANCE", uniqueConstraints = @UniqueConstraint(columnNames = { "program_id", "academic_year", "program_study_option_id" }))
 public class ProgramInstance {
 
     @Id
@@ -36,16 +38,12 @@ public class ProgramInstance {
     @Column(name = "identifier")
     private String identifier;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_option_id")
+    @ManyToOne
+    @JoinColumn(name = "program_study_option_id")
     private StudyOption studyOption;
 
     @Column(name = "enabled")
     private Boolean enabled;
-
-    @Column(name = "disabled_date")
-    @Temporal(TemporalType.DATE)
-    private Date disabledDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
@@ -107,14 +105,6 @@ public class ProgramInstance {
         return this.enabled;
     }
 
-    public Date getDisabledDate() {
-        return disabledDate;
-    }
-
-    public void setDisabledDate(Date disabledDate) {
-        this.disabledDate = disabledDate;
-    }
-
     public String getIdentifier() {
         return identifier;
     }
@@ -123,10 +113,67 @@ public class ProgramInstance {
         this.identifier = identifier;
     }
 
+    public ProgramInstance withIdentifier(String identifier) {
+        this.identifier = identifier;
+        return this;
+    }
+
+    public ProgramInstance withAcademicYear(String academicYear) {
+        this.academicYear = academicYear;
+        return this;
+    }
+
+    public ProgramInstance withStudyOption(StudyOption studyOption) {
+        this.studyOption = studyOption;
+        return this;
+    }
+
+    public ProgramInstance withEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    public ProgramInstance withApplicationStartDate(Date applicationStartDate) {
+        this.applicationStartDate = applicationStartDate;
+        return this;
+    }
+
+    public ProgramInstance withApplicationDeadline(Date applicationDeadline) {
+        this.applicationDeadline = applicationDeadline;
+        return this;
+    }
+
+    public ProgramInstance withProgram(Program program) {
+        this.program = program;
+        return this;
+    }
+
     public boolean isDateWithinBounds(Date date) {
         boolean afterStartDate = !date.before(getApplicationStartDate());
         boolean beforeEndDate = date.before(getApplicationDeadline());
         return afterStartDate && beforeEndDate;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(identifier, academicYear, studyOption, enabled, applicationStartDate, applicationDeadline);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ProgramInstance other = (ProgramInstance) obj;
+        return Objects.equal(this.identifier, other.identifier) //
+                && Objects.equal(this.academicYear, other.academicYear)
+                && Objects.equal(this.studyOption, other.studyOption)
+                && Objects.equal(this.enabled, other.enabled)
+                && Objects.equal(this.applicationStartDate, other.applicationStartDate)
+                && Objects.equal(this.applicationDeadline, other.applicationDeadline);
     }
 
 }

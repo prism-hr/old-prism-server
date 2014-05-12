@@ -178,7 +178,6 @@ public class ProgramInstanceServiceTest {
         assertEquals(startDate.toDate(), programInstance.getApplicationStartDate());
         assertEquals(academicYear, programInstance.getAcademicYear());
         assertEquals(deadline.toDate(), programInstance.getApplicationDeadline());
-        assertEquals(deadline.minusMonths(1).toDate(), programInstance.getDisabledDate());
         assertTrue(programInstance.getEnabled());
         assertEquals("CUSTOM", programInstance.getIdentifier());
         assertSame(program, programInstance.getProgram());

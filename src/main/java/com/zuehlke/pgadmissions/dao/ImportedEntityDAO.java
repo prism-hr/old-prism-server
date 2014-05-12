@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.Institution;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -61,8 +62,14 @@ public class ImportedEntityDAO {
         sessionFactory.getCurrentSession().flush();
     }
 
-    public void disableAllEntities(Class<ImportedEntity> entityClass) {
+    public void disableAllEntities(Class<? extends ImportedEntity> entityClass) {
         sessionFactory.getCurrentSession().createQuery("update " + entityClass.getSimpleName() + " set enabled = false") //
+                .executeUpdate();
+    }
+
+    public void disableAllProgramInstances(Institution institution) {
+        sessionFactory.getCurrentSession().createQuery("update ProgramInstance as pi set enabled = false where pi.program in (select id from Program where institution = :institution)") //
+                .setParameter("institution", institution)//
                 .executeUpdate();
     }
 }

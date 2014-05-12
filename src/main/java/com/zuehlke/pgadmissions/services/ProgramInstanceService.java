@@ -135,7 +135,6 @@ public class ProgramInstanceService {
         programInstance.setApplicationStartDate(startDate.toDate());
         programInstance.setAcademicYear(Integer.toString(startYear));
         programInstance.setApplicationDeadline(deadline.toDate());
-        programInstance.setDisabledDate(deadline.minusMonths(1).toDate());
         programInstance.setEnabled(true);
         programInstance.setIdentifier("CUSTOM");
         programInstance.setStudyOption(studyOption);
@@ -204,6 +203,10 @@ public class ProgramInstanceService {
 
     public List<StudyOption> getStudyOptions(Program program) {
         return programDAO.getAvailableStudyOptions(program);
+    }
+
+    public ProgramInstance getByProgramAndAcademicYearAndStudyOption(Program program, String academicYear, StudyOption studyOption) {
+        return programDAO.getByProgramAndAcademicYearAndStudyOption(program, academicYear, studyOption);
     }
 
 }

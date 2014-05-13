@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.workflow;
 
+import static org.junit.Assert.assertTrue;
+
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +30,7 @@ import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.ReviewService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -61,33 +64,36 @@ public class PrismWorkflowTest {
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private RoleService roleService;
+
     @Test
     public void initializeWorkflowTest() throws Exception {
-        User superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, manageUsersService.getPrismSystem(),
+        User superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, roleService.getPrismSystem(),
                 Authority.SYSTEM_ADMINISTRATOR);
+
+        assertTrue(roleService.hasRole(superadmin, Authority.SYSTEM_PROGRAM_CREATOR, roleService.getPrismSystem()));
 
         xmlDataImportTask.importData();
 
         InstitutionDomicile polishDomicile = entityService.getBy(InstitutionDomicile.class, "code", "PL");
         ProgramType programType = programService.getProgramTypes().iterator().next();
-
+        
         User programCreator = new User().withFirstName("Jerzy").withLastName("Urban").withEmail("jerzy@urban.pl")
                 .withAccount(new UserAccount().withPassword("password").withConfirmPassword("password"));
-        OpportunityRequest opportunityRequest = opportunitiesService.createOpportunityRequest(
-                new OpportunityRequestBuilder().institutionCountry(polishDomicile).institutionCode(null).otherInstitution("Akademia Gorniczo-Hutnicza")
-                        .programType(programType).programTitle("Zywienie zbiorowe").programDescription("I tak pracy po tym nie znajdziesz.")
-                        .studyOptions("F++++,P++++").studyDuration(18).advertisingDeadlineYear(new DateTime().getYear() + 3).author(programCreator).build(),
-                false);
-
-        authenticationProvider.authenticate(new TestingAuthenticationToken("jozek@oleksy.pl", "password"));
-
-        Program savedProgram = opportunitiesService.respondToOpportunityRequest(opportunityRequest.getId(), opportunityRequest,
-                new OpportunityRequestCommentBuilder().commentType(OpportunityRequestCommentType.APPROVE).content("Ok!").build());
+        
+        Program program = programService.getAllEnabledPrograms().get(0);
 
         User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl"));
+        
+        // TODO assert that (program|project)_create_application action exists
+        
         applicant = registrationService.activateAccount(applicant.getActivationCode());
 
-        ApplicationForm application = applicationFormService.getOrCreateApplication(applicant, savedProgram.getId());
+        ApplicationForm application = applicationFormService.getOrCreateApplication(applicant, program.getId());
+        
+        // TODO assert that application_complete action exists
+        
         applicationFormService.submitApplication(application);
 
         AssignReviewersComment assignReviewerComment = new AssignReviewersComment();

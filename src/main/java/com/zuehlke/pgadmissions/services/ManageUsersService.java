@@ -30,11 +30,11 @@ public class ManageUsersService {
             roleService.removeRoles(user, scope);
         }
         for (Authority authority : authorities) {
-            roleService.createUserRole(roleService.getPrismSystem(), user, authority);
+            roleService.getOrCreateUserRole(roleService.getPrismSystem(), user, authority);
         }
         return user;
     }
-
+    
     public PrismSystem getPrismSystem() {
         return roleService.getPrismSystem();
     }

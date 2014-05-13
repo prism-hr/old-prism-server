@@ -59,6 +59,14 @@ public class Institution implements PrismScope {
         return id;
     }
 
+    public PrismSystem getSystem() {
+        return system;
+    }
+
+    public void setSystem(PrismSystem system) {
+        this.system = system;
+    }
+
     public String getName() {
         return name;
     }
@@ -119,5 +127,25 @@ public class Institution implements PrismScope {
     public Institution withCode(String code) {
         this.code = code;
         return this;
+    }
+    
+    @Override
+    public String getScopeName() {
+        return "institution";
+    }
+
+    @Override
+    public Institution getInstitution() {
+        return this;
+    }
+
+    @Override
+    public Program getProgram() {
+        return null;
+    }
+
+    @Override
+    public Project getProject() {
+        return null;
     }
 }

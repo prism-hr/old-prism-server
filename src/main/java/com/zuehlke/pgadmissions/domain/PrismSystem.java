@@ -53,5 +53,30 @@ public class PrismSystem implements Serializable, PrismScope {
     public void setState(State state) {
         this.state = state;
     }
+    
+    @Override
+    public String getScopeName() {
+        return "system";
+    }
+
+    @Override
+    public PrismSystem getSystem() {
+        return this;
+    }
+
+    @Override
+    public Institution getInstitution() {
+        return null;
+    }
+
+    @Override
+    public Program getProgram() {
+        return null;
+    }
+
+    @Override
+    public Project getProject() {
+        return null;
+    }
 
 }

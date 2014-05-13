@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.Address;
@@ -62,7 +63,7 @@ public class TestData {
     }
 
     public static UserRole aUserRole(ApplicationForm applicaton, Role role, User user, User requestingUser) {
-        return new UserRole().withApplication(applicaton).withRole(role).withUser(user).withRequestingUser(requestingUser).withAssignedTimestamp(new Date());
+        return new UserRole().withApplication(applicaton).withRole(role).withUser(user).withRequestingUser(requestingUser).withAssignedTimestamp(new DateTime());
     }
 
     public static Document aDocument() {

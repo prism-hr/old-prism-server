@@ -450,4 +450,19 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         return this;
     }
     
+    @Override
+    public String getScopeName() {
+        return "application";
+    }
+
+    @Override
+    public PrismSystem getSystem() {
+        return getInstitution().getSystem();
+    }
+
+    @Override
+    public Institution getInstitution() {
+        return getProgram().getInstitution();
+    }
+    
 }

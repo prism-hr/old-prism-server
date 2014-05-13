@@ -205,7 +205,7 @@ public class UserDAO {
                         .disjunction()
                         .add(Restrictions.eq("registeredUser.enabled", true))
                         .add(Restrictions.conjunction().add(Restrictions.eq("registeredUser.enabled", false))
-                                .add(Restrictions.in("role.id", Arrays.asList(Authority.SUGGESTEDSUPERVISOR))))).addOrder(Order.asc("registeredUser.lastName"))
+                                .add(Restrictions.in("role.id", Arrays.asList(Authority.APPLICATION_SUGGESTED_SUPERVISOR))))).addOrder(Order.asc("registeredUser.lastName"))
                 .addOrder(Order.asc("registeredUser.firstName")).addOrder(Order.asc("registeredUser.id")).list();
     }
 

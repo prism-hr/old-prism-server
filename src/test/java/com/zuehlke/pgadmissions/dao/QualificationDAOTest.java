@@ -24,7 +24,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetQualificationById() throws ParseException {
         ApplicationForm application = TestData.anApplicationForm(user, program, testObjectProvider.getState(PrismState.APPLICATION_UNSUBMITTED));
-        Qualification qualification = TestData.aQualification(application, testObjectProvider.getQualificationType(), TestData.aDocument(), testObjectProvider.getInstitution());
+        Qualification qualification = TestData.aQualification(application, testObjectProvider.getQualificationType(), TestData.aDocument(), testObjectProvider.getImportedInstitution());
         save(application, qualification);
         flushAndClearSession();
         
@@ -37,7 +37,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldDeleteQualification() throws ParseException {
         ApplicationForm application = TestData.anApplicationForm(user, program, testObjectProvider.getState(PrismState.APPLICATION_UNSUBMITTED));
-        Qualification qualification = TestData.aQualification(application, testObjectProvider.getQualificationType(), TestData.aDocument(), testObjectProvider.getInstitution()); 
+        Qualification qualification = TestData.aQualification(application, testObjectProvider.getQualificationType(), TestData.aDocument(), testObjectProvider.getImportedInstitution()); 
         save(application, qualification);
         flushAndClearSession();
 

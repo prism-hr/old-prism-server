@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -69,6 +70,7 @@ public class ValidApplicationFormBuilder {
     protected PersonalDetails personalDetails;
     protected AdditionalInformation additionalInformation;
     protected ProgramInstance instance;
+    protected ImportedInstitution importedInstitution;
     protected Institution institution;
     protected Program program;
     protected SourcesOfInterest interest;
@@ -98,7 +100,7 @@ public class ValidApplicationFormBuilder {
     public ApplicationForm build(SessionFactory sessionFactory) {
         ApplicationForm applicationForm = build();
         save(sessionFactory, user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser,
-                language, country, domicile, address, institution, program, employmentPosition, disability, ethnicity, interest, applicationForm);
+                language, country, domicile, address, importedInstitution, program, employmentPosition, disability, ethnicity, interest, applicationForm);
         program.setCode("TMRMBISING001");
         return applicationForm;
     }
@@ -162,18 +164,18 @@ public class ValidApplicationFormBuilder {
         instance = new ProgramInstanceBuilder().academicYear("2013").applicationDeadline(org.apache.commons.lang.time.DateUtils.addYears(new Date(), 1))
                 .applicationStartDate(org.apache.commons.lang.time.DateUtils.addMonths(new Date(), 5)).enabled(true).studyOption("F+++++", "Full-time")
                 .identifier("0009").build();
-        institution = new Institution().withCode("code").withName("jakas instytucja").withDomicile(domicile)
-                .withState(new State().withId(PrismState.INSTITUTION_APPROVED));
+        importedInstitution = new ImportedInstitution().withCode("code").withName("jakas instytucja").withDomicile(domicile)
+                .withEnabled(true);
         program = new Program().withUser(approverUser).withCode("TMRMBISING99").withState(ProgramState.PROGRAM_APPROVED).withInstances(instance)
                 .withTitle("MRes Medical and Biomedical Imaging").withInstitution(institution);
         interest = new SourcesOfInterestBuilder().code("BRIT_COUN").name("British Council").build();
         programDetails = new ProgrammeDetailsBuilder().sourcesOfInterest(interest).startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))
                 .studyOption(new StudyOption("F+++++", "Full-time")).build();
         qualificationType = new QualificationTypeBuilder().code("DEGTRE").name("Bachelors Degree - France").enabled(true).build();
-        qualification1 = new Qualification().withId(Integer.MAX_VALUE - 1).withAwardDate(new Date()).withGrade("6").withInstitution(institution)
+        qualification1 = new Qualification().withId(Integer.MAX_VALUE - 1).withAwardDate(new Date()).withGrade("6").withInstitution(importedInstitution)
                 .withLanguage("English").withStartDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).withSubject("Engineering")
                 .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
-        qualification2 = new Qualification().withId(Integer.MAX_VALUE - 2).withAwardDate(new Date()).withGrade("6").withInstitution(institution)
+        qualification2 = new Qualification().withId(Integer.MAX_VALUE - 2).withAwardDate(new Date()).withGrade("6").withInstitution(importedInstitution)
                 .withLanguage("English").withStartDate(org.apache.commons.lang.time.DateUtils.addYears(new Date(), -1)).withSubject("Engineering")
                 .withTitle("MSc").withType(qualificationType).withCompleted(true).withDocument(proofOfAwardDocument).withExport(true);
         funding = new FundingBuilder().awardDate(DateUtils.addYears(new Date(), -1)).description("Received a funding").document(fundingDocument)

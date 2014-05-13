@@ -28,8 +28,8 @@ import org.unitils.inject.annotation.TestedObject;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -174,7 +174,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldCreateNewCustomProgram() {
-        Domicile domicile = new Domicile();
+        InstitutionDomicile domicile = new InstitutionDomicile();
         ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
 
         User requestAuthor = new User();

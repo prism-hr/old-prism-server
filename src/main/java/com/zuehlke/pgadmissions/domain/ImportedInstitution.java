@@ -14,72 +14,69 @@ import org.apache.solr.analysis.LowerCaseFilterFactory;
 import org.apache.solr.analysis.SnowballPorterFilterFactory;
 import org.apache.solr.analysis.StandardTokenizerFactory;
 import org.apache.solr.analysis.StopFilterFactory;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.AnalyzerDef;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 
-@AnalyzerDef(name = "institutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
+@AnalyzerDef(name = "importedInstitutionNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
         @TokenFilterDef(factory = LowerCaseFilterFactory.class), @TokenFilterDef(factory = StopFilterFactory.class),
         @TokenFilterDef(factory = SnowballPorterFilterFactory.class, params = @Parameter(name = "language", value = "English")),
         @TokenFilterDef(factory = ASCIIFoldingFilterFactory.class) })
 @Entity
-@Table(name = "INSTITUTION")
+@Table(name = "IMPORTED_INSTITUTION")
 @Indexed
-public class Institution implements PrismScope {
+public class ImportedInstitution {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "system_id", nullable = false)
-    private PrismSystem system;
+    @JoinColumn(name = "insititution_id", nullable = false)
+    private Institution institution;
 
     @ManyToOne
-    @JoinColumn(name = "institution_domicile_id", nullable = false)
-    private InstitutionDomicile domicile;
+    @JoinColumn(name = "domicile_id", nullable = false)
+    private Domicile domicile;
 
     @Column(name = "code", nullable = false)
     private String code;
 
     @Column(name = "name", nullable = false)
+    @Field(analyzer = @Analyzer(definition = "importedInstitutionNameAnalyzer"), index = Index.YES, analyze = Analyze.YES, store = Store.NO)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "state_id", nullable = false)
-    private State state;
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled;
 
     public Integer getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Institution getInstitution() {
+        return institution;
     }
 
-    public State getState() {
-        return state;
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
     }
 
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    public InstitutionDomicile getDomicile() {
+    public Domicile getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(InstitutionDomicile domicile) {
+    public void setDomicile(Domicile domicile) {
         this.domicile = domicile;
     }
 
@@ -91,32 +88,48 @@ public class Institution implements PrismScope {
         this.code = code;
     }
 
-    public Institution withId(Integer id) {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public ImportedInstitution withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public Institution withSystem(PrismSystem system) {
-        this.system = system;
+    public ImportedInstitution withInstitution(Institution institution) {
+        this.institution = institution;
         return this;
     }
 
-    public Institution withDomicile(InstitutionDomicile domicile) {
+    public ImportedInstitution withDomicile(Domicile domicile) {
         this.domicile = domicile;
         return this;
     }
 
-    public Institution withName(String name) {
+    public ImportedInstitution withName(String name) {
         this.name = name;
         return this;
     }
 
-    public Institution withState(State state) {
-        this.state = state;
+    public ImportedInstitution withEnabled(boolean enabled) {
+        this.enabled = enabled;
         return this;
     }
 
-    public Institution withCode(String code) {
+    public ImportedInstitution withCode(String code) {
         this.code = code;
         return this;
     }

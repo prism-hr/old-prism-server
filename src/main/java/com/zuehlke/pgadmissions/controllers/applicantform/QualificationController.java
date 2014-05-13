@@ -14,19 +14,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.QualificationType;
@@ -116,29 +113,8 @@ public class QualificationController {
         return RedirectLocation.UPDATE_APPLICATION_QUALIFICATION + applicationForm.getApplicationNumber() + "&message=deleted";
     }
 
-    @RequestMapping(value = "/qualification/title/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public String provideSuggestionsForQualificationTitle(@PathVariable final String searchTerm) {
-        Gson gson = new Gson();
-        return gson.toJson(searchService.getMatchingQualificationsWithTitlesLike(searchTerm));
-    }
-
-    @RequestMapping(value = "/qualification/subject/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public String provideSuggestionsForQualificationSubject(@PathVariable final String searchTerm) {
-        Gson gson = new Gson();
-        return gson.toJson(searchService.getMatchingQualificationsWithSubjectsLike(searchTerm));
-    }
-
-    @RequestMapping(value = "/qualification/grade/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public String provideSuggestionsForQualificationGrade(@PathVariable final String searchTerm) {
-        Gson gson = new Gson();
-        return gson.toJson(searchService.getMatchingQualificationsWithGradesLike(searchTerm));
-    }
-
     @ModelAttribute("institutions")
-    public List<Institution> getEmptyQualificationInstitution() {
+    public List<ImportedInstitution> getEmptyQualificationInstitution() {
         return Collections.emptyList();
     }
 
@@ -164,7 +140,7 @@ public class QualificationController {
 
     private String returnView(ModelMap modelMap, Qualification qualification) {
         modelMap.put("qualification", qualification);
-        Institution institution = qualification.getInstitution();
+        ImportedInstitution institution = qualification.getInstitution();
         if (institution != null) {
             modelMap.put("institutions", institution.getDomicile());
         }

@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Service
@@ -30,19 +32,11 @@ public class InstitutionService {
         return institutionDAO.getByCode(institutionCode);
     }
 
-    public List<Institution> getEnabledInstitutionsByDomicile(Domicile domicile) {
-        return institutionDAO.getByDomicile(domicile);
+    public List<ImportedInstitution> getEnabledImportedInstitutionsByDomicile(Domicile domicile) {
+        return institutionDAO.getEnabledImportedInstitutionsByDomicile(domicile);
     }
     
-    public List<Institution> getEnabledInstitutionsByUserIdAndDomicile(Integer userId, Domicile domicile) {
-        return institutionDAO.getByUserIdAndDomicile(userId, domicile);
-    }
-    
-    public List<Institution> getEnabledInstitutionsByDomicileExludingUserId(Integer userId, Domicile domicile) {
-        return institutionDAO.getByDomicileExludingUserId(userId, domicile);
-    }
-
-    public Institution getOrCreate(String institutionCode, Domicile domicile, String institutionName) {
+    public Institution getOrCreate(String institutionCode, InstitutionDomicile domicile, String institutionName) {
         Institution persistentInstitution;
         if ("OTHER".equals(institutionCode)) {
             persistentInstitution = institutionDAO.getByDomicileAndName(domicile, institutionName);

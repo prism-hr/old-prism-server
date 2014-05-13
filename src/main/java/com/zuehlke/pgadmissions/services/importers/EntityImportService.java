@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services.importers;
 
-import static javax.transaction.Transactional.TxType.REQUIRES_NEW;
-
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -28,6 +26,7 @@ import com.zuehlke.pgadmissions.dao.EntityDAO;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
 import com.zuehlke.pgadmissions.domain.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
@@ -212,7 +211,7 @@ public class EntityImportService {
         Program program = programService.getProgramByCode(programme.getCode());
         if (program == null) {
             program = new Program().withInstitution(institution).withCode(programme.getCode()).withState(ProgramState.PROGRAM_APPROVED);
-            save(program);
+            entityDAO.save(program);
         }
 
         program.setTitle(programme.getName());
@@ -225,14 +224,9 @@ public class EntityImportService {
         StudyOption studyOption = entityDAO.getBy(StudyOption.class, "id", modeOfAttendance.getCode());
         if (studyOption == null) {
             studyOption = new StudyOption().withId(modeOfAttendance.getCode()).withDisplayName(modeOfAttendance.getName());
-            save(studyOption);
+            entityDAO.save(studyOption);
         }
         return studyOption;
-    }
-
-    @Transactional(REQUIRES_NEW)
-    public void save(Object entity) {
-        entityDAO.save(entity);
     }
 
     @Transactional

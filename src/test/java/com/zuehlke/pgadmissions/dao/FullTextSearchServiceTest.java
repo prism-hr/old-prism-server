@@ -25,7 +25,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
@@ -173,7 +173,7 @@ public class FullTextSearchServiceTest extends AutomaticRollbackTestCase {
     public void shouldReturnSimilarMatchForInstitutionName() {
         TransactionTemplate template = new TransactionTemplate(transactionManager);
 
-        final Institution institution = TestData.aQualificationInstitution(null);
+        final ImportedInstitution institution = TestData.aImportedInstitution(null);
 
         template.execute(new TransactionCallbackWithoutResult() {
             @Override

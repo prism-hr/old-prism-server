@@ -16,19 +16,17 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.TestData;
 
 public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldFindOpportunityRequestById() {
         User user = (User) sessionFactory.getCurrentSession().get(User.class, 15);
-        Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
+        InstitutionDomicile domicile = (InstitutionDomicile) sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
 
         OpportunityRequest request1 = aOpportunityRequest(user, domicile).build();
         OpportunityRequest request2 = aOpportunityRequest(user, domicile).build();
@@ -47,8 +45,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetInitialOpportunityRequests() {
         User currentUser = (User) sessionFactory.getCurrentSession().get(User.class, 28);
         User otherUser = (User) sessionFactory.getCurrentSession().get(User.class, 15);
-        Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
-        Institution institution = TestData.aQualificationInstitution(domicile);
+        InstitutionDomicile domicile = (InstitutionDomicile) sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
         Program program = testObjectProvider.getEnabledProgram();
 
         DateTime date = new DateTime(1410, 7, 14, 12, 0);
@@ -58,7 +55,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
         OpportunityRequest request3 = aOpportunityRequest(currentUser, domicile).sourceProgram(program).createdDate(date.plusSeconds(8).toDate()).build();
         OpportunityRequest request4 = aOpportunityRequest(otherUser, domicile).createdDate(date.plusSeconds(8).toDate()).build();
 
-        save(institution, program, request1, request2, request3, request4);
+        save(program, request1, request2, request3, request4);
 
         OpportunityRequestDAO opportunityRequestDAO = new OpportunityRequestDAO(sessionFactory);
         List<OpportunityRequest> returned = opportunityRequestDAO.listOpportunityRequests(currentUser);
@@ -72,8 +69,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetOpportunityRequestsForProgram() {
         User user = (User) sessionFactory.getCurrentSession().get(User.class, 15);
-        Domicile domicile = (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
-        Institution institution = TestData.aQualificationInstitution(domicile);
+        InstitutionDomicile domicile = (InstitutionDomicile) sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class).add(Restrictions.eq("code", "XK")).uniqueResult();
         Program program = testObjectProvider.getEnabledProgram();
 
         DateTime date = new DateTime(1410, 7, 14, 12, 0);
@@ -82,7 +78,7 @@ public class OpportunityRequestDAOTest extends AutomaticRollbackTestCase {
         OpportunityRequest request2 = aOpportunityRequest(user, domicile).sourceProgram(program).createdDate(date.toDate()).build();
         OpportunityRequest request3 = aOpportunityRequest(user, domicile).sourceProgram(program).createdDate(date.plusSeconds(8).toDate()).build();
 
-        save(institution, program, request1, request2, request3);
+        save(program, request1, request2, request3);
 
         OpportunityRequestDAO opportunityRequestDAO = new OpportunityRequestDAO(sessionFactory);
         List<OpportunityRequest> returned = opportunityRequestDAO.getOpportunityRequests(program);

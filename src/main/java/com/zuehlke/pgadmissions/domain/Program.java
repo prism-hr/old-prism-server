@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Table(name = "PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "code", "institution_id" }),
         @UniqueConstraint(columnNames = { "title", "institution_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-
 public class Program extends Advert implements PrismScope {
 
     private static final long serialVersionUID = -9073611033741317582L;
@@ -55,9 +54,8 @@ public class Program extends Advert implements PrismScope {
     @JoinColumn(name = "institution_id", nullable = false)
     private Institution institution;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "program_import_id")
-    private ProgramImport programImport;
+    @Column(name = "is_imported", nullable = false)
+    private boolean imported;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "program")
     @OrderBy("applicationStartDate")
@@ -119,12 +117,12 @@ public class Program extends Advert implements PrismScope {
         this.institution = institution;
     }
 
-    public ProgramImport getProgramImport() {
-        return programImport;
+    public boolean isImported() {
+        return imported;
     }
 
-    public void setProgramImport(ProgramImport programImport) {
-        this.programImport = programImport;
+    public void setImported(boolean imported) {
+        this.imported = imported;
     }
 
     public List<ScoringStage> getCustomQuestionCoverage() {
@@ -236,8 +234,8 @@ public class Program extends Advert implements PrismScope {
         return this;
     }
 
-    public Program withProgramImport(ProgramImport programImport) {
-        this.programImport = programImport;
+    public Program withImported(boolean imported) {
+        this.imported = imported;
         return this;
     }
 
@@ -245,5 +243,5 @@ public class Program extends Advert implements PrismScope {
         this.programType = programType;
         return this;
     }
-    
+
 }

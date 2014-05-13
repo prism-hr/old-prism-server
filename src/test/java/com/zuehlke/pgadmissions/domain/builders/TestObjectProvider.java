@@ -14,7 +14,9 @@ import org.hibernate.sql.JoinType;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
@@ -129,10 +131,6 @@ public class TestObjectProvider {
                 .setMaxResults(1).uniqueResult();
     }
 
-    public Institution getInstitution() {
-        return getInstitution(PrismState.INSTITUTION_APPROVED);
-    }
-
     public ApplicationForm getProgramApplication() {
         return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class) //
                 .createAlias("program", "program", JoinType.INNER_JOIN) //
@@ -234,17 +232,26 @@ public class TestObjectProvider {
         return (Project) criteria.setMaxResults(1).uniqueResult();
     }
 
-    public Institution getInstitution(PrismState state) {
-        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Restrictions.eq("state.id", state)).setMaxResults(1)
+    public Institution getInstitution() {
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)).setMaxResults(1)
+                .uniqueResult();
+    }
+    
+    public ImportedInstitution getImportedInstitution() {
+        return (ImportedInstitution) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class).add(Restrictions.eq("enabled", true)).setMaxResults(1)
                 .uniqueResult();
     }
 
     public Domicile getDomicile() {
         return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult();
     }
+    
+    public InstitutionDomicile getInstitutionDomicile() {
+        return (InstitutionDomicile) sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class).setMaxResults(1).uniqueResult();
+    }
 
-    public Domicile getAlternativeDomicile(Domicile domicile) {
-        return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class)//
+    public InstitutionDomicile getAlternativeInstitutionDomicile(InstitutionDomicile domicile) {
+        return (InstitutionDomicile) sessionFactory.getCurrentSession().createCriteria(InstitutionDomicile.class)//
                 .add(Restrictions.ne("id", domicile.getId())) //
                 .setMaxResults(1).uniqueResult();
     }

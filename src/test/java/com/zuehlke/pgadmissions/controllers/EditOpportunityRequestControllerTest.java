@@ -35,11 +35,11 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -69,7 +69,7 @@ public class EditOpportunityRequestControllerTest {
 
     @Mock
     @InjectIntoByType
-    private InstitutionDAO qualificationInstitutionDAO;
+    private InstitutionDAO institutionDAO;
 
     @Mock
     @InjectIntoByType
@@ -100,7 +100,7 @@ public class EditOpportunityRequestControllerTest {
 
     @Test
     public void shouldGetEditOpportunityRequestPage() {
-        Domicile domicile = new Domicile();
+        InstitutionDomicile domicile = new InstitutionDomicile();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(domicile).build();
         List<OpportunityRequest> requests = Lists.newArrayList();
         ModelMap modelMap = new ModelMap();
@@ -109,7 +109,7 @@ public class EditOpportunityRequestControllerTest {
         expect(permissionsService.canSeeOpportunityRequest(opportunityRequest)).andReturn(true);
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(opportunityRequest);
         expect(opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest)).andReturn(requests);
-        expect(qualificationInstitutionDAO.getByDomicile(domicile)).andReturn(institutions);
+        expect(institutionDAO.getEnabledByDomicile(domicile)).andReturn(institutions);
 
         replay();
         String result = controller.getEditOpportunityRequestPage(8, modelMap);
@@ -161,7 +161,7 @@ public class EditOpportunityRequestControllerTest {
     public void shouldRespondToOpportunityRequestWhenBindingErrors() {
         User author = new User();
         Date createdDate = new Date();
-        Domicile domicile = new DomicileBuilder().code("PL").build();
+        InstitutionDomicile domicile = new InstitutionDomicile();
         OpportunityRequest opportunityRequest = new OpportunityRequestBuilder().institutionCountry(domicile).build();
         OpportunityRequest existingRequest = new OpportunityRequestBuilder().author(author).createdDate(createdDate).status(OpportunityRequestStatus.REJECTED)
                 .build();
@@ -174,7 +174,7 @@ public class EditOpportunityRequestControllerTest {
         List<OpportunityRequest> requests = Lists.newArrayList();
 
         expect(permissionsService.canPostOpportunityRequestComment(existingRequest, comment)).andReturn(true);
-        expect(qualificationInstitutionDAO.getByDomicile(domicile)).andReturn(institutions);
+        expect(institutionDAO.getEnabledByDomicile(domicile)).andReturn(institutions);
         expect(opportunitiesService.getOpportunityRequest(8)).andReturn(existingRequest);
         expect(opportunitiesService.getAllRelatedOpportunityRequests(opportunityRequest)).andReturn(requests);
 

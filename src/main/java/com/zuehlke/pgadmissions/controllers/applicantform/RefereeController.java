@@ -97,20 +97,6 @@ public class RefereeController {
         return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getApplicationNumber() + "&message=deleted";
     }
 
-    @RequestMapping(value = "/referee/employer/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public String provideSuggestionsForRefereeJobEmployer(@PathVariable final String searchTerm) {
-        Gson gson = new Gson();
-        return gson.toJson(searchService.getMatchingRefereesWithJobEmployersLike(searchTerm));
-    }
-
-    @RequestMapping(value = "/referee/position/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public String provideSuggestionsForRefereeJobTitle(@PathVariable final String searchTerm) {
-        Gson gson = new Gson();
-        return gson.toJson(searchService.getMatchingRefereesWithJobTitlesLike(searchTerm));
-    }
-
     @ModelAttribute("domiciles")
     public List<Domicile> getAllDomiciles() {
         return importedEntityService.getAllDomiciles();

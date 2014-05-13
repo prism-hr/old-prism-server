@@ -63,7 +63,7 @@ public class Qualification implements Serializable, FormSectionObject {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
-    private Institution institution;
+    private ImportedInstitution institution;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
@@ -118,11 +118,11 @@ public class Qualification implements Serializable, FormSectionObject {
         this.title = title;
     }
 
-    public Institution getInstitution() {
+    public ImportedInstitution getInstitution() {
         return institution;
     }
 
-    public void setInstitution(Institution institution) {
+    public void setInstitution(ImportedInstitution institution) {
         this.institution = institution;
     }
 
@@ -235,7 +235,7 @@ public class Qualification implements Serializable, FormSectionObject {
         return this;
     }
 
-    public Qualification withInstitution(Institution institution) {
+    public Qualification withInstitution(ImportedInstitution institution) {
         this.institution = institution;
         return this;
     }

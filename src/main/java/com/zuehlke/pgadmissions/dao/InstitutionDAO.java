@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
 
 @Repository
@@ -30,9 +32,16 @@ public class InstitutionDAO {
     public InstitutionDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-
-    public List<Institution> getByDomicile(Domicile domicile) {
+    
+    public List<Institution> getEnabledByDomicile(InstitutionDomicile domicile) {
         return (List<Institution>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .add(Restrictions.eq("domicile", domicile)) //
+                .addOrder(Order.asc("name")) //
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    }
+
+    public List<ImportedInstitution> getEnabledImportedInstitutionsByDomicile(Domicile domicile) {
+        return (List<ImportedInstitution>) sessionFactory.getCurrentSession().createCriteria(ImportedInstitution.class) //
                 .add(Restrictions.eq("domicile", domicile)) //
                 .addOrder(Order.asc("name")) //
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
@@ -64,7 +73,7 @@ public class InstitutionDAO {
                 .uniqueResult();
     }
 
-    public Institution getByDomicileAndName(Domicile domicile, String institutionName) {
+    public Institution getByDomicileAndName(InstitutionDomicile domicile, String institutionName) {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class).add(Restrictions.eq("domicile", domicile))
                 .add(Restrictions.eq("name", institutionName)).uniqueResult();
     }

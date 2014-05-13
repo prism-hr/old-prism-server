@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
-import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestCommentBuilder
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestCommentType;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ManageUsersService;
 import com.zuehlke.pgadmissions.services.OpportunitiesService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -38,7 +38,7 @@ public class PrismWorkflowTest {
     private XMLDataImportTask xmlDataImportTask;
 
     @Autowired
-    private ImportedEntityService importedEntityService;
+    private EntityService entityService;
 
     @Autowired
     private ProgramService programService;
@@ -68,7 +68,7 @@ public class PrismWorkflowTest {
 
         xmlDataImportTask.importData();
 
-        Domicile polishDomicile = importedEntityService.getByCode(Domicile.class, "PL");
+        InstitutionDomicile polishDomicile = entityService.getBy(InstitutionDomicile.class, "code", "PL");
         ProgramType programType = programService.getProgramTypes().iterator().next();
 
         User programCreator = new User().withFirstName("Jerzy").withLastName("Urban").withEmail("jerzy@urban.pl")

@@ -23,12 +23,10 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Errors;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramImport;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.services.FullTextSearchService;
 import com.zuehlke.pgadmissions.services.ProgramInstanceService;
@@ -54,9 +52,8 @@ public class OpportunityRequestValidatorTest {
 
     @Before
     public void setUp() {
-        Domicile institutionCountry = new DomicileBuilder().code("PL").build();
         author = new User();
-        opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(author, institutionCountry).build();
+        opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(author, new InstitutionDomicile().withCode("PL")).build();
 
         registerFormValidatorMock = EasyMock.createMock(RegisterFormValidator.class);
         programInstanceServiceMock = EasyMock.createMock(ProgramInstanceService.class);
@@ -117,17 +114,16 @@ public class OpportunityRequestValidatorTest {
     public void shouldNotRejectIfAtasRequiredIsEmptyOutsideUK() {
         opportunityRequest.setAtasRequired(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
-        
+
         configureAndReplayRegisterFormValidator(mappingResult);
         opportunityRequestValidator.validate(opportunityRequest, mappingResult);
-        
+
         assertEquals(0, mappingResult.getErrorCount());
     }
-    
+
     @Test
     public void shouldRejectIfAtasRequiredIsEmptyInUK() {
-        Domicile institutionCountry = new DomicileBuilder().code("XK").build();
-        opportunityRequest.setInstitutionCountry(institutionCountry);
+        opportunityRequest.setInstitutionCountry(new InstitutionDomicile().withCode("XK"));
         opportunityRequest.setAtasRequired(null);
         DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(opportunityRequest, "opportunityRequest");
 
@@ -307,7 +303,7 @@ public class OpportunityRequestValidatorTest {
 
     @Test
     public void shouldIgnoreSomeFieldsIfValidatingRequestForBuiltInProgram() {
-        opportunityRequest.setSourceProgram(new Program().withProgramImport(new ProgramImport()));
+        opportunityRequest.setSourceProgram(new Program().withImported(true));
         opportunityRequest.setProgramTitle(null);
         opportunityRequest.setAuthor(null);
         opportunityRequest.setStudyOptions(null);

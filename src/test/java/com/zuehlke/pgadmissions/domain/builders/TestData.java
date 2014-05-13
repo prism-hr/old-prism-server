@@ -8,7 +8,9 @@ import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -24,7 +26,12 @@ import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 
 public class TestData {
 
-    public static Institution aQualificationInstitution(Domicile domicile) {
+    public static ImportedInstitution aImportedInstitution(Domicile domicile) {
+        return new ImportedInstitution().withCode("AGH").withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile)
+                .withEnabled(true);
+    }
+    
+    public static Institution aInstitution(InstitutionDomicile domicile) {
         return new Institution().withCode("AGH").withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile)
                 .withState(new State().withId(PrismState.INSTITUTION_APPROVED));
     }
@@ -63,7 +70,7 @@ public class TestData {
                 .withType(DocumentType.CV);
     }
 
-    public static Qualification aQualification(ApplicationForm application, QualificationType qualificationType, Document document, Institution institution) {
+    public static Qualification aQualification(ApplicationForm application, QualificationType qualificationType, Document document, ImportedInstitution institution) {
         return new Qualification().withAwardDate(new Date()).withGrade("").withTitle("").withLanguage("Abkhazian").withSubject("").withCompleted(true)
                 .withStartDate(new Date()).withType(qualificationType).withApplication(application).withDocument(document).withExport(false).withInstitution(institution);
     }

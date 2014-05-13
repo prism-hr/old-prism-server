@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static javax.transaction.Transactional.TxType.REQUIRES_NEW;
-
 import java.util.Date;
 import java.util.List;
 
@@ -146,7 +144,7 @@ public class ProgramService {
             program.setUser(opportunityRequest.getAuthor());
         }
 
-        if (program.getProgramImport() == null) {
+        if (program.isImported()) {
             if (program.getInstitution() == null || !Objects.equal(program.getInstitution().getCode(), opportunityRequest.getInstitutionCode())) {
                 Institution institution = qualificationInstitutionService.getOrCreate(opportunityRequest.getInstitutionCode(),
                         opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
@@ -195,7 +193,7 @@ public class ProgramService {
 
         Program program = thisBean.createOrGetProgram(opportunityRequest);
 
-        if (program.getProgramImport() == null) {
+        if (program.isImported()) {
             programInstanceService.createRemoveProgramInstances(program, opportunityRequest.getStudyOptions(), opportunityRequest.getAdvertisingDeadlineYear());
         }
 

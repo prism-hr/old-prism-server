@@ -51,41 +51,6 @@ public class FullTextSearchService {
     }
     
     @Transactional(readOnly = true)
-    public List<String> getMatchingQualificationsWithTitlesLike(final String searchTerm) {
-    	return fullTextSearchDAO.getMatchingQualificationsWithTitlesLike(searchTerm);
-    }
-    
-    @Transactional(readOnly = true)
-    public List<String> getMatchingQualificationsWithSubjectsLike(final String searchTerm) {
-    	return fullTextSearchDAO.getMatchingQualificationsWithSubjectsLike(searchTerm);
-    }
-    
-    @Transactional(readOnly = true)
-    public List<String> getMatchingQualificationsWithGradesLike(final String searchTerm) {
-    	return fullTextSearchDAO.getMatchingQualificationsWithGradesLike(searchTerm);
-    }
-    
-    @Transactional(readOnly = true)
-    public List<String> getMatchingEmploymentPositionsWithEmployerNamesLike(final String searchTerm) {
-    	return fullTextSearchDAO.getMatchingEmploymentPositionsWithEmployerNamesLike(searchTerm);
-    }
-    
-    @Transactional(readOnly = true)
-    public List<String> getMatchingEmploymentPositionsWithPositionsLike(final String searchTerm) {
-    	return fullTextSearchDAO.getMatchingEmploymentPositionsWithPositionsLike(searchTerm);
-    }
-    
-    @Transactional(readOnly = true)
-    public List<String> getMatchingRefereesWithJobEmployersLike(final String searchTerm) {
-    	return fullTextSearchDAO.getMatchingRefereesWithJobEmployersLike(searchTerm);
-    }
-    
-    @Transactional(readOnly = true)
-    public List<String> getMatchingRefereesWithJobTitlesLike(final String searchTerm) {
-    	return fullTextSearchDAO.getMatchingRefereesWithJobTitlesLike(searchTerm);
-    }
-    
-    @Transactional(readOnly = true)
     public List<String> getMatchingInstitutions(final String searchTerm, String domicileCode) {
         return fullTextSearchDAO.getMatchingInsitutions(searchTerm, domicileCode);
     }

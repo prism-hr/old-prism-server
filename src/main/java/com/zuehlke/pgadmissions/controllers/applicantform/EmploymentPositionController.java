@@ -99,20 +99,6 @@ public class EmploymentPositionController {
         return RedirectLocation.UPDATE_APPLICATION_EMPLOYMENT_POSITION + applicationForm.getApplicationNumber() + "&message=deleted";
     }
 
-    @RequestMapping(value = "/employment/employer/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public String provideSuggestionsForEmploymentPositionEmployerName(@PathVariable final String searchTerm) {
-        Gson gson = new Gson();
-        return gson.toJson(searchService.getMatchingEmploymentPositionsWithEmployerNamesLike(searchTerm));
-    }
-
-    @RequestMapping(value = "/employment/position/{searchTerm:.+}", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public String provideSuggestionsForEmploymentPositionPosition(@PathVariable final String searchTerm) {
-        Gson gson = new Gson();
-        return gson.toJson(searchService.getMatchingEmploymentPositionsWithPositionsLike(searchTerm));
-    }
-
     @ModelAttribute("languages")
     public List<Language> getAllEnabledLanguages() {
         return importedEntityService.getAllLanguages();

@@ -12,10 +12,13 @@ public class EntityService {
 
     @Autowired
     private EntityDAO entityDAO;
-    
 
-    public Object getById(Class<?> klass, int id) {
+    public <T> T getById(Class<T> klass, int id) {
         return entityDAO.getById(klass, id);
     }
-    
+
+    public <T> T getBy(Class<T> klass, String propertyName, Object propertyValue) {
+        return entityDAO.getBy(klass, propertyName, propertyValue);
+    }
+
 }

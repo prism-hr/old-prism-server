@@ -26,12 +26,11 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
-import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.builders.DomicileBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramTypeBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ProgramState;
@@ -98,7 +97,7 @@ public class ProgramConfigurationControllerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldGetOpportunityData() {
-        Domicile domicile = new DomicileBuilder().id(88).build();
+        InstitutionDomicile domicile = new InstitutionDomicile();
         Program program = new Program().withCode("07").withInstitution(new Institution().withDomicile(domicile).withCode("inst"))
                 .withId(999).withTitle("Dlaczego w pizdzie nie ma krzesel?").withDescription("Zeby chuj stal").withStudyDuration(8)
                 .withFunding("Ni ma kasy").withState(ProgramState.PROGRAM_APPROVED).withRequireProjectDefinition(false)

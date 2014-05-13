@@ -94,7 +94,7 @@ public class OpportunityRequestValidator extends AbstractValidator {
         }
 
         // new request or editing custom program
-        if (sourceProgram == null || sourceProgram.getProgramImport() == null) {
+        if (sourceProgram == null || !sourceProgram.isImported()) {
 
             if (Strings.isNullOrEmpty(opportunityRequest.getStudyOptions())) {
                 errors.rejectValue("studyOptions", EMPTY_DROPDOWN_ERROR_MESSAGE);

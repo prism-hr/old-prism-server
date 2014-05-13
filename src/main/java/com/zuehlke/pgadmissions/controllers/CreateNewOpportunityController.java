@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.ImportedInstitution;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.StudyOption;
@@ -52,7 +52,7 @@ public class CreateNewOpportunityController {
     private ImportedEntityService importedEntityService;
 
     @Autowired
-    private InstitutionDAO qualificationInstitutionDAO;
+    private InstitutionDAO institutionDAO;
 
     @Autowired
     private EntityPropertyEditor<Domicile> domicilePropertyEditor;
@@ -95,7 +95,7 @@ public class CreateNewOpportunityController {
         if (result.hasErrors()) {
             if (opportunityRequest.getInstitutionCountry() != null) {
                 model.addAttribute("institutions",
-                        qualificationInstitutionDAO.getByDomicile(opportunityRequest.getInstitutionCountry()));
+                        institutionDAO.getEnabledByDomicile(opportunityRequest.getInstitutionCountry()));
             }
             request.setAttribute(CLICKED_ON_CREATE_OPPORTUNITY, true);
             return LOGIN_PAGE;
@@ -120,7 +120,7 @@ public class CreateNewOpportunityController {
     }
 
     @ModelAttribute("institutions")
-    public List<Institution> getEmptyQualificationInstitution() {
+    public List<ImportedInstitution> getEmptyQualificationInstitution() {
         return Collections.emptyList();
     }
 

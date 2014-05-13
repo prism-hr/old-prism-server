@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
@@ -157,7 +158,7 @@ public class ProgramConfigurationController {
         Map<String, Object> dataMap = Maps.newHashMap();
         dataMap.put("advertId", program.getId());
 
-        Domicile institutionCountry = program.getInstitution().getDomicile();
+        InstitutionDomicile institutionCountry = program.getInstitution().getDomicile();
 
         result.put("programId", program.getId());
         result.put("programTitle", program.getTitle());
@@ -165,7 +166,7 @@ public class ProgramConfigurationController {
         result.put("programStudyDuration", program.getStudyDuration());
         result.put("programFunding", program.getFunding());
         result.put("programState", program.getState());
-        result.put("isCustomProgram", program.getProgramImport() == null);
+        result.put("isCustomProgram", !program.isImported());
         result.put("atasRequired", program.getRequireProjectDefinition());
         result.put("programType", program.getProgramType().getId());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));

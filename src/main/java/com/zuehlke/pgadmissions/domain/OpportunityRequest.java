@@ -35,7 +35,7 @@ public class OpportunityRequest {
 
     @ManyToOne
     @JoinColumn(name = "institution_domicile_id")
-    private Domicile institutionCountry;
+    private InstitutionDomicile institutionCountry;
 
     @Column(name = "institution_code")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 10)
@@ -117,11 +117,11 @@ public class OpportunityRequest {
         this.id = id;
     }
 
-    public Domicile getInstitutionCountry() {
+    public InstitutionDomicile getInstitutionCountry() {
         return institutionCountry;
     }
 
-    public void setInstitutionCountry(Domicile institutionCountry) {
+    public void setInstitutionCountry(InstitutionDomicile institutionCountry) {
         this.institutionCountry = institutionCountry;
     }
 

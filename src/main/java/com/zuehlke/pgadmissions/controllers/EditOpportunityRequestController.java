@@ -55,7 +55,7 @@ public class EditOpportunityRequestController {
     private ImportedEntityService importedEntityService;
 
     @Autowired
-    private InstitutionDAO qualificationInstitutionDAO;
+    private InstitutionDAO institutionDAO;
 
     @Autowired
     private EntityPropertyEditor<Domicile> domicilePropertyEditor;
@@ -99,7 +99,7 @@ public class EditOpportunityRequestController {
         modelMap.addAttribute("comment", comment);
 
         if (opportunityRequest.getInstitutionCountry() != null) {
-            modelMap.addAttribute("institutions", qualificationInstitutionDAO.getByDomicile(opportunityRequest.getInstitutionCountry()));
+            modelMap.addAttribute("institutions", institutionDAO.getEnabledByDomicile(opportunityRequest.getInstitutionCountry()));
         }
 
         return EDIT_REQUEST_PAGE_VIEW_NAME;
@@ -128,7 +128,7 @@ public class EditOpportunityRequestController {
             modelMap.put("comment", comment);
 
             if (opportunityRequest.getInstitutionCountry() != null) {
-                modelMap.addAttribute("institutions", qualificationInstitutionDAO.getByDomicile(opportunityRequest.getInstitutionCountry()));
+                modelMap.addAttribute("institutions", institutionDAO.getEnabledByDomicile(opportunityRequest.getInstitutionCountry()));
             }
 
             return EDIT_REQUEST_PAGE_VIEW_NAME;

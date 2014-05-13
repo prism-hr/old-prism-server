@@ -1,15 +1,14 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Institution;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.utils.HibernateUtils;
@@ -20,8 +19,8 @@ public class InstitutionDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldReturnInstitutionForDomicileCode() {
-        Domicile domicile1 = testObjectProvider.getDomicile();
-        Domicile domicile2 = testObjectProvider.getAlternativeDomicile(domicile1);
+        InstitutionDomicile domicile1 = testObjectProvider.getInstitutionDomicile();
+        InstitutionDomicile domicile2 = testObjectProvider.getAlternativeInstitutionDomicile(domicile1);
         
         Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Bielsko-Biala")
                 .withDomicile(domicile1).withCode("ABC").withSystem(testObjectProvider.getPrismSystem());
@@ -34,14 +33,14 @@ public class InstitutionDAOTest extends AutomaticRollbackTestCase {
 
         flushAndClearSession();
 
-        List<Institution> returnList = institutionDAO.getByDomicile(domicile1);
+        List<Institution> returnList = institutionDAO.getEnabledByDomicile(domicile1);
 
         assertTrue(HibernateUtils.containsEntity(returnList, institution1));
     }
 
     @Test
     public void shouldGetInstitutionByCode() {
-        Domicile domicile1 = testObjectProvider.getDomicile();
+        InstitutionDomicile domicile1 = testObjectProvider.getInstitutionDomicile();
         
         Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Bielsko-Biala")
                 .withDomicile(domicile1).withCode("ABC").withSystem(testObjectProvider.getPrismSystem());
@@ -62,7 +61,7 @@ public class InstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetLastCustomInstitution() {
-        Domicile domicile1 = testObjectProvider.getDomicile();
+        InstitutionDomicile domicile1 = testObjectProvider.getInstitutionDomicile();
         
         Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Bielsko-Biala")
                 .withDomicile(domicile1).withCode("CUST99995").withSystem(testObjectProvider.getPrismSystem());
@@ -83,8 +82,8 @@ public class InstitutionDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetInstitutionByDomicileAndName() {
-        Domicile domicile1 = testObjectProvider.getDomicile();
-        Domicile domicile2 = testObjectProvider.getAlternativeDomicile(domicile1);
+        InstitutionDomicile domicile1 = testObjectProvider.getInstitutionDomicile();
+        InstitutionDomicile domicile2 = testObjectProvider.getAlternativeInstitutionDomicile(domicile1);
         
         Institution institution1 = new Institution().withState(new State().withId(PrismState.INSTITUTION_APPROVED)).withName("University of Bielsko-Biala")
                 .withDomicile(domicile1).withCode("ABC").withSystem(testObjectProvider.getPrismSystem());

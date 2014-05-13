@@ -24,7 +24,7 @@ import org.unitils.inject.annotation.TestedObject;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.OpportunityRequestDAO;
-import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -144,8 +144,7 @@ public class OpportunitiesServiceTest {
         Program program = new Program();
         Program savedProgram = new Program();
         OpportunityRequest request = new OpportunityRequestBuilder().id(666).author(author).sourceProgram(program).build();
-        Domicile country = new Domicile();
-        OpportunityRequest newOpportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, country).otherInstitution("jakis uniwerek").build();
+        OpportunityRequest newOpportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(null, new InstitutionDomicile()).otherInstitution("jakis uniwerek").build();
         OpportunityRequestComment comment = new OpportunityRequestCommentBuilder().content("ok").commentType(OpportunityRequestCommentType.APPROVE).build();
         OpportunitiesService thisBeanMock = EasyMockUnitils.createMock(OpportunitiesService.class);
 

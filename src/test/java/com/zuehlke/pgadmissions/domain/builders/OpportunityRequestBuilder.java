@@ -6,7 +6,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.enums.OpportunityRequestType;
 public class OpportunityRequestBuilder {
 
     private Integer id;
-    private Domicile institutionCountry;
+    private InstitutionDomicile institutionCountry;
     private String institutionCode;
     private String otherInstitution;
     private String programTitle;
@@ -44,7 +44,7 @@ public class OpportunityRequestBuilder {
         return this;
     }
 
-    public OpportunityRequestBuilder institutionCountry(Domicile institutionCountry) {
+    public OpportunityRequestBuilder institutionCountry(InstitutionDomicile institutionCountry) {
         this.institutionCountry = institutionCountry;
         return this;
     }
@@ -170,7 +170,7 @@ public class OpportunityRequestBuilder {
         return request;
     }
 
-    public static OpportunityRequestBuilder aOpportunityRequest(User author, Domicile institutionCountry) {
+    public static OpportunityRequestBuilder aOpportunityRequest(User author, InstitutionDomicile institutionCountry) {
         DateTime date = new DateTime(2014, 3, 14, 0, 0);
 
         return new OpportunityRequestBuilder().author(author).createdDate(date.toDate()).institutionCode("AGH").institutionCountry(institutionCountry)

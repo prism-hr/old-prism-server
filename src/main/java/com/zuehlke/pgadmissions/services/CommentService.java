@@ -128,7 +128,7 @@ public class CommentService {
         if (true) {
             if (BooleanUtils.isTrue(stateChangeDTO.getDelegate())) {
                 User userToSaveAsDelegate = manageUsersService.setUserRoles(stateChangeDTO.getDelegateFirstName(), stateChangeDTO.getDelegateLastName(),
-                        stateChangeDTO.getDelegateEmail(), true, false, manageUsersService.getPrismSystem(), Authority.APPLICATION_ADMINISTRATOR);
+                        stateChangeDTO.getDelegateEmail(), false, manageUsersService.getPrismSystem(), Authority.APPLICATION_ADMINISTRATOR);
 
                 stateChangeComment.setDelegateAdministrator(userToSaveAsDelegate);
             }

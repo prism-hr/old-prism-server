@@ -23,9 +23,9 @@ public class ManageUsersService {
     @Autowired
     private MailSendingService mailService;
 
-    public User setUserRoles(String firstname, String lastname, String email, boolean createIfNotExist, boolean replaceRoles, PrismScope scope,
+    public User setUserRoles(String firstname, String lastname, String email, boolean replaceRoles, PrismScope scope,
             Authority... authorities) {
-        User user = userService.getUser(firstname, lastname, email, createIfNotExist);
+        User user = userService.getOrCreateUser(firstname, lastname, email);
         if (replaceRoles) {
             roleService.removeRoles(user, scope);
         }

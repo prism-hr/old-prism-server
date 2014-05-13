@@ -64,7 +64,7 @@ public class CreateNewApplicationUserController {
         }
 
         User existingUser = userService.getUserByEmailIncludingDisabledAccounts(userDTO.getEmail());
-        User user = userService.getUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true);
+        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
 
         modelMap.put("isNew", existingUser == null);
         modelMap.put("user", user);

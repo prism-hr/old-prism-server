@@ -29,7 +29,7 @@ public class RefereeService {
 
     @Autowired
     private RefereeDAO refereeDAO;
-    
+
     @Autowired
     private UserService userService;
 
@@ -81,9 +81,9 @@ public class RefereeService {
         applicationFormCopyHelper.copyReferee(persistentReferee, referee, false);
         applicationFormService.saveOrUpdateApplicationSection(application);
         // FIXME check if can edit referees
-//        if (application.getState().isModifiable()) {
-            processRefereeAndGetAsUser(referee);
-//        }
+        // if (application.getState().isModifiable()) {
+        processRefereeAndGetAsUser(referee);
+        // }
     }
 
     // TODO finish it
@@ -126,9 +126,9 @@ public class RefereeService {
         }
 
         if (!roleService.hasRole(user, Authority.APPLICATION_REFEREE, referee.getApplication())) {
-//            user.getRoles().add(refereeRole);
+            // user.getRoles().add(refereeRole);
             if (user.getActivationCode() == null) {
-                
+
             }
         }
         referee.setUser(user);
@@ -198,19 +198,20 @@ public class RefereeService {
         commentService.save(referenceComment);
 
         // FIXME try to notify PorticoService that reference comment has been posted
-//        if ( applicationForm.getReferencesToSendToPortico().size() < 2) {
-//            referee.setSendToUCL(true);
-//        }
+        // if ( applicationForm.getReferencesToSendToPortico().size() < 2) {
+        // referee.setSendToUCL(true);
+        // }
         applicationFormUserRoleService.referencePosted(referenceComment);
-        
+
         // FIXME call mail sending service
-//        saveReferenceAndSendMailNotifications(referee);
+        // saveReferenceAndSendMailNotifications(referee);
         return referenceComment;
     }
 
     private Referee createReferee(RefereesAdminEditDTO refereesAdminEditDTO, ApplicationForm applicationForm) {
-        User user = userService.getUser(refereesAdminEditDTO.getFirstname(), refereesAdminEditDTO.getLastname(), refereesAdminEditDTO.getEditedRefereeId(), true);
-        
+        User user = userService.getOrCreateUser(refereesAdminEditDTO.getFirstname(), refereesAdminEditDTO.getLastname(),
+                refereesAdminEditDTO.getEditedRefereeId());
+
         Referee referee = new Referee();
         referee.setApplication(applicationForm);
         referee.setUser(user);

@@ -71,27 +71,10 @@ public class UserService {
         return userDAO.getUserByEmailIncludingDisabledAccounts(email);
     }
 
-    /**
-     * Gets or creates a user.
-     * 
-     * @param firstname
-     *            user first name
-     * @param lastname
-     *            user last name
-     * @param email
-     *            user email
-     * @param createIfNotExist
-     *            if <code>true</code> creates non-existing user, otherwise throws {@link IllegalArgumentException} when user does not exist
-     * @return found or created user
-     */
-    public User getUser(final String firstname, final String lastname, final String email, boolean createIfNotExist) {
+    public User getOrCreateUser(final String firstname, final String lastname, final String email) {
         User existingUser = userDAO.getUserByEmail(email);
         if (existingUser != null) {
             return existingUser;
-        }
-
-        if (!createIfNotExist) {
-            throw new IllegalArgumentException();
         }
 
         User user = new User();

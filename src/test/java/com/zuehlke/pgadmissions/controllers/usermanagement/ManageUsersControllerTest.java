@@ -166,7 +166,7 @@ public class ManageUsersControllerTest {
         newUserDTO.setSelectedProgram(program);
         newUserDTO.setSelectedAuthorities(Authority.APPLICATION_REVIEWER, Authority.PROGRAM_ADMINISTRATOR);
         EasyMock.expect(userService.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
-        EasyMock.expect(manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, true, program, Authority.APPLICATION_REVIEWER, Authority.PROGRAM_ADMINISTRATOR))
+        EasyMock.expect(manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, program, Authority.APPLICATION_REVIEWER, Authority.PROGRAM_ADMINISTRATOR))
                 .andReturn(new User().withId(4));
 
         replay();
@@ -299,7 +299,7 @@ public class ManageUsersControllerTest {
         userDTO.setLastName("Doe");
         userDTO.setEmail("jane.doe@test.com");
 
-        EasyMock.expect(manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, true, prismSystem, Authority.SYSTEM_ADMINISTRATOR)).andReturn(
+        EasyMock.expect(manageUsersService.setUserRoles("Jane", "Doe", "jane.doe@test.com", true, prismSystem, Authority.SYSTEM_ADMINISTRATOR)).andReturn(
                 new User().withId(4));
 
         replay();

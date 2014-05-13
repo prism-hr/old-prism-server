@@ -53,7 +53,7 @@ public class OpportunitiesService {
         }
 
         if (createAuthorUser) {
-            userService.getUser(author.getFirstName(), author.getLastName(), author.getEmail(), true);
+            userService.getOrCreateUser(author.getFirstName(), author.getLastName(), author.getEmail());
         }
 
         opportunityRequest.setCreatedDate(new Date());

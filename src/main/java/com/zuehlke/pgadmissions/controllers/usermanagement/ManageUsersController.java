@@ -132,7 +132,7 @@ public class ManageUsersController {
         
         boolean userExisted = userService.getUserByEmail(userDTO.getEmail()) != null;
 
-        User newUser = manageUsersService.setUserRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true, true, roleService.getPrismSystem(),
+        User newUser = manageUsersService.setUserRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), false, roleService.getPrismSystem(),
                 userDTO.getSelectedAuthorities());
         
         if(!userExisted) {
@@ -154,7 +154,7 @@ public class ManageUsersController {
             return NEW_USER_VIEW_NAME;
         }
 
-        manageUsersService.setUserRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true, true, userDTO.getSelectedProgram(),
+        manageUsersService.setUserRoles(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(), true, userDTO.getSelectedProgram(),
                 userDTO.getSelectedAuthorities());
 
         return "redirect:/manageUsers/edit?programCode=" + userDTO.getSelectedProgram().getCode();

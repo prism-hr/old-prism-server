@@ -1,25 +1,22 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
-import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service
 @Transactional
@@ -32,21 +29,27 @@ public class RoleService {
         return roleDAO.getById(authority);
     }
 
-    public UserRole createUserRole(PrismScope scope, User user, Authority authority) {
-        UserRole userRole = new UserRole().withUser(user).withRole(getById(authority)).withAssignedTimestamp(new Date());
-        PrismScope unproxiedScope = HibernateUtils.unproxy(scope);
-        if (unproxiedScope instanceof PrismScope) {
-            userRole.setSystem((PrismSystem) scope);
-        } else if (unproxiedScope instanceof Institution) {
-            userRole.setInstitution((Institution) scope);
-        } else if (unproxiedScope instanceof Program) {
-            userRole.setProgram((Program) scope);
-        } else if (unproxiedScope instanceof Project) {
-            userRole.setProject((Project) scope);
-        } else if (unproxiedScope instanceof ApplicationForm) {
-            userRole.setApplication((ApplicationForm) scope);
+    public UserRole getOrCreateUserRole(PrismScope scope, User user, Authority authority) {
+        Role role = roleDAO.getById(authority);
+        UserRole userRole = roleDAO.get(user, scope, authority);
+        if (userRole == null) {
+            userRole = new UserRole().withUser(user).withRole(role);
+            try {
+                PropertyUtils.setSimpleProperty(userRole, scope.getScopeName(), scope);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            userRole.setAssignedTimestamp(new DateTime());
+            roleDAO.save(userRole);
+
+            for (Role inheritedRole : role.getInheritedRoles()) {
+                PrismScope enclosingScope = getEnclosingScope(inheritedRole.getId(), scope);
+                if (enclosingScope != null) {
+                    getOrCreateUserRole(enclosingScope, user, inheritedRole.getId());
+                }
+            }
         }
-        return roleDAO.saveUserRole(userRole);
+        return userRole;
     }
 
     public boolean hasAnyRole(User user, Authority... authorities) {
@@ -63,13 +66,13 @@ public class RoleService {
     }
 
     public boolean hasRole(User user, Authority authority, PrismScope scope) {
-        return roleDAO.hasRole(user, authority, scope);
+        return roleDAO.get(user, scope, authority) != null;
     }
 
     public List<User> getUsersInRole(PrismScope scope, Authority... authorities) {
         return roleDAO.getUsersInRole(scope, authorities);
     }
-    
+
     public User getUserInRole(PrismScope scope, Authority... authorities) {
         return roleDAO.getUserInRole(scope, authorities);
     }
@@ -115,6 +118,17 @@ public class RoleService {
     public UserRole getUserRole(User user, Authority authority) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public PrismScope getEnclosingScope(Authority authority, PrismScope currentScope) {
+        String roleName = authority.name();
+        String scopeName = roleName.substring(0, roleName.indexOf('_')).toLowerCase();
+
+        try {
+            return (PrismScope) PropertyUtils.getSimpleProperty(currentScope, scopeName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

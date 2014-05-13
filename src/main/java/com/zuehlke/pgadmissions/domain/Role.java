@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -23,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 @Entity
 @Table(name = "ROLE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class Role implements GrantedAuthority, Serializable {
+public class Role implements GrantedAuthority {
 
     private static final long serialVersionUID = 4265990408553249748L;
 
@@ -32,8 +31,8 @@ public class Role implements GrantedAuthority, Serializable {
     private Authority id;
 
     @ManyToMany
-    @JoinTable(name = "COMMENT_ACTION_VISIBILITY", joinColumns = { @JoinColumn(name = "application_role_id") }, inverseJoinColumns = { @JoinColumn(name = "action_id") })
-    private Set<Action> visibleActions = Sets.newHashSet();
+    @JoinTable(name = "ROLE_INHERITANCE", joinColumns = { @JoinColumn(name = "role_id") }, inverseJoinColumns = { @JoinColumn( name = "inherited_role_id") })
+    private Set<Role> inheritedRoles = Sets.newHashSet();
 
     public Authority getId() {
         return id;
@@ -48,8 +47,8 @@ public class Role implements GrantedAuthority, Serializable {
         return id.toString();
     }
 
-    public Set<Action> getVisibleActions() {
-        return visibleActions;
+    public Set<Role> getInheritedRoles() {
+        return inheritedRoles;
     }
 
     @Override
@@ -68,10 +67,10 @@ public class Role implements GrantedAuthority, Serializable {
         final Role other = (Role) obj;
         return Objects.equal(id, other.getId());
     }
-    
+
     public Role withId(Authority id) {
         this.id = id;
         return this;
     }
-    
+
 }

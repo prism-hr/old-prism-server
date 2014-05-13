@@ -35,12 +35,8 @@ public class RoleDAO {
         return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("id", id)).uniqueResult();
     }
 
-    public Role saveRole(final Role role) {
-        return (Role) sessionFactory.getCurrentSession().merge(role);
-    }
-
-    public UserRole saveUserRole(UserRole userRole) {
-        return (UserRole) sessionFactory.getCurrentSession().merge(userRole);
+    public int save(UserRole userRole) {
+        return (Integer) sessionFactory.getCurrentSession().save(userRole);
     }
 
     public List<User> getUsersInRole(PrismScope scope, Authority[] authorities) {
@@ -53,9 +49,12 @@ public class RoleDAO {
         return null;
     }
 
-    public boolean hasRole(User user, Authority authority, PrismScope scope) {
-        // TODO Auto-generated method stub
-        return false;
+    public UserRole get(User user, PrismScope scope, Authority authority) {
+        return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("role.id", authority)) //
+                .add(Restrictions.eq(scope.getScopeName(), scope)) //
+                .uniqueResult();
     }
 
 }

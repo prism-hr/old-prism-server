@@ -155,11 +155,7 @@ INSERT INTO COMMENT (application_id, action_id, user_id, role_id, content, creat
 	WHERE COMMENT.action_id = "APPLICATION_ASSESS_ELIGIBILITY"
 ;
 	
-ALTER TABLE COMMENT_ASSIGNED_USER
-	ADD COLUMN comment_custom_question_id INT(10) UNSIGNED,
-	ADD INDEX (comment_custom_question_id),
-	ADD FOREIGN KEY (comment_custom_question_id) REFERENCES COMMENT_CUSTOM_QUESTION (id)
-;
+/* Provide reference comment */
 
 ALTER TABLE COMMENT_CUSTOM_QUESTION
 	CHANGE COLUMN stage action_id VARCHAR(100) NOT NULL
@@ -186,27 +182,6 @@ ALTER TABLE COMMENT_CUSTOM_QUESTION
 	ADD UNIQUE INDEX (program_id, action_id),
 	DROP INDEX id,
 	DROP INDEX program_fk
-;
-
-CREATE TABLE COMMENT_CUSTOM_QUESTION_TYPE (
-	id VARCHAR(50) NOT NULL,
-	PRIMARY KEY (id)
-) ENGINE = INNODB
-	SELECT question_type AS id
-	FROM COMMENT_CUSTOM_QUESTION_RESPONSE
-	GROUP BY (question_type)
-;
-
-ALTER TABLE COMMENT_CUSTOM_QUESTION_RESPONSE
-	DROP FOREIGN KEY comment_fk,
-	MODIFY COLUMN comment_id INT(10) UNSIGNED NOT NULL,
-	CHANGE COLUMN question_type comment_custom_question_type_id VARCHAR(50) NOT NULL,
-	CHANGE COLUMN score_position display_order INT(3) UNSIGNED NOT NULL,
-	MODIFY COLUMN question LONGTEXT,
-	ADD INDEX (comment_custom_question_type_id),
-	ADD FOREIGN KEY (comment_custom_question_type_id) REFERENCES COMMENT_CUSTOM_QUESTION_TYPE (id),
-	ADD FOREIGN KEY (comment_id) REFERENCES COMMENT (id),
-	MODIFY COLUMN rating_response INT(1) UNSIGNED
 ;
 
 RENAME TABLE COMMENT_CUSTOM_QUESTION TO COMMENT_CUSTOM_QUESTION_VERSION
@@ -249,4 +224,44 @@ ALTER TABLE COMMENT_CUSTOM_QUESTION_VERSION
 	DROP COLUMN program_id
 ;
 
-/* Fix not null constraints on comment table */
+ALTER TABLE COMMENT_CUSTOM_QUESTION
+	MODIFY COLUMN program_id INT(10) UNSIGNED NOT NULL
+;
+
+ALTER TABLE COMMENT
+	ADD COLUMN comment_custom_question_version_id INT(10) UNSIGNED,
+	ADD COLUMN custom_question_response LONGTEXT,
+	ADD INDEX (comment_custom_question_version_id),
+	ADD FOREIGN KEY (comment_custom_question_version_id) REFERENCES COMMENT_CUSTOM_QUESTION_VERSION (id)
+;
+
+SET GROUP_CONCAT_MAX_LEN = 100000
+;
+
+UPDATE COMMENT INNER JOIN (
+	SELECT comment_id AS comment_id,  
+	GROUP_CONCAT("<response>", "\n\t<question>", question, "</question>\n\t<answer>", 
+	CONCAT(
+		IF(text_response IS NOT NULL,
+			text_response,
+			""), 
+		IF(date_response IS NOT NULL,
+			date_response,
+			""),
+		IF (date_response IS NOT NULL AND second_date_response IS NOT NULL,
+			"|",
+			""),
+		IF(second_date_response IS NOT NULL,
+			second_date_response,
+			""), 
+		IF(rating_response IS NOT NULL,
+			rating_response,
+			"")), "<answer>\n</response>" ORDER BY score_position SEPARATOR "\n") AS content
+	FROM COMMENT_CUSTOM_QUESTION_RESPONSE
+	GROUP BY comment_id) AS CUSTOM_RESPONSE
+	ON COMMENT.id = CUSTOM_RESPONSE.comment_id
+SET COMMENT.custom_question_response = CUSTOM_RESPONSE.content
+;
+
+DROP TABLE COMMENT_CUSTOM_QUESTION_RESPONSE
+;

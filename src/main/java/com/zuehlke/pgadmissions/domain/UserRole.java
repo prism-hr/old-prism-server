@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,8 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "USER_ROLE")
@@ -19,7 +18,7 @@ public class UserRole {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "system_id")
@@ -54,14 +53,14 @@ public class UserRole {
     private User requestingUser;
 
     @Column(name = "assigned_timestamp", nullable = false)
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date assignedTimestamp;
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime assignedTimestamp;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -129,11 +128,11 @@ public class UserRole {
         this.requestingUser = requestingUser;
     }
 
-    public Date getAssignedTimestamp() {
+    public DateTime getAssignedTimestamp() {
         return assignedTimestamp;
     }
 
-    public void setAssignedTimestamp(Date assignedTimestamp) {
+    public void setAssignedTimestamp(DateTime assignedTimestamp) {
         this.assignedTimestamp = assignedTimestamp;
     }
 
@@ -177,7 +176,7 @@ public class UserRole {
         return this;
     }
     
-    public UserRole withAssignedTimestamp(Date assignedTimestamp) {
+    public UserRole withAssignedTimestamp(DateTime assignedTimestamp) {
         this.assignedTimestamp = assignedTimestamp;
         return this;
     }

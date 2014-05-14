@@ -13,7 +13,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
-import com.zuehlke.pgadmissions.domain.enums.ActionType;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 
@@ -39,7 +39,7 @@ public class Transcript1PdfBuilder extends AbstractPdfModelBuilder {
             document.add(table);
             document.add(addSectionSeparators());
 
-            AssignSupervisorsComment latestApprovalRound = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(form, ActionType.APPLICATION_ASSIGN_SUPERVISORS);
+            AssignSupervisorsComment latestApprovalRound = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(form, ApplicationFormAction.APPLICATION_ASSIGN_SUPERVISORS);
             if (latestApprovalRound != null) {
                 if (StringUtils.isBlank(latestApprovalRound.getMissingQualificationExplanation())) {
                     document.add(new Paragraph(String.format("Approval Round Comment:\n%s", latestApprovalRound.getMissingQualificationExplanation())));

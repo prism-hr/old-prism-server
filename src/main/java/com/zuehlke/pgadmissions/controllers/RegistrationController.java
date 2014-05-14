@@ -106,6 +106,7 @@ public class RegistrationController {
         if (action == ApplicationFormAction.PROGRAM_CREATE_APPLICATION || action == ApplicationFormAction.PROJECT_CREATE_APPLICATION) {
             Authority authority = action == ApplicationFormAction.PROJECT_CREATE_APPLICATION ? Authority.PROJECT_APPLICATION_CREATOR
                     : Authority.PROGRAM_APPLICATION_CREATOR;
+            // FIXME add program_application_creator or project_application_creator role to the user
             UserRole userRole = roleService.getUserRole(user, authority);
             Advert advert = Objects.firstNonNull(userRole.getProgram(), userRole.getProject());
             ApplicationForm application = applicationFormService.getOrCreateApplication(user, advert.getId());

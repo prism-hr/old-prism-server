@@ -18,8 +18,8 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -189,7 +188,6 @@ public class ApplicationFormService {
 
     public void saveOrUpdateApplicationSection(ApplicationForm application) {
         User currentUser = userService.getCurrentUser();
-        Action action = actionService.getById(actionService.getPrecedentAction(application, currentUser, ActionType.APPLICATION_VIEW_EDIT));
         workflowService.applicationUpdated(application, userService.getCurrentUser());
     }
 
@@ -234,8 +232,8 @@ public class ApplicationFormService {
         return applicationDescriptor;
     }
 
-    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ActionType applicationCompleteApprovalStage) {
-        return applicationFormDAO.getLatestStateChangeComment(applicationForm, applicationCompleteApprovalStage);
+    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ApplicationFormAction action) {
+        return applicationFormDAO.getLatestStateChangeComment(applicationForm);
     }
 
     private void autoPopulateApplication(ApplicationForm applicationForm) {

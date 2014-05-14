@@ -253,5 +253,10 @@ public class Program extends Advert implements PrismScope {
     public PrismSystem getSystem() {
         return getInstitution().getSystem();
     }
+    
+    @Override
+    public String getType() {
+        return "program";
+    }
 
 }

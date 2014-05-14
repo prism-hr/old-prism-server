@@ -2,10 +2,14 @@ package com.zuehlke.pgadmissions.workflow;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
+import org.apache.commons.lang.WordUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.test.context.ContextConfiguration;
@@ -13,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
+import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -31,11 +36,15 @@ import com.zuehlke.pgadmissions.services.ProgramService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.importers.EntityImportService;
 import com.zuehlke.pgadmissions.timers.XMLDataImportTask;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/testWorkflowContext.xml")
 public class PrismWorkflowTest {
+
+    @Autowired
+    private EntityImportService entityImportService;
 
     @Autowired
     private XMLDataImportTask xmlDataImportTask;
@@ -74,26 +83,32 @@ public class PrismWorkflowTest {
 
         assertTrue(roleService.hasRole(superadmin, Authority.SYSTEM_PROGRAM_CREATOR, roleService.getPrismSystem()));
 
+        for (ImportedEntityFeed feed : entityImportService.getImportedEntityFeeds()) {
+            String entityName = WordUtils.uncapitalize(feed.getImportedEntityType().getEntityClass().getSimpleName());
+            String url = "reference_data/2014-05-08/" + entityName + ".xml";
+            feed.setLocation(url);
+            entityService.update(feed);
+        }
         xmlDataImportTask.importData();
 
         InstitutionDomicile polishDomicile = entityService.getBy(InstitutionDomicile.class, "code", "PL");
         ProgramType programType = programService.getProgramTypes().iterator().next();
-        
+
         User programCreator = new User().withFirstName("Jerzy").withLastName("Urban").withEmail("jerzy@urban.pl")
                 .withAccount(new UserAccount().withPassword("password").withConfirmPassword("password"));
-        
+
         Program program = programService.getAllEnabledPrograms().get(0);
 
-        User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl"));
-        
+        User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl").withAccount(new UserAccount().withPassword("password")));
+
         // TODO assert that (program|project)_create_application action exists
-        
+
         applicant = registrationService.activateAccount(applicant.getActivationCode());
 
         ApplicationForm application = applicationFormService.getOrCreateApplication(applicant, program.getId());
-        
+
         // TODO assert that application_complete action exists
-        
+
         applicationFormService.submitApplication(application);
 
         AssignReviewersComment assignReviewerComment = new AssignReviewersComment();

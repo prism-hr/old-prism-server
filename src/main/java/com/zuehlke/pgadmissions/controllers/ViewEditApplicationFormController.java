@@ -1,25 +1,18 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ActionType;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -47,40 +40,16 @@ public class ViewEditApplicationFormController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "application")
-    public String getApplicationView(HttpServletRequest request, @ModelAttribute ApplicationForm applicationForm) {
+    public String getApplicationView(HttpServletRequest request, @RequestParam String applicationNumber) {
         User user = userService.getCurrentUser();
-        ApplicationFormAction viewEditAction = actionService.getPrecedentAction(applicationForm, user, ActionType.APPLICATION_VIEW_EDIT);
 
-        switch (viewEditAction) {
-        case APPLICATION_COMPLETE:
-        case APPLICATION_CORRECT:
-        case APPLICATION_EDIT_AS_CREATOR:
-            applicationFormService.openApplicationForEdit(applicationForm, user);
-            return TemplateLocation.APPLICATION_APPLICANT_FORM;
-        case APPLICATION_EDIT_AS_ADMINISTRATOR:
-            return RedirectLocation.UPDATE_APPLICATION_AS_STAFF + applicationForm.getApplicationNumber();
-        case APPLICATION_VIEW_AS_CREATOR:
-        case APPLICATION_VIEW_AS_REFEREE:
-        case APPLICATION_VIEW_AS_RECRUITER:
-            return getApplicationView(applicationForm, user, request);
-        default:
-            throw new ResourceNotFoundException();
-        }
-
-    }
-
-    @ModelAttribute
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        List<ApplicationFormAction> viewActions = actionService.getActionIdByActionType(ActionType.APPLICATION_VIEW_EDIT);
-        return applicationFormService.getSecuredApplication(applicationId, viewActions.toArray(new ApplicationFormAction[viewActions.size()]));
-    }
-
-    private String getApplicationView(ApplicationForm application, User user, HttpServletRequest request) {
+        ApplicationForm application = applicationFormService.getByApplicationNumber(applicationNumber);
         applicationFormService.openApplicationForView(application, user);
         if (request != null && request.getParameter("embeddedApplication") != null && request.getParameter("embeddedApplication").equals("true")) {
             return TemplateLocation.APPLICATION_STAFF_EMBEDDED_FORM;
         }
         return TemplateLocation.APPLICATION_STAFF_FORM;
+
     }
 
 }

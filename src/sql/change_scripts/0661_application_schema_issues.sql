@@ -107,9 +107,9 @@ INSERT INTO COMMENT (application_id, action_id, user_id, role_id, created_timest
 /* Application assess eligibility comments */
 
 ALTER TABLE COMMENT
-	ADD COLUMN application_qualified VARCHAR(30),
-	ADD COLUMN application_competent_in_work_language VARCHAR(30),
-	ADD COLUMN application_residence_status VARCHAR(30)
+	ADD COLUMN application_qualified VARCHAR(30) AFTER transition_state_id,
+	ADD COLUMN application_competent_in_work_language VARCHAR(30) AFTER application_qualified,
+	ADD COLUMN application_residence_status VARCHAR(30) AFTER application_competent_in_work_language
 ;
 
 UPDATE COMMENT INNER JOIN VALIDATION_COMMENT
@@ -123,12 +123,6 @@ SET COMMENT.action_id = "APPLICATION_ASSESS_ELIGIBILITY",
 ;
 
 DROP TABLE VALIDATION_COMMENT
-;
-
-/* Rearrange comment table */
-
-ALTER TABLE COMMENT
-	MODIFY COLUMN action_id VARCHAR(100) AFTER delegate_role_id
 ;
 
 /* Application confirm eligibility comments */
@@ -145,16 +139,30 @@ SET COMMENT.action_id = "APPLICATION_CONFIRM_ELIGIBILITY",
 DROP TABLE ADMITTER_COMMENT
 ;
 
+/* Rearrange comment table */
+
+ALTER TABLE COMMENT
+	ADD COLUMN use_custom_referee_questions INT(1) UNSIGNED,
+	MODIFY COLUMN action_id VARCHAR(100) AFTER delegate_role_id
+;
+
 /* Application complete validation comments */
 
-INSERT INTO COMMENT (application_id, action_id, user_id, role_id, content, created_timestamp, transition_state_id)
+INSERT INTO COMMENT (application_id, action_id, user_id, role_id, content, created_timestamp, transition_state_id, use_custom_referee_questions)
 	SELECT COMMENT.application_id, "APPLICATION_COMPLETE_VALIDATION_STAGE", COMMENT.user_id, COMMENT.role_id, COMMENT.content, COMMENT.created_timestamp, 
-	CONCAT("APPLICATION_", STATECHANGE_COMMENT.next_status)
+		CONCAT("APPLICATION_", STATECHANGE_COMMENT.next_status), STATECHANGE_COMMENT.use_custom_reference_questions
 	FROM COMMENT INNER JOIN STATECHANGE_COMMENT
 		ON COMMENT.id = STATECHANGE_COMMENT.id
 	WHERE COMMENT.action_id = "APPLICATION_ASSESS_ELIGIBILITY"
 ;
-	
+
+INSERT INTO COMMENT_ASSIGNED_USER (comment_id, user_id, role_id)
+	SELECT id, user_id, "APPLICATION_ADMINISTRATOR"
+	FROM STATECHANGE_COMMENT
+	WHERE comment_type = "VALIDATION"
+		AND user_id IS NOT NULL
+;
+
 /* Provide reference comment */
 
 ALTER TABLE COMMENT_CUSTOM_QUESTION

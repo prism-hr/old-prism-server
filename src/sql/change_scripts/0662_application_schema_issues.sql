@@ -1,4 +1,4 @@
-/* Provide reference comment */
+/* Provide reference comment continued */
 
 ALTER TABLE COMMENT
 	ADD COLUMN application_suitable_for_institution INT(1) UNSIGNED AFTER application_residence_status,
@@ -66,14 +66,17 @@ ALTER TABLE APPLICATION_QUALIFICATION
 /* Assign reviewers comment */
 
 ALTER TABLE COMMENT
-	ADD COLUMN review_round_id INT(10) UNSIGNED
+	ADD COLUMN review_round_id INT(10) UNSIGNED,
+	ADD COLUMN use_custom_questions INT(1) UNSIGNED AFTER application_rating
 ;
 		
-INSERT INTO COMMENT (application_id, action_id, user_id, role_id, created_timestamp, review_round_id)
+INSERT INTO COMMENT (application_id, action_id, user_id, role_id, created_timestamp, transition_state_id, use_custom_questions, review_round_id)
 	SELECT EVENT.application_form_id, "ASSIGN_REVIEWERS", EVENT.user_id, "PROGRAM_ADMINISTRATOR", 
-		EVENT.event_date, REVIEW_STATE_CHANGE_EVENT.review_round_id
+		EVENT.event_date, "APPLICATION_REVIEW_PENDING_FEEDBACK", REVIEW_ROUND.use_custom_questions, REVIEW_ROUND.id
 	FROM REVIEW_STATE_CHANGE_EVENT INNER JOIN EVENT
 		ON REVIEW_STATE_CHANGE_EVENT.id = EVENT.id
+	INNER JOIN REVIEW_ROUND
+		ON REVIEW_STATE_CHANGE_EVENT.review_round_id = REVIEW_ROUND.id
 ;
 
 INSERT IGNORE INTO COMMENT_ASSIGNED_USER (comment_id, user_id, role_id)

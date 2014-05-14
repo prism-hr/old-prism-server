@@ -244,4 +244,14 @@ public class Program extends Advert implements PrismScope {
         return this;
     }
 
+    @Override
+    public String getScopeName() {
+        return "program";
+    }
+    
+    @Override
+    public PrismSystem getSystem() {
+        return getInstitution().getSystem();
+    }
+
 }

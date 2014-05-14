@@ -406,11 +406,11 @@ public class WorkflowService {
         Project project = applicationForm.getProject();
         if (project != null) {
             User primarySupervisor = roleService.getUserInRole(project, Authority.PROJECT_PRIMARY_SUPERVISOR);
-            administrators.put(primarySupervisor, Authority.PROJECTADMINISTRATOR);
+            administrators.put(primarySupervisor, Authority.PROJECT_ADMINISTRATOR);
 
             User projectAdministrator = project.getUser();
             if (projectAdministrator != null) {
-                administrators.put(projectAdministrator, Authority.PROJECTADMINISTRATOR);
+                administrators.put(projectAdministrator, Authority.PROJECT_ADMINISTRATOR);
             }
         }
 

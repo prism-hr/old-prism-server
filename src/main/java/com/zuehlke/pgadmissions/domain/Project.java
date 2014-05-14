@@ -78,5 +78,20 @@ public class Project extends Advert implements PrismScope {
         setId(id);
         return this;
     }
+    
+    @Override
+    public String getScopeName() {
+        return "project";
+    }
+
+    @Override
+    public PrismSystem getSystem() {
+        return getInstitution().getSystem();
+    }
+
+    @Override
+    public Institution getInstitution() {
+        return getProgram().getInstitution();
+    }
 
 }

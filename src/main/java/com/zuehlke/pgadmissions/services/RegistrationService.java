@@ -59,7 +59,7 @@ public class RegistrationService {
         } else {
             // User is an applicant
             user = processPendingApplicantUser(pendingUser);
-            // FIXME add applicant role to the user
+            // FIXME add program_application_creator or project_application_creator role to the user
             userService.save(user);
         }
 

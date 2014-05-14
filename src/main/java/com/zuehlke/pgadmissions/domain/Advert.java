@@ -164,6 +164,8 @@ public abstract class Advert implements Serializable {
     public abstract Program getProgram();
 
     public abstract Project getProject();
+    
+    public abstract String getType();
 
     public abstract String getTitle();
 

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.TypeLocatorImpl;
 import org.hibernate.transform.Transformers;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
@@ -42,22 +40,12 @@ public class ActionDAO {
                 .add(Restrictions.eq("id", actionId)).uniqueResult();
     }
     
-    public List<ApplicationFormAction> getActionIdByActionType(ActionType actionType) {
-        return (List<ApplicationFormAction>) sessionFactory.getCurrentSession().createCriteria(Action.class)
-                .setProjection(Projections.property("id"))
-                .add(Restrictions.eq("actionType", actionType)).list();
-    }
-    
     public List<ActionDefinition> getUserActions(Integer applicationFormId, Integer userId) {
-        return getUserActionsAbstract(applicationFormId, userId, null, null);
+        return getUserActionsAbstract(applicationFormId, userId, null);
     }
     
     public List<ActionDefinition> getUserActionById(Integer applicationFormId, Integer userId, ApplicationFormAction action) {
-        return getUserActionsAbstract(applicationFormId, userId, action, null);
-    }
-    
-    public List<ActionDefinition> getUserActionByActionType(Integer applicationFormId, Integer userId, ActionType actionType) {
-        return getUserActionsAbstract(applicationFormId, userId, null, actionType);
+        return getUserActionsAbstract(applicationFormId, userId, action);
     }
     
     public void deleteApplicationActions(ApplicationForm applicationForm) {
@@ -85,7 +73,7 @@ public class ActionDAO {
                 .setString(3, action.toString()).executeUpdate();
     }
     
-    private List<ActionDefinition> getUserActionsAbstract(Integer applicationFormId, Integer userId, ApplicationFormAction action, ActionType actionType) {
+    private List<ActionDefinition> getUserActionsAbstract(Integer applicationFormId, Integer userId, ApplicationFormAction action) {
         Properties customDTOProperties = new Properties();
         customDTOProperties.put("enumClass", ApplicationFormAction.class.getCanonicalName());
         customDTOProperties.put("type", "12");
@@ -97,7 +85,6 @@ public class ActionDAO {
                 .setInteger(0, applicationFormId)
                 .setInteger(1, userId))
                 .setString(2, action.toString())
-                .setString(3, actionType.toString())
                 .setResultTransformer(Transformers.aliasToBean(ActionDefinition.class)).list();
     }
 	

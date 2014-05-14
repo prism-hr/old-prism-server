@@ -23,7 +23,7 @@ public class State {
     @ManyToOne
     @JoinColumn(name = "parent_state_id")
     private State parentState;
-
+    
     public PrismState getId() {
         return id;
     }

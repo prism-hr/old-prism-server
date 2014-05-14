@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
@@ -76,7 +75,7 @@ public class OfferRecommendationController {
 
         OfferRecommendedComment offerRecommendedComment = new OfferRecommendedComment();
         AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService.getLatestStateChangeComment(application,
-                ActionType.APPLICATION_COMPLETE_APPROVAL_STAGE);
+                ApplicationFormAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         if (approvalComment != null) {
             offerRecommendedComment.setProjectTitle(approvalComment.getProjectTitle());
             offerRecommendedComment.setProjectAbstract(approvalComment.getProjectAbstract());

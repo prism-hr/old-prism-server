@@ -21,4 +21,12 @@ public class EntityService {
         return entityDAO.getBy(klass, propertyName, propertyValue);
     }
 
+    public void save(Object entity) {
+        entityDAO.save(entity);
+    }
+
+    public void update(Object entity) {
+        entityDAO.update(entity);
+    }
+
 }

@@ -78,7 +78,7 @@ public class Project extends Advert implements PrismScope {
         setId(id);
         return this;
     }
-    
+
     @Override
     public String getScopeName() {
         return "project";
@@ -92,6 +92,11 @@ public class Project extends Advert implements PrismScope {
     @Override
     public Institution getInstitution() {
         return getProgram().getInstitution();
+    }
+
+    @Override
+    public String getType() {
+        return "project";
     }
 
 }

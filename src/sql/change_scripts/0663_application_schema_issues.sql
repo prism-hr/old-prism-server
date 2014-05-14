@@ -21,10 +21,6 @@ DROP TABLE REVIEW_COMMENT
 ;
 
 /* Review evaluation comment */
-
-ALTER TABLE COMMENT
-	ADD COLUMN use_custom_recruiter_questions INT(1) UNSIGNED
-;
 	
 UPDATE COMMENT INNER JOIN REVIEW_EVALUATION_COMMENT
 	ON COMMENT.id = REVIEW_EVALUATION_COMMENT.id
@@ -46,7 +42,27 @@ INSERT INTO COMMENT_ASSIGNED_USER (comment_id, user_id, role_id)
 DROP TABLE REVIEW_EVALUATION_COMMENT
 ;
 
-/* Assign interviewer comment */
+/* Is under consideration property for states */
+
+ALTER TABLE STATE
+	ADD COLUMN is_under_assessment INT(1) UNSIGNED
+;
+
+UPDATE STATE
+SET is_under_assessment = 0
+;
+
+UPDATE STATE
+SET is_under_assessment = 1
+WHERE parent_state_id IN ("APPLICATION_VALIDATION", "APPLICATION_REVIEW",
+	"APPLICATION_INTERVIEW", "APPLICATION_APPROVAL", "PROGRAM_MODIFIABLE")
+	OR id IN ("APPLICATION_APPROVED", "APPLICATION_REJECTED")
+;
+
+
+ALTER TABLE STATE
+	MODIFY COLUMN is_under_assessment INT(1) UNSIGNED NOT NULL
+;
 
 /* Assign application administrators */
 /* Assign use custom question flags */

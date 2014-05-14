@@ -67,10 +67,10 @@ ALTER TABLE APPLICATION_QUALIFICATION
 
 ALTER TABLE COMMENT
 	ADD COLUMN review_round_id INT(10) UNSIGNED,
-	ADD COLUMN use_custom_questions INT(1) UNSIGNED AFTER application_rating
+	ADD COLUMN use_custom_recruiter_questions INT(1) UNSIGNED
 ;
 		
-INSERT INTO COMMENT (application_id, action_id, user_id, role_id, created_timestamp, transition_state_id, use_custom_questions, review_round_id)
+INSERT INTO COMMENT (application_id, action_id, user_id, role_id, created_timestamp, transition_state_id, use_custom_recruiter_questions, review_round_id)
 	SELECT EVENT.application_form_id, "ASSIGN_REVIEWERS", EVENT.user_id, "PROGRAM_ADMINISTRATOR", 
 		EVENT.event_date, "APPLICATION_REVIEW_PENDING_FEEDBACK", REVIEW_ROUND.use_custom_questions, REVIEW_ROUND.id
 	FROM REVIEW_STATE_CHANGE_EVENT INNER JOIN EVENT
@@ -113,7 +113,7 @@ ALTER TABLE REVIEW_EVALUATION_COMMENT
 DROP TABLE REVIEW_ROUND
 ;
 
-/* Recreate foreign key on role inheritance */
+/* Recreate primary key on role inheritance */
 
 ALTER TABLE ROLE_INHERITANCE
 	DROP PRIMARY KEY,

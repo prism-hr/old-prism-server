@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
 public interface PrismScope {
+    
+    public Integer getId();
 
     public String getScopeName();
     

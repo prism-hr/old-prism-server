@@ -34,4 +34,8 @@ public class EntityDAO {
         return sessionFactory.getCurrentSession().save(entity);
     }
 
+    public void update(Object entity) {
+        sessionFactory.getCurrentSession().update(entity);
+    }
+
 }

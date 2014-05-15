@@ -81,7 +81,6 @@ public class RejectApplicationController {
 
         rejectService.moveApplicationToReject(application, rejection);
         rejectService.sendToPortico(application);
-        actionService.deleteApplicationActions(application);
         applicationFormUserRoleService.applicationUpdated(application, user);
         return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
     }

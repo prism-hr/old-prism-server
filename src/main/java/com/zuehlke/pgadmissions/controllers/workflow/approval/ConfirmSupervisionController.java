@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.ConfirmSupervisionDTO;
@@ -86,7 +85,7 @@ public class ConfirmSupervisionController {
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
 
         ApplicationForm applicationForm = getApplicationForm(applicationId);
-        CompleteApprovalComment comment = (CompleteApprovalComment) applicationsService.getLatestStateChangeComment(applicationForm, ActionType.APPLICATION_COMPLETE_APPROVAL_STAGE);
+        CompleteApprovalComment comment = (CompleteApprovalComment) applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
 
         confirmSupervisionDTO.setProjectTitle(comment.getProjectTitle());
         confirmSupervisionDTO.setProjectAbstract(comment.getProjectAbstract());

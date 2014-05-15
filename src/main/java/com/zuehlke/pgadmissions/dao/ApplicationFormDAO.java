@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
-import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
@@ -161,9 +160,11 @@ public class ApplicationFormDAO {
     }
 
     public ApplicationForm getInProgressApplication(final User applicant, final Advert advert) {
-        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).createAlias("status", "state", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("applicant", applicant)).add(Restrictions.eq("advert", advert)).add(Restrictions.eq("state.completed", false))
-                .addOrder(Order.desc("createdDate")).addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
+        return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).createAlias("state", "state", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("user", applicant))                
+                .add(Restrictions.eq(advert.getType(), advert))
+                .add(Restrictions.eq("state.completed", false)).addOrder(Order.desc("createdDate"))
+                .addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
     }
 
     public Boolean getRaisesUpdateFlagForUser(ApplicationForm application, User user) {
@@ -193,26 +194,26 @@ public class ApplicationFormDAO {
 
     public void deleteProgramRole(User user, Program program, Authority authority) {
         // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_PROGRAM_ROLE(?, ?, ?);").setInteger(0, user.getId())
-                .setInteger(1, program.getId()).setString(2, authority.toString()).executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_PROGRAM_ROLE(?, ?, ?);").setInteger(0, user.getId()).setInteger(1, program.getId())
+                .setString(2, authority.toString()).executeUpdate();
     }
 
     public void deleteUserRole(User user, Authority authority) {
         // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_USER_ROLE(?, ?);").setInteger(0, user.getId())
-                .setString(1, authority.toString()).executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_DELETE_USER_ROLE(?, ?);").setInteger(0, user.getId()).setString(1, authority.toString())
+                .executeUpdate();
     }
 
     public void insertProgramRole(User user, Program program, Authority authority) {
         // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_INSERT_PROGRAM_ROLE(?, ?, ?);").setInteger(0, user.getId())
-                .setInteger(1, program.getId()).setString(2, authority.toString()).executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_INSERT_PROGRAM_ROLE(?, ?, ?);").setInteger(0, user.getId()).setInteger(1, program.getId())
+                .setString(2, authority.toString()).executeUpdate();
     }
 
     public void insertUserRole(User user, Authority authority) {
         // FIXME: rewrite as HQL statement
-        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_INSERT_USER_ROLE(?, ?);").setInteger(0, user.getId())
-                .setString(1, authority.toString()).executeUpdate();
+        sessionFactory.getCurrentSession().createSQLQuery("CALL SP_INSERT_USER_ROLE(?, ?);").setInteger(0, user.getId()).setString(1, authority.toString())
+                .executeUpdate();
     }
 
     public void updateApplicationDueDate(ApplicationForm applicationForm, Date deadlineTimestamp) {
@@ -232,7 +233,7 @@ public class ApplicationFormDAO {
         sessionFactory.getCurrentSession().createSQLQuery("CALL SP_UPDATE_URGENT_APPLICATIONS();").executeUpdate();
     }
 
-    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ActionType applicationCompleteApprovalStage) {
+    public Comment getLatestStateChangeComment(ApplicationForm applicationForm) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class).uniqueResult();
     }
 

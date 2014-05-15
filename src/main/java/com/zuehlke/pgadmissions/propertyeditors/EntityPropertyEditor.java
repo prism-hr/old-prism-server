@@ -4,8 +4,6 @@ import java.beans.PropertyEditorSupport;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.services.EntityService;
 

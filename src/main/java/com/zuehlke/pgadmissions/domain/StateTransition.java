@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.enums.StateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.enums.StateTransitionType;
 
 @Entity
-@Table(name = "STATE")
+@Table(name = "STATE_TRANSITION")
 public class StateTransition {
 
     @Id

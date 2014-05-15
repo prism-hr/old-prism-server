@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -50,13 +51,14 @@ public class StateDAO {
                 .add(Restrictions.eq("canBeAssignedFrom", true)).list();
     }
 
-    public List<StateTransition> getStateTransitions(State state, ApplicationFormAction action) {
+    public List<StateTransition> getStateTransitions(PrismState state, ApplicationFormAction action) {
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
-                .createAlias("stateAction", "stateAction") //
-                .add(Restrictions.eq("stateAction.state", state)) //
-                .add(Restrictions.eq("stateAction.action", action))
-                .addOrder(Order.asc("type"))
-                .addOrder(Order.asc("processingOrder"));
+                .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("stateAction.state.id", state)) //
+                .add(Restrictions.eq("stateAction.action.id", action)) //
+                .addOrder(Order.asc("type")) //
+                .addOrder(Order.asc("processingOrder")) //
+                .list();
     }
 
 }

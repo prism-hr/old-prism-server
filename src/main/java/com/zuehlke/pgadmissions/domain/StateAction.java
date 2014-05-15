@@ -7,10 +7,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
-
 @Entity
-@Table(name = "STATE")
+@Table(name = "STATE_ACTION")
 public class StateAction {
 
     @Id
@@ -18,7 +16,7 @@ public class StateAction {
 
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
-    private PrismState stateId;
+    private State state;
 
     @ManyToOne
     @JoinColumn(name = "action_id", nullable = false)
@@ -42,12 +40,12 @@ public class StateAction {
         this.id = id;
     }
 
-    public PrismState getStateId() {
-        return stateId;
+    public State getState() {
+        return state;
     }
 
-    public void setStateId(PrismState stateId) {
-        this.stateId = stateId;
+    public void setState(State stateId) {
+        this.state = stateId;
     }
 
     public Action getAction() {

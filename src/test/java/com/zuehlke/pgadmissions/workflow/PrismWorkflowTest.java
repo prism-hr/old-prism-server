@@ -99,13 +99,14 @@ public class PrismWorkflowTest {
         User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl")
                 .withAccount(new UserAccount().withPassword("password")), program);
 
-        // TODO assert that (program|project)_create_application action exists
+        assertTrue(actionService.canExecute(applicant, program, ApplicationFormAction.PROGRAM_CREATE_APPLICATION));
 
         applicant = registrationService.activateAccount(applicant.getActivationCode());
 
         ActionOutcome actionOutcome = actionService.executeAction(applicant, ApplicationFormAction.PROGRAM_CREATE_APPLICATION, program.getId());
         System.out.println(actionOutcome.createRedirectionUrl());
 
+        assertTrue(actionService.canExecute(applicant, program, ApplicationFormAction.APPLICATION_COMPLETE));
         // TODO assert that application_complete action exists
 
         // applicationFormService.submitApplication(application);

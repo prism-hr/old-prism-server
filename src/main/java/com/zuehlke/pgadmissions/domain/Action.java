@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,9 +15,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 @Entity
 @Table(name = "ACTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class Action implements Serializable {
-
-    private static final long serialVersionUID = 52046298022482941L;
+public class Action {
 
     @Id
     @Column(name = "id")

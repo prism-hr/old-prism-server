@@ -57,7 +57,11 @@ public class ActionService {
     public List<ActionDefinition> getUserActions(Integer applicationFormId, Integer userId) {
         return actionDAO.getUserActions(applicationFormId, userId);
     }
-
+    
+    public boolean canExecute(User user, PrismScope scope, ApplicationFormAction action) {
+        return actionDAO.canExecute(user, scope, action);
+    }
+    
     public ActionOutcome executeAction(User user, ApplicationFormAction action, Integer scopeId) {
         String actionName = action.name();
         String scopeName = actionName.substring(0, actionName.indexOf('_'));
@@ -95,7 +99,7 @@ public class ActionService {
     }
 
     private ApplicationFormAction performTransition(ApplicationFormAction action, PrismScope scope) {
-        List<StateTransition> stateTransitions = stateDAO.getStateTransitions(scope.getState(), action);
+        List<StateTransition> stateTransitions = stateDAO.getStateTransitions(scope.getState().getId(), action);
         
         if(stateTransitions.size() == 1) {
             StateTransition transition = stateTransitions.get(0);

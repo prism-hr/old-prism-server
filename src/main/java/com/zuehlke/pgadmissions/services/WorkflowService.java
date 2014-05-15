@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
@@ -425,7 +423,7 @@ public class WorkflowService {
         for (Entry<User, Authority> administrator : administrators.entrySet()) {
             Boolean raisesUrgentFlag = dueDate.before(new Date());
 
-            List<ActionRequired> requiredActions = new ArrayList<ActionRequired>();
+//            List<ActionRequired> requiredActions = new ArrayList<ActionRequired>();
 //            requiredActions.add(new ApplicationFormActionRequired(actionDAO.getById(action), dueDate, bindDeadlineToDueDate, raisesUrgentFlag));
 //
 //            if (INITIATE_STAGE_MAP.containsValue(action)) {

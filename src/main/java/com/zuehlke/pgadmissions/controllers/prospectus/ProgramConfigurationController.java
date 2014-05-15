@@ -170,7 +170,6 @@ public class ProgramConfigurationController {
         result.put("atasRequired", program.getRequireProjectDefinition());
         result.put("programType", program.getProgramType().getId());
         result.put("institutionCountryCode", encryptionHelper.encrypt(institutionCountry.getId()));
-        result.put("institutionCode", program.getInstitution().getCode());
         // TODO check if locked
 //        result.put("programLock", program.getLocked());
         result.put("advertisingDeadline", programInstanceService.getAdvertisingDeadlineYear(program));

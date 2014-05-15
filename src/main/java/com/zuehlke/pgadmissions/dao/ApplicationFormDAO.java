@@ -163,7 +163,7 @@ public class ApplicationFormDAO {
         return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).createAlias("state", "state", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("user", applicant))                
                 .add(Restrictions.eq(advert.getType(), advert))
-                .add(Restrictions.eq("state.completed", false)).addOrder(Order.desc("createdDate"))
+                .add(Restrictions.eq("state.underAssessment", true)).addOrder(Order.desc("createdTimestamp"))
                 .addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
     }
 

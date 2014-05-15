@@ -41,9 +41,6 @@ public class Institution implements PrismScope {
     @JoinColumn(name = "institution_domicile_id", nullable = false)
     private InstitutionDomicile domicile;
 
-    @Column(name = "code", nullable = false)
-    private String code;
-
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -91,14 +88,6 @@ public class Institution implements PrismScope {
         this.domicile = domicile;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
     public Institution withId(Integer id) {
         this.id = id;
         return this;
@@ -124,11 +113,6 @@ public class Institution implements PrismScope {
         return this;
     }
 
-    public Institution withCode(String code) {
-        this.code = code;
-        return this;
-    }
-    
     @Override
     public String getScopeName() {
         return "institution";

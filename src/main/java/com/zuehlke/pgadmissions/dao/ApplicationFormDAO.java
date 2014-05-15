@@ -162,7 +162,7 @@ public class ApplicationFormDAO {
     public ApplicationForm getInProgressApplication(final User applicant, final Advert advert) {
         return (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).createAlias("state", "state", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("user", applicant))                
-                .add(Restrictions.eq(advert.getType(), advert))
+                .add(Restrictions.eq(advert.getAdvertType().name().toLowerCase(), advert))
                 .add(Restrictions.eq("state.underAssessment", true)).addOrder(Order.desc("createdTimestamp"))
                 .addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
     }

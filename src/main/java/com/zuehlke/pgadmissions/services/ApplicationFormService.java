@@ -32,8 +32,8 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ReportFormat;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
 @Service
 @Transactional
@@ -170,7 +170,7 @@ public class ApplicationFormService {
     public ApplicationForm getSecuredApplication(final String applicationId, final ApplicationFormAction... actions) {
         ApplicationForm application = getByApplicationNumber(applicationId);
         if (application == null) {
-            throw new MissingApplicationFormException(applicationId);
+            throw new ResourceNotFoundException();
         }
         User user = userService.getCurrentUser();
         for (ApplicationFormAction action : actions) {
@@ -178,7 +178,7 @@ public class ApplicationFormService {
                 return application;
             }
         }
-        throw new ActionNoLongerRequiredException(application.getApplicationNumber());
+        throw new CannotExecuteActionException(application);
     }
 
     public void saveOrUpdateApplicationSection(ApplicationForm application) {

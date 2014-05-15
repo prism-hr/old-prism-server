@@ -252,9 +252,4 @@ public class Program extends Advert {
         return getInstitution().getSystem();
     }
 
-    @Override
-    public String getType() {
-        return "program";
-    }
-
 }

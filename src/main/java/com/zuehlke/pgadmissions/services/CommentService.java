@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.dto.StateChangeDTO;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
+import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 
 @Service
 @Transactional
@@ -111,7 +111,7 @@ public class CommentService {
             stateChangeComment = new CompleteApprovalComment();
             break;
         default:
-            throw new ActionNoLongerRequiredException(applicationForm.getApplicationNumber());
+            throw new CannotExecuteActionException(applicationForm);
         }
 
         stateChangeComment.setApplication(applicationForm);

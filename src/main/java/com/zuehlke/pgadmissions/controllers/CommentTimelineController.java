@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -39,7 +39,7 @@ public class CommentTimelineController {
 	public ApplicationForm getApplicationForm(@RequestParam String id) {
 		ApplicationForm applicationForm = applicationService.getByApplicationNumber(id);
 		if (applicationForm == null) {
-			throw new MissingApplicationFormException(id);
+			throw new ResourceNotFoundException(id);
 		}
 		return applicationForm;
 	}

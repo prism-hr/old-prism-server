@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
-import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
+import com.zuehlke.pgadmissions.exceptions.PrismException;
 
 import freemarker.template.Template;
 
@@ -39,7 +39,7 @@ public class ApplyTemplateRenderer {
             linkToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(ApplyTemplateRenderer.LINK_TO_APPLY);
             buttonToApplyTemplate = freeMarkerConfigurer.getConfiguration().getTemplate(ApplyTemplateRenderer.BUTTON_TO_APPLY);
         } catch (IOException e) {
-            throw new PgadmissionsException(e);
+            throw new PrismException(e);
         }
     }
 

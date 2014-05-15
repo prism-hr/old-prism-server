@@ -16,16 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -78,7 +73,8 @@ public class RegistrationController {
         }
 
         Integer advertId = (Integer) request.getSession().getAttribute("requestAdvertId");
-        User user = registrationService.submitRegistration(pendingUser);
+        Advert advert = programService.getById(advertId);
+        User user = registrationService.submitRegistration(pendingUser, advert);
         model.addAttribute("pendingUser", user);
         return TemplateLocation.REGISTRATION_SUCCESS_CONFIRMATION;
     }

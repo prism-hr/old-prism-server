@@ -95,7 +95,7 @@ public class PrismWorkflowTest {
 
         Program program = programService.getAllEnabledPrograms().get(0);
 
-        User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl").withAccount(new UserAccount().withPassword("password")));
+        User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl").withAccount(new UserAccount().withPassword("password")), null);
 
         // TODO assert that (program|project)_create_application action exists
 

@@ -32,9 +32,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Table(name = "PROGRAM", uniqueConstraints = { @UniqueConstraint(columnNames = { "code", "institution_id" }),
         @UniqueConstraint(columnNames = { "title", "institution_id" }) })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Program extends Advert implements PrismScope {
-
-    private static final long serialVersionUID = -9073611033741317582L;
+public class Program extends Advert {
 
     @Column(name = "state_id")
     @Enumerated(EnumType.STRING)
@@ -248,12 +246,12 @@ public class Program extends Advert implements PrismScope {
     public String getScopeName() {
         return "program";
     }
-    
+
     @Override
     public PrismSystem getSystem() {
         return getInstitution().getSystem();
     }
-    
+
     @Override
     public String getType() {
         return "program";

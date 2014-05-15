@@ -15,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
-import com.zuehlke.pgadmissions.domain.Action;
-import com.zuehlke.pgadmissions.domain.ActionRequired;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -152,7 +150,6 @@ public class ApplicationFormService {
         case APPLICATION_WITHDRAWN:
             application.setDueDate(null);
             application.setClosingDate(null);
-            actionService.deleteApplicationActions(application);
         }
         
 
@@ -166,8 +163,6 @@ public class ApplicationFormService {
         }
         applicationForm = createApplication(applicant, advert);
         autoPopulateApplication(applicationForm);
-        addSuggestedSupervisorsFromProject(applicationForm);
-        workflowService.applicationCreated(applicationForm);
         log.info("New application form created: " + applicationForm.getApplicationNumber());
         return applicationForm;
     }
@@ -216,10 +211,7 @@ public class ApplicationFormService {
 
     public void applicationCreated(ApplicationForm application) {
         User applicant = application.getUser();
-        Action action = actionService.getById(ApplicationFormAction.APPLICATION_COMPLETE);
         Role role = roleService.getById(Authority.APPLICATION_CREATOR);
-        ActionRequired completeApplicationAction = new ActionRequired().withApplication(application).withRole(role).withAction(action).withDeadlineDate(application.getDueDate())
-                .withBindDeadlineToDueDate(false).withRaisesUrgentFlag(true);
         // TODO save action
         roleService.getOrCreateUserRole(application, applicant, Authority.APPLICATION_CREATOR);
     }

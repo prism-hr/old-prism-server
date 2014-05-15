@@ -20,8 +20,6 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 public class RegistrationService {
     // TODO fix tests
 
-    private final Logger log = LoggerFactory.getLogger(RegistrationService.class);
-
     @Autowired
     private EncryptionUtils encryptionUtils;
 

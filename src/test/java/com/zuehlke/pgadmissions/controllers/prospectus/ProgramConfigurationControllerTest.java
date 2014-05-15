@@ -98,7 +98,7 @@ public class ProgramConfigurationControllerTest {
     @SuppressWarnings("unchecked")
     public void shouldGetOpportunityData() {
         InstitutionDomicile domicile = new InstitutionDomicile();
-        Program program = new Program().withCode("07").withInstitution(new Institution().withDomicile(domicile).withCode("inst"))
+        Program program = new Program().withCode("07").withInstitution(new Institution().withDomicile(domicile))
                 .withId(999).withTitle("Dlaczego w pizdzie nie ma krzesel?").withDescription("Zeby chuj stal").withStudyDuration(8)
                 .withFunding("Ni ma kasy").withState(ProgramState.PROGRAM_APPROVED).withRequireProjectDefinition(false)
                 .withProgramType(new ProgramTypeBuilder().id(ProgramTypeId.INTERNSHIP).build());

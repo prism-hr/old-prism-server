@@ -33,7 +33,7 @@ public class TestData {
     }
     
     public static Institution aInstitution(InstitutionDomicile domicile) {
-        return new Institution().withCode("AGH").withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile)
+        return new Institution().withName("Akademia G\u00F3rniczo-Hutnicza").withDomicile(domicile)
                 .withState(new State().withId(PrismState.INSTITUTION_APPROVED));
     }
 

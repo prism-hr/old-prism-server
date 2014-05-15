@@ -29,8 +29,9 @@ import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.XMLDataImportException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.referencedata.v2.jaxb.ProgrammeOccurrences.ProgrammeOccurrence;
@@ -209,7 +210,7 @@ public class EntityImportService {
     public Program getOrCreateProgram(Programme programme, Institution institution) {
         Program program = programService.getProgramByCode(programme.getCode());
         if (program == null) {
-            program = new Program().withInstitution(institution).withCode(programme.getCode()).withState(ProgramState.PROGRAM_APPROVED);
+            program = new Program().withInstitution(institution).withCode(programme.getCode()).withState(new State().withId(PrismState.PROGRAM_APPROVED));
             entityDAO.save(program);
         }
 

@@ -34,11 +34,11 @@ import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
-import com.zuehlke.pgadmissions.domain.enums.ProjectState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 
@@ -169,7 +169,7 @@ public class ProgramsServiceTest {
         programsService.removeProject(1);
         verify();
 
-        assertEquals(ProjectState.PROJECT_DISABLED, project.getState());
+        assertEquals(PrismState.PROJECT_DISABLED, project.getState().getId());
     }
 
     @Test
@@ -222,7 +222,7 @@ public class ProgramsServiceTest {
         assertEquals(program.getRequireProjectDefinition(), opportunityRequest.getAtasRequired());
         assertEquals(program.getStudyDuration(), opportunityRequest.getStudyDuration());
         assertEquals(program.getFunding(), opportunityRequest.getFunding());
-        assertEquals(ProgramState.PROGRAM_APPROVED, program.getState());
+        assertEquals(PrismState.PROGRAM_APPROVED, program.getState().getId());
         assertSame(program.getProgramType(), opportunityRequest.getProgramType());
         assertSame(program.getUser(), requestAuthor);
     }
@@ -243,7 +243,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldUpdateClosingDate() {
-        Program program = new Program().withCode("AAA_00018").withDescription("program").withStudyDuration(12).withState(ProgramState.PROGRAM_APPROVED);
+        Program program = new Program().withCode("AAA_00018").withDescription("program").withStudyDuration(12).withState(new State().withId(PrismState.PROGRAM_APPROVED));
         AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).advert(program).build();
         programDAOMock.updateClosingDate(closingDate);
         replay();
@@ -253,7 +253,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldAddClosingDateToProgram() {
-        Program program = new Program().withCode("AAA_00018").withDescription("program").withStudyDuration(12).withState(ProgramState.PROGRAM_APPROVED);
+        Program program = new Program().withCode("AAA_00018").withDescription("program").withStudyDuration(12).withState(new State().withId(PrismState.PROGRAM_APPROVED));
         AdvertClosingDate closingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).advert(program).build();
         programDAOMock.save(program);
         replay();

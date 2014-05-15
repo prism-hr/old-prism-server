@@ -30,8 +30,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
 import com.zuehlke.pgadmissions.domain.enums.NotificationMethod;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
-import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 
 public class TestObjectProvider {
 
@@ -99,27 +97,27 @@ public class TestObjectProvider {
     }
 
     public Program getEnabledProgram() {
-        return getProgram(ProgramState.PROGRAM_APPROVED, null);
+        return getProgram(PrismState.PROGRAM_APPROVED, null);
     }
 
     public Program getDisabledProgram() {
-        return getProgram(ProgramState.PROGRAM_DISABLED, null);
+        return getProgram(PrismState.PROGRAM_DISABLED, null);
     }
 
     public Project getEnabledProject() {
-        return getProject(ProjectState.PROJECT_APPROVED);
+        return getProject(PrismState.PROJECT_APPROVED);
     }
 
     public Project getDisabledProject() {
-        return getProject(ProjectState.PROJECT_DISABLED);
+        return getProject(PrismState.PROJECT_DISABLED);
     }
 
     public Program getAlternativeEnabledProgram(Program program) {
-        return getProgram(ProgramState.PROGRAM_APPROVED, program);
+        return getProgram(PrismState.PROGRAM_APPROVED, program);
     }
 
     public Program getAlternativeDisabledProgram(Program program) {
-        return getProgram(ProgramState.PROGRAM_DISABLED, program);
+        return getProgram(PrismState.PROGRAM_DISABLED, program);
     }
 
     public Role getRole(Authority authority) {
@@ -215,8 +213,8 @@ public class TestObjectProvider {
         return null;
     }
 
-    private Program getProgram(ProgramState state, Program alternativeOf) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("state", state));
+    private Program getProgram(PrismState state, Program alternativeOf) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("state.id", state));
 
         if (alternativeOf != null) {
             criteria.add(Restrictions.ne("id", alternativeOf.getId()));
@@ -225,9 +223,9 @@ public class TestObjectProvider {
         return (Program) criteria.setMaxResults(1).uniqueResult();
     }
 
-    private Project getProject(ProjectState state) {
+    private Project getProject(PrismState state) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Project.class).createAlias("program", "program", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("state", state));
+                .add(Restrictions.eq("state.id", state));
 
         return (Project) criteria.setMaxResults(1).uniqueResult();
     }

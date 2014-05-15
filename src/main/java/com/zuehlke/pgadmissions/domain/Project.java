@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,7 +11,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
-import com.zuehlke.pgadmissions.domain.enums.ProjectState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
@@ -25,9 +23,9 @@ public class Project extends Advert {
     @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
-    @Column(name = "state_id")
-    @Enumerated(EnumType.STRING)
-    private ProjectState state;
+    @ManyToOne
+    @JoinColumn(name = "state_id", nullable = false)
+    private State state;
 
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 255)
     @Column(name = "title")
@@ -41,11 +39,11 @@ public class Project extends Advert {
         this.program = program;
     }
 
-    public ProjectState getState() {
+    public State getState() {
         return state;
     }
 
-    public void setState(ProjectState state) {
+    public void setState(State state) {
         this.state = state;
     }
 
@@ -69,7 +67,7 @@ public class Project extends Advert {
 
     @Override
     public boolean isEnabled() {
-        return state == ProjectState.PROJECT_APPROVED;
+        return state.getId() == PrismState.PROJECT_APPROVED;
     }
 
     public Project withId(Integer id) {

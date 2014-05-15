@@ -34,9 +34,8 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityGroup;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
-import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -61,7 +60,7 @@ public class ProgramDAO {
         Advert project = (Advert) sessionFactory.getCurrentSession() //
                 .createCriteria(Project.class)//
                 .add(Restrictions.eq("id", advertId)) //
-                .add(Restrictions.eq("state", ProjectState.PROJECT_APPROVED))//
+                .add(Restrictions.eq("state.id", PrismState.PROJECT_APPROVED))//
                 .uniqueResult();
         if (project != null) {
             return project;
@@ -69,7 +68,7 @@ public class ProgramDAO {
         return (Advert) sessionFactory.getCurrentSession() //
                 .createCriteria(Program.class)//
                 .add(Restrictions.eq("id", advertId)) //
-                .add(Restrictions.eq("state", ProgramState.PROGRAM_APPROVED))//
+                .add(Restrictions.eq("state.id", PrismState.PROGRAM_APPROVED))//
                 .uniqueResult();
     }
 
@@ -81,7 +80,7 @@ public class ProgramDAO {
 
     public Program getProgamAcceptingApplicationsByCode(String code) {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code))
-                .add(Restrictions.eq("state", ProgramState.PROGRAM_APPROVED)).uniqueResult();
+                .add(Restrictions.eq("state.id", PrismState.PROGRAM_APPROVED)).uniqueResult();
     }
 
     public String getProgramIdByCode(String code) {
@@ -103,7 +102,7 @@ public class ProgramDAO {
 
     public List<Program> getAllEnabledPrograms() {
         return sessionFactory.getCurrentSession().createCriteria(Program.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq("state", ProgramState.PROGRAM_APPROVED)).addOrder(Order.asc("title")).list();
+                .add(Restrictions.eq("state.id", PrismState.PROGRAM_APPROVED)).addOrder(Order.asc("title")).list();
     }
 
     public List<Program> getProgramsForWhichUserCanManageProjects(User user) {
@@ -194,7 +193,7 @@ public class ProgramDAO {
 
     public List<Project> getProjectsForProgram(Program program) {
         return sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("program", program))
-                .add(Restrictions.eq("state", ProjectState.PROJECT_APPROVED)).list();
+                .add(Restrictions.eq("state.id", PrismState.PROJECT_APPROVED)).list();
     }
 
     public List<Project> getProjectsForProgramOfWhichAuthor(Program program, User author) {
@@ -203,7 +202,7 @@ public class ProgramDAO {
                 .createCriteria(Project.class) //
                 .add(Restrictions.eq("program", program)) //
                 .add(Restrictions.eq("user", author)) //
-                .add(Restrictions.eq("state", ProjectState.PROJECT_APPROVED)).list();
+                .add(Restrictions.eq("state.id", PrismState.PROJECT_APPROVED)).list();
     }
 
     public void deleteInactiveAdverts() {

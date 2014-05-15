@@ -19,9 +19,7 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Entity
 @Table(name = "PROJECT")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Project extends Advert implements PrismScope {
-
-    private static final long serialVersionUID = 5963260213501162814L;
+public class Project extends Advert {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id", nullable = false)
@@ -78,7 +76,7 @@ public class Project extends Advert implements PrismScope {
         setId(id);
         return this;
     }
-    
+
     @Override
     public String getScopeName() {
         return "project";
@@ -92,6 +90,11 @@ public class Project extends Advert implements PrismScope {
     @Override
     public Institution getInstitution() {
         return getProgram().getInstitution();
+    }
+
+    @Override
+    public String getType() {
+        return "project";
     }
 
 }

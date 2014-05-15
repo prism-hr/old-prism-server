@@ -87,7 +87,6 @@ public class RejectServiceTest {
         expectLastCall();
 
         mailServiceMock.sendRejectionConfirmationToApplicant(application);
-        actionService.deleteApplicationActions(application);
 
         replay();
         rejectService.moveApplicationToReject(application, rejection);

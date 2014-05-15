@@ -20,8 +20,6 @@ import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 public class RegistrationService {
     // TODO fix tests
 
-    private final Logger log = LoggerFactory.getLogger(RegistrationService.class);
-
     @Autowired
     private EncryptionUtils encryptionUtils;
 
@@ -37,13 +35,14 @@ public class RegistrationService {
     @Autowired
     private MailSendingService mailService;
 
-    public User processPendingApplicantUser(User pendingApplicantUser) {
-        pendingApplicantUser.getAccount().setPassword(encryptionUtils.getMD5Hash(pendingApplicantUser.getPassword()));
-        pendingApplicantUser.getAccount().setEnabled(false);
+    public User processPendingApplicantUser(User user) {
+        user.getAccount().setPassword(encryptionUtils.getMD5Hash(user.getPassword()));
+        user.getAccount().setEnabled(false);
         // FIXME set advert ID
         // pendingApplicantUser.setOriginalApplicationQueryString(advertId);
-        pendingApplicantUser.setActivationCode(encryptionUtils.generateUUID());
-        return pendingApplicantUser;
+        user.setActivationCode(encryptionUtils.generateUUID());
+        userService.save(user);
+        return user;
     }
 
     public User submitRegistration(User pendingUser) {
@@ -59,8 +58,6 @@ public class RegistrationService {
         } else {
             // User is an applicant
             user = processPendingApplicantUser(pendingUser);
-            // FIXME add program_application_creator or project_application_creator role to the user
-            userService.save(user);
         }
 
         mailService.sendRegistrationConfirmation(user);

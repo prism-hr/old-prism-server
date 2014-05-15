@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
+
 public enum Authority {
 
     APPLICATION_ADMINISTRATOR, //
@@ -29,6 +30,6 @@ public enum Authority {
     PROJECT_SECONDARY_SUPERVISOR, //
     SYSTEM_ADMINISTRATOR, //
     SYSTEM_APPLICATION_CREATOR, //
-    SYSTEM_PROGRAM_CREATOR
+    SYSTEM_PROGRAM_CREATOR;
 
 }

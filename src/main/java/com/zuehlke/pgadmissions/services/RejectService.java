@@ -56,7 +56,6 @@ public class RejectService {
 		
 		sendRejectNotificationToApplicant(form);
 		applicationDao.save(form);
-		actionService.deleteApplicationActions(form);
 	}
 	
 	private void sendRejectNotificationToApplicant(ApplicationForm form) {

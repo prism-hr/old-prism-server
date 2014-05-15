@@ -45,7 +45,6 @@ public class WithdrawController {
 
         withdrawService.withdrawApplication(applicationForm);
         withdrawService.sendToPortico(applicationForm);
-        actionService.deleteApplicationActions(applicationForm);
         workflowService.applicationUpdated(applicationForm, user);
         return "redirect:/applications?messageCode=application.withdrawn&application=" + applicationForm.getApplicationNumber();
     }

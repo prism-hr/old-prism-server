@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 @Entity
 @Table(name = "ADVERT")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Advert implements Serializable {
-    private static final long serialVersionUID = 5963260213501162814L;
+public abstract class Advert implements PrismScope {
 
     @Id
     @GeneratedValue

@@ -14,11 +14,8 @@ import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
-import com.zuehlke.pgadmissions.exceptions.PgadmissionsException;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.application.InsufficientApplicationFormPrivilegesException;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
+import com.zuehlke.pgadmissions.exceptions.PrismException;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.DiagnosticInfoPrintUtils;
@@ -27,7 +24,7 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
 
     private final Logger log = LoggerFactory.getLogger(PgadmissionsExceptionResolver.class);
 
-    private final Map<Class<? extends PgadmissionsException>, PgadmissionExceptionHandler<? extends PgadmissionsException>> handlerMap = new LinkedHashMap<Class<? extends PgadmissionsException>, PgadmissionsExceptionResolver.PgadmissionExceptionHandler<? extends PgadmissionsException>>();;
+    private final Map<Class<? extends PrismException>, PgadmissionExceptionHandler<? extends PrismException>> handlerMap = new LinkedHashMap<Class<? extends PrismException>, PgadmissionsExceptionResolver.PgadmissionExceptionHandler<? extends PrismException>>();;
 
     @Autowired
     private UserService userService;
@@ -38,9 +35,9 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
 
     @Override
     protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        if (ex instanceof PgadmissionsException) {
+        if (ex instanceof PrismException) {
             log.debug("Exception catched during request processing ", ex);
-            return handlePgadmissionsException((PgadmissionsException) ex, request);
+            return handlePgadmissionsException((PrismException) ex, request);
         }
         User currentUser = null;
         try {
@@ -53,7 +50,7 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected ModelAndView handlePgadmissionsException(PgadmissionsException ex, HttpServletRequest request) {
+    protected ModelAndView handlePgadmissionsException(PrismException ex, HttpServletRequest request) {
         String view = "redirect:/applications";
         ModelAndView modelAndView = new ModelAndView(view);
 
@@ -66,39 +63,20 @@ public class PgadmissionsExceptionResolver extends AbstractHandlerExceptionResol
         return modelAndView;
     }
 
-    private interface PgadmissionExceptionHandler<T extends PgadmissionsException> {
+    private interface PgadmissionExceptionHandler<T extends PrismException> {
         AlertDefinition handlePgadmissionsException(T ex, HttpServletRequest request);
     }
 
-    protected <T extends PgadmissionsException> void addHandler(Class<T> clazz, PgadmissionExceptionHandler<T> handler) {
+    protected <T extends PrismException> void addHandler(Class<T> clazz, PgadmissionExceptionHandler<T> handler) {
         handlerMap.put(clazz, handler);
     }
 
     protected void initializeHandlerMap() {
-        addHandler(MissingApplicationFormException.class, new PgadmissionExceptionHandler<MissingApplicationFormException>() {
+        addHandler(CannotExecuteActionException.class, new PgadmissionExceptionHandler<CannotExecuteActionException>() {
             @Override
-            public AlertDefinition handlePgadmissionsException(MissingApplicationFormException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Missing application", "The application does not exist: " + ex.getApplicationNumber() + ".");
-            }
-        });
-        addHandler(InsufficientApplicationFormPrivilegesException.class, new PgadmissionExceptionHandler<InsufficientApplicationFormPrivilegesException>() {
-            @Override
-            public AlertDefinition handlePgadmissionsException(InsufficientApplicationFormPrivilegesException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "You do not have sufficient privileges on this application form: "
-                        + ex.getApplicationNumber() + ".");
-            }
-        });
-        addHandler(ActionNoLongerRequiredException.class, new PgadmissionExceptionHandler<ActionNoLongerRequiredException>() {
-            @Override
-            public AlertDefinition handlePgadmissionsException(ActionNoLongerRequiredException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "You cannot perform this action", "Check that the action has not been performed already.");
-            }
-        });
-        addHandler(CannotUpdateApplicationException.class, new PgadmissionExceptionHandler<CannotUpdateApplicationException>() {
-            @Override
-            public AlertDefinition handlePgadmissionsException(CannotUpdateApplicationException ex, HttpServletRequest request) {
-                return new AlertDefinition(AlertType.INFO, "Cannot update application", "The application can no longer be updated: "
-                        + ex.getApplicationNumber() + ".");
+            public AlertDefinition handlePgadmissionsException(CannotExecuteActionException ex, HttpServletRequest request) {
+                return new AlertDefinition(AlertType.INFO, "Cannot perform action", "You do not have sufficient privileges on this "
+                        + ex.getPrismScope().getScopeName() + ".");
             }
         });
         addHandler(CannotApplyException.class, new PgadmissionExceptionHandler<CannotApplyException>() {

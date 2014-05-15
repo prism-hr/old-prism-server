@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.ProgramService;
@@ -105,7 +105,7 @@ public class SubmitApplicationFormControllerTest {
 
     }
 
-    @Test(expected = MissingApplicationFormException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowResourceNotFoundExceptionIfSubmittedApplicationFormDoesNotExist() {
         expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(null);
         

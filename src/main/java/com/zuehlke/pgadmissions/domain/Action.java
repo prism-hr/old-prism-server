@@ -12,7 +12,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.zuehlke.pgadmissions.domain.enums.ActionType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 
 @Entity
@@ -27,13 +26,6 @@ public class Action implements Serializable {
     @Enumerated(EnumType.STRING)
     private ApplicationFormAction id;
 
-    @Column(name = "action_type_id")
-    @Enumerated(EnumType.STRING)
-    private ActionType actionType;
-
-    @Column(name = "precedence")
-    private Integer precedence = 0;
-
     public ApplicationFormAction getId() {
         return id;
     }
@@ -42,22 +34,6 @@ public class Action implements Serializable {
         this.id = id;
     }
 
-    public ActionType getActionType() {
-        return actionType;
-    }
-
-    public void setActionType(ActionType actionType) {
-        this.actionType = actionType;
-    }
-
-    public Integer getPrecedence() {
-        return precedence;
-    }
-
-    public void setPrecedence(Integer precedence) {
-        this.precedence = precedence;
-    }
-    
     public Action withId(ApplicationFormAction id) {
         this.id = id;
         return this;

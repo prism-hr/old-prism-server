@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -81,7 +81,6 @@ public class RejectApplicationController {
 
         rejectService.moveApplicationToReject(application, rejection);
         rejectService.sendToPortico(application);
-        actionService.deleteApplicationActions(application);
         applicationFormUserRoleService.applicationUpdated(application, user);
         return NEXT_VIEW_NAME + "?messageCode=application.rejected&application=" + application.getApplicationNumber();
     }
@@ -95,7 +94,7 @@ public class RejectApplicationController {
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
         if (application == null) {
-            throw new MissingApplicationFormException(applicationId);
+            throw new ResourceNotFoundException(applicationId);
         }
         return application;
     }

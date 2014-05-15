@@ -202,7 +202,7 @@ public class ProgramsServiceTest {
     @Test
     public void shouldGetCustomProgram() {
         ProgramService thisBean = EasyMockUnitils.createMock(ProgramService.class);
-        Program program = new Program().withInstitution(new Institution().withCode("any_inst"));
+        Program program = new Program().withInstitution(new Institution());
         User requestAuthor = new User();
         OpportunityRequest opportunityRequest = OpportunityRequestBuilder.aOpportunityRequest(requestAuthor, null).institutionCode("any_inst")
                 .atasRequired(true).sourceProgram(program).acceptingApplications(true).build();
@@ -229,8 +229,8 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldGenerateNextProgramCode() {
-        Institution institution = new Institution().withCode("AAA");
-        Program lastCustomProgram = new Program().withCode("AAA_00018");
+        Institution institution = new Institution();
+        Program lastCustomProgram = new Program().withCode("00018");
 
         expect(programDAOMock.getLastCustomProgram(institution)).andReturn(lastCustomProgram);
 
@@ -238,7 +238,7 @@ public class ProgramsServiceTest {
         String nextCode = programsService.generateNextProgramCode(institution);
         verify();
 
-        assertEquals("AAA_00019", nextCode);
+        assertEquals("00019", nextCode);
     }
 
     @Test
@@ -273,7 +273,7 @@ public class ProgramsServiceTest {
 
     @Test
     public void shouldInitialProgramCode() {
-        Institution institution = new Institution().withCode("AAA");
+        Institution institution = new Institution();
 
         expect(programDAOMock.getLastCustomProgram(institution)).andReturn(null);
 
@@ -281,7 +281,7 @@ public class ProgramsServiceTest {
         String nextCode = programsService.generateNextProgramCode(institution);
         verify();
 
-        assertEquals("AAA_00000", nextCode);
+        assertEquals("00000", nextCode);
     }
 
     @Test(expected = CannotApplyException.class)

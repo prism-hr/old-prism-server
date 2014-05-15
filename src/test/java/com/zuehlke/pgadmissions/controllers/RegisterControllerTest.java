@@ -162,7 +162,7 @@ public class RegisterControllerTest {
         User pendingUser = new User().withId(1);
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-        EasyMock.expect(registrationServiceMock.submitRegistration(pendingUser)).andReturn(pendingUser);
+        EasyMock.expect(registrationServiceMock.submitRegistration(pendingUser, null)).andReturn(pendingUser);
 
         EasyMock.replay(registrationServiceMock);
 
@@ -178,7 +178,7 @@ public class RegisterControllerTest {
         BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
         EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 
-        EasyMock.expect(registrationServiceMock.submitRegistration(pendingUser)).andReturn(pendingUser);
+        EasyMock.expect(registrationServiceMock.submitRegistration(pendingUser, null)).andReturn(pendingUser);
 
         EasyMock.replay(registrationServiceMock);
 
@@ -221,7 +221,7 @@ public class RegisterControllerTest {
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         userServiceMock.save(user);
         EasyMock.replay(userServiceMock);
-        String view = registerController.activateAccountSubmit(activationCode, null, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, null, new MockHttpServletRequest());
         EasyMock.verify(userServiceMock);
         assertEquals("redirect:/applications?activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
@@ -237,7 +237,7 @@ public class RegisterControllerTest {
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         userServiceMock.save(user);
         EasyMock.replay(userServiceMock);
-        String view = registerController.activateAccountSubmit(activationCode, null, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, null, new MockHttpServletRequest());
         EasyMock.verify(userServiceMock);
         assertEquals("redirect:/directLink?activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
@@ -260,7 +260,7 @@ public class RegisterControllerTest {
 
         EasyMock.replay(userServiceMock);
 
-        String view = registerController.activateAccountSubmit(activationCode, null, requestMock);
+        String view = registerController.activateAccountSubmit(activationCode, null, null, requestMock);
 
         EasyMock.verify(userServiceMock);
 
@@ -283,7 +283,7 @@ public class RegisterControllerTest {
         userServiceMock.save(user);
 
         replay();
-        String view = registerController.activateAccountSubmit(activationCode, null,  new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, null,  new MockHttpServletRequest());
         assertEquals("redirect:/application?applicationId=ABC&activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
     }
@@ -303,7 +303,7 @@ public class RegisterControllerTest {
         userServiceMock.save(user);
 
         replay();
-        String view = registerController.activateAccountSubmit(activationCode, null, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, null, new MockHttpServletRequest());
         assertEquals("redirect:/application?applicationId=ABC&activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
     }
@@ -322,7 +322,7 @@ public class RegisterControllerTest {
 
         userServiceMock.save(user);
         replay();
-        registerController.activateAccountSubmit(activationCode, null, new MockHttpServletRequest());
+        registerController.activateAccountSubmit(activationCode, null, null, new MockHttpServletRequest());
     }
 
     @Test
@@ -330,7 +330,7 @@ public class RegisterControllerTest {
         String activationCode = "differentactivationcode";
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(null);
         EasyMock.replay(userServiceMock);
-        String view = registerController.activateAccountSubmit(activationCode, null, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, null, new MockHttpServletRequest());
         assertEquals("public/register/activation_failed", view);
     }
 

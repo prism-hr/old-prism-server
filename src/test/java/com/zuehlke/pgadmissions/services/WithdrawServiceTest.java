@@ -44,7 +44,6 @@ public class WithdrawServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_REVIEW)).build();
 
         applicationServiceMock.save(applicationForm);
-        actionService.deleteApplicationActions(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);
@@ -58,7 +57,6 @@ public class WithdrawServiceTest {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(new State().withId(PrismState.APPLICATION_UNSUBMITTED)).build();
 
         applicationServiceMock.save(applicationForm);
-        actionService.deleteApplicationActions(applicationForm);
 
         replay();
         service.withdrawApplication(applicationForm);

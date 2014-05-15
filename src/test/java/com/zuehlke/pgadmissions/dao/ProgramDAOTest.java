@@ -136,9 +136,9 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetLastCustomProgram() {
-        Program program1 = TestData.aProgram(programType, institution, user).withCode(institution.getCode() + "_00006").withTitle("A");
-        Program program2 = TestData.aProgram(programType, institution, user).withCode(institution.getCode() + "_00008").withTitle("B");
-        Program program3 = TestData.aProgram(programType, institution, user).withCode(institution.getCode() + "_00007").withTitle("C");
+        Program program1 = TestData.aProgram(programType, institution, user).withInstitution(institution).withTitle("A");
+        Program program2 = TestData.aProgram(programType, institution, user).withInstitution(institution).withTitle("B");
+        Program program3 = TestData.aProgram(programType, institution, user).withInstitution(institution).withTitle("C");
         save(program1, program2, program3);
         flushAndClearSession();
         Program returned = programDAO.getLastCustomProgram(institution);

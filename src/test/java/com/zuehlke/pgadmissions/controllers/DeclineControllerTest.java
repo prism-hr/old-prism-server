@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -78,7 +77,7 @@ public class DeclineControllerTest {
         assertEquals(applicationForm, returnedForm);
     }
 
-    @Test(expected = MissingApplicationFormException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowExceptionIfApplicationNotExists() {
         ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).build();
         EasyMock.expect(applicationServiceMock.getByApplicationNumber("5")).andReturn(null);

@@ -75,8 +75,7 @@ public class ProgramDAO {
 
     public Program getProgramByCode(String code) {
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setFetchMode("instances", FetchMode.JOIN)
-                .add(Restrictions.eq("code", code)) //
+                .setFetchMode("instances", FetchMode.JOIN).add(Restrictions.eq("code", code)) //
                 .uniqueResult();
     }
 
@@ -113,9 +112,8 @@ public class ProgramDAO {
     }
 
     public Program getLastCustomProgram(Institution institution) {
-        String matcher = String.format("%s_%%", institution.getCode());
         DetachedCriteria maxCustomCode = DetachedCriteria.forClass(Program.class).setProjection(Projections.max("code"))
-                .add(Restrictions.like("code", matcher));
+                .add(Restrictions.eq("institution", institution));
         return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Property.forName("code").eq(maxCustomCode)).uniqueResult();
     }
 

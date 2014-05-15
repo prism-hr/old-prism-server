@@ -163,8 +163,6 @@ public abstract class Advert implements PrismScope {
 
     public abstract Project getProject();
 
-    public abstract String getType();
-
     public abstract String getTitle();
 
 }

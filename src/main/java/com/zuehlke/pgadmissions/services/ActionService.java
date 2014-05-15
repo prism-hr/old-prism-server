@@ -4,23 +4,19 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ActionDAO;
-import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.UserRole;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
-import com.zuehlke.pgadmissions.exceptions.application.ActionNoLongerRequiredException;
+import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 
 @Service
 @Transactional
@@ -44,7 +40,7 @@ public class ActionService {
     @Deprecated
     public void validateAction(final ApplicationForm application, final User user, final ApplicationFormAction action) {
         if (!checkActionAvailable(application, user, action)) {
-            throw new ActionNoLongerRequiredException(application.getApplicationNumber());
+            throw new CannotExecuteActionException(application);
         }
     }
 
@@ -74,18 +70,18 @@ public class ActionService {
     }
 
     public String executeAction(User user, ApplicationFormAction action, PrismScope scope) {
+        if(!actionDAO.canExecute(user, scope, action)){
+            throw new CannotExecuteActionException(scope);
+        }
+        
         Pattern createPattern = Pattern.compile("([A-Z]+)_CREATE_([A-Z]+)");
         Matcher createMatcher = createPattern.matcher(action.name());
-        
+
         if (createMatcher.matches()) {
             String newScope = createMatcher.group(2).toLowerCase();
             entityCreationService.create(user, scope, newScope);
-
         }
-
-
-        // ApplicationForm application = applicationService.getOrCreateApplication(user, ((Advert) scope).getId());
-
+        
         String nextActionId = null;
         return "";
     }

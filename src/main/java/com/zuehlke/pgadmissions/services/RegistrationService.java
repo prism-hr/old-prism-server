@@ -4,14 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.User;
+import com.zuehlke.pgadmissions.domain.enums.AdvertType;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -35,17 +36,21 @@ public class RegistrationService {
     @Autowired
     private MailSendingService mailService;
 
-    public User processPendingApplicantUser(User user) {
+    public User processPendingApplicantUser(User user, Advert advert) {
         user.getAccount().setPassword(encryptionUtils.getMD5Hash(user.getPassword()));
         user.getAccount().setEnabled(false);
-        // FIXME set advert ID
-        // pendingApplicantUser.setOriginalApplicationQueryString(advertId);
         user.setActivationCode(encryptionUtils.generateUUID());
+
         userService.save(user);
+
+        Authority authority = advert.getAdvertType() == AdvertType.PROGRAM ? Authority.PROGRAM_APPLICATION_CREATOR
+                : Authority.PROJECT_APPLICATION_CREATOR;
+        roleService.getOrCreateUserRole(advert, user, authority);
+
         return user;
     }
 
-    public User submitRegistration(User pendingUser) {
+    public User submitRegistration(User pendingUser, Advert advert) {
         User user = null;
 
         // TODO use action ID instead of activation code
@@ -57,7 +62,7 @@ public class RegistrationService {
             user.getAccount().setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
         } else {
             // User is an applicant
-            user = processPendingApplicantUser(pendingUser);
+            user = processPendingApplicantUser(pendingUser, advert);
         }
 
         mailService.sendRegistrationConfirmation(user);

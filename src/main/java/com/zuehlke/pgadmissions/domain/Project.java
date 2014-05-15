@@ -92,9 +92,4 @@ public class Project extends Advert {
         return getProgram().getInstitution();
     }
 
-    @Override
-    public String getType() {
-        return "project";
-    }
-
 }

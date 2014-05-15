@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.dto.RefereesAdminEditDTO;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor;
@@ -255,7 +255,7 @@ public class EditApplicationFormAsProgrammeAdminController {
     public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
         ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
-            throw new MissingApplicationFormException(applicationId);
+            throw new ResourceNotFoundException(applicationId);
         }
         return applicationForm;
     }

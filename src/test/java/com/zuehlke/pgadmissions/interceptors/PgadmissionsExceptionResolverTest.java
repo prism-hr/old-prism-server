@@ -19,7 +19,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.AlertDefinition.AlertType;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -39,7 +39,7 @@ public class PgadmissionsExceptionResolverTest {
         // GIVEN
         HttpServletRequest request = new MockHttpServletRequest();
         HttpServletResponse response = new MockHttpServletResponse();
-        MissingApplicationFormException exception = new MissingApplicationFormException("app1");
+        ResourceNotFoundException exception = new ResourceNotFoundException("app1");
 
         // WHEN
         ModelAndView modelAndView = resolver.resolveException(request, response, null, exception);

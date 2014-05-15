@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Action;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -86,6 +87,11 @@ public class ActionDAO {
                 .setInteger(1, userId))
                 .setString(2, action.toString())
                 .setResultTransformer(Transformers.aliasToBean(ActionDefinition.class)).list();
+    }
+
+    public boolean canExecute(User user, PrismScope scope, ApplicationFormAction action) {
+        // TODO Auto-generated method stub
+        return true;
     }
 	
 }

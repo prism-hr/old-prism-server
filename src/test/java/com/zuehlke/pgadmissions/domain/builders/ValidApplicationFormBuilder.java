@@ -43,7 +43,6 @@ import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageQualificationEnum;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
 import com.zuehlke.pgadmissions.domain.enums.Title;
 
 public class ValidApplicationFormBuilder {
@@ -81,6 +80,7 @@ public class ValidApplicationFormBuilder {
     protected Funding funding;
     protected ApplicationForm applicationForm;
     private ApplicationFormBuilder applicationFormBuilder;
+    private State state;
 
     public ValidApplicationFormBuilder() {
     }
@@ -99,7 +99,7 @@ public class ValidApplicationFormBuilder {
 
     public ApplicationForm build(SessionFactory sessionFactory) {
         ApplicationForm applicationForm = build();
-        save(sessionFactory, user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser,
+        save(sessionFactory, state, user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser,
                 language, country, domicile, address, importedInstitution, program, employmentPosition, disability, ethnicity, interest, applicationForm);
         program.setCode("TMRMBISING001");
         return applicationForm;
@@ -166,7 +166,8 @@ public class ValidApplicationFormBuilder {
                 .identifier("0009").build();
         importedInstitution = new ImportedInstitution().withCode("code").withName("jakas instytucja").withDomicile(domicile)
                 .withEnabled(true);
-        program = new Program().withUser(approverUser).withCode("TMRMBISING99").withState(ProgramState.PROGRAM_APPROVED).withInstances(instance)
+        state = new State().withId(PrismState.PROGRAM_APPROVED);
+        program = new Program().withUser(approverUser).withCode("TMRMBISING99").withState(state).withInstances(instance)
                 .withTitle("MRes Medical and Biomedical Imaging").withInstitution(institution);
         interest = new SourcesOfInterestBuilder().code("BRIT_COUN").name("British Council").build();
         programDetails = new ProgrammeDetailsBuilder().sourcesOfInterest(interest).startDate(org.apache.commons.lang.time.DateUtils.addDays(new Date(), 1))

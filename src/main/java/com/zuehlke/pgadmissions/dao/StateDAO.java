@@ -3,12 +3,15 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.State;
+import com.zuehlke.pgadmissions.domain.StateTransition;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 @Repository
@@ -16,39 +19,44 @@ import com.zuehlke.pgadmissions.domain.enums.PrismState;
 public class StateDAO {
 
     @Autowired
-	private SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
     public StateDAO() {
     }
-    
+
     public StateDAO(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-	
-	public void save(State state) {
-        sessionFactory.getCurrentSession().saveOrUpdate(state);
-	}
-	
-	public State getById(PrismState id) {
-		return (State)sessionFactory.getCurrentSession().createCriteria(State.class)
-				.add(Restrictions.eq("id", id)).uniqueResult();
-	}
 
-	public List<State> getAllConfigurableStates() {
-        return (List<State>) sessionFactory.getCurrentSession().createCriteria(State.class)
-                .add(Restrictions.isNotNull("duration")).list();
-	}
-	
-	public List<PrismState> getAllStatesThatApplicationsCanBeAssignedTo() {
-        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class)
-                .setProjection(Projections.property("id"))
+    public void save(State state) {
+        sessionFactory.getCurrentSession().saveOrUpdate(state);
+    }
+
+    public State getById(PrismState id) {
+        return (State) sessionFactory.getCurrentSession().createCriteria(State.class).add(Restrictions.eq("id", id)).uniqueResult();
+    }
+
+    public List<State> getAllConfigurableStates() {
+        return (List<State>) sessionFactory.getCurrentSession().createCriteria(State.class).add(Restrictions.isNotNull("duration")).list();
+    }
+
+    public List<PrismState> getAllStatesThatApplicationsCanBeAssignedTo() {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class).setProjection(Projections.property("id"))
                 .add(Restrictions.eq("canBeAssignedTo", true)).list();
     }
-	
-	public List<PrismState> getAllStatesThatApplicationsCanBeAssignedFrom() {
-        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class)
-                .setProjection(Projections.property("id"))
+
+    public List<PrismState> getAllStatesThatApplicationsCanBeAssignedFrom() {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class).setProjection(Projections.property("id"))
                 .add(Restrictions.eq("canBeAssignedFrom", true)).list();
-	}
-	
+    }
+
+    public List<StateTransition> getStateTransitions(State state, ApplicationFormAction action) {
+        return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .createAlias("stateAction", "stateAction") //
+                .add(Restrictions.eq("stateAction.state", state)) //
+                .add(Restrictions.eq("stateAction.action", action))
+                .addOrder(Order.asc("type"))
+                .addOrder(Order.asc("processingOrder"));
+    }
+
 }

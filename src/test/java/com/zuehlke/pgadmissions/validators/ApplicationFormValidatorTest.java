@@ -35,12 +35,13 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StudyOption;
 import com.zuehlke.pgadmissions.domain.builders.AdditionalInformationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.services.ProgramService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -190,7 +191,7 @@ public class ApplicationFormValidatorTest {
 
     @Before
     public void setup() throws ParseException {
-        program = new Program().withState(ProgramState.PROGRAM_APPROVED);
+        program = new Program().withState(new State().withId(PrismState.PROGRAM_APPROVED));
         programInstance = new ProgramInstanceBuilder().id(1).studyOption("1", "Full-time")
                 .applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).build();
         program.getInstances().addAll(Arrays.asList(programInstance));

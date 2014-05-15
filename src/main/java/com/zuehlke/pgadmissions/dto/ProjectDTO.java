@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.validators.ATASConstraint;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -34,7 +34,7 @@ public class ProjectDTO {
 
     private Date closingDate;
 
-    private ProgramState state;
+    private PrismState state;
 
     private User primarySupervisor;
 
@@ -106,11 +106,11 @@ public class ProjectDTO {
         this.closingDate = closingDate;
     }
 
-    public ProgramState getState() {
+    public PrismState getState() {
         return state;
     }
 
-    public void setState(ProgramState state) {
+    public void setState(PrismState state) {
         this.state = state;
     }
 

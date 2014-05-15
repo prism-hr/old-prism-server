@@ -38,7 +38,7 @@ import com.google.gson.JsonSerializer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.ProjectState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -161,7 +161,7 @@ public class ProjectConfigurationController {
     public String getProject(@PathVariable("projectId") int projectId) throws TemplateException, IOException {
         Map<String, Object> map = Maps.newHashMap();
         Project project = (Project) programsService.getById(projectId);
-        if (project == null || project.getState() != ProjectState.PROJECT_APPROVED) {
+        if (project == null || project.getState().getId() != PrismState.PROJECT_APPROVED) {
             throw new ResourceNotFoundException();
         }
         map.put("project", project);

@@ -45,25 +45,12 @@ public class InstitutionService {
                 persistentInstitution.setDomicile(domicile);
                 persistentInstitution.setState(stateDAO.getById(PrismState.INSTITUTION_APPROVED));
                 persistentInstitution.setName(institutionName);
-                persistentInstitution.setCode(generateNextInstitutionCode());
                 institutionDAO.save(persistentInstitution);
             }
         } else {
             persistentInstitution = getByCode(institutionCode);
         }
         return persistentInstitution;
-    }
-
-    protected String generateNextInstitutionCode() {
-        Institution lastCustomInstitution = institutionDAO.getLastCustomInstitution();
-        Integer codeNumber;
-        if (lastCustomInstitution != null) {
-            codeNumber = Integer.valueOf(lastCustomInstitution.getCode().substring(4));
-            codeNumber++;
-        } else {
-            codeNumber = 0;
-        }
-        return String.format("CUST%05d", codeNumber);
     }
 
 }

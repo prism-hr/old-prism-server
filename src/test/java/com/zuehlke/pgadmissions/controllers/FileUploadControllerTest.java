@@ -14,13 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -55,15 +52,6 @@ public class FileUploadControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 		controller.getApplicationForm("5");
 
-	}
-
-	@Test(expected = CannotUpdateApplicationException.class)
-	public void shouldThrowCannotUpdateApplicationExceptionIfApplicationFormNotInUnsubmmitedState() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).status(new State().withId(PrismState.APPLICATION_APPROVED))
-				.build();
-		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("2")).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm("2");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)

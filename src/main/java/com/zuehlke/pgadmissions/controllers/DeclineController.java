@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -118,7 +117,7 @@ public class DeclineController {
 	public ApplicationForm getApplicationForm(String applicationId) {
 		ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
 		if (applicationForm == null) {
-			throw new MissingApplicationFormException(applicationId);
+			throw new ResourceNotFoundException(applicationId);
 		}
 		return applicationForm;
 	}

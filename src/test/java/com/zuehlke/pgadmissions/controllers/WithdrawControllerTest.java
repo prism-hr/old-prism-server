@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
-import com.zuehlke.pgadmissions.exceptions.application.MissingApplicationFormException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -68,7 +68,7 @@ public class WithdrawControllerTest {
         assertEquals(applicationForm, returnedForm);
     }
 
-    @Test(expected = MissingApplicationFormException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void shouldThrowExceptionIfApplicationNotFound() {
         String applicationNumber = "abc";
         EasyMock.expect(applicationsServiceMock.getByApplicationNumber("abc")).andReturn(null);

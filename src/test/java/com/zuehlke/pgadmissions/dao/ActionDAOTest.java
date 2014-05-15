@@ -16,7 +16,6 @@ public class ActionDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetActionById() {
         Action returnedAction = actionDAO.getById(ApplicationFormAction.APPLICATION_VIEW_AS_REFEREE);
         assertNotNull(returnedAction);
-        assertNotNull(returnedAction.getActionType());
     }
 
     @Before

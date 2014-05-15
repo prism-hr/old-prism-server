@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.AdvertClosingDate;
@@ -29,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.enums.ProjectState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.dto.ProjectDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
+import com.zuehlke.pgadmissions.utils.HibernateUtils;
 
 @Service
 @Transactional
@@ -56,6 +56,7 @@ public class ProgramService {
     public Advert getById(Integer advertId) {
         return programDAO.getById(advertId);
     }
+
     @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
     public void save(Advert advert) {
         programDAO.save(advert);
@@ -122,12 +123,12 @@ public class ProgramService {
         Program lastCustomProgram = programDAO.getLastCustomProgram(institution);
         Integer codeNumber;
         if (lastCustomProgram != null) {
-            codeNumber = Integer.valueOf(lastCustomProgram.getCode().split("_")[1]);
+            codeNumber = Integer.valueOf(lastCustomProgram.getCode());
             codeNumber++;
         } else {
             codeNumber = 0;
         }
-        return String.format("%s_%05d", institution.getCode(), codeNumber);
+        return String.format("%05d", codeNumber);
     }
 
     protected Program createOrGetProgram(OpportunityRequest opportunityRequest) {
@@ -145,7 +146,7 @@ public class ProgramService {
         }
 
         if (program.isImported()) {
-            if (program.getInstitution() == null || !Objects.equal(program.getInstitution().getCode(), opportunityRequest.getInstitutionCode())) {
+            if (program.getInstitution() == null || !HibernateUtils.sameEntities(program.getInstitution(), opportunityRequest.getInstitutionCode())) {
                 Institution institution = qualificationInstitutionService.getOrCreate(opportunityRequest.getInstitutionCode(),
                         opportunityRequest.getInstitutionCountry(), opportunityRequest.getOtherInstitution());
                 program.setInstitution(institution);
@@ -208,7 +209,7 @@ public class ProgramService {
         }
 
         Program existingProgram = opportunityRequest.getSourceProgram();
-        if (existingProgram != null && existingProgram.getInstitution().getCode().equals(opportunityRequest.getInstitutionCode())) {
+        if (existingProgram != null && HibernateUtils.sameEntities(existingProgram.getInstitution(), opportunityRequest.getInstitutionCode())) {
             return true;
         }
 

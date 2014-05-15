@@ -21,8 +21,11 @@ public class State {
     private PrismState id;
 
     @ManyToOne
-    @JoinColumn(name = "parent_state_id")
+    @JoinColumn(name = "parent_state_id", nullable = false)
     private State parentState;
+
+    @Column(name = "is_under_assessment", nullable = false)
+    private boolean underAssessment;
 
     public PrismState getId() {
         return id;
@@ -38,6 +41,14 @@ public class State {
 
     public void setParentState(State parentState) {
         this.parentState = parentState;
+    }
+
+    public boolean isUnderAssessment() {
+        return underAssessment;
+    }
+
+    public void setUnderAssessment(boolean underAssessment) {
+        this.underAssessment = underAssessment;
     }
 
     public State withId(PrismState id) {

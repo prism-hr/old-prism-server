@@ -1091,10 +1091,3 @@ INSERT IGNORE INTO INSTITUTION_DOMICILE (code, name)
 INSERT IGNORE INTO INSTITUTION_DOMICILE (code, name)
 	VALUES ("ZW",  "Zimbabwe")
 ;
-
-/* Assign interviewer comment */
-
-/* Reconfigure use custom question flags */
-/* Find and expose move to different stage comments */
-
-/* Fix null constraints on comment table */

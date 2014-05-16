@@ -14,4 +14,6 @@ public interface PrismScope {
 
     public Project getProject();
     
+    public State getState();
+    
 }

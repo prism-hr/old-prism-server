@@ -23,12 +23,12 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.ScoringDefinition;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.AdvertClosingDateBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TestData;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
-import com.zuehlke.pgadmissions.domain.enums.ProjectState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 
 public class ProgramDAOTest extends AutomaticRollbackTestCase {
@@ -38,6 +38,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     private Project project;
     private ProgramType programType;
     private User user;
+    private State state;
 
     @Override
     public void setup() {
@@ -48,16 +49,17 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         project = testObjectProvider.getEnabledProject();
         programType = testObjectProvider.getProgramType();
         user = testObjectProvider.getEnabledUserInRole(Authority.PROGRAM_ADMINISTRATOR);
+        state = testObjectProvider.getState(PrismState.PROGRAM_APPROVED);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void shouldGetAllPrograms() {
         List<Program> programs = (List<Program>) sessionFactory.getCurrentSession().createCriteria(Program.class)
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).add(Restrictions.eq("state", ProgramState.PROGRAM_APPROVED)).addOrder(Order.asc("title"))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).add(Restrictions.eq("state.id", PrismState.PROGRAM_APPROVED)).addOrder(Order.asc("title"))
                 .list();
-        Program program1 = TestData.aProgram(programType, institution, user).withCode("AAA").withTitle("p1");
-        Program program2 = TestData.aProgram(programType, institution, user).withCode("BBB").withTitle("p2");
+        Program program1 = TestData.aProgram(programType, institution, user, state).withCode("AAA").withTitle("p1");
+        Program program2 = TestData.aProgram(programType, institution, user, state).withCode("BBB").withTitle("p2");
         sessionFactory.getCurrentSession().save(program1);
         sessionFactory.getCurrentSession().save(program2);
         flushAndClearSession();
@@ -67,7 +69,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetProgramById() {
-        Program program = TestData.aProgram(programType, institution, user);
+        Program program = TestData.aProgram(programType, institution, user, state);
         sessionFactory.getCurrentSession().save(program);
         flushAndClearSession();
         assertEquals(program.getId(), programDAO.getById(program.getId()).getId());
@@ -75,7 +77,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetProgramByCode() {
-        Program program = TestData.aProgram(programType, institution, user).withCode("code1");
+        Program program = TestData.aProgram(programType, institution, user, state).withCode("code1");
         sessionFactory.getCurrentSession().save(program);
         flushAndClearSession();
         assertEquals(program.getId(), programDAO.getProgramByCode("code1").getId());
@@ -83,14 +85,14 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldSaveProgram() {
-        Program program = TestData.aProgram(programType, institution, user);
+        Program program = TestData.aProgram(programType, institution, user, state);
         programDAO.save(program);
         Assert.assertNotNull(program.getId());
     }
 
     @Test
     public void shouldGetProgramWithScoringDefinitions() {
-        Program program = TestData.aProgram(programType, institution, user).withCode("code1");
+        Program program = TestData.aProgram(programType, institution, user, state).withCode("code1");
 
         ScoringDefinition scoringDef1 = new ScoringDefinition();
         scoringDef1.setContent("aaa");
@@ -122,7 +124,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         AdvertClosingDate badge1 = new AdvertClosingDateBuilder().closingDate(closingDates.minusMonths(1)).build();
         AdvertClosingDate badge2 = new AdvertClosingDateBuilder().closingDate(closingDates.plusMonths(1)).build();
         AdvertClosingDate badge3 = new AdvertClosingDateBuilder().closingDate(closingDates.plusMonths(2)).build();
-        Program program = TestData.aProgram(programType, institution, user).withClosingDates(badge1, badge2, badge3);
+        Program program = TestData.aProgram(programType, institution, user, state).withClosingDates(badge1, badge2, badge3);
         badge1.setAdvert(program);
         badge2.setAdvert(program);
         badge3.setAdvert(program);
@@ -136,9 +138,9 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldGetLastCustomProgram() {
-        Program program1 = TestData.aProgram(programType, institution, user).withInstitution(institution).withTitle("A");
-        Program program2 = TestData.aProgram(programType, institution, user).withInstitution(institution).withTitle("B");
-        Program program3 = TestData.aProgram(programType, institution, user).withInstitution(institution).withTitle("C");
+        Program program1 = TestData.aProgram(programType, institution, user, state).withInstitution(institution).withTitle("A");
+        Program program2 = TestData.aProgram(programType, institution, user, state).withInstitution(institution).withTitle("B");
+        Program program3 = TestData.aProgram(programType, institution, user, state).withInstitution(institution).withTitle("C");
         save(program1, program2, program3);
         flushAndClearSession();
         Program returned = programDAO.getLastCustomProgram(institution);
@@ -148,7 +150,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     @Test
     public void shouldGetClosingDateById() {
         AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).build();
-        Program program = TestData.aProgram(programType, institution, user).withClosingDates(putClosingDate);
+        Program program = TestData.aProgram(programType, institution, user, state).withClosingDates(putClosingDate);
         sessionFactory.getCurrentSession().save(program);
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
         AdvertClosingDate gotClosingDate = programDAO.getClosingDateById(putClosingDate.getId());
@@ -159,7 +161,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     public void shouldGetClosingDateByDate() {
         LocalDate closingDate = new LocalDate();
         AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(closingDate).build();
-        Program program = TestData.aProgram(programType, institution, user).withClosingDates(putClosingDate);
+        Program program = TestData.aProgram(programType, institution, user, state).withClosingDates(putClosingDate);
         sessionFactory.getCurrentSession().save(program);
         ProgramDAO programDAO = new ProgramDAO(sessionFactory);
         AdvertClosingDate gotClosingDate = programDAO.getClosingDateByDate(program, closingDate);
@@ -172,7 +174,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
         LocalDate truncatedDateToday = new LocalDate(dateToday.getYear(), dateToday.getMonthOfYear(), dateToday.getDayOfMonth());
         LocalDate truncatedDateTomorrow = truncatedDateToday.plusDays(1);
         AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(truncatedDateToday).build();
-        Program program = TestData.aProgram(programType, institution, user).withClosingDates(putClosingDate);
+        Program program = TestData.aProgram(programType, institution, user, state).withClosingDates(putClosingDate);
         sessionFactory.getCurrentSession().save(program);
         sessionFactory.getCurrentSession().flush();
         sessionFactory.getCurrentSession().clear();
@@ -189,7 +191,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
     public void shouldDeleteClosingDate() {
         AdvertClosingDate putClosingDate = new AdvertClosingDateBuilder().closingDate(new LocalDate()).build();
         Integer putClosingDateId = putClosingDate.getId();
-        Program program = TestData.aProgram(programType, institution, user).withClosingDates(putClosingDate);
+        Program program = TestData.aProgram(programType, institution, user, state).withClosingDates(putClosingDate);
         sessionFactory.getCurrentSession().save(program);
         sessionFactory.getCurrentSession().flush();
         sessionFactory.getCurrentSession().clear();
@@ -227,7 +229,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase {
 
     @Test
     public void shouldNotGetDisabledProjectsForProgram() {
-        project.setState(ProjectState.PROJECT_DISABLED);
+        project.setState(new State().withId(PrismState.PROJECT_APPROVED));
         programDAO.save(project);
         flushAndClearSession();
 

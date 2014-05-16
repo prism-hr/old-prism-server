@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -101,25 +102,8 @@ public class RegistrationController {
             return TemplateLocation.REGISTRATION_FAILURE_CONFIRMATION;
         }
 
-        String redirectView = RedirectLocation.REDIRECT;
-
-        // Application Creator
-        // Reference Provider
-        // Everybody Else
-            
-        
-        String redirectionPath = actionService.executeAction(user, action, scopeId);
-
-        if (StringUtils.contains(redirectView, "?")) {
-            redirectView += "&";
-        } else {
-            redirectView += "?";
-        }
-
-        redirectView += RedirectLocation.ACTIVATION_CODE + user.getActivationCode();
-
-        log.info("Activation page requested by " + user.getUsername() + ". Redirecting to: " + redirectView);
-        return redirectView;
+        ActionOutcome actionOutcome = actionService.executeAction(user, action, scopeId);
+        return actionOutcome.createRedirectionUrl();
     }
 
     @RequestMapping(method = RequestMethod.GET)

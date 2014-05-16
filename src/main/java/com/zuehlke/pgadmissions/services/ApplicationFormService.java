@@ -241,6 +241,7 @@ public class ApplicationFormService {
     private ApplicationForm createApplication(User applicant, Advert advert) {
         String applicationNumber = generateApplicationNumber(advert.getProgram());
         ApplicationForm application = new ApplicationForm();
+        application.setState(stateService.getById(PrismState.APPLICATION_UNSUBMITTED));
         application.setUser(applicant);
         application.setProgram(advert.getProgram());
         application.setProject(advert.getProject());

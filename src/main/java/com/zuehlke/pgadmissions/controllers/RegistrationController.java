@@ -35,8 +35,6 @@ import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 @RequestMapping(value = "/register")
 public class RegistrationController {
 
-    private static final Logger log = LoggerFactory.getLogger(RegistrationController.class);
-
     @Autowired
     private UserService userService;
 

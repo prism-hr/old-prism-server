@@ -119,7 +119,7 @@ public class ConfirmSupervisionController {
     public String confirmSupervision(ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_SUPERVISION);
         workflowService.deleteApplicationUpdate(applicationForm, user);
         return CONFIRM_SUPERVISION_PAGE;
     }
@@ -128,7 +128,7 @@ public class ConfirmSupervisionController {
     public String applyConfirmSupervision(@Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result, ModelMap modelMap) {
         ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
-        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_PRIMARY_SUPERVISION);
+        actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_SUPERVISION);
 
         if (result.hasErrors()) {
             return CONFIRM_SUPERVISION_PAGE;

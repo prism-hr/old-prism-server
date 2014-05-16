@@ -8,7 +8,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
-import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -23,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceCommentBuilder;
@@ -34,8 +32,6 @@ import com.zuehlke.pgadmissions.scoring.jaxb.QuestionType;
 public class CommentDAOTest extends AutomaticRollbackTestCase {
 
     private CommentDAO commentDAO;
-
-    private StateDAO stateDAO;
 
     private User user;
     private Program program;
@@ -115,20 +111,6 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
     }
 
     @Test
-    public void shouldReturnNoValidationCommentForApplication() {
-        User user = new User().withFirstName("Jane").withLastName("Doe").withEmail("email@test.com")
-                .withAccount(new UserAccount().withPassword("password").withEnabled(false));
-
-        ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).build();
-
-        save(user, application);
-        flushAndClearSession();
-
-        ValidationComment returnedComment = commentDAO.getValidationCommentForApplication(application);
-        assertNull(returnedComment);
-    }
-
-    @Test
     public void shouldReturnCommentWithTwoScores() {
         User user = new User().withFirstName("Jane").withLastName("Doe").withEmail("email@test.com")
                 .withAccount(new UserAccount().withPassword("password").withEnabled(false));
@@ -146,15 +128,6 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
         ReferenceComment returnedComment = (ReferenceComment) commentDAO.get(commentId);
         assertNotNull(returnedComment);
         assertEquals(2, returnedComment.getScores().size());
-    }
-
-    private boolean listContainsId(Comment comment, List<? extends Comment> reloadedComments) {
-        for (Comment entry : reloadedComments) {
-            if (entry.getId().equals(comment.getId())) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

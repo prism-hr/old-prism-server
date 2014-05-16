@@ -1,51 +1,51 @@
 package com.zuehlke.pgadmissions.mail;
 
 import static junit.framework.Assert.assertEquals;
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.unitils.easymock.EasyMockUnitils.replay;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+import org.unitils.UnitilsBlockJUnit4ClassRunner;
+import org.unitils.easymock.annotation.Mock;
+import org.unitils.inject.annotation.InjectIntoByType;
+import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.domain.NotificationTemplate;
 import com.zuehlke.pgadmissions.domain.NotificationTemplateVersion;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.services.NotificationTemplateService;
 
+@RunWith(UnitilsBlockJUnit4ClassRunner.class)
 public class MailSenderTest {
 
+    @Mock
+    @InjectIntoByType
     private JavaMailSender javaMailSenderMock;
 
+    @Mock
+    @InjectIntoByType
     private NotificationTemplateService emailTemplateServiceMock;
 
+    @Mock
+    @InjectIntoByType
     private FreeMarkerConfig freemarkerConfigMock;
 
+    @TestedObject
     private MailSender service;
-
-    @Before
-    public void setup() {
-        javaMailSenderMock = createMock(JavaMailSender.class);
-        emailTemplateServiceMock = createMock(NotificationTemplateService.class);
-        freemarkerConfigMock = createMock(FreeMarkerConfig.class);
-    }
 
     @Test
     public void shouldResolveSubjectWithoutArguments() {
         NotificationTemplate notificationTemplate = new NotificationTemplate().withVersion(new NotificationTemplateVersion()
                 .withSubject("Subject without arguments"));
 
-        service = new MailSender(javaMailSenderMock, null, null, null, emailTemplateServiceMock, freemarkerConfigMock);
-
         expect(emailTemplateServiceMock.getById(isA(NotificationTemplateId.class))).andReturn(notificationTemplate);
 
-        replay(emailTemplateServiceMock);
+        replay();
         String result = service.resolveSubject(NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST, (Object[]) null);
-        verify(emailTemplateServiceMock);
 
         assertEquals("Subject without arguments", result);
     }
@@ -55,13 +55,10 @@ public class MailSenderTest {
         NotificationTemplate notificationTemplate = new NotificationTemplate().withVersion(new NotificationTemplateVersion()
                 .withSubject("Dear %s, welcome to the 105 Zoo"));
 
-        service = new MailSender(javaMailSenderMock, null, null, null, emailTemplateServiceMock, freemarkerConfigMock);
-
         expect(emailTemplateServiceMock.getById(isA(NotificationTemplateId.class))).andReturn(notificationTemplate);
 
-        replay(emailTemplateServiceMock);
+        replay();
         String result = service.resolveSubject(NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST, new Object[] { "Beppe" });
-        verify(emailTemplateServiceMock);
 
         assertEquals("Dear Beppe, welcome to the 105 Zoo", result);
     }

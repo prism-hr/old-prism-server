@@ -93,6 +93,8 @@
     <constructor-arg value="com.zuehlke.pgadmissions.controllers.prospectus.ApplyTemplateRenderer" />
   </bean>
 
+  <bean id="mailSender" class="com.zuehlke.pgadmissions.mail.MailSenderMock" primary="true" />
+
   <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PgAdmissionAuthenticationProvider" />
 
 </beans>

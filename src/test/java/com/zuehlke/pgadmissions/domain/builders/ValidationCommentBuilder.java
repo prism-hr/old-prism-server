@@ -9,8 +9,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
-import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
 public class ValidationCommentBuilder {
@@ -19,17 +18,11 @@ public class ValidationCommentBuilder {
     private ApplicationForm application;
     private ValidationQuestionOptions qualifiedForPhd;
     private ValidationQuestionOptions englishCompentencyOk;
-    private HomeOrOverseas homeOrOverseas;
+    private ResidenceStatus homeOrOverseas;
     private Date date;
     private String comment;
     private Integer id;
-    private PrismState nextStatus;
     private List<Document> documents = new ArrayList<Document>();
-
-    public ValidationCommentBuilder nextStatus(PrismState nextStatus) {
-        this.nextStatus = nextStatus;
-        return this;
-    }
 
     public ValidationCommentBuilder user(User user) {
         this.user = user;
@@ -56,7 +49,7 @@ public class ValidationCommentBuilder {
         return this;
     }
 
-    public ValidationCommentBuilder homeOrOverseas(HomeOrOverseas homeOrOverseas) {
+    public ValidationCommentBuilder homeOrOverseas(ResidenceStatus homeOrOverseas) {
         this.homeOrOverseas = homeOrOverseas;
         return this;
     }
@@ -86,7 +79,6 @@ public class ValidationCommentBuilder {
         validationComment.setId(id);
         validationComment.setQualifiedForPhd(qualifiedForPhd);
         validationComment.setUser(user);
-        validationComment.setNextStatus(nextStatus);
         validationComment.getDocuments().addAll(documents);
         return validationComment;
     }

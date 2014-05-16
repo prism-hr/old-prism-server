@@ -5,7 +5,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
@@ -27,7 +27,7 @@ public class StateChangeDTO {
 
     private ValidationQuestionOptions englishCompentencyOk;
 
-    private HomeOrOverseas homeOrOverseas;
+    private ResidenceStatus homeOrOverseas;
 
     private PrismState status;
 
@@ -48,7 +48,7 @@ public class StateChangeDTO {
 
     private ValidationQuestionOptions[] validationQuestionOptions;
 
-    private HomeOrOverseas[] homeOrOverseasOptions;
+    private ResidenceStatus[] homeOrOverseasOptions;
 
     private List<PrismState> stati;
 
@@ -131,11 +131,11 @@ public class StateChangeDTO {
         this.englishCompentencyOk = englishCompentencyOk;
     }
 
-    public HomeOrOverseas getHomeOrOverseas() {
+    public ResidenceStatus getHomeOrOverseas() {
         return homeOrOverseas;
     }
 
-    public void setHomeOrOverseas(HomeOrOverseas homeOrOverseas) {
+    public void setHomeOrOverseas(ResidenceStatus homeOrOverseas) {
         this.homeOrOverseas = homeOrOverseas;
     }
 
@@ -203,11 +203,11 @@ public class StateChangeDTO {
         this.validationQuestionOptions = validationQuestionOptions;
     }
 
-    public HomeOrOverseas[] getHomeOrOverseasOptions() {
+    public ResidenceStatus[] getHomeOrOverseasOptions() {
         return homeOrOverseasOptions;
     }
 
-    public void setHomeOrOverseasOptions(HomeOrOverseas[] homeOrOverseasOptions) {
+    public void setHomeOrOverseasOptions(ResidenceStatus[] homeOrOverseasOptions) {
         this.homeOrOverseasOptions = homeOrOverseasOptions;
     }
 

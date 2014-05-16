@@ -5,9 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-@Entity
-@Table
-@DiscriminatorValue(value = "PROVIDE_REFERENCE")
 public class ReferenceComment extends Comment {
 
     private static final long serialVersionUID = 5269362387094590530L;

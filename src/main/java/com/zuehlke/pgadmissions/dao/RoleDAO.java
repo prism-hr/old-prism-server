@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.dao;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -10,8 +12,11 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
@@ -54,6 +59,48 @@ public class RoleDAO {
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.id", authority)) //
                 .add(Restrictions.eq(scope.getScopeName(), scope)) //
+                .uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, Role invokingRole) {
+        return (List<RoleTransition>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
+                .add(Restrictions.eq("stateTransition", stateTransition)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eq("role", invokingRole)) //
+                                .add(Restrictions.eq("restrictToInvoker", true))) //
+                        .add(Restrictions.ne("restrictToInvoker", true))) //
+                .addOrder(Order.asc("role")) //
+                .addOrder(Order.asc("processingOrder")) //
+                .list();
+    }
+
+    public Role canExecute(User user, PrismScope scope, ApplicationFormAction action) {
+        // TODO reimplement using query
+        switch (action) {
+        case PROGRAM_CREATE_APPLICATION:
+            return getById(Authority.PROGRAM_APPLICATION_CREATOR);
+        case APPLICATION_COMPLETE:
+            return getById(Authority.APPLICATION_CREATOR);
+        default:
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<User> getBy(Role role, PrismScope scope) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.distinct(Projections.property("user"))) //
+                .add(Restrictions.eq("role", role)) //
+                .add(Restrictions.eq(scope.getScopeName(), scope)) //
+                .list();
+    }
+
+    public UserRole getUserRole(User user, Authority authority) {
+        return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .add(Restrictions.eq("role.id", authority)) //
+                .add(Restrictions.eq("user", user)) //
                 .uniqueResult();
     }
 

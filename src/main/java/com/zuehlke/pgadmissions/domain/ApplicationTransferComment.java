@@ -11,8 +11,6 @@ import javax.persistence.Table;
 
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
-@Entity
-@Table(name = "APPLICATION_TRANSFER_COMMENT")
 public class ApplicationTransferComment extends Comment {
 
     private static final long serialVersionUID = 9120577563568889651L;

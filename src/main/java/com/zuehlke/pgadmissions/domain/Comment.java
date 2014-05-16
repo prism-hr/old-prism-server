@@ -9,17 +9,12 @@ import java.util.TimeZone;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -31,12 +26,10 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.IndexColumn;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.validators.ATASConstraint;
@@ -44,9 +37,6 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
 @Entity
 @Table(name = "COMMENT")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "action_id", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue(value = "COMMENT")
 public class Comment implements Serializable {
 
     private static final long serialVersionUID = 2861325991249900547L;
@@ -56,22 +46,44 @@ public class Comment implements Serializable {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_form_id")
+    @JoinColumn(name = "program_id")
+    private Program program;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    private Project project;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application_id")
     private ApplicationForm application;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    @ManyToOne
+    @JoinColumn(name = "action_id")
+    private Action action;
+
+    @Column(name = "declined_response")
+    private Boolean declined;
 
     @Size(max = 50000, message = "A maximum of 50000 characters are allowed.")
     @Lob
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "transition_state_id")
+    private State transitionState;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comment")
     private Set<CommentAssignedUser> assignedUsers = Sets.newHashSet();
 
-    @Column(name = "created_timestamp", insertable = false)
-    @Generated(GenerationTime.INSERT)
+    @Column(name = "created_timestamp", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTimestamp;
 
@@ -92,7 +104,7 @@ public class Comment implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "home_or_overseas")
-    private HomeOrOverseas homeOrOverseas;
+    private ResidenceStatus homeOrOverseas;
 
     @Column(name = "project_description_available")
     private Boolean projectDescriptionAvailable;
@@ -136,7 +148,7 @@ public class Comment implements Serializable {
     @Column(name = "appointment_datetime")
     private Date appointmentDate;
 
-    @Column(name = " appointment_datetime ", nullable = false)
+    @Column(name = " appointment_datetime ")
     private TimeZone appointmentTimezone = TimeZone.getTimeZone("GMT");
 
     @Column(name = "appointment_duration")
@@ -148,14 +160,8 @@ public class Comment implements Serializable {
     @Column(name = "location_url")
     private String locationUrl;
 
-    @Column(name = "declined")
-    private Boolean declined;
-
     @Column(name = "recommend_alternative_opportunity")
     private Boolean recommendAlternativeOpportunity;
-
-    @Column(name = "next_status")
-    private PrismState nextStatus = null;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delegate_provider_id")
@@ -234,11 +240,11 @@ public class Comment implements Serializable {
         this.englishCompetencyOk = englishCompetencyOk;
     }
 
-    public HomeOrOverseas getHomeOrOverseas() {
+    public ResidenceStatus getHomeOrOverseas() {
         return homeOrOverseas;
     }
 
-    public void setHomeOrOverseas(HomeOrOverseas homeOrOverseas) {
+    public void setHomeOrOverseas(ResidenceStatus homeOrOverseas) {
         this.homeOrOverseas = homeOrOverseas;
     }
 
@@ -386,14 +392,6 @@ public class Comment implements Serializable {
         this.recommendAlternativeOpportunity = recommendAlternativeOpportunity;
     }
 
-    public PrismState getNextStatus() {
-        return nextStatus;
-    }
-
-    public void setNextStatus(PrismState nextStatus) {
-        this.nextStatus = nextStatus;
-    }
-
     public User getDelegateProvider() {
         return delegateProvider;
     }
@@ -467,7 +465,7 @@ public class Comment implements Serializable {
     }
 
     public boolean isAtLeastOneAnswerUnsure() {
-        return getHomeOrOverseas() == HomeOrOverseas.UNSURE || getQualifiedForPhd() == ValidationQuestionOptions.UNSURE
+        return getHomeOrOverseas() == ResidenceStatus.UNSURE || getQualifiedForPhd() == ValidationQuestionOptions.UNSURE
                 || getEnglishCompetencyOk() == ValidationQuestionOptions.UNSURE;
     }
 

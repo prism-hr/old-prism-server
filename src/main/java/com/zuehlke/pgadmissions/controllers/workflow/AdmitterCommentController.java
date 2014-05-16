@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -142,8 +142,8 @@ public class AdmitterCommentController {
     }
 
     @ModelAttribute("homeOrOverseasOptions")
-    public HomeOrOverseas[] getHomeOrOverseasOptions() {
-        return HomeOrOverseas.values();
+    public ResidenceStatus[] getHomeOrOverseasOptions() {
+        return ResidenceStatus.values();
     }
 
 }

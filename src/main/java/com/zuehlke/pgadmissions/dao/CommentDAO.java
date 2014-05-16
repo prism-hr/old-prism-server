@@ -43,13 +43,6 @@ public class CommentDAO {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public ValidationComment getValidationCommentForApplication(ApplicationForm applicationForm) {
-        return (ValidationComment) sessionFactory.getCurrentSession().createCriteria(ValidationComment.class) //
-                .add(Restrictions.eq("type", CommentType.VALIDATION)) //
-                .add(Restrictions.eq("application", applicationForm)) //
-                .addOrder(Order.desc("date")).setMaxResults(1).uniqueResult();
-    }
-
     public List<Comment> getVisibleComments(User user, ApplicationForm applicationForm) {
         // TODO amend and add tests
         return sessionFactory

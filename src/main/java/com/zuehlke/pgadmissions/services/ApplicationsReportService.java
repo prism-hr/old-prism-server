@@ -30,13 +30,13 @@ import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
 import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
@@ -342,7 +342,7 @@ public class ApplicationsReportService {
         int[] endorsements = new int[2];
         for (Referee referee : app.getReferees()) {
             if (referee.getComment() != null) {
-                ReferenceComment reference = referee.getComment();
+                Comment reference = referee.getComment();
                 if (BooleanUtils.isTrue(reference.getSuitableForProgramme())) {
                     endorsements[0]++;
                 } else if (BooleanUtils.isFalse(reference.getSuitableForProgramme())) {

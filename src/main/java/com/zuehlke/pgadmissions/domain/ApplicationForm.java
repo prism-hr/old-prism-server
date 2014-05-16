@@ -88,7 +88,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     private User user = null;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "program_id")
+    @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
     @ManyToOne(fetch = FetchType.LAZY)

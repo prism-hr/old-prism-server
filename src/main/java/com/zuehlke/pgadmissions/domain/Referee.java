@@ -47,7 +47,7 @@ public class Referee implements Serializable, FormSectionObject {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
-    private ReferenceComment comment;
+    private Comment comment;
 
     @ESAPIConstraint(rule = "PhoneNumber", maxLength = 35, message = "{text.field.notphonenumber}")
     @Column(name = "phone")
@@ -83,11 +83,11 @@ public class Referee implements Serializable, FormSectionObject {
         this.application = application;
     }
 
-    public ReferenceComment getComment() {
+    public Comment getComment() {
         return comment;
     }
 
-    public void setComment(ReferenceComment comment) {
+    public void setComment(Comment comment) {
         this.comment = comment;
     }
 

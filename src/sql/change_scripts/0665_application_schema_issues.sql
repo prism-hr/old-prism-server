@@ -83,8 +83,3 @@ ALTER TABLE COMMENT
 	ADD COLUMN application_position_provisional_start_date DATE AFTER application_position_description,
 	ADD COLUMN application_appointment_conditions TEXT AFTER application_position_provisional_start_date
 ;
-
-/* Reconfigure use custom question flags */
-/* Find and expose move to different stage comments */
-
-/* Fix null constraints on comment table */

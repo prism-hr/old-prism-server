@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.workflow;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang.WordUtils;
 import org.junit.Test;
@@ -11,8 +10,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -79,8 +77,6 @@ public class PrismWorkflowTest {
         User superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, roleService.getPrismSystem(),
                 Authority.SYSTEM_ADMINISTRATOR);
 
-        assertTrue(roleService.hasRole(superadmin, Authority.SYSTEM_PROGRAM_CREATOR, roleService.getPrismSystem()));
-
         for (ImportedEntityFeed feed : entityImportService.getImportedEntityFeeds()) {
             String entityName = WordUtils.uncapitalize(feed.getImportedEntityType().getEntityClass().getSimpleName());
             String url = "reference_data/2014-05-08/" + entityName + ".xml";
@@ -104,11 +100,13 @@ public class PrismWorkflowTest {
 
         applicant = registrationService.activateAccount(applicant.getActivationCode());
 
-        ActionOutcome actionOutcome = actionService.executeAction(applicant, ApplicationFormAction.PROGRAM_CREATE_APPLICATION, program.getId());
+        Comment createApplicationComment = new Comment();
+        ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, ApplicationFormAction.PROGRAM_CREATE_APPLICATION, createApplicationComment);
         System.out.println(actionOutcome.createRedirectionUrl());
 
         assertNotNull(roleService.canExecute(applicant, program, ApplicationFormAction.APPLICATION_COMPLETE));
-        actionOutcome = actionService.executeAction(applicant, ApplicationFormAction.APPLICATION_COMPLETE, 1);
+        Comment completeApplicationComment = new Comment();
+        actionOutcome = actionService.executeAction(1, applicant, ApplicationFormAction.APPLICATION_COMPLETE, completeApplicationComment);
         System.out.println(actionOutcome.createRedirectionUrl());
         
         // applicationFormService.submitApplication(application);

@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
-import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -128,7 +128,7 @@ public class ExportService {
         ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(form,
                 ApplicationFormAction.APPLICATION_COMPLETE_VALIDATION_STAGE);
 
-        Boolean isOverseasStudent = validationComment == null ? true : validationComment.getHomeOrOverseas().equals(HomeOrOverseas.OVERSEAS);
+        Boolean isOverseasStudent = validationComment == null ? true : validationComment.getHomeOrOverseas().equals(ResidenceStatus.OVERSEAS);
         OfferRecommendedComment offerRecommendedComment = (OfferRecommendedComment) applicationsService.getLatestStateChangeComment(form,
                 ApplicationFormAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
         CommentAssignedUser primarySupervisor = null;

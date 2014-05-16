@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ReferenceComment;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.dto.SendToPorticoDataDTO;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.PorticoService;
@@ -85,7 +85,7 @@ public class SendToPorticoDataDTOValidator extends AbstractValidator {
         if (referees != null) {
         	
             for (int i = 0; i < referees.size(); i++) {
-            	ReferenceComment reference = refereeService.getRefereeById(referees.get(i)).getComment();
+            	Comment reference = refereeService.getRefereeById(referees.get(i)).getComment();
                 if (reference == null || reference.getDeclined()) {
             		referees.remove(i);
             	}

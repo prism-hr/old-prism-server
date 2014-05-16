@@ -9,14 +9,14 @@ import com.zuehlke.pgadmissions.domain.AdmitterComment;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 
 public class AdmitterCommentBuilder {
 
     private ValidationQuestionOptions qualifiedForPhd;
     private ValidationQuestionOptions englishCompentencyOk;
-    private HomeOrOverseas homeOrOverseas;
+    private ResidenceStatus homeOrOverseas;
     private ApplicationForm application;
     private User user;
     private String strComment;
@@ -64,7 +64,7 @@ public class AdmitterCommentBuilder {
         return this;
     }
 
-    public AdmitterCommentBuilder homeOrOverseas(HomeOrOverseas homeOrOverseas) {
+    public AdmitterCommentBuilder homeOrOverseas(ResidenceStatus homeOrOverseas) {
         this.homeOrOverseas = homeOrOverseas;
         return this;
     }

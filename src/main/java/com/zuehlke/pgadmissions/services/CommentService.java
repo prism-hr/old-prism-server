@@ -121,7 +121,7 @@ public class CommentService {
         stateChangeComment.setUseCustomQuestions(BooleanUtils.toBoolean(stateChangeDTO.getUseCustomQuestions()));
 
         PrismState nextStatus = stateChangeDTO.getNextStatus();
-        stateChangeComment.setNextStatus(nextStatus);
+//        stateChangeComment.setNextStatus(nextStatus);
         stateChangeComment.setDelegateAdministrator(null);
 
         // TODO check if has global administration rights (PermissionsService)

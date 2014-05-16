@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
-import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.ApplicationDescriptor;
@@ -105,7 +105,7 @@ public class StateTransitionController {
     	
     	if (applicationForm.getState().getId() == PrismState.APPLICATION_VALIDATION) {
 	    	stateChangeDTO.setValidationQuestionOptions(ValidationQuestionOptions.values());
-	    	stateChangeDTO.setHomeOrOverseasOptions(HomeOrOverseas.values());
+	    	stateChangeDTO.setHomeOrOverseasOptions(ResidenceStatus.values());
     	}
 
     	stateChangeDTO.setStati(stateTransitionService.getAssignableNextStati(applicationForm, user));

@@ -3,11 +3,8 @@ package com.zuehlke.pgadmissions.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.unitils.easymock.EasyMockUnitils.replay;
 
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
@@ -24,12 +21,8 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
-import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -221,7 +214,7 @@ public class RegisterControllerTest {
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         userServiceMock.save(user);
         EasyMock.replay(userServiceMock);
-        String view = registerController.activateAccountSubmit(activationCode, null, null, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, null);
         EasyMock.verify(userServiceMock);
         assertEquals("redirect:/applications?activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
@@ -237,92 +230,10 @@ public class RegisterControllerTest {
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
         userServiceMock.save(user);
         EasyMock.replay(userServiceMock);
-        String view = registerController.activateAccountSubmit(activationCode, null, null, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, null);
         EasyMock.verify(userServiceMock);
         assertEquals("redirect:/directLink?activationCode=" + activationCode, view);
         assertTrue(user.isEnabled());
-    }
-
-    @Test
-    public void shouldActivateAccountAndRedirectToDirectURLIfProvidedAtRegistrationTime() throws ParseException {
-        String activationCode = "ul5oaij68186jbcg";
-
-        User user = new User().withId(1).withActivationCode(activationCode).withAccount(new UserAccount().withEnabled(false)
-                .withPassword("1234"));
-
-        MockHttpServletRequest requestMock = new MockHttpServletRequest();
-        mockHttpSession.putValue("directToUrl", "/directLink");
-        requestMock.setSession(mockHttpSession);
-
-        EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
-
-        userServiceMock.save(user);
-
-        EasyMock.replay(userServiceMock);
-
-        String view = registerController.activateAccountSubmit(activationCode, null, null, requestMock);
-
-        EasyMock.verify(userServiceMock);
-
-        assertEquals("redirect:/directLink?activationCode=" + activationCode, view);
-
-        assertTrue(user.isEnabled());
-    }
-
-    @Test
-    public void shouldCreateNewApplicationAndRedirectToItIfQueryStringExistsOnUser() throws ParseException {
-        String activationCode = "ul5oaij68186jbcg";
-        Advert advert = new Program();
-        Program program = new Program().withId(1);
-        User user = new User().withId(1).withActivationCode(activationCode).withAccount(new UserAccount().withEnabled(false)
-                .withPassword("1234"));
-        EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
-        Map<String, String> parsedParams = new HashMap<String, String>(3);
-        parsedParams.put("program", "code");
-        EasyMock.expect(programServiceMock.getValidProgramProjectAdvert(null)).andReturn(program);
-        userServiceMock.save(user);
-
-        replay();
-        String view = registerController.activateAccountSubmit(activationCode, null, null,  new MockHttpServletRequest());
-        assertEquals("redirect:/application?applicationId=ABC&activationCode=" + activationCode, view);
-        assertTrue(user.isEnabled());
-    }
-
-    @Test
-    public void shouldCreateNewApplicationAndRedirectToItIfQueryStringExistsOnUserWithProject() throws ParseException {
-        String activationCode = "ul5oaij68186jbcg";
-        Advert advert = new Program();
-        Project project = new Project().withId(1);
-        User user = new User().withId(1).withActivationCode(activationCode).withAccount(new UserAccount().withEnabled(false)
-                .withPassword("1234"));
-        EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
-        Map<String, String> parsedParams = new HashMap<String, String>(3);
-        parsedParams.put("program", "code");
-        parsedParams.put("project", "1");
-        EasyMock.expect(programServiceMock.getValidProgramProjectAdvert(null)).andReturn(project);
-        userServiceMock.save(user);
-
-        replay();
-        String view = registerController.activateAccountSubmit(activationCode, null, null, new MockHttpServletRequest());
-        assertEquals("redirect:/application?applicationId=ABC&activationCode=" + activationCode, view);
-        assertTrue(user.isEnabled());
-    }
-
-    @Test(expected = CannotApplyException.class)
-    public void shouldThrowExceptionIfRegisteringForAnInvalidOpportunity() throws ParseException {
-        String activationCode = "ul5oaij68186jbcg";
-        Advert advert = new Program();
-        User user = new User().withId(1).withActivationCode(activationCode).withAccount(new UserAccount().withEnabled(false)
-                .withPassword("1234"));
-        EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(user);
-        Map<String, String> parsedParams = new HashMap<String, String>(3);
-        parsedParams.put("program", "code");
-        parsedParams.put("advert", "1");
-        EasyMock.expect(programServiceMock.getValidProgramProjectAdvert(1)).andThrow(new CannotApplyException());
-
-        userServiceMock.save(user);
-        replay();
-        registerController.activateAccountSubmit(activationCode, null, null, new MockHttpServletRequest());
     }
 
     @Test
@@ -330,7 +241,7 @@ public class RegisterControllerTest {
         String activationCode = "differentactivationcode";
         EasyMock.expect(userServiceMock.getUserByActivationCode(activationCode)).andReturn(null);
         EasyMock.replay(userServiceMock);
-        String view = registerController.activateAccountSubmit(activationCode, null, null, new MockHttpServletRequest());
+        String view = registerController.activateAccountSubmit(activationCode, null, null);
         assertEquals("public/register/activation_failed", view);
     }
 

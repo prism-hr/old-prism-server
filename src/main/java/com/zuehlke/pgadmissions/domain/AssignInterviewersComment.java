@@ -12,9 +12,6 @@ import javax.persistence.Table;
 
 import com.google.common.collect.Lists;
 
-@Entity
-@Table
-@DiscriminatorValue(value = "ASSIGN_INTERVIEWERS")
 public class AssignInterviewersComment extends Comment {
 
     private static final long serialVersionUID = 9120577563568889651L;

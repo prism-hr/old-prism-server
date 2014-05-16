@@ -5,9 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-@Entity
-@Table
-@DiscriminatorValue(value = "PROVIDE_INTERVIEW_FEEDBACK")
 public class InterviewComment extends Comment {
 
     private static final long serialVersionUID = 9120577563568889651L;

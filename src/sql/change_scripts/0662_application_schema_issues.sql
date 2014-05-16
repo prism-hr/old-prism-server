@@ -71,7 +71,7 @@ ALTER TABLE COMMENT
 ;
 		
 INSERT INTO COMMENT (application_id, action_id, user_id, role_id, created_timestamp, transition_state_id, use_custom_recruiter_questions, review_round_id)
-	SELECT EVENT.application_form_id, "ASSIGN_REVIEWERS", EVENT.user_id, "PROGRAM_ADMINISTRATOR", 
+	SELECT EVENT.application_form_id, "APPLICATION_ASSIGN_REVIEWERS", EVENT.user_id, "PROGRAM_ADMINISTRATOR", 
 		EVENT.event_date, "APPLICATION_REVIEW_PENDING_FEEDBACK", REVIEW_ROUND.use_custom_questions, REVIEW_ROUND.id
 	FROM REVIEW_STATE_CHANGE_EVENT INNER JOIN EVENT
 		ON REVIEW_STATE_CHANGE_EVENT.id = EVENT.id

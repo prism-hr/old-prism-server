@@ -106,12 +106,14 @@ ALTER TABLE COMMENT
 	ADD COLUMN transition_state_id VARCHAR(50) AFTER content,
 	ADD INDEX (program_id),
 	ADD INDEX (project_id),
+	ADD INDEX (action_id),
 	ADD INDEX (role_id),
 	ADD INDEX (delegate_user_id),
 	ADD INDEX (delegate_role_id),
 	ADD INDEX (transition_state_id),
 	ADD FOREIGN KEY (program_id) REFERENCES PROGRAM (id),
 	ADD FOREIGN KEY (project_id) REFERENCES PROJECT (id),
+	ADD FOREIGN KEY (action_id) REFERENCES ACTION (id),
 	ADD FOREIGN KEY (application_id) REFERENCES APPLICATION (id),
 	ADD FOREIGN KEY (role_id) REFERENCES ROLE (id),
 	ADD FOREIGN KEY (delegate_user_id) REFERENCES USER (id),
@@ -183,7 +185,7 @@ DROP TABLE OPPORTUNITY_REQUEST
 /* Create the project workflow comments */
 
 INSERT INTO COMMENT (project_id, action_id, user_id, role_id, created_timestamp, transition_state_id)
-	SELECT PROJECT.id, "PROGRAM_CREATE_PROGRAM", USER_ROLE.user_id, USER_ROLE.role_id, "2014-01-02 09:00:00", "PROJECT_APPROVED"
+	SELECT PROJECT.id, "PROGRAM_CREATE_PROJECT", USER_ROLE.user_id, USER_ROLE.role_id, "2014-01-02 09:00:00", "PROJECT_APPROVED"
 	FROM PROJECT INNER JOIN USER_ROLE
 		ON PROJECT.id = USER_ROLE.project_id
 	WHERE USER_ROLE.role_id = "PROJECT_PRIMARY_SUPERVISOR"

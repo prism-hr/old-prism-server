@@ -34,18 +34,20 @@ ALTER TABLE INSTITUTION
 ALTER TABLE COMMENT
 	ADD COLUMN application_interview_datetime DATETIME AFTER application_desire_to_supervise,
 	ADD COLUMN application_interview_timezone VARCHAR(50) AFTER application_interview_datetime,
-	ADD COLUMN application_interviee_instructions TEXT AFTER application_interview_timezone,
-	ADD COLUMN application_interviewer_instructions TEXT AFTER application_interviee_instructions,
+	ADD COLUMN application_interview_duration INT(10) AFTER application_interview_timezone,
+	ADD COLUMN application_interviewee_instructions TEXT AFTER application_interview_timezone,
+	ADD COLUMN application_interviewer_instructions TEXT AFTER application_interviewee_instructions,
 	ADD COLUMN application_interview_location VARCHAR(2000) AFTER application_interviewer_instructions,
 	ADD COLUMN interview_id INT(10) UNSIGNED
 ;
 
 INSERT INTO COMMENT (application_id, action_id, user_id, role_id, created_timestamp, transition_state_id, 
 	application_use_custom_recruiter_questions, application_interview_datetime, application_interview_timezone, 
-	application_interviee_instructions, application_interviewer_instructions, application_interview_location, interview_id)
-	SELECT EVENT.application_form_id, "ASSIGN_INTERVIEWERS", EVENT.user_id, "PROGRAM_ADMINISTRATOR", 
+	application_interview_duration, application_interviewee_instructions, application_interviewer_instructions, 
+	application_interview_location, interview_id)
+	SELECT EVENT.application_form_id, "APPLICATION_ASSIGN_INTERVIEWERS", EVENT.user_id, "PROGRAM_ADMINISTRATOR", 
 		EVENT.event_date, "APPLICATION_INTERVIEW_PENDING_SCHEDULING", INTERVIEW.use_custom_questions, 
-		NULL, NULL, NULL, NULL, NULL, INTERVIEW.id
+		NULL, NULL, NULL, NULL, NULL, NULL, INTERVIEW.id
 	FROM INTERVIEW_STATE_CHANGE_EVENT INNER JOIN EVENT
 		ON INTERVIEW_STATE_CHANGE_EVENT.id = EVENT.id
 	INNER JOIN INTERVIEW
@@ -54,22 +56,22 @@ INSERT INTO COMMENT (application_id, action_id, user_id, role_id, created_timest
 		ON INTERVIEW.id = INTERVIEW_PARTICIPANT.interview_id
 	GROUP BY INTERVIEW.id
 		UNION
-	SELECT EVENT.application_form_id, "ASSIGN_INTERVIEWERS", EVENT.user_id, "PROGRAM_ADMINISTRATOR", 
+	SELECT EVENT.application_form_id, "APPLICATION_ASSIGN_INTERVIEWERS", EVENT.user_id, "PROGRAM_ADMINISTRATOR", 
 		EVENT.event_date, "APPLICATION_INTERVIEW_PENDING_INTERVIEW", INTERVIEW.use_custom_questions, 
 		CONCAT(INTERVIEW.due_date, " ", INTERVIEW.interview_time, ":00"), INTERVIEW.time_zone,
-		INTERVIEW.further_details, INTERVIEW.further_interviewer_details, INTERVIEW.location_url,
-		INTERVIEW.id
+		INTERVIEW.duration, INTERVIEW.further_details, INTERVIEW.further_interviewer_details, 
+		INTERVIEW.location_url, INTERVIEW.id
 	FROM INTERVIEW_STATE_CHANGE_EVENT INNER JOIN EVENT
 		ON INTERVIEW_STATE_CHANGE_EVENT.id = EVENT.id
 	INNER JOIN INTERVIEW
 		ON INTERVIEW_STATE_CHANGE_EVENT.interview_id = INTERVIEW.id
 	WHERE EVENT.event_date < CONCAT(INTERVIEW.due_date, " ", INTERVIEW.interview_time, ";00")
 		UNION
-	SELECT EVENT.application_form_id, "ASSIGN_INTERVIEWERS", EVENT.user_id, "PROGRAM_ADMINISTRATOR", 
+	SELECT EVENT.application_form_id, "APPLICATION_ASSIGN_INTERVIEWERS", EVENT.user_id, "PROGRAM_ADMINISTRATOR", 
 		EVENT.event_date, "APPLICATION_INTERVIEW_PENDING_FEEDBACK", INTERVIEW.use_custom_questions, 
 		CONCAT(INTERVIEW.due_date, " ", INTERVIEW.interview_time, ":00"), INTERVIEW.time_zone,
-		INTERVIEW.further_details, INTERVIEW.further_interviewer_details, INTERVIEW.location_url,	
-		INTERVIEW.id
+		INTERVIEW.duration, INTERVIEW.further_details, INTERVIEW.further_interviewer_details, 
+		INTERVIEW.location_url,	INTERVIEW.id
 	FROM INTERVIEW_STATE_CHANGE_EVENT INNER JOIN EVENT
 		ON INTERVIEW_STATE_CHANGE_EVENT.id = EVENT.id
 	INNER JOIN INTERVIEW
@@ -84,7 +86,7 @@ INSERT IGNORE INTO COMMENT_ASSIGNED_USER (comment_id, user_id, role_id)
 	SELECT COMMENT.id, APPLICATION.user_id, "APPLICATION_POTENTIAL_INTERVIEWEE"
 	FROM COMMENT INNER JOIN APPLICATION
 		ON COMMENT.application_id = APPLICATION.id
-	WHERE COMMENT.transition_state_id = "APPLICATION_INTERVIEW_PENDING_SCHEDULING"
+	WHERE COMMENT.transition_state_id = "APPLICATION_INTERVIEW_PENDING_AVAILABILITY"
 		UNION
 	SELECT COMMENT.id, APPLICATION.user_id, "APPLICATION_INTERVIEWEE"
 	FROM COMMENT INNER JOIN APPLICATION
@@ -185,8 +187,3 @@ INSERT INTO COMMENT_ASSIGNED_USER (comment_id, user_id, role_id)
 		ON COMMENT.application_id = APPLICATION.id
 	WHERE COMMENT.action_id = "APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY"
 ;
-	
-/* Reconfigure use custom question flags */
-/* Find and expose move to different stage comments */
-
-/* Fix null constraints on comment table */

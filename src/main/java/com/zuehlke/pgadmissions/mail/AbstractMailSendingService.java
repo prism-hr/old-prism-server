@@ -95,10 +95,6 @@ public abstract class AbstractMailSendingService {
         mailSender.sendEmail(message);
     }
 
-    protected void sendEmail(PrismEmailMessage... messages) {
-        mailSender.sendEmail(messages);
-    }
-
     protected String getHostName() {
         return host;
     }

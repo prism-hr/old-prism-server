@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.StateTransitionType;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -51,11 +52,12 @@ public class StateDAO {
                 .add(Restrictions.eq("canBeAssignedFrom", true)).list();
     }
 
-    public List<StateTransition> getStateTransitions(PrismState state, ApplicationFormAction action) {
+    public List<StateTransition> getStateTransitions(PrismState state, ApplicationFormAction action, StateTransitionType... stateTransitionTypes) {
         return (List<StateTransition>) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
                 .createAlias("stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.state.id", state)) //
                 .add(Restrictions.eq("stateAction.action.id", action)) //
+                .add(Restrictions.in("type", stateTransitionTypes)) //
                 .addOrder(Order.asc("type")) //
                 .addOrder(Order.asc("processingOrder")) //
                 .list();

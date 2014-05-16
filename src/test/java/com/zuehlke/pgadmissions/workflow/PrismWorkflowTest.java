@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.workflow;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang.WordUtils;
@@ -99,16 +100,17 @@ public class PrismWorkflowTest {
         User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl")
                 .withAccount(new UserAccount().withPassword("password")), program);
 
-        assertTrue(actionService.canExecute(applicant, program, ApplicationFormAction.PROGRAM_CREATE_APPLICATION));
+        assertNotNull(roleService.canExecute(applicant, program, ApplicationFormAction.PROGRAM_CREATE_APPLICATION));
 
         applicant = registrationService.activateAccount(applicant.getActivationCode());
 
         ActionOutcome actionOutcome = actionService.executeAction(applicant, ApplicationFormAction.PROGRAM_CREATE_APPLICATION, program.getId());
         System.out.println(actionOutcome.createRedirectionUrl());
 
-        assertTrue(actionService.canExecute(applicant, program, ApplicationFormAction.APPLICATION_COMPLETE));
-        // TODO assert that application_complete action exists
-
+        assertNotNull(roleService.canExecute(applicant, program, ApplicationFormAction.APPLICATION_COMPLETE));
+        actionOutcome = actionService.executeAction(applicant, ApplicationFormAction.APPLICATION_COMPLETE, 1);
+        System.out.println(actionOutcome.createRedirectionUrl());
+        
         // applicationFormService.submitApplication(application);
         //
         // AssignReviewersComment assignReviewerComment = new AssignReviewersComment();

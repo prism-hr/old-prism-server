@@ -114,9 +114,11 @@ public class ActionService {
             nextAction = transitionAction != null ? transitionAction : nextAction;
             newScope.setState(stateTransition.getTransitionState());
 
-            comment.setUser(user);
-            comment.setCreatedTimestamp(new Date());
-            commentService.save(comment);
+            if (comment != null) {
+                comment.setUser(user);
+                comment.setCreatedTimestamp(new Date());
+                commentService.save(comment);
+            }
 
             List<RoleTransition> roleTransitions = roleService.getRoleTransitions(stateTransition, invokingRole);
             for (RoleTransition roleTransition : roleTransitions) {

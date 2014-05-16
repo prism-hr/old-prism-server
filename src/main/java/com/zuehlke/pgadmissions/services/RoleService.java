@@ -1,12 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.codehaus.jackson.map.util.BeanUtil;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,13 +45,6 @@ public class RoleService {
             }
             userRole.setAssignedTimestamp(new DateTime());
             roleDAO.save(userRole);
-
-            for (Role inheritedRole : role.getInheritedRoles()) {
-                PrismScope enclosingScope = getEnclosingScope(inheritedRole.getId(), scope);
-                if (enclosingScope != null) {
-                    getOrCreateUserRole(enclosingScope, user, inheritedRole.getId());
-                }
-            }
         }
         return userRole;
     }

@@ -9,8 +9,6 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -24,7 +22,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.zuehlke.pgadmissions.domain.enums.AdvertType;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ScoringStage;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 
@@ -34,9 +32,9 @@ import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Program extends Advert {
 
-    @Column(name = "state_id")
-    @Enumerated(EnumType.STRING)
-    private ProgramState state;
+    @ManyToOne
+    @JoinColumn(name = "state_id", nullable = false)
+    private State state;
 
     @Column(name = "code")
     private String code;
@@ -139,11 +137,11 @@ public class Program extends Advert {
         this.programType = programType;
     }
 
-    public ProgramState getState() {
+    public State getState() {
         return state;
     }
 
-    public void setState(ProgramState state) {
+    public void setState(State state) {
         this.state = state;
     }
 
@@ -159,7 +157,7 @@ public class Program extends Advert {
 
     @Override
     public boolean isEnabled() {
-        return state == ProgramState.PROGRAM_APPROVED;
+        return state.getId() == PrismState.PROGRAM_APPROVED;
     }
 
     public Program withId(Integer id) {
@@ -187,7 +185,7 @@ public class Program extends Advert {
         return this;
     }
 
-    public Program withState(ProgramState state) {
+    public Program withState(State state) {
         this.state = state;
         return this;
     }

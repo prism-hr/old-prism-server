@@ -30,10 +30,11 @@ import com.zuehlke.pgadmissions.domain.Institution;
 import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.OpportunityRequest;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.OpportunityRequestBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramTypeBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ProgramState;
+import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ProgramTypeId;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
@@ -100,7 +101,7 @@ public class ProgramConfigurationControllerTest {
         InstitutionDomicile domicile = new InstitutionDomicile();
         Program program = new Program().withCode("07").withInstitution(new Institution().withDomicile(domicile))
                 .withId(999).withTitle("Dlaczego w pizdzie nie ma krzesel?").withDescription("Zeby chuj stal").withStudyDuration(8)
-                .withFunding("Ni ma kasy").withState(ProgramState.PROGRAM_APPROVED).withRequireProjectDefinition(false)
+                .withFunding("Ni ma kasy").withState(new State().withId(PrismState.PROGRAM_APPROVED)).withRequireProjectDefinition(false)
                 .withProgramType(new ProgramTypeBuilder().id(ProgramTypeId.INTERNSHIP).build());
 
         Map<String, Object> dataMap = Maps.newHashMap();

@@ -111,7 +111,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
         Institution institution = testObjectProvider.getInstitution();
         ProgramType programType = testObjectProvider.getProgramType();
-        Program program = TestData.aProgram(programType, institution, user);
+        Program program = TestData.aProgram(programType, institution, user, testObjectProvider.getState(PrismState.PROGRAM_APPROVED));
         save(program);
         
         flushAndClearSession();

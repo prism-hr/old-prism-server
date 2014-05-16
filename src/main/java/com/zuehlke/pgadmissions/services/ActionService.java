@@ -9,13 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ActionDAO;
+import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ActionDefinition;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.exceptions.CannotExecuteActionException;
 
 @Service
@@ -24,6 +27,9 @@ public class ActionService {
 
     @Autowired
     private ActionDAO actionDAO;
+    
+    @Autowired
+    private StateDAO stateDAO;
 
     @Autowired
     private RoleService roleService;
@@ -51,8 +57,12 @@ public class ActionService {
     public List<ActionDefinition> getUserActions(Integer applicationFormId, Integer userId) {
         return actionDAO.getUserActions(applicationFormId, userId);
     }
-
-    public String executeAction(User user, ApplicationFormAction action, Integer scopeId) {
+    
+    public boolean canExecute(User user, PrismScope scope, ApplicationFormAction action) {
+        return actionDAO.canExecute(user, scope, action);
+    }
+    
+    public ActionOutcome executeAction(User user, ApplicationFormAction action, Integer scopeId) {
         String actionName = action.name();
         String scopeName = actionName.substring(0, actionName.indexOf('_'));
 
@@ -69,21 +79,33 @@ public class ActionService {
         return executeAction(user, action, scope);
     }
 
-    public String executeAction(User user, ApplicationFormAction action, PrismScope scope) {
-        if(!actionDAO.canExecute(user, scope, action)){
+    public ActionOutcome executeAction(User user, ApplicationFormAction action, PrismScope scope) {
+        if (!actionDAO.canExecute(user, scope, action)) {
             throw new CannotExecuteActionException(scope);
         }
-        
+
         Pattern createPattern = Pattern.compile("([A-Z]+)_CREATE_([A-Z]+)");
         Matcher createMatcher = createPattern.matcher(action.name());
 
+        PrismScope newScope = null;
         if (createMatcher.matches()) {
-            String newScope = createMatcher.group(2).toLowerCase();
-            entityCreationService.create(user, scope, newScope);
+            String newScopeName = createMatcher.group(2).toLowerCase();
+            newScope = entityCreationService.create(user, scope, newScopeName);
         }
+
         
-        String nextActionId = null;
-        return "";
+        ApplicationFormAction nextAction = performTransition(action, scope);
+        return new ActionOutcome(user, newScope, nextAction);
+    }
+
+    private ApplicationFormAction performTransition(ApplicationFormAction action, PrismScope scope) {
+        List<StateTransition> stateTransitions = stateDAO.getStateTransitions(scope.getState().getId(), action);
+        
+        if(stateTransitions.size() == 1) {
+            StateTransition transition = stateTransitions.get(0);
+            return transition.getTransitionAction().getId();
+        }
+        return null;
     }
 
 }

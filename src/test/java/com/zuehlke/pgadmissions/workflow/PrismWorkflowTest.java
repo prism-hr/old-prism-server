@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.ActionOutcome;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -68,7 +69,7 @@ public class PrismWorkflowTest {
 
     @Autowired
     private RoleService roleService;
-    
+
     @Autowired
     private ActionService actionService;
 
@@ -95,21 +96,24 @@ public class PrismWorkflowTest {
 
         Program program = programService.getAllEnabledPrograms().get(0);
 
-        User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl").withAccount(new UserAccount().withPassword("password")), null);
+        User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl")
+                .withAccount(new UserAccount().withPassword("password")), program);
 
-        // TODO assert that (program|project)_create_application action exists
+        assertTrue(actionService.canExecute(applicant, program, ApplicationFormAction.PROGRAM_CREATE_APPLICATION));
 
         applicant = registrationService.activateAccount(applicant.getActivationCode());
 
-        actionService.executeAction(applicant, ApplicationFormAction.PROGRAM_CREATE_APPLICATION, program.getId());
+        ActionOutcome actionOutcome = actionService.executeAction(applicant, ApplicationFormAction.PROGRAM_CREATE_APPLICATION, program.getId());
+        System.out.println(actionOutcome.createRedirectionUrl());
 
+        assertTrue(actionService.canExecute(applicant, program, ApplicationFormAction.APPLICATION_COMPLETE));
         // TODO assert that application_complete action exists
 
-//        applicationFormService.submitApplication(application);
-//
-//        AssignReviewersComment assignReviewerComment = new AssignReviewersComment();
-//        assignReviewerComment.setContent("Assigning reviewers");
-//        reviewService.moveApplicationToReview(application.getId(), assignReviewerComment);
+        // applicationFormService.submitApplication(application);
+        //
+        // AssignReviewersComment assignReviewerComment = new AssignReviewersComment();
+        // assignReviewerComment.setContent("Assigning reviewers");
+        // reviewService.moveApplicationToReview(application.getId(), assignReviewerComment);
 
     }
 

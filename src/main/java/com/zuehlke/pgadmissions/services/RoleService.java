@@ -13,10 +13,14 @@ import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.PrismSystem;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.RoleTransition;
+import com.zuehlke.pgadmissions.domain.StateTransition;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AuthorityScope;
+import com.zuehlke.pgadmissions.domain.enums.RoleTransitionType;
 
 @Service
 @Transactional
@@ -41,13 +45,6 @@ public class RoleService {
             }
             userRole.setAssignedTimestamp(new DateTime());
             roleDAO.save(userRole);
-
-            for (Role inheritedRole : role.getInheritedRoles()) {
-                PrismScope enclosingScope = getEnclosingScope(inheritedRole.getId(), scope);
-                if (enclosingScope != null) {
-                    getOrCreateUserRole(enclosingScope, user, inheritedRole.getId());
-                }
-            }
         }
         return userRole;
     }
@@ -116,8 +113,7 @@ public class RoleService {
     }
 
     public UserRole getUserRole(User user, Authority authority) {
-        // TODO Auto-generated method stub
-        return null;
+        return roleDAO.getUserRole(user, authority);
     }
 
     public PrismScope getEnclosingScope(Authority authority, PrismScope currentScope) {
@@ -128,6 +124,30 @@ public class RoleService {
             return (PrismScope) PropertyUtils.getSimpleProperty(currentScope, scopeName);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public List<RoleTransition> getRoleTransitions(StateTransition stateTransition, Role invokingRole) {
+        return roleDAO.getRoleTransitions(stateTransition, invokingRole);
+    }
+
+    public Role canExecute(User user, PrismScope scope, ApplicationFormAction action) {
+        return roleDAO.canExecute(user, scope, action);
+    }
+
+    public List<User> getBy(Role role, PrismScope scope) {
+        return roleDAO.getBy(role, scope);
+    }
+
+    public void executeRoleTransition(PrismScope scope, User user, Role role, RoleTransitionType type, PrismScope newScope, Role newRole) {
+        UserRole userRole = getUserRole(user, role.getId());
+        switch (type) {
+        case UPDATE:
+            userRole.setRole(newRole);
+            userRole.setScope(newScope);
+            break;
+        default:
+            break;
         }
     }
 

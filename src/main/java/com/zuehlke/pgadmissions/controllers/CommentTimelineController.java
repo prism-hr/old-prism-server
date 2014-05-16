@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -62,8 +62,8 @@ public class CommentTimelineController {
 	}
 	
 	@ModelAttribute("homeOrOverseasOptions")
-	public HomeOrOverseas[] getHomeOrOverseasOptions() {
-		return HomeOrOverseas.values();
+	public ResidenceStatus[] getHomeOrOverseasOptions() {
+		return ResidenceStatus.values();
 	}
 
 	@ModelAttribute("user")

@@ -46,7 +46,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     @GeneratedValue
     private Integer id;
 
-    @Column(name = "application_number")
+    @Column(name = "application_number", nullable = false)
     private String applicationNumber;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -54,7 +54,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     private Rejection rejection;
 
     @ManyToOne
-    @JoinColumn(name = "state_id")
+    @JoinColumn(name = "state_id", nullable = false)
     private State state;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -88,7 +88,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     private User user = null;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "program_id")
+    @JoinColumn(name = "program_id", nullable = false)
     private Program program;
 
     @ManyToOne(fetch = FetchType.LAZY)

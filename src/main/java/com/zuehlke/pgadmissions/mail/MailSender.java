@@ -37,32 +37,25 @@ public class MailSender {
 
     private final Logger log = LoggerFactory.getLogger(MailSender.class);
 
-    private final JavaMailSender javaMailSender;
+    @Autowired
+    private JavaMailSender javaMailSender;
 
-    private final boolean emailProductionSwitch;
+    @Value("${email.prod}")
+    private boolean productionEmail;
 
-    private final String emailAddressFrom;
+    @Value("${email.address.from}")
+    private String emailAddressFrom;
 
-    private final String emailAddressTo;
-
-    private final NotificationTemplateService emailTemplateService;
-
-    private final FreeMarkerConfig freemarkerConfig;
-    
-    public JavaMailSender getJavaMailSender() {
-        return javaMailSender;
-    }
+    @Value("${email.address.to}")
+    private String emailAddressTo;
 
     @Autowired
-    public MailSender(final JavaMailSender javaMailSender, @Value("${email.prod}") final String production,
-            @Value("${email.address.from}") final String emailAddressFrom, @Value("${email.address.to}") final String emailAddressTo,
-            final NotificationTemplateService emailTemplateService, final FreeMarkerConfig freemarkerConfig) {
-        this.javaMailSender = javaMailSender;
-        this.emailProductionSwitch = BooleanUtils.toBoolean(production);
-        this.emailAddressFrom = emailAddressFrom;
-        this.emailAddressTo = emailAddressTo;
-        this.emailTemplateService = emailTemplateService;
-        this.freemarkerConfig = freemarkerConfig;
+    private NotificationTemplateService emailTemplateService;
+
+    @Autowired
+    private FreeMarkerConfig freemarkerConfig;
+
+    public MailSender() {
         enableLoggingOfSMTPCommands();
     }
 
@@ -94,7 +87,7 @@ public class MailSender {
 
     public void sendEmail(final Collection<PrismEmailMessage> emailMessages) {
         for (PrismEmailMessage message : emailMessages) {
-            if (emailProductionSwitch) {
+            if (productionEmail) {
                 sendEmailAsProductionMessage(message);
             } else {
                 sendEmailAsDevelopmentMessage(message);
@@ -135,8 +128,8 @@ public class MailSender {
                     }
 
                     NotificationTemplate notificationTemplate = emailTemplateService.getById(message.getTemplateName());
-                    Template template = new Template(message.getTemplateName().displayValue(), new StringReader(notificationTemplate.getVersion().getContent()),
-                            freemarkerConfig.getConfiguration());
+                    Template template = new Template(message.getTemplateName().displayValue(),
+                            new StringReader(notificationTemplate.getVersion().getContent()), freemarkerConfig.getConfiguration());
 
                     HtmlToPlainText htmlFormatter = new HtmlToPlainText();
                     String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(template, message.getModel());
@@ -182,8 +175,8 @@ public class MailSender {
                     }
 
                     NotificationTemplate notificationTemplate = emailTemplateService.getById(message.getTemplateName());
-                    Template template = new Template(message.getTemplateName().displayValue(), new StringReader(notificationTemplate.getVersion().getContent()),
-                            freemarkerConfig.getConfiguration());
+                    Template template = new Template(message.getTemplateName().displayValue(),
+                            new StringReader(notificationTemplate.getVersion().getContent()), freemarkerConfig.getConfiguration());
 
                     HtmlToPlainText htmlFormatter = new HtmlToPlainText();
                     String htmlText = FreeMarkerTemplateUtils.processTemplateIntoString(template, message.getModel());

@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-public enum HomeOrOverseas {
+public enum ResidenceStatus {
 
 	HOME("Home/EU"), OVERSEAS("Overseas"), UNSURE("Unsure");
 
 	private final String displayValue;
 
-	private HomeOrOverseas(String displayValue){	
+	private ResidenceStatus(String displayValue){	
 		this.displayValue = displayValue;
 	}
 

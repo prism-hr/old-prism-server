@@ -4,8 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.savedrequest.DefaultSavedRequest;
 import org.springframework.stereotype.Controller;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.dto.ActionOutcome;
@@ -34,8 +33,6 @@ import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 @Controller
 @RequestMapping(value = "/register")
 public class RegistrationController {
-
-    private static final Logger log = LoggerFactory.getLogger(RegistrationController.class);
 
     @Autowired
     private UserService userService;
@@ -93,8 +90,7 @@ public class RegistrationController {
     }
 
     @RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
-    public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam(required = false) ApplicationFormAction action,
-            Integer scopeId,  HttpServletRequest request) {
+    public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam(required = false) ApplicationFormAction action, Integer scopeId) {
 
         User user = registrationService.activateAccount(activationCode);
 
@@ -102,7 +98,7 @@ public class RegistrationController {
             return TemplateLocation.REGISTRATION_FAILURE_CONFIRMATION;
         }
 
-        ActionOutcome actionOutcome = actionService.executeAction(user, action, scopeId);
+        ActionOutcome actionOutcome = actionService.executeAction(scopeId, user, action, new Comment());
         return actionOutcome.createRedirectionUrl();
     }
 

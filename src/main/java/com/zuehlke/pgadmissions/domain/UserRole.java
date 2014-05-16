@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -136,6 +139,14 @@ public class UserRole {
         this.assignedTimestamp = assignedTimestamp;
     }
 
+    public void setScope(PrismScope scope) {
+        try {
+            PropertyUtils.setProperty(this, scope.getScopeName(), scope);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public UserRole withSystem(PrismSystem system) {
         this.system = system;
         return this;
@@ -175,7 +186,7 @@ public class UserRole {
         this.requestingUser = requestingUser;
         return this;
     }
-    
+
     public UserRole withAssignedTimestamp(DateTime assignedTimestamp) {
         this.assignedTimestamp = assignedTimestamp;
         return this;

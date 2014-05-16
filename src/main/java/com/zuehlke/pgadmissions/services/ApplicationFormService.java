@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
@@ -245,10 +244,6 @@ public class ApplicationFormService {
         application.setProgram(advert.getProgram());
         application.setProject(advert.getProject());
         application.setApplicationNumber(applicationNumber);
-        ProgramDetails programDetails = programDetailsService.getOrCreate(application);
-        programDetails.setApplication(application);
-        application.setProgramDetails(programDetails);
-        applicationFormDAO.save(application);
         return application;
     }
 

@@ -36,7 +36,7 @@ import com.zuehlke.pgadmissions.services.exporters.ApplicationTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 
 @RunWith(UnitilsJUnit4TestClassRunner.class)
-public class ExportQueueListenerTest {
+public class PorticoQueueListenerTest {
 
     @Mock @InjectIntoByType
     private ExportService porticoExportServiceMock;
@@ -60,7 +60,7 @@ public class ExportQueueListenerTest {
     private RoleService roleServiceMock;
     
     @TestedObject
-    private ExportQueueListener listener;
+    private PorticoQueueListener listener;
     
     @Test
     public void shouldReceiveJmsMessageAndCallSendToPortico() throws JMSException {
@@ -122,7 +122,7 @@ public class ExportQueueListenerTest {
         try {
             listener.onMessage(messageMock);
             Assert.fail("A TriggerJmsRetryException should have been thrown");
-        }  catch (ExportQueueListener.TriggerJmsRetryException e) {
+        }  catch (PorticoQueueListener.TriggerJmsRetryException e) {
             assertEquals(uclExportServiceException.getMessage(), e.getMessage());
         }
         

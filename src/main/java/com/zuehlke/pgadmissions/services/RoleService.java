@@ -37,13 +37,7 @@ public class RoleService {
         Role role = roleDAO.getById(authority);
         UserRole userRole = roleDAO.get(user, scope, authority);
         if (userRole == null) {
-            userRole = new UserRole().withUser(user).withRole(role);
-            try {
-                PropertyUtils.setSimpleProperty(userRole, scope.getScopeName(), scope);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            userRole.setAssignedTimestamp(new DateTime());
+            userRole = new UserRole().withUser(user).withRole(role).withScope(scope).withAssignedTimestamp(new DateTime());
             roleDAO.save(userRole);
         }
         return userRole;
@@ -149,6 +143,10 @@ public class RoleService {
         default:
             break;
         }
+    }
+
+    public Role getCreatorRole(ApplicationFormAction action, PrismScope scope) {
+        return roleDAO.getCreatorRole(action, scope);
     }
 
 }

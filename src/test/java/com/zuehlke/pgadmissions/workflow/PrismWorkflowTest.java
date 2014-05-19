@@ -73,12 +73,40 @@ public class PrismWorkflowTest {
 
     @Autowired
     private ActionService actionService;
-    
+
     @Autowired
     private MailSenderMock mailSenderMock;
 
     @Test
-    public void initializeWorkflowTest() throws Exception {
+    public void runWorkflowTest() throws Exception {
+        initializeData();
+
+        Program program = programService.getAllEnabledPrograms().get(0);
+
+        User programAdministrator = manageUsersService.setUserRoles("Jerzy", "Urban", "jerzy@urban.pl", true, program, Authority.PROGRAM_ADMINISTRATOR);
+
+        User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl")
+                .withAccount(new UserAccount().withPassword("password")), program);
+        mailSenderMock.assertEmailSent(applicant, NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+
+        applicant = registrationService.activateAccount(applicant.getActivationCode(), ApplicationFormAction.PROGRAM_CREATE_APPLICATION, program.getId());
+
+        Comment createApplicationComment = null;
+        ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, ApplicationFormAction.PROGRAM_CREATE_APPLICATION,
+                createApplicationComment);
+        System.out.println(actionOutcome.createRedirectionUrl());
+
+        Comment completeApplicationComment = null;
+        actionOutcome = actionService.executeAction(1, applicant, ApplicationFormAction.APPLICATION_COMPLETE, completeApplicationComment);
+        System.out.println(actionOutcome.createRedirectionUrl());
+
+        Comment assignReviewerComment = new Comment();
+        actionService.executeAction(1, programAdministrator, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
+
+        mailSenderMock.verify();
+    }
+
+    private void initializeData() {
         User superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, roleService.getPrismSystem(),
                 Authority.SYSTEM_ADMINISTRATOR);
 
@@ -89,40 +117,6 @@ public class PrismWorkflowTest {
             entityService.update(feed);
         }
         xmlDataImportTask.importData();
-
-        InstitutionDomicile polishDomicile = entityService.getBy(InstitutionDomicile.class, "code", "PL");
-        ProgramType programType = programService.getProgramTypes().iterator().next();
-
-        User programCreator = new User().withFirstName("Jerzy").withLastName("Urban").withEmail("jerzy@urban.pl")
-                .withAccount(new UserAccount().withPassword("password").withConfirmPassword("password"));
-
-        Program program = programService.getAllEnabledPrograms().get(0);
-
-        User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl")
-                .withAccount(new UserAccount().withPassword("password")), program);
-        
-        mailSenderMock.assertEmailSent(applicant, NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
-
-        assertNotNull(roleService.canExecute(applicant, program, ApplicationFormAction.PROGRAM_CREATE_APPLICATION));
-
-        applicant = registrationService.activateAccount(applicant.getActivationCode());
-
-        Comment createApplicationComment = null;
-        ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, ApplicationFormAction.PROGRAM_CREATE_APPLICATION, createApplicationComment);
-        System.out.println(actionOutcome.createRedirectionUrl());
-
-        assertNotNull(roleService.canExecute(applicant, program, ApplicationFormAction.APPLICATION_COMPLETE));
-        Comment completeApplicationComment = null;
-        actionOutcome = actionService.executeAction(1, applicant, ApplicationFormAction.APPLICATION_COMPLETE, completeApplicationComment);
-        System.out.println(actionOutcome.createRedirectionUrl());
-        
-        // applicationFormService.submitApplication(application);
-        //
-        // AssignReviewersComment assignReviewerComment = new AssignReviewersComment();
-        // assignReviewerComment.setContent("Assigning reviewers");
-        // reviewService.moveApplicationToReview(application.getId(), assignReviewerComment);
-
-        mailSenderMock.verify();
     }
 
 }

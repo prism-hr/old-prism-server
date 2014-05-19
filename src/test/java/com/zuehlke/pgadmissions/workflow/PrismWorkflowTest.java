@@ -92,12 +92,12 @@ public class PrismWorkflowTest {
                 createApplicationComment);
         Application createdApplication = (Application) actionOutcome.getScope();
         assertEquals(ApplicationFormAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
-        
+
         Comment completeApplicationComment = null;
-        actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, ApplicationFormAction.APPLICATION_COMPLETE, completeApplicationComment);
+        actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, ApplicationFormAction.APPLICATION_COMPLETE,
+                completeApplicationComment);
         assertEquals(ApplicationFormAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
         assertEquals(roleService.getPrismSystem().getId(), actionOutcome.getScope().getId());
-        
 
         Comment assignReviewerComment = new Comment();
         actionService.executeAction(1, programAdministrator, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
@@ -106,8 +106,8 @@ public class PrismWorkflowTest {
     }
 
     private User registerAndActivateApplicant(Advert advert, String firstName, String lastName, String email) {
-        User applicant = registrationService.submitRegistration(new User().withFirstName(firstName).withLastName(lastName).withEmail(email)
-                .withAccount(new UserAccount().withPassword("password")), advert);
+        User applicant = registrationService.submitRegistration(
+                new User().withFirstName(firstName).withLastName(lastName).withEmail(email).withAccount(new UserAccount().withPassword("password")), advert);
         mailSenderMock.assertEmailSent(applicant, NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
 
         applicant = registrationService.activateAccount(applicant.getActivationCode(), ApplicationFormAction.PROGRAM_CREATE_APPLICATION, advert.getId());

@@ -13,8 +13,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.ValidationComment;
-import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Repository
 @SuppressWarnings("unchecked")

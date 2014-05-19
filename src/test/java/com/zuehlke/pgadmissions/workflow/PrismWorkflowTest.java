@@ -1,6 +1,9 @@
 package com.zuehlke.pgadmissions.workflow;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.commons.lang.WordUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -75,27 +80,21 @@ public class PrismWorkflowTest {
 
     @Test
     public void runWorkflowTest() throws Exception {
-        initializeData();
-
         Program program = programService.getAllEnabledPrograms().get(0);
 
         User programAdministrator = manageUsersService.setUserRoles("Jerzy", "Urban", "jerzy@urban.pl", true, program, Authority.PROGRAM_ADMINISTRATOR);
 
-        User applicant = registrationService.submitRegistration(new User().withFirstName("Kuba").withLastName("Fibinger").withEmail("kuba@fibinger.pl")
-                .withAccount(new UserAccount().withPassword("password")), program);
-        mailSenderMock.assertEmailSent(applicant, NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
-
-        applicant = registrationService.activateAccount(applicant.getActivationCode(), ApplicationFormAction.PROGRAM_CREATE_APPLICATION, program.getId());
+        User applicant = registerAndActivateApplicant(program, "Kuba", "Fibinger", "kuba@fibinger.pl");
 
         Comment createApplicationComment = null;
         ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, ApplicationFormAction.PROGRAM_CREATE_APPLICATION,
                 createApplicationComment);
-        System.out.println(actionOutcome.createRedirectionUrl());
-
+        ApplicationForm createdApplication = (ApplicationForm) actionOutcome.getScope();
+        assertEquals(ApplicationFormAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
         
         Comment completeApplicationComment = null;
-        actionOutcome = actionService.executeAction(1, applicant, ApplicationFormAction.APPLICATION_COMPLETE, completeApplicationComment);
-        System.out.println(actionOutcome.createRedirectionUrl());
+        actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, ApplicationFormAction.APPLICATION_COMPLETE, completeApplicationComment);
+        assertEquals(ApplicationFormAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
 
         Comment assignReviewerComment = new Comment();
         actionService.executeAction(1, programAdministrator, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);
@@ -103,7 +102,17 @@ public class PrismWorkflowTest {
         mailSenderMock.verify();
     }
 
-    private void initializeData() {
+    private User registerAndActivateApplicant(Advert advert, String firstName, String lastName, String email) {
+        User applicant = registrationService.submitRegistration(new User().withFirstName(firstName).withLastName(lastName).withEmail(email)
+                .withAccount(new UserAccount().withPassword("password")), advert);
+        mailSenderMock.assertEmailSent(applicant, NotificationTemplateId.SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+
+        applicant = registrationService.activateAccount(applicant.getActivationCode(), ApplicationFormAction.PROGRAM_CREATE_APPLICATION, advert.getId());
+        return applicant;
+    }
+
+    @Before
+    public void initializeData() {
         User superadmin = manageUsersService.setUserRoles("Jozef", "Oleksy", "jozek@oleksy.pl", true, roleService.getPrismSystem(),
                 Authority.SYSTEM_ADMINISTRATOR);
 

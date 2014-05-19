@@ -14,8 +14,6 @@ import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.PrismScope;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.RoleTransition;
 import com.zuehlke.pgadmissions.domain.StateTransition;
@@ -86,12 +84,13 @@ public class ActionService {
             newScope = entityCreationService.create(user, scope, newScopeName);
         }
 
-        ApplicationFormAction nextAction = performTransition(scope, user, invokingRole, action, newScope, comment);
+        ApplicationFormAction nextAction = executeStateTransition(scope, user, invokingRole, action, newScope, comment);
         entityService.save(newScope);
-        return new ActionOutcome(user, newScope, nextAction);
+        PrismScope nextActionScope = nextAction != null ? newScope.getEnclosingScope(nextAction.getScopeName()) : null;
+        return new ActionOutcome(user, nextActionScope, nextAction);
     }
 
-    private ApplicationFormAction performTransition(PrismScope scope, User user, Role invokingRole, ApplicationFormAction action, PrismScope newScope,
+    private ApplicationFormAction executeStateTransition(PrismScope scope, User user, Role invokingRole, ApplicationFormAction action, PrismScope newScope,
             Comment comment) {
         List<StateTransition> stateTransitions = stateDAO.getStateTransitions(scope.getState().getId(), action, StateTransitionType.ONE_COMPLETED,
                 StateTransitionType.ALL_COMPLETED);
@@ -108,15 +107,19 @@ public class ActionService {
                 commentService.save(comment);
             }
 
-            List<RoleTransition> roleTransitions = roleService.getRoleTransitions(stateTransition, invokingRole);
-            for (RoleTransition roleTransition : roleTransitions) {
-                Role role = roleTransition.getRole();
-                List<User> users = roleService.getBy(role, scope);
-                for (User roleUser : users) {
-                    roleService.executeRoleTransition(scope, roleUser, role, roleTransition.getType(), newScope, roleTransition.getTransitionRole());
-                }
-            }
+            executeRoleTransitions(invokingRole, scope, stateTransition, newScope);
         }
         return nextAction;
+    }
+
+    private void executeRoleTransitions(Role invokingRole, PrismScope scope, StateTransition stateTransition, PrismScope newScope) {
+        List<RoleTransition> roleTransitions = roleService.getRoleTransitions(stateTransition, invokingRole);
+        for (RoleTransition roleTransition : roleTransitions) {
+            Role role = roleTransition.getRole();
+            List<User> users = roleService.getBy(role, scope);
+            for (User roleUser : users) {
+                roleService.executeRoleTransition(scope, roleUser, role, roleTransition.getType(), newScope, roleTransition.getTransitionRole());
+            }
+        }
     }
 }

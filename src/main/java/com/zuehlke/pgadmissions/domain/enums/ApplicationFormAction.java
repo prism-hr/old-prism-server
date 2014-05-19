@@ -69,8 +69,7 @@ public enum ApplicationFormAction {
     SYSTEM_VIEW_PROJECT_LIST;
 
     public Class<? extends PrismScope> getScopeClass() {
-        String actionName = name();
-        String scopeName = actionName.substring(0, actionName.indexOf('_'));
+        String scopeName = getPrefix();
 
         Class<? extends PrismScope> scopeClass = null;
         if ("APPLICATION".equals(scopeName)) {
@@ -81,6 +80,17 @@ public enum ApplicationFormAction {
             scopeClass = Program.class;
         }
         return scopeClass;
+    }
+
+    public String getScopeName() {
+        String scopeName = getPrefix();
+        return scopeName.toLowerCase();
+    }
+
+    private String getPrefix() {
+        String actionName = name();
+        String scopeName = actionName.substring(0, actionName.indexOf('_'));
+        return scopeName;
     }
     
 }

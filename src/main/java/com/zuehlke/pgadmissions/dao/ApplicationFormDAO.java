@@ -18,7 +18,6 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Advert;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationFormUpdate;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -165,11 +164,6 @@ public class ApplicationFormDAO {
                 .add(Restrictions.eq(advert.getAdvertType().name().toLowerCase(), advert))
                 .add(Restrictions.eq("state.underAssessment", true)).addOrder(Order.desc("createdTimestamp"))
                 .addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
-    }
-
-    public Boolean getRaisesUpdateFlagForUser(ApplicationForm application, User user) {
-        return (Boolean) sessionFactory.getCurrentSession().createCriteria(ApplicationFormUpdate.class).setProjection(Projections.property("raisesUpdateFlag"))
-                .add(Restrictions.eq("id.applicationForm", application)).add(Restrictions.eq("id.registeredUser", user)).uniqueResult();
     }
 
     public Boolean getRaisesUrgentFlagForUser(ApplicationForm application, User user) {

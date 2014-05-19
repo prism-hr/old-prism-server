@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,9 +13,7 @@ import org.hibernate.search.annotations.Indexed;
 @Entity
 @Table(name = "SYSTEM")
 @Indexed
-public class PrismSystem implements Serializable, PrismScope {
-
-    private static final long serialVersionUID = 2746228908173552617L;
+public class PrismSystem extends PrismScope {
 
     @Id
     @GeneratedValue
@@ -76,6 +72,11 @@ public class PrismSystem implements Serializable, PrismScope {
 
     @Override
     public Project getProject() {
+        return null;
+    }
+    
+    @Override
+    public ApplicationForm getApplication() {
         return null;
     }
 

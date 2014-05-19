@@ -27,7 +27,7 @@ import org.hibernate.search.annotations.TokenizerDef;
 @Entity
 @Table(name = "INSTITUTION")
 @Indexed
-public class Institution implements PrismScope {
+public class Institution extends PrismScope {
 
     @Id
     @GeneratedValue
@@ -133,6 +133,11 @@ public class Institution implements PrismScope {
 
     @Override
     public Project getProject() {
+        return null;
+    }
+
+    @Override
+    public ApplicationForm getApplication() {
         return null;
     }
 }

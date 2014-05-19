@@ -90,4 +90,8 @@ public class Project extends Advert {
         return getProgram().getInstitution();
     }
 
+    @Override
+    public ApplicationForm getApplication() {
+        return null;
+    }
 }

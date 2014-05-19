@@ -1,0 +1,49 @@
+/* Remove pointless roles */
+
+DROP TABLE ROLE_INHERITANCE
+;
+
+DELETE
+FROM USER_ROLE
+WHERE role_id IN ("PROGRAM_PROJECT_CREATOR", "INSTITUTION_PROGRAM_CREATOR")
+;
+
+DELETE
+FROM STATE_ACTION_ASSIGNMENT
+WHERE role_id IN ("PROGRAM_PROJECT_CREATOR", "INSTITUTION_PROGRAM_CREATOR")
+;
+
+DELETE
+FROM ROLE_TRANSITION_EXCLUSION
+WHERE role_id IN ("PROGRAM_PROJECT_CREATOR", "INSTITUTION_PROGRAM_CREATOR")
+;
+
+DELETE
+FROM ROLE
+WHERE id IN ("PROGRAM_PROJECT_CREATOR", "INSTITUTION_PROGRAM_CREATOR")
+;
+
+/* Remove pointless notification records */
+
+SET FOREIGN_KEY_CHECKS = 0
+;
+
+DELETE
+FROM NOTIFICATION_TEMPLATE
+WHERE id = "SYSTEM_REGISTRATION_REQUEST"
+;
+
+DELETE
+FROM NOTIFICATION_TEMPLATE_VERSION
+WHERE notification_template_id = "SYSTEM_REGISTRATION_REQUEST"
+;
+
+SET FOREIGN_KEY_CHECKS = 1
+;
+
+/* Assign supervisor continued */
+
+/* Reconfigure use custom question flags */
+/* Find and expose move to different stage comments */
+
+/* Fix null constraints on comment table */

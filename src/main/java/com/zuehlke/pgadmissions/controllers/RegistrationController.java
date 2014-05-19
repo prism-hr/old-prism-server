@@ -90,9 +90,9 @@ public class RegistrationController {
     }
 
     @RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
-    public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam(required = false) ApplicationFormAction action, Integer scopeId) {
+    public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam ApplicationFormAction action, Integer scopeId) {
 
-        User user = registrationService.activateAccount(activationCode);
+        User user = registrationService.activateAccount(activationCode, action, scopeId);
 
         if (user == null) {
             return TemplateLocation.REGISTRATION_FAILURE_CONFIRMATION;
@@ -100,6 +100,12 @@ public class RegistrationController {
 
         ActionOutcome actionOutcome = actionService.executeAction(scopeId, user, action, new Comment());
         return actionOutcome.createRedirectionUrl();
+    }
+
+    @RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
+    public String activateAccountSubmit(@RequestParam String activationCode, Integer scopeId) {
+        // TODO check type of scope
+        return "redirect:/activateAccount?activationCode=" + activationCode + "action=PROGRAM_CREATE_ACTION&scopeId=" + scopeId;
     }
 
     @RequestMapping(method = RequestMethod.GET)

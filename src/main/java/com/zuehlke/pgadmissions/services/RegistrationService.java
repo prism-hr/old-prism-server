@@ -3,16 +3,16 @@ package com.zuehlke.pgadmissions.services;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.PrismScope;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.User;
-import com.zuehlke.pgadmissions.domain.enums.AdvertType;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
@@ -36,42 +36,42 @@ public class RegistrationService {
     @Autowired
     private MailSendingService mailService;
 
-    public User processPendingApplicantUser(User user, Advert advert) {
-        user.getAccount().setPassword(encryptionUtils.getMD5Hash(user.getPassword()));
-        user.getAccount().setEnabled(false);
-        user.setActivationCode(encryptionUtils.generateUUID());
+    @Autowired
+    private EntityService entityService;
 
-        userService.save(user);
+    public User submitRegistration(User pendingUser, PrismScope prismScope) {
+        User user = userService.getUserByEmail(pendingUser.getEmail());
 
-        Authority authority = advert.getAdvertType() == AdvertType.PROGRAM ? Authority.PROGRAM_APPLICATION_CREATOR
-                : Authority.PROJECT_APPLICATION_CREATOR;
-        roleService.getOrCreateUserRole(advert, user, authority);
-
-        return user;
-    }
-
-    public User submitRegistration(User pendingUser, Advert advert) {
-        User user = null;
-
-        // TODO use action ID instead of activation code
-        boolean isInvited = StringUtils.isNotEmpty(pendingUser.getActivationCode());
-
-        if (isInvited) {
-            // User has been invited to join PRISM
-            user = userService.getUserByActivationCode(pendingUser.getActivationCode());
-            user.getAccount().setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
+        if (user != null) {
+            // invited user
+            if (!user.getActivationCode().equals(pendingUser.getActivationCode())) {
+                throw new ResourceNotFoundException();
+            }
         } else {
-            // User is an applicant
-            user = processPendingApplicantUser(pendingUser, advert);
+            // new user
+            user = pendingUser;
+            user.getAccount().setEnabled(false);
+            user.setActivationCode(encryptionUtils.generateUUID());
+            userService.save(user);
         }
 
+        user.getAccount().setPassword(encryptionUtils.getMD5Hash(pendingUser.getPassword()));
         mailService.sendRegistrationConfirmation(user);
         return user;
     }
 
-    public User activateAccount(String activationCode) {
+    public User activateAccount(String activationCode, ApplicationFormAction action, int resourceId) {
         User user = userService.getUserByActivationCode(activationCode);
         user.getAccount().setEnabled(true);
+
+        PrismScope scope = entityService.getBy(action.getScopeClass(), "id", resourceId);
+        Role role = roleService.getCreatorRole(action, scope);
+
+        if (role == null) {
+            throw new ResourceNotFoundException();
+        }
+        
+        roleService.getOrCreateUserRole(scope, user, role.getId());
         return user;
     }
 

@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.PrismScope;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
+
 public enum ApplicationFormAction {
 
     APPLICATION_ASSESS_ELIGIBILITY, //
@@ -63,4 +68,19 @@ public enum ApplicationFormAction {
     SYSTEM_VIEW_PROGRAM_LIST, //
     SYSTEM_VIEW_PROJECT_LIST;
 
+    public Class<? extends PrismScope> getScopeClass() {
+        String actionName = name();
+        String scopeName = actionName.substring(0, actionName.indexOf('_'));
+
+        Class<? extends PrismScope> scopeClass = null;
+        if ("APPLICATION".equals(scopeName)) {
+            scopeClass = ApplicationForm.class;
+        } else if ("PROJECT".equals(scopeName)) {
+            scopeClass = Project.class;
+        } else if ("PROGRAM".equals(scopeName)) {
+            scopeClass = Program.class;
+        }
+        return scopeClass;
+    }
+    
 }

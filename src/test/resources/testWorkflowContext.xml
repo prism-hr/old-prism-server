@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:sec="http://www.springframework.org/schema/security"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd      
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+  <context:property-placeholder location="classpath:environment.properties" />
+
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://${db.host}/pgadmissions-test" />
+        <property name="username" value="${db.username}" />
+        <property name="password" value="${db.password}" />
+  </bean>
+
+  <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <property name="dataSource" ref="dataSource" />
+    <property name="packagesToScan" value="com.zuehlke.pgadmissions.domain" />
+    <property name="hibernateProperties">
+      <props>
+        <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+        <prop key="hibernate.show_sql">false</prop>
+        <prop key="hibernate.format_sql">false</prop>
+        <prop key="javax.persistence.validation.mode">NONE</prop>
+        <prop key="hibernate.search.default.directory_provider">filesystem</prop>
+        <prop key="hibernate.search.default.indexBase">testIndexes/</prop>
+        <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+        <prop key="hibernate.hbm2ddl.import_files">sql/disable_foreign_key_check.sql,sql/initialize_prism_data.sql,sql/enable_foreign_key_check.sql</prop>
+        <prop key="hibernate.cache.use_second_level_cache">false</prop>
+        <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory
+        </prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+    <property name="sessionFactory" ref="sessionFactory" />
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+
+  <tx:annotation-driven transaction-manager="transactionManager" />
+
+  <bean id="defaultTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+    <property name="transactionManager" ref="transactionManager" />
+  </bean>
+
+  <context:component-scan base-package="com.zuehlke.pgadmissions">
+    <context:exclude-filter type="assignable" expression="com.zuehlke.pgadmissions.controllers.prospectus.ApplyTemplateRenderer" />
+  </context:component-scan>
+
+  <bean id="javaMailSender" class="com.zuehlke.pgadmissions.mail.FakeLoggingMailSender" />
+
+  <!-- bean definitions -->
+  
+  <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    <property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
+    <property name="freemarkerVariables">
+      <map>
+        <entry key="encrypter" value-ref="encryptionHelper" />
+        <entry key="permissionsService" value-ref="permissionsService" />
+      </map>
+    </property>
+  </bean>
+
+  <bean id="programValidator" class="com.zuehlke.pgadmissions.validators.OpportunityRequestValidator">
+    <property name="validatingProgram" value="true" />
+  </bean>
+
+  <bean id="domicilePropertyEditor" class="com.zuehlke.pgadmissions.propertyeditors.EntityPropertyEditor">
+    <constructor-arg value="com.zuehlke.pgadmissions.domain.Domicile" />
+  </bean>
+
+  <bean id="porticoQueue" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
+    <constructor-arg value="javax.jms.Queue" />
+  </bean>
+
+  <bean id="jmsTemplate" class="org.easymock.EasyMock" factory-method="createMock" primary="true">
+    <constructor-arg value="org.springframework.jms.core.JmsTemplate" />
+  </bean>
+
+  <bean id="webServiceTemplate" class="com.zuehlke.pgadmissions.utils.EasyMockFactoryBean" primary="true">
+    <constructor-arg value="org.springframework.ws.client.core.WebServiceTemplate" />
+  </bean>
+
+  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+  <bean id="applyTemplateRenderer" class="com.zuehlke.pgadmissions.utils.EasyMockFactoryBean" primary="true">
+    <constructor-arg value="com.zuehlke.pgadmissions.controllers.prospectus.ApplyTemplateRenderer" />
+  </bean>
+
+  <bean id="mailSender" class="com.zuehlke.pgadmissions.mail.MailSenderMock" primary="true" />
+
+  <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PgAdmissionAuthenticationProvider" />
+
+</beans>

@@ -66,11 +66,6 @@ public class RegistrationService {
 
         PrismScope scope = entityService.getBy(action.getScopeClass(), "id", resourceId);
         Role role = roleService.getCreatorRole(action, scope);
-
-        if (role == null) {
-            throw new ResourceNotFoundException();
-        }
-        
         roleService.getOrCreateUserRole(scope, user, role.getId());
         return user;
     }

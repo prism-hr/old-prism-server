@@ -20,6 +20,9 @@ public class InstitutionDomicile {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column
+    private boolean enabled;
+
     public Integer getId() {
         return id;
     }
@@ -42,6 +45,14 @@ public class InstitutionDomicile {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public InstitutionDomicile withId(Integer id) {

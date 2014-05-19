@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.workflow;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.apache.commons.lang.WordUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,9 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.InstitutionDomicile;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgramType;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -96,6 +92,7 @@ public class PrismWorkflowTest {
                 createApplicationComment);
         System.out.println(actionOutcome.createRedirectionUrl());
 
+        
         Comment completeApplicationComment = null;
         actionOutcome = actionService.executeAction(1, applicant, ApplicationFormAction.APPLICATION_COMPLETE, completeApplicationComment);
         System.out.println(actionOutcome.createRedirectionUrl());

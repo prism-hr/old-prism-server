@@ -80,12 +80,12 @@ public class RoleDAO {
     
     public Role getCreatorRole(ApplicationFormAction action, PrismScope resource) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
-                .setProjection(Projections.groupProperty("transitionRole"))
+                .setProjection(Projections.groupProperty("role"))
                 .createAlias("stateTransition", "stateTransition", JoinType.INNER_JOIN)
                 .createAlias("stateTransition.stateAction", "stateAction", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("stateAction.state", resource.getState())) //
                 .add(Restrictions.eq("stateAction.action.id", action)) //
-                .add(Restrictions.eq("type", RoleTransitionType.UPDATE)) //
+                .add(Restrictions.eq("type", RoleTransitionType.CREATE)) //
                 .add(Restrictions.eq("restrictToInvoker", true)).uniqueResult();
     }
 

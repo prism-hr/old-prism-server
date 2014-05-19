@@ -44,6 +44,9 @@ public class Institution implements PrismScope {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "homepage", nullable = false)
+    private String homepage;
+
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     private State state;

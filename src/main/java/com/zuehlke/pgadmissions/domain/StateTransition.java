@@ -45,6 +45,9 @@ public class StateTransition {
     @Column(name = "display_order")
     private Integer displayOrder;
 
+    @Column(name = "do_post_comment", nullable = false)
+    private boolean doPostComment;
+
     public Integer getId() {
         return id;
     }
@@ -107,6 +110,14 @@ public class StateTransition {
 
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
+    }
+
+    public boolean isDoPostComment() {
+        return doPostComment;
+    }
+
+    public void setDoPostComment(boolean doPostComment) {
+        this.doPostComment = doPostComment;
     }
 
 }

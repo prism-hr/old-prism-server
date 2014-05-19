@@ -67,19 +67,7 @@ public class ActionService {
     }
 
     public ActionOutcome executeAction(Integer scopeId, User user, ApplicationFormAction action, Comment comment) {
-        String actionName = action.name();
-        String scopeName = actionName.substring(0, actionName.indexOf('_'));
-
-        Class<? extends PrismScope> scopeClass = null;
-        if ("APPLICATION".equals(scopeName)) {
-            scopeClass = ApplicationForm.class;
-        } else if ("PROJECT".equals(scopeName)) {
-            scopeClass = Project.class;
-        } else if ("PROGRAM".equals(scopeName)) {
-            scopeClass = Program.class;
-        }
-
-        PrismScope scope = entityService.getById(scopeClass, scopeId);
+        PrismScope scope = entityService.getById(action.getScopeClass(), scopeId);
         return executeAction(scope, user, action, comment);
     }
 

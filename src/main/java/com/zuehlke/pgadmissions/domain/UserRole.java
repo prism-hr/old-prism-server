@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -189,6 +187,11 @@ public class UserRole {
 
     public UserRole withAssignedTimestamp(DateTime assignedTimestamp) {
         this.assignedTimestamp = assignedTimestamp;
+        return this;
+    }
+    
+    public UserRole withScope(PrismScope scope) {
+        this.setScope(scope);
         return this;
     }
 

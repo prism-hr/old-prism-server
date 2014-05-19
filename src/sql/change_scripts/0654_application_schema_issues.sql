@@ -1558,7 +1558,6 @@ CREATE TABLE STATE_TRANSITION_PROPAGATION (
 	FOREIGN KEY (state_transition_id) REFERENCES STATE_TRANSITION (id),
 	FOREIGN KEY (propagated_state_transition_id) REFERENCES STATE_TRANSITION (id)
 ) ENGINE = INNODB
-
 ;
 
 /* Terminate project/program on recruitment */

@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.AdvertType;
 @Entity
 @Table(name = "ADVERT")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Advert implements PrismScope {
+public abstract class Advert extends PrismScope {
 
     @Id
     @GeneratedValue

@@ -35,9 +35,8 @@ public class ActionOutcome {
     }
 
     public String createRedirectionUrl() {
-        Map<String, String> params = Maps.newHashMap();
-        params.put("user", user.getActivationCode());
-        params.put("scope", scope.getId().toString());
+        Map<String, String> params = Maps.newLinkedHashMap();
+        params.put("resource", scope.getId().toString());
         params.put("action", nextAction.name());
 
         return "redirect:/execute?" + Joiner.on("&").withKeyValueSeparator("=").join(params);

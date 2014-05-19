@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -38,9 +37,7 @@ import com.google.common.base.Objects;
 @Entity
 @Table(name = "APPLICATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ApplicationForm implements Comparable<ApplicationForm>, Serializable, PrismScope {
-
-    private static final long serialVersionUID = -7671357234815343496L;
+public class ApplicationForm extends PrismScope {
 
     @Id
     @GeneratedValue
@@ -215,7 +212,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
     }
 
     public void setAcceptedTerms(Boolean acceptedTerms) {
-        this.acceptedTerms= acceptedTerms;
+        this.acceptedTerms = acceptedTerms;
     }
 
     public Date getCreatedTimestamp() {
@@ -366,25 +363,11 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.submittedIpAddress = InetAddress.getByName(ipAddress).getAddress();
     }
 
-    @Override
-    public int compareTo(ApplicationForm appForm) {
-        if (appForm.getSubmittedTimestamp() != null && this.getSubmittedTimestamp() == null) {
-            return -1;
-        }
-        if (appForm.getSubmittedTimestamp() == null && this.getSubmittedTimestamp() != null) {
-            return 1;
-        }
-        if (appForm.getSubmittedTimestamp() == null && this.getSubmittedTimestamp() == null) {
-            return this.createdTimestamp.compareTo(appForm.getCreatedTimestamp());
-        }
-        return this.submittedTimestamp.compareTo(appForm.getSubmittedTimestamp());
-    }
-    
     public ApplicationForm withId(Integer id) {
         this.id = id;
         return this;
     }
-    
+
     public ApplicationForm withApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
         return this;
@@ -409,22 +392,22 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.dueDate = dueDate;
         return this;
     }
-    
+
     public ApplicationForm withSubmittedTimestamp(Date submittedTimestamp) {
         this.submittedTimestamp = submittedTimestamp;
         return this;
     }
-    
+
     public ApplicationForm withPersonalDetails(PersonalDetails personalDetails) {
         this.personalDetails = personalDetails;
         return this;
     }
-    
+
     public ApplicationForm withProgramDetails(ProgramDetails programDetails) {
         this.programDetails = programDetails;
         return this;
     }
-    
+
     public ApplicationForm withAddress(ApplicationAddress applicationAddress) {
         this.applicationAddress = applicationAddress;
         return this;
@@ -434,7 +417,7 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.applicationDocument = applicationDocument;
         return this;
     }
-    
+
     public ApplicationForm withAdditionalInformation(AdditionalInformation additionalInformation) {
         this.additionalInformation = additionalInformation;
         return this;
@@ -444,12 +427,12 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         this.acceptedTerms = acceptedTerms;
         return this;
     }
-    
+
     public ApplicationForm withReferees(Referee... referees) {
         this.referees.addAll(Arrays.asList(referees));
         return this;
     }
-    
+
     @Override
     public String getScopeName() {
         return "application";
@@ -465,4 +448,9 @@ public class ApplicationForm implements Comparable<ApplicationForm>, Serializabl
         return getProgram().getInstitution();
     }
     
+    @Override
+    public ApplicationForm getApplication() {
+        return this;
+    }
+
 }

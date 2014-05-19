@@ -250,4 +250,9 @@ public class Program extends Advert {
         return getInstitution().getSystem();
     }
 
+    @Override
+    public ApplicationForm getApplication() {
+        return null;
+    }
+
 }

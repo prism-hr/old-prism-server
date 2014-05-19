@@ -1,21 +1,33 @@
 package com.zuehlke.pgadmissions.domain;
 
-public interface PrismScope {
-    
-    public Integer getId();
+import org.apache.commons.beanutils.PropertyUtils;
 
-    public String getScopeName();
+public abstract class PrismScope {
     
-    public PrismSystem getSystem();
+    public abstract Integer getId();
 
-    public Institution getInstitution();
+    public abstract String getScopeName();
     
-    public Program getProgram();
+    public abstract PrismSystem getSystem();
 
-    public Project getProject();
+    public abstract Institution getInstitution();
     
-    public State getState();
+    public abstract Program getProgram();
+
+    public abstract Project getProject();
     
-    public void setState(State state);
+    public abstract ApplicationForm getApplication();
+    
+    public abstract State getState();
+    
+    public abstract void setState(State state);
+    
+    public PrismScope getEnclosingScope(String scopeName) {
+        try {
+            return (PrismScope) PropertyUtils.getSimpleProperty(this, scopeName);
+        } catch (Exception e) {
+            throw new Error(e);
+        }
+    }
     
 }

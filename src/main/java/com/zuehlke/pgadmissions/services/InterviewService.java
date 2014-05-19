@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -47,7 +47,7 @@ public class InterviewService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void moveApplicationToInterview(User user, final AssignInterviewersComment interviewComment, ApplicationForm applicationForm) {
+    public void moveApplicationToInterview(User user, final AssignInterviewersComment interviewComment, Application applicationForm) {
         interviewComment.setApplication(applicationForm);
 
         applicationsService.setApplicationStatus(applicationForm, PrismState.APPLICATION_INTERVIEW);
@@ -85,7 +85,7 @@ public class InterviewService {
     }
 
     public void postVote(InterviewVoteComment interviewVoteComment, User user) {
-        ApplicationForm application = interviewVoteComment.getApplication();
+        Application application = interviewVoteComment.getApplication();
         AssignInterviewersComment assignInterviewersComment = (AssignInterviewersComment) applicationsService.getLatestStateChangeComment(application,
                 ApplicationFormAction.APPLICATION_ASSIGN_INTERVIEWERS);
         commentService.save(interviewVoteComment);
@@ -94,7 +94,7 @@ public class InterviewService {
         mailService.sendInterviewVoteConfirmationToAdministrators(application, user);
     }
 
-    public void confirmInterview(User user, ApplicationForm applicationForm, InterviewConfirmDTO interviewConfirmDTO) {
+    public void confirmInterview(User user, Application applicationForm, InterviewConfirmDTO interviewConfirmDTO) {
         InterviewService thisBean = applicationContext.getBean(InterviewService.class);
 
         Integer timeslotId = interviewConfirmDTO.getTimeslotId();
@@ -138,7 +138,7 @@ public class InterviewService {
     // }
 
     protected void sendConfirmationEmails(InterviewScheduleComment comment) {
-        final ApplicationForm applicationForm = comment.getApplication();
+        final Application applicationForm = comment.getApplication();
         try {
             mailService.sendInterviewConfirmationToApplicant(applicationForm);
             List<User> interviewerUsers = Lists.newArrayList();
@@ -151,7 +151,7 @@ public class InterviewService {
         }
     }
 
-    private InterviewScheduleComment createInterviewScheduleComment(User user, ApplicationForm application, String interviewInstructions, String locationUrl) {
+    private InterviewScheduleComment createInterviewScheduleComment(User user, Application application, String interviewInstructions, String locationUrl) {
         InterviewScheduleComment scheduleComment = new InterviewScheduleComment();
         scheduleComment.setContent("");
         scheduleComment.setAppointmentInstructions(interviewInstructions);

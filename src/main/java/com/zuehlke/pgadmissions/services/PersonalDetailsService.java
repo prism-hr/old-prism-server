@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.User;
 
@@ -19,7 +19,7 @@ public class PersonalDetailsService {
     @Autowired
     private ApplicationFormCopyHelper applicationFormCopyHelper;
     
-    public PersonalDetails getOrCreate(ApplicationForm application) {
+    public PersonalDetails getOrCreate(Application application) {
         PersonalDetails personalDetails = application.getPersonalDetails();
         if (personalDetails == null) {
             personalDetails = new PersonalDetails();
@@ -27,7 +27,7 @@ public class PersonalDetailsService {
         return personalDetails;
     }
     
-    public void saveOrUpdate(ApplicationForm application, PersonalDetails personalDetails, User updatedUser) {
+    public void saveOrUpdate(Application application, PersonalDetails personalDetails, User updatedUser) {
         PersonalDetails persistentPersonalDetails = application.getPersonalDetails();
         if (persistentPersonalDetails == null) {
             persistentPersonalDetails = new PersonalDetails();
@@ -40,7 +40,7 @@ public class PersonalDetailsService {
         applicationFormService.saveOrUpdateApplicationSection(application);
     }
      
-    private void updateApplicantData(ApplicationForm application, User updatedUser) {
+    private void updateApplicantData(Application application, User updatedUser) {
         User persistentUpdatedUser = application.getUser();
         persistentUpdatedUser.setFirstName(updatedUser.getFirstName());
         persistentUpdatedUser.setFirstName2(updatedUser.getFirstName2());

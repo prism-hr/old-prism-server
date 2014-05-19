@@ -5,14 +5,14 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.User;
 
 public class CommentBuilder {
 	
-	private ApplicationForm application;
+	private Application application;
 	private User user;
 	private String strComment;
 	private Integer id;
@@ -29,7 +29,7 @@ public class CommentBuilder {
 		return this;
 	}
 	
-	public CommentBuilder application (ApplicationForm application){
+	public CommentBuilder application (Application application){
 		this.application = application;
 		return this;
 	}

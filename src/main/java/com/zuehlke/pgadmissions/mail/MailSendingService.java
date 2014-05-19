@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.OpportunityRequestComment;
@@ -55,7 +55,7 @@ public class MailSendingService extends AbstractMailSendingService {
 
     private RoleService roleService;
 
-    private void sendReferenceRequest(Referee referee, ApplicationForm application) {
+    private void sendReferenceRequest(Referee referee, Application application) {
         PrismEmailMessage message = null;
         try {
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(application.getProgram()));
@@ -70,13 +70,13 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendReferenceRequest(List<Referee> referees, ApplicationForm applicationForm) {
+    public void sendReferenceRequest(List<Referee> referees, Application applicationForm) {
         for (Referee referee : referees) {
             sendReferenceRequest(referee, applicationForm);
         }
     }
 
-    public void sendSubmissionConfirmationToApplicant(ApplicationForm form) {
+    public void sendSubmissionConfirmationToApplicant(Application form) {
         PrismEmailMessage message = null;
         try {
             User applicant = form.getUser();
@@ -103,7 +103,7 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendRejectionConfirmationToApplicant(ApplicationForm form) {
+    public void sendRejectionConfirmationToApplicant(Application form) {
         PrismEmailMessage message = null;
         try {
             User applicant = form.getUser();
@@ -129,7 +129,7 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendApprovedNotification(ApplicationForm form) {
+    public void sendApprovedNotification(Application form) {
         PrismEmailMessage message = null;
         try {
             User applicant = form.getUser();
@@ -154,7 +154,7 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewConfirmationToInterviewers(ApplicationForm application, List<User> interviewers) {
+    public void sendInterviewConfirmationToInterviewers(Application application, List<User> interviewers) {
         PrismEmailMessage message = null;
         for (User interviewer : interviewers) {
             try {
@@ -170,7 +170,7 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewConfirmationToApplicant(ApplicationForm application) {
+    public void sendInterviewConfirmationToApplicant(Application application) {
         PrismEmailMessage message = null;
         try {
             String subject = resolveMessage(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION_INTERVIEWEE, application);
@@ -194,7 +194,7 @@ public class MailSendingService extends AbstractMailSendingService {
     }
 
     public void sendInterviewVoteNotificationToInterviewerParticipants(AssignInterviewersComment assignInterviewersComment) {
-        ApplicationForm application = assignInterviewersComment.getApplication();
+        Application application = assignInterviewersComment.getApplication();
         String subject = resolveMessage(NotificationTemplateId.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST, application);
         PrismEmailMessage message = null;
 
@@ -213,7 +213,7 @@ public class MailSendingService extends AbstractMailSendingService {
         }
     }
 
-    public void sendInterviewVoteConfirmationToAdministrators(ApplicationForm application, User user) {
+    public void sendInterviewVoteConfirmationToAdministrators(Application application, User user) {
         Collection<User> administrators = userDAO.getInterviewAdministrators(application);
         PrismEmailMessage message = null;
         String subject = resolveMessage(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION, application);

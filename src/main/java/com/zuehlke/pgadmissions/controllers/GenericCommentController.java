@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
@@ -67,8 +67,8 @@ public class GenericCommentController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application applicationForm = applicationsService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new ResourceNotFoundException();
         }
@@ -77,7 +77,7 @@ public class GenericCommentController {
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
@@ -89,7 +89,7 @@ public class GenericCommentController {
 
     @ModelAttribute("comment")
     public Comment getComment(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         Comment comment = new Comment();
         comment.setApplication(applicationForm);
         comment.setUser(userService.getCurrentUser());
@@ -106,7 +106,7 @@ public class GenericCommentController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getGenericCommentPage(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_COMMENT);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
@@ -115,7 +115,7 @@ public class GenericCommentController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String addComment(@Valid @ModelAttribute("comment") Comment comment, BindingResult result, ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_COMMENT);
         if (result.hasErrors()) {

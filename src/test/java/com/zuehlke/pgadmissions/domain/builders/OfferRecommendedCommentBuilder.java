@@ -5,14 +5,14 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.OfferRecommendedComment;
 import com.zuehlke.pgadmissions.domain.User;
 
 public class OfferRecommendedCommentBuilder {
 
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
     private String comment;
     private Integer id;
     private Date createdTimeStamp;
@@ -60,7 +60,7 @@ public class OfferRecommendedCommentBuilder {
         return this;
     }
 
-    public OfferRecommendedCommentBuilder application(ApplicationForm application) {
+    public OfferRecommendedCommentBuilder application(Application application) {
         this.applicationForm = application;
         return this;
     }

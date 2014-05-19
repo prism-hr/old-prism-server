@@ -46,7 +46,7 @@ public class ApplicationTransfer implements Serializable {
 
     /** The application form that constitutes my payload (a payload of the transfer I am representing). */
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "transfer")
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
 
     /** Timepoint when I was created (so this is the timepoint of scheduling). */
     @Column(name = "began_timestamp")
@@ -82,11 +82,11 @@ public class ApplicationTransfer implements Serializable {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public ApplicationForm getApplicationForm() {
+    public Application getApplicationForm() {
         return applicationForm;
     }
 
-    public void setApplicationForm(ApplicationForm applicationForm) {
+    public void setApplicationForm(Application applicationForm) {
         this.applicationForm = applicationForm;
     }
 

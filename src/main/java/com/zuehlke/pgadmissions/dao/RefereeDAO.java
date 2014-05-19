@@ -12,7 +12,7 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -60,7 +60,7 @@ public class RefereeDAO {
                 .add(Restrictions.le("lastNotified", dateWithSubtractedInterval)).list();
     }
 
-    public List<Referee> getRefereesWhoDidntProvideReferenceYet(ApplicationForm form) {
+    public List<Referee> getRefereesWhoDidntProvideReferenceYet(Application form) {
         return (List<Referee>) sessionFactory.getCurrentSession().createCriteria(Referee.class)
                 .createAlias("reference", "referenceComment", JoinType.LEFT_OUTER_JOIN)
                 .add(Restrictions.isNull("referenceComment.id"))

@@ -12,7 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -36,12 +36,12 @@ public class FileUploadControllerTest {
 
 	@Test
 	public void shouldGetApplicationFormFromService() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).build();
+		Application applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).build();
 
 		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 
-		ApplicationForm returnedForm = controller.getApplicationForm("1");
+		Application returnedForm = controller.getApplicationForm("1");
 		assertEquals(applicationForm, returnedForm);
 	}
 
@@ -57,7 +57,7 @@ public class FileUploadControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionIfCurrentUserNotApplicant() {
 		User applicant = new User().withId(6);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant)
+		Application applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant)
 				.build();
 		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);

@@ -15,14 +15,14 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
 public final class PrismEmailMessage {
     
-    private ApplicationForm form;
+    private Application form;
     
     private String replyToAddress;
 
@@ -156,11 +156,11 @@ public final class PrismEmailMessage {
         this.replyToAddress = replyToAddress;
     }
 
-    public ApplicationForm getApplicationForm() {
+    public Application getApplicationForm() {
         return form;
     }
 
-    public void setApplicationForm(final ApplicationForm form) {
+    public void setApplicationForm(final Application form) {
         this.form = form;
     }
     

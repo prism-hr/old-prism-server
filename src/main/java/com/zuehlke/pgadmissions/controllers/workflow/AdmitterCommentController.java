@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -70,8 +70,8 @@ public class AdmitterCommentController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application application = applicationsService.getByApplicationNumber(applicationId);
         if (application == null) {
             throw new ResourceNotFoundException(applicationId);
         }
@@ -80,14 +80,14 @@ public class AdmitterCommentController {
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @ModelAttribute("comment")
     public AdmitterComment getComment(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         AdmitterComment comment = new AdmitterComment();
         comment.setApplication(applicationForm);
         comment.setUser(userService.getCurrentUser());
@@ -108,7 +108,7 @@ public class AdmitterCommentController {
 
     @RequestMapping(value = "/confirmEligibility", method = RequestMethod.GET)
     public String getConfirmEligibilityPage(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_ELIGIBILITY);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
@@ -117,7 +117,7 @@ public class AdmitterCommentController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/confirmEligibility")
     public String confirmEligibility(ModelMap modelMap, @Valid @ModelAttribute("comment") AdmitterComment comment, BindingResult result) {
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        Application application = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_CONFIRM_ELIGIBILITY);
 

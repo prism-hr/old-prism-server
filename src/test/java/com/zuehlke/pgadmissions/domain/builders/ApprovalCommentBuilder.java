@@ -4,14 +4,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
 
 public class ApprovalCommentBuilder {
 
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
     private String content;
     private Integer id;
     private Date createdTimeStamp;
@@ -65,7 +65,7 @@ public class ApprovalCommentBuilder {
         return this;
     }
 
-    public ApprovalCommentBuilder application(ApplicationForm application) {
+    public ApprovalCommentBuilder application(Application application) {
         this.applicationForm = application;
         return this;
     }

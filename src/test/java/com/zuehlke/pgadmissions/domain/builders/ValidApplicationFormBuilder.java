@@ -12,9 +12,9 @@ import org.springframework.core.io.Resource;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Disability;
 import com.zuehlke.pgadmissions.domain.Document;
@@ -78,7 +78,7 @@ public class ValidApplicationFormBuilder {
     protected Qualification qualification1;
     protected Qualification qualification2;
     protected Funding funding;
-    protected ApplicationForm applicationForm;
+    protected Application applicationForm;
     private ApplicationFormBuilder applicationFormBuilder;
     private State state;
 
@@ -97,8 +97,8 @@ public class ValidApplicationFormBuilder {
         return null;
     }
 
-    public ApplicationForm build(SessionFactory sessionFactory) {
-        ApplicationForm applicationForm = build();
+    public Application build(SessionFactory sessionFactory) {
+        Application applicationForm = build();
         save(sessionFactory, state, user, cvDocument, proofOfAwardDocument, referenceDocument, personalStatement, languageQualificationDocument, approverUser,
                 language, country, domicile, address, importedInstitution, program, employmentPosition, disability, ethnicity, interest, applicationForm);
         program.setCode("TMRMBISING001");
@@ -111,7 +111,7 @@ public class ValidApplicationFormBuilder {
         }
     }
 
-    public ApplicationForm build() {
+    public Application build() {
         user = new User().withFirstName("Kevin").withFirstName2("Franciszek").withFirstName3("Duncan").withLastName("Denver").withEmail("ked@zuhlke.com")
                 .withAccount(new UserAccount().withEnabled(true));
         cvDocument = getRandomDocument(DocumentType.CV, "My CV.pdf", user);

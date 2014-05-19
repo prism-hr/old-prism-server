@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
@@ -55,7 +55,7 @@ public class ApprovalService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void confirmOrDeclineSupervision(ApplicationForm form, ConfirmSupervisionDTO confirmSupervisionDTO) {
+    public void confirmOrDeclineSupervision(Application form, ConfirmSupervisionDTO confirmSupervisionDTO) {
         ApprovalService thisBean = applicationContext.getBean(ApprovalService.class);
 
         AssignSupervisorsComment approvalComment = (AssignSupervisorsComment) applicationsService
@@ -99,7 +99,7 @@ public class ApprovalService {
     }
 
     public AssignSupervisorsComment initiateApprovalComment(String applicationId) {
-        ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
+        Application application = applicationsService.getByApplicationNumber(applicationId);
         AssignSupervisorsComment approvalComment = new AssignSupervisorsComment();
         Comment latestApprovalComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
         Project project = application.getProject();
@@ -137,7 +137,7 @@ public class ApprovalService {
         return approvalComment;
     }
 
-    public void moveApplicationToApproval(ApplicationForm form, Comment newComment, User initiator) {
+    public void moveApplicationToApproval(Application form, Comment newComment, User initiator) {
         checkSendToPorticoStatus(form);
 
         boolean sendReferenceRequest = form.getState().getId() == PrismState.APPLICATION_VALIDATION;
@@ -168,7 +168,7 @@ public class ApprovalService {
         applicationFormUserRoleService.applicationUpdated(form, initiator);
     }
 
-    private void checkSendToPorticoStatus(ApplicationForm form) {
+    private void checkSendToPorticoStatus(Application form) {
         // TODO check if explanation provided if not enough qualifications
 //        if (!form.hasEnoughReferencesToSendToPortico() || (!form.hasEnoughQualificationsToSendToPortico())) {
 //            throw new IllegalStateException("Send to portico data is not valid");

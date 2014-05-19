@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 
 @Service
 @Transactional
@@ -18,7 +18,7 @@ public class AdditionalInformationService {
     @Autowired
     ApplicationFormCopyHelper applicationFormCopyHelper;
 
-    public AdditionalInformation getOrCreate(ApplicationForm application) {
+    public AdditionalInformation getOrCreate(Application application) {
         AdditionalInformation additionalInformation = application.getAdditionalInformation();
         if (additionalInformation == null) {
             additionalInformation = new AdditionalInformation();
@@ -26,7 +26,7 @@ public class AdditionalInformationService {
         return additionalInformation;
     }
     
-	public void saveOrUpdate(ApplicationForm application, AdditionalInformation additionalInformation) {
+	public void saveOrUpdate(Application application, AdditionalInformation additionalInformation) {
 	    AdditionalInformation persistentAdditionalInformation = application.getAdditionalInformation();
 	    if (persistentAdditionalInformation == null) {
 	        persistentAdditionalInformation = new AdditionalInformation();

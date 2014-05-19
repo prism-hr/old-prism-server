@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Score;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
@@ -17,7 +17,7 @@ public class AdmitterCommentBuilder {
     private ValidationQuestionOptions qualifiedForPhd;
     private ValidationQuestionOptions englishCompentencyOk;
     private ResidenceStatus homeOrOverseas;
-    private ApplicationForm application;
+    private Application application;
     private User user;
     private String strComment;
     private Integer id;
@@ -34,7 +34,7 @@ public class AdmitterCommentBuilder {
         return this;
     }
 
-    public AdmitterCommentBuilder application(ApplicationForm application) {
+    public AdmitterCommentBuilder application(Application application) {
         this.application = application;
         return this;
     }

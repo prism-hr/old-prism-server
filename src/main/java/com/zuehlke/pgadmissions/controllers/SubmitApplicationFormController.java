@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.CannotApplyException;
@@ -57,7 +57,7 @@ public class SubmitApplicationFormController {
     private SubmitApplicationFormService submitApplicationFormService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public String submitApplication(@Valid ApplicationForm application, BindingResult result, HttpServletRequest request) {
+    public String submitApplication(@Valid Application application, BindingResult result, HttpServletRequest request) {
         User user = userService.getCurrentUser();
         actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_COMPLETE);
 
@@ -77,7 +77,7 @@ public class SubmitApplicationFormController {
     }
     
     @ModelAttribute
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+    public Application getApplicationForm(@RequestParam String applicationId) {
         return applicationService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE);
     }
     

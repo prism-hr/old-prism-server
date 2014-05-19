@@ -28,8 +28,8 @@ import com.google.visualization.datasource.datatable.value.NumberValue;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -161,9 +161,9 @@ public class ApplicationsReportService {
 
         data.addColumns(cd);
 
-        List<ApplicationForm> applications = applicationsService.getApplicationsForReport(user, filtering, reportType);
+        List<Application> applications = applicationsService.getApplicationsForReport(user, filtering, reportType);
 
-        for (ApplicationForm app : applications) {
+        for (Application app : applications) {
 
             if (app.getSubmittedTimestamp() == null || app.getPersonalDetails() == null) {
                 continue;
@@ -298,12 +298,12 @@ public class ApplicationsReportService {
         return data;
     }
 
-    private String getApplicationLink(ApplicationForm app) {
+    private String getApplicationLink(Application app) {
         String applicationLink = host + "/pgadmissions/application?view=view&applicationId=" + app.getApplicationNumber();
         return applicationLink;
     }
 
-    private long getTimeSpentIn(ApplicationForm app, PrismState applicationStatus) {
+    private long getTimeSpentIn(Application app, PrismState applicationStatus) {
         return 666; // FIXME
     }
 
@@ -326,7 +326,7 @@ public class ApplicationsReportService {
         return new DateValue(calendar);
     }
 
-    private int[] getNumberOfReceivedAndDeclinedReferences(ApplicationForm app) {
+    private int[] getNumberOfReceivedAndDeclinedReferences(Application app) {
         int[] reicevedAndDeclinedCount = new int[2];
         for (Referee referee : app.getReferees()) {
             if (referee.getComment() != null) {
@@ -338,7 +338,7 @@ public class ApplicationsReportService {
         return reicevedAndDeclinedCount;
     }
 
-    private int[] getNumberOfPositiveAndNegativeReferenceEndorsements(ApplicationForm app) {
+    private int[] getNumberOfPositiveAndNegativeReferenceEndorsements(Application app) {
         int[] endorsements = new int[2];
         for (Referee referee : app.getReferees()) {
             if (referee.getComment() != null) {
@@ -359,7 +359,7 @@ public class ApplicationsReportService {
         return endorsements;
     }
 
-    private int[] getNumberOfPositiveAndNegativeReviewEndorsements(ApplicationForm app) {
+    private int[] getNumberOfPositiveAndNegativeReviewEndorsements(Application app) {
         int[] endorsements = new int[2];
         // FIXME
 //        ReviewRound review = app.getLatestReviewRound();
@@ -387,7 +387,7 @@ public class ApplicationsReportService {
         return endorsements;
     }
 
-    private int getNumberOfInterviewReports(ApplicationForm app) {
+    private int getNumberOfInterviewReports(Application app) {
 //        Interview interview = app.getLatestInterview();
 //        if (interview == null) {
 //            return 0;
@@ -402,7 +402,7 @@ public class ApplicationsReportService {
         return 666;
     }
 
-    private int[] getNumberOfPositiveAndNegativeInterviewEndorsements(ApplicationForm app) {
+    private int[] getNumberOfPositiveAndNegativeInterviewEndorsements(Application app) {
 //        int[] endorsements = new int[2];
 //        Interview interview = app.getLatestInterview();
 //        if (interview == null) {
@@ -428,7 +428,7 @@ public class ApplicationsReportService {
         return new int[]{666, 666};
     }
 
-    private String getPrintablePrimarySupervisor(ApplicationForm app) {
+    private String getPrintablePrimarySupervisor(Application app) {
 //        ApprovalRound approvalRound = app.getLatestApprovalRound();
 //        if (approvalRound != null) {
 //            Supervisor primarySupervisor = approvalRound.getPrimarySupervisor();
@@ -439,7 +439,7 @@ public class ApplicationsReportService {
         return StringUtils.EMPTY;
     }
 
-    private String getPrintableSecondarySupervisor(ApplicationForm app) {
+    private String getPrintableSecondarySupervisor(Application app) {
 //        ApprovalRound approvalRound = app.getLatestApprovalRound();
 //        if (approvalRound != null) {
 //            Supervisor secondarySupervisor = approvalRound.getSecondarySupervisor();
@@ -450,7 +450,7 @@ public class ApplicationsReportService {
         return StringUtils.EMPTY;
     }
 
-    private Date getApproveDate(ApplicationForm app) {
+    private Date getApproveDate(Application app) {
 //        List<Event> events = app.getEvents();
 //        for (Event event : events) {
 //            if (event instanceof StateChangeEvent) {
@@ -463,7 +463,7 @@ public class ApplicationsReportService {
         return null;
     }
 
-    private String getConditionalType(ApplicationForm app) {
+    private String getConditionalType(Application app) {
 //        ApprovalRound approvalRound = app.getLatestApprovalRound();
 //        if (approvalRound != null) {
 //            if (BooleanUtils.isTrue(approvalRound.getRecommendedConditionsAvailable())) {
@@ -475,7 +475,7 @@ public class ApplicationsReportService {
         return StringUtils.EMPTY;
     }
 
-    private String getOfferConditions(ApplicationForm app) {
+    private String getOfferConditions(Application app) {
 //        ApprovalRound approvalRound = app.getLatestApprovalRound();
 //        if (approvalRound != null) {
 //            if (approvalRound.getRecommendedConditions() != null) {
@@ -485,7 +485,7 @@ public class ApplicationsReportService {
         return StringUtils.EMPTY;
     }
 
-    private String getProjectTitle(ApplicationForm app) {
+    private String getProjectTitle(Application app) {
 //        ApprovalRound approvalRound = app.getLatestApprovalRound();
 //        if (approvalRound != null) {
 //            if (approvalRound.getProjectTitle() != null) {
@@ -495,7 +495,7 @@ public class ApplicationsReportService {
         return StringUtils.EMPTY;
     }
 
-    private String getAcademicYear(ApplicationForm app) {
+    private String getAcademicYear(Application app) {
         Date startDate = app.getProgramDetails().getStartDate();
         if (startDate != null) {
             for (ProgramInstance instance : app.getProgram().getInstances()) {
@@ -507,7 +507,7 @@ public class ApplicationsReportService {
         return StringUtils.EMPTY;
     }
 
-    private String getAverageRatingForAllInterviewRounds(ApplicationForm app) {
+    private String getAverageRatingForAllInterviewRounds(Application app) {
 //        List<Interview> interviews = app.getInterviews();
 //        if (interviews.isEmpty()) {
 //            return null;
@@ -523,7 +523,7 @@ public class ApplicationsReportService {
         return "666";
     }
 
-    private String getFundingTotal(ApplicationForm app) {
+    private String getFundingTotal(Application app) {
         List<Funding> funding = app.getFundings();
         Integer totalFunding = 0;
         for (Funding temp : funding) {
@@ -532,13 +532,13 @@ public class ApplicationsReportService {
         return totalFunding.toString();
     }
 
-    private String getAverageReferenceRating(ApplicationForm app) {
+    private String getAverageReferenceRating(Application app) {
 //        BigDecimal referenceRating = applicantRatingService.getAverageReferenceRating(app);
 //        return MathUtils.formatRating(referenceRating);
         return "666";
     }
 
-    private String getAverageRatingForAllReviewRounds(ApplicationForm app) {
+    private String getAverageRatingForAllReviewRounds(Application app) {
 //        List<ReviewRound> reviewRounds = app.getReviewRounds();
 //        if (reviewRounds.isEmpty()) {
 //            return null;

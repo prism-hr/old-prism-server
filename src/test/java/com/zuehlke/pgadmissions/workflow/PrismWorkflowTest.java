@@ -12,9 +12,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.ImportedEntityFeed;
+import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
@@ -89,12 +90,14 @@ public class PrismWorkflowTest {
         Comment createApplicationComment = null;
         ActionOutcome actionOutcome = actionService.executeAction(program.getId(), applicant, ApplicationFormAction.PROGRAM_CREATE_APPLICATION,
                 createApplicationComment);
-        ApplicationForm createdApplication = (ApplicationForm) actionOutcome.getScope();
+        Application createdApplication = (Application) actionOutcome.getScope();
         assertEquals(ApplicationFormAction.APPLICATION_COMPLETE, actionOutcome.getNextAction());
         
         Comment completeApplicationComment = null;
         actionOutcome = actionService.executeAction(createdApplication.getId(), applicant, ApplicationFormAction.APPLICATION_COMPLETE, completeApplicationComment);
         assertEquals(ApplicationFormAction.SYSTEM_VIEW_APPLICATION_LIST, actionOutcome.getNextAction());
+        assertEquals(roleService.getPrismSystem().getId(), actionOutcome.getScope().getId());
+        
 
         Comment assignReviewerComment = new Comment();
         actionService.executeAction(1, programAdministrator, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS, assignReviewerComment);

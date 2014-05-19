@@ -137,7 +137,7 @@ public class Institution extends PrismScope {
     }
 
     @Override
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return null;
     }
 }

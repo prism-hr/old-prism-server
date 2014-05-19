@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.User;
@@ -62,7 +62,7 @@ public class RejectApplicationController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getRejectPage(ModelMap modelMap) {
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        Application application = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_CONFIRM_REJECTION);
         applicationFormUserRoleService.deleteApplicationUpdate(application, user);
@@ -71,7 +71,7 @@ public class RejectApplicationController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors, ModelMap modelMap) {
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        Application application = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_CONFIRM_REJECTION);
         
@@ -91,8 +91,8 @@ public class RejectApplicationController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application application = applicationsService.getByApplicationNumber(applicationId);
         if (application == null) {
             throw new ResourceNotFoundException(applicationId);
         }
@@ -101,7 +101,7 @@ public class RejectApplicationController {
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }

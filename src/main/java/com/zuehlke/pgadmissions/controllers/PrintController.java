@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.google.common.io.Closer;
 import com.google.common.io.Flushables;
 import com.itextpdf.text.DocumentException;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
@@ -52,7 +52,7 @@ public class PrintController {
 	public void printPage(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletRequestBindingException {
 		String applicationFormNumber = ServletRequestUtils.getStringParameter(request, "applicationFormId");
 		
-		ApplicationForm form = applicationSevice.getByApplicationNumber(applicationFormNumber);
+		Application form = applicationSevice.getByApplicationNumber(applicationFormNumber);
 		
 		if (form == null) {
 		    throw new ResourceNotFoundException();
@@ -77,10 +77,10 @@ public class PrintController {
 		String appListToPrint = ServletRequestUtils.getStringParameter(request, "appList");
 		String[] applicationIds = appListToPrint.split(";");
 		User user = userService.getCurrentUser();
-		HashMap<PdfModelBuilder, ApplicationForm> formsToPrint = new HashMap<PdfModelBuilder, ApplicationForm>();
+		HashMap<PdfModelBuilder, Application> formsToPrint = new HashMap<PdfModelBuilder, Application>();
 		
 		for (String applicationId : applicationIds) {
-			ApplicationForm form = applicationSevice.getByApplicationNumber(applicationId);
+			Application form = applicationSevice.getByApplicationNumber(applicationId);
 			
 			if (form == null) {
 			    continue;
@@ -127,7 +127,7 @@ public class PrintController {
 		return new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
 	}
 	
-	private boolean isApplicant(final User user, final ApplicationForm form) {
+	private boolean isApplicant(final User user, final Application form) {
 	    return user.getId().equals(form.getUser().getId());
 	}
 }

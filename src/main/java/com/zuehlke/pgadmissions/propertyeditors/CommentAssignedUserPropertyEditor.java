@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
@@ -54,7 +54,7 @@ public class CommentAssignedUserPropertyEditor extends PropertyEditorSupport {
             throw new IllegalArgumentException("no such user: " + split[1]);
         }
 
-        ApplicationForm applicationForm = applicationsService.getByApplicationNumber(appId);
+        Application applicationForm = applicationsService.getByApplicationNumber(appId);
         if (applicationForm == null) {
             throw new IllegalArgumentException("no such applications: " + split[0]);
         }

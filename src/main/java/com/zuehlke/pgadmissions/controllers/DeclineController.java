@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -42,7 +42,7 @@ public class DeclineController {
 	@RequestMapping(value = "/review", method = RequestMethod.GET)
 	public String declineReview(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
 	    User reviewer = getReviewer(activationCode);
-	    ApplicationForm application = getApplicationForm(applicationId);
+	    Application application = getApplicationForm(applicationId);
 	    
 	    actionService.validateAction(application, reviewer, ApplicationFormAction.APPLICATION_PROVIDE_REVIEW);
 	    
@@ -67,7 +67,7 @@ public class DeclineController {
 		}
 	}
 
-	public Referee getReferee(String activationCode, ApplicationForm applicationForm) {
+	public Referee getReferee(String activationCode, Application applicationForm) {
 		User user = userService.getUserByActivationCode(activationCode);
 		if (user == null) {
 			throw new ResourceNotFoundException();
@@ -78,7 +78,7 @@ public class DeclineController {
 
 	@RequestMapping(value = "/reference", method = RequestMethod.GET)
 	public String declineReference(@RequestParam String activationCode, @RequestParam String applicationId, @RequestParam(required = false) String confirmation, ModelMap modelMap) {
-	    ApplicationForm applicationForm = getApplicationForm(applicationId);
+	    Application applicationForm = getApplicationForm(applicationId);
 	    Referee referee = getReferee(activationCode, applicationForm);
 	    User user = userService.getUserByActivationCode(activationCode);
 	    
@@ -114,8 +114,8 @@ public class DeclineController {
 		return reviewer;
 	}
 
-	public ApplicationForm getApplicationForm(String applicationId) {
-		ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
+	public Application getApplicationForm(String applicationId) {
+		Application applicationForm = applicationsService.getByApplicationNumber(applicationId);
 		if (applicationForm == null) {
 			throw new ResourceNotFoundException(applicationId);
 		}

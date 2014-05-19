@@ -15,7 +15,7 @@ import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.AdmitterComment;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
@@ -69,12 +69,12 @@ public class WorkflowService {
     @Autowired
     private ApplicationFormService applicationFormService;
 
-    public void applicationCreated(ApplicationForm applicationForm) {
+    public void applicationCreated(Application applicationForm) {
 //        createApplicationFormUserRole(applicationForm, applicationForm.getApplicant(), Authority.APPLICANT, false,
 //                new ApplicationFormActionRequired(actionDAO.getById(ApplicationFormAction.COMPLETE_APPLICATION), applicationForm.getDueDate(), true, false));
     }
 
-    public void applicationSubmitted(ApplicationForm applicationForm) {
+    public void applicationSubmitted(Application applicationForm) {
 //        assignToAdministrators(applicationForm, ApplicationFormAction.COMPLETE_VALIDATION_STAGE, applicationForm.getDueDate(), true);
 //
 //        for (RegisteredUser approver : applicationForm.getProgram().getApprovers()) {
@@ -104,7 +104,7 @@ public class WorkflowService {
 //        }
     }
 
-    public void validationStageCompleted(ApplicationForm application) {
+    public void validationStageCompleted(Application application) {
 //        deleteStateActions(application);
 //        Boolean anyUnsure = application.getValidationComment().isAtLeastOneAnswerUnsure();
 //        List<RegisteredUser> admitters = userDAO.getAdmitters();
@@ -226,7 +226,7 @@ public class WorkflowService {
     }
 
     public void admitterCommentPosted(AdmitterComment comment) {
-        ApplicationForm application = comment.getApplication();
+        Application application = comment.getApplication();
 //        deleteRoleAction(application, Authority.ADMITTER, ApplicationFormAction.CONFIRM_ELIGIBILITY);
 //        deleteRoleAction(application, Authority.SUPERADMINISTRATOR, ApplicationFormAction.CONFIRM_ELIGIBILITY);
     }
@@ -311,7 +311,7 @@ public class WorkflowService {
 //        updateApplicationDueDate(application);
     }
 
-    public void applicationExportFailed(ApplicationForm application) {
+    public void applicationExportFailed(Application application) {
 //        for (RegisteredUser user : userDAO.getAdmitters()) {
 //            createApplicationFormUserRole(application, user, Authority.SUPERADMINISTRATOR, false,
 //                    new ApplicationFormActionRequired(actionDAO.getById(ApplicationFormAction.CORRECT_APPLICATION), new Date(), false, true));
@@ -322,29 +322,29 @@ public class WorkflowService {
 //        }
     }
 
-    public void applicationExportResent(ApplicationForm application) {
+    public void applicationExportResent(Application application) {
 //        deleteRoleAction(application, Authority.ADMITTER, ApplicationFormAction.CORRECT_APPLICATION);
 //        deleteRoleAction(application, Authority.SUPERADMINISTRATOR, ApplicationFormAction.CORRECT_APPLICATION);
     }
     
-    public Boolean getRaisesUrgentFlagByUserAndApplicationForm(User user, ApplicationForm applicationForm) {
+    public Boolean getRaisesUrgentFlagByUserAndApplicationForm(User user, Application applicationForm) {
 //        return applicationFormUserRoleDAO.getRaisesUrgentFlagByUserAndApplicationForm(user, applicationForm);
         return false;
     }
 
-    public List<User> getUsersInterestedInApplication(ApplicationForm applicationForm) {
+    public List<User> getUsersInterestedInApplication(Application applicationForm) {
         return userDAO.getUsersInterestedInApplication(applicationForm);
     }
 
-    public List<User> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
+    public List<User> getUsersPotentiallyInterestedInApplication(Application applicationForm) {
         return userDAO.getUsersPotentiallyInterestedInApplication(applicationForm);
     }
     
-    public void deleteApplicationUpdate(ApplicationForm applicationForm, User user) {
+    public void deleteApplicationUpdate(Application applicationForm, User user) {
 //        applicationFormUserRoleDAO.deleteApplicationUpdate(applicationForm, registeredUser);
     }
     
-    public void deleteApplicationRole(ApplicationForm application, User user, Authority authority) {
+    public void deleteApplicationRole(Application application, User user, Authority authority) {
 //        applicationFormUserRoleDAO.deleteApplicationRole(application, user, authority);
     }
     
@@ -368,15 +368,15 @@ public class WorkflowService {
 //        applicationFormUserRoleDAO.updateUrgentApplications();
     }
 
-    private void updateApplicationDueDate(ApplicationForm applicationForm, LocalDate dueDate) {
+    private void updateApplicationDueDate(Application applicationForm, LocalDate dueDate) {
 //        applicationFormUserRoleDAO.updateApplicationDueDate(applicationForm, deadlineTimestamp);
     }
 
-    private void updateApplicationInterest(ApplicationForm applicationForm, User user, Boolean interested) {
+    private void updateApplicationInterest(Application applicationForm, User user, Boolean interested) {
 //        applicationFormUserRoleDAO.updateApplicationInterest(applicationForm, registeredUser, interested);
     }
 
-    private void deleteProvideInterviewAvailabilityAction(ApplicationForm applicationForm, User user) {
+    private void deleteProvideInterviewAvailabilityAction(Application applicationForm, User user) {
 //        Authority authority = Authority.INTERVIEWER;
 //        if (registeredUser.isApplicant(applicationForm)) {
 //            authority = Authority.APPLICANT;
@@ -384,13 +384,13 @@ public class WorkflowService {
 //        actionDAO.deleteUserAction(applicationForm, registeredUser, authority, ApplicationFormAction.PROVIDE_INTERVIEW_AVAILABILITY);
     }
 
-    private void updateApplicationDueDate(ApplicationForm applicationForm) {
+    private void updateApplicationDueDate(Application applicationForm) {
         LocalDate newDueDate = new LocalDate();
         applicationForm.setDueDate(newDueDate);
         updateApplicationDueDate(applicationForm, newDueDate);
     }
 
-    private void assignToAdministrators(ApplicationForm applicationForm, ApplicationFormAction action, Date dueDate, Boolean bindDeadlineToDueDate) {
+    private void assignToAdministrators(Application applicationForm, ApplicationFormAction action, Date dueDate, Boolean bindDeadlineToDueDate) {
         Map<User, Authority> administrators = Maps.newHashMap();
 
         for (User superAdministrator : userDAO.getSuperadministrators()) {
@@ -436,7 +436,7 @@ public class WorkflowService {
         }
     }
 
-    public void applicationUpdated(ApplicationForm applicationForm, User user) {
+    public void applicationUpdated(Application applicationForm, User user) {
         // TODO Auto-generated method stub
         
     }

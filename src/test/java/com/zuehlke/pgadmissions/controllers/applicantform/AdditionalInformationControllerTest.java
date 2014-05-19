@@ -13,7 +13,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -54,14 +54,14 @@ public class AdditionalInformationControllerTest {
     @Test
     public void shouldReturnApplicationFormView() {
         Assert.assertEquals("/private/pgStudents/form/components/additional_information",
-                controller.getAdditionalInformationView(new ApplicationForm(), new ExtendedModelMap()));
+                controller.getAdditionalInformationView(new Application(), new ExtendedModelMap()));
     }
 
     @Test
     public void shouldBindPropertyEditors() {
         WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
         binderMock.setValidator(validatorMock);
-        binderMock.registerCustomEditor(ApplicationForm.class, applFormPropertyEditorMock);
+        binderMock.registerCustomEditor(Application.class, applFormPropertyEditorMock);
         binderMock.registerCustomEditor(Boolean.class, booleanPropertyEditorMock);
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 

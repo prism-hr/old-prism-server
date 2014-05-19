@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 public class ProgrammeDetailsBuilder {
 
 	private Integer id;
-	private ApplicationForm applicationForm;
+	private Application applicationForm;
 	private StudyOption studyOption;
 	private Date startDate;
 	private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
@@ -40,7 +40,7 @@ public class ProgrammeDetailsBuilder {
 		return this;
 	}
 	
-	public ProgrammeDetailsBuilder applicationForm(ApplicationForm applicationForm) {
+	public ProgrammeDetailsBuilder applicationForm(Application applicationForm) {
 		this.applicationForm = applicationForm;
 		return this;
 	}

@@ -17,9 +17,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationFilter;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.State;
@@ -49,17 +49,17 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     private User currentUser;
 
-    private ApplicationForm app1InApproval;
+    private Application app1InApproval;
 
-    private ApplicationForm app2InReview;
+    private Application app2InReview;
 
-    private ApplicationForm app3InValidation;
+    private Application app3InValidation;
 
-    private ApplicationForm app4InApproved;
+    private Application app4InApproved;
 
-    private ApplicationForm app5InInterview;
+    private Application app5InInterview;
 
-    private ApplicationForm app6InReview;
+    private Application app6InReview;
 
     private Date submissionDate;
 
@@ -112,17 +112,17 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
         program = testObjectProvider.getEnabledProgram();
 
-        app1InApproval = new ApplicationForm().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_APPROVAL))
+        app1InApproval = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_APPROVAL))
                 .withApplicationNumber("app1").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 0));
-        app2InReview = new ApplicationForm().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_REVIEW))
+        app2InReview = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_REVIEW))
                 .withApplicationNumber("app2").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 1));
-        app3InValidation = new ApplicationForm().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_VALIDATION))
+        app3InValidation = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_VALIDATION))
                 .withApplicationNumber("app3").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 2));
-        app4InApproved = new ApplicationForm().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_APPROVED))
+        app4InApproved = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_APPROVED))
                 .withApplicationNumber("app4").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 3));
-        app5InInterview = new ApplicationForm().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_INTERVIEW))
+        app5InInterview = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_INTERVIEW))
                 .withApplicationNumber("app5").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 4));
-        app6InReview = new ApplicationForm().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_REVIEW))
+        app6InReview = new Application().withProgram(program).withUser(applicant).withState(new State().withId(PrismState.APPLICATION_REVIEW))
                 .withApplicationNumber("app6").withSubmittedTimestamp(DateUtils.addDays(submissionDate, 5));
 
         save(applicant, currentUser, app1InApproval, app2InReview, app3InValidation, app4InApproved, app5InInterview, app6InReview);
@@ -133,8 +133,8 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     }
 
-    private void createAndSaveApplicationFormUserRoles(ApplicationForm... applications) {
-        for (ApplicationForm applicaton : applications) {
+    private void createAndSaveApplicationFormUserRoles(Application... applications) {
+        for (Application applicaton : applications) {
             UserRole userRole = TestData.aUserRole(applicaton, role, currentUser, currentUser);
             save(userRole);
         }
@@ -142,7 +142,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Test
     public void shouldReturnAppsFilteredByNumber() {
-        ApplicationForm otherApplicationForm = TestData.anApplicationForm(applicant, program, TestData.aState(PrismState.APPLICATION_APPROVAL));
+        Application otherApplicationForm = TestData.anApplicationForm(applicant, program, TestData.aState(PrismState.APPLICATION_APPROVAL));
         save(otherApplicationForm);
         flushAndClearSession();
 
@@ -156,7 +156,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
 
     @Test
     public void shouldReturnAppsFilteredByNotNumber() {
-        ApplicationForm otherApplicationForm = new ApplicationForm().withProgram(program).withUser(applicant)
+        Application otherApplicationForm = new Application().withProgram(program).withUser(applicant)
                 .withState(new State().withId(PrismState.APPLICATION_APPROVAL)).withApplicationNumber("other1");
         save(otherApplicationForm);
         createAndSaveApplicationFormUserRoles(otherApplicationForm);
@@ -232,7 +232,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         User otherUser = new User().withFirstName("Franciszek").withLastName("Pieczka").withEmail("franek@pieczka.com").withActivationCode("activation3")
                 .withAccount(new UserAccount().withPassword("franek123").withEnabled(false));
 
-        ApplicationForm otherApplicationForm = new ApplicationForm().withProgram(program).withUser(otherUser)
+        Application otherApplicationForm = new Application().withProgram(program).withUser(otherUser)
                 .withState(new State().withId(PrismState.APPLICATION_APPROVAL)).withApplicationNumber("other1");
         save(otherUser, otherApplicationForm);
         createAndSaveApplicationFormUserRoles(otherApplicationForm);
@@ -359,7 +359,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     public void shouldReturnAppsFilteredByApplicantFirstNameAndLastName() {
         User otherUser = new User().withFirstName("Franciszek").withLastName("Pieczka").withEmail("franek@pieczka.com").withActivationCode("activation3");
 
-        ApplicationForm otherApplicationForm = new ApplicationForm().withProgram(program).withUser(otherUser)
+        Application otherApplicationForm = new Application().withProgram(program).withUser(otherUser)
                 .withState(new State().withId(PrismState.APPLICATION_APPROVAL)).withApplicationNumber("other1");
         save(otherUser, otherApplicationForm);
         createAndSaveApplicationFormUserRoles(otherApplicationForm);
@@ -377,7 +377,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     public void shouldReturnAppsFilteredByProgramName() {
         Program alternativeProgram = testObjectProvider.getAlternativeEnabledProgram(program);
 
-        ApplicationForm app1InApproval = new ApplicationForm().withProgram(alternativeProgram).withUser(applicant)
+        Application app1InApproval = new Application().withProgram(alternativeProgram).withUser(applicant)
                 .withState(new State().withId(PrismState.APPLICATION_APPROVAL)).withApplicationNumber("app112")
                 .withSubmittedTimestamp(DateUtils.addDays(submissionDate, 0));
 
@@ -403,7 +403,7 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
         List<ApplicationDescriptor> applications = applicationDAO.getVisibleApplicationsForList(currentUser,
                 newFiltering(SortCategory.RATING, SortOrder.ASCENDING, 1, programFilter), 50);
 
-        List<ApplicationForm> expectedApplications = Lists.newArrayList(app4InApproved, app3InValidation, app5InInterview, app1InApproval, app2InReview,
+        List<Application> expectedApplications = Lists.newArrayList(app4InApproved, app3InValidation, app5InInterview, app1InApproval, app2InReview,
                 app6InReview);
 
         for (int i = 0; i < expectedApplications.size(); i++) {
@@ -417,8 +417,8 @@ public class ApplicationFormListDAOFilteringTest extends AutomaticRollbackTestCa
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static void assertContainsApplications(List<ApplicationDescriptor> applications, ApplicationForm... expectedApplications) {
-        for (ApplicationForm expectedApplication : expectedApplications) {
+    private static void assertContainsApplications(List<ApplicationDescriptor> applications, Application... expectedApplications) {
+        for (Application expectedApplication : expectedApplications) {
             assertThat(applications, (Matcher) hasItem(hasProperty("applicationFormNumber", equalTo(expectedApplication.getApplicationNumber()))));
         }
     }

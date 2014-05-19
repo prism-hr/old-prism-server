@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -48,7 +48,7 @@ public class ExportQueueService {
     private ApplicationTransferService formTransferService;
 
     @Transactional
-    public void sendToPortico(final ApplicationForm form) {
+    public void sendToPortico(final Application form) {
         createOrReturnExistingApplicationFormTransfer(form);
 
         if (throttleService.isPorticoInterfaceEnabled()) {
@@ -68,7 +68,7 @@ public class ExportQueueService {
     public void sendQueuedApprovedApplicationsToPortico() {
         List<ApplicationTransfer> applications = formTransferService.getAllTransfersWaitingToBeSentToPorticoOldestFirst();
         for (ApplicationTransfer transfer : applications) {
-            ApplicationForm form = transfer.getApplicationForm();
+            Application form = transfer.getApplicationForm();
             if (form.getState().equals(PrismState.APPLICATION_APPROVED)) {
                 sendToPortico(form);
             }
@@ -80,7 +80,7 @@ public class ExportQueueService {
         List<Long> transferIds = formTransferService.getAllTransfersWaitingToBeSentToPorticoOldestFirstAsIds();
         int numberOfApplicationsSent = 1;
         for (Long transferId : transferIds) {
-            ApplicationForm form = formTransferService.getById(transferId).getApplicationForm();
+            Application form = formTransferService.getById(transferId).getApplicationForm();
             if ((batchSize == 0) || numberOfApplicationsSent <= batchSize) {
                 numberOfApplicationsSent++;
                 sendToPortico(form);
@@ -89,13 +89,13 @@ public class ExportQueueService {
     }
 
     @Transactional
-    public ApplicationTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
+    public ApplicationTransfer createOrReturnExistingApplicationFormTransfer(final Application form) {
         return formTransferService.createOrReturnExistingApplicationFormTransfer(form);
     }
 
     @Transactional
     public void handleNonDeliverableApplication(final String applicationNumber) {
-        ApplicationForm form = formDAO.getByApplicationNumber(applicationNumber);
+        Application form = formDAO.getByApplicationNumber(applicationNumber);
         ApplicationTransfer transfer = form.getTransfer();
         transfer.setState(ApplicationTransferState.CANCELLED);
     }

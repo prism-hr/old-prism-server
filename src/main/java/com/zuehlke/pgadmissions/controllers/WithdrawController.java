@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -39,7 +39,7 @@ public class WithdrawController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String withdrawApplicationAndGetApplicationList(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_WITHDRAW);
 
@@ -54,8 +54,8 @@ public class WithdrawController {
     }
 
     @ModelAttribute
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application applicationForm = applicationService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new ResourceNotFoundException(applicationId);
         }

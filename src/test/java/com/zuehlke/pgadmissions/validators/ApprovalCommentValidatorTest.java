@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignSupervisorsComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalCommentBuilder;
@@ -160,7 +160,7 @@ public class ApprovalCommentValidatorTest {
 
 //        Supervisor supervisor1 = new SupervisorBuilder().id(4).build();
 //        Supervisor supervisor2 = new SupervisorBuilder().id(5).isPrimary(true).build();
-        ApplicationForm application = new ApplicationFormBuilder().id(2).build();
+        Application application = new ApplicationFormBuilder().id(2).build();
         approvalComment = new ApprovalCommentBuilder() //
                 .application(application)//
 //                .supervisors(supervisor1, supervisor2)//

@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.ImportedInstitution;
@@ -44,8 +44,8 @@ public class TestData {
         return new UserAccount().withEnabled(true).withPassword("password");
     }
 
-    public static ApplicationForm anApplicationForm(User user, Program program, State state) {
-        return new ApplicationForm().withUser(user).withProgram(program).withState(state).withDueDate(new LocalDate().plusWeeks(2));
+    public static Application anApplicationForm(User user, Program program, State state) {
+        return new Application().withUser(user).withProgram(program).withState(state).withDueDate(new LocalDate().plusWeeks(2));
     }
 
     public static Address anAddress(Domicile domicile) {
@@ -61,7 +61,7 @@ public class TestData {
         return new State().withId(stateValue);
     }
 
-    public static UserRole aUserRole(ApplicationForm applicaton, Role role, User user, User requestingUser) {
+    public static UserRole aUserRole(Application applicaton, Role role, User user, User requestingUser) {
         return new UserRole().withApplication(applicaton).withRole(role).withUser(user).withRequestingUser(requestingUser).withAssignedTimestamp(new DateTime());
     }
 
@@ -70,7 +70,7 @@ public class TestData {
                 .withType(DocumentType.CV);
     }
 
-    public static Qualification aQualification(ApplicationForm application, QualificationType qualificationType, Document document, ImportedInstitution institution) {
+    public static Qualification aQualification(Application application, QualificationType qualificationType, Document document, ImportedInstitution institution) {
         return new Qualification().withAwardDate(new Date()).withGrade("").withTitle("").withLanguage("Abkhazian").withSubject("").withCompleted(true)
                 .withStartDate(new Date()).withType(qualificationType).withApplication(application).withDocument(document).withExport(false).withInstitution(institution);
     }

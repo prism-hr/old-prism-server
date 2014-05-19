@@ -20,7 +20,7 @@ public class SuggestedSupervisor {
 
     @ManyToOne
     @JoinColumn(name = "application_form_id")
-    private ApplicationForm application;
+    private Application application;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -28,11 +28,11 @@ public class SuggestedSupervisor {
 
     private boolean aware;
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 
@@ -52,7 +52,7 @@ public class SuggestedSupervisor {
         this.aware = aware;
     }
 
-    public SuggestedSupervisor withApplication(ApplicationForm application) {
+    public SuggestedSupervisor withApplication(Application application) {
         this.application = application;
         return this;
     }

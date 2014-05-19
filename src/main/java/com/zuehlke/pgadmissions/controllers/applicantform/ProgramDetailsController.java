@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 import com.zuehlke.pgadmissions.domain.SourcesOfInterest;
 import com.zuehlke.pgadmissions.domain.StudyOption;
@@ -68,12 +68,12 @@ public class ProgramDetailsController {
     private EntityPropertyEditor<SourcesOfInterest> sourcesOfInterestPropertyEditor;
 
     @RequestMapping(value = "/getProgrammeDetails", method = RequestMethod.GET)
-    public String getProgrammeDetailsView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
+    public String getProgrammeDetailsView(@ModelAttribute Application applicationForm, ModelMap modelMap) {
         return returnView(modelMap, programDetailsService.getOrCreate(applicationForm));
     }
 
     @RequestMapping(value = "/editProgrammeDetails", method = RequestMethod.POST)
-    public String editProgrammeDetails(@ModelAttribute ApplicationForm applicationForm, @Valid ProgramDetails programDetails, BindingResult result,
+    public String editProgrammeDetails(@ModelAttribute Application applicationForm, @Valid ProgramDetails programDetails, BindingResult result,
             ModelMap modelMap) {
         if (result.hasErrors()) {
             return returnView(modelMap, programDetails);
@@ -84,7 +84,7 @@ public class ProgramDetailsController {
 
     @RequestMapping(value = "/getDefaultStartDate", method = RequestMethod.GET)
     @ResponseBody
-    public Date getDefaultStartDate(@ModelAttribute ApplicationForm applicationForm) {
+    public Date getDefaultStartDate(@ModelAttribute Application applicationForm) {
         return applicationFormService.getDefaultStartDateForApplication(applicationForm);
     }
 
@@ -99,7 +99,7 @@ public class ProgramDetailsController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(String applicationId) {
+    public Application getApplicationForm(String applicationId) {
         return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
                 ApplicationFormAction.APPLICATION_CORRECT);
     }
@@ -109,7 +109,7 @@ public class ProgramDetailsController {
         binder.setValidator(programmeDetailsValidator);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
         binder.registerCustomEditor(Date.class, datePropertyEditor);
-        binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+        binder.registerCustomEditor(Application.class, applicationFormPropertyEditor);
         binder.registerCustomEditor(SuggestedSupervisor.class, supervisorJSONPropertyEditor);
         binder.registerCustomEditor(SourcesOfInterest.class, sourcesOfInterestPropertyEditor);
     }

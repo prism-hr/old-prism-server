@@ -76,7 +76,7 @@ public class PrismSystem extends PrismScope {
     }
     
     @Override
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return null;
     }
 

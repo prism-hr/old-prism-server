@@ -56,7 +56,7 @@ public class Funding implements Serializable, FormSectionObject {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_form_id")
-    private ApplicationForm application;
+    private Application application;
 
     public void setId(Integer id) {
         this.id = id;
@@ -105,11 +105,11 @@ public class Funding implements Serializable, FormSectionObject {
         this.awardDate = awardDate;
     }
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 

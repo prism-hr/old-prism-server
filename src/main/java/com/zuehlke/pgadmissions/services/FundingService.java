@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.FundingDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
@@ -34,7 +34,7 @@ public class FundingService {
         return getSecuredInstance(fundingId);
     }
     
-    public void saveOrUpdate(ApplicationForm application, Integer fundingId, Funding funding) { 
+    public void saveOrUpdate(Application application, Integer fundingId, Funding funding) { 
         Funding persistentFunding;
         if (fundingId == null) {
             persistentFunding = new Funding();

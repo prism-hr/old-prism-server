@@ -26,9 +26,9 @@ import org.springframework.validation.Validator;
 import org.unitils.inject.util.InjectionUtils;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -53,7 +53,7 @@ public class ApplicationFormValidatorTest {
 
     private ApplicationFormValidator applicationFormValidator;
 
-    private ApplicationForm application;
+    private Application application;
 
     private ProgramService programService;
 
@@ -88,7 +88,7 @@ public class ApplicationFormValidatorTest {
         replay(programService, programDetailsValidatorMock, personalDetailsValidatorMock, applicationFormAddressValidatorMock,
                 additionalInformationValidatorMock, applicationFormDocumentValidatorMock);
 
-        assertTrue(applicationFormValidator.supports(ApplicationForm.class));
+        assertTrue(applicationFormValidator.supports(Application.class));
     }
 
     @Test
@@ -201,7 +201,7 @@ public class ApplicationFormValidatorTest {
         additionalInformation = new AdditionalInformationBuilder().id(3).build();
         document = new ApplicationDocument().withPersonalStatement(new Document());
 
-        application = new ApplicationForm() //
+        application = new Application() //
                 .withProgram(program) //
                 .withPersonalDetails(personalDetails) //
                 .withProgramDetails(programmeDetails) //

@@ -17,7 +17,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
@@ -82,12 +82,12 @@ public class FundingControllerTest {
 
     @Test
     public void shouldReturnApplicationForm() {
-        ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).build();
+        Application applicationForm = new ApplicationFormBuilder().id(1).build();
 
         expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 
         replay();
-        ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
+        Application returnedApplicationForm = controller.getApplicationForm("1");
         assertEquals(applicationForm, returnedApplicationForm);
     }
 
@@ -105,7 +105,7 @@ public class FundingControllerTest {
 
         binderMock.setValidator(fundingValidatorMock);
         binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
-        binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
+        binderMock.registerCustomEditor(Application.class, applicationFormPropertyEditorMock);
         binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
         binderMock.registerCustomEditor(EasyMock.eq(String.class), EasyMock.anyObject(StringTrimmerEditor.class));
 

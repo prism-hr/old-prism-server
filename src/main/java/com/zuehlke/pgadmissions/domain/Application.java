@@ -37,7 +37,7 @@ import com.google.common.base.Objects;
 @Entity
 @Table(name = "APPLICATION")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ApplicationForm extends PrismScope {
+public class Application extends PrismScope {
 
     @Id
     @GeneratedValue
@@ -363,72 +363,72 @@ public class ApplicationForm extends PrismScope {
         this.submittedIpAddress = InetAddress.getByName(ipAddress).getAddress();
     }
 
-    public ApplicationForm withId(Integer id) {
+    public Application withId(Integer id) {
         this.id = id;
         return this;
     }
 
-    public ApplicationForm withApplicationNumber(String applicationNumber) {
+    public Application withApplicationNumber(String applicationNumber) {
         this.applicationNumber = applicationNumber;
         return this;
     }
 
-    public ApplicationForm withProgram(Program program) {
+    public Application withProgram(Program program) {
         this.program = program;
         return this;
     }
 
-    public ApplicationForm withUser(User user) {
+    public Application withUser(User user) {
         this.user = user;
         return this;
     }
 
-    public ApplicationForm withState(State state) {
+    public Application withState(State state) {
         this.state = state;
         return this;
     }
 
-    public ApplicationForm withDueDate(LocalDate dueDate) {
+    public Application withDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
         return this;
     }
 
-    public ApplicationForm withSubmittedTimestamp(Date submittedTimestamp) {
+    public Application withSubmittedTimestamp(Date submittedTimestamp) {
         this.submittedTimestamp = submittedTimestamp;
         return this;
     }
 
-    public ApplicationForm withPersonalDetails(PersonalDetails personalDetails) {
+    public Application withPersonalDetails(PersonalDetails personalDetails) {
         this.personalDetails = personalDetails;
         return this;
     }
 
-    public ApplicationForm withProgramDetails(ProgramDetails programDetails) {
+    public Application withProgramDetails(ProgramDetails programDetails) {
         this.programDetails = programDetails;
         return this;
     }
 
-    public ApplicationForm withAddress(ApplicationAddress applicationAddress) {
+    public Application withAddress(ApplicationAddress applicationAddress) {
         this.applicationAddress = applicationAddress;
         return this;
     }
 
-    public ApplicationForm withDocument(ApplicationDocument applicationDocument) {
+    public Application withDocument(ApplicationDocument applicationDocument) {
         this.applicationDocument = applicationDocument;
         return this;
     }
 
-    public ApplicationForm withAdditionalInformation(AdditionalInformation additionalInformation) {
+    public Application withAdditionalInformation(AdditionalInformation additionalInformation) {
         this.additionalInformation = additionalInformation;
         return this;
     }
 
-    public ApplicationForm withAcceptedTerms(Boolean acceptedTerms) {
+    public Application withAcceptedTerms(Boolean acceptedTerms) {
         this.acceptedTerms = acceptedTerms;
         return this;
     }
 
-    public ApplicationForm withReferees(Referee... referees) {
+    public Application withReferees(Referee... referees) {
         this.referees.addAll(Arrays.asList(referees));
         return this;
     }
@@ -449,7 +449,7 @@ public class ApplicationForm extends PrismScope {
     }
     
     @Override
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return this;
     }
 

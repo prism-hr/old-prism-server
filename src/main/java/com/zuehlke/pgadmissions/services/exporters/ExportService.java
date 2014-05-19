@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.ObjectFactory;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
@@ -35,8 +35,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorHandlingDecision;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferErrorType;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.exceptions.ExportServiceException;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 import com.zuehlke.pgadmissions.services.PorticoService;
@@ -89,11 +89,11 @@ public class ExportService {
 
     // oooooooooooooooooooooooooo PUBLIC API IMPLEMENTATION oooooooooooooooooooooooooooooooo
 
-    public void sendToPortico(final ApplicationForm form, final ApplicationTransfer transfer) throws ExportServiceException {
+    public void sendToPortico(final Application form, final ApplicationTransfer transfer) throws ExportServiceException {
         sendToPortico(form, transfer, new DeafListener());
     }
 
-    public void sendToPortico(final ApplicationForm form, final ApplicationTransfer transfer, TransferListener listener) throws ExportServiceException {
+    public void sendToPortico(final Application form, final ApplicationTransfer transfer, TransferListener listener) throws ExportServiceException {
         try {
             log.info(String.format("Submitting application to PORTICO [applicationNumber=%s]", form.getApplicationNumber()));
             ExportService proxy = context.getBean(this.getClass());
@@ -121,9 +121,9 @@ public class ExportService {
     // ooooooooooooooooooooooooooooooo PRIVATE oooooooooooooooooooooooooooooooo
 
     @Transactional
-    public void sendWebServiceRequest(final ApplicationForm formObj, final ApplicationTransfer transferObj, final TransferListener listener)
+    public void sendWebServiceRequest(final Application formObj, final ApplicationTransfer transferObj, final TransferListener listener)
             throws ExportServiceException {
-        ApplicationForm form = applicationsService.getById(formObj.getId());
+        Application form = applicationsService.getById(formObj.getId());
         ApplicationTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         ValidationComment validationComment = (ValidationComment) applicationsService.getLatestStateChangeComment(form,
                 ApplicationFormAction.APPLICATION_COMPLETE_VALIDATION_STAGE);
@@ -174,7 +174,7 @@ public class ExportService {
     }
 
     @Transactional
-    public void uploadDocuments(final ApplicationForm form, final ApplicationTransfer transferObj, final TransferListener listener)
+    public void uploadDocuments(final Application form, final ApplicationTransfer transferObj, final TransferListener listener)
             throws ExportServiceException {
         ApplicationTransfer transfer = applicationFormTransferService.getById(transferObj.getId());
         try {
@@ -217,7 +217,7 @@ public class ExportService {
      * In case we send an incomplete application we still want to send the referees which might have responded with a comment and or a document.
      */
     @Transactional
-    protected void prepareApplicationForm(final ApplicationForm application) {
+    protected void prepareApplicationForm(final Application application) {
         if (application.getState().getId() == PrismState.APPLICATION_WITHDRAWN || application.getState().getId() == PrismState.APPLICATION_REJECTED) {
             if (porticoService.getReferencesToSendToPortico(application).size() < 2) {
                 final HashMap<Integer, Referee> refereesToSend = new HashMap<Integer, Referee>();
@@ -252,7 +252,7 @@ public class ExportService {
         applicationsService.save(application);
     }
 
-    public ApplicationTransfer createOrReturnExistingApplicationFormTransfer(final ApplicationForm form) {
+    public ApplicationTransfer createOrReturnExistingApplicationFormTransfer(final Application form) {
         return applicationFormTransferService.createOrReturnExistingApplicationFormTransfer(form);
     }
 

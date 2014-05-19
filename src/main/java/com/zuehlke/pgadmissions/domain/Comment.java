@@ -30,7 +30,6 @@ import org.hibernate.annotations.IndexColumn;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
-import com.zuehlke.pgadmissions.domain.enums.PrismState;
 import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.validators.ATASConstraint;
 import com.zuehlke.pgadmissions.validators.ESAPIConstraint;
@@ -55,7 +54,7 @@ public class Comment implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
-    private ApplicationForm application;
+    private Application application;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -192,11 +191,11 @@ public class Comment implements Serializable {
         this.id = id;
     }
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 

@@ -18,8 +18,8 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -59,7 +59,7 @@ public class DocumentsControllerTest {
     @Test
     public void shouldReturnApplicationFormView() {
         ModelMap modelMap = new ModelMap();
-        ApplicationForm application = new ApplicationFormBuilder().applicationFormDocument(new ApplicationDocument().withPersonalStatement(new Document()).withCv(new Document())).build();
+        Application application = new ApplicationFormBuilder().applicationFormDocument(new ApplicationDocument().withPersonalStatement(new Document()).withCv(new Document())).build();
         modelMap.put("applicationForm", application);
 
         assertEquals("/private/pgStudents/form/components/documents", controller.getDocumentsView(null, modelMap));
@@ -69,12 +69,12 @@ public class DocumentsControllerTest {
 
     @Test
     public void shouldReturnApplicationForm() {
-        ApplicationForm applicationForm = new ApplicationForm();
+        Application applicationForm = new Application();
 
         EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(applicationForm);
 
         replay();
-        ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
+        Application returnedApplicationForm = controller.getApplicationForm("1");
 
         assertSame(applicationForm, returnedApplicationForm);
     }
@@ -104,7 +104,7 @@ public class DocumentsControllerTest {
         User currentUser = new User();
         ApplicationDocument documentsSectionDTO = new ApplicationDocument();
         BindingResult bindingResult = new BeanPropertyBindingResult(documentsSectionDTO, "documentsSectionDTO");
-        ApplicationForm application = new ApplicationFormBuilder().id(666).applicationNumber("ABC").build();
+        Application application = new ApplicationFormBuilder().id(666).applicationNumber("ABC").build();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
 

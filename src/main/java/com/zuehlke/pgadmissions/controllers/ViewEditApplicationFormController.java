@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
@@ -43,7 +43,7 @@ public class ViewEditApplicationFormController {
     public String getApplicationView(HttpServletRequest request, @RequestParam String applicationNumber) {
         User user = userService.getCurrentUser();
 
-        ApplicationForm application = applicationFormService.getByApplicationNumber(applicationNumber);
+        Application application = applicationFormService.getByApplicationNumber(applicationNumber);
         applicationFormService.openApplicationForView(application, user);
         if (request != null && request.getParameter("embeddedApplication") != null && request.getParameter("embeddedApplication").equals("true")) {
             return TemplateLocation.APPLICATION_STAFF_EMBEDDED_FORM;

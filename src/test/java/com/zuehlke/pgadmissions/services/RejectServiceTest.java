@@ -20,7 +20,7 @@ import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
@@ -58,7 +58,7 @@ public class RejectServiceTest {
     @InjectIntoByType
     private ActionService actionService;
 
-    private ApplicationForm application;
+    private Application application;
 
     private RejectReason reason1;
 

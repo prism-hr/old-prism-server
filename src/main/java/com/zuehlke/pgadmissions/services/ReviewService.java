@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.StateDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.State;
@@ -39,7 +39,7 @@ public class ReviewService {
     private CommentService commentService;
 
     public void moveApplicationToReview(int applicationId, AssignReviewersComment comment) {
-        ApplicationForm application = applicationsService.getById(applicationId);
+        Application application = applicationsService.getById(applicationId);
         User user = userService.getCurrentUser();
         Comment latestAssignReviewersComment = applicationsService.getLatestStateChangeComment(application, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS);
 

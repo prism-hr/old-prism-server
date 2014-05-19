@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserAccount;
@@ -24,7 +24,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
     
     private User user;
     
-    private ApplicationForm application;
+    private Application application;
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerException() {

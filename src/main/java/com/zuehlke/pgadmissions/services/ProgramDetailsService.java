@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ProgramDetails;
 
 @Service
@@ -18,7 +18,7 @@ public class ProgramDetailsService {
     @Autowired
     private ApplicationFormCopyHelper applicationFormCopyHelper;
     
-    public ProgramDetails getOrCreate(ApplicationForm application) {
+    public ProgramDetails getOrCreate(Application application) {
         ProgramDetails programDetails = application.getProgramDetails();
         if (programDetails == null) {
             programDetails = new ProgramDetails();
@@ -26,7 +26,7 @@ public class ProgramDetailsService {
         return programDetails;
     }
     
-    public void saveOrUpdate(ApplicationForm application, ProgramDetails programDetails) {
+    public void saveOrUpdate(Application application, ProgramDetails programDetails) {
         ProgramDetails persistentProgramDetails = application.getProgramDetails();
         if (persistentProgramDetails == null) {
             persistentProgramDetails = new ProgramDetails();

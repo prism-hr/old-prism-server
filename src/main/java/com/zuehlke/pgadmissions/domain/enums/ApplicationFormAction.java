@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.PrismScope;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -73,7 +73,7 @@ public enum ApplicationFormAction {
 
         Class<? extends PrismScope> scopeClass = null;
         if ("APPLICATION".equals(scopeName)) {
-            scopeClass = ApplicationForm.class;
+            scopeClass = Application.class;
         } else if ("PROJECT".equals(scopeName)) {
             scopeClass = Project.class;
         } else if ("PROGRAM".equals(scopeName)) {

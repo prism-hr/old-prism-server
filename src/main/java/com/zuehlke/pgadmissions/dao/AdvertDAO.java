@@ -25,7 +25,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.UserRole;
@@ -123,7 +123,7 @@ public class AdvertDAO {
     }
     
     private Criteria getProgramAdvertByApplicationFormIdCriteria(Session session, String feedKeyValue) {
-        return session.createCriteria(ApplicationForm.class, "applicationForm")
+        return session.createCriteria(Application.class, "applicationForm")
                 .createAlias("applicationForm.program", "program", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("applicationForm.id", Integer.parseInt(feedKeyValue)));
     }

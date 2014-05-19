@@ -2,14 +2,14 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 
 public class FundingBuilder {
 
-	private ApplicationForm application;
+	private Application application;
 	private FundingType type;
 	private String description;
 	private String value;
@@ -22,7 +22,7 @@ public class FundingBuilder {
 		return this;
 	}
 	
-	public FundingBuilder application(ApplicationForm application) {
+	public FundingBuilder application(Application application) {
 		this.application = application;
 		return this;
 	}

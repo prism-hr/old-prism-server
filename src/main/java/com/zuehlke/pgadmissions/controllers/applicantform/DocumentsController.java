@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -45,12 +45,12 @@ public class DocumentsController {
     private ApplicationFormPropertyEditor applicationFormPropertyEditor;
 
     @RequestMapping(value = "/getDocuments", method = RequestMethod.GET)
-    public String getDocumentsView(@ModelAttribute ApplicationForm applicationForm, ModelMap modelMap) {
+    public String getDocumentsView(@ModelAttribute Application applicationForm, ModelMap modelMap) {
         return returnView(modelMap, applicationFormDocumentService.getOrCreate(applicationForm));
     }
 
     @RequestMapping(value = "/editDocuments", method = RequestMethod.POST)
-    public String editDocuments(@Valid ApplicationDocument applicationFormDocument, BindingResult result, @ModelAttribute ApplicationForm applicationForm,
+    public String editDocuments(@Valid ApplicationDocument applicationFormDocument, BindingResult result, @ModelAttribute Application applicationForm,
             ModelMap modelMap) {
         if (result.hasErrors()) {
             return returnView(modelMap, applicationFormDocument);
@@ -60,7 +60,7 @@ public class DocumentsController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(String applicationId) {
+    public Application getApplicationForm(String applicationId) {
         return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
                 ApplicationFormAction.APPLICATION_CORRECT);
     }
@@ -74,7 +74,7 @@ public class DocumentsController {
     public void registerPropertyEditors(WebDataBinder binder) {
         binder.setValidator(documentSectionValidator);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
-        binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+        binder.registerCustomEditor(Application.class, applicationFormPropertyEditor);
     }
 
     private String returnView(ModelMap modelMap, ApplicationDocument applicationFormDocument) {

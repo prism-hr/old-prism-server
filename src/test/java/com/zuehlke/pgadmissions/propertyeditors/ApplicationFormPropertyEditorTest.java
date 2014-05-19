@@ -7,7 +7,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationFormService;
 
@@ -19,7 +19,7 @@ public class ApplicationFormPropertyEditorTest {
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
-		ApplicationForm form = new ApplicationFormBuilder().id(1).build();
+		Application form = new ApplicationFormBuilder().id(1).build();
 		EasyMock.expect(applicationsServiceMock.getByApplicationNumber("1")).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
 		

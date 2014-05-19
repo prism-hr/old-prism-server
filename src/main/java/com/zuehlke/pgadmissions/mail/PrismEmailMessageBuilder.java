@@ -11,14 +11,14 @@ import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 
 public class PrismEmailMessageBuilder {
 
-    protected ApplicationForm form;
+    protected Application form;
     
     protected String fromAddress;
     
@@ -168,7 +168,7 @@ public class PrismEmailMessageBuilder {
         return this;
     }
     
-    public PrismEmailMessageBuilder applicationForm(final ApplicationForm form) {
+    public PrismEmailMessageBuilder applicationForm(final Application form) {
         this.form = form;
         return this;
     }

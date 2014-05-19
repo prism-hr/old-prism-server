@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignReviewersComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
@@ -58,7 +58,7 @@ public class MoveToReviewController {
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToReview")
     public String getReviewRoundDetailsPage(ModelMap modelMap) {
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        Application application = (Application) modelMap.get("applicationForm");
         actionService.validateAction(application, getUser(), ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS);
         applicationFormUserRoleService.deleteApplicationUpdate(application, getUser());
         return REVIEW_DETAILS_VIEW_NAME;
@@ -66,14 +66,14 @@ public class MoveToReviewController {
 
     @RequestMapping(method = RequestMethod.GET, value = "reviewersSection")
     public String getReviewersSectionView(ModelMap modelMap) {
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        Application application = (Application) modelMap.get("applicationForm");
         modelMap.put("comment", createAssignReviewersComment(application.getApplicationNumber()));
         return REVIEWERS_SECTION_NAME;
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
     public String moveToReview(@Valid AssignReviewersComment comment, BindingResult bindingResult, ModelMap modelMap) {
-        ApplicationForm application = (ApplicationForm) modelMap.get("applicationForm");
+        Application application = (Application) modelMap.get("applicationForm");
         User user = getUser();
 
         actionService.validateAction(application, user, ApplicationFormAction.APPLICATION_ASSIGN_REVIEWERS);
@@ -122,8 +122,8 @@ public class MoveToReviewController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application application = applicationsService.getByApplicationNumber(applicationId);
         if (application == null) {
             throw new ResourceNotFoundException(applicationId);
         }
@@ -132,7 +132,7 @@ public class MoveToReviewController {
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }

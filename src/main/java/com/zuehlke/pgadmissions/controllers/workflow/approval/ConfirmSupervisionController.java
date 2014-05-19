@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.CompleteApprovalComment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -65,8 +65,8 @@ public class ConfirmSupervisionController {
     private ProgramInstanceService programInstanceService;
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application application = applicationsService.getByApplicationNumber(applicationId);
         if (application == null) {
             throw new ResourceNotFoundException(applicationId);
         }
@@ -75,7 +75,7 @@ public class ConfirmSupervisionController {
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
@@ -84,7 +84,7 @@ public class ConfirmSupervisionController {
     public ConfirmSupervisionDTO getConfirmSupervisionDTO(@RequestParam String applicationId) {
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
 
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         CompleteApprovalComment comment = (CompleteApprovalComment) applicationsService.getLatestStateChangeComment(applicationForm, ApplicationFormAction.APPLICATION_COMPLETE_APPROVAL_STAGE);
 
         confirmSupervisionDTO.setProjectTitle(comment.getProjectTitle());
@@ -117,7 +117,7 @@ public class ConfirmSupervisionController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String confirmSupervision(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_SUPERVISION);
         workflowService.deleteApplicationUpdate(applicationForm, user);
@@ -126,7 +126,7 @@ public class ConfirmSupervisionController {
 
     @RequestMapping(value = "applyConfirmSupervision", method = RequestMethod.POST)
     public String applyConfirmSupervision(@Valid ConfirmSupervisionDTO confirmSupervisionDTO, BindingResult result, ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_CONFIRM_SUPERVISION);
 

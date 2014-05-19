@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -61,13 +61,13 @@ public class RefereeController {
     private FullTextSearchService searchService;
     
     @RequestMapping(value = "/getReferee", method = RequestMethod.GET)
-    public String getRefereeView(@ModelAttribute ApplicationForm applicationForm, @RequestParam(required = false) Integer refereeId, ModelMap modelMap) {
+    public String getRefereeView(@ModelAttribute Application applicationForm, @RequestParam(required = false) Integer refereeId, ModelMap modelMap) {
         return returnView(modelMap, refereeService.getOrCreate(refereeId));
     }
 
     @RequestMapping(value = "/editReferee", method = RequestMethod.POST)
     public String editReferee(Integer refereeId, @Valid Referee newReferee, BindingResult result, ModelMap modelMap,
-            @ModelAttribute ApplicationForm applicationForm) {
+            @ModelAttribute Application applicationForm) {
         Referee referee = null;
         if (refereeId != null) {
             referee = refereeService.getRefereeById(refereeId);
@@ -100,7 +100,7 @@ public class RefereeController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+    public Application getApplicationForm(@RequestParam String applicationId) {
         return applicationsService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_EDIT_AS_CREATOR, ApplicationFormAction.APPLICATION_CORRECT);
     }
 
@@ -109,7 +109,7 @@ public class RefereeController {
         binder.setValidator(refereeValidator);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
         binder.registerCustomEditor(Domicile.class, domicilePropertyEditor);
-        binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+        binder.registerCustomEditor(Application.class, applicationFormPropertyEditor);
     }
 
     private String returnView(ModelMap modelMap, Referee referee) {

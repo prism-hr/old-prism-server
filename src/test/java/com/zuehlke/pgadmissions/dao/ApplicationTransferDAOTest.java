@@ -6,7 +6,7 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
@@ -15,7 +15,7 @@ public class ApplicationTransferDAOTest extends AutomaticRollbackTestCase {
 
     private ApplicationTransferDAO applicationTransferDAO;
     
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
     
     @Test
     public void shouldReturnTransferBasedOnBookingReference() {

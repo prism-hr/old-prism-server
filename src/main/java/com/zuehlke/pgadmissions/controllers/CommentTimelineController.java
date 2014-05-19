@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
@@ -36,8 +36,8 @@ public class CommentTimelineController {
 	private CommentService commentService;
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String id) {
-		ApplicationForm applicationForm = applicationService.getByApplicationNumber(id);
+	public Application getApplicationForm(@RequestParam String id) {
+		Application applicationForm = applicationService.getByApplicationNumber(id);
 		if (applicationForm == null) {
 			throw new ResourceNotFoundException(id);
 		}
@@ -51,7 +51,7 @@ public class CommentTimelineController {
 	}
 	
 	@ModelAttribute("comments")
-	public List<Comment> getComments(@ModelAttribute ApplicationForm applicationForm) {		
+	public List<Comment> getComments(@ModelAttribute Application applicationForm) {		
 		return commentService.getVisibleComments(getUser(), applicationForm);		
 		
 	}

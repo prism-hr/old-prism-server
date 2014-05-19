@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.AssignInterviewersComment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
@@ -64,8 +64,8 @@ public class MoveToInterviewController {
     private WorkflowService applicationFormUserRoleService;
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm application = applicationsService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application application = applicationsService.getByApplicationNumber(applicationId);
         if (application == null) {
             throw new ResourceNotFoundException(applicationId);
         }
@@ -74,7 +74,7 @@ public class MoveToInterviewController {
 
     @RequestMapping(method = RequestMethod.GET, value = "moveToInterview")
     public String getInterviewDetailsPage(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_ASSIGN_INTERVIEWERS);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
@@ -89,7 +89,7 @@ public class MoveToInterviewController {
 
     @RequestMapping(value = "/move", method = RequestMethod.POST)
     public String moveToInterview(@Valid @ModelAttribute("interview") AssignInterviewersComment interviewComment, BindingResult bindingResult, ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_ASSIGN_INTERVIEWERS);
 
@@ -109,7 +109,7 @@ public class MoveToInterviewController {
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }

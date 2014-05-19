@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.DigestNotificationType;
@@ -183,7 +183,7 @@ public class ScheduledMailSendingService extends AbstractMailSendingService {
         PrismEmailMessage message;
         try {
             String subject = resolveMessage(APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER, referee.getApplication());
-            ApplicationForm application = referee.getApplication();
+            Application application = referee.getApplication();
             String adminsEmails = getAdminsEmailsCommaSeparatedAsString(roleService.getProgramAdministrators(application.getProgram()));
             EmailModelBuilder modelBuilder = getModelBuilder(new String[] { "adminsEmails", "referee", "application", "applicant", "host" }, new Object[] {
                     adminsEmails, referee, application, application.getUser(), getHostName() });

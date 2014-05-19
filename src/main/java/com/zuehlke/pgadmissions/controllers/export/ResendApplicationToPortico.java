@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.services.ExportQueueService;
 
 /**
@@ -47,7 +47,7 @@ public class ResendApplicationToPortico {
             @RequestParam(required = true) final String applicationNumber, 
             @RequestParam(required = true) final String activationCode) {
         if (StringUtils.equals(PORTICO_RESEND_ACTIVATION_CODE, activationCode)) {
-            ApplicationForm form = getApplicationForm(applicationNumber);
+            Application form = getApplicationForm(applicationNumber);
             if (form != null) {
                 porticoQueueService.sendToPortico(form);
                 return OK;
@@ -57,7 +57,7 @@ public class ResendApplicationToPortico {
     }
     
     @Transactional(readOnly = true)
-    public ApplicationForm getApplicationForm(final String applicationNumber) {
+    public Application getApplicationForm(final String applicationNumber) {
         return formDAO.getByApplicationNumber(applicationNumber);
     }
 }

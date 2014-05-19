@@ -14,7 +14,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 
 @Component
@@ -22,7 +22,7 @@ public class PdfDocumentBuilder {
     
     private Logger log = LoggerFactory.getLogger(PdfDocumentBuilder.class);
 
-    public void build(final PdfModelBuilder builder, final OutputStream outputStream, final ApplicationForm form) {
+    public void build(final PdfModelBuilder builder, final OutputStream outputStream, final Application form) {
         try {
             Document pdfDocument = new Document(PageSize.A4, 50, 50, 100, 50);
             
@@ -46,13 +46,13 @@ public class PdfDocumentBuilder {
         }
     }
     
-    public byte[] build(final PdfModelBuilder builder, final ApplicationForm form) {
-        HashMap<PdfModelBuilder, ApplicationForm> map = new HashMap<PdfModelBuilder, ApplicationForm>();
+    public byte[] build(final PdfModelBuilder builder, final Application form) {
+        HashMap<PdfModelBuilder, Application> map = new HashMap<PdfModelBuilder, Application>();
         map.put(builder, form);
         return build(map);
     }
     
-    public byte[] build(final Map<PdfModelBuilder, ApplicationForm> forms) {
+    public byte[] build(final Map<PdfModelBuilder, Application> forms) {
         try {
             Document pdfDocument = new Document(PageSize.A4, 50, 50, 100, 50);
             
@@ -62,9 +62,9 @@ public class PdfDocumentBuilder {
             
             pdfDocument.open();
             
-            for (Entry<PdfModelBuilder, ApplicationForm> entry : forms.entrySet()) {
+            for (Entry<PdfModelBuilder, Application> entry : forms.entrySet()) {
                 PdfModelBuilder modelBuilder = entry.getKey();
-                ApplicationForm form = entry.getValue();
+                Application form = entry.getValue();
                 try {
                     modelBuilder.build(form, pdfDocument, pdfWriter);
                 } catch (PdfDocumentBuilderException e) {

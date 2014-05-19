@@ -23,7 +23,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.User;
@@ -82,7 +82,7 @@ public class RejectApplicationControllerTest {
     @Test
     public void getRejectionPage() {
         User admin = new User().withId(1);
-        ApplicationForm application = new ApplicationForm();
+        Application application = new Application();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", application);
         modelMap.put("user", admin);
@@ -109,11 +109,11 @@ public class RejectApplicationControllerTest {
 
     @Test
     public void shouldReturnApplicationForm() {
-        ApplicationForm application = new ApplicationForm();
+        Application application = new Application();
         EasyMock.expect(applicationServiceMock.getByApplicationNumber("10")).andReturn(application);
 
         EasyMock.replay(applicationServiceMock);
-        ApplicationForm applicationForm = controllerUT.getApplicationForm("10");
+        Application applicationForm = controllerUT.getApplicationForm("10");
         EasyMock.verify(applicationServiceMock);
 
         Assert.assertEquals(application, applicationForm);
@@ -153,7 +153,7 @@ public class RejectApplicationControllerTest {
 
     @Test
     public void moveToRejectWithValidRejection() {
-        ApplicationForm application = new ApplicationForm();
+        Application application = new Application();
         User admin = new User().withId(1);
         Rejection rejection = new RejectionBuilder().id(3).build();
         BindingResult result = new BeanPropertyBindingResult(rejection, "rejection");
@@ -175,7 +175,7 @@ public class RejectApplicationControllerTest {
 
     @Test
     public void returnToRejectViewWithInvalidRejection() {
-        ApplicationForm application = new ApplicationForm();
+        Application application = new Application();
         User admin = new User().withId(1);
         Rejection rejection = new RejectionBuilder().id(3).build();
         BindingResult result = new DirectFieldBindingResult(rejection, "rejection");

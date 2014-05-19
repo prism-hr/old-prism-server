@@ -9,7 +9,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.User;
@@ -41,7 +41,7 @@ public class CommentDAO {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
-    public List<Comment> getVisibleComments(User user, ApplicationForm applicationForm) {
+    public List<Comment> getVisibleComments(User user, Application applicationForm) {
         // TODO amend and add tests
         return sessionFactory
                 .getCurrentSession()
@@ -57,12 +57,12 @@ public class CommentDAO {
                         .add(Restrictions.ge("r.internal", "afao.internal"))).addOrder(Order.desc("createdTimestamp")).list();
     }
 
-    public List<CommentAssignedUser> getNotDecliningSupervisorsFromLatestApprovalStage(ApplicationForm application) {
+    public List<CommentAssignedUser> getNotDecliningSupervisorsFromLatestApprovalStage(Application application) {
         // TODO implement
         return null;
     }
 
-    public <T extends Comment> T getLastCommentOfType(User user, ApplicationForm application, Class<T> clazz) {
+    public <T extends Comment> T getLastCommentOfType(User user, Application application, Class<T> clazz) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(clazz).add(Restrictions.eq("application", application))
                 .addOrder(Order.desc("createdTimestamp")).addOrder(Order.desc("id"));
         if (user != null) {

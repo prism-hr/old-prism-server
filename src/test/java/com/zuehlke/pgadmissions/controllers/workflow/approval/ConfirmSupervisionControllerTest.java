@@ -15,7 +15,7 @@ import org.unitils.easymock.annotation.Mock;
 import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -70,7 +70,7 @@ public class ConfirmSupervisionControllerTest {
     
     @Test
     public void testLoadConfirmSupervisionPage() {
-        ApplicationForm applicationForm = new ApplicationForm();
+        Application applicationForm = new Application();
         User user = new User();
         ModelMap modelMap = new ModelMap();
         modelMap.put("applicationForm", applicationForm);
@@ -88,7 +88,7 @@ public class ConfirmSupervisionControllerTest {
     @Test
     public void testApplyConfirmSupervision() {
         User user = new User();
-        ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("app1").build();
+        Application applicationForm = new ApplicationFormBuilder().applicationNumber("app1").build();
 
         ConfirmSupervisionDTO confirmSupervisionDTO = new ConfirmSupervisionDTO();
         confirmSupervisionDTO.setConfirmedSupervision(true);
@@ -124,7 +124,7 @@ public class ConfirmSupervisionControllerTest {
 
     @Test
     public void shouldReturnApplicationForm() {
-        ApplicationForm applicationForm = new ApplicationForm();
+        Application applicationForm = new Application();
 
         EasyMock.expect(applicationServiceMock.getByApplicationNumber("app1")).andReturn(applicationForm);
 

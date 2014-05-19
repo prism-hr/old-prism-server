@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.GenderTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.QualificationsTp;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
 import com.zuehlke.pgadmissions.domain.Address;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.Domicile;
@@ -90,7 +90,7 @@ public class PorticoWebServiceIT {
 
     private String receivedApplicantId;
 
-    private ApplicationForm randomApplicationForm;
+    private Application randomApplicationForm;
 
     private static Set<String> USED_APPLICATION_NUMBERS = new HashSet<String>();
 
@@ -130,7 +130,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
                 request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
@@ -147,7 +147,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().setApplicantID(receivedApplicantId);
                 request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
@@ -173,7 +173,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 // request.getApplication().getApplicant().setApplicantID("SL609837");
                 request.getApplication().getApplicant().getFullName().setSurname("AIYEGBUSI");
@@ -202,7 +202,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 // request.getApplication().getApplicant().setApplicantID("12023085");
                 request.getApplication().getApplicant().getFullName().setSurname("EDWARDS");
@@ -236,7 +236,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().getFullName().setSurname("NOGUCHI");
                 request.getApplication().getApplicant().getFullName().setForename1("YUMIKO");
@@ -270,7 +270,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().setApplicantID("13064319");
                 request.getApplication().getApplicant().getFullName().setSurname("WEI");
@@ -310,7 +310,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
                 request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
@@ -328,7 +328,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().setApplicantID(receivedApplicantId);
                 request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
@@ -355,7 +355,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 // request.getApplication().getApplicant().setApplicantID("SL639411");
                 request.getApplication().getApplicant().getFullName().setSurname("RAOOFI");
@@ -388,7 +388,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 // request.getApplication().getApplicant().setApplicantID("13063189");
                 request.getApplication().getApplicant().getFullName().setSurname("SHARMA");
@@ -423,7 +423,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().getFullName().setSurname("SPENCER");
                 request.getApplication().getApplicant().getFullName().setForename1("ROBIN GRAHAM NELSON");
@@ -457,7 +457,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().setApplicantID("13064277");
                 request.getApplication().getApplicant().getFullName().setSurname("JONES");
@@ -498,7 +498,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
                 request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
@@ -516,7 +516,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().setApplicantID(receivedApplicantId);
                 request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
@@ -543,7 +543,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 // request.getApplication().getApplicant().setApplicantID("SL676328");
                 request.getApplication().getApplicant().getFullName().setSurname("ABIRHIRE");
@@ -574,7 +574,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 // request.getApplication().getApplicant().setApplicantID("13050747");
                 request.getApplication().getApplicant().getFullName().setSurname("KYRIAZIS");
@@ -609,7 +609,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().getFullName().setSurname("WHITE");
                 request.getApplication().getApplicant().getFullName().setForename1("HEATHER ELIZABETH JANET");
@@ -644,7 +644,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 request.getApplication().getApplicant().setApplicantID("13064301");
                 request.getApplication().getApplicant().getFullName().setSurname("BARNETT");
@@ -704,7 +704,7 @@ public class PorticoWebServiceIT {
         ApplicationTransfer applicationFormTransfer = uclExportService.createOrReturnExistingApplicationFormTransfer(randomApplicationForm);
         uclExportService.sendToPortico(randomApplicationForm, applicationFormTransfer, new AbstractPorticoITTransferListener() {
             @Override
-            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+            public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
                 super.webServiceCallStarted(request, form);
                 saveRequest(randomApplicationForm, request);
             }
@@ -732,9 +732,9 @@ public class PorticoWebServiceIT {
         return null;
     }
 
-    private ApplicationForm randomlyPickApplicationForm() {
-        List<ApplicationForm> allApplicationsByStatus = applicationsService.getApplicationsByStatus(PrismState.APPLICATION_REVIEW);
-        ApplicationForm applicationForm = null;
+    private Application randomlyPickApplicationForm() {
+        List<Application> allApplicationsByStatus = applicationsService.getApplicationsByStatus(PrismState.APPLICATION_REVIEW);
+        Application applicationForm = null;
         boolean foundEnoughDataForQualifications = false;
         boolean foundEnoughDataForReferees = false;
 
@@ -785,23 +785,23 @@ public class PorticoWebServiceIT {
     private abstract class AbstractPorticoITTransferListener implements TransferListener {
 
         @Override
-        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+        public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
             for (QualificationsTp detailsTp : request.getApplication().getApplicant().getQualificationList().getQualificationDetail()) {
                 detailsTp.getInstitution().setCode("UK0275");
             }
         }
 
         @Override
-        public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+        public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
             receivedApplicantId = response.getReference().getApplicantID();
             addReceivedPorticoIdsToCsvFile(response);
         }
 
-        protected void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request) {
+        protected void saveRequest(Application applicationForm, SubmitAdmissionsApplicationRequest request) {
             saveRequest(applicationForm, request, StringUtils.EMPTY);
         }
 
-        protected void saveRequest(ApplicationForm applicationForm, SubmitAdmissionsApplicationRequest request, String postFix) {
+        protected void saveRequest(Application applicationForm, SubmitAdmissionsApplicationRequest request, String postFix) {
             // request.getApplication().getApplicant().getFullName().setSurname(randomLastname);
             // request.getApplication().getApplicant().getFullName().setForename1(randomFirstname);
             // request.getApplication().getApplicant().getHomeAddress().setEmail(randomEmail);
@@ -839,7 +839,7 @@ public class PorticoWebServiceIT {
         }
 
         @Override
-        public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+        public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
             csvEntries.add("null"); // applicantId
             csvEntries.add("null"); // applicationId
             csvEntries.add(error.getDiagnosticInfo());
@@ -847,7 +847,7 @@ public class PorticoWebServiceIT {
         }
 
         @Override
-        public void sftpTransferStarted(ApplicationForm form) {
+        public void sftpTransferStarted(Application form) {
             // we do nothing here
         }
 
@@ -866,7 +866,7 @@ public class PorticoWebServiceIT {
         }
 
         @Override
-        public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+        public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
             csvEntries.add("null"); // zipFileName
             csvEntries.add(error.getDiagnosticInfo());
             Assert.fail(String.format("SFTP call failed with: %s", error.getDiagnosticInfo()));

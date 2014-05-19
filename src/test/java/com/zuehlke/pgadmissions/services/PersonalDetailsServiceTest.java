@@ -14,7 +14,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Passport;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -58,7 +58,7 @@ public class PersonalDetailsServiceTest {
                 .passportAvailable(true).passportInformation(new Passport()).id(1).languageQualificationAvailable(null).passportAvailable(null)
                 .build();
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().personalDetails(personalDetails).applicant(applicant).build();
+        Application applicationForm = new ApplicationFormBuilder().personalDetails(personalDetails).applicant(applicant).build();
 
         expect(applicationContext.getBean(PersonalDetailsService.class)).andReturn(thisBeanMock);
         expect(applicationFormDAOMock.getById(84)).andReturn(applicationForm);

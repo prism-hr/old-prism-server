@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -69,7 +69,7 @@ public class RefereeService {
         return getSecuredInstance(refereeId);
     }
 
-    public void saveOrUpdate(ApplicationForm application, Integer refereeId, Referee referee) {
+    public void saveOrUpdate(Application application, Integer refereeId, Referee referee) {
         Referee persistentReferee;
         if (refereeId == null) {
             persistentReferee = new Referee();
@@ -151,7 +151,7 @@ public class RefereeService {
         referee.setDeclined(true);
     }
 
-    public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> refereesSendToPortico) {
+    public void selectForSendingToPortico(final Application applicationForm, final List<Integer> refereesSendToPortico) {
         for (Referee referee : applicationForm.getReferees()) {
             referee.setSendToUCL(false);
         }
@@ -162,7 +162,7 @@ public class RefereeService {
         }
     }
 
-    public Comment editReferenceComment(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
+    public Comment editReferenceComment(Application applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
         Integer refereeId = encryptionHelper.decryptToInteger(refereesAdminEditDTO.getEditedRefereeId());
         Referee referee = getRefereeById(refereeId);
         Comment reference = referee.getComment();
@@ -181,7 +181,7 @@ public class RefereeService {
         return reference;
     }
 
-    public ReferenceComment postCommentOnBehalfOfReferee(ApplicationForm applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
+    public ReferenceComment postCommentOnBehalfOfReferee(Application applicationForm, RefereesAdminEditDTO refereesAdminEditDTO) {
         Referee referee;
         if (BooleanUtils.isTrue(refereesAdminEditDTO.getContainsRefereeData())) {
             referee = createReferee(refereesAdminEditDTO, applicationForm);
@@ -209,7 +209,7 @@ public class RefereeService {
         return referenceComment;
     }
 
-    private Referee createReferee(RefereesAdminEditDTO refereesAdminEditDTO, ApplicationForm applicationForm) {
+    private Referee createReferee(RefereesAdminEditDTO refereesAdminEditDTO, Application applicationForm) {
         User user = userService.getOrCreateUser(refereesAdminEditDTO.getFirstname(), refereesAdminEditDTO.getLastname(),
                 refereesAdminEditDTO.getEditedRefereeId());
 
@@ -225,7 +225,7 @@ public class RefereeService {
         return referee;
     }
 
-    private ReferenceComment createReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO, Referee referee, ApplicationForm applicationForm) {
+    private ReferenceComment createReferenceComment(RefereesAdminEditDTO refereesAdminEditDTO, Referee referee, Application applicationForm) {
         ReferenceComment referenceComment = new ReferenceComment();
         referenceComment.setApplication(applicationForm);
         referenceComment.setUser(referee.getUser());
@@ -251,7 +251,7 @@ public class RefereeService {
         return referee;
     }
 
-    public boolean isRefereeOfApplicationForm(User currentUser, ApplicationForm form) {
+    public boolean isRefereeOfApplicationForm(User currentUser, Application form) {
         // TODO Auto-generated method stub
         return false;
     }

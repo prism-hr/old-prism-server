@@ -18,7 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ValidationUtils;
 import org.unitils.inject.util.InjectionUtils;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -57,18 +57,18 @@ public class ApplicationFormCopyHelperTest {
 
     @Test
     public void shouldCopyApplicationForm() {
-        ApplicationForm applicationForm = new ValidApplicationFormBuilder().build();
+        Application applicationForm = new ValidApplicationFormBuilder().build();
         State state = new State();
         applicationForm.setState(state);
         validateApplication(applicationForm);
 
-        ApplicationForm newApplicationForm = new ApplicationForm();
+        Application newApplicationForm = new Application();
         applicationFormCopyHelper.copyApplicationFormData(newApplicationForm, applicationForm);
 
         validateApplication(newApplicationForm);
     }
 
-    private void validateApplication(ApplicationForm applicationForm) {
+    private void validateApplication(Application applicationForm) {
         BindingResult bindingResult = new BeanPropertyBindingResult(applicationForm, "applicationForm");
 
         bindingResult.pushNestedPath("personalDetails");

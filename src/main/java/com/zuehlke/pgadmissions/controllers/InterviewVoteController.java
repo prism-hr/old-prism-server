@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.base.Strings;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.InterviewVoteComment;
 import com.zuehlke.pgadmissions.domain.User;
@@ -57,8 +57,8 @@ public class InterviewVoteController {
 
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = applicationsService.getByApplicationNumber(applicationId);
+    public Application getApplicationForm(@RequestParam String applicationId) {
+        Application applicationForm = applicationsService.getByApplicationNumber(applicationId);
         if (applicationForm == null) {
             throw new ResourceNotFoundException(applicationId);
         }
@@ -86,14 +86,14 @@ public class InterviewVoteController {
 
     @ModelAttribute("applicationDescriptor")
     public ApplicationDescriptor getApplicationDescriptor(@RequestParam String applicationId) {
-        ApplicationForm applicationForm = getApplicationForm(applicationId);
+        Application applicationForm = getApplicationForm(applicationId);
         User user = getUser();
         return applicationsService.getApplicationDescriptorForUser(applicationForm, user);
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String getInterviewVotePage(ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY);
         applicationFormUserRoleService.deleteApplicationUpdate(applicationForm, user);
@@ -103,7 +103,7 @@ public class InterviewVoteController {
     @RequestMapping(method = RequestMethod.POST)
     public String submitInterviewVotes(BindingResult bindingResult,
             @RequestParam(required = false) String comment, ModelMap modelMap) {
-        ApplicationForm applicationForm = (ApplicationForm) modelMap.get("applicationForm");
+        Application applicationForm = (Application) modelMap.get("applicationForm");
         User user = (User) modelMap.get("user");
         actionService.validateAction(applicationForm, user, ApplicationFormAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY);
 

@@ -12,7 +12,7 @@ import org.hibernate.sql.JoinType;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Advert;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramExport;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -62,7 +62,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetProgramApplicationAdvert() {
-        ApplicationForm applicationForm = testObjectProvider.getProgramApplication();
+        Application applicationForm = testObjectProvider.getProgramApplication();
         String applicationFormId = applicationForm.getId().toString(); 
         List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYAPPLICATIONFORMID, applicationFormId, null);
         assertThat(loadedAdverts.size(), equalTo(1));
@@ -71,7 +71,7 @@ public class AdvertDAOTest extends AutomaticRollbackTestCase {
     
     @Test
     public void shouldGetProjectApplicationAdvert() {
-        ApplicationForm applicationForm = testObjectProvider.getProjectApplication();
+        Application applicationForm = testObjectProvider.getProjectApplication();
         String applicationFormId = applicationForm.getId().toString();
         List<AdvertDTO> loadedAdverts = advertDAO.getAdvertFeed(OpportunityListType.CURRENTOPPORTUNITYBYAPPLICATIONFORMID, applicationFormId, null);
         assertThat(loadedAdverts.size(), equalTo(2));

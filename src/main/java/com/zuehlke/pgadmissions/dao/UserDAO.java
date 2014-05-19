@@ -17,7 +17,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.UserRole;
@@ -70,7 +70,7 @@ public class UserDAO {
     }
 
     public Long getNumberOfActiveApplicationsForApplicant(final User applicant) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicant", applicant))
+        return (Long) sessionFactory.getCurrentSession().createCriteria(Application.class).add(Restrictions.eq("applicant", applicant))
                 .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_APPROVED)))
                 .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_REJECTED)))
                 .add(Restrictions.not(Restrictions.eq("status", PrismState.APPLICATION_WITHDRAWN))).setProjection(Projections.rowCount()).uniqueResult();
@@ -185,7 +185,7 @@ public class UserDAO {
                 .add(Restrictions.eq("credentialsNonExpired", true)).list();
     }
 
-    public List<User> getInterviewAdministrators(ApplicationForm application) {
+    public List<User> getInterviewAdministrators(Application application) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class).setProjection(Projections.groupProperty("user"))
                 .createAlias("actions", "applicationFormActionRequired", JoinType.INNER_JOIN)
                 .createAlias("applicationFormActionRequired.action", "action", JoinType.INNER_JOIN).createAlias("role", "applicationRole", JoinType.INNER_JOIN)
@@ -193,7 +193,7 @@ public class UserDAO {
                 .add(Restrictions.eq("action.id", ApplicationFormAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)).list();
     }
 
-    public List<User> getUsersInterestedInApplication(ApplicationForm applicationForm) {
+    public List<User> getUsersInterestedInApplication(Application applicationForm) {
         return sessionFactory
                 .getCurrentSession()
                 .createCriteria(UserRole.class)
@@ -209,7 +209,7 @@ public class UserDAO {
                 .addOrder(Order.asc("registeredUser.firstName")).addOrder(Order.asc("registeredUser.id")).list();
     }
 
-    public List<User> getUsersPotentiallyInterestedInApplication(ApplicationForm applicationForm) {
+    public List<User> getUsersPotentiallyInterestedInApplication(Application applicationForm) {
         DetachedCriteria usersInterestedInApplicant = DetachedCriteria.forClass(UserRole.class)
                 .setProjection(Projections.projectionList().add(Projections.groupProperty("user"))).add(Restrictions.eq("applicationForm", applicationForm))
                 .add(Restrictions.eq("interestedInApplicant", true));

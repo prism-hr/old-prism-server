@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 
 public class RejectionBuilder {
 	
-	private ApplicationForm applicationForm;
+	private Application applicationForm;
 	private RejectReason rejectionReason;
 	private boolean includeProspectusLink;
 	private Integer id;
@@ -27,7 +27,7 @@ public class RejectionBuilder {
 	}
 	
 
-	public RejectionBuilder applicationForm(ApplicationForm applicationForm){
+	public RejectionBuilder applicationForm(Application applicationForm){
 		this.applicationForm = applicationForm;
 		return this;		
 	}

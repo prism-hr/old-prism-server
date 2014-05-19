@@ -2,26 +2,26 @@ package com.zuehlke.pgadmissions.services.exporters;
 
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.AdmissionsApplicationResponse;
 import com.zuehlke.pgadmissions.admissionsservice.v2.jaxb.SubmitAdmissionsApplicationRequest;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 
 public class DeafListener implements TransferListener {
 
     @Override
-    public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, ApplicationForm form) {
+    public void webServiceCallStarted(SubmitAdmissionsApplicationRequest request, Application form) {
     }
 
     @Override
-    public void webServiceCallCompleted(AdmissionsApplicationResponse response, ApplicationForm form) {
+    public void webServiceCallCompleted(AdmissionsApplicationResponse response, Application form) {
     }
 
     @Override
-    public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+    public void webServiceCallFailed(Throwable throwable, ApplicationTransferError error, Application form) {
     }
 
     @Override
-    public void sftpTransferStarted(ApplicationForm form) {
+    public void sftpTransferStarted(Application form) {
     }
 
     @Override
@@ -29,6 +29,6 @@ public class DeafListener implements TransferListener {
     }
 
     @Override
-    public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, ApplicationForm form) {
+    public void sftpTransferFailed(Throwable throwable, ApplicationTransferError error, Application form) {
     }
 }

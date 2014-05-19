@@ -21,7 +21,7 @@ import org.unitils.inject.annotation.InjectIntoByType;
 import org.unitils.inject.annotation.TestedObject;
 
 import com.zuehlke.pgadmissions.dao.QualificationDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -63,7 +63,7 @@ public class QualificationServiceTest {
 
     @Test
     public void shouldSaveNewQualification() {
-        ApplicationForm applicationForm = new ApplicationForm();
+        Application applicationForm = new Application();
         Qualification qualification = new Qualification();
 
         replay();
@@ -95,7 +95,7 @@ public class QualificationServiceTest {
         Qualification qualification3 = new Qualification().withId(3).withExport(false);
         Qualification qualification4 = new Qualification().withId(4).withExport(false);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().qualifications(qualification1, qualification2, qualification3, qualification4).build();
+        Application applicationForm = new ApplicationFormBuilder().qualifications(qualification1, qualification2, qualification3, qualification4).build();
 
         EasyMock.expect(qualificationDAOMock.getById(3)).andReturn(qualification3);
         EasyMock.expect(qualificationDAOMock.getById(4)).andReturn(qualification4);
@@ -121,7 +121,7 @@ public class QualificationServiceTest {
         Qualification qualification3 = new Qualification().withId(3).withExport(false);
         Qualification qualification4 = new Qualification().withId(4).withExport(false);
 
-        ApplicationForm applicationForm = new ApplicationFormBuilder().qualifications(qualification1, qualification2, qualification3, qualification4).build();
+        Application applicationForm = new ApplicationFormBuilder().qualifications(qualification1, qualification2, qualification3, qualification4).build();
 
         EasyMock.expect(qualificationDAOMock.getById(1)).andReturn(qualification1);
         EasyMock.expect(qualificationDAOMock.getById(2)).andReturn(qualification2);

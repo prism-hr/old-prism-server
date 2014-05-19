@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.controllers.locations.RedirectLocation;
 import com.zuehlke.pgadmissions.controllers.locations.TemplateLocation;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormAction;
@@ -57,19 +57,19 @@ public class FundingController {
         binder.setValidator(fundingValidator);
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
         binder.registerCustomEditor(Date.class, datePropertyEditor);
-        binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+        binder.registerCustomEditor(Application.class, applicationFormPropertyEditor);
         binder.registerCustomEditor(Document.class, documentPropertyEditor);
     }
 
     @RequestMapping(value = "/getFunding", method = RequestMethod.GET)
-    public String getFundingView(@RequestParam(value = "fundingId", required = false) Integer fundingId, @ModelAttribute ApplicationForm applicationForm,
+    public String getFundingView(@RequestParam(value = "fundingId", required = false) Integer fundingId, @ModelAttribute Application applicationForm,
             ModelMap modelMap) {
         return returnView(modelMap, fundingService.getOrCreate(fundingId));
     }
 
     @RequestMapping(value = "/editFunding", method = RequestMethod.POST)
     public String editFunding(@RequestParam(value = "fundingId", required = false) Integer fundingId, @Valid Funding funding, BindingResult result,
-            ModelMap modelMap, @ModelAttribute ApplicationForm applicationForm) {
+            ModelMap modelMap, @ModelAttribute Application applicationForm) {
         if (result.hasErrors()) {
             return returnView(modelMap, funding);
         }
@@ -78,7 +78,7 @@ public class FundingController {
     }
 
     @RequestMapping(value = "/deleteFunding", method = RequestMethod.POST)
-    public String deleteFunding(@RequestParam("id") Integer fundingId, @ModelAttribute ApplicationForm applicationForm) {
+    public String deleteFunding(@RequestParam("id") Integer fundingId, @ModelAttribute Application applicationForm) {
         fundingService.delete(fundingId);
         return RedirectLocation.UPDATE_APPLICATION_FUNDING + applicationForm.getApplicationNumber() + "&message=deleted";
     }
@@ -89,7 +89,7 @@ public class FundingController {
     }
 
     @ModelAttribute("applicationForm")
-    public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+    public Application getApplicationForm(@RequestParam String applicationId) {
         return applicationFormService.getSecuredApplication(applicationId, ApplicationFormAction.APPLICATION_COMPLETE,
                 ApplicationFormAction.APPLICATION_CORRECT);
     }

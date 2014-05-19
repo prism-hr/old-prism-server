@@ -16,8 +16,8 @@ import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormListDAO;
 import com.zuehlke.pgadmissions.domain.Advert;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationFilterGroup;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -75,19 +75,19 @@ public class ApplicationFormService {
     @Autowired
     private WorkflowService workflowService;
 
-    public ApplicationForm getById(Integer id) {
+    public Application getById(Integer id) {
         return applicationFormDAO.getById(id);
     }
 
-    public void save(ApplicationForm application) {
+    public void save(Application application) {
         applicationFormDAO.save(application);
     }
 
-    public void refresh(final ApplicationForm applicationForm) {
+    public void refresh(final Application applicationForm) {
         applicationFormDAO.refresh(applicationForm);
     }
 
-    public ApplicationForm getByApplicationNumber(String applicationNumber) {
+    public Application getByApplicationNumber(String applicationNumber) {
         return applicationFormDAO.getByApplicationNumber(applicationNumber);
     }
 
@@ -99,19 +99,19 @@ public class ApplicationFormService {
         return applications;
     }
 
-    public List<ApplicationForm> getApplicationsForReport(final User user, final ApplicationFilterGroup filtering, final ReportFormat reportType) {
+    public List<Application> getApplicationsForReport(final User user, final ApplicationFilterGroup filtering, final ReportFormat reportType) {
         return applicationFormListDAO.getVisibleApplicationsForReport(user, filtering);
     }
 
-    public List<ApplicationForm> getApplicationsByStatus(final PrismState status) {
+    public List<Application> getApplicationsByStatus(final PrismState status) {
         return applicationFormDAO.getAllApplicationsByStatus(status);
     }
 
-    public List<ApplicationForm> getApplicationsForProject(final Project project) {
+    public List<Application> getApplicationsForProject(final Project project) {
         return applicationFormDAO.getApplicationsByProject(project);
     }
 
-    public void submitApplication(ApplicationForm application) {
+    public void submitApplication(Application application) {
         // TODO set IP
         
         setApplicationStatus(application, PrismState.APPLICATION_VALIDATION);
@@ -120,7 +120,7 @@ public class ApplicationFormService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public void setApplicationStatus(ApplicationForm application, PrismState newStatus) {
+    public void setApplicationStatus(Application application, PrismState newStatus) {
         application.setState(stateService.getById(newStatus));
 
         // TODO add referee roles and send referee notifications
@@ -154,9 +154,9 @@ public class ApplicationFormService {
 
     }
 
-    public ApplicationForm getOrCreateApplication(final User applicant, final Integer advertId) {
+    public Application getOrCreateApplication(final User applicant, final Integer advertId) {
         Advert advert = programService.getValidProgramProjectAdvert(advertId);
-        ApplicationForm applicationForm = applicationFormDAO.getInProgressApplication(applicant, advert);
+        Application applicationForm = applicationFormDAO.getInProgressApplication(applicant, advert);
         if (applicationForm != null) {
             return applicationForm;
         }
@@ -166,8 +166,8 @@ public class ApplicationFormService {
         return applicationForm;
     }
 
-    public ApplicationForm getSecuredApplication(final String applicationId, final ApplicationFormAction... actions) {
-        ApplicationForm application = getByApplicationNumber(applicationId);
+    public Application getSecuredApplication(final String applicationId, final ApplicationFormAction... actions) {
+        Application application = getByApplicationNumber(applicationId);
         if (application == null) {
             throw new ResourceNotFoundException();
         }
@@ -180,26 +180,26 @@ public class ApplicationFormService {
         throw new CannotExecuteActionException(application);
     }
 
-    public void saveOrUpdateApplicationSection(ApplicationForm application) {
+    public void saveOrUpdateApplicationSection(Application application) {
         User currentUser = userService.getCurrentUser();
         workflowService.applicationUpdated(application, userService.getCurrentUser());
     }
 
-    public void openApplicationForEdit(ApplicationForm application, User user) {
+    public void openApplicationForEdit(Application application, User user) {
         openApplicationForView(application, user);
     }
 
-    public void openApplicationForView(ApplicationForm application, User user) {
+    public void openApplicationForView(Application application, User user) {
         applicationFormDAO.deleteApplicationUpdate(application, user);
     }
 
-    public void queueApplicationForExport(ApplicationForm application) {
+    public void queueApplicationForExport(Application application) {
         if (application.getState().getId() == PrismState.APPLICATION_WITHDRAWN_PENDING_EXPORT) {
             exportQueueService.createOrReturnExistingApplicationFormTransfer(application);
         }
     }
 
-    public Date getDefaultStartDateForApplication(ApplicationForm application) {
+    public Date getDefaultStartDateForApplication(Application application) {
         Program program = application.getProgram();
         StudyOption studyOption = application.getProgramDetails().getStudyOption();
         if (program != null && studyOption != null) {
@@ -208,14 +208,14 @@ public class ApplicationFormService {
         return null;
     }
 
-    public void applicationCreated(ApplicationForm application) {
+    public void applicationCreated(Application application) {
         User applicant = application.getUser();
         Role role = roleService.getById(Authority.APPLICATION_CREATOR);
         // TODO save action
         roleService.getOrCreateUserRole(application, applicant, Authority.APPLICATION_CREATOR);
     }
 
-    public ApplicationDescriptor getApplicationDescriptorForUser(final ApplicationForm application, final User user) {
+    public ApplicationDescriptor getApplicationDescriptorForUser(final Application application, final User user) {
         ApplicationDescriptor applicationDescriptor = new ApplicationDescriptor();
         applicationDescriptor.getActionDefinitions().addAll(actionService.getUserActions(user.getId(), application.getId()));
         applicationDescriptor.setNeedsToSeeUrgentFlag(applicationFormDAO.getRaisesUrgentFlagForUser(application, user));
@@ -223,23 +223,23 @@ public class ApplicationFormService {
         return applicationDescriptor;
     }
 
-    public Comment getLatestStateChangeComment(ApplicationForm applicationForm, ApplicationFormAction action) {
+    public Comment getLatestStateChangeComment(Application applicationForm, ApplicationFormAction action) {
         return applicationFormDAO.getLatestStateChangeComment(applicationForm);
     }
 
-    private void autoPopulateApplication(ApplicationForm applicationForm) {
+    private void autoPopulateApplication(Application applicationForm) {
         User user = userService.getCurrentUser();
         if (user != null) {
-            ApplicationForm previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(applicationForm, user);
+            Application previousApplication = applicationFormDAO.getPreviousApplicationForApplicant(applicationForm, user);
             if (previousApplication != null) {
                 applicationFormCopyHelper.copyApplicationFormData(applicationForm, previousApplication);
             }
         }
     }
 
-    private ApplicationForm createApplication(User applicant, Advert advert) {
+    private Application createApplication(User applicant, Advert advert) {
         String applicationNumber = generateApplicationNumber(advert.getProgram());
-        ApplicationForm application = new ApplicationForm();
+        Application application = new Application();
         application.setUser(applicant);
         application.setProgram(advert.getProgram());
         application.setProject(advert.getProject());
@@ -254,7 +254,7 @@ public class ApplicationFormService {
         return applicationNumber;
     }
 
-    private void addSuggestedSupervisorsFromProject(ApplicationForm application) {
+    private void addSuggestedSupervisorsFromProject(Application application) {
         Project project = application.getProject();
         if (project != null) {
             List<SuggestedSupervisor> suggestedSupervisors = application.getProgramDetails().getSuggestedSupervisors();
@@ -274,11 +274,11 @@ public class ApplicationFormService {
         return supervisor;
     }
 
-    private LocalDate getClosingDateForApplication(ApplicationForm application) {
+    private LocalDate getClosingDateForApplication(Application application) {
         return application.getAdvert().getClosingDate().getClosingDate();
     }
 
-    private LocalDate getDueDateForApplication(ApplicationForm application) {
+    private LocalDate getDueDateForApplication(Application application) {
         LocalDate baselineDate = new LocalDate();
         LocalDate closingDate = application.getClosingDate();
         State status = application.getState();

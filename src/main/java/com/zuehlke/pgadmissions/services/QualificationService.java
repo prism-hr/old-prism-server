@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.components.ApplicationFormCopyHelper;
 import com.zuehlke.pgadmissions.dao.QualificationDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 
@@ -36,7 +36,7 @@ public class QualificationService {
         return getSecuredInstance(qualificationId);
     }
 
-    public void saveOrUpdate(ApplicationForm application, Integer qualificationId, Qualification qualification) {
+    public void saveOrUpdate(Application application, Integer qualificationId, Qualification qualification) {
         Qualification persistentQualification;
         if (qualificationId == null) {
             persistentQualification = new Qualification();
@@ -56,7 +56,7 @@ public class QualificationService {
         applicationFormService.saveOrUpdateApplicationSection(qualification.getApplication());
     }
 
-    public void selectForSendingToPortico(final ApplicationForm applicationForm, final List<Integer> qualificationsSendToPortico) {
+    public void selectForSendingToPortico(final Application applicationForm, final List<Integer> qualificationsSendToPortico) {
         for (Qualification qualification : applicationForm.getQualifications()) {
             qualification = qualificationDAO.getById(qualification.getId());
             qualification.setExport(false);

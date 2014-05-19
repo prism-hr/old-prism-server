@@ -35,9 +35,9 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationAddress;
 import com.zuehlke.pgadmissions.domain.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageQualification;
@@ -135,7 +135,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         return bookmarkMap;
     }
 
-    public void build(final ApplicationForm form, final Document pdfDocument, final PdfWriter pdfWriter) throws PdfDocumentBuilderException {
+    public void build(final Application form, final Document pdfDocument, final PdfWriter pdfWriter) throws PdfDocumentBuilderException {
         try {
             addCoverPage(form, pdfDocument, pdfWriter);
 
@@ -185,7 +185,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
     }
 
-    protected void addHeaderEvent(final ApplicationForm form, final PdfWriter writer) {
+    protected void addHeaderEvent(final Application form, final PdfWriter writer) {
         Chunk submittedDateHeader = null;
 
         if (form.getSubmittedTimestamp() != null) {
@@ -199,7 +199,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         writer.setPageEvent(headerEvent);
     }
 
-    protected void addCoverPage(final ApplicationForm form, final Document pdfDocument, final PdfWriter writer) throws MalformedURLException, IOException,
+    protected void addCoverPage(final Application form, final Document pdfDocument, final PdfWriter writer) throws MalformedURLException, IOException,
             DocumentException {
         pdfDocument.newPage();
 
@@ -246,7 +246,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.newPage();
     }
 
-    protected void addProgrammeSection(final ApplicationForm form, Document pdfDocument) throws DocumentException {
+    protected void addProgrammeSection(final Application form, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("PROGRAMME", BOLD_FONT));
@@ -326,7 +326,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
     }
 
-    protected void addPersonalDetailsSection(final ApplicationForm form, Document pdfDocument) throws DocumentException {
+    protected void addPersonalDetailsSection(final Application form, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("PERSONAL DETAILS", BOLD_FONT));
@@ -542,7 +542,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
     }
 
-    protected void addAddressSection(final ApplicationForm form, Document pdfDocument) throws DocumentException {
+    protected void addAddressSection(final Application form, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("ADDRESS", BOLD_FONT));
@@ -584,7 +584,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
     }
 
-    protected void addQualificationSection(final ApplicationForm form, Document pdfDocument) throws DocumentException {
+    protected void addQualificationSection(final Application form, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("QUALIFICATIONS", BOLD_FONT));
@@ -680,7 +680,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
     }
 
-    protected void addEmploymentSection(final ApplicationForm form, Document pdfDocument) throws DocumentException {
+    protected void addEmploymentSection(final Application form, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("EMPLOYMENT", BOLD_FONT));
@@ -741,7 +741,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
     }
 
-    protected void addFundingSection(final ApplicationForm form, Document pdfDocument) throws DocumentException {
+    protected void addFundingSection(final Application form, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("FUNDING", BOLD_FONT));
@@ -797,7 +797,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
     }
 
-    protected void addReferencesSection(final ApplicationForm form, Document pdfDocument) throws DocumentException {
+    protected void addReferencesSection(final Application form, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("REFERENCES", BOLD_FONT));
@@ -861,7 +861,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
     }
 
-    protected void addDocumentsSection(final ApplicationForm form, Document pdfDocument) throws DocumentException {
+    protected void addDocumentsSection(final Application form, Document pdfDocument) throws DocumentException {
         PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(MAX_WIDTH_PERCENTAGE);
         table.addCell(newGrayTableCell("DOCUMENTS", BOLD_FONT));
@@ -908,7 +908,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
     }
 
-    protected void addAdditionalInformationSection(final ApplicationForm form, Document pdfDocument) throws DocumentException {
+    protected void addAdditionalInformationSection(final Application form, Document pdfDocument) throws DocumentException {
         if (!includeCriminialConvictions) {
             return;
         }
@@ -939,7 +939,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         pdfDocument.add(table);
     }
 
-    protected void addSupportingDocuments(final ApplicationForm form, final Document pdfDocument, final PdfWriter pdfWriter) throws DocumentException {
+    protected void addSupportingDocuments(final Application form, final Document pdfDocument, final PdfWriter pdfWriter) throws DocumentException {
         for (Integer integer : bookmarkMap.keySet()) {
             pdfDocument.newPage();
 
@@ -1037,7 +1037,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         }
     }
 
-    private void addClosingDateToTable(PdfPTable table, final ApplicationForm form) {
+    private void addClosingDateToTable(PdfPTable table, final Application form) {
         table.addCell(newTableCell("Closing date", SMALL_BOLD_FONT));
         Project project = form.getProject();
         String closingDate = NOT_REQUIRED;
@@ -1047,7 +1047,7 @@ public class PdfModelBuilder extends AbstractPdfModelBuilder {
         table.addCell(newTableCell(closingDate, SMALL_FONT));
     }
 
-    private void addProjectTitleToTable(PdfPTable table, final ApplicationForm form) {
+    private void addProjectTitleToTable(PdfPTable table, final Application form) {
         table.addCell(newTableCell("Project", SMALL_BOLD_FONT));
         String projectTitle = NOT_REQUIRED;
         if (form.getProject() != null) {

@@ -32,7 +32,7 @@ public class EmploymentPosition implements Serializable, FormSectionObject {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
-    private ApplicationForm application;
+    private Application application;
 
     @Column(name = "employer_name")
     @ESAPIConstraint(rule = "ExtendedAscii", maxLength = 150)
@@ -71,11 +71,11 @@ public class EmploymentPosition implements Serializable, FormSectionObject {
         return id;
     }
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 
@@ -148,7 +148,7 @@ public class EmploymentPosition implements Serializable, FormSectionObject {
         return this;
     }
     
-    public EmploymentPosition withApplication(ApplicationForm application) {
+    public EmploymentPosition withApplication(Application application) {
         this.application = application;
         return this;
     }

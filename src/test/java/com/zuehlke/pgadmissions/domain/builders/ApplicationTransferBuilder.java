@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationTransferState;
 
@@ -12,7 +12,7 @@ public class ApplicationTransferBuilder {
     
     private Date createdTimestamp;
 
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
 
     private Date transferStartTimepoint;
 
@@ -34,7 +34,7 @@ public class ApplicationTransferBuilder {
         return this;
     }
 
-    public ApplicationTransferBuilder applicationForm(final ApplicationForm form) {
+    public ApplicationTransferBuilder applicationForm(final Application form) {
         this.applicationForm = form;
         return this;
     }

@@ -31,7 +31,7 @@ public class ApplicationAddress implements Serializable, FormSectionObject {
     private Address contactAddress;
     
     @OneToOne(mappedBy = "applicationAddress", fetch = FetchType.LAZY)
-    private ApplicationForm application;
+    private Application application;
     
     @Transient
     private boolean acceptedTerms;
@@ -60,11 +60,11 @@ public class ApplicationAddress implements Serializable, FormSectionObject {
         this.contactAddress = contactAddress;
     }
 
-    public ApplicationForm getApplication() {
+    public Application getApplication() {
         return application;
     }
 
-    public void setApplication(ApplicationForm application) {
+    public void setApplication(Application application) {
         this.application = application;
     }
 

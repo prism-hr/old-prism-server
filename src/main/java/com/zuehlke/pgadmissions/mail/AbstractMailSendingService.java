@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.User;
 import com.zuehlke.pgadmissions.domain.enums.NotificationTemplateId;
 import com.zuehlke.pgadmissions.services.ConfigurationService;
@@ -77,7 +77,7 @@ public abstract class AbstractMailSendingService {
         };
     }
 
-    protected String resolveMessage(NotificationTemplateId templateName, ApplicationForm applicationForm) {
+    protected String resolveMessage(NotificationTemplateId templateName, Application applicationForm) {
         User applicant = applicationForm.getUser();
         if (applicant == null) {
             return mailSender.resolveSubject(templateName, applicationForm.getApplicationNumber(), applicationForm.getAdvert().getTitle());

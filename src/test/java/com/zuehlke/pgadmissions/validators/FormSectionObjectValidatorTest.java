@@ -8,14 +8,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.FormSectionObject;
 import com.zuehlke.pgadmissions.domain.State;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PrismState;
 
 public class FormSectionObjectValidatorTest {
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
     private MyObject formSectionObject;
     private FormSectionObjectValidator formSectionObjectValidator;
 
@@ -57,10 +57,10 @@ public class FormSectionObjectValidatorTest {
     }
 
     private class MyObject implements FormSectionObject {
-        private ApplicationForm application = applicationForm;
+        private Application application = applicationForm;
         private boolean acceptedTerms;
 
-        public ApplicationForm getApplication() {
+        public Application getApplication() {
             return application;
         }
 

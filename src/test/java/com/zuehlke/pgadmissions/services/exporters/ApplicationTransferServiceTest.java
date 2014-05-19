@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.dao.ApplicationTransferDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationTransferErrorDAO;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.domain.ApplicationTransfer;
 import com.zuehlke.pgadmissions.domain.ApplicationTransferError;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationTransferBuilder;
@@ -70,7 +70,7 @@ public class ApplicationTransferServiceTest {
 
     @Test
     public void shouldUpdateTransferPorticoIds() {
-        ApplicationForm form = new ValidApplicationFormBuilder().build();
+        Application form = new ValidApplicationFormBuilder().build();
         form.setUclBookingReferenceNumber("");
         // form.getApplicant().setUclUserId("");
 

@@ -22,7 +22,7 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Application;
 import com.zuehlke.pgadmissions.pdf.CombinedReferencesPdfBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.pdf.Transcript1PdfBuilder;
@@ -63,7 +63,7 @@ public class PorticoDocumentUploadIT {
     
     private int sentApps = 0;
 
-    private ApplicationForm applicationForm;
+    private Application applicationForm;
 
     private Resource validPdf; 
 

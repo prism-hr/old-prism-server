@@ -89,7 +89,7 @@ public class RegistrationController {
         return TemplateLocation.REGISTRATION_SUCCESS_CONFIRMATION;
     }
 
-    @RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
+    @RequestMapping(value = "/activateAccount", params = "action", method = RequestMethod.GET)
     public String activateAccountSubmit(@RequestParam String activationCode, @RequestParam ApplicationFormAction action, Integer scopeId) {
 
         User user = registrationService.activateAccount(activationCode, action, scopeId);

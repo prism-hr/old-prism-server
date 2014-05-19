@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.mail.MailSendingService;
 import com.zuehlke.pgadmissions.services.exporters.ApplicationTransferService;
 import com.zuehlke.pgadmissions.services.exporters.ExportService;
 
-public class ExportQueueListener implements MessageListener {
+public class PorticoQueueListener implements MessageListener {
 
     public static class TriggerJmsRetryException extends RuntimeException {
         private static final long serialVersionUID = 79819935845687782L;
@@ -28,7 +28,7 @@ public class ExportQueueListener implements MessageListener {
         }
     }
 
-    private final Logger log = LoggerFactory.getLogger(ExportQueueListener.class);
+    private final Logger log = LoggerFactory.getLogger(PorticoQueueListener.class);
 
     @Autowired
     private ExportService exportService;

@@ -13,7 +13,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 public class FakeLoggingMailSender extends JavaMailSenderImpl {
 
-    private final Logger log = LoggerFactory.getLogger(MailSenderMock.class);
+    private final Logger log = LoggerFactory.getLogger(FakeLoggingMailSender.class);
     
     @Override
     protected void doSend(MimeMessage[] mimeMessages, Object[] originalMessages) throws MailException {
